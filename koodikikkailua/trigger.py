@@ -9,16 +9,30 @@ import pylab as pl
 import os
 import csv
 
-def saveFile(array, path, fileName):
+
+def saveFile(param, path, fileName):
+    """Method for saving a dictionary of parameters to a file.
+    
+    Keyword arguments:
+    param    -- a dictionary of parameters 
+    path     -- path of the file
+    fileName -- name of the file
+    """
     path += fileName
     print path
     writer = csv.writer(open(path, 'wb'))
     #f = open(path, 'w')
-    for key, value in array.items():
+    for key, value in param.items():
         writer.writerow([key,value])
     
     
 def loadFile(path,fileName):
+    """Method for loading saved parameters to a dictionary.
+    
+    Keyword arguments:
+    path     -- path of the file
+    fileName -- name of the file
+    """
     path += fileName
     reader = csv.reader(open(path, 'rb'))
     a = dict(x for x in reader)
