@@ -9,6 +9,7 @@
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QObject, pyqtSignal
+import EOG
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -40,9 +41,20 @@ class Ui_MainWindow(object):
         self.graphicsView = QtGui.QGraphicsView(self.centralwidget)
         self.graphicsView.setGeometry(QtCore.QRect(265, 0, 811, 651))
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
+        
         self.drawSimpleFunction = QtGui.QPushButton(self.centralwidget)
         self.drawSimpleFunction.setGeometry(QtCore.QRect(70, 280, 95, 31))
         self.drawSimpleFunction.setObjectName(_fromUtf8("drawSimpleFunction"))
+        
+        self.EventMarginalMin = QtGui.QLineEdit(self.centralwidget)
+        self.EventMarginalMin.setGeometry(QtCore.QRect(20,220,51,31))
+        self.EventMarginalMin.setObjectName(_fromUtf8("EventMinMarginLineEdit"))
+
+        self.EventMarginalMax = QtGui.QLineEdit(self.centralwidget)
+        self.EventMarginalMax.setGeometry(QtCore.QRect(90,220,51,31))
+        self.EventMarginalMax.setObjectName(_fromUtf8("EventMaxMarginLineEdit"))
+        
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1081, 29))
@@ -52,17 +64,16 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
 
-        trigger = pyqtSignal()
-        
-        self.drawSimpleFunction.clicked.connect(self.drawSimpleFunction)
+        self.drawSimpleFunction.clicked.connect(self.drawKappyra)        
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-    def drawSimpleFunction(self):
-        
-        
-        
+    def drawKappyra(self):
+        min = self.EventMarginalMin.text()
+        max = self.EventMarginalMax.text()
+        EOG.drawEpochs(float(min), float(max))
+                
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))

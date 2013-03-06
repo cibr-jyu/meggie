@@ -3,7 +3,7 @@ Created on Feb 28, 2013
 
 @author: jaeilepp
 '''
-
+"""
 def eventlist(events, eog_events):
     array = []
     for i in range(len(events)):
@@ -14,45 +14,49 @@ def eventlist(events, eog_events):
                 array.append(events[i])
                 break
     return np.vstack(array)
-
+"""
 import mne
 import pylab as pl
 import numpy as np
 
 
-fname = '/home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_raw.fif'
-raw = mne.fiff.Raw(fname)
-events = mne.find_events(raw, stim_channel=['STI 001'])
+def drawEpochs(tminInput, tmaxInput):
 
-event_id = 998
-eog_events = mne.preprocessing.find_eog_events(raw, event_id)
-"""print events
-print '---------------------------------------------------------------------------------------------------------------------------------------------'
-print eog_events"""
-
-picks = mne.fiff.pick_types(raw.info, meg=True, eeg=False, stim=False, eog=False, exclude=raw.info['bads'])
-
-start, stop = raw.time_as_index([0, 15])
-#_, times = raw[picks, start:(stop + 1)]
-tmin, tmax = -0.2, 0.5
-el = eventlist(events, eog_events)
-print len(events)
-#epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks)
-reject = dict(grad=4000e-13, mag=4e-12, eog=150e-6)
-baseline = (None, 0)
-epochs = mne.Epochs(raw, el, 5, tmin, tmax, proj=True, picks=picks, baseline=baseline, preload=False)
-epochs.drop_bad_epochs()
-list = mne.compute_proj_epochs(epochs)
-print list
-
-#evoked = epochs.average()
-#evoked.plot()
-#print '-------------------------------------------------------------------------------------'
-
-#data = epochs.get_data()
-#times = epochs.times
-#print data.T[200]
-#pl.plot(times, np.squeeze(data.T))
-#pl.show()
-#./mne_compute_proj_eog.py -i /home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_raw.fif --l-freq 1 --h-freq 35 --rej-grad 3000 --rej-mag 4000 --rej-eeg 100 --proj /home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_eog_proj.fif
-
+    fname = '../../koodikikkailua/sample_audvis_raw.fif'
+    raw = mne.fiff.Raw(fname)
+    events = mne.find_events(raw, stim_channel=['STI 001'])
+    
+    event_id = 998
+    #eog_events = mne.preprocessing.find_eog_events(raw, event_id)
+    """print events
+    print '---------------------------------------------------------------------------------------------------------------------------------------------'
+    print eog_events"""
+    
+    picks = mne.fiff.pick_types(raw.info, meg=True, eeg=False, stim=False, eog=False, exclude=raw.info['bads'])
+    
+    #start, stop = raw.time_as_index([0, 15])
+    #_, times = raw[picks, start:(stop + 1)]
+    tmin, tmax = -0.2, 0.5
+    tmin = tminInput
+    tmax = tmaxInput
+    #el = eventlist(events, eog_events)
+    #print len(events)
+    #epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks)
+    #reject = dict(grad=4000e-13, mag=4e-12, eog=150e-6)
+    baseline = (None, 0)
+    epochs = mne.Epochs(raw, events, 5, tmin, tmax, proj=True, picks=picks, baseline=baseline, preload=False)
+    #epochs.drop_bad_epochs()
+    #list = mne.compute_proj_epochs(epochs)
+    #print list
+    
+    evoked = epochs.average()
+    evoked.plot()
+    #print '-------------------------------------------------------------------------------------'
+    pl.subplot(999)
+    #data = epochs.get_data()
+    #times = epochs.times
+    #print data.T[200]
+    #pl.plot(times, np.squeeze(data.T))
+    #pl.show()
+    #./mne_compute_proj_eog.py -i /home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_raw.fif --l-freq 1 --h-freq 35 --rej-grad 3000 --rej-mag 4000 --rej-eeg 100 --proj /home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_eog_proj.fif
+    
