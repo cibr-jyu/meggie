@@ -20,11 +20,23 @@ import pylab as pl
 import numpy as np
 
 
-def drawEpochs(tminInput, tmaxInput):
-
+def drawEOGEpochs(tminInput, tmaxInput, eventStimChannel):
     fname = '../../koodikikkailua/sample_audvis_raw.fif'
+    
+    tmin = tminInput
+    tmax = tmaxInput
+    
+    #TODO check if tmin and tmax are sane
+    if (tmin<-5 or tmax>10):
+        tmin, tmax = -0.2, 0.5
+    
     raw = mne.fiff.Raw(fname)
-    events = mne.find_events(raw, stim_channel=['STI 001'])
+    
+    # Alunperin stimchannelina 'STI 001'
+    # TODO: stimchannel valittava listasta
+    events = mne.find_events(raw, stim_channel=[eventStimChannel])
+    
+    
     
     event_id = 998
     #eog_events = mne.preprocessing.find_eog_events(raw, event_id)
@@ -36,9 +48,8 @@ def drawEpochs(tminInput, tmaxInput):
     
     #start, stop = raw.time_as_index([0, 15])
     #_, times = raw[picks, start:(stop + 1)]
-    tmin, tmax = -0.2, 0.5
-    tmin = tminInput
-    tmax = tmaxInput
+    
+    
     #el = eventlist(events, eog_events)
     #print len(events)
     #epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks)

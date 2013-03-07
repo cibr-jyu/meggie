@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         self.graphicsView.setGeometry(QtCore.QRect(265, 0, 811, 651))
         self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
         
+        
         self.drawSimpleFunction = QtGui.QPushButton(self.centralwidget)
         self.drawSimpleFunction.setGeometry(QtCore.QRect(70, 280, 95, 31))
         self.drawSimpleFunction.setObjectName(_fromUtf8("drawSimpleFunction"))
@@ -59,20 +60,36 @@ class Ui_MainWindow(object):
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1081, 29))
         self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuTools = QtGui.QMenu(self.menubar)
+        self.menuTools.setObjectName(_fromUtf8("menuTools"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
+        self.actionLoad_file = QtGui.QAction(MainWindow)
+        self.actionLoad_file.setObjectName(_fromUtf8("actionLoad_file"))
+        self.actionSave_file = QtGui.QAction(MainWindow)
+        self.actionSave_file.setObjectName(_fromUtf8("actionSave_file"))
+        self.actionPreferences = QtGui.QAction(MainWindow)
+        self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
+        self.menuFile.addAction(self.actionLoad_file)
+        self.menuFile.addAction(self.actionSave_file)
+        self.menuTools.addAction(self.actionPreferences)
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
 
-        self.drawSimpleFunction.clicked.connect(self.drawKappyra)        
+
+        self.drawSimpleFunction.clicked.connect(self.drawEOGEpochs)        
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-    def drawKappyra(self):
+    def drawEOGEpochs(self):
         min = self.EventMarginalMin.text()
         max = self.EventMarginalMax.text()
-        EOG.drawEpochs(float(min), float(max))
+        EOG.drawEOGEpochs(float(min), float(max), 'STI 001')
                 
 
     def retranslateUi(self, MainWindow):
