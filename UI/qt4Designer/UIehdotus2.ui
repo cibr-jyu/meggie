@@ -62,8 +62,8 @@
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>230</y>
+      <x>0</x>
+      <y>240</y>
       <width>341</width>
       <height>321</height>
      </rect>
@@ -139,7 +139,7 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>120</x>
         <y>10</y>
         <width>101</width>
         <height>21</height>
@@ -214,7 +214,7 @@
        <string>Show:</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="EOGcheckBox">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -227,7 +227,7 @@
        <string>EOG</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="ECGCheckBox">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -240,7 +240,7 @@
        <string>ECG</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_3">
+     <widget class="QCheckBox" name="StimChannelCheckBox">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -253,7 +253,7 @@
        <string>StimChannel</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_4">
+     <widget class="QCheckBox" name="BadChannelsCheckBox">
       <property name="geometry">
        <rect>
         <x>210</x>

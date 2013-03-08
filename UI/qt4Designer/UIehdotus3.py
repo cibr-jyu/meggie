@@ -10,6 +10,7 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QObject, pyqtSignal
 import EOG
+import matPlotEmbedEx
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -34,13 +35,29 @@ class Ui_MainWindow(object):
         self.treeWidget = QtGui.QTreeWidget(self.centralwidget)
         self.treeWidget.setGeometry(QtCore.QRect(30, 20, 256, 192))
         self.treeWidget.setObjectName(_fromUtf8("treeWidget"))
+        
+        ''' 
+        Lisää MainWindowin lapseksi widgetin, jolle määritellään koko
+        '''
+        self.mpl_widget = QtGui.QWidget(MainWindow)
+        self.mpl_widget.setGeometry(QtCore.QRect(350, 40, 456, 392))
+
+
+        '''
+        Laittaa mpl_widgetin sisälle matplotlibin canvas-elementtejä
+        Layout kertoo, miten em. widgetin sisälle laitetut widgetit asettuvat
+        '''
+        l = QtGui.QVBoxLayout(self.mpl_widget)
+        sc = matPlotEmbedEx.MyStaticMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
+        dc = matPlotEmbedEx.MyDynamicMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
+        l.addWidget(sc)
+        l.addWidget(dc)
+        
         item_0 = QtGui.QTreeWidgetItem(self.treeWidget)
         item_1 = QtGui.QTreeWidgetItem(item_0)
         item_1 = QtGui.QTreeWidgetItem(item_0)
         item_2 = QtGui.QTreeWidgetItem(item_1)
-        self.graphicsView = QtGui.QGraphicsView(self.centralwidget)
-        self.graphicsView.setGeometry(QtCore.QRect(365, 0, 711, 651))
-        self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
+   
         self.scrollArea = QtGui.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(10, 230, 341, 321))
         self.scrollArea.setWidgetResizable(True)
@@ -48,12 +65,14 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents = QtGui.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 339, 319))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
+        
         self.comboBox_2 = QtGui.QComboBox(self.scrollAreaWidgetContents)
         self.comboBox_2.setGeometry(QtCore.QRect(90, 190, 85, 31))
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
         self.comboBox = QtGui.QComboBox(self.scrollAreaWidgetContents)
         self.comboBox.setGeometry(QtCore.QRect(80, 40, 85, 31))
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        
         self.eventMarginalMin = QtGui.QLineEdit(self.scrollAreaWidgetContents)
         self.eventMarginalMin.setGeometry(QtCore.QRect(60, 100, 51, 31))
         self.eventMarginalMin.setText(_fromUtf8(""))
@@ -61,9 +80,11 @@ class Ui_MainWindow(object):
         self.eventMarginalMax = QtGui.QLineEdit(self.scrollAreaWidgetContents)
         self.eventMarginalMax.setGeometry(QtCore.QRect(60, 140, 51, 31))
         self.eventMarginalMax.setObjectName(_fromUtf8("eventMarginalMax"))
+        
         self.drawButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.drawButton.setGeometry(QtCore.QRect(220, 280, 95, 31))
         self.drawButton.setObjectName(_fromUtf8("drawButton"))
+        
         self.label = QtGui.QLabel(self.scrollAreaWidgetContents)
         self.label.setGeometry(QtCore.QRect(110, 10, 101, 21))
         self.label.setObjectName(_fromUtf8("label"))
@@ -82,6 +103,7 @@ class Ui_MainWindow(object):
         self.label_6 = QtGui.QLabel(self.scrollAreaWidgetContents)
         self.label_6.setGeometry(QtCore.QRect(220, 30, 66, 21))
         self.label_6.setObjectName(_fromUtf8("label_6"))
+        
         self.checkBox = QtGui.QCheckBox(self.scrollAreaWidgetContents)
         self.checkBox.setGeometry(QtCore.QRect(210, 60, 93, 26))
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
@@ -94,6 +116,7 @@ class Ui_MainWindow(object):
         self.checkBox_4 = QtGui.QCheckBox(self.scrollAreaWidgetContents)
         self.checkBox_4.setGeometry(QtCore.QRect(210, 150, 121, 26))
         self.checkBox_4.setObjectName(_fromUtf8("checkBox_4"))
+        
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -129,6 +152,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
       
           
+          
     def drawEOGEpochs(self):
         min = self.eventMarginalMin.text()
         max = self.eventMarginalMax.text()
@@ -161,6 +185,8 @@ class Ui_MainWindow(object):
         self.actionLoad_file.setText(_translate("MainWindow", "Load file", None))
         self.actionSave_file.setText(_translate("MainWindow", "Save file", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
+
+
 
 
 if __name__ == "__main__":
