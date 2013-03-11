@@ -11,6 +11,9 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QObject, pyqtSignal
 import EOG
 import matPlotEmbedEx
+from epochScrollAreaWidget import epochScrollArea
+from epochScrollAreaWidget import FormWidget 
+from Widget import Ui_Form
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -47,17 +50,18 @@ class Ui_MainWindow(object):
         Laittaa mpl_widgetin sisälle matplotlibin canvas-elementtejä
         Layout kertoo, miten em. widgetin sisälle laitetut widgetit asettuvat
         '''
-        l = QtGui.QVBoxLayout(self.mpl_widget)
-        sc = matPlotEmbedEx.MyStaticMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
-        dc = matPlotEmbedEx.MyDynamicMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
-        l.addWidget(sc)
-        l.addWidget(dc)
+        #l = QtGui.QVBoxLayout(self.mpl_widget)
+        #sc = matPlotEmbedEx.MyStaticMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
+        #dc = matPlotEmbedEx.MyDynamicMplCanvas(self.mpl_widget, width=5, height=4, dpi=100)
+        #l.addWidget(sc) # Huomaa nämä, omat widgetit vaativat erillisen lisäyskäsky
+        #l.addWidget(dc)
         
         item_0 = QtGui.QTreeWidgetItem(self.treeWidget)
         item_1 = QtGui.QTreeWidgetItem(item_0)
         item_1 = QtGui.QTreeWidgetItem(item_0)
         item_2 = QtGui.QTreeWidgetItem(item_1)
-   
+    
+        # ScrollAreaWidget starts here
         self.scrollArea = QtGui.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(10, 230, 341, 321))
         self.scrollArea.setWidgetResizable(True)
@@ -69,10 +73,10 @@ class Ui_MainWindow(object):
         self.comboBox_2 = QtGui.QComboBox(self.scrollAreaWidgetContents)
         self.comboBox_2.setGeometry(QtCore.QRect(90, 190, 85, 31))
         self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
+        
         self.comboBox = QtGui.QComboBox(self.scrollAreaWidgetContents)
         self.comboBox.setGeometry(QtCore.QRect(80, 40, 85, 31))
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        
         self.eventMarginalMin = QtGui.QLineEdit(self.scrollAreaWidgetContents)
         self.eventMarginalMin.setGeometry(QtCore.QRect(60, 100, 51, 31))
         self.eventMarginalMin.setText(_fromUtf8(""))
@@ -118,6 +122,18 @@ class Ui_MainWindow(object):
         self.checkBox_4.setObjectName(_fromUtf8("checkBox_4"))
         
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        # ScrollAreWidget ends here
+        
+        #Scrollarea as self-made widget
+        #self.scrollArea2 = epochScrollArea(self.centralwidget)
+        #self.scrollArea2.setGeometry(QtCore.QRect(200, 230, 341, 321))
+        
+        #self.scrollArea3 = Ui_Form(self.centralwidget)
+        #self.scrollArea3.setGeometry(QtCore.QRect(200, 230, 341, 321))
+        
+        #self.formW = FormWidget(self.centralwidget)
+        #self.formW.setGeometry(QtCore.QRect(200, 230, 341, 321))
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1081, 29))
