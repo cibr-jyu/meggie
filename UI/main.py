@@ -8,7 +8,7 @@ from PyQt4 import QtCore,QtGui
  
 # Import the pyuic4-compiled main UI module 
 from InitialWindow import Ui_MainWindow
-from CreateProjectDialog import CreateProjectDialog
+from CreateProjectDialog import Ui_CreateProjectDialog
 
 #import measurementInfo
  
@@ -32,17 +32,24 @@ class Main(QtGui.QMainWindow):
         """Buttons automatically have clicked signal, no need to define
         it in Qt designer
         """
-        self.ui.pushButton.clicked.connect(self.openCreateProjectDialog)    
-        
- 
-    def openCreateProjectDialog(self):
+            
+    # Automatically connects to clicked-signal of the button    
+    def on_ButtonNewProject_clicked(self):
         """
         Creates a new CreateProjectDialog and shows it
         """
         self.dialog = QtGui.QDialog() # New blank QDialog
-        createProjectDialog = CreateProjectDialog() # Refers to CreateProjectDialog in CreateProjecDialog class
+        createProjectDialog = Ui_CreateProjectDialog() # Refers to class in file CreateProjecDialog
         createProjectDialog.setupUi(self.dialog) # populates the blank QDialog with actual content
         self.dialog.show()
+        
+        #self.
+        
+        #self.dialog.CreateProjectDialog.
+        
+        #self.dialog.pushButton.clicked.connect()
+        
+        
         
         
         #dialog = self.createProjectDialog()
