@@ -18,11 +18,13 @@ Last modified: 19.01.2009
 import sys, os, random
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
+import PyQt4.QtGui
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.figure import Figure
+from enaml.backends.qt.qt_widget_component import QtWidgetComponent
+from PyQt4.uic.properties import QtGui
 
 
 class AppForm(QMainWindow):
@@ -33,7 +35,7 @@ class AppForm(QMainWindow):
         self.create_menu()
         self.create_main_frame()
         self.create_status_bar()
-
+        
         self.textbox.setText('1 2 3 4')
         self.on_draw()
 
@@ -179,7 +181,7 @@ class AppForm(QMainWindow):
         about_action = self.create_action("&About", 
             shortcut='F1', slot=self.on_about, 
             tip='About the demo')
-        
+
         self.add_actions(self.help_menu, (about_action,))
 
     def add_actions(self, target, actions):
