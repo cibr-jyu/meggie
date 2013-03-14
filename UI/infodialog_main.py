@@ -1,12 +1,12 @@
 import sys
 from PyQt4 import QtCore, QtGui
 from infodialog import Ui_infoDialog
-import measurementInfo
+from root.controller.measurementInfo import MeasurementInfo
 import mne
 
 
-class Main(QtGui.QMainWindow):
-    def __init__(self):
+class InfoDialog(QtGui.QMainWindow):
+    def __init__(self, raw):
         QtGui.QMainWindow.__init__(self)
         
         self.ui = Ui_infoDialog()
@@ -14,8 +14,8 @@ class Main(QtGui.QMainWindow):
         self.ui.tab_list = []
         button = self.ui.ButtonClose       
         button.clicked.connect(self.button_clicked)
-        raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')
-        mi = measurementInfo.MeasurementInfo(raw)
+        #raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')
+        mi = MeasurementInfo(raw)
         
         self.ui.labelDateValue.setText(mi.get_date())
         self.ui.labelEEGValue.setText(mi.get_EEG_channels())

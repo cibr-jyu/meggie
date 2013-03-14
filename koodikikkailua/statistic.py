@@ -19,6 +19,35 @@ class Statistic(object):
         Constructor
         """
         
+    def find_minimum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
+        """
+        Returns a minimum for a 1d numpy array.
+        
+        Keyword arguments:
+        sfreq         -- Sampling frequency
+        arr           -- 1d numpy array
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
+        """
+        
+        if sfreq <= 0:
+            raise Exception('Sampling frequency cannot be zero.')
+        if arr == []:
+            raise Exception('No data found.')
+        twindow = arr[int(round((tmin/1000)/sfreq)):int(round(tmax/sfreq))+1]
+        return np.min(twindow)
+        
+    def find_minimum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
+        """
+        Returns an array of minimums for a 2d array.
+        
+        Keyword arguments:
+        sfreq         -- Sampling frequency
+        arr           -- 2d numpy array
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
+        """
+        return [self.find_minimum(sfreq, row, tmin, tmax) for row in arr]
         
     def find_maximum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
@@ -27,73 +56,73 @@ class Statistic(object):
         Keyword arguments:
         sfreq         -- Sampling frequency
         arr           -- 1d numpy array
-        tmin          -- Start of the time window
-        tmax          -- End of the time window
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
         """
         if sfreq <= 0:
             raise Exception('Sampling frequency cannot be zero.')
-        twindow = arr[int(round(tmin/sfreq)):int(round(tmax/sfreq))+1]
+        if arr == []:
+            raise Exception('No data found.')
+        twindow = arr[int(round((tmin/1000)/sfreq)):int(round(tmax/sfreq))+1]
         return np.max(twindow)
     
-    def find_maximum2d(self, sfreq, arr, tmin=0.0, tmax=0.0):
+    def find_maximum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns maximums for a 2d array.
+        Returns an array of maximums for a 2d array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency
         arr           -- 2d numpy array
-        tmin          -- Start of the time window
-        tmax          -- End of the time window
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
         """
         return [self.find_maximum(sfreq, row, tmin, tmax) for row in arr]
     
-    def find_half_maximum(self, sfreq, arr, tmin=0.0, tmax=0.0):
+    def find_half_maximum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
         Returns half maximum for a 1d numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency
         arr           -- 1d numpy array
-        tmin          -- Start of the time window
-        tmax          -- End of the time window
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
         """
         return self.find_maximum(sfreq, arr, tmin, tmax)/2
     
     
-    def find_half_maximum2d(self, sfreq, arr, tmin=0.0, tmax=0.0):
+    def find_half_maximum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
         Returns half maximums for a 2d numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency
         arr           -- 2d numpy array
-        tmin          -- Start of the time window
-        tmax          -- End of the time window
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
         """
         return [self.find_maximum(sfreq, row, tmin, tmax)/2 for row in arr]
     
     def find_maximum_intensity(self, mat, h, w):
         """
-        """
-        for y in range(len(mat[0]) - h):
-            for x in range(len(mat) - w+1):
-                newmat = mat[x][y:h]
-                print newmat
-                #calculate_integral(newmat)
+        Takes a matrix and finds the coordinates of a window for maximum intensity.
         
+        Keyword arguments:
+        mat           -- A matrix
+        h             -- Height of the window
+        w             -- Width of the window
+        """
+        max = 0
+        xcoord = 0
+        ycoord = 0
+        for y in range(len(mat) - h+1):
+            for x in range((len(mat[0]) - w)+1):
+                newmat = mat[y:h+y,x:w+x]
+                #a = calculate_integral(newmat)
+                print newmat
+                #if a > max:
+                    #xcoord = x
+                    #ycoord = y
+        #TODO: palauta koordinaatit
+        return max
     
-def main():
-    #TODO: yksikkötesti tmin < 0
-    m = np.empty((3,3))
-    a = [0,25,7,5,48,6,84,2,1]
-    s = Statistic()
-    print m
-    print s.find_maximum(5.5, a, 0.5, 100.4)
-    print (sys.float_info.max +1000000000000000)
-    print s.find_half_maximum2d(1, m, 1, 2)
-    m = np.array([[1, 2, 3],[4, 5, 6],[7, 8, 9]])
-    print m[0][0:2]
-    s.find_maximum_intensity(m, 2, 2)
-
-if __name__ == "__main__":
-    main()

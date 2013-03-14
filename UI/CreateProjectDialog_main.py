@@ -2,6 +2,8 @@
  
  
 import os,sys
+from root.controller.file import File
+from infodialog_main import InfoDialog
 #from Project import Project
  
 from PyQt4 import QtCore,QtGui
@@ -11,9 +13,10 @@ from CreateProjectDialog_Ui import Ui_CreateProjectDialog
  
 # Create a dialog main window
 class CreateProjectDialog(QtGui.QDialog):
+    fname = ''
     def __init__(self):
         QtGui.QDialog.__init__(self)
-
+        self.fname = ''
         """
         Reference to main dialog window
         """       
@@ -23,10 +26,27 @@ class CreateProjectDialog(QtGui.QDialog):
     
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard for file dialog opening twice
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home')
-        print fname
+        # Jaakko koodaa: vaihdoin fnamen attribuutiksi
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home')
+        print self.fname
+        
+        
+        """
+        Jaakko koodaa: tästä alkaa 
+        """
+        self.ui.FilePathLineEdit.setText(self.fname)
+        
+    def on_showFileInfoButton_clicked(self):
+        f = File()
+        raw = f.open_raw(self.fname)
+        self.infoDialog = InfoDialog(raw)
+        self.infoDialog.show()
+                
+        """
+        Jaakko koodaa: tähän loppuu
+        """
           
-          
+    
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=Main()
