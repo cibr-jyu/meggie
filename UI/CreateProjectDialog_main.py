@@ -7,7 +7,7 @@ import os,sys
 from PyQt4 import QtCore,QtGui
  
 # Import the pyuic4-compiled main UI module 
-from CreateProjectDialog import Ui_CreateProjectDialog
+from CreateProjectDialog_Ui import Ui_CreateProjectDialog
  
 # Create a dialog main window
 class CreateProjectDialog(QtGui.QDialog):

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>infoDialog</class>
+ <widget class="QDialog" name="infoDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>455</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Measurement info</string>
+  </property>
+  <widget class="QPushButton" name="ButtonClose">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>390</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>22</x>
+     <y>22</y>
+     <width>301</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="metaBox">
+      <property name="title">
+       <string>Background</string>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>26</x>
+         <y>35</y>
+         <width>83</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelDate">
+          <property name="text">
+           <string>Date:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelDateValue">
+          <property name="text">
+           <string>DateValue</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="filtersBox">
+      <property name="title">
+       <string>Filters</string>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>23</x>
+         <y>31</y>
+         <width>135</width>
+         <height>53</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelLow">
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="text">
+           <string>Low-pass:</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelLowValue">
+          <property name="text">
+           <string>Low-pass value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelHigh">
+          <property name="text">
+           <string>High-pass:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelHighValue">
+          <property name="text">
+           <string>High-pass value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelSfreq">
+          <property name="text">
+           <string>TextLabel:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <zorder>labelLow</zorder>
+      <zorder>labelHigh</zorder>
+      <zorder>labelSfreq</zorder>
+      <zorder>channelsBox</zorder>
+      <zorder>labelLowValue</zorder>
+      <zorder>labelHighValue</zorder>
+      <zorder>label_5</zorder>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="channelsBox">
+      <property name="title">
+       <string>Channels</string>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>23</y>
+         <width>143</width>
+         <height>72</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelEEG">
+          <property name="text">
+           <string>EEG:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelEEGValue">
+          <property name="text">
+           <string>EEG value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelGradMEG">
+          <property name="text">
+           <string>Grad. MEG:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelGradMEGValue">
+          <property name="text">
+           <string>Grad. MEG value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelMagMEG">
+          <property name="text">
+           <string>Mag. MEG:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="labelMagMEGValue">
+          <property name="text">
+           <string>Mag. MEG value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelSamples">
+          <property name="text">
+           <string>Samples:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="labelSamplesValue">
+          <property name="text">
+           <string>SamplesValue</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <zorder>labelEEG</zorder>
+      <zorder>labelGradMEG</zorder>
+      <zorder>MagMEGBox</zorder>
+      <zorder>labelMagMEG</zorder>
+      <zorder>labelXY</zorder>
+      <zorder>labelEEGValue</zorder>
+      <zorder>labelGradMEGValue</zorder>
+      <zorder>labelMagMEGValue</zorder>
+      <zorder>labelXYValue</zorder>
+      <zorder>labelXYValue</zorder>
+      <zorder>labelMagMEGValue</zorder>
+      <zorder>labelEEGValue</zorder>
+      <zorder>labelGradMEGValue</zorder>
+      <zorder></zorder>
+      <zorder>labelSamples</zorder>
+      <zorder>labelSamplesValue</zorder>
+      <zorder>labelSamples</zorder>
+      <zorder>labelSamplesValue</zorder>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <zorder>filtersBox</zorder>
+  <zorder>channelsBox</zorder>
+  <zorder>metaBox</zorder>
+  <zorder>channelsBox</zorder>
+  <zorder>filtersBox</zorder>
+  <zorder></zorder>
+  <zorder>ButtonClose</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
