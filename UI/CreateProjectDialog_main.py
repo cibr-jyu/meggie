@@ -2,7 +2,7 @@
  
  
 import os,sys
-from root.controller.file import File
+from file import File
 from infoDialog_main import InfoDialog
 #from Project import Project
 import messageBox
