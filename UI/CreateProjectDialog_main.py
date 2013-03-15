@@ -2,8 +2,8 @@
  
  
 import os,sys
-from root.controller.file import File
-from infodialog_main import InfoDialog
+from file import File
+from infoDialog_main import InfoDialog
 #from Project import Project
  
 from PyQt4 import QtCore,QtGui
@@ -25,7 +25,7 @@ class CreateProjectDialog(QtGui.QDialog):
  
     
     def on_browseButton_clicked(self, checked=None):
-        if checked is None: return # Standard for file dialog opening twice
+        if checked is None: return # Standard workaround for file dialog opening twice
         # Jaakko koodaa: vaihdoin fnamen attribuutiksi
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home')
         print self.fname
