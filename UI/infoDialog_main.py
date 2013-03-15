@@ -1,7 +1,7 @@
 import sys
 from PyQt4 import QtCore, QtGui
 from infoDialog_Ui import Ui_infoDialog
-from measurementInfo import MeasurementInfo
+from root.controller.measurementInfo import MeasurementInfo
 import mne
 
 

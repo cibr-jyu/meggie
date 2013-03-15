@@ -2,10 +2,10 @@
  
  
 import os,sys
-from file import File
+from root.controller.file import File
 from infoDialog_main import InfoDialog
 #from Project import Project
- 
+import messageBox
 from PyQt4 import QtCore,QtGui
  
 # Import the pyuic4-compiled main UI module 
@@ -33,15 +33,20 @@ class CreateProjectDialog(QtGui.QDialog):
         
         """
         Jaakko koodaa: tästä alkaa 
-        """
+        """ #QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
         self.ui.FilePathLineEdit.setText(self.fname)
         
     def on_showFileInfoButton_clicked(self):
-        f = File()
-        raw = f.open_raw(self.fname)
-        self.infoDialog = InfoDialog(raw)
-        self.infoDialog.show()
-                
+        try:
+            f = File()
+            raw = f.open_raw(self.fname)
+            self.infoDialog = InfoDialog(raw)
+            self.infoDialog.show()
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err[0]))
+            self.messageBox.show()
+            
         """
         Jaakko koodaa: tähän loppuu
         """

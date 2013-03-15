@@ -9,56 +9,127 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>314</height>
+    <width>382</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Create new project</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>***project created in the same folder as picked file</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSplitter" name="splitter">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <widget class="QLineEdit" name="FilePathLineEdit"/>
-       <widget class="QPushButton" name="browseButton">
+  <widget class="QDialogButtonBox" name="cancelOkButtonBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>350</y>
+     <width>176</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>341</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>***project created in the same folder as picked file</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QLineEdit" name="FilePathLineEdit"/>
+          <widget class="QPushButton" name="browseButton">
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="showFileInfoButton">
+          <property name="text">
+           <string>Show file info</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="labelProjectName">
+          <property name="text">
+           <string>Project name:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEditProjectName"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="labelAuthor">
+          <property name="text">
+           <string>Author:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEditAuthor"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="labelDescritption">
         <property name="text">
-         <string>Browse...</string>
+         <string>Description:</string>
         </property>
        </widget>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="showFileInfoButton">
-       <property name="text">
-        <string>Show file info</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="cancelOkButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-  </layout>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="textEditDescription"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <zorder>cancelOkButtonBox</zorder>
+  <zorder>labelAuthor</zorder>
+  <zorder>lineEditAuthor</zorder>
+  <zorder>lineEditProjectName</zorder>
+  <zorder>labelProjectName</zorder>
+  <zorder>lineEditAuthor</zorder>
+  <zorder>labelDescritption</zorder>
+  <zorder>textEditDescription</zorder>
+  <zorder>labelDescritption</zorder>
  </widget>
  <resources/>
  <connections>
