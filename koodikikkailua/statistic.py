@@ -7,8 +7,9 @@ Created on Mar 14, 2013
 """
 import numpy as np
 import sys
+from IntegralImage import IntegralImage
 
-class Statistic(object):
+class Statistic():
     """
     classdocs
     """
@@ -118,11 +119,23 @@ class Statistic(object):
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
                 newmat = mat[y:h+y,x:w+x]
-                #a = calculate_integral(newmat)
+                i = IntegralImage()
                 print newmat
-                #if a > max:
-                    #xcoord = x
-                    #ycoord = y
-        #TODO: palauta koordinaatit
-        return max
+                i.sumOverMatrix(newmat)
+                a = i.sumOverRectangularArea((0,0), (1,1))
+                if a > max:
+                    xcoord = x
+                    ycoord = y
+                    max = a
+        #TODO: palauta koordinaatit OIKEIN!
+        print max
+        return xcoord, ycoord
     
+def main():
+    s = Statistic()
+    m = np.array([[1,1,1,1,1],[2,2,2,2,2],[3,3,3,3,3],[4,4,4,4,4]])
+    max = s.find_maximum_intensity(m, 2, 2)
+    print max
+     
+if __name__ == "__main__":
+    main()
