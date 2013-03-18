@@ -28,7 +28,7 @@ class Project():
         date - - the time and date of the saved project
         """
         
-        self.project_name = 
+        #self.project_name = 
         self.raw_data = 'no data specified'
         self.file_path = 'no path defined'
         self.author = 'unknown author'
