@@ -37,7 +37,7 @@ class CreateProjectDialog(QtGui.QDialog):
             self.project.set_description(self.ui.textEditDescription.toPlainText())
             print self.project.get_description()
             print self.project.get_date()
-            self.UIehd = MainWindow()
+            self.UIehd = MainWindow(self.project)
             self.UIehd.show()
             self.close()
         except Exception, err:
@@ -48,7 +48,7 @@ class CreateProjectDialog(QtGui.QDialog):
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin')
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn')
         print self.fname
         try:
             f = File()
