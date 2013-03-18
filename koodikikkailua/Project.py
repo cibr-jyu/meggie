@@ -28,9 +28,9 @@ class Project():
         date - - the time and date of the saved project
         """
         
-        
-        self.rawData = 'no data specified'
-        self.filePath = 'no path defined'
+        self.project_name = 
+        self.raw_data = 'no data specified'
+        self.file_path = 'no path defined'
         self.author = 'unknown author'
         self.description = 'no description'
         self.date = time.strftime('%Y %m %d %X')
@@ -41,17 +41,17 @@ class Project():
         Returns the path of the current project file.
         """
         
-        return self.filePath
+        return self.file_path
     
    
-    def set_file_path(self, filePath):
+    def set_file_path(self, file_path):
         """
         Sets the given path for the project file.
         Raises exception if the given path doesn't exist.
         """
         
-        if (os.path.isdir(filePath)): 
-            self.filePath = filePath
+        if (os.path.isdir(file_path)): 
+            self.file_path = file_path
         else:
             raise Exception('No such path')
             
@@ -61,16 +61,16 @@ class Project():
         Returns the raw data file of the project.
         """
         
-        return self.rawData
+        return self.raw_data
     
     
-    def set_raw_data(self, rawData):
+    def set_raw_data(self, raw_data):
         """
         Sets the raw data file for the project.
         Raises exception if the given data type is wrong. 
         """
-        if (type(rawData) == mne.fiff.Raw):
-            self.rawData = rawData
+        if (type(raw_data) == mne.fiff.Raw):
+            self.rawData = raw_data
         else:
             raise Exception('Wrong data type')
         
@@ -125,3 +125,11 @@ class Project():
                 raise Exception("Use only letters and numbers in your description")  
         else:
             raise Exception("Too long description")
+        
+    
+    def save_project(self, folder_name):
+        print 'testi'
+        newpath = self.file_path + folder_name
+        if os.path.exists(self.file_path):
+            print newpath
+            os.mkdir(newpath)
