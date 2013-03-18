@@ -60,7 +60,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
 
         self.retranslateUi(MainWindow)
-        #QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), .openCreateProjectDialog)
         
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
