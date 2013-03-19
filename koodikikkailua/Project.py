@@ -21,26 +21,46 @@ class Project():
         Constructor
         
         Keyword arguments:
-        rawData - - the raw data file of the measured data
-        filePath - - the path of the saved project
+        project_name - - the name of the project
+        raw_data - - the raw data file of the measured data
+        file_path - - the path of the saved project
         author - - the author of the project
         description - - the description of the project written by the author
         date - - the time and date of the saved project
         """
         
-        #self.project_name = 
+        self.project_name = 'project'
         self.raw_data = 'no data specified'
         self.file_path = 'no path defined'
         self.author = 'unknown author'
         self.description = 'no description'
         self.date = time.strftime('%Y %m %d %X')
         
+        
+    def get_project_name(self):
+        """
+        Returns the name of the project.
+        """
+        return self.project_name
+    
+    
+    def set_project_name(self, project_name):
+        """
+        Sets the name for the project.
+        """
+        if (len(project_name) <= 30):
+            if re.match("^[A-Za-z0-9 ]*$", project_name):
+                self.project_name = project_name
+            else:
+                raise Exception("Use only letters and numbers in project name")
+        else:
+            raise Exception('Too long project name')
+    
     
     def get_file_path(self):
         """
         Returns the path of the current project file.
         """
-        
         return self.file_path
     
    
@@ -49,7 +69,6 @@ class Project():
         Sets the given path for the project file.
         Raises exception if the given path doesn't exist.
         """
-        
         if (os.path.isdir(file_path)): 
             self.file_path = file_path
         else:
@@ -60,7 +79,6 @@ class Project():
         """
         Returns the raw data file of the project.
         """
-        
         return self.raw_data
     
     
@@ -88,7 +106,6 @@ class Project():
         Raises exception if the author name is too long.
         Raises exception if the author name includes other characters than letters and numbers.
         """
-        
         if (len(author) <= 50):
             if re.match("^[A-Za-z0-9 ]*$", author):
                 self.author = author
@@ -127,9 +144,11 @@ class Project():
             raise Exception("Too long description")
         
     
-    def save_project(self, folder_name):
-        print 'testi'
-        newpath = self.file_path + folder_name
+    def save_project(self):
+        """
+        Saves the project folder and the contents including raw data file.
+        """
+        newpath = self.file_path + self.project_name
         if os.path.exists(self.file_path):
             print newpath
             os.mkdir(newpath)
