@@ -145,7 +145,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabRecommended">
       <property name="accessibleName">
@@ -165,23 +165,23 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pushButtonEpoch">
           <property name="text">
-           <string>sss</string>
+           <string>Epoch</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="pushButtonSSS">
           <property name="text">
-           <string>tsss</string>
+           <string>SSS</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="pushButtonMC">
           <property name="text">
-           <string>mc</string>
+           <string>MC</string>
           </property>
          </widget>
         </item>

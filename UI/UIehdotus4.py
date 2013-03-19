@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus4.ui'
 #
-# Created: Tue Mar 19 11:07:40 2013
+# Created: Tue Mar 19 11:58:38 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -91,15 +91,15 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.pushButton = QtGui.QPushButton(self.layoutWidget)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.verticalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtGui.QPushButton(self.layoutWidget)
-        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
-        self.verticalLayout.addWidget(self.pushButton_2)
-        self.pushButton_3 = QtGui.QPushButton(self.layoutWidget)
-        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
-        self.verticalLayout.addWidget(self.pushButton_3)
+        self.pushButtonEpoch = QtGui.QPushButton(self.layoutWidget)
+        self.pushButtonEpoch.setObjectName(_fromUtf8("pushButtonEpoch"))
+        self.verticalLayout.addWidget(self.pushButtonEpoch)
+        self.pushButtonSSS = QtGui.QPushButton(self.layoutWidget)
+        self.pushButtonSSS.setObjectName(_fromUtf8("pushButtonSSS"))
+        self.verticalLayout.addWidget(self.pushButtonSSS)
+        self.pushButtonMC = QtGui.QPushButton(self.layoutWidget)
+        self.pushButtonMC.setObjectName(_fromUtf8("pushButtonMC"))
+        self.verticalLayout.addWidget(self.pushButtonMC)
         self.tabWidget.addTab(self.tabRecommended, _fromUtf8(""))
         self.tabInfo = QtGui.QWidget()
         self.tabInfo.setObjectName(_fromUtf8("tabInfo"))
@@ -202,7 +202,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.treeWidget, QtCore.SIGNAL(_fromUtf8("itemDoubleClicked(QTreeWidgetItem*,int)")), MainWindow.deleteLater)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -218,9 +218,9 @@ class Ui_MainWindow(object):
         self.treeWidget.topLevelItem(0).child(1).setText(0, _translate("MainWindow", "tsss", None))
         self.treeWidget.topLevelItem(0).child(1).child(0).setText(0, _translate("MainWindow", "high-pass(parameters)", None))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
-        self.pushButton.setText(_translate("MainWindow", "sss", None))
-        self.pushButton_2.setText(_translate("MainWindow", "tsss", None))
-        self.pushButton_3.setText(_translate("MainWindow", "mc", None))
+        self.pushButtonEpoch.setText(_translate("MainWindow", "Epoch", None))
+        self.pushButtonSSS.setText(_translate("MainWindow", "SSS", None))
+        self.pushButtonMC.setText(_translate("MainWindow", "MC", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabRecommended), _translate("MainWindow", "Recommended actions", None))
         self.metaBox.setTitle(_translate("MainWindow", "Background", None))
         self.labelDate.setText(_translate("MainWindow", "Date:", None))
