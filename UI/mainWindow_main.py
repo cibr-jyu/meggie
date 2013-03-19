@@ -7,7 +7,7 @@ import os,sys
 from PyQt4 import QtCore,QtGui
  
 # Import the pyuic4-compiled main UI module 
-from mainWindow_Ui import Ui_MainWindow
+from mainWindow_Ui2 import Ui_MainWindow
 from CreateProjectDialog_main import CreateProjectDialog
 
 #import measurementInfo
@@ -23,6 +23,7 @@ class Main(QtGui.QMainWindow):
         self.ui=Ui_MainWindow()
         self.ui.setupUi(self)
 
+        #self.ui.widget.hide()
             
     # Automatically connects to clicked-signal of the button    
     def on_ButtonNewProject_clicked(self):
