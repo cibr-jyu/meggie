@@ -150,5 +150,4 @@ class Project():
         """
         newpath = self.file_path + self.project_name
         if os.path.exists(self.file_path):
-            print newpath
             os.mkdir(newpath)
