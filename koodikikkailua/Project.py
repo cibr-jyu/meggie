@@ -70,7 +70,7 @@ class Project():
         Raises exception if the given data type is wrong. 
         """
         if (type(raw_data) == mne.fiff.Raw):
-            self.rawData = raw_data
+            self.raw_data = raw_data
         else:
             raise Exception('Wrong data type')
         

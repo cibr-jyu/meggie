@@ -6,12 +6,21 @@ import mne
 
 
 class InfoDialog(QtGui.QDialog):
-    def __init__(self, raw):
+    def __init__(self, raw, info, create_window):
+        """
+        Constructor
+        
+        Keyword arguments:
+        raw           -- Raw object
+        info          -- Ui object that receives the info data
+        create_window -- Boolean that tells if a new window is created
+        """
         QtGui.QDialog.__init__(self)
         self.raw = raw
-        self.ui = Ui_infoDialog()
-        self.ui.setupUi(self)
-        self.ui.tab_list = []
+        self.ui = info
+        if create_window:
+            self.ui.setupUi(self)
+            self.ui.tab_list = []
         
         self.setLabelTestValues()
     
@@ -22,15 +31,15 @@ class InfoDialog(QtGui.QDialog):
             
         #raw = mne.fiff.Raw('/home/kpaliran/Hoksotin/parkkosenpaketti/meg/jn/jn_multimodal01_raw_sss.fif')
         #raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')
-        mi = MeasurementInfo(self.raw)
+        self.mi = MeasurementInfo(self.raw)
         
-        self.ui.labelDateValue.setText(mi.get_date())
-        self.ui.labelEEGValue.setText(mi.get_EEG_channels())
-        self.ui.labelGradMEGValue.setText(mi.get_grad_channels())
-        self.ui.labelHighValue.setText(mi.get_high_pass())
-        self.ui.labelLowValue.setText(mi.get_low_pass())
-        self.ui.labelMagMEGValue.setText(mi.get_mag_channels())
-        self.ui.labelSamplesValue.setText(mi.get_sampling_freq())
+        self.ui.labelDateValue.setText(self.mi.get_date())
+        self.ui.labelEEGValue.setText(self.mi.get_EEG_channels())
+        self.ui.labelGradMEGValue.setText(self.mi.get_grad_channels())
+        self.ui.labelHighValue.setText(self.mi.get_high_pass())
+        self.ui.labelLowValue.setText(self.mi.get_low_pass())
+        self.ui.labelMagMEGValue.setText(self.mi.get_mag_channels())
+        self.ui.labelSamplesValue.setText(self.mi.get_sampling_freq())
     
         
 

@@ -4,13 +4,14 @@ Created on Mar 16, 2013
 @author: jaeilepp
 '''
 from PyQt4 import QtCore,QtGui
-from UIehd1 import Ui_MainWindow
+from UIehdotus4 import Ui_MainWindow
 import mne
 import pylab as pl
 from matplotlib.figure import Figure
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+from infoDialog_main import InfoDialog
 class MainWindow(QtGui.QMainWindow):
     '''
     classdocs
@@ -28,11 +29,12 @@ class MainWindow(QtGui.QMainWindow):
         self.raw = project.get_raw_data()
         self.ui.treeWidget.topLevelItem(0).setText(0, QtGui.QApplication.translate("MainWindow", str(self.raw), None, QtGui.QApplication.UnicodeUTF8))
         self.ui.treeWidget.editItem
+        info = InfoDialog(self.raw, self.ui, False)
         
         self.dpi = 100
         self.fig = Figure((5.0, 4.0), dpi=self.dpi)
         self.canvas = FigureCanvas(self.fig)
-        self.canvas.setParent(self.ui.graphicsView)
+        self.canvas.setParent(self.ui.centralwidget)
         self.axes = self.fig.add_subplot(111)
         
         picks = mne.fiff.pick_types(self.raw.info, meg='mag')

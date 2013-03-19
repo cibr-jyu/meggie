@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         self.treeWidget.setSortingEnabled(False)
         self.treeWidget.setSortingEnabled(__sortingEnabled)
 
-
+"""
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
@@ -67,3 +67,4 @@ if __name__ == "__main__":
     MainWindow.show()
     sys.exit(app.exec_())
 
+"""

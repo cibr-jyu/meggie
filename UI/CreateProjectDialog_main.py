@@ -7,6 +7,7 @@ from infoDialog_main import InfoDialog
 import messageBox
 from Project import Project
 from UIehd1_main import MainWindow
+from infoDialog_Ui import Ui_infoDialog
 #from Project import Project
 
 from PyQt4 import QtCore,QtGui
@@ -63,7 +64,8 @@ class CreateProjectDialog(QtGui.QDialog):
         
     def on_showFileInfoButton_clicked(self):
         try:
-            self.infoDialog = InfoDialog(self.raw)
+            info = Ui_infoDialog()
+            self.infoDialog = InfoDialog(self.raw, info, True)
             self.infoDialog.show()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
