@@ -30,13 +30,14 @@ class CreateProjectDialog(QtGui.QDialog):
     def accept(self):
         try:
             if self.ui.lineEditProjectName.text() == '':
-                raise Exception('Fill all required fields!')
+                raise Exception('Give a project name!')
             self.project = Project()
             self.project.set_raw_data(self.raw)
             self.project.set_author(self.ui.lineEditAuthor.text())
-            #self.project.setFilePath(self.ui.lineEditProjectName.text())   TODO: Muuta project-luokkaa siten, että luo uuden kansion projektille.
+            self.project.set_project_name(self.ui.lineEditProjectName.text())
+            self.project.save_project()  
             self.project.set_description(self.ui.textEditDescription.toPlainText())
-            print self.project.get_description()
+            print self.ui.lineEditProjectName.text()
             print self.project.get_date()
             self.UIehd = MainWindow(self.project)
             self.UIehd.show()
@@ -50,14 +51,14 @@ class CreateProjectDialog(QtGui.QDialog):
         if checked is None: return # Standard workaround for file dialog opening twice
         
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn')
-        print self.fname
-        try:
-            f = File()
-            self.raw = f.open_raw(self.fname)
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err[0]))
-            self.messageBox.show()
+        if self.fname != '':
+            try:
+                f = File()
+                self.raw = f.open_raw(self.fname)
+            except Exception, err:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText(str(err[0]))
+                self.messageBox.show()
                 
         #QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
         self.ui.FilePathLineEdit.setText(self.fname)

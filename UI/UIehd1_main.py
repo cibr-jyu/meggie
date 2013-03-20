@@ -12,6 +12,9 @@ import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from infoDialog_main import InfoDialog
+from epochs import Epochs
+from eventList import Events
+from parameterDialog_main import ParameterDialog
 class MainWindow(QtGui.QMainWindow):
     '''
     classdocs
@@ -31,6 +34,18 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.treeWidget.editItem
         info = InfoDialog(self.raw, self.ui, False)
         
+        
+        #print self.events
+        #self.epochs = Epochs
+        
+        
+        
+        
+        
+        
+        
+        
+        
         self.dpi = 100
         self.fig = Figure((5.0, 4.0), dpi=self.dpi)
         self.canvas = FigureCanvas(self.fig)
@@ -44,3 +59,24 @@ class MainWindow(QtGui.QMainWindow):
         self.canvas.draw()
         #pl.xlabel('time (s)')
         #pl.ylabel('MEG data (T)')
+        
+        
+        
+    def on_pushButtonEpoch_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        self.epochParameterDialog = ParameterDialog()
+        self.epochParameterDialog.show()
+        eveFile = self.raw.info.get('filename')[:-4] + '-eve.fif'
+        self.epochParameterDialog.fileEdit.setText(eveFile)
+        
+        
+    def create_epochs(self):
+
+        """
+        
+        print eveFile
+        events = Events(eveFile)
+        self.epochs = Epochs(self.raw, events.events)
+        evoked = self.epochs.average()
+        evoked.plot()
+        """
