@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>322</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>310</y>
      <width>176</width>
      <height>31</height>
     </rect>
@@ -32,7 +32,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>21</x>
@@ -65,13 +65,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>80</y>
      <width>351</width>
-     <height>188</height>
+     <height>227</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -80,9 +80,29 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
+         <widget class="QLabel" name="labelStimulus">
+          <property name="text">
+           <string>Stimulus channel:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBoxStimulus">
+          <item>
+           <property name="text">
+            <string>New Itemffdf</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
          <widget class="QLabel" name="labelEventID">
           <property name="text">
-           <string>Project name:</string>
+           <string>Event ID:</string>
           </property>
          </widget>
         </item>
@@ -211,7 +231,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_4">
+       <widget class="QCheckBox" name="checkBoxEog">
         <property name="text">
          <string>eog</string>
         </property>
@@ -223,13 +243,7 @@
   </widget>
   <zorder>layoutWidget</zorder>
   <zorder>cancelOkButtonBox</zorder>
-  <zorder>labelEventFile</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>checkBoxMeg</zorder>
-  <zorder>checkBoxEeg</zorder>
-  <zorder>checkBoxStim</zorder>
-  <zorder>checkBox_4</zorder>
  </widget>
  <resources/>
  <connections>
@@ -240,8 +254,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>234</y>
+     <x>195</x>
+     <y>310</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -256,28 +270,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>240</y>
+     <x>195</x>
+     <y>310</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>browseButton</sender>
-   <signal>clicked()</signal>
-   <receiver>ParameterDialog</receiver>
-   <slot>openFileChooserDialog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>382</x>
-     <y>99</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>491</x>
-     <y>101</y>
     </hint>
    </hints>
   </connection>

@@ -64,7 +64,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonEpoch_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.epochParameterDialog = ParameterDialog()
+        self.epochParameterDialog = ParameterDialog(self.raw)
         self.epochParameterDialog.show()
         eveFile = self.raw.info.get('filename')[:-4] + '-eve.fif'
         self.epochParameterDialog.fileEdit.setText(eveFile)

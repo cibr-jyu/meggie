@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8 
+
 """
 Created on Mar 14, 2013
 
@@ -7,9 +7,10 @@ Created on Mar 14, 2013
 """
 import numpy as np
 import sys
+
 from IntegralImage import IntegralImage
 
-class Statistic():
+class Statistic(object):
     """
     classdocs
     """
@@ -22,10 +23,10 @@ class Statistic():
         
     def find_minimum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns a minimum for a 1d numpy array.
+        Returns the last minimum and its time for a 1d numpy array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency (Hz)
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -35,8 +36,11 @@ class Statistic():
             raise Exception('Sampling frequency cannot be zero.')
         if arr == []:
             raise Exception('No data found.')
-        twindow = arr[int(round((tmin/1000)/sfreq)):int(round(tmax/sfreq))+1]
-        return np.min(twindow)
+        start = int(round((tmin/1000)/sfreq))
+        stop = int(round(tmax/sfreq))+1
+        twindow = arr[start:stop]
+        time = (np.argmin(twindow)+ start) * 1000 / sfreq
+        return np.min(twindow), time
         
     def find_minimum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
@@ -52,7 +56,7 @@ class Statistic():
         
     def find_maximum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns a maximum for a 1d numpy array.
+        Returns the last maximum and its time for a 1d numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency
@@ -64,8 +68,11 @@ class Statistic():
             raise Exception('Sampling frequency cannot be zero.')
         if arr == []:
             raise Exception('No data found.')
-        twindow = arr[int(round((tmin/1000)/sfreq)):int(round(tmax/sfreq))+1]
-        return np.max(twindow)
+        start = int(round((tmin/1000)/sfreq))
+        stop = int(round(tmax/sfreq))+1
+        twindow = arr[start:stop]
+        time = (np.argmax(twindow) + start) * 1000 / sfreq 
+        return np.max(twindow), time
     
     def find_maximum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
@@ -79,7 +86,8 @@ class Statistic():
         """
         return [self.find_maximum(sfreq, row, tmin, tmax) for row in arr]
     
-    def find_half_maximum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
+    def find_half_maximum(self, sfreq, arr, tmin=0.0,
+                          tmax=sys.float_info.max):
         """
         Returns half maximum for a 1d numpy array.
         
@@ -89,10 +97,11 @@ class Statistic():
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
         """
-        return self.find_maximum(sfreq, arr, tmin, tmax)/2
+        (max, time) = self.find_maximum(sfreq, arr, tmin, tmax)
+        return (max/2, time)
     
-    
-    def find_half_maximum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
+    def find_half_maximum2d(self, sfreq, arr, tmin=0.0,
+                            tmax=sys.float_info.max):
         """
         Returns half maximums for a 2d numpy array.
         
@@ -106,7 +115,8 @@ class Statistic():
     
     def find_maximum_intensity(self, mat, h, w):
         """
-        Takes a matrix and finds the coordinates of a window for maximum intensity.
+        Takes a matrix and finds the coordinates of a 
+        window for maximum intensity.
         
         Keyword arguments:
         mat           -- A matrix
@@ -116,10 +126,10 @@ class Statistic():
         max = 0
         xcoord = 0
         ycoord = 0
+        i = IntegralImage()
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
                 newmat = mat[y:h+y,x:w+x]
-                i = IntegralImage()
                 print newmat
                 i.sumOverMatrix(newmat)
                 a = i.sumOverRectangularArea((0,0), (1,1))
@@ -127,7 +137,7 @@ class Statistic():
                     xcoord = x
                     ycoord = y
                     max = a
-        #TODO: palauta koordinaatit OIKEIN!
+        #TODO: palauta koordinaatit OIKEIN! Integralimagea kutsutaan vain kerran
         print max
         return xcoord, ycoord
     

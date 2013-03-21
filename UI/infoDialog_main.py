@@ -34,15 +34,15 @@ class InfoDialog(QtGui.QDialog):
         self.mi = MeasurementInfo(self.raw)
         
         self.ui.labelDateValue.setText(self.mi.get_date())
-        self.ui.labelEEGValue.setText(self.mi.get_EEG_channels())
-        self.ui.labelGradMEGValue.setText(self.mi.get_grad_channels())
-        self.ui.labelHighValue.setText(self.mi.get_high_pass())
-        self.ui.labelLowValue.setText(self.mi.get_low_pass())
-        self.ui.labelMagMEGValue.setText(self.mi.get_mag_channels())
-        self.ui.labelSamplesValue.setText(self.mi.get_sampling_freq())
+        self.ui.labelEEGValue.setText(str(self.mi.get_EEG_channels()))
+        self.ui.labelGradMEGValue.setText(str(self.mi.get_grad_channels()))
+        self.ui.labelHighValue.setText(str(self.mi.get_high_pass()))
+        self.ui.labelLowValue.setText(str(self.mi.get_low_pass()))
+        self.ui.labelMagMEGValue.setText(str(self.mi.get_mag_channels()))
+        self.ui.labelSamplesValue.setText(str(self.mi.get_sampling_freq()))
     
         
-
+"""
 def main():
     app = QtGui.QApplication(sys.argv)
     window=infoDialog()
@@ -55,3 +55,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+"""

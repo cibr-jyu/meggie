@@ -6,20 +6,19 @@ Created on Mar 12, 2013
 @author: Jaakko Leppäkangas
 """
 import mne
-import os
 
-class MyClass(object):
+class Events(object):
     """
     classdocs
     """
 
 
-    def __init__(self, eveFile):
+    def __init__(self, raw, stim_ch):
         """
         Constructor
-        
-        Keyword arguments:
-        eveFile       -- Event file.
         """
-        if os.path.isfile(eveFile):
-            return mne.find_events(eveFile)
+        self.events = mne.find_events(raw, stim_channel=stim_ch)
+        #if os.path.isfile(eveFile):
+        #    self.events = mne.read_events(eveFile)
+        
+        
