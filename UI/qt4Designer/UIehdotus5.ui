@@ -20,16 +20,191 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-     </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QGroupBox" name="metaBox">
+        <property name="title">
+         <string>Background</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>26</x>
+           <y>35</y>
+           <width>113</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelDate">
+            <property name="text">
+             <string>Date:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelDateValue">
+            <property name="text">
+             <string>DateValue</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QGroupBox" name="filtersBox">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>70</y>
+           <width>299</width>
+           <height>125</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Filters</string>
+         </property>
+         <widget class="QWidget" name="layoutWidget_4">
+          <property name="geometry">
+           <rect>
+            <x>23</x>
+            <y>31</y>
+            <width>181</width>
+            <height>77</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelLow">
+             <property name="lineWidth">
+              <number>1</number>
+             </property>
+             <property name="text">
+              <string>Low-pass:</string>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="labelLowValue">
+             <property name="text">
+              <string>Low-pass value</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelHigh">
+             <property name="text">
+              <string>High-pass:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelHighValue">
+             <property name="text">
+              <string>High-pass value</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelSfreq">
+             <property name="text">
+              <string>TextLabel:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="channelsBox">
+        <property name="title">
+         <string>Channels</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget_5">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>23</y>
+           <width>300</width>
+           <height>142</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelEEG">
+            <property name="text">
+             <string>EEG:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="labelEEGValue">
+            <property name="text">
+             <string>EEG value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelGradMEG">
+            <property name="text">
+             <string>Grad. MEG:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="labelGradMEGValue">
+            <property name="text">
+             <string>Grad. MEG value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelMagMEG">
+            <property name="text">
+             <string>Mag. MEG:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="labelMagMEGValue">
+            <property name="text">
+             <string>Mag. MEG value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelSamples">
+            <property name="text">
+             <string>Samples:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="labelSamplesValue">
+            <property name="text">
+             <string>SamplesValue</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -71,8 +246,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>400</width>
-     <height>41</height>
+     <width>430</width>
+     <height>97</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -82,252 +257,81 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>431</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButtonEpoch">
+        <property name="text">
+         <string>Epoch</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonAverage">
+        <property name="text">
+         <string>Average</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonaverage">
+        <property name="text">
+         <string>Visualize</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
     <widget class="QTabWidget" name="tabWidget">
      <property name="geometry">
       <rect>
-       <x>2</x>
-       <y>203</y>
-       <width>351</width>
-       <height>501</height>
+       <x>20</x>
+       <y>130</y>
+       <width>364</width>
+       <height>571</height>
       </rect>
      </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabRecommended">
+      <property name="maximumSize">
+       <size>
+        <width>360</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="accessibleName">
        <string extracomment="dsfsdf"/>
       </property>
       <attribute name="title">
        <string>Recommended actions</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>30</y>
-         <width>97</width>
-         <height>107</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="pushButtonEpoch">
-          <property name="text">
-           <string>Epoch</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonSSS">
-          <property name="text">
-           <string>SSS</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonMC">
-          <property name="text">
-           <string>MC</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tabInfo">
-      <attribute name="title">
-       <string>Info</string>
-      </attribute>
-      <widget class="QWidget" name="layoutWidget_2">
+      <widget class="QWidget" name="horizontalLayoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>301</width>
-         <height>391</height>
+         <width>341</width>
+         <height>511</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QGroupBox" name="metaBox">
-          <property name="title">
-           <string>Background</string>
-          </property>
-          <widget class="QWidget" name="layoutWidget_3">
-           <property name="geometry">
-            <rect>
-             <x>26</x>
-             <y>35</y>
-             <width>113</width>
-             <height>23</height>
-            </rect>
+         <widget class="QListWidget" name="listWidgetEpochs">
+          <item>
+           <property name="text">
+            <string>Epoch</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelDate">
-              <property name="text">
-               <string>Date:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="labelDateValue">
-              <property name="text">
-               <string>DateValue</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QGroupBox" name="filtersBox">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>70</y>
-             <width>299</width>
-             <height>125</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Filters</string>
-           </property>
-           <widget class="QWidget" name="layoutWidget_4">
-            <property name="geometry">
-             <rect>
-              <x>23</x>
-              <y>31</y>
-              <width>181</width>
-              <height>77</height>
-             </rect>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelLow">
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="text">
-                <string>Low-pass:</string>
-               </property>
-               <property name="scaledContents">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="labelLowValue">
-               <property name="text">
-                <string>Low-pass value</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelHigh">
-               <property name="text">
-                <string>High-pass:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="labelHighValue">
-               <property name="text">
-                <string>High-pass value</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelSfreq">
-               <property name="text">
-                <string>TextLabel:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="channelsBox">
-          <property name="title">
-           <string>Channels</string>
-          </property>
-          <widget class="QWidget" name="layoutWidget_5">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>23</y>
-             <width>194</width>
-             <height>104</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelEEG">
-              <property name="text">
-               <string>EEG:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="labelEEGValue">
-              <property name="text">
-               <string>EEG value</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelGradMEG">
-              <property name="text">
-               <string>Grad. MEG:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="labelGradMEGValue">
-              <property name="text">
-               <string>Grad. MEG value</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelMagMEG">
-              <property name="text">
-               <string>Mag. MEG:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="labelMagMEGValue">
-              <property name="text">
-               <string>Mag. MEG value</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="labelSamples">
-              <property name="text">
-               <string>Samples:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="labelSamplesValue">
-              <property name="text">
-               <string>SamplesValue</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          </item>
          </widget>
         </item>
        </layout>
