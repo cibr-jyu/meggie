@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-#coding: utf8 
+# coding: latin1
 """
 Created on Mar 6, 2013
 
 @author: Jaakko Leppäkangas
 """
 import mne
+
 import datetime
 
 class MeasurementInfo(object):
@@ -23,7 +24,6 @@ class MeasurementInfo(object):
         if isinstance(raw, mne.fiff.raw.Raw):
             self.raw = raw
             self.info = dict(raw.info)
-            
         else:
             raise TypeError('Not a Raw object.')
     
@@ -34,7 +34,7 @@ class MeasurementInfo(object):
         if self.info.get('highpass') is None:
             raise Exception('Field highpass does not exist.')
         else:
-            return str(self.info.get('highpass'))
+            return self.info.get('highpass')
     
     def get_low_pass(self):
         """
@@ -43,7 +43,7 @@ class MeasurementInfo(object):
         if self.info.get('lowpass') is None:
             raise Exception('Field lowpass does not exist.')
         else:
-            return str(self.info.get('lowpass'))
+            return self.info.get('lowpass')
     
     def get_sampling_freq(self):
         """
@@ -52,7 +52,7 @@ class MeasurementInfo(object):
         if self.info.get('sfreq') is None:
             raise Exception('Field sfreq does not exist.')
         else:
-            return str(self.info.get('sfreq'))
+            return self.info.get('sfreq')
             
     def get_mag_channels(self):
         """
@@ -61,7 +61,8 @@ class MeasurementInfo(object):
         if mne.fiff.pick_types(self.raw.info, meg='mag', exclude=[]) is None:
             raise Exception('')
         else:
-            return str(len(mne.fiff.pick_types(self.raw.info, meg='mag', exclude=[])))
+            return len(mne.fiff.pick_types(self.raw.info, meg='mag',
+                                           exclude=[]))
         
     def get_grad_channels(self):
         """
@@ -70,17 +71,20 @@ class MeasurementInfo(object):
         if mne.fiff.pick_types(self.raw.info, meg='grad', exclude=[]) is None:
             raise Exception('')
         else:
-            return str(len(mne.fiff.pick_types(self.raw.info, meg='grad', exclude=[])))
+            return len(mne.fiff.pick_types(self.raw.info, meg='grad',
+                                           exclude=[]))
         
         
     def get_EEG_channels(self):
         """
         Returns the number of EEG channels.
         """
-        if mne.fiff.pick_types(self.raw.info, meg=False, eeg=True, exclude=[]) is None:
+        if mne.fiff.pick_types(self.raw.info, meg=False,
+                               eeg=True, exclude=[]) is None:
             raise Exception('')
         else:
-            return str(len(mne.fiff.pick_types(self.raw.info, meg=False, eeg=True, exclude=[])))
+            return len(mne.fiff.pick_types(self.raw.info, meg=False,
+                                           eeg=True, exclude=[]))
         
     def get_date(self):
         """
@@ -110,7 +114,7 @@ class MeasurementInfo(object):
         STIChannel    -- name of the channel
         """
         if mne.find_events(self.raw, stim_channel=STIChannel) is None:
-            raise Exception('')
+            raise Exception('No stimulus channel found.')
         else:
             return mne.find_events(self.raw, stim_channel=STIChannel)
         

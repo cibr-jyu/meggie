@@ -7,13 +7,15 @@ Created on Mar 12, 2013
 """
 import mne
 
+import eventList
+
 class Epochs(object):
     """
     classdocs
     """
 
 
-    def __init__(self, raw, events, p, tmin=-0.2, tmax=0.5, event_id=0):
+    def __init__(self, raw, stim_channel, meg, eeg, stim, eog, reject, tmin=-0.2, tmax=0.5, event_id=0):
         """
         Constructor
         
@@ -24,11 +26,14 @@ class Epochs(object):
         tmax          -- End time after the event (default 0.5)
         event_id      -- The id of the event (default 0)
         """
-        if events is None:
-            raise Exception('No events given.')
         if isinstance(raw, mne.fiff.raw.Raw):
-            self.epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=p)
-            
+            events = eventList.Events(raw, stim_channel)
+            picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
+                                        stim=stim, eog=eog)
+            #self.e = epochs.Epochs(raw, events.events, picks, float(tmin),
+            #                       float(tmax), int(event_id))
+            self.epochs = mne.Epochs(raw, events.events, event_id, tmin, tmax, picks=picks)
+            #self.logger = Logger()
         else:
             raise TypeError('Not a Raw object.')
         

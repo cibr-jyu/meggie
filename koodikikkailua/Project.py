@@ -9,6 +9,10 @@ import time
 import os
 import re
 
+from node import Node
+from tree import Tree
+import tree
+
 class Project():
     """
     Project holds information about the currently saved raw data,
@@ -151,3 +155,19 @@ class Project():
         newpath = self.file_path + self.project_name
         if os.path.exists(self.file_path):
             os.mkdir(newpath)
+            
+    def get_subtree(self, tree, nid, s=''):
+        """
+        Returns a set of commands from a subtree.
+        
+        Keyword arguments:
+        tree          -- A tree
+        nid           -- ID of the leaf
+        s             -- Helper for recursion
+        """
+        while nid is not None:
+            n = tree.get_node(nid)
+            s = self.get_subtree(tree, n.bpointer, s)
+            s += ''.join(n.name)
+            return s
+        return ''

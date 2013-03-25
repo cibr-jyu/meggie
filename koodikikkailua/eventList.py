@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8 
+# coding: latin1
 """
 Created on Mar 12, 2013
 

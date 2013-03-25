@@ -113,16 +113,19 @@ class Statistic(object):
         """
         return [self.find_maximum(sfreq, row, tmin, tmax)/2 for row in arr]
     
-    def find_maximum_intensity(self, mat, h, w):
+    def find_maximum_intensity(self, mat, w, h):
         """
         Takes a matrix and finds the coordinates of a 
-        window for maximum intensity.
+        window for maximum intensity. In case of many
+        maximums, the first one is returned.
         
         Keyword arguments:
         mat           -- A matrix
-        h             -- Height of the window
         w             -- Width of the window
+        h             -- Height of the window
         """
+        if w > len(mat[0]) or h > len(mat):
+            raise Exception('Out of bounds.')
         max = 0
         xcoord = 0
         ycoord = 0
@@ -132,19 +135,22 @@ class Statistic(object):
                 newmat = mat[y:h+y,x:w+x]
                 print newmat
                 i.sumOverMatrix(newmat)
-                a = i.sumOverRectangularArea((0,0), (1,1))
+                a = i.sumOverRectangularArea((0,0), (w-1,h-1))
+                """ Save coordinates if a new maximum is found """
                 if a > max:
                     xcoord = x
                     ycoord = y
                     max = a
-        #TODO: palauta koordinaatit OIKEIN! Integralimagea kutsutaan vain kerran
         print max
         return xcoord, ycoord
     
 def main():
     s = Statistic()
-    m = np.array([[1,1,1,1,1],[2,2,2,2,2],[3,3,3,3,3],[4,4,4,4,4]])
-    max = s.find_maximum_intensity(m, 2, 2)
+    m = np.array([[1,1,1,1,1],
+                  [2,2,2,2,2],
+                  [3,3,3,3,3],
+                  [4,5,9,7,8]])
+    max = s.find_maximum_intensity(m, 5, 4)
     print max
      
 if __name__ == "__main__":

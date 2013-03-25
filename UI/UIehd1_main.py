@@ -100,11 +100,11 @@ class MainWindow(QtGui.QMainWindow):
         eeg = self.epochParameterDialog.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.epochParameterDialog.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.epochParameterDialog.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        epochs = CreateEpochs(self.raw, event_id, stim_channel, tmin,
-                              tmax, reject, meg, eeg, stim, eog)
+        epochs = Epochs(self.raw, stim_channel, meg, eeg, stim, eog, reject, float(tmin),
+                        float(tmax), int(event_id))
         item = QtGui.QListWidgetItem()
-        item.setText('Event ID: ' + str(epochs.e.epochs.event_id))
-        item.setData(1,epochs.e.epochs)
+        item.setText('Event ID: ' + str(epochs.epochs.event_id))
+        item.setData(1,epochs.epochs)
         self.ui.listWidgetEpochs.addItem(item)
         """
         
