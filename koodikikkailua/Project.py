@@ -19,7 +19,6 @@ class Project():
     the path of the data file, the author, the date and description.
     """
     
-    
     def __init__(self):
         """
         Constructor
@@ -39,7 +38,8 @@ class Project():
         self.author = 'unknown author'
         self.description = 'no description'
         self.date = time.strftime('%Y %m %d %X')
-        
+        self.tree = Tree()
+        self.__index = 0
         
     def get_project_name(self):
         """
@@ -156,18 +156,36 @@ class Project():
         if os.path.exists(self.file_path):
             os.mkdir(newpath)
             
-    def get_subtree(self, tree, nid, s=''):
+            
+    def write_commands(self, commands, node, parent=''):
+        """
+        Writes an array of commands in a tree structure.
+        Used for creating a batch file.
+        
+        Keyword arguments:
+        commands      -- An array of commands
+        node          -- Node id
+        parent        -- Parent of the node
+        """
+        if parent == '':
+            self.tree.create_node(commands, 'prep'+str(self.__index))
+        else:
+            self.tree.create_node(commands, node + str(self.__index), parent)
+        self.__index += 1
+        return self.__index - 1
+            
+    def get_subtree(self, nid, s=''):
         """
         Returns a set of commands from a subtree.
         
         Keyword arguments:
-        tree          -- A tree
         nid           -- ID of the leaf
         s             -- Helper for recursion
         """
         while nid is not None:
-            n = tree.get_node(nid)
-            s = self.get_subtree(tree, n.bpointer, s)
+            n = self.tree.get_node(nid)
+            s = self.get_subtree(n.bpointer, s)
             s += ''.join(n.name)
             return s
         return ''
+    
