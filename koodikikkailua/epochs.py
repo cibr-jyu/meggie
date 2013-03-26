@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: latin1
 """
 Created on Mar 12, 2013
@@ -10,12 +9,9 @@ import mne
 import eventList
 
 class Epochs(object):
-    """
-    classdocs
-    """
 
-
-    def __init__(self, raw, stim_channel, meg, eeg, stim, eog, reject, tmin=-0.2, tmax=0.5, event_id=0):
+    def __init__(self, raw, stim_channel, meg, eeg, stim,
+                 eog, reject, tmin=-0.2, tmax=0.5, event_id=0):
         """
         Constructor
         
@@ -30,16 +26,16 @@ class Epochs(object):
             events = eventList.Events(raw, stim_channel)
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
-            #self.e = epochs.Epochs(raw, events.events, picks, float(tmin),
-            #                       float(tmax), int(event_id))
-            self.epochs = mne.Epochs(raw, events.events, event_id, tmin, tmax, picks=picks)
-            #self.logger = Logger()
+            self.epochs = mne.Epochs(raw, events.events, event_id,
+                                     tmin, tmax, picks=picks)
         else:
             raise TypeError('Not a Raw object.')
         
     def average(self):
         """
-        Average epochs.
+        Average epochs. Returns evoked data.
         """
+        if self.epochs is None:
+            raise Exception('No epochs found.')
         self.evoked = self.epochs.average()
         return self.evoked

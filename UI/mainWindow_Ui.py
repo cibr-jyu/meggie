@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'InitialWindow.ui'
+# Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Tue Mar 12 12:05:01 2013
+# Created: Tue Mar 26 14:54:51 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-#from CreateProjectDialog import CreateProjectDialog
-
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -28,15 +26,24 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1081, 707)
+        MainWindow.resize(324, 221)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.pushButton = QtGui.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(360, 150, 171, 31))
-        self.pushButton.setObjectName(_fromUtf8("ButtonNewProject"))
+        self.widget = QtGui.QWidget(self.centralwidget)
+        self.widget.setGeometry(QtCore.QRect(50, 30, 211, 91))
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.ButtonNewProject = QtGui.QPushButton(self.widget)
+        self.ButtonNewProject.setObjectName(_fromUtf8("ButtonNewProject"))
+        self.verticalLayout.addWidget(self.ButtonNewProject)
+        self.ButtonOpenProject = QtGui.QPushButton(self.widget)
+        self.ButtonOpenProject.setObjectName(_fromUtf8("ButtonOpenProject"))
+        self.verticalLayout.addWidget(self.ButtonOpenProject)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1081, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 324, 29))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -53,6 +60,8 @@ class Ui_MainWindow(object):
         self.actionSave_file.setObjectName(_fromUtf8("actionSave_file"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
+        self.actionShow_project_creation_dialog = QtGui.QAction(MainWindow)
+        self.actionShow_project_creation_dialog.setObjectName(_fromUtf8("actionShow_project_creation_dialog"))
         self.menuFile.addAction(self.actionLoad_file)
         self.menuFile.addAction(self.actionSave_file)
         self.menuTools.addAction(self.actionPreferences)
@@ -60,25 +69,16 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
 
         self.retranslateUi(MainWindow)
-        
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        self.pushButton.setText(_translate("MainWindow", "Create new project", None))
+        self.ButtonNewProject.setText(_translate("MainWindow", "Create new project", None))
+        self.ButtonOpenProject.setText(_translate("MainWindow", "Open existing project", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
         self.actionLoad_file.setText(_translate("MainWindow", "Load file", None))
         self.actionSave_file.setText(_translate("MainWindow", "Save file", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+        self.actionShow_project_creation_dialog.setText(_translate("MainWindow", "Show project creation dialog", None))
 

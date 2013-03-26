@@ -6,36 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>777</width>
-    <height>707</height>
+    <width>324</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="projectMainScreenWidgetEpochs" name="widget" native="true"/>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>30</y>
+      <width>211</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <widget class="QPushButton" name="ButtonNewProject">
        <property name="text">
         <string>Create new project</string>
        </property>
       </widget>
-     </widget>
-    </item>
-   </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ButtonOpenProject">
+       <property name="text">
+        <string>Open existing project</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>777</width>
+     <width>324</width>
      <height>29</height>
     </rect>
    </property>
@@ -80,14 +91,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>projectMainScreenWidgetEpochs</class>
-   <extends>QWidget</extends>
-   <header>projectMainScreenWidgetEpochs_main</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
  <slots>

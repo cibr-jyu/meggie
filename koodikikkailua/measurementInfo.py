@@ -8,6 +8,7 @@ Created on Mar 6, 2013
 import mne
 
 import datetime
+import re
 
 class MeasurementInfo(object):
     """
@@ -92,9 +93,12 @@ class MeasurementInfo(object):
         """
         if self.info.get('meas_date') is None:
             raise Exception('Field meas_date does not exist.')
+        elif not isinstance(datetime.datetime.fromtimestamp\
+                        (self.info.get('meas_date')[0]), datetime.datetime):
+            raise TypeError('Field meas_date is not a valid timestamp.')
         else:
-            date = datetime.datetime.fromtimestamp(self.info.get('meas_date')[0])
-            return date.strftime('%Y-%m-%d')
+            d = datetime.datetime.fromtimestamp(self.info.get('meas_date')[0])
+            return d.strftime('%Y-%m-%d')
         
     def get_stim_channel_names(self):
         """
@@ -118,4 +122,17 @@ class MeasurementInfo(object):
         else:
             return mne.find_events(self.raw, stim_channel=STIChannel)
         
-                
+    def get_subject_name(self):
+        """
+        Returns the subjects name
+        """
+        subj_info = mne.fiff.show_fiff(self.info.get('filename'))
+        if not isinstance(subj_info, str):
+            raise TypeError('Personal info not found.')
+        name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
+        last_name = name_result.group(1).split(' ')
+        name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', subj_info)
+        first_name = name_result.group(1).split(' ')
+        name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...', subj_info)
+        middle_name = name_result.group(1).split(' ')
+        return last_name[2] + ' ' + first_name[2] + ' ' + middle_name[2]

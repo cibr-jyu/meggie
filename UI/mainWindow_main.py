@@ -23,7 +23,7 @@ class Main(QtGui.QMainWindow):
         self.ui=Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.widget.hide()
+        #self.ui.widget.hide()
             
             
             
@@ -34,6 +34,7 @@ class Main(QtGui.QMainWindow):
         """       
         self.dialog = CreateProjectDialog()
         self.dialog.show()
+        self.close()
         
 
 def main(): 

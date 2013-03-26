@@ -26,7 +26,7 @@ class Statistic(object):
         Returns the last minimum and its time for a 1d numpy array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency (Hz)
+        sfreq         -- Sampling frequency in Hz
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -44,10 +44,10 @@ class Statistic(object):
         
     def find_minimum2d(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns an array of minimums for a 2d array.
+        Returns an array of last minimums for a 2d array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency in Hz
         arr           -- 2d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -59,7 +59,7 @@ class Statistic(object):
         Returns the last maximum and its time for a 1d numpy array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency in Hz
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -79,7 +79,7 @@ class Statistic(object):
         Returns an array of maximums for a 2d array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency in Hz
         arr           -- 2d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -92,7 +92,7 @@ class Statistic(object):
         Returns half maximum for a 1d numpy array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency in Hz
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -106,7 +106,7 @@ class Statistic(object):
         Returns half maximums for a 2d numpy array.
         
         Keyword arguments:
-        sfreq         -- Sampling frequency
+        sfreq         -- Sampling frequency in Hz
         arr           -- 2d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
@@ -117,7 +117,7 @@ class Statistic(object):
         """
         Takes a matrix and finds the coordinates of a 
         window for maximum intensity. In case of many
-        maximums, the first one is returned.
+        equal maximums, the first one is returned.
         
         Keyword arguments:
         mat           -- A matrix
@@ -130,19 +130,22 @@ class Statistic(object):
         xcoord = 0
         ycoord = 0
         i = IntegralImage()
+        """
+        Goes through the original matrix and finds the window with highest
+        intensity.
+        """
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
                 newmat = mat[y:h+y,x:w+x]
                 print newmat
-                i.sumOverMatrix(newmat)
-                a = i.sumOverRectangularArea((0,0), (w-1,h-1))
+                a = i.sum_over_rectangular_area((0,0), (w-1,h-1), newmat)
                 """ Save coordinates if a new maximum is found """
                 if a > max:
                     xcoord = x
                     ycoord = y
                     max = a
         print max
-        return xcoord, ycoord
+        return max, xcoord, ycoord
     
 def main():
     s = Statistic()
@@ -150,7 +153,7 @@ def main():
                   [2,2,2,2,2],
                   [3,3,3,3,3],
                   [4,5,9,7,8]])
-    max = s.find_maximum_intensity(m, 5, 4)
+    max = s.find_maximum_intensity(m, 2, 3)
     print max
      
 if __name__ == "__main__":

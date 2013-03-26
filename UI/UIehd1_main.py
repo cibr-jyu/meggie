@@ -38,10 +38,7 @@ class MainWindow(QtGui.QMainWindow):
         #self.ui.treeWidget.topLevelItem(0).setText(0, QtGui.QApplication.translate("MainWindow", str(self.raw), None, QtGui.QApplication.UnicodeUTF8))
         #self.ui.treeWidget.editItem
         info = InfoDialog(self.raw, self.ui, False)
-        
-        
-        #print self.events
-        #self.epochs = Epochs
+
         
         
         
@@ -49,8 +46,9 @@ class MainWindow(QtGui.QMainWindow):
         
         
         
+        """ Draws a graph to the window"""
         
-        
+        """
         self.dpi = 100
         self.fig = Figure((5.0, 4.0), dpi=self.dpi)
         self.canvas = FigureCanvas(self.fig)
@@ -64,7 +62,7 @@ class MainWindow(QtGui.QMainWindow):
         self.canvas.draw()
         #pl.xlabel('time (s)')
         #pl.ylabel('MEG data (T)')
-        
+        """
         
         
     def on_pushButtonEpoch_clicked(self, checked=None):

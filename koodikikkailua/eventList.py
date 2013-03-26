@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: latin1
 """
 Created on Mar 12, 2013
@@ -8,14 +7,14 @@ Created on Mar 12, 2013
 import mne
 
 class Events(object):
-    """
-    classdocs
-    """
-
 
     def __init__(self, raw, stim_ch):
         """
         Constructor
+        
+        Keyword arguments:
+        raw           -- A raw object
+        stim_ch       -- Name of the stimulus channel
         """
         self.events = mne.find_events(raw, stim_channel=stim_ch)
         #if os.path.isfile(eveFile):
