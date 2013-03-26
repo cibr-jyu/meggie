@@ -23,7 +23,9 @@ class Main(QtGui.QMainWindow):
         self.ui=Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #self.ui.widget.hide()
+        self.ui.widget.hide()
+            
+            
             
     # Automatically connects to clicked-signal of the button    
     def on_ButtonNewProject_clicked(self):
