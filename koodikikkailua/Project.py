@@ -141,12 +141,16 @@ class Project(object):
         """
         Saves the project folder and the contents including raw data file.
         """
-        newpath = self.file_path + self.project_name
+        self.newpath = self.file_path + '/' + self.project_name + '/'
         if os.path.exists(self.file_path):
-            os.mkdir(newpath)
+            os.mkdir(self.newpath)
+            os.mkdir(self.newpath + 'data')
         else:
             raise Exception('No such path')
-            
+        
+        
+    def save_raw(self, file_name):
+        mne.fiff.Raw.save(self.raw_data, str(self.newpath) + file_name)    
             
     def write_commands(self, commands, node, parent=''):
         """

@@ -33,9 +33,11 @@ class CreateProjectDialog(QtGui.QDialog):
                 raise Exception('Give a project name!')
             self.project = Project()
             self.project.set_raw_data(self.raw)
+            self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
             self.project.set_author(self.ui.lineEditAuthor.text())
             self.project.set_project_name(self.ui.lineEditProjectName.text())
             self.project.save_project()  
+            self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
             print self.ui.lineEditProjectName.text()
             print self.project.get_date()
@@ -50,7 +52,7 @@ class CreateProjectDialog(QtGui.QDialog):
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn')
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/jaolpeso/')
         if self.fname != '':
             try:
                 f = File()
