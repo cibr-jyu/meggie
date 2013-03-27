@@ -4,7 +4,7 @@ Created on Mar 16, 2013
 @author: jaeilepp
 '''
 from PyQt4 import QtCore,QtGui
-from UIehd5 import Ui_MainWindow
+from UIehd7 import Ui_MainWindow
 import mne
 import pylab as pl
 from matplotlib.figure import Figure
@@ -33,18 +33,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.tabEvoked = None
+        self.project = project
         #self.item = QtGui.QTreeWidgetItem(self.ui.treeWidget)
-        self.raw = project.get_raw_data()
+        self.raw = project.get_raw_data() # Onko fiksua olla oma attribuutti???
         #self.ui.treeWidget.topLevelItem(0).setText(0, QtGui.QApplication.translate("MainWindow", str(self.raw), None, QtGui.QApplication.UnicodeUTF8))
         #self.ui.treeWidget.editItem
         info = InfoDialog(self.raw, self.ui, False)
-
-        
-        
-        
-        
-        
-        
+        self.ui.pushButtonAverage.setEnabled(False)
+        self.ui.pushButtonVisualize.setEnabled(False)
         
         """ Draws a graph to the window"""
         
@@ -80,13 +76,16 @@ class MainWindow(QtGui.QMainWindow):
         #Check if the tab has already been created
         if self.ui.tabEvoked == None:
             self.ui.tabEvoked = QtGui.QWidget()
-            self.ui.listWidgetAverage = QtGui.QListWidget()
-            self.ui.listWidgetAverage = self.__create_tab(self.ui.tabEvoked, 'Evoked', self.ui.listWidgetAverage)
+            self.ui.listWidgetAverage = self.__create_tab(self.ui.tabEvoked, 'Evoked')
         item = QtGui.QListWidgetItem()
         item.setText('TestElement')
         item.setData(1,evoked)
         self.ui.listWidgetAverage.addItem(item)
         evoked.plot()
+        
+    def on_pushButtonMaxFIlter_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        
         
     def create_epochs(self):
         stim_channel = str(self.epochParameterDialog.ui.comboBoxStimulus.currentText())
@@ -100,10 +99,9 @@ class MainWindow(QtGui.QMainWindow):
         eog = self.epochParameterDialog.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         epochs = Epochs(self.raw, stim_channel, meg, eeg, stim, eog, reject, float(tmin),
                         float(tmax), int(event_id))
-        item = QtGui.QListWidgetItem()
-        item.setText('Event ID: ' + str(epochs.epochs.event_id))
-        item.setData(1,epochs.epochs)
-        self.ui.listWidgetEpochs.addItem(item)
+        self.ui.tabEpoch = QtGui.QWidget()
+        self.__create_tab(self.ui.tabEpoch, 'Epoch')
+        
         """
         
         print eveFile
@@ -113,7 +111,7 @@ class MainWindow(QtGui.QMainWindow):
         evoked.plot()
         """
     
-    def __create_tab(self, tab, title, list):
+    def __create_tab(self, tab, title):
         """
         Creates a new tab with a listWidget to tabWidget.
         
@@ -128,12 +126,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.horizontalLayoutWidget = QtGui.QWidget(tab)
         self.ui.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10,
                                                                 341, 511))
-        list = QtGui.QListWidget(self.ui.horizontalLayoutWidget)
         #self.ui.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
-        self.ui.horizontalLayout = QtGui.QHBoxLayout(self.ui.
-                                                     horizontalLayoutWidget)
-        self.ui.horizontalLayout.setMargin(0)
-        self.ui.horizontalLayout.addWidget(list)
-        return list
+
         #self.listWidget.setObjectName(("listWidgetEpochs"))
         

@@ -40,7 +40,7 @@ class InfoDialog(QtGui.QDialog):
         self.ui.labelLowValue.setText(str(self.mi.get_low_pass()))
         self.ui.labelMagMEGValue.setText(str(self.mi.get_mag_channels()))
         self.ui.labelSamplesValue.setText(str(self.mi.get_sampling_freq()))
-        #self.ui.labelSubjectValue.setText(self.mi.get_subject_name())
+        self.ui.labelSubjectValue.setText(self.mi.get_subject_name())
     
         
 """

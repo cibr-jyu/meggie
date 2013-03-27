@@ -171,7 +171,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QCheckBox" name="checkBoxMeg">
+       <widget class="QCheckBox" name="checkBoxMag">
+        <property name="text">
+         <string>meg</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxMeg_2">
         <property name="text">
          <string>meg</string>
         </property>

@@ -33,10 +33,13 @@ class CreateProjectDialog(QtGui.QDialog):
                 raise Exception('Give a project name!')
             self.project = Project()
             self.project.set_raw_data(self.raw)
-            self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
+            self.project.set_file_path(os.path.dirname('/home/jaeilepp/'))
+            #self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
             self.project.set_author(self.ui.lineEditAuthor.text())
             self.project.set_project_name(self.ui.lineEditProjectName.text())
             self.project.save_project()  
+            #TODO: korjaa käyttäjä asettamaan workspace
+            #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
             self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
             print self.ui.lineEditProjectName.text()
@@ -46,20 +49,20 @@ class CreateProjectDialog(QtGui.QDialog):
             self.close()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err[0]))
+            self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
     
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/jaolpeso/')
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn/')
         if self.fname != '':
             try:
                 f = File()
                 self.raw = f.open_raw(self.fname)
             except Exception, err:
                 self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText(str(err[0]))
+                self.messageBox.labelException.setText(str(err))
                 self.messageBox.show()
                 
         #QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
@@ -72,7 +75,7 @@ class CreateProjectDialog(QtGui.QDialog):
             self.infoDialog.show()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err[0]))
+            self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
 
 """    

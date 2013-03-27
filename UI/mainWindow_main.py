@@ -7,6 +7,7 @@ import os,sys
 from PyQt4 import QtCore,QtGui
  
 # Import the pyuic4-compiled main UI module 
+import messageBox
 from mainWindow_Ui import Ui_MainWindow
 from CreateProjectDialog_main import CreateProjectDialog
 
@@ -22,7 +23,6 @@ class Main(QtGui.QMainWindow):
         """
         self.ui=Ui_MainWindow()
         self.ui.setupUi(self)
-
         #self.ui.widget.hide()
             
             
@@ -36,6 +36,16 @@ class Main(QtGui.QMainWindow):
         self.dialog.show()
         self.close()
         
+    def on_ButtonOpenProject_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn/')
+        path = os.path.dirname(os.path.abspath(str(fname)))
+        if os.path.exists(path + '/data'):
+            print 'hfhsfh'
+        else:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Project files not found.')
+            self.messageBox.show()
 
 def main(): 
     app = QtGui.QApplication(sys.argv)
