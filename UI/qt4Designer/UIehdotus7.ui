@@ -441,7 +441,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -477,9 +477,8 @@
     </widget>
     <zorder>layoutWidget</zorder>
     <zorder>layoutWidget</zorder>
+    <zorder>layoutWidget</zorder>
     <zorder>tabWidget</zorder>
-    <zorder>pushButtonBack</zorder>
-    <zorder>pushButtonForward</zorder>
    </widget>
   </widget>
   <action name="actionLoad_file">

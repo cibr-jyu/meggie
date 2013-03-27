@@ -32,7 +32,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -121,15 +121,8 @@
     </item>
    </layout>
   </widget>
+  <zorder>layoutWidget</zorder>
   <zorder>cancelOkButtonBox</zorder>
-  <zorder>labelAuthor</zorder>
-  <zorder>lineEditAuthor</zorder>
-  <zorder>lineEditProjectName</zorder>
-  <zorder>labelProjectName</zorder>
-  <zorder>lineEditAuthor</zorder>
-  <zorder>labelDescritption</zorder>
-  <zorder>textEditDescription</zorder>
-  <zorder>labelDescritption</zorder>
  </widget>
  <resources/>
  <connections>
@@ -172,8 +165,8 @@
    <slot>openFileChooserDialog()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>382</x>
-     <y>99</y>
+     <x>357</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>491</x>

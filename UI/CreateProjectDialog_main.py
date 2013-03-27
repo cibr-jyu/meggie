@@ -1,20 +1,19 @@
   # -*- coding: utf-8 -*-
- 
- 
-import os,sys
+
 from file import File
 from infoDialog_main import InfoDialog
 import messageBox
 from Project import Project
 from UIehd1_main import MainWindow
 from infoDialog_Ui import Ui_infoDialog
-#from Project import Project
+from CreateProjectDialog_Ui import Ui_CreateProjectDialog
 
 from PyQt4 import QtCore,QtGui
- 
 # Import the pyuic4-compiled main UI module 
-from CreateProjectDialog_Ui import Ui_CreateProjectDialog
- 
+
+import os,sys
+import pickle
+
 # Create a dialog main window
 class CreateProjectDialog(QtGui.QDialog):
     fname = ''
@@ -37,11 +36,13 @@ class CreateProjectDialog(QtGui.QDialog):
             #self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
             self.project.set_author(self.ui.lineEditAuthor.text())
             self.project.set_project_name(self.ui.lineEditProjectName.text())
-            self.project.save_project()  
+            self.project.save_project()
             #TODO: korjaa käyttäjä asettamaan workspace
             #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
             self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
+            p = pickle.Pickler('project')
+            p.dump(self.project)
             print self.ui.lineEditProjectName.text()
             print self.project.get_date()
             self.UIehd = MainWindow(self.project)
