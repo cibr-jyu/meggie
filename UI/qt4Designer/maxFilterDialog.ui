@@ -844,21 +844,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-<<<<<<< Updated upstream
-     <x>508</x>
-     <y>223</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>468</x>
-     <y>248</y>
-=======
      <x>97</x>
      <y>342</y>
     </hint>
     <hint type="destinationlabel">
      <x>234</x>
      <y>318</y>
->>>>>>> Stashed changes
     </hint>
    </hints>
   </connection>
