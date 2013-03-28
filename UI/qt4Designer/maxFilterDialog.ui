@@ -659,12 +659,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>507</x>
-     <y>184</y>
+     <x>508</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>467</x>
-     <y>209</y>
+     <x>468</x>
+     <y>248</y>
     </hint>
    </hints>
   </connection>

@@ -41,6 +41,7 @@ class Main(QtGui.QMainWindow):
         path = os.path.dirname(os.path.abspath(str(fname)))
         if os.path.exists(path + '/data'):
             print 'hfhsfh'
+        
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
