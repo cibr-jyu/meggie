@@ -14,6 +14,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as Naviga
 
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
+from maxFilterDialog_main import MaxFilterDialog
 
 from epochs import Epochs
 from eventList import Events
@@ -83,10 +84,13 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetAverage.addItem(item)
         evoked.plot()
         
-    def on_pushButtonMaxFIlter_clicked(self, checked=None):
+    def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
+        self.maxFilterDialog = MaxFilterDialog(self, self.raw)
+        self.maxFilterDialog.show()
         
-        
+    
+      
     def create_epochs(self):
         stim_channel = str(self.epochParameterDialog.ui.comboBoxStimulus.currentText())
         event_id = self.epochParameterDialog.ui.lineEditEventID.text()

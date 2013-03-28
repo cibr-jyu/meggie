@@ -46,6 +46,7 @@ class Main(QtGui.QMainWindow):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
             self.messageBox.show()
+            
 
 def main(): 
     app = QtGui.QApplication(sys.argv)

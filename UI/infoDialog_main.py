@@ -22,12 +22,12 @@ class InfoDialog(QtGui.QDialog):
             self.ui.setupUi(self)
             self.ui.tab_list = []
         
-        self.setLabelTestValues()
+        self._setLabelTestValues()
     
     def on_ButtonClose_clicked(self):
         self.close()
         
-    def setLabelTestValues(self):
+    def _setLabelTestValues(self):
         
         #raw = mne.fiff.Raw('/home/kpaliran/Hoksotin/parkkosenpaketti/meg/jn/jn_multimodal01_raw_sss.fif')
         #raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')

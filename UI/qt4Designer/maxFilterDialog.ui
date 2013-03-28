@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>736</height>
+    <width>828</width>
+    <height>723</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>690</y>
+     <x>100</x>
+     <y>660</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -32,175 +32,13 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>410</y>
+     <x>30</x>
+     <y>30</y>
      <width>409</width>
-     <height>131</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QCheckBox" name="checkBoxtSSS">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>tSSS</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame">
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QWidget" name="formLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>10</y>
-         <width>401</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelDataBufferLength">
-          <property name="text">
-           <string>Data buffer length (s):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditDataBufferLength">
-          <property name="text">
-           <string>10</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelSubspaceCorrelationLimit">
-          <property name="text">
-           <string>Subspace correlation limit:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditSubspaceCorrelationLimit">
-          <property name="text">
-           <string>0.98</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_4">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>550</y>
-     <width>409</width>
-     <height>131</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
-    <item>
-     <widget class="QCheckBox" name="checkBoxMaxMove">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>MaxMove</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QWidget" name="formLayoutWidget_3">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>10</y>
-         <width>391</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <layout class="QFormLayout" name="formLayout_3">
-        <item row="2" column="0">
-         <layout class="QFormLayout" name="formLayout_4"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelHPI">
-          <property name="text">
-           <string>HPI signal amp extraction window (ms):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditHPI">
-          <property name="text">
-           <string>200</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelHPIStep">
-          <property name="text">
-           <string>Step to move HPI window (ms):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditHPIStep">
-          <property name="text">
-           <string>10</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>60</y>
-     <width>409</width>
-     <height>341</height>
+     <height>355</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -331,6 +169,12 @@
           <property name="text">
            <string>Float (32 bits)</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -338,6 +182,9 @@
           <property name="text">
            <string>Long (32 bits)</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -345,6 +192,9 @@
           <property name="text">
            <string>Short (16 bits)</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -480,84 +330,165 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>22</x>
-     <y>22</y>
-     <width>411</width>
-     <height>33</height>
+     <x>450</x>
+     <y>30</y>
+     <width>351</width>
+     <height>351</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Input file:</string>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="checkBoxtSSS">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>tSSS</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QWidget" name="formLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>10</y>
+           <width>341</width>
+           <height>81</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelDataBufferLength">
+            <property name="text">
+             <string>Data buffer length (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditDataBufferLength">
+            <property name="text">
+             <string>10</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelSubspaceCorrelationLimit">
+            <property name="text">
+             <string>Subspace correlation limit:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditSubspaceCorrelationLimit">
+            <property name="text">
+             <string>0.98</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QSplitter" name="splitter_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QLineEdit" name="FilePathLineEdit_2"/>
-      <widget class="QPushButton" name="browseButton_2">
-       <property name="text">
-        <string>Browse...</string>
-       </property>
-      </widget>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="checkBoxMaxMove">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>MaxMove</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_2">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QWidget" name="formLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>9</x>
+           <y>10</y>
+           <width>331</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout_3">
+          <item row="2" column="0">
+           <layout class="QFormLayout" name="formLayout_4"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelHPI">
+            <property name="text">
+             <string>HPI signal amp extraction window (ms):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditHPI">
+            <property name="text">
+             <string>200</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelHPIStep">
+            <property name="text">
+             <string>Step to move HPI window (ms):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditHPIStep">
+            <property name="text">
+             <string>10</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
-  <zorder>frame</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>splitter_2</zorder>
-  <zorder>label</zorder>
   <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>checkBoxFit</zorder>
   <zorder>layoutWidget_4</zorder>
-  <zorder>radioButtonShort</zorder>
-  <zorder>radioButtonFloat</zorder>
-  <zorder>radioButtonLong</zorder>
-  <zorder>checkBoxtSSS</zorder>
-  <zorder>lineEditSkipStart_1</zorder>
-  <zorder>lineEditBadLimit</zorder>
-  <zorder>labelBadLimit</zorder>
-  <zorder>lineEditBad</zorder>
-  <zorder>labelBad</zorder>
-  <zorder>lineEditOrderOut</zorder>
-  <zorder>labelOrderOut</zorder>
-  <zorder>lineEditOrderIn</zorder>
-  <zorder>labelOrderIn</zorder>
-  <zorder>lineEditOrderOut</zorder>
-  <zorder>labelOrderOut</zorder>
-  <zorder>lineEditOrderIn</zorder>
-  <zorder>labelOrderIn</zorder>
-  <zorder>labelBadLimit</zorder>
-  <zorder>lineEditBadLimit</zorder>
-  <zorder>lineEditSkipStart_1</zorder>
-  <zorder>lineEditBad</zorder>
-  <zorder>labelBad</zorder>
-  <zorder>labelBadLimit</zorder>
-  <zorder>lineEditBadLimit</zorder>
-  <zorder>lineEditBad</zorder>
-  <zorder>labelBad</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder></zorder>
-  <zorder>layoutWidget_4</zorder>
-  <zorder>lineEditSkipStart_1</zorder>
-  <zorder>radioButtonLong</zorder>
-  <zorder>radioButtonShort</zorder>
-  <zorder>radioButtonFloat</zorder>
-  <zorder>layoutWidget_5</zorder>
-  <zorder>layoutWidget_7</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder>horizontalSpacer_2</zorder>
-  <zorder></zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>layoutWidget</zorder>
  </widget>
  <resources/>
  <connections>
@@ -568,8 +499,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>834</y>
+     <x>318</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -584,28 +515,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>376</x>
-     <y>840</y>
+     <x>386</x>
+     <y>691</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxtSSS</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frame</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>97</x>
-     <y>663</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>122</x>
-     <y>691</y>
     </hint>
    </hints>
   </connection>
@@ -616,12 +531,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>304</y>
+     <x>212</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>253</x>
-     <y>304</y>
+     <x>323</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
@@ -632,12 +547,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>203</x>
-     <y>287</y>
+     <x>212</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>417</x>
-     <y>311</y>
+     <x>434</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
@@ -648,12 +563,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>337</y>
+     <x>212</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>227</x>
-     <y>340</y>
+     <x>323</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -664,12 +579,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>341</y>
+     <x>212</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>411</x>
-     <y>337</y>
+     <x>434</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -680,12 +595,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>380</y>
+     <x>212</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
-     <x>275</x>
-     <y>380</y>
+     <x>323</x>
+     <y>356</y>
     </hint>
    </hints>
   </connection>
@@ -696,12 +611,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>186</x>
-     <y>364</y>
+     <x>212</x>
+     <y>353</y>
     </hint>
     <hint type="destinationlabel">
-     <x>412</x>
-     <y>376</y>
+     <x>434</x>
+     <y>356</y>
     </hint>
    </hints>
   </connection>
@@ -712,12 +627,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>302</y>
+     <x>212</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>178</x>
-     <y>338</y>
+     <x>212</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
@@ -728,12 +643,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>340</y>
+     <x>212</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>190</x>
-     <y>379</y>
+     <x>212</x>
+     <y>353</y>
     </hint>
    </hints>
   </connection>
@@ -741,17 +656,36 @@
    <sender>checkBoxMaxMove</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_2</receiver>
-   <slot>setVisible(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>475</x>
-     <y>630</y>
+     <x>507</x>
+     <y>184</y>
     </hint>
     <hint type="destinationlabel">
-     <x>484</x>
-     <y>670</y>
+     <x>467</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxtSSS</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frame</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>497</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
