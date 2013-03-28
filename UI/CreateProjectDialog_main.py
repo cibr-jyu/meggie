@@ -17,9 +17,10 @@ import pickle
 # Create a dialog main window
 class CreateProjectDialog(QtGui.QDialog):
     fname = ''
-    def __init__(self):
+    def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.fname = ''
+        self.parent = parent
         """
         Reference to main dialog window
         """       
@@ -39,14 +40,14 @@ class CreateProjectDialog(QtGui.QDialog):
             self.project.save_project()
             #TODO: korjaa käyttäjä asettamaan workspace
             #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
-            self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
-            
+            self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             print self.ui.lineEditProjectName.text()
             print self.project.get_date()
             self.UIehd = MainWindow(self.project)
             self.UIehd.show()
             self.close()
+            self.parent.close()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))

@@ -32,9 +32,8 @@ class Main(QtGui.QMainWindow):
         """
         Creates a new CreateProjectDialog and shows it
         """       
-        self.dialog = CreateProjectDialog()
+        self.dialog = CreateProjectDialog(self)
         self.dialog.show()
-        self.close()
         
     def on_ButtonOpenProject_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice

@@ -130,6 +130,8 @@ class MeasurementInfo(object):
         if not isinstance(subj_info, str):
             raise TypeError('Personal info not found.')
         name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
+        if name_result == None:
+            return 'Unknown'
         last_name = name_result.group(1).split(' ')
         name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', subj_info)
         first_name = name_result.group(1).split(' ')
