@@ -16,6 +16,17 @@ from CreateProjectDialog_main import CreateProjectDialog
   # Create a class main window
 class Main(QtGui.QMainWindow):
     def __init__(self):
+        
+        """
+        Make imports work for every package the application directory structure,
+        as long as the depth of this file in the structure stays the same
+        """
+        sys.path.append("../")
+        sys.path.append("../../")
+        sys.path.append("../../code/")
+        sys.path.append("../../code/externalModules/")
+        sys.path.append("../../code/tests/")
+        
         QtGui.QMainWindow.__init__(self)
 
         """

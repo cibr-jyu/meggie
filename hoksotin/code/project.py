@@ -11,7 +11,7 @@ import re
 
 from node import Node
 from tree import Tree
-import tree
+#import tree
 
 class Project(object):
     """

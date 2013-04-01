@@ -1,6 +1,10 @@
+
+"""
 import mne
 import pylab as pl
+"""
 
+"""
 fname = '/home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_raw.fif'
 raw = mne.fiff.Raw(fname, False, True)
 picks = mne.fiff.pick_types(raw.info, meg=True, eeg=True, eog=True)
@@ -11,6 +15,8 @@ events = mne.find_events(raw, stim_channel='STI 014')
 epochs = mne.Epochs(raw, events, event_id, tmin, tmax, proj=True, picks=picks, preload=True,)
 evoked = epochs.average()
 evoked.plot()
+"""
+
 """
 pl.plot(times, data.T)
 pl.xlabel('time (s)')

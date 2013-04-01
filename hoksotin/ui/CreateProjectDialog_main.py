@@ -1,9 +1,12 @@
   # -*- coding: utf-8 -*-
 
+
 from file import File
 from infoDialog_main import InfoDialog
 import messageBox
-from Project import Project
+
+from project import Project
+
 from UIehd1_main import MainWindow
 from infoDialog_Ui import Ui_infoDialog
 from CreateProjectDialog_Ui import Ui_CreateProjectDialog
