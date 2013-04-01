@@ -37,7 +37,7 @@ class Main(QtGui.QMainWindow):
         
     def on_ButtonOpenProject_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn/')
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/')
         path = os.path.dirname(os.path.abspath(str(fname)))
         if os.path.exists(path + '/data'):
             print 'hfhsfh'
