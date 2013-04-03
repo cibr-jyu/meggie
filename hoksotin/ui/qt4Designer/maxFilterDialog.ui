@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
+    <width>568</width>
     <height>670</height>
    </rect>
   </property>
@@ -27,10 +27,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidgetMaxFilterSettings">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -50,7 +50,17 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEditOrderIn"/>
+          <widget class="QSpinBox" name="spinBoxOrderIn">
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>11</number>
+           </property>
+           <property name="value">
+            <number>8</number>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLabel" name="labelOrderOut">
@@ -60,7 +70,17 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEditOrderOut"/>
+          <widget class="QSpinBox" name="spinBoxOrderOut">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>3</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -91,7 +111,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEditBadLimit"/>
+                  <widget class="QDoubleSpinBox" name="doubleSpinBoxBadLimit">
+                   <property name="value">
+                    <double>7.000000000000000</double>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -301,35 +325,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditX0">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout">
-                   <item>
-                    <widget class="QLabel" name="labelZ0">
-                     <property name="text">
-                      <string>z0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="lineEditZ0">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                    </widget>
+                    <widget class="QDoubleSpinBox" name="doubleSpinBoxX0"/>
                    </item>
                   </layout>
                  </item>
@@ -343,12 +339,23 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditY0">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
+                    <widget class="QDoubleSpinBox" name="doubleSpinBoxY0"/>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <item>
+                    <widget class="QLabel" name="labelZ0">
+                     <property name="text">
+                      <string>z0</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="doubleSpinBoxZ0">
+                     <property name="value">
+                      <double>40.000000000000000</double>
                      </property>
                     </widget>
                    </item>
@@ -428,7 +435,7 @@
       <attribute name="title">
        <string>TSSS</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -471,7 +478,7 @@
              <x>0</x>
              <y>10</y>
              <width>341</width>
-             <height>81</height>
+             <height>107</height>
             </rect>
            </property>
            <layout class="QFormLayout" name="formLayout">
@@ -485,13 +492,6 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEditDataBufferLength">
-              <property name="text">
-               <string>10</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelSubspaceCorrelationLimit">
               <property name="text">
@@ -499,12 +499,11 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxBufferLength"/>
+            </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEditSubspaceCorrelationLimit">
-              <property name="text">
-               <string>0.98</string>
-              </property>
-             </widget>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxCorr"/>
             </item>
            </layout>
           </widget>
@@ -632,7 +631,7 @@
              </property>
             </widget>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>110</x>
@@ -671,6 +670,33 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabCustom">
+      <attribute name="title">
+       <string>Custom</string>
+      </attribute>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>491</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="labelCustom">
+          <property name="text">
+           <string>Custom parameters:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -684,8 +710,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>865</y>
+     <x>188</x>
+     <y>660</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -700,8 +726,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>865</y>
+     <x>188</x>
+     <y>660</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -716,12 +742,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>309</y>
+     <x>94</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
-     <x>482</x>
-     <y>310</y>
+     <x>246</x>
+     <y>510</y>
     </hint>
    </hints>
   </connection>
@@ -732,12 +758,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>309</y>
+     <x>94</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
-     <x>590</x>
-     <y>310</y>
+     <x>398</x>
+     <y>510</y>
     </hint>
    </hints>
   </connection>
@@ -748,12 +774,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>352</y>
+     <x>94</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
-     <x>482</x>
-     <y>355</y>
+     <x>246</x>
+     <y>547</y>
     </hint>
    </hints>
   </connection>
@@ -764,12 +790,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>352</y>
+     <x>94</x>
+     <y>544</y>
     </hint>
     <hint type="destinationlabel">
-     <x>590</x>
-     <y>355</y>
+     <x>398</x>
+     <y>547</y>
     </hint>
    </hints>
   </connection>
@@ -780,12 +806,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>389</y>
+     <x>94</x>
+     <y>581</y>
     </hint>
     <hint type="destinationlabel">
-     <x>482</x>
-     <y>392</y>
+     <x>246</x>
+     <y>584</y>
     </hint>
    </hints>
   </connection>
@@ -796,12 +822,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>372</x>
-     <y>389</y>
+     <x>94</x>
+     <y>581</y>
     </hint>
     <hint type="destinationlabel">
-     <x>590</x>
-     <y>392</y>
+     <x>398</x>
+     <y>584</y>
     </hint>
    </hints>
   </connection>
@@ -816,8 +842,8 @@
      <y>79</y>
     </hint>
     <hint type="destinationlabel">
-     <x>592</x>
-     <y>488</y>
+     <x>524</x>
+     <y>565</y>
     </hint>
    </hints>
   </connection>
@@ -844,12 +870,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>97</x>
-     <y>342</y>
+     <x>136</x>
+     <y>387</y>
     </hint>
     <hint type="destinationlabel">
-     <x>234</x>
-     <y>318</y>
+     <x>398</x>
+     <y>354</y>
     </hint>
    </hints>
   </connection>
@@ -860,12 +886,60 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>338</y>
+     <x>110</x>
+     <y>387</y>
     </hint>
     <hint type="destinationlabel">
-     <x>71</x>
-     <y>315</y>
+     <x>111</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxX0</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>87</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxY0</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>163</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxZ0</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>246</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>163</y>
     </hint>
    </hints>
   </connection>
