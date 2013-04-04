@@ -30,7 +30,7 @@
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidgetMaxFilterSettings">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -701,6 +701,41 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidgetMaxFilterSettings</tabstop>
+  <tabstop>spinBoxOrderIn</tabstop>
+  <tabstop>spinBoxOrderOut</tabstop>
+  <tabstop>doubleSpinBoxX0</tabstop>
+  <tabstop>doubleSpinBoxY0</tabstop>
+  <tabstop>doubleSpinBoxZ0</tabstop>
+  <tabstop>checkBoxFit</tabstop>
+  <tabstop>radioButtonFloat</tabstop>
+  <tabstop>radioButtonLong</tabstop>
+  <tabstop>radioButtonShort</tabstop>
+  <tabstop>doubleSpinBoxBadLimit</tabstop>
+  <tabstop>lineEditBad</tabstop>
+  <tabstop>checkBoxAutobad</tabstop>
+  <tabstop>checkBoxSkip_1</tabstop>
+  <tabstop>lineEditSkipStart_1</tabstop>
+  <tabstop>lineEditSkipEnd_1</tabstop>
+  <tabstop>checkBoxSkip_2</tabstop>
+  <tabstop>lineEditSkipStart_2</tabstop>
+  <tabstop>lineEditSkipEnd_2</tabstop>
+  <tabstop>checkBoxSkip_3</tabstop>
+  <tabstop>lineEditSkipStart_3</tabstop>
+  <tabstop>lineEditSkipEnd_3</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>checkBoxtSSS</tabstop>
+  <tabstop>spinBoxBufferLength</tabstop>
+  <tabstop>doubleSpinBoxCorr</tabstop>
+  <tabstop>checkBoxMaxMove</tabstop>
+  <tabstop>lineEditHPI</tabstop>
+  <tabstop>lineEditHPIStep</tabstop>
+  <tabstop>radioButton</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>textEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

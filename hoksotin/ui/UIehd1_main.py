@@ -11,6 +11,8 @@ from matplotlib.figure import Figure
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+import subprocess
+import os
 
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
@@ -19,6 +21,7 @@ from maxFilterDialog_main import MaxFilterDialog
 from epochs import Epochs
 from eventList import Events
 from createEpochs import CreateEpochs
+from widgets.create_tab import Tab, EpochTab
 
 class MainWindow(QtGui.QMainWindow):
     '''
@@ -61,7 +64,6 @@ class MainWindow(QtGui.QMainWindow):
         #pl.ylabel('MEG data (T)')
         """
         
-        
     def on_pushButtonEpoch_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.epochParameterDialog = ParameterDialog(self)
@@ -84,6 +86,24 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetAverage.addItem(item)
         evoked.plot()
         
+    def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64'
+        os.environ['SUBJECT'] = 'jn'
+        os.environ['SUBJECTS_DIR'] = '/usr/local/bin/ParkkosenPurettu/mri-fs'
+        #subprocess.Popen('export MNE_ROOT=/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64', shell=True)
+        #subprocess.Popen('export SUBJECT=jn', shell=True)
+        #subprocess.Popen('export SUBJECTS_DIR=/usr/local/bin/ParkkosenPurettu/mri-fs', shell=True)
+        subprocess.Popen('$MNE_ROOT', shell=True)
+        #proc = subprocess.Popen('/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64/bin/mne_browse_raw', shell=True, stdout=subprocess.PIPE,
+        #                        stderr=subprocess.STDOUT)
+        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw', shell=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        for line in proc.stdout.readlines():
+            print line
+        retval = proc.wait()
+        print "the program return code was %d" % retval
+        
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.maxFilterDialog = MaxFilterDialog(self, self.raw)
@@ -103,8 +123,8 @@ class MainWindow(QtGui.QMainWindow):
         eog = self.epochParameterDialog.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         epochs = Epochs(self.raw, stim_channel, meg, eeg, stim, eog, reject, float(tmin),
                         float(tmax), int(event_id))
-        self.ui.tabEpoch = QtGui.QWidget()
-        self.__create_tab(self.ui.tabEpoch, 'Epoch')
+        #self.ui.tabEpoch = QtGui.QWidget()
+        self.__create_tab('Epoch')
         
         """
         
@@ -115,22 +135,25 @@ class MainWindow(QtGui.QMainWindow):
         evoked.plot()
         """
     
-    def __create_tab(self, tab, title):
+    def __create_tab(self, title):
         """
         Creates a new tab with a listWidget to tabWidget.
         
         Keyword arguments:
         tab           -- A QWidget
         title         -- Title for the tab
-        list          -- A QListWidget
-        returns a reference to the newly created listWidget
         """
-        self.ui.horizontalLayoutWidget = QtGui.QWidget(tab)
+        tab = EpochTab(title, self.ui)
+        """
         self.ui.tabWidget.addTab(tab, title)
-        self.ui.horizontalLayoutWidget = QtGui.QWidget(tab)
-        self.ui.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10,
-                                                                341, 511))
-        #self.ui.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
+        self.horizontalLayoutWidget = QtGui.QWidget(tab)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 60, 341, 481))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setMargin(0)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.metaBox = QtGui.QGroupBox(self.horizontalLayoutWidget)
+        self.metaBox.setTitle("Background")
+        self.verticalLayout.addWidget(self.metaBox)
+        self.horizontalLayout.addLayout(self.verticalLayout)
 
-        #self.listWidget.setObjectName(("listWidgetEpochs"))
-        
+        """
