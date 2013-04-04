@@ -130,27 +130,39 @@ class Project(object):
         Raises exception if the description includes other characters than letters and numbers.        
         """
         if (len(description) <= 1000):
-            if re.match("^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$", description):
+            if (re.match("^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$", description)  or len(description) == 0):
                 self.description = description
             else:
                 raise Exception("Use only letters and numbers in your description")  
         else:
             raise Exception("Too long description")
     
-    def save_project(self):
+    def save_project(self, workspace):
         """
         Saves the project folder and the contents including raw data file.
+        
+        Keyword arguments:
+        workspace    - - workspace for the chosen project.
         """
-        self.newpath = self.file_path + '/' + self.project_name + '/'
-        if os.path.exists(self.file_path):
-            os.mkdir(self.newpath)
-            os.mkdir(self.newpath + 'data')
+        self.file_path = workspace + self.project_name + '/'
+        if os.path.exists(workspace):
+            os.mkdir(self.file_path)
         else:
             raise Exception('No such path')
         
-        
     def save_raw(self, file_name):
-        mne.fiff.Raw.save(self.raw_data, str(self.newpath) + file_name)    
+        """
+        Saves the raw data file into the project folder.
+        
+        Keyword arguments:
+        file_name      - - the full path and name of the chosen raw data file
+        folder_name    - - the name of the raw data file before the first _ character
+        raw_file_path  - - the full path and name of the saved raw data file
+        """
+        folder_name = file_name.split("_", 1)
+        os.mkdir(self.file_path + folder_name[0])
+        raw_file_path = str(self.file_path) + folder_name[0] + '/' + file_name
+        mne.fiff.Raw.save(self.raw_data, raw_file_path)
             
     def write_commands(self, commands, node, parent=''):
         """

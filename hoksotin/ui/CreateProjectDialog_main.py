@@ -6,6 +6,7 @@ from infoDialog_main import InfoDialog
 import messageBox
 
 from project import Project
+from workspace import Workspace
 
 from UIehd1_main import MainWindow
 from infoDialog_Ui import Ui_infoDialog
@@ -34,14 +35,16 @@ class CreateProjectDialog(QtGui.QDialog):
         try:
             if self.ui.lineEditProjectName.text() == '':
                 raise Exception('Give a project name!')
+            self.workspace = Workspace()
             self.project = Project()
             self.project.set_raw_data(self.raw)
-            self.project.set_file_path(os.path.dirname('/usr/local/bin/'))
+            #self.project.set_file_path(os.path.dirname('/tmp/'))
             #self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
             self.project.set_author(self.ui.lineEditAuthor.text())
             self.project.set_project_name(self.ui.lineEditProjectName.text())
-            self.project.save_project()
-            #TODO: korjaa käyttäjä asettamaan workspace
+            self.workspace.set_workspace('/tmp/') #TODO: korjaa käyttäjä asettamaan workspace, ui:ssa ei vielä boksia valinnalle
+            self.project.save_project(self.workspace.get_workspace())
+            
             #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
             self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
@@ -59,7 +62,7 @@ class CreateProjectDialog(QtGui.QDialog):
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/')
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/')
         if self.fname != '':
             try:
                 f = File()
