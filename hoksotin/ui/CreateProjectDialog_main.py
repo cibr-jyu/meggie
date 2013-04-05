@@ -48,6 +48,7 @@ class CreateProjectDialog(QtGui.QDialog):
             #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
             self.project.set_description(self.ui.textEditDescription.toPlainText())
             self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
+            self.project.save_project_settings()
             print self.ui.lineEditProjectName.text()
             print self.project.get_date()
             self.UIehd = MainWindow(self.project)

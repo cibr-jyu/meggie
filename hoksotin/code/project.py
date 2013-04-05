@@ -9,6 +9,11 @@ import time
 import os
 import re
 
+# Better to use pickle rather than cpickle, as project paths may
+# include unicode characters
+import pickle
+import shutil
+
 from node import Node
 from tree import Tree
 #import tree
@@ -137,9 +142,42 @@ class Project(object):
         else:
             raise Exception("Too long description")
     
+    
+    def save_project_settings(self):
+        '''
+        Saves project settings into a file in the root of the project
+        directory structure.
+ 
+        '''
+        
+        # String conversion, because shutil doesn't accept QStrings
+        settingsFileName = str(self.project_name + '.pro')
+        
+        # Actually a file object
+        settingsFile = open(settingsFileName, 'w')
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(self, settingsFile, 2)
+       
+        
+        # Copy the file from working directory to 
+        shutil.move(settingsFileName, str(self.file_path))
+        settingsFile.close()
+        
+        
+    def load_project_settings(self):
+        '''
+        Loads project settings from a file in the root of the project
+        directory structure.
+        
+        Keyword arguments:
+        project    - - project object to save
+        '''
+        
+    
     def save_project(self, workspace):
         """
-        Saves the project folder and the contents including raw data file.
+        Creates the project folder.
         
         Keyword arguments:
         workspace    - - workspace for the chosen project.
