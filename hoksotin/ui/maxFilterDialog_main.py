@@ -44,7 +44,8 @@ class MaxFilterDialog(QtGui.QDialog):
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/')
+        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
+                                                       '/home/')
         
     
     def accept(self):
@@ -58,7 +59,8 @@ class MaxFilterDialog(QtGui.QDialog):
             fit = self.ui.checkBoxFit.checkState() == QtCore.Qt.Checked
             order_in = self.ui.spinBoxOrderIn.value()
             order_out = self.ui.spinBoxOrderOut.value()
-            autobad = self.ui.checkBoxAutobad.checkState() == QtCore.Qt.Checked
+            autobad = self.ui.checkBoxAutobad.checkState() == \
+            QtCore.Qt.Checked
             bad_limit = self.ui.doubleSpinBoxBadLimit.value()
             bads = self.ui.lineEditBad.text()
             skips = ''
@@ -69,19 +71,24 @@ class MaxFilterDialog(QtGui.QDialog):
                 if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
                     skips += self.ui.lineEditSkipStart_2.text() + ' '
                     skips += self.ui.lineEditSkipEnd_2.text() + ' '
-                    if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
+                    if self.ui.checkBoxSkip_2.checkState() == \
+                    QtCore.Qt.Checked:
                         skips += self.ui.lineEditSkipStart_3.text() + ' '
                         skips += self.ui.lineEditSkipEnd_3.text() + ' '            
             button_text = str(self.ui.buttonGroup.checkedButton().text())
             format = button_text.split(' ')[0].lower()
             if self.ui.checkBoxMaxMove.checkState() == QtCore.Qt.Checked:
-                button_position = str(self.ui.buttonGroupMaxMove.checkedButton().text())
-                if button_position == 'Transform data into default head position':
+                button_position = \
+                str(self.ui.buttonGroupMaxMove.checkedButton().text())
+                if button_position == \
+                'Transform data into default head position':
                     dictionary['-trans'] = 'default'
-                elif button_position == 'Transform data to head position in a file:':
+                elif button_position == \
+                'Transform data to head position in a file:':
                     if self.fname != '':
                         try:
-                            if os.path.isfile(str(fname)) and str(fname).endswith('fif'):
+                            if os.path.isfile(str(fname)) and \
+                            str(fname).endswith('fif'):
                                 dictionary['-trans'] = self.fname
                             else:
                                 raise Exception('Could not open file.')
@@ -89,7 +96,8 @@ class MaxFilterDialog(QtGui.QDialog):
                             self.messageBox = messageBox.AppForm()
                             self.messageBox.labelException.setText(str(err))
                             self.messageBox.show()
-                elif button_position == 'Transform data into averaged head position':
+                elif button_position == \
+                'Transform data into averaged head position':
                     pass
             if self.ui.checkBoxStorePosition.checkState() == QtCore.Qt.Checked:
                 dictionary['-hp'] = '' #TODO Viittaus projektin kansioon!
