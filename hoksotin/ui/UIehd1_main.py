@@ -38,10 +38,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.setupUi(self)
         self.ui.tabEvoked = None
         self.project = project
-        #self.item = QtGui.QTreeWidgetItem(self.ui.treeWidget)
         self.raw = project.get_raw_data() # Onko fiksua olla oma attribuutti???
-        #self.ui.treeWidget.topLevelItem(0).setText(0, QtGui.QApplication.translate("MainWindow", str(self.raw), None, QtGui.QApplication.UnicodeUTF8))
-        #self.ui.treeWidget.editItem
         info = InfoDialog(self.raw, self.ui, False)
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
@@ -89,15 +86,15 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64'
-        os.environ['SUBJECT'] = 'jn'
-        os.environ['SUBJECTS_DIR'] = '/usr/local/bin/ParkkosenPurettu/mri-fs'
+        #os.environ['SUBJECT'] = 'jn'
+        #os.environ['SUBJECTS_DIR'] = '/usr/local/bin/ParkkosenPurettu/mri-fs'
         #subprocess.Popen('export MNE_ROOT=/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64', shell=True)
         #subprocess.Popen('export SUBJECT=jn', shell=True)
         #subprocess.Popen('export SUBJECTS_DIR=/usr/local/bin/ParkkosenPurettu/mri-fs', shell=True)
         subprocess.Popen('$MNE_ROOT', shell=True)
         #proc = subprocess.Popen('/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64/bin/mne_browse_raw', shell=True, stdout=subprocess.PIPE,
         #                        stderr=subprocess.STDOUT)
-        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw', shell=True, stdout=subprocess.PIPE,
+        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + self.raw.info.get('filename'), shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
         for line in proc.stdout.readlines():
             print line
@@ -108,8 +105,6 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.maxFilterDialog = MaxFilterDialog(self, self.raw)
         self.maxFilterDialog.show()
-        
-    
       
     def create_epochs(self):
         stim_channel = str(self.epochParameterDialog.ui.comboBoxStimulus.currentText())

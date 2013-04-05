@@ -5,6 +5,7 @@ Created on Mar 28, 2013
 '''
 import re
 
+
 class Settings(object):
     '''
     classdocs
@@ -41,3 +42,14 @@ class Settings(object):
         if re.match("^[a-zA-Z0]+$", value):
             return True
         else: raise Exception('Use only letters.')
+        
+    def validate_float(self, value, min, max):
+        """
+        Validator for floats.
+        
+        Keyword arguments:
+        value         -- Value to validate
+        min           -- Lower limit for the value
+        max           -- Upper limit for the value
+        """
+        
