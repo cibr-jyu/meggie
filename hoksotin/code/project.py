@@ -104,9 +104,10 @@ class Project(object):
     
     def set_author(self, author):
         """
-        Sets the author of the project.
+        Sets the author of the project. 
         Raises exception if the author name is too long.
-        Raises exception if the author name includes other characters than letters and numbers.
+        Raises exception if the author name includes other characters
+        than letters and numbers.
         """
         if (len(author) <= 50):
             if re.match("^[A-Za-z0-9 ]*$", author):
@@ -132,23 +133,27 @@ class Project(object):
         """
         Sets the description of the project written by the author.
         Raises exception if the description is too long.
-        Raises exception if the description includes other characters than letters and numbers.        
+        Raises exception if the description includes other characters
+        than letters and numbers.        
         """
         if (len(description) <= 1000):
-            if (re.match("^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$", description)  or len(description) == 0):
+            if (re.match(
+                "^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
+                 description) or len(description) == 0):
                 self.description = description
             else:
-                raise Exception("Use only letters and numbers in your description")  
+                raise Exception("Use only letters and " + 
+                                "numbers in your description")  
         else:
             raise Exception("Too long description")
     
     
     def save_project_settings(self):
-        '''
+        """
         Saves project settings into a file in the root of the project
         directory structure.
  
-        '''
+        """
         
         # String conversion, because shutil doesn't accept QStrings
         settingsFileName = str(self.project_name + '.pro')
@@ -166,13 +171,13 @@ class Project(object):
         
         
     def load_project_settings(self):
-        '''
+        """
         Loads project settings from a file in the root of the project
         directory structure.
         
         Keyword arguments:
         project    - - project object to save
-        '''
+        """
         
     
     def save_project(self, workspace):
