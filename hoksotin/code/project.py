@@ -154,14 +154,14 @@ class Project(object):
         settingsFileName = str(self.project_name + '.pro')
         
         # Actually a file object
-        settingsFile = open(settingsFileName, 'w')
+        settingsFile = open(self.file_path + '/' + settingsFileName, 'wb')
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
        
+        # Move the file from working directory to 
+        #shutil.move(settingsFileName, str(self.file_path))
         
-        # Copy the file from working directory to 
-        shutil.move(settingsFileName, str(self.file_path))
         settingsFile.close()
         
         

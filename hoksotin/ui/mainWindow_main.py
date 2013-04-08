@@ -2,6 +2,7 @@
  
  
 import os,sys
+import pickle
 #from Project import Project
  
 from PyQt4 import QtCore,QtGui
@@ -10,6 +11,8 @@ from PyQt4 import QtCore,QtGui
 import messageBox
 from mainWindow_Ui import Ui_MainWindow
 from CreateProjectDialog_main import CreateProjectDialog
+from UIehd1_main import MainWindow
+from IPython.lib.pretty import pprint
 
 #import measurementInfo
  
@@ -48,10 +51,16 @@ class Main(QtGui.QMainWindow):
         
     def on_ButtonOpenProject_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/')
-        path = os.path.dirname(os.path.abspath(str(fname)))
-        if os.path.exists(path + '/data'):
-            print 'hfhsfh'
+        path = str(QtGui.QFileDialog.getExistingDirectory(self, "Select project directory"))
+        #path = os.path.dirname(os.path.abspath(str(fname)))
+        fname = path + '/' + path.split('/')[-1] + '.pro'
+        if os.path.exists(path) and os.path.isfile(fname):
+            output = open(fname, 'rb')
+            print output
+            project = pickle.load(output)
+            self.UIehd = MainWindow(project)
+            self.UIehd.show()
+            self.close()
         
         else:
             self.messageBox = messageBox.AppForm()
