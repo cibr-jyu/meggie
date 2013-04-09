@@ -1,21 +1,17 @@
-'''
+# coding: latin1
+"""
 Created on Mar 28, 2013
 
-@author: jaeilepp
-'''
+@author: Jaakko Leppäkangas
+"""
 import re
 
 
 class Settings(object):
-    '''
-    classdocs
-    '''
-
+    
 
     def __init__(self):
-        '''
-        Constructor
-        '''
+        pass
         
     def validate_int(self, value, min, max):
         """
@@ -25,11 +21,14 @@ class Settings(object):
         value         -- Value to validate
         min           -- Lower limit for the value
         max           -- Upper limit for the value
+        Raises an exception if the value is over the given boundaries.
+        Raises an exception if value is not an integer.
         """
         if re.match("^-*[0-9,\.]+$", value):
             if int(value) > max or int(value) < min:
                 raise Exception('Value out of bounds.')
-        else: raise Exception('Use only numbers.')
+        else:
+            raise Exception('Use only numbers.')
         return True
         
     def validate_string(self, value):
@@ -38,6 +37,7 @@ class Settings(object):
         
         Keyword arguments:
         value         -- String to validate.
+        Raises an exception if the value is not a string.
         """
         if re.match("^[a-zA-Z0]+$", value):
             return True

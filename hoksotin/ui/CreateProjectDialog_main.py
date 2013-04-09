@@ -63,7 +63,8 @@ class CreateProjectDialog(QtGui.QDialog):
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home/')
+        self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
+                                                           '/home/'))
         if self.fname != '':
             try:
                 f = File()

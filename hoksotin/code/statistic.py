@@ -3,7 +3,7 @@
 """
 Created on Mar 14, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppäkangas
 """
 import numpy as np
 import sys
@@ -12,24 +12,24 @@ from IntegralImage import IntegralImage
 
 class Statistic(object):
     """
-    classdocs
+    A class for statistical operations.
     """
 
 
     def __init__(self):
-        """
-        Constructor
-        """
+        pass
         
     def find_minimum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns the last minimum and its time for a 1d numpy array.
+        Returns the last minimum and its time for a
+        one dimensional numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency in Hz
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
+        Raises an exceptiong if the sampling frequency is zero.
         """
         
         if sfreq <= 0:

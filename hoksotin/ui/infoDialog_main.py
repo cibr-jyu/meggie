@@ -33,14 +33,14 @@ class InfoDialog(QtGui.QDialog):
         #raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')
         self.mi = MeasurementInfo(self.raw)
         
-        self.ui.labelDateValue.setText(self.mi.get_date())
-        self.ui.labelEEGValue.setText(str(self.mi.get_EEG_channels()))
-        self.ui.labelGradMEGValue.setText(str(self.mi.get_grad_channels()))
-        self.ui.labelHighValue.setText(str(self.mi.get_high_pass()))
-        self.ui.labelLowValue.setText(str(self.mi.get_low_pass()))
-        self.ui.labelMagMEGValue.setText(str(self.mi.get_mag_channels()))
-        self.ui.labelSamplesValue.setText(str(self.mi.get_sampling_freq()))
-        self.ui.labelSubjectValue.setText(self.mi.get_subject_name())
+        self.ui.labelDateValue.setText(self.mi.date)
+        self.ui.labelEEGValue.setText(str(self.mi.EEG_channels))
+        self.ui.labelGradMEGValue.setText(str(self.mi.grad_channels))
+        self.ui.labelHighValue.setText(str(self.mi.high_pass))
+        self.ui.labelLowValue.setText(str(self.mi.low_pass))
+        self.ui.labelMagMEGValue.setText(str(self.mi.mag_channels))
+        self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq))
+        self.ui.labelSubjectValue.setText(self.mi.subject_name)
     
         
 """

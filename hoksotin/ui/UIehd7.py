@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus7.ui'
 #
-# Created: Wed Mar 27 12:25:56 2013
+# Created: Tue Apr  9 10:34:25 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -248,20 +248,20 @@ class Ui_MainWindow(object):
         self.pushButtonVisualize = QtGui.QPushButton(self.layoutWidget1)
         self.pushButtonVisualize.setObjectName(_fromUtf8("pushButtonVisualize"))
         self.verticalLayout_2.addWidget(self.pushButtonVisualize)
-        self.widget = QtGui.QWidget(self.dockWidgetContents)
-        self.widget.setGeometry(QtCore.QRect(20, 0, 100, 36))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.widget)
+        self.layoutWidget2 = QtGui.QWidget(self.dockWidgetContents)
+        self.layoutWidget2.setGeometry(QtCore.QRect(20, 0, 100, 36))
+        self.layoutWidget2.setObjectName(_fromUtf8("layoutWidget2"))
+        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.layoutWidget2)
         self.horizontalLayout_10.setMargin(0)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
-        self.pushButtonBack = QtGui.QPushButton(self.widget)
+        self.pushButtonBack = QtGui.QPushButton(self.layoutWidget2)
         self.pushButtonBack.setText(_fromUtf8(""))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("image1.xpm")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButtonBack.setIcon(icon)
         self.pushButtonBack.setObjectName(_fromUtf8("pushButtonBack"))
         self.horizontalLayout_10.addWidget(self.pushButtonBack)
-        self.pushButtonForward = QtGui.QPushButton(self.widget)
+        self.pushButtonForward = QtGui.QPushButton(self.layoutWidget2)
         self.pushButtonForward.setText(_fromUtf8(""))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8("image2.xpm")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -301,13 +301,13 @@ class Ui_MainWindow(object):
         self.labelHigh.setText(_translate("MainWindow", "High-pass:", None))
         self.labelHighValue.setText(_translate("MainWindow", "High-pass value", None))
         self.channelsBox.setTitle(_translate("MainWindow", "Channels", None))
-        self.labelEEG.setText(_translate("MainWindow", "EEG:", None))
+        self.labelEEG.setText(_translate("MainWindow", "EEG channels:", None))
         self.labelEEGValue.setText(_translate("MainWindow", "EEG value", None))
-        self.labelGradMEG.setText(_translate("MainWindow", "Grad. MEG:", None))
+        self.labelGradMEG.setText(_translate("MainWindow", "Gradiometers:", None))
         self.labelGradMEGValue.setText(_translate("MainWindow", "Grad. MEG value", None))
-        self.labelMagMEG.setText(_translate("MainWindow", "Mag. MEG:", None))
+        self.labelMagMEG.setText(_translate("MainWindow", "Magnetometers:", None))
         self.labelMagMEGValue.setText(_translate("MainWindow", "Mag. MEG value", None))
-        self.labelSamples.setText(_translate("MainWindow", "Samples:", None))
+        self.labelSamples.setText(_translate("MainWindow", "Sampling frequency:", None))
         self.labelSamplesValue.setText(_translate("MainWindow", "SamplesValue", None))
         self.labelRawData.setText(_translate("MainWindow", "TextLabel", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabRaw), _translate("MainWindow", "Raw", None))

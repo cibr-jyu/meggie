@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: latin1
 """
 Created on Mar 6, 2013
@@ -12,8 +11,9 @@ import re
 
 class MeasurementInfo(object):
     """
-    classdocs
+    A class for collecting information from MEG-measurements.
     """
+
 
     def __init__(self, raw):
         """
@@ -21,112 +21,132 @@ class MeasurementInfo(object):
         
         Keyword arguments:
         raw           -- Raw object
+        Raises a TypeError if the raw object is not of type mne.fiff.Raw.
         """
         if isinstance(raw, mne.fiff.raw.Raw):
-            self.raw = raw
-            self.info = dict(raw.info)
+            self._raw = raw
+            self._info = dict(raw.info)
         else:
             raise TypeError('Not a Raw object.')
     
-    def get_high_pass(self):
+    @property
+    def high_pass(self):
         """
-        Returns the online high pass cutoff frequency.
+        Returns the online high pass cutoff frequency in Hz.
+        Raises an exception if the field highpass does not exist.
         """
-        if self.info.get('highpass') is None:
+        if self._info.get('highpass') is None:
             raise Exception('Field highpass does not exist.')
         else:
-            return self.info.get('highpass')
+            return self._info.get('highpass')
     
-    def get_low_pass(self):
+    @property
+    def low_pass(self):
         """
         Returns the online low pass filter cutoff frequency.
+        Raises an exception if the field lowpass does not exist.
         """
-        if self.info.get('lowpass') is None:
+        if self._info.get('lowpass') is None:
             raise Exception('Field lowpass does not exist.')
         else:
-            return self.info.get('lowpass')
+            return self._info.get('lowpass')
     
-    def get_sampling_freq(self):
+    @property
+    def sampling_freq(self):
         """
-        Returns the sample frequency.
+        Returns the sampling frequency.
+        Raises an exception if the field sfreq does not exist.
         """
-        if self.info.get('sfreq') is None:
+        if self._info.get('sfreq') is None:
             raise Exception('Field sfreq does not exist.')
         else:
-            return self.info.get('sfreq')
-            
-    def get_mag_channels(self):
+            return self._info.get('sfreq')
+    
+    @property        
+    def mag_channels(self):
         """
         Returns the number of magnetometer channels.
+        Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self.raw.info, meg='mag', exclude=[]) is None:
-            raise Exception('')
+        if mne.fiff.pick_types(self._info, meg='mag', exclude=[]) is None:
+            raise Exception('Could not find magnetometers.')
         else:
-            return len(mne.fiff.pick_types(self.raw.info, meg='mag',
+            return len(mne.fiff.pick_types(self._info, meg='mag',
                                            exclude=[]))
-        
-    def get_grad_channels(self):
+    @property    
+    def grad_channels(self):
         """
         Returns the number of gradiometer channels.
+        Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self.raw.info, meg='grad', exclude=[]) is None:
-            raise Exception('')
+        if mne.fiff.pick_types(self._info, meg='grad', exclude=[]) is None:
+            raise Exception('Could not find gradiometers.')
         else:
-            return len(mne.fiff.pick_types(self.raw.info, meg='grad',
+            return len(mne.fiff.pick_types(self._info, meg='grad',
                                            exclude=[]))
         
-        
-    def get_EEG_channels(self):
+    @property    
+    def EEG_channels(self):
         """
         Returns the number of EEG channels.
+        Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self.raw.info, meg=False,
+        if mne.fiff.pick_types(self._info, meg=False,
                                eeg=True, exclude=[]) is None:
-            raise Exception('')
+            raise Exception('Could not find EEG channels.')
         else:
-            return len(mne.fiff.pick_types(self.raw.info, meg=False,
+            return len(mne.fiff.pick_types(self._info, meg=False,
                                            eeg=True, exclude=[]))
-        
-    def get_date(self):
+    @property    
+    def date(self):
         """
         Returns the date of measurement in form yyyy-mm-dd.
+        Raises an Exception if field meas_date does not exist.
+        Raises an Exception if no valid timestamp is found.
         """
-        if self.info.get('meas_date') is None:
+        if self._info.get('meas_date') is None:
             raise Exception('Field meas_date does not exist.')
         elif not isinstance(datetime.datetime.fromtimestamp\
-                        (self.info.get('meas_date')[0]), datetime.datetime):
+                        (self._info.get('meas_date')[0]), datetime.datetime):
             raise TypeError('Field meas_date is not a valid timestamp.')
         else:
-            d = datetime.datetime.fromtimestamp(self.info.get('meas_date')[0])
+            d = datetime.datetime.fromtimestamp(self._info.get('meas_date')[0])
             return d.strftime('%Y-%m-%d')
-        
-    def get_stim_channel_names(self):
+    
+    @property    
+    def stim_channel_names(self):
         """
         Returns the names of stimulus channels.
+        Raises an exception if the field ch_names does not exist.
         """
-        if self.info.get('ch_names') is None:
+        if self._info.get('ch_names') is None:
             raise Exception('Field ch_names does not exist.')
         else:
-            chNames = self.info.get('ch_names')
+            chNames = self._info.get('ch_names')
             return [s for s in chNames if 'STI' in s]
-        
-    def get_events(self, STIChannel):
+    
+    @property    
+    def events(self, STIChannel):
         """
         Returns events from a certain stimulus channel.
         
         Keyword arguments:
         STIChannel    -- name of the channel
+        Raises an exception if an error occurs while finding events.
         """
-        if mne.find_events(self.raw, stim_channel=STIChannel) is None:
+        if mne.find_events(self._raw, stim_channel=STIChannel) is None:
             raise Exception('No stimulus channel found.')
         else:
-            return mne.find_events(self.raw, stim_channel=STIChannel)
-        
-    def get_subject_name(self):
+            return mne.find_events(self._raw, stim_channel=STIChannel)
+    
+    @property    
+    def subject_name(self):
         """
         Returns the subjects name
+        Raises an exception if the personal data is not a string.
+        Raises an exception if the personal data is malformed.
         """
-        subj_info = mne.fiff.show_fiff(self.info.get('filename'))
+        subj_info = mne.fiff.show_fiff(self._info.get('filename'))
         if not isinstance(subj_info, str):
             raise TypeError('Personal info not found.')
         name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
@@ -137,4 +157,6 @@ class MeasurementInfo(object):
         first_name = name_result.group(1).split(' ')
         name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...', subj_info)
         middle_name = name_result.group(1).split(' ')
+        if len(last_name) < 3 or len(first_name) < 3 or len(middle_name) < 3:
+            raise Exception('An error occurred while fetching subjects name.')
         return last_name[2] + ' ' + first_name[2] + ' ' + middle_name[2]

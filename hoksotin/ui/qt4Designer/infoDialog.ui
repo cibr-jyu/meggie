@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Measurement info</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -36,7 +36,7 @@
         <property name="title">
          <string>Background</string>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>26</x>
@@ -96,9 +96,6 @@
           </item>
          </layout>
         </widget>
-        <zorder>layoutWidget</zorder>
-        <zorder></zorder>
-        <zorder>filtersBox</zorder>
        </widget>
       </item>
       <item>
@@ -106,7 +103,7 @@
         <property name="title">
          <string>Filters</string>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>24</x>
@@ -179,7 +176,7 @@
         <property name="title">
          <string>Channels</string>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>30</x>
@@ -194,7 +191,7 @@
             <item>
              <widget class="QLabel" name="labelEEG">
               <property name="text">
-               <string>EEG:</string>
+               <string>EEG channels:</string>
               </property>
              </widget>
             </item>
@@ -218,7 +215,7 @@
             <item>
              <widget class="QLabel" name="labelGradMEG">
               <property name="text">
-               <string>Grad. MEG:</string>
+               <string>Gradiometers:</string>
               </property>
              </widget>
             </item>
@@ -242,7 +239,7 @@
             <item>
              <widget class="QLabel" name="labelMagMEG">
               <property name="text">
-               <string>Mag. MEG:</string>
+               <string>Magnetometers:</string>
               </property>
              </widget>
             </item>
@@ -266,7 +263,7 @@
             <item>
              <widget class="QLabel" name="labelSamples">
               <property name="text">
-               <string>Samples:</string>
+               <string>Sampling frequency:</string>
               </property>
              </widget>
             </item>
@@ -300,8 +297,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>ButtonClose</zorder>
  </widget>
  <resources/>
  <connections/>

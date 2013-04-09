@@ -268,7 +268,7 @@
                 <item>
                  <widget class="QLabel" name="labelEEG">
                   <property name="text">
-                   <string>EEG:</string>
+                   <string>EEG channels:</string>
                   </property>
                  </widget>
                 </item>
@@ -292,7 +292,7 @@
                 <item>
                  <widget class="QLabel" name="labelGradMEG">
                   <property name="text">
-                   <string>Grad. MEG:</string>
+                   <string>Gradiometers:</string>
                   </property>
                  </widget>
                 </item>
@@ -316,7 +316,7 @@
                 <item>
                  <widget class="QLabel" name="labelMagMEG">
                   <property name="text">
-                   <string>Mag. MEG:</string>
+                   <string>Magnetometers:</string>
                   </property>
                  </widget>
                 </item>
@@ -340,7 +340,7 @@
                 <item>
                  <widget class="QLabel" name="labelSamples">
                   <property name="text">
-                   <string>Samples:</string>
+                   <string>Sampling frequency:</string>
                   </property>
                  </widget>
                 </item>
