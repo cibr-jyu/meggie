@@ -206,7 +206,10 @@ class Experiment(object):
         """
         self._file_path = workspace + self._experiment_name + '/'
         if os.path.exists(workspace):
-            os.mkdir(self._file_path)
+            try:
+                os.mkdir(self._file_path)
+            except OSError:
+                print "no rights to save to the chosen path"
         else:
             raise Exception('No such path')
         
@@ -220,7 +223,13 @@ class Experiment(object):
         raw_file_path  - - the full path and name of the saved raw data file
         """
         folder_name = file_name.split("_", 1)
-        os.mkdir(self._file_path + folder_name[0])
+        try:
+            if os.path.exists(self._file_path + folder_name[0]):
+                pass
+            else:
+                os.mkdir(self._file_path + folder_name[0])
+        except OSError:
+            print "no rights to save the raw file to the chosen path or bad raw file name"
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
             

@@ -58,7 +58,7 @@ class CreateProjectDialog(QtGui.QDialog):
         
         try:
             # TODO: user should set this workspace from the mainWindow UI    
-            self.workspace.working_directory = '/usr/local/bin/' 
+            self.workspace.working_directory = '/tmp/' #'/usr/local/bin/' 
             self.experiment.save_experiment(self.workspace.working_directory)
                         
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
