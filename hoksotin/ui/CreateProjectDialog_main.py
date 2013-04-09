@@ -5,7 +5,7 @@ from file import File
 from infoDialog_main import InfoDialog
 import messageBox
 
-from project import Project
+from experiment import Experiment
 from workspace import Workspace
 
 from UIehd1_main import MainWindow
@@ -34,24 +34,24 @@ class CreateProjectDialog(QtGui.QDialog):
     def accept(self):
         try:
             if self.ui.lineEditProjectName.text() == '':
-                raise Exception('Give a project name!')
+                raise Exception('Give a experiment name!')
             self.workspace = Workspace()
-            self.project = Project()
-            self.project.set_raw_data(self.raw)
-            #self.project.set_file_path(os.path.dirname('/tmp/'))
-            #self.project.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
-            self.project.set_author(self.ui.lineEditAuthor.text())
-            self.project.set_project_name(self.ui.lineEditProjectName.text())
+            self.experiment = Experiment()
+            self.experiment.raw_data = self.raw
+            #self.experiment.set_file_path(os.path.dirname('/tmp/'))
+            #self.experiment.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
+            self.experiment.author = self.ui.lineEditAuthor.text()
+            self.experiment.experiment_name = self.ui.lineEditProjectName.text()
             self.workspace.set_workspace('/usr/local/bin/') #TODO: korjaa käyttäjä asettamaan workspace, ui:ssa ei vielä boksia valinnalle
-            self.project.save_project(self.workspace.get_workspace())
+            self.experiment.save_experiment(self.workspace.get_workspace())
             
-            #self.project.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
-            self.project.set_description(self.ui.textEditDescription.toPlainText())
-            self.project.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
-            self.project.save_project_settings()
+            #self.experiment.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
+            self.experiment.description = self.ui.textEditDescription.toPlainText()
+            self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
+            self.experiment.save_experiment_settings()
             print self.ui.lineEditProjectName.text()
-            print self.project.get_date()
-            self.UIehd = MainWindow(self.project)
+            print self.experiment.get_date()
+            self.UIehd = MainWindow(self.experiment)
             self.UIehd.show()
             self.close()
             self.parent.close()

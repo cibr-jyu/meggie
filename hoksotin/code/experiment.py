@@ -1,7 +1,7 @@
 """
 Created on Mar 6, 2013
 
-@author: Janne Pesonen
+@_author: Janne Pesonen
 """
 
 import mne
@@ -18,10 +18,10 @@ from node import Node
 from tree import Tree
 #import tree
 
-class Project(object):
+class Experiment(object):
     """
-    Project holds information about the currently saved raw data,
-    the path of the data file, the author, the date and description.
+    Experiment holds information about the currently saved raw data,
+    the path of the data file, the _author, the date and _description.
     """
     
     def __init__(self):
@@ -29,93 +29,104 @@ class Project(object):
         Constructor
         
         Keyword arguments:
-        project_name    - - the name of the project
-        raw_data        - - the raw data file of the measured data
-        file_path       - - the path of the saved project
-        author          - - the author of the project
-        description     - - the description of the project written by the author
+        _experiment_name    - - the name of the project
+        _raw_data        - - the raw data file of the measured data
+        _file_path       - - the path of the saved project
+        _author          - - the _author of the project
+        _description     - - the _description of the project written by the _author
         date            - - the time and date of the saved project
         """
         
-        self.project_name = 'project'
-        self.raw_data = 'no data specified'
-        self.file_path = 'no path defined'
-        self.author = 'unknown author'
-        self.description = 'no description'
+        self._experiment_name = 'project'
+        self._raw_data = 'no data specified'
+        self._file_path = 'no path defined'
+        self._author = 'unknown _author'
+        self._description = 'no _description'
         self.date = time.strftime('%Y %m %d %X')
         self.tree = Tree()
         self.__index = 0
         
-    def get_project_name(self):
+    @property
+    def experiment_name(self):
         """
         Returns the name of the project.
         """
-        return self.project_name
-  
-    def set_project_name(self, project_name):
+        return self._experiment_name
+
+    @experiment_name.setter
+    def experiment_name(self, experiment_name):
         """
         Sets the name for the project.
+        
+        Keyword arguments:
+        experiment_name    - - experiment_name 
         """
-        if (len(project_name) <= 30):
-            if re.match("^[A-Za-z0-9 ]*$", project_name):
-                self.project_name = project_name
+        if (len(experiment_name) <= 30):
+            if re.match("^[A-Za-z0-9 ]*$", experiment_name):
+                self._experiment_name = experiment_name
             else:
                 raise Exception("Use only letters and numbers in project name")
         else:
             raise Exception('Too long project name')
     
-    def get_file_path(self):
+    @property
+    def file_path(self):
         """
         Returns the path of the current project file.
         """
-        return self.file_path
-   
-    def set_file_path(self, file_path):
+        return self._file_path
+    
+    @file_path.setter
+    def file_path(self, file_path):
         """
         Sets the given path for the project file.
         Raises exception if the given path doesn't exist.
         """
         if (os.path.isdir(file_path)): 
-            self.file_path = file_path
+            self._file_path = file_path
         else:
             raise Exception('No such path')
-        
-    def get_raw_data(self):
+    
+    @property
+    def raw_data(self):
         """
         Returns the raw data file of the project.
         """
-        return self.raw_data
+        return self._raw_data
     
-    def set_raw_data(self, raw_data):
+    @raw_data.setter
+    def raw_data(self, raw_data):
         """
         Sets the raw data file for the project.
         Raises exception if the given data type is wrong. 
         """
-        if (type(raw_data) is mne.fiff.Raw):
-            self.raw_data = raw_data
+        if (isinstance(raw_data, mne.fiff.Raw)):
+            self._raw_data = raw_data
         else:
             raise Exception('Wrong data type')
     
-    def get_author(self):
+    @property
+    def author(self):
         """
-        Returns the author of the project
+        Returns the _author of the project
         """
-        return self.author
+        return self._author
     
-    def set_author(self, author):
+    @author.setter
+    def author(self, author):
         """
-        Sets the author of the project. 
-        Raises exception if the author name is too long.
-        Raises exception if the author name includes other characters
+        Sets the _author of the project. 
+        Raises exception if the _author name is too long.
+        Raises exception if the _author name includes other characters
         than letters and numbers.
         """
         if (len(author) <= 50):
             if re.match("^[A-Za-z0-9 ]*$", author):
-                self.author = author
+                self._author = author
             else:
-                raise Exception("Use only letters and numbers in author name")
+                raise Exception("Use only letters and numbers in _author name")
         else:
-            raise Exception('Too long author name')
+            raise Exception('Too long _author name')
     
     def get_date(self):
         """
@@ -123,32 +134,34 @@ class Project(object):
         """
         return self.date
     
-    def get_description(self):
+    @property
+    def description(self):
         """
-        Returns the description of the project.
+        Returns the _description of the project.
         """
-        return self.description
+        return self._description
 
-    def set_description(self, description):
+    @description.setter
+    def description(self, description):
         """
-        Sets the description of the project written by the author.
-        Raises exception if the description is too long.
-        Raises exception if the description includes other characters
+        Sets the _description of the project written by the _author.
+        Raises exception if the _description is too long.
+        Raises exception if the _description includes other characters
         than letters and numbers.        
         """
         if (len(description) <= 1000):
             if (re.match(
                 "^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
                  description) or len(description) == 0):
-                self.description = description
+                self._description = description
             else:
                 raise Exception("Use only letters and " + 
-                                "numbers in your description")  
+                                "numbers in your _description")  
         else:
-            raise Exception("Too long description")
+            raise Exception("Too long _description")
     
     
-    def save_project_settings(self):
+    def save_experiment_settings(self):
         """
         Saves project settings into a file in the root of the project
         directory structure.
@@ -156,21 +169,21 @@ class Project(object):
         """
         
         # String conversion, because shutil doesn't accept QStrings
-        settingsFileName = str(self.project_name + '.pro')
+        settingsFileName = str(self._experiment_name + '.pro')
         
         # Actually a file object
-        settingsFile = open(self.file_path + '/' + settingsFileName, 'wb')
+        settingsFile = open(self._file_path + '/' + settingsFileName, 'wb')
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
        
         # Move the file from working directory to 
-        #shutil.move(settingsFileName, str(self.file_path))
+        #shutil.move(settingsFileName, str(self._file_path))
         
         settingsFile.close()
         
         
-    def load_project_settings(self):
+    def load_experiment_settings(self):
         """
         Loads project settings from a file in the root of the project
         directory structure.
@@ -180,16 +193,16 @@ class Project(object):
         """
         
     
-    def save_project(self, workspace):
+    def save_experiment(self, workspace):
         """
         Creates the project folder.
         
         Keyword arguments:
         workspace    - - workspace for the chosen project.
         """
-        self.file_path = workspace + self.project_name + '/'
+        self._file_path = workspace + self._experiment_name + '/'
         if os.path.exists(workspace):
-            os.mkdir(self.file_path)
+            os.mkdir(self._file_path)
         else:
             raise Exception('No such path')
         
@@ -203,9 +216,9 @@ class Project(object):
         raw_file_path  - - the full path and name of the saved raw data file
         """
         folder_name = file_name.split("_", 1)
-        os.mkdir(self.file_path + folder_name[0])
-        raw_file_path = str(self.file_path) + folder_name[0] + '/' + file_name
-        mne.fiff.Raw.save(self.raw_data, raw_file_path)
+        os.mkdir(self._file_path + folder_name[0])
+        raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
+        mne.fiff.Raw.save(self._raw_data, raw_file_path)
             
     def write_commands(self, commands, node, parent=''):
         """
