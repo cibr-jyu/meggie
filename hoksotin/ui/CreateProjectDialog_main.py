@@ -27,38 +27,53 @@ class CreateProjectDialog(QtGui.QDialog):
         self.parent = parent
         """
         Reference to main dialog window
-        """       
-        self.ui = Ui_CreateProjectDialog() # Refers to class in file CreateProjecDialog
+        """
+        
+        # Refers to class in file CreateProjecDialog
+        self.ui = Ui_CreateProjectDialog() 
         self.ui.setupUi(self)
         
     def accept(self):
         try:
             if self.ui.lineEditProjectName.text() == '':
                 raise Exception('Give a experiment name!')
-            self.workspace = Workspace()
-            self.experiment = Experiment()
-            self.experiment.raw_data = self.raw
-            #self.experiment.set_file_path(os.path.dirname('/tmp/'))
-            #self.experiment.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
-            self.experiment.author = self.ui.lineEditAuthor.text()
-            self.experiment.experiment_name = self.ui.lineEditProjectName.text()
-            self.workspace.working_directory = '/usr/local/bin/' #TODO: korjaa käyttäjä asettamaan workspace, ui:ssa ei vielä boksia valinnalle
-            self.experiment.save_experiment(self.workspace.working_directory)
             
-            #self.experiment.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
-            self.experiment.description = self.ui.textEditDescription.toPlainText()
-            self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
-            self.experiment.save_experiment_settings()
-            print self.ui.lineEditProjectName.text()
-            print self.experiment.get_date()
-            self.UIehd = MainWindow(self.experiment)
-            self.UIehd.show()
-            self.close()
-            self.parent.close()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()            
+            
+        try: 
+            self.workspace = Workspace()
+            self.experiment = Experiment()
+            self.experiment.raw_data = self.raw
+            self.experiment.author = self.ui.lineEditAuthor.text()
+            self.experiment.experiment_name = self.ui.\
+            lineEditProjectName.text()
+            self.experiment.description = self.ui.textEditDescription.toPlainText()
+
+        except AttributeError:
+            print "Cannot assign attribute to project"           
+            
+        
+        try:
+            # TODO: user should set this workspace from the mainWindow UI    
+            self.workspace.working_directory = '/usr/local/bin/' 
+            self.experiment.save_experiment(self.workspace.working_directory)
+                        
+            self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
+            self.experiment.save_experiment_settings()
+      
+        except IOError, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
+            
+        self.UIehd = MainWindow(self.experiment)
+        self.UIehd.show()
+        self.close()
+        self.parent.close()
+        
     
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
