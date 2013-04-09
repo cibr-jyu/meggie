@@ -22,7 +22,7 @@ class ParameterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_ParameterDialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(parent.raw).get_stim_channel_names()
+        stim_channels = MeasurementInfo(parent.raw).stim_channel_names
         print stim_channels
         self.ui.comboBoxStimulus.addItems(stim_channels)
         self.ui.lineEditEventID.setText('5')

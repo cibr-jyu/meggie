@@ -108,9 +108,9 @@ class MainWindow(QtGui.QMainWindow):
       
     def create_epochs(self):
         stim_channel = str(self.epochParameterDialog.ui.comboBoxStimulus.currentText())
-        event_id = self.epochParameterDialog.ui.lineEditEventID.text()
-        tmin = self.epochParameterDialog.ui.lineEditTmin.text()
-        tmax = self.epochParameterDialog.ui.lineEditTmax.text()
+        event_id = int(self.epochParameterDialog.ui.lineEditEventID.text())
+        tmin = float(self.epochParameterDialog.ui.lineEditTmin.text())
+        tmax = float(self.epochParameterDialog.ui.lineEditTmax.text())
         reject = self.epochParameterDialog.ui.lineEditReject.text()
         meg = self.epochParameterDialog.ui.checkBoxMeg.checkState() == QtCore.Qt.Checked
         eeg = self.epochParameterDialog.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
