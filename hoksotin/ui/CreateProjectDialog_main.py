@@ -42,8 +42,8 @@ class CreateProjectDialog(QtGui.QDialog):
             #self.experiment.set_file_path(os.path.dirname(str(self.ui.FilePathLineEdit.text())))
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.lineEditProjectName.text()
-            self.workspace.set_workspace('/usr/local/bin/') #TODO: korjaa käyttäjä asettamaan workspace, ui:ssa ei vielä boksia valinnalle
-            self.experiment.save_experiment(self.workspace.get_workspace())
+            self.workspace.working_directory = '/usr/local/bin/' #TODO: korjaa käyttäjä asettamaan workspace, ui:ssa ei vielä boksia valinnalle
+            self.experiment.save_experiment(self.workspace.working_directory)
             
             #self.experiment.save_raw(os.path.basename('/home/jaeilepp/' + self.ui.lineEditProjectName.text() + '/'))
             self.experiment.description = self.ui.textEditDescription.toPlainText()
