@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# coding: latin1
 
 """
 Created on Mar 14, 2013
@@ -29,16 +29,9 @@ class Statistic(object):
         arr           -- 1d numpy array
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
-        Raises an exceptiong if the sampling frequency is zero.
-        """
-        
-        if sfreq <= 0:
-            raise Exception('Sampling frequency cannot be zero.')
-        if arr == []:
-            raise Exception('No data found.')
-        start = int(round((tmin/1000)/sfreq))
-        stop = int(round(tmax/sfreq))+1
-        twindow = arr[start:stop]
+        """        
+        twindow, start = self.timewindow_to_samplewindow(sfreq, arr,
+                                                         tmin, tmax)
         time = (np.argmin(twindow)+ start) * 1000 / sfreq
         return np.min(twindow), time
         
@@ -64,13 +57,8 @@ class Statistic(object):
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
         """
-        if sfreq <= 0:
-            raise Exception('Sampling frequency cannot be zero.')
-        if arr == []:
-            raise Exception('No data found.')
-        start = int(round((tmin/1000)/sfreq))
-        stop = int(round(tmax/sfreq))+1
-        twindow = arr[start:stop]
+        twindow, start = self.timewindow_to_samplewindow(sfreq, arr,
+                                                         tmin, tmax)
         time = (np.argmax(twindow) + start) * 1000 / sfreq 
         return np.max(twindow), time
     
@@ -146,6 +134,28 @@ class Statistic(object):
                     max = a
         print max
         return max, xcoord, ycoord
+    
+    def timewindow_to_samplewindow(self, sfreq, arr, tmin, tmax):
+        """
+        Converts time window in milliseconds to samples.
+        Returns the time window in samples and the starting sample.
+        
+        Keyword arguments:
+        sfreq         -- Sampling frequency
+        arr           -- 1d numpy array
+        tmin          -- Start of the time window in milliseconds
+        tmax          -- End of the time window in milliseconds
+        Raises an exception if the sampling frequency is zero.
+        Raises an exception if the array is empty.
+        """
+        if sfreq <= 0:
+            raise Exception('Sampling frequency cannot be zero.')
+        if arr == []:
+            raise Exception('No data found.')
+        start = int(round((tmin/1000)*sfreq))
+        stop = int(round((tmax/1000)*sfreq))+1
+        return arr[start:stop], start
+        
     
 def main():
     s = Statistic()

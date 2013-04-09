@@ -1,7 +1,8 @@
+# coding: latin1
 """
 Created on Mar 14, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppäkangas
 """
 import unittest
 import numpy as np
@@ -16,11 +17,10 @@ class Test(unittest.TestCase):
         """
         a = [0,25,7,5,48,6,84,2,1]
         s = Statistic()
-        self.assertEqual(s.find_maximum(0.5, a, 1000, 5000), (84, 12000), 'Find_maximum failed')
-        self.assertEqual(s.find_maximum(1000, a), (84, 6), 'Find_maximum failed')
-        self.assertEqual(s.find_half_maximum(1000, a), (42, 6), 'Find_maximum failed')
-        a = [0,0,0,0,0,0,0]
-        self.assertEqual(s.find_maximum(0.5, a, 1000, 5000), (0,4000), 'Find_maximum failed')
+        self.assertEqual(s.find_maximum(1, a, 1000, 5000), (48, 4000), 'Find_maximum1 failed')
+        self.assertEqual(s.find_maximum(1000, a), (84, 6), 'Find_maximum2 failed')
+        self.assertEqual(s.find_half_maximum(1000, a), (42, 6), 'Find_maximum3 failed')
+        self.assertEqual(s.find_maximum(0.5, a, 1000, 5000), (25,2000), 'Find_maximum failed')
         pass
 
     def test_min(self):
