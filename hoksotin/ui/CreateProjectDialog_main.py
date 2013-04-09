@@ -41,26 +41,31 @@ class CreateProjectDialog(QtGui.QDialog):
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()            
+            self.messageBox.show()
+            return          
+           
+       
             
         try: 
             self.workspace = Workspace()
             self.experiment = Experiment()
-            self.experiment.raw_data = self.raw
+            self.workspace.working_directory = '/usr/local/bin/'  #'/tmp/' 
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
             lineEditProjectName.text()
             self.experiment.description = self.ui.textEditDescription.toPlainText()
+            print self.experiment.file_path
 
         except AttributeError:
-            print "Cannot assign attribute to project"           
-            
-        
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText("Cannot assign attribute to project")
+            self.messageBox.show()
+            return         
+                      
         try:
             # TODO: user should set this workspace from the mainWindow UI    
-            self.workspace.working_directory = '/tmp/' #'/usr/local/bin/' 
             self.experiment.save_experiment(self.workspace.working_directory)
-                        
+            self.experiment.raw_data = self.raw    
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.experiment.save_experiment_settings()
       
@@ -68,6 +73,8 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
+            return
+
             
         self.UIehd = MainWindow(self.experiment)
         self.UIehd.show()

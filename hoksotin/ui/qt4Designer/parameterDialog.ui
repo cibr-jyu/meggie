@@ -81,7 +81,14 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEditEventID"/>
+         <widget class="QSpinBox" name="spinBoxEventID">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>65536</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -108,7 +115,17 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEditTmin"/>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
+          <property name="minimum">
+           <double>-10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>-0.200000000000000</double>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -135,7 +152,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEditTmax"/>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax"/>
         </item>
        </layout>
       </item>
@@ -173,14 +190,14 @@
       <item>
        <widget class="QCheckBox" name="checkBoxMag">
         <property name="text">
-         <string>meg</string>
+         <string>mag</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBoxMeg_2">
+       <widget class="QCheckBox" name="checkBoxGrad">
         <property name="text">
-         <string>meg</string>
+         <string>grad</string>
         </property>
        </widget>
       </item>

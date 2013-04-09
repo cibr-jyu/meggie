@@ -187,7 +187,7 @@ class Experiment(object):
         settingsFile.close()
         
         
-    def load_experiment_settings(self):
+    def load_experiment_settings(self, fname):
         """
         Loads project settings from a file in the root of the experiment
         directory structure.
@@ -219,8 +219,6 @@ class Experiment(object):
         
         Keyword arguments:
         file_name      - - the full path and name of the chosen raw data file
-        folder_name    - - the name of the raw data file before the first _ character
-        raw_file_path  - - the full path and name of the saved raw data file
         """
         folder_name = file_name.split("_", 1)
         try:
@@ -232,6 +230,7 @@ class Experiment(object):
             print "no rights to save the raw file to the chosen path or bad raw file name"
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
+        self._raw_data = mne.fiff.Raw(raw_file_path)
             
     def write_commands(self, commands, node, parent=''):
         """

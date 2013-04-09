@@ -3,7 +3,8 @@
  
 import os,sys
 import pickle
-#from Project import Project
+
+import mne
  
 from PyQt4 import QtCore,QtGui
  
@@ -12,7 +13,8 @@ import messageBox
 from mainWindow_Ui import Ui_MainWindow
 from CreateProjectDialog_main import CreateProjectDialog
 from UIehd1_main import MainWindow
-from IPython.lib.pretty import pprint
+
+from experiment import Experiment
 
 #import measurementInfo
  
@@ -60,8 +62,10 @@ class Main(QtGui.QMainWindow):
         # TODO needs exception checking for corrupt/wrong type of file
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
-            project = pickle.load(output)
-            self.UIehd = MainWindow(project)
+            experiment = pickle.load(output)
+            #workaround for setting up the raw object
+            experiment.raw_data = mne.fiff.Raw(experiment.raw_data.info.get('filename'))
+            self.UIehd = MainWindow(experiment)
             self.UIehd.show()
             self.close()
         
