@@ -16,14 +16,15 @@ class Workspace(object):
         Constructor
         
         Keyword arguments:
-        self.working_directory    - - Default workspace is used for the
+        self._working_directory    - - Default workspace is used for the
                                       measurement if user doesn't define.
         """
-        self.working_directory = os.getcwd()
+        self._working_directory = os.getcwd()
         
-        
-    def get_workspace(self):
-        return self.working_directory
+    @property    
+    def working_directory(self):
+        return self._working_directory
     
-    def set_workspace(self, working_directory):
-        self.working_directory = working_directory
+    @working_directory.setter
+    def working_directory(self, working_directory):
+        self._working_directory = working_directory
