@@ -13,11 +13,7 @@ class Workspace(object):
 
     def __init__(self):
         """
-        Constructor
-        
-        Keyword arguments:
-        self._working_directory    - - Default workspace is used for the
-                                      measurement if user doesn't define.
+        Constructor sets default working directory.
         """
         self._working_directory = os.getcwd()
         
@@ -27,4 +23,10 @@ class Workspace(object):
     
     @working_directory.setter
     def working_directory(self, working_directory):
+        """
+        Keyword arguments:
+        self._working_directory    - - Default workspace is used for the
+                                      measurement if user doesn't define.
+        """
+
         self._working_directory = working_directory

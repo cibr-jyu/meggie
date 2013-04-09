@@ -5,8 +5,10 @@ Created on Mar 6, 2013
 """
 
 import mne
-import time
+
 import os
+
+import time
 import re
 
 # Better to use pickle rather than cpickle, as project paths may
@@ -16,28 +18,19 @@ import shutil
 
 from node import Node
 from tree import Tree
-#import tree
 
 class Experiment(object):
     """
     Experiment holds information about the currently saved raw data,
-    the path of the data file, the _author, the date and _description.
+    path of the experiment file, _author, date and _description.
     """
     
     def __init__(self):
         """
-        Constructor
-        
-        Keyword arguments:
-        _experiment_name    - - the name of the project
-        _raw_data        - - the raw data file of the measured data
-        _file_path       - - the path of the saved project
-        _author          - - the _author of the project
-        _description     - - the _description of the project written by the _author
-        date            - - the time and date of the saved project
+        Constructor sets default values for attributes.
         """
         
-        self._experiment_name = 'project'
+        self._experiment_name = 'experiment'
         self._raw_data = 'no data specified'
         self._file_path = 'no path defined'
         self._author = 'unknown _author'
@@ -49,38 +42,41 @@ class Experiment(object):
     @property
     def experiment_name(self):
         """
-        Returns the name of the project.
+        Returns the name of the experiment.
         """
         return self._experiment_name
 
     @experiment_name.setter
     def experiment_name(self, experiment_name):
         """
-        Sets the name for the project.
+        Sets the name for the experiment.
         
         Keyword arguments:
-        experiment_name    - - experiment_name 
+        experiment_name    - - the name of the experiment 
         """
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):
                 self._experiment_name = experiment_name
             else:
-                raise Exception("Use only letters and numbers in project name")
+                raise Exception("Use only letters and numbers in experiment name")
         else:
-            raise Exception('Too long project name')
+            raise Exception('Too long experiment name')
     
     @property
     def file_path(self):
         """
-        Returns the path of the current project file.
+        Returns the path of the current experiment file.
         """
         return self._file_path
     
     @file_path.setter
     def file_path(self, file_path):
         """
-        Sets the given path for the project file.
+        Sets the given path for the experiment file.
         Raises exception if the given path doesn't exist.
+        
+        Keyword arguments:
+        file_path       - - the path of the saved experiment
         """
         if (os.path.isdir(file_path)): 
             self._file_path = file_path
@@ -90,15 +86,18 @@ class Experiment(object):
     @property
     def raw_data(self):
         """
-        Returns the raw data file of the project.
+        Returns the raw data file of the experiment.
         """
         return self._raw_data
     
     @raw_data.setter
     def raw_data(self, raw_data):
         """
-        Sets the raw data file for the project.
+        Sets the raw data file for the experiment.
         Raises exception if the given data type is wrong. 
+        
+        Keyword arguments:
+        raw_data        - - the raw data file of the measured data
         """
         if (isinstance(raw_data, mne.fiff.Raw)):
             self._raw_data = raw_data
@@ -108,17 +107,20 @@ class Experiment(object):
     @property
     def author(self):
         """
-        Returns the _author of the project
+        Returns the _author of the experiment
         """
         return self._author
     
     @author.setter
     def author(self, author):
         """
-        Sets the _author of the project. 
+        Sets the _author of the experiment.
         Raises exception if the _author name is too long.
         Raises exception if the _author name includes other characters
         than letters and numbers.
+        
+        Keyword arguments:
+        author          - - the _author of the experiment
         """
         if (len(author) <= 50):
             if re.match("^[A-Za-z0-9 ]*$", author):
@@ -130,24 +132,27 @@ class Experiment(object):
     
     def get_date(self):
         """
-        Returns the saving time and date of the project.
+        Returns the saving time and date of the experiment.
         """
         return self.date
     
     @property
     def description(self):
         """
-        Returns the _description of the project.
+        Returns the _description of the experiment.
         """
         return self._description
 
     @description.setter
     def description(self, description):
         """
-        Sets the _description of the project written by the _author.
+        Sets the _description of the experiment written by the _author.
         Raises exception if the _description is too long.
         Raises exception if the _description includes other characters
         than letters and numbers.        
+        
+        Keyword arguments:
+        description     - - the _description of the experiment written by the _author
         """
         if (len(description) <= 1000):
             if (re.match(
@@ -163,9 +168,8 @@ class Experiment(object):
     
     def save_experiment_settings(self):
         """
-        Saves project settings into a file in the root of the project
+        Saves experiment settings into a file in the root of the experiment
         directory structure.
- 
         """
         
         # String conversion, because shutil doesn't accept QStrings
@@ -185,20 +189,20 @@ class Experiment(object):
         
     def load_experiment_settings(self):
         """
-        Loads project settings from a file in the root of the project
+        Loads project settings from a file in the root of the experiment
         directory structure.
         
         Keyword arguments:
-        project    - - project object to save
+        experiment    - - experiment object to save
         """
         
     
     def save_experiment(self, workspace):
         """
-        Creates the project folder.
+        Creates the experiment folder.
         
         Keyword arguments:
-        workspace    - - workspace for the chosen project.
+        workspace    - - workspace for the chosen experiment.
         """
         self._file_path = workspace + self._experiment_name + '/'
         if os.path.exists(workspace):
@@ -208,7 +212,7 @@ class Experiment(object):
         
     def save_raw(self, file_name):
         """
-        Saves the raw data file into the project folder.
+        Saves the raw data file into the experiment folder.
         
         Keyword arguments:
         file_name      - - the full path and name of the chosen raw data file
