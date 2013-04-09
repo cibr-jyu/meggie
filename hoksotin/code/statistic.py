@@ -124,8 +124,9 @@ class Statistic(object):
         """
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
+                #create a new matrix with the size of the window
                 newmat = mat[y:h+y,x:w+x]
-                print newmat
+                #temporary variable to help finding the maximum
                 a = i.sum_over_rectangular_area((0,0), (w-1,h-1), newmat)
                 """ Save coordinates if a new maximum is found """
                 if a > max:

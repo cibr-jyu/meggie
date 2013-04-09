@@ -29,7 +29,7 @@ class MainWindow(QtGui.QMainWindow):
     '''
 
 
-    def __init__(self, project):
+    def __init__(self, experiment):
         '''
         Constructor
         '''
@@ -37,12 +37,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.tabEvoked = None
-        self.project = project
-        self.raw = project.get_raw_data() # Onko fiksua olla oma attribuutti???
+        self.experiment = experiment
+        self.raw = experiment.raw_data # Onko fiksua olla oma attribuutti???
         info = InfoDialog(self.raw, self.ui, False)
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
-        
+        self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         """ Draws a graph to the window"""
         
         """
@@ -129,6 +129,9 @@ class MainWindow(QtGui.QMainWindow):
         evoked = self.epochs.average()
         evoked.plot()
         """
+    
+    def on_currentChanged(self):
+        print self.ui.tabWidget.currentIndex()
     
     def __create_tab(self, title):
         """
