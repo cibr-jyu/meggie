@@ -12,6 +12,7 @@ class ParameterDialog(QtGui.QDialog):
     '''
     classdocs
     '''
+    index = 1
 
 
     def __init__(self, parent):
@@ -25,9 +26,12 @@ class ParameterDialog(QtGui.QDialog):
         stim_channels = MeasurementInfo(parent.raw).stim_channel_names
         print stim_channels
         self.ui.comboBoxStimulus.addItems(stim_channels)
+        self.ui.lineEditName.setText('Epoch' + str(self.__class__.index))
+        """
         self.ui.lineEditEventID.setText('5')
         self.ui.lineEditTmin.setText('-0.2')
         self.ui.lineEditTmax.setText('0.5')
+        """   
                 
     def on_browseButton_clicked(self, checked=None):
         """
@@ -43,6 +47,7 @@ class ParameterDialog(QtGui.QDialog):
         """
         self.close()
         self.parent.create_epochs()
+        self.__class__.index += 1
         
         """
         self.fname = self.fileEdit.text()

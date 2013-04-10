@@ -19,7 +19,7 @@
   <widget class="QDialogButtonBox" name="cancelOkButtonBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>200</x>
      <y>270</y>
      <width>176</width>
      <height>31</height>
@@ -159,9 +159,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="labelReject">
+         <widget class="QLabel" name="labelName">
           <property name="text">
-           <string>Reject:      </string>
+           <string>Epoch name:      </string>
           </property>
          </widget>
         </item>
@@ -179,7 +179,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEditReject"/>
+         <widget class="QLineEdit" name="lineEditName"/>
         </item>
        </layout>
       </item>

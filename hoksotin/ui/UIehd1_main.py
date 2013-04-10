@@ -108,18 +108,19 @@ class MainWindow(QtGui.QMainWindow):
       
     def create_epochs(self):
         stim_channel = str(self.epochParameterDialog.ui.comboBoxStimulus.currentText())
-        event_id = int(self.epochParameterDialog.ui.lineEditEventID.text())
-        tmin = float(self.epochParameterDialog.ui.lineEditTmin.text())
-        tmax = float(self.epochParameterDialog.ui.lineEditTmax.text())
-        reject = self.epochParameterDialog.ui.lineEditReject.text()
-        meg = self.epochParameterDialog.ui.checkBoxMeg.checkState() == QtCore.Qt.Checked
+        event_id = int(self.epochParameterDialog.ui.spinBoxEventID.value())
+        tmin = float(self.epochParameterDialog.ui.doubleSpinBoxTmin.value())
+        tmax = float(self.epochParameterDialog.ui.doubleSpinBoxTmax.value())
+        epoch_name = self.epochParameterDialog.ui.lineEditName.text()
+        mag = self.epochParameterDialog.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
+        grad = self.epochParameterDialog.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
         eeg = self.epochParameterDialog.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.epochParameterDialog.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.epochParameterDialog.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        epochs = Epochs(self.raw, stim_channel, meg, eeg, stim, eog, reject, float(tmin),
+        epochs = Epochs(self.raw, stim_channel, mag, grad, eeg, stim, eog, epoch_name, float(tmin),
                         float(tmax), int(event_id))
         #self.ui.tabEpoch = QtGui.QWidget()
-        self.__create_tab('Epoch')
+        self.__create_tab(epoch_name, 'epoch')
         
         """
         
@@ -132,8 +133,13 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_currentChanged(self):
         print self.ui.tabWidget.currentIndex()
+        self.tab = self.ui.tabWidget.currentWidget()
+        if self.tab.winId == 'epoch':
+            self.ui.pushButtonAverage.setEnabled(True)
+        else:
+            self.ui.pushButtonAverage.setEnabled(False)
     
-    def __create_tab(self, title):
+    def __create_tab(self, title, id):
         """
         Creates a new tab with a listWidget to tabWidget.
         
@@ -141,7 +147,7 @@ class MainWindow(QtGui.QMainWindow):
         tab           -- A QWidget
         title         -- Title for the tab
         """
-        tab = EpochTab(title, self.ui)
+        EpochTab(title, self.ui, id)
         """
         self.ui.tabWidget.addTab(tab, title)
         self.horizontalLayoutWidget = QtGui.QWidget(tab)

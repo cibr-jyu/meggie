@@ -14,7 +14,7 @@ class Epochs(object):
     """
 
 
-    def __init__(self, raw, stim_channel, meg, eeg, stim,
+    def __init__(self, raw, stim_channel, mag, grad, eeg, stim,
                  eog, reject, tmin=-0.2, tmax=0.5, event_id=0):
         """
         Constructor
@@ -30,6 +30,12 @@ class Epochs(object):
         """
         if stim_channel is None:
             raise Exception('No stimulus channel found.')
+        if mag and grad:
+            meg = True
+        elif mag:
+            meg = 'mag'
+        elif grad:
+            meg = 'grad'
         if isinstance(raw, mne.fiff.raw.Raw):
             events = eventList.Events(raw, stim_channel)
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
