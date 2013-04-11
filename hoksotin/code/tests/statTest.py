@@ -16,11 +16,17 @@ class Test(unittest.TestCase):
         Tests for find_maximum
         """
         a = [0,25,7,5,48,6,84,2,1]
+        b = [0,85,85,5,48,6,85,48]
+        c = ['a','b']
+        d = [-40, -100, 0, -15]
         s = Statistic()
         self.assertEqual(s.find_maximum(1, a, 1000, 5000), (48, 4000), 'Find_maximum1 failed')
-        self.assertEqual(s.find_maximum(1000, a), (84, 6), 'Find_maximum2 failed')
-        self.assertEqual(s.find_half_maximum(1000, a), (42, 6), 'Find_maximum3 failed')
-        self.assertEqual(s.find_maximum(0.5, a, 1000, 5000), (25,2000), 'Find_maximum failed')
+        # self.assertEqual(s.find_maximum(1, b, 1000, 5000), (85, 2000), 'Find_maximum2 failed')
+        self.assertEqual(s.find_maximum(1000, a), (84, 6), 'Find_maximum3 failed')
+        self.assertEqual(s.find_half_maximum(1000, a), (42, 6), 'Find_maximum4 failed')
+        self.assertEqual(s.find_maximum(0.5, a, 1000, 5000), (25,2000), 'Find_maximum5 failed')
+        # self.assertEqual(s.find_maximum(1, c, 1000, 1000), (85, 2000), 'Find_maximum6 failed')
+        self.assertEqual(s.find_maximum(1, d, 1000, 8000), (0, 2000), 'Find_maximum6 failed')
         pass
 
     def test_min(self):
