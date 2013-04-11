@@ -11,6 +11,7 @@ import os
 import time
 import re
 
+import numpy as np
 # Better to use pickle rather than cpickle, as project paths may
 # include unicode characters
 import pickle
@@ -38,6 +39,7 @@ class Experiment(object):
         self.date = time.strftime('%Y %m %d %X')
         self.tree = Tree()
         self.__index = 0
+        self._event_set = []
         
     @property
     def experiment_name(self):
@@ -165,6 +167,33 @@ class Experiment(object):
         else:
             raise Exception("Too long _description")
     
+    @property
+    def event_set(self):
+        """
+        Returns the events as a tuple, where the first element is the id
+        and the second element is the number of the events.
+        """
+        return self._event_set
+    
+    def create_event_set(self):
+        """
+        Creates an event set where the first element is the id
+        and the second element is the number of the events.
+        Raises type error if the raw_data attribute is not set or
+        if the data is not of type mne.fiff.Raw.
+        """
+        if not isinstance(self._raw_data, mne.fiff.Raw):
+            raise TypeError('Not a raw object')
+        events = mne.find_events(self._raw_data)
+        event_occ = [] #occurrences of all the events
+        for i in range(len(events)):
+            event_occ.append(events[i][2])
+        bins = np.bincount(event_occ) #number of events stored in an array
+        event_numbers = np.nonzero(bins)[0]
+        d = []
+        for i in event_numbers:
+            d.append((i, bins[i]))
+        print d
     
     def save_experiment_settings(self):
         """

@@ -65,7 +65,8 @@ class CreateProjectDialog(QtGui.QDialog):
         try:
             # TODO: user should set this workspace from the mainWindow UI    
             self.experiment.save_experiment(self.workspace.working_directory)
-            self.experiment.raw_data = self.raw    
+            self.experiment.raw_data = self.raw
+            self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.experiment.save_experiment_settings()
       

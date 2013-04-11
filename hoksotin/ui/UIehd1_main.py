@@ -5,14 +5,14 @@ Created on Mar 16, 2013
 '''
 from PyQt4 import QtCore,QtGui
 from UIehd7 import Ui_MainWindow
+
 import mne
+
 import pylab as pl
 from matplotlib.figure import Figure
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
-import subprocess
-import os
 
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
@@ -21,6 +21,7 @@ from maxFilterDialog_main import MaxFilterDialog
 from epochs import Epochs
 from eventList import Events
 from createEpochs import CreateEpochs
+from caller import Caller
 from widgets.create_tab import Tab, EpochTab
 
 class MainWindow(QtGui.QMainWindow):
@@ -40,6 +41,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment = experiment
         self.raw = experiment.raw_data # Onko fiksua olla oma attribuutti???
         info = InfoDialog(self.raw, self.ui, False)
+        self.caller = Caller()
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
@@ -85,21 +87,8 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64'
-        #os.environ['SUBJECT'] = 'jn'
-        #os.environ['SUBJECTS_DIR'] = '/usr/local/bin/ParkkosenPurettu/mri-fs'
-        #subprocess.Popen('export MNE_ROOT=/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64', shell=True)
-        #subprocess.Popen('export SUBJECT=jn', shell=True)
-        #subprocess.Popen('export SUBJECTS_DIR=/usr/local/bin/ParkkosenPurettu/mri-fs', shell=True)
-        subprocess.Popen('$MNE_ROOT', shell=True)
-        #proc = subprocess.Popen('/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64/bin/mne_browse_raw', shell=True, stdout=subprocess.PIPE,
-        #                        stderr=subprocess.STDOUT)
-        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + self.raw.info.get('filename'), shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        for line in proc.stdout.readlines():
-            print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval
+        self.caller.call_mne_browse_raw(self.raw.info.get('filename'))
+        
         
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
