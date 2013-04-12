@@ -20,7 +20,7 @@ from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 
 from epochs import Epochs
-from eventList import Events
+from events import Events
 from createEpochs import CreateEpochs
 from caller import Caller
 from widgets.create_tab import Tab, EpochTab

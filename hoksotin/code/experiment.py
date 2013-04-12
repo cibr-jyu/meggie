@@ -15,7 +15,6 @@ import numpy as np
 # Better to use pickle rather than cpickle, as project paths may
 # include unicode characters
 import pickle
-import shutil
 
 from node import Node
 from tree import Tree
@@ -185,15 +184,11 @@ class Experiment(object):
         if not isinstance(self._raw_data, mne.fiff.Raw):
             raise TypeError('Not a raw object')
         events = mne.find_events(self._raw_data)
-        event_occ = [] #occurrences of all the events
-        for i in range(len(events)):
-            event_occ.append(events[i][2])
-        bins = np.bincount(event_occ) #number of events stored in an array
-        event_numbers = np.nonzero(bins)[0]
-        d = []
-        for i in event_numbers:
-            d.append((i, bins[i]))
-        print d
+        bins = np.bincount(events[:,2]) #number of events stored in an array
+        d = dict()
+        for i in set(events[:,2]):
+            d[i] = bins[i]
+        self._event_set = d
     
     def save_experiment_settings(self):
         """

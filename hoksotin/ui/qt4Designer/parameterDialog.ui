@@ -9,18 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
-    <height>319</height>
+    <width>577</width>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Give parameters</string>
   </property>
   <widget class="QDialogButtonBox" name="cancelOkButtonBox">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>270</y>
+     <x>390</x>
+     <y>300</y>
      <width>176</width>
      <height>31</height>
     </rect>
@@ -32,16 +35,29 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QPushButton" name="pushButtonAdd">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>300</y>
+     <width>95</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add to list &gt;&gt;</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>6</y>
-     <width>351</width>
-     <height>251</height>
+     <y>10</y>
+     <width>541</width>
+     <height>281</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -68,27 +84,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxEventID">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>65536</number>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="comboBoxEventID"/>
         </item>
        </layout>
       </item>
@@ -100,19 +96,6 @@
            <string>Start time:</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
@@ -139,20 +122,17 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax">
+          <property name="maximum">
+           <double>9.900000000000000</double>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax"/>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -161,7 +141,7 @@
         <item>
          <widget class="QLabel" name="labelName">
           <property name="text">
-           <string>Epoch name:      </string>
+           <string>Event name:      </string>
           </property>
          </widget>
         </item>
@@ -183,49 +163,72 @@
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Include:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QCheckBox" name="checkBoxMag">
+            <property name="text">
+             <string>mag</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxGrad">
+            <property name="text">
+             <string>grad</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxEeg">
+            <property name="text">
+             <string>eeg</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxStim">
+            <property name="text">
+             <string>stim</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxEog">
+            <property name="text">
+             <string>eog</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
-      <item>
-       <widget class="QCheckBox" name="checkBoxMag">
-        <property name="text">
-         <string>mag</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxGrad">
-        <property name="text">
-         <string>grad</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxEeg">
-        <property name="text">
-         <string>eeg</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxStim">
-        <property name="text">
-         <string>stim</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxEog">
-        <property name="text">
-         <string>eog</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QListWidget" name="listWidgetEvents"/>
     </item>
    </layout>
   </widget>
+  <zorder>cancelOkButtonBox</zorder>
+  <zorder>listWidgetEvents</zorder>
+  <zorder>pushButtonAdd</zorder>
+  <zorder>label</zorder>
+  <zorder></zorder>
+  <zorder>label</zorder>
+  <zorder></zorder>
+  <zorder></zorder>
+  <zorder></zorder>
  </widget>
  <resources/>
  <connections>
@@ -236,7 +239,7 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>375</x>
+     <x>655</x>
      <y>300</y>
     </hint>
     <hint type="destinationlabel">
@@ -252,7 +255,7 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>375</x>
+     <x>655</x>
      <y>300</y>
     </hint>
     <hint type="destinationlabel">

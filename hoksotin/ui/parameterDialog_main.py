@@ -7,6 +7,9 @@ from PyQt4 import QtCore,QtGui
 from epochParameterDialog_UI import Ui_ParameterDialog
 
 from measurementInfo import MeasurementInfo
+from enaml.components.push_button import PushButton
+
+from epochs import Epochs
 
 class ParameterDialog(QtGui.QDialog):
     '''
@@ -25,30 +28,59 @@ class ParameterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         stim_channels = MeasurementInfo(parent.raw).stim_channel_names
         print stim_channels
+        keys = map(str, parent.experiment.event_set.keys())
+        print keys
         self.ui.comboBoxStimulus.addItems(stim_channels)
-        self.ui.lineEditName.setText('Epoch' + str(self.__class__.index))
+        self.ui.comboBoxEventID.addItems(keys)
+        self.ui.lineEditName.setText('Event' + str(self.__class__.index))
         """
         self.ui.lineEditEventID.setText('5')
         self.ui.lineEditTmin.setText('-0.2')
         self.ui.lineEditTmax.setText('0.5')
         """   
-                
+        
+        """        
     def on_browseButton_clicked(self, checked=None):
-        """
-        Called when Browse-button is pressed. Opens a file browser.        
-        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn')
         self.fileEdit.setText(self.fname)
+        """
+        
+    def create_epochs(self):
+        stim_channel = str(self.ui.comboBoxStimulus.currentText())
+        self.event_id = int(self.ui.comboBoxEventID.currentText())
+        tmin = float(self.ui.doubleSpinBoxTmin.value())
+        tmax = float(self.ui.doubleSpinBoxTmax.value())
+        epoch_name = self.ui.lineEditName.text()
+        mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
+        grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
+        eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
+        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
+        eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
+        epochs = Epochs(self.parent.raw, stim_channel, mag, grad, eeg, stim, eog, epoch_name, float(tmin),
+                        float(tmax), int(self.event_id))
+        return epochs
+        
+    def on_pushButtonAdd_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        epochs = self.create_epochs()
+        print epochs
+        self.__class__.index += 1
+        #id = self.ui.spinBoxEventID.value()
+        event_set = '(ID:' + str(self.event_id) + ', ' + str(self.parent.experiment.event_set.get(self.event_id)) + ' events)'
+        item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
+        item.setData(1, epochs)
+        self.ui.listWidgetEvents.addItem(item)
+        self.ui.lineEditName.setText('Event' + str(self.__class__.index))
+        #print self.parent.experiment.event_set
+        
         
     def accept(self):
         """
         Called when the OK button is pressed.
         """
-        self.close()
-        self.parent.create_epochs()
-        self.__class__.index += 1
-        
+        print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        self.close()        
         """
         self.fname = self.fileEdit.text()
         stim_channel = str(self.ui.comboBoxStimulus.currentText())

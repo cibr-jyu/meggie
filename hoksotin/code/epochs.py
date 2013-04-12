@@ -6,7 +6,7 @@ Created on Mar 12, 2013
 """
 import mne
 
-import eventList
+import events
 
 class Epochs(object):
     """
@@ -37,12 +37,12 @@ class Epochs(object):
         elif grad:
             meg = 'grad'
         if isinstance(raw, mne.fiff.raw.Raw):
-            events = eventList.Events(raw, stim_channel)
+            e = events.Events(raw, stim_channel)
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
             if picks is None:
                 raise Exception('Picks cannot be empty.')
-            self.epochs = mne.Epochs(raw, events.events, event_id,
+            self.epochs = mne.Epochs(raw, e.events, event_id,
                                      tmin, tmax, picks=picks)
         else:
             raise TypeError('Not a Raw object.')

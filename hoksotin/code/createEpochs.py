@@ -7,7 +7,7 @@ import mne
 import pylab as pl
 
 import epochs
-import eventList
+import events
 
 class CreateEpochs(object):
     '''
@@ -20,7 +20,7 @@ class CreateEpochs(object):
         '''
         Constructor
         '''
-        events = eventList.Events(raw, stim_channel)
+        events = events.Events(raw, stim_channel)
         picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
                                     eog=eog)
         e = epochs.Epochs(raw, events.events, picks, float(tmin), float(tmax),
