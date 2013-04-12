@@ -25,13 +25,13 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidgetEOGSettings">
+    <widget class="QTabWidget" name="tabWidgetECGSettings">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tabEOG1">
+     <widget class="QWidget" name="tabECG1">
       <attribute name="title">
-       <string>EOG settings</string>
+       <string>ECG settings</string>
       </attribute>
       <widget class="QGroupBox" name="groupBoxEpoch">
        <property name="geometry">
@@ -171,7 +171,7 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBoxFilteringEOG">
+      <widget class="QGroupBox" name="groupBoxFilteringECG">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -181,7 +181,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Filtering EOG channel</string>
+        <string>Filtering ECG channel</string>
        </property>
        <widget class="QFrame" name="frame_6">
         <property name="geometry">
@@ -218,7 +218,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBoxLowPass"/>
+             <widget class="QSpinBox" name="spinBoxLowPassECG"/>
             </item>
            </layout>
           </item>
@@ -232,7 +232,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBoxHighPass"/>
+             <widget class="QSpinBox" name="spinBoxHighPassECG"/>
             </item>
            </layout>
           </item>
@@ -407,7 +407,7 @@
        </widget>
       </widget>
      </widget>
-     <widget class="QWidget" name="tabEOG2">
+     <widget class="QWidget" name="tabECG2">
       <attribute name="title">
        <string>Bads etc.</string>
       </attribute>
@@ -539,6 +539,28 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>370</y>
+         <width>511</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Channel to use for ECG detection (Required if no ECG found):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_3"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -548,8 +570,8 @@
   <tabstop>spinBoxTmin</tabstop>
   <tabstop>spinBoxTmax</tabstop>
   <tabstop>lineEditEventID</tabstop>
-  <tabstop>spinBoxLowPass</tabstop>
-  <tabstop>spinBoxHighPass</tabstop>
+  <tabstop>spinBoxLowPassECG</tabstop>
+  <tabstop>spinBoxHighPassECG</tabstop>
   <tabstop>spinBoxGrad</tabstop>
   <tabstop>spinBoxMag</tabstop>
   <tabstop>spinBoxEeg</tabstop>
@@ -557,7 +579,7 @@
   <tabstop>spinBoxHigh</tabstop>
   <tabstop>lineEdit</tabstop>
   <tabstop>lineEdit_2</tabstop>
-  <tabstop>tabWidgetEOGSettings</tabstop>
+  <tabstop>tabWidgetECGSettings</tabstop>
   <tabstop>lineEditBad</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxTaps</tabstop>
