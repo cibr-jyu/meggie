@@ -57,22 +57,36 @@ class ParameterDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        epochs = Epochs(self.parent.raw, stim_channel, mag, grad, eeg, stim, eog, epoch_name, float(tmin),
-                        float(tmax), int(self.event_id))
+        try:
+            epochs = Epochs(self.parent.raw, stim_channel, mag, grad, eeg,
+                            stim, eog, epoch_name, float(tmin),
+                            float(tmax), int(self.event_id))
+        except:
+            return #TODO error handling
         return epochs
         
     def on_pushButtonAdd_clicked(self, checked=None):
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return # Standard workaround
         epochs = self.create_epochs()
         print epochs
         self.__class__.index += 1
         #id = self.ui.spinBoxEventID.value()
-        event_set = '(ID:' + str(self.event_id) + ', ' + str(self.parent.experiment.event_set.get(self.event_id)) + ' events)'
-        item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
-        item.setData(1, epochs)
-        self.ui.listWidgetEvents.addItem(item)
-        self.ui.lineEditName.setText('Event' + str(self.__class__.index))
+        if isinstance(epochs, Epochs):
+            event_set = '(ID:' + str(self.event_id) + ', ' + str(self.parent.experiment.event_set.get(self.event_id)) + ' events)'
+            item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
+            item.setData(1, epochs)
+            self.ui.listWidgetEvents.addItem(item)
+            self.ui.lineEditName.setText('Event' + str(self.__class__.index))
+            self.ui.listWidgetEvents.setCurrentItem(item) #select the last item
+            self.ui.pushButtonRemove.setEnabled(True)
         #print self.parent.experiment.event_set
+        
+    def on_pushButtonRemove_clicked(self, checked=None):
+        if checked is None: return # Standard workaround
+        row = self.ui.listWidgetEvents.currentRow()
+        self.ui.listWidgetEvents.takeItem(row)
+        if self.ui.listWidgetEvents.currentRow() < 0:
+            self.ui.pushButtonRemove.setEnabled(False)
         
         
     def accept(self):
