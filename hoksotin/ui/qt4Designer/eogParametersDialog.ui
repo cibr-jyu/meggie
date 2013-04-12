@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidgetEOGSettings">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabEOG1">
       <attribute name="title">
@@ -405,12 +405,6 @@
          </layout>
         </widget>
        </widget>
-       <zorder>frame</zorder>
-       <zorder>groupBoxFilteringEOG</zorder>
-       <zorder>groupBoxSSP</zorder>
-       <zorder>groupBoxFilter</zorder>
-       <zorder>groupBoxFilteringEOG</zorder>
-       <zorder>groupBoxSSP</zorder>
       </widget>
      </widget>
      <widget class="QWidget" name="tabEOG2">
@@ -468,7 +462,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -490,7 +484,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -550,6 +544,29 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinBoxTmin</tabstop>
+  <tabstop>spinBoxTmax</tabstop>
+  <tabstop>lineEditEventID</tabstop>
+  <tabstop>spinBoxLowPass</tabstop>
+  <tabstop>spinBoxHighPass</tabstop>
+  <tabstop>spinBoxGrad</tabstop>
+  <tabstop>spinBoxMag</tabstop>
+  <tabstop>spinBoxEeg</tabstop>
+  <tabstop>spinBoxLow</tabstop>
+  <tabstop>spinBoxHigh</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>tabWidgetEOGSettings</tabstop>
+  <tabstop>lineEditBad</tabstop>
+  <tabstop>spinBoxStart</tabstop>
+  <tabstop>spinBoxTaps</tabstop>
+  <tabstop>spinBoxJobs</tabstop>
+  <tabstop>checkBoxEEGProj</tabstop>
+  <tabstop>checkBoxSSPProj</tabstop>
+  <tabstop>checkBoxSSPCompute</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -559,8 +576,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>648</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -575,8 +592,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>648</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
