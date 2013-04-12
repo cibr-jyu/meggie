@@ -163,7 +163,7 @@ class Experiment(object):
                 self._description = description
             else:
                 raise Exception("Use only letters and " + 
-                                "numbers in your _description")  
+                                "numbers in your _description")
         else:
             raise Exception("Too long _description")
     

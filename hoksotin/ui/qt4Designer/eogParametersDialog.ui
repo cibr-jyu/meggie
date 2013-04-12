@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidgetEOGSettings">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabEOG1">
       <attribute name="title">
@@ -405,12 +405,6 @@
          </layout>
         </widget>
        </widget>
-       <zorder>frame</zorder>
-       <zorder>groupBoxFilteringEOG</zorder>
-       <zorder>groupBoxSSP</zorder>
-       <zorder>groupBoxFilter</zorder>
-       <zorder>groupBoxFilteringEOG</zorder>
-       <zorder>groupBoxSSP</zorder>
       </widget>
      </widget>
      <widget class="QWidget" name="tabEOG2">
@@ -468,7 +462,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -490,7 +484,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>

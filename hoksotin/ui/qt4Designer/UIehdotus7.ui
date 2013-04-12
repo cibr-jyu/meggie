@@ -75,7 +75,7 @@
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>150</y>
+       <y>160</y>
        <width>391</width>
        <height>611</height>
       </rect>
@@ -385,10 +385,10 @@
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>146</width>
-       <height>70</height>
+       <x>10</x>
+       <y>0</y>
+       <width>192</width>
+       <height>144</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -406,13 +406,27 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonEOG">
+        <property name="text">
+         <string>Calculate EOG projections</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonECG">
+        <property name="text">
+         <string>Calculate ECG projections</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>30</y>
+       <x>260</x>
+       <y>10</y>
        <width>87</width>
        <height>107</height>
       </rect>
@@ -441,41 +455,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>0</y>
-       <width>100</width>
-       <height>36</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
-      <item>
-       <widget class="QPushButton" name="pushButtonBack">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>image1.xpm</normaloff>image1.xpm</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonForward">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>image2.xpm</normaloff>image2.xpm</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <zorder>layoutWidget</zorder>
     <zorder>layoutWidget</zorder>
     <zorder>layoutWidget</zorder>
     <zorder>tabWidget</zorder>

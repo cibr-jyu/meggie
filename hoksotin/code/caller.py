@@ -28,3 +28,16 @@ class Caller(object):
             print line
         retval = proc.wait()
         print "the program return code was %d" % retval
+        
+    def call_maxfilter(self, dic, custom):
+        bs = 'maxfilter '
+        for i in range(len(dic)):
+            bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
+        bs += custom
+        print bs
+        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        for line in proc.stdout.readlines():
+            print line
+        retval = proc.wait()
+        print "the program return code was %d" % retval

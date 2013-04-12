@@ -6,6 +6,7 @@ Created on Mar 28, 2013
 from maxFilterDialog import Ui_Dialog
 from settings import Settings
 import messageBox
+from caller import Caller
 
 import os
 import subprocess
@@ -29,6 +30,7 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
         
+        """
     def call_maxfilter(self, dic, custom):
         bs = 'maxfilter '
         for i in range(len(dic)):
@@ -41,6 +43,7 @@ class MaxFilterDialog(QtGui.QDialog):
             print line
         retval = proc.wait()
         print "the program return code was %d" % retval
+        """
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -121,7 +124,8 @@ class MaxFilterDialog(QtGui.QDialog):
                 dictionary['-st'] = self.ui.spinBoxBufferLength.value()
                 dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
             custom = self.ui.textEditCustom.toPlainText()
-            t = Thread(target=self.call_maxfilter, args=(dictionary, custom,))
+            caller = Caller()
+            t = Thread(target=caller.call_maxfilter, args=(dictionary, custom,))
             t.start()
             self.close()
         except Exception, err:
