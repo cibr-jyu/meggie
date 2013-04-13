@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1007</width>
+    <width>892</width>
     <height>701</height>
    </rect>
   </property>
@@ -24,13 +24,13 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QTabWidget" name="tabWidget_2">
+       <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>1</number>
         </property>
         <widget class="QWidget" name="tabBlank">
          <attribute name="title">
-          <string>     </string>
+          <string/>
          </attribute>
         </widget>
         <widget class="QWidget" name="tabRaw">
@@ -304,12 +304,12 @@
               <property name="title">
                <string>Triggers</string>
               </property>
-              <widget class="QTableView" name="triggerTable">
+              <widget class="QListWidget" name="listWidget">
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>31</y>
-                 <width>331</width>
+                 <y>30</y>
+                 <width>241</width>
                  <height>141</height>
                 </rect>
                </property>
@@ -435,7 +435,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1007</width>
+     <width>892</width>
      <height>29</height>
     </rect>
    </property>

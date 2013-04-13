@@ -8,7 +8,7 @@ import messageBox
 from experiment import Experiment
 from workspace import Workspace
 
-#from mainWindow_mainTesti import MainWindow
+from UIehd1_main import MainWindow
 from infoDialog_Ui import Ui_infoDialog
 from CreateProjectDialog_Ui import Ui_CreateProjectDialog
 
@@ -33,7 +33,6 @@ class CreateProjectDialog(QtGui.QDialog):
         self.ui = Ui_CreateProjectDialog() 
         self.ui.setupUi(self)
         
-        
     def accept(self):
         try:
             if self.ui.lineEditProjectName.text() == '':
@@ -45,6 +44,7 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.show()
             return          
            
+       
             
         try: 
             self.workspace = Workspace()
@@ -61,7 +61,6 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.labelException.setText("Cannot assign attribute to project")
             self.messageBox.show()
             return         
-           
                       
         try:
             # TODO: user should set this workspace from the mainWindow UI    
@@ -77,13 +76,13 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.show()
             return
 
-        
-        self.parent.experiment = self.experiment
-        self.parent.raw = self.experiment.raw_data
-        self.parent.ui.tabWidget.insertTab(1, self.parent.ui.tabRaw, "Raw")
+            
+        self.UIehd = MainWindow(self.experiment)
+        self.UIehd.show()
         self.close()
+        self.parent.close()
         
-        
+    
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
@@ -100,7 +99,6 @@ class CreateProjectDialog(QtGui.QDialog):
                 
         #QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
         self.ui.FilePathLineEdit.setText(self.fname)
-        
         
     def on_showFileInfoButton_clicked(self):
         try:
