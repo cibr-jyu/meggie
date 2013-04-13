@@ -337,6 +337,24 @@
                </layout>
               </item>
               <item>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <item>
+                 <widget class="QPushButton" name="pushButtonEOG">
+                  <property name="text">
+                   <string>Calculate EOG projections</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonECG">
+                  <property name="text">
+                   <string>Calculate ECG projections</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
                <spacer name="horizontalSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
