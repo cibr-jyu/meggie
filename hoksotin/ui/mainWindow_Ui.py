@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus10.ui'
 #
-# Created: Sat Apr 13 13:41:16 2013
+# Created: Sat Apr 13 15:16:48 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -195,9 +195,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.triggersBox = QtGui.QGroupBox(self.tabRaw)
         self.triggersBox.setObjectName(_fromUtf8("triggersBox"))
-        self.triggerTable = QtGui.QTableView(self.triggersBox)
-        self.triggerTable.setGeometry(QtCore.QRect(10, 31, 331, 141))
-        self.triggerTable.setObjectName(_fromUtf8("triggerTable"))
+        self.listWidget = QtGui.QListWidget(self.triggersBox)
+        self.listWidget.setGeometry(QtCore.QRect(10, 30, 241, 141))
+        self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.verticalLayout_4.addWidget(self.triggersBox)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
@@ -210,6 +210,15 @@ class Ui_MainWindow(object):
         self.pushButtonMaxFilter.setObjectName(_fromUtf8("pushButtonMaxFilter"))
         self.verticalLayout.addWidget(self.pushButtonMaxFilter)
         self.horizontalLayout_11.addLayout(self.verticalLayout)
+        self.verticalLayout_5 = QtGui.QVBoxLayout()
+        self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
+        self.pushButtonEOG = QtGui.QPushButton(self.tabRaw)
+        self.pushButtonEOG.setObjectName(_fromUtf8("pushButtonEOG"))
+        self.verticalLayout_5.addWidget(self.pushButtonEOG)
+        self.pushButtonECG = QtGui.QPushButton(self.tabRaw)
+        self.pushButtonECG.setObjectName(_fromUtf8("pushButtonECG"))
+        self.verticalLayout_5.addWidget(self.pushButtonECG)
+        self.horizontalLayout_11.addLayout(self.verticalLayout_5)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
@@ -269,7 +278,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -296,6 +305,8 @@ class Ui_MainWindow(object):
         self.triggersBox.setTitle(_translate("MainWindow", "Triggers", None))
         self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
         self.pushButtonMaxFilter.setText(_translate("MainWindow", "MaxFilter", None))
+        self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections", None))
+        self.pushButtonECG.setText(_translate("MainWindow", "Calculate ECG projections", None))
         self.pushButtonEpoch.setText(_translate("MainWindow", "Epoch", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average", None))
         self.pushButtonVisualize.setText(_translate("MainWindow", "Visualize", None))
@@ -307,14 +318,4 @@ class Ui_MainWindow(object):
         self.actionCreate_experiment.setText(_translate("MainWindow", "Create new experiment...", None))
         self.actionOpen_experiment.setText(_translate("MainWindow", "Open experiment...", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 
