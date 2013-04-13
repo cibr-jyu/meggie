@@ -102,11 +102,12 @@ class MaxFilterDialog(QtGui.QDialog):
                 elif button_position == \
                 'Transform data into averaged head position':
                     pass
-            if self.ui.checkBoxStorePosition.checkState() == QtCore.Qt.Checked:
-                dictionary['-hp'] = '' #TODO Viittaus projektin kansioon!
+            if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
+                dictionary['-hp'] = ''
             dictionary['-f'] = self.raw.info.get('filename')
+            print self.raw.info.get('filename')
             """raw.fif -> raw_sss.fif"""
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif' #TODO Viittaus projektin kansioon!
+            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
             if fit: dictionary['-origin fit'] = ''
             else: dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
             dictionary['-linefreq'] = self.ui.spinBoxLineFreq.value()
@@ -125,7 +126,8 @@ class MaxFilterDialog(QtGui.QDialog):
                 dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
             custom = self.ui.textEditCustom.toPlainText()
             caller = Caller()
-            t = Thread(target=caller.call_maxfilter, args=(dictionary, custom,))
+            t = Thread(target=caller.call_maxfilter,
+                       args=(dictionary, custom,))
             t.start()
             self.close()
         except Exception, err:

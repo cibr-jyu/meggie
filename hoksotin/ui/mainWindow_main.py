@@ -23,11 +23,12 @@ from CreateProjectDialog_main import CreateProjectDialog
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
 from maxFilterDialog_main import MaxFilterDialog
+from eogParametersDialog_main import EogParametersDialog
 import messageBox
 
 from experiment import Experiment
 from epochs import Epochs
-from eventList import Events
+from events import Events
 
 #from createEpochs import CreateEpochs
 #from widgets.create_tab import Tab, EpochTab
@@ -149,6 +150,10 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.pushButtonAverage.setEnabled(False)
         
+    def on_pushButtonEOG_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        self.eogDialog = EogParametersDialog(self)
+        self.eogDialog.show()
        
 def main(): 
     app = QtGui.QApplication(sys.argv)

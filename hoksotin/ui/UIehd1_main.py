@@ -4,7 +4,7 @@ Created on Mar 16, 2013
 @author: jaeilepp
 '''
 from PyQt4 import QtCore,QtGui
-from UIehd7 import Ui_MainWindow
+from UIehd10 import Ui_MainWindow
 
 import mne
 

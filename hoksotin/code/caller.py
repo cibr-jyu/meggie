@@ -50,5 +50,19 @@ class Caller(object):
     def call_ecg_ssp(self):
         pass
     
-    def call_eog_ssp(self):
-        pass
+    def call_eog_ssp(self, dic):
+        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
+        bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
+        for i in range(len(dic)):
+            bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
+        try:
+            subprocess.Popen('$MNE_ROOT', shell=True)
+            proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+        except:
+            pass #TODO error handling
+        for line in proc.stdout.readlines():
+            print line
+        retval = proc.wait()
+        print "the program return code was %d" % retval
+        
