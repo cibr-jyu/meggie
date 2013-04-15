@@ -6,18 +6,24 @@ import mne
 
 
 class InfoDialog(QtGui.QDialog):
-    def __init__(self, raw, info, create_window):
+    '''
+    Dialog to get and show the info from the raw file. Can be used to direct
+    the extracted information from the file to the dialog itself or some
+    other ui with similar element names. Currently used for setting the
+    parameters in the Raw tab of the mainWindow. 
+    '''
+    def __init__(self, raw, targetUi, create_window):
         """
         Constructor
         
         Keyword arguments:
         raw           -- Raw object
-        info          -- Ui object that receives the info data
+        targetUi      -- Ui object that receives the info data
         create_window -- Boolean that tells if a new window is created
         """
         QtGui.QDialog.__init__(self)
         self.raw = raw
-        self.ui = info
+        self.ui = targetUi
         if create_window:
             self.ui.setupUi(self)
             self.ui.tab_list = []
@@ -29,8 +35,6 @@ class InfoDialog(QtGui.QDialog):
         
     def _setLabelTestValues(self):
         
-        #raw = mne.fiff.Raw('/home/kpaliran/Hoksotin/parkkosenpaketti/meg/jn/jn_multimodal01_raw_sss.fif')
-        #raw = mne.fiff.Raw('/usr/local/bin/ParkkosenPurettu/meg/jn/jn_multimodal01_raw_sss.fif')
         self.mi = MeasurementInfo(self.raw)
         
         self.ui.labelDateValue.setText(self.mi.date)

@@ -49,10 +49,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabEvoked = None
         
         # Only leaves the blank tab in tabWidget initially
-        # TODO: remove by id
-        self.ui.tabWidget.removeTab(1)
-        self.ui.tabWidget.removeTab(1)
-        #self.ui.tabWidget.removeTab(0)
+        while self.ui.tabWidget.count() > 0:
+            self.ui.tabWidget.removeTab(0)
+        
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
@@ -80,8 +79,10 @@ class MainWindow(QtGui.QMainWindow):
             
             #workaround for setting up the raw object after pickling
             self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))            
-            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
-            self.ui.tabWidget.insertTab(1, self.ui.tabRaw, "Preprocessing")
+            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Preprocessing")
+            #self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
+            
+            # Reads the raw data info and sets it to the labels of
             InfoDialog(self.experiment.raw_data, self.ui, False)
         
         else:
