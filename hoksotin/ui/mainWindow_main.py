@@ -48,7 +48,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.setupUi(self)
         self.ui.tabEvoked = None
         
-        #Only leaves the blank tab in tabWidget initially
+        # Only leaves the blank tab in tabWidget initially
+        # TODO: remove by id
         self.ui.tabWidget.removeTab(1)
         self.ui.tabWidget.removeTab(1)
         #self.ui.tabWidget.removeTab(0)
@@ -92,6 +93,10 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.labelException.setText('Project files not found.')
             self.messageBox.show()
           
+     
+    #def setup_ui_by_experiment_state(self):
+        
+         
         
     def on_pushButtonEpoch_clicked(self, checked=None):
         """
