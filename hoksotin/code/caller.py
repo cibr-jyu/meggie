@@ -20,7 +20,7 @@ class Caller(object):
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
         """
-        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
+        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
             proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + filename,
                                     shell=True, stdout=subprocess.PIPE,
@@ -49,7 +49,7 @@ class Caller(object):
         pass
     
     def call_eog_ssp(self, dic):
-        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
+        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '

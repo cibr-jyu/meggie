@@ -49,8 +49,8 @@ class ParameterDialog(QtGui.QDialog):
     def create_epochs(self):
         stim_channel = str(self.ui.comboBoxStimulus.currentText())
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        tmin = float(self.ui.doubleSpinBoxTmin.value())
-        tmax = float(self.ui.doubleSpinBoxTmax.value())
+        self.tmin = float(self.ui.doubleSpinBoxTmin.value())
+        self.tmax = float(self.ui.doubleSpinBoxTmax.value())
         epoch_name = self.ui.lineEditName.text()
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
         grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
@@ -59,8 +59,8 @@ class ParameterDialog(QtGui.QDialog):
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         try:
             epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag, grad, eeg,
-                            stim, eog, epoch_name, float(tmin),
-                            float(tmax), int(self.event_id))
+                            stim, eog, epoch_name, float(self.tmin),
+                            float(self.tmax), int(self.event_id))
         except:
             return #TODO error handling
         return epochs
@@ -71,7 +71,10 @@ class ParameterDialog(QtGui.QDialog):
         print epochs
         self.__class__.index += 1
         if isinstance(epochs, Epochs):
-            event_set = '(ID:' + str(self.event_id) + ', ' + str(self.parent.experiment.event_set.get(self.event_id)) + ' events)'
+            event_set = '(ID:' + str(self.event_id) + ', ' + \
+                str(self.parent.experiment.event_set.get(self.event_id)) + \
+                ' events, start: ' + str(self.tmin) + ', end: ' + \
+                str(self.tmax) + ')'
             item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
             item.setData(1, epochs)
             self.ui.listWidgetEvents.addItem(item)

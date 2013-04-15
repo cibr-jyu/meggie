@@ -92,7 +92,10 @@ class MaxFilterDialog(QtGui.QDialog):
             dictionary['-f'] = self.raw.info.get('filename')
             print self.raw.info.get('filename')
             """raw.fif -> raw_sss.fif"""
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
+            if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
+                dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_tsss.fif'
+            else:
+                dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
             if fit: dictionary['-origin fit'] = ''
             else: dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
             dictionary['-linefreq'] = self.ui.spinBoxLineFreq.value()
