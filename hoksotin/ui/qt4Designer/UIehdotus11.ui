@@ -26,7 +26,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabRaw">
          <attribute name="title">
@@ -386,47 +386,20 @@
          <attribute name="title">
           <string>Preprocessing</string>
          </attribute>
-         <widget class="QWidget" name="layoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>490</x>
-            <y>70</y>
-            <width>87</width>
-            <height>107</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QPushButton" name="pushButtonEpoch">
-             <property name="text">
-              <string>Epoch</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAverage">
-             <property name="text">
-              <string>Average</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonVisualize">
-             <property name="text">
-              <string>Visualize</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="groupBoxPreprocessingCheckBoxes">
           <property name="geometry">
            <rect>
             <x>10</x>
             <y>20</y>
-            <width>114</width>
+            <width>241</width>
             <height>126</height>
            </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
@@ -439,29 +412,38 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
-            <widget class="QCheckBox" name="checkBox">
+            <widget class="QCheckBox" name="checkBoxMaxFilter">
              <property name="text">
               <string>Maxfilter</string>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox_2">
-             <property name="text">
-              <string>ECG</string>
+             <property name="checkable">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_3">
+            <widget class="QCheckBox" name="checkBoxECG">
+             <property name="text">
+              <string>ECG</string>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxEOG">
              <property name="text">
               <string>EOG</string>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="groupBoxAvailablePreprocessingSteps">
           <property name="geometry">
            <rect>
             <x>10</x>
@@ -471,7 +453,7 @@
            </rect>
           </property>
           <property name="title">
-           <string>Available actions</string>
+           <string>Available actions:</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">

@@ -46,15 +46,23 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.tabEvoked = None
         
-        # Only leaves the blank tab in tabWidget initially
+       
+        
+        # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
         
-        self.ui.pushButtonAverage.setEnabled(False)
-        self.ui.pushButtonVisualize.setEnabled(False)
-        self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
+        
+        #self.ui.tabEvoked = None
+        '''
+        Old code for activating buttons when experiment state changes
+        TODO: check and remove
+        #self.ui.pushButtonAverage.setEnabled(False)
+        #self.ui.pushButtonVisualize.setEnabled(False)
+        #self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
+        '''
+        
         
     def on_actionCreate_experiment_triggered(self):
         """
@@ -79,8 +87,8 @@ class MainWindow(QtGui.QMainWindow):
             
             #workaround for setting up the raw object after pickling
             self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))            
-            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Preprocessing")
-            #self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
+            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+            self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
             
             # Reads the raw data info and sets it to the labels of
             InfoDialog(self.experiment.raw_data, self.ui, False)
@@ -94,7 +102,6 @@ class MainWindow(QtGui.QMainWindow):
     #def setup_ui_by_experiment_state(self):
         
          
-        
     def on_pushButtonEpoch_clicked(self, checked=None):
         """
         Opens the epoch dialog. 
@@ -103,6 +110,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.epochParameterDialog = ParameterDialog(self)
         self.epochParameterDialog.show()        
+        
         
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
@@ -126,25 +134,34 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         caller = Caller()
         caller.call_mne_browse_raw(self.experiment.raw_data.info.get('filename'))
+    
         
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
         self.maxFilterDialog.show()
     
+    
     def on_currentChanged(self):
+        """
+        Keeps track of the active tab.
+        """
         print self.ui.tabWidget.currentIndex()
         self.tab = self.ui.tabWidget.currentWidget()
+        
+        '''
         #if self.tab == None: return
         if self.tab.winId == 'epoch':
             self.ui.pushButtonAverage.setEnabled(True)
         else:
             self.ui.pushButtonAverage.setEnabled(False)
+        '''
         
     def on_pushButtonEOG_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.show()
+    
        
 def main(): 
     app = QtGui.QApplication(sys.argv)

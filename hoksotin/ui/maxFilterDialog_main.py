@@ -115,6 +115,7 @@ class MaxFilterDialog(QtGui.QDialog):
             t = Thread(target=caller.call_maxfilter,
                        args=(dictionary, custom,))
             t.start()
+            self.parent.ui.checkBoxMaxFilter.setCheckState(2)
             self.close()
         except Exception, err:
             self.messageBox = messageBox.AppForm()
