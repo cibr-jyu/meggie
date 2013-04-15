@@ -29,6 +29,7 @@ import messageBox
 from experiment import Experiment
 from epochs import Epochs
 from events import Events
+from caller import Caller
 
 #from createEpochs import CreateEpochs
 #from widgets.create_tab import Tab, EpochTab
@@ -50,11 +51,6 @@ class MainWindow(QtGui.QMainWindow):
         #Only leaves the blank tab in tabWidget initially
         self.ui.tabWidget.removeTab(1)
         self.ui.tabWidget.removeTab(1)
-        
-        self.experiment = None
-        self.raw = None
-         
-        #info = InfoDialog(self.raw, self.ui, False)
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
@@ -76,13 +72,19 @@ class MainWindow(QtGui.QMainWindow):
                self, "Select project directory"))
         
         fname = path + '/' + path.split('/')[-1] + '.pro'
-         # TODO needs exception checking for corrupt/wrong type of file
+        # TODO needs exception checking for corrupt/wrong type of file
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
-            #workaround for setting up the raw object
-            self.experiment.raw_data = mne.fiff.Raw(experiment.raw_data.info.get('filename'))
             
+            print self.experiment.raw_data.info.get('filename')
+            #workaround for setting up the raw object after pickling
+            #self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))
+            
+            print self.experiment.raw_data.info.get('filename')
+            
+            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+            self.ui.tabWidget.insertTab(1, self.ui.tabRaw, "Preprocessing")
         
         else:
             self.messageBox = messageBox.AppForm()
@@ -97,10 +99,7 @@ class MainWindow(QtGui.QMainWindow):
         # Standard workaround for file dialog opening twice
         if checked is None: return
         self.epochParameterDialog = ParameterDialog(self)
-        self.epochParameterDialog.show()
-        #eveFile = self.raw.info.get('filename')[:-4] + '-eve.fif'
-        #self.epochParameterDialog.fileEdit.setText(eveFile)
-        
+        self.epochParameterDialog.show()        
         
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
@@ -122,23 +121,12 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        
-        # Should this path be in the program settings?
-        os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64'
-        subprocess.Popen('$MNE_ROOT', shell=True)
-        
-        # Opens browse_raw in a separate thread
-        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + self.raw.info.get('filename'), shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        for line in proc.stdout.readlines():
-            print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval  
-        
+        caller = Caller()
+        caller.call_mne_browse_raw(self.experiment.raw_data.info.get('filename'))
         
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.maxFilterDialog = MaxFilterDialog(self, self.raw)
+        self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
         self.maxFilterDialog.show()
        
     

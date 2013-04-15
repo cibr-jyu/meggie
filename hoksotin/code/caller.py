@@ -22,9 +22,7 @@ class Caller(object):
         """
         os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
-            subprocess.Popen('$MNE_ROOT', shell=True)
-            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' +
-                                    filename,
+            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
         except:
@@ -56,7 +54,6 @@ class Caller(object):
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
         try:
-            subprocess.Popen('$MNE_ROOT', shell=True)
             proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
         except:

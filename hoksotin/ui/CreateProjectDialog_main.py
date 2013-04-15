@@ -70,6 +70,7 @@ class CreateProjectDialog(QtGui.QDialog):
             self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.experiment.save_experiment_settings()
+            print self.experiment.raw_data.info.get('filename')
       
         except IOError, err:
             self.messageBox = messageBox.AppForm()

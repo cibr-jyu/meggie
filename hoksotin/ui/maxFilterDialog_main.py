@@ -118,7 +118,8 @@ class MaxFilterDialog(QtGui.QDialog):
                 dictionary['-autobad'] = 'off'
                 dictionary['-bad'] = bads
             dictionary['-badlimit'] = bad_limit
-            dictionary['-skip'] = skips
+            if skips != '':
+                dictionary['-skip'] = skips
             dictionary['-format'] = format
             
             if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:

@@ -26,7 +26,7 @@ class ParameterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_ParameterDialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(parent.raw).stim_channel_names
+        stim_channels = MeasurementInfo(parent.experiment.raw_data).stim_channel_names
         print stim_channels
         keys = map(str, parent.experiment.event_set.keys())
         print keys
