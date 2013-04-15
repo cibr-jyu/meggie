@@ -84,6 +84,7 @@ class CreateProjectDialog(QtGui.QDialog):
         self.parent.ui.tabWidget.insertTab(0, self.parent.ui.tabRaw, "Raw")
         self.parent.ui.tabWidget.insertTab(1, self.parent.ui.tabRaw, 
                                            "Preprocessing" )
+        InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
         self.close()
         
         

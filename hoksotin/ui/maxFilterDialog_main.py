@@ -30,21 +30,6 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
         
-        """
-    def call_maxfilter(self, dic, custom):
-        bs = 'maxfilter '
-        for i in range(len(dic)):
-            bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
-        bs += custom
-        print bs
-        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        for line in proc.stdout.readlines():
-            print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval
-        """
-        
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',

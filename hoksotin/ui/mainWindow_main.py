@@ -57,7 +57,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonVisualize.setEnabled(False)
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         
-        
     def on_actionCreate_experiment_triggered(self):
         """
         Creates a new CreateProjectDialog and shows it
@@ -79,14 +78,11 @@ class MainWindow(QtGui.QMainWindow):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
             
-            print self.experiment.raw_data.info.get('filename')
             #workaround for setting up the raw object after pickling
-            self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))
-            
-            print self.experiment.raw_data.info.get('filename')
-            
+            self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))            
             self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
             self.ui.tabWidget.insertTab(1, self.ui.tabRaw, "Preprocessing")
+            InfoDialog(self.experiment.raw_data, self.ui, False)
         
         else:
             self.messageBox = messageBox.AppForm()
