@@ -6,6 +6,7 @@ Created on Apr 11, 2013
 """
 import subprocess
 import os
+import mne
 
 class Caller(object):
     """
@@ -50,6 +51,9 @@ class Caller(object):
     
     def call_eog_ssp(self, dic):
         #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
+        
+        # TODO not the actual path to the needed script (the needed script
+        # is an extra script in mne-python)
         bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '

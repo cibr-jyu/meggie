@@ -3,6 +3,7 @@
 Boilerplate script to run the application.
 Please note that this only works on Unix due to pathname conventions
 (slash vs. backslash).
+TODO: tested to work on Windows, too
 """
 
 import sys

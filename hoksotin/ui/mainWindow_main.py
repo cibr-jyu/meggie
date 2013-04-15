@@ -84,17 +84,30 @@ class MainWindow(QtGui.QMainWindow):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
             
-            #workaround for setting up the raw object after pickling
-            self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))            
-            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
-            self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
+            # workaround for setting up the raw object after pickling
+            self.experiment.raw_data = mne.fiff.Raw(
+                self.experiment.raw_data.info.get('filename'))            
             
-            # Reads the raw data info and sets it to the labels of
+            """
+            TODO should deduce the tabs to be opened from the existing
+            files in the experiment directory
+            """
+            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+            self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing,
+                                        "Preprocessing")
+            
+            # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)
+            
+            """
+            Sets info about trigger channels and their events to
+            Triggers box in the Raw tab
+            """
             events = self.experiment.event_set
             for key, value in events.iteritems():
                 item = QtGui.QListWidgetItem()
-                item.setText('Trigger ' + str(key) + ', ' + str(value) + ' events')
+                item.setText('Trigger ' + str(key) + ', ' + str(value) +
+                            ' events')
                 self.ui.listWidget.addItem(item)
                    
         else:
@@ -104,6 +117,7 @@ class MainWindow(QtGui.QMainWindow):
           
      
     #def setup_ui_by_experiment_state(self):
+        
         
          
     def on_pushButtonEpoch_clicked(self, checked=None):
