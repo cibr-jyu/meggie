@@ -15,14 +15,41 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_13">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCompute">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Compute</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidgetEOGSettings">
@@ -65,7 +92,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>241</width>
+           <width>244</width>
            <height>41</height>
           </rect>
          </property>
@@ -237,7 +264,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>311</width>
+           <width>314</width>
            <height>41</height>
           </rect>
          </property>
@@ -635,7 +662,7 @@
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>491</width>
+         <width>381</width>
          <height>41</height>
         </rect>
        </property>
@@ -643,7 +670,7 @@
         <item>
          <widget class="QLabel" name="labelBad">
           <property name="text">
-           <string>Bad channels (e.g. 0323 1042 2631) :</string>
+           <string>Bad channels:</string>
           </property>
          </widget>
         </item>
@@ -730,6 +757,9 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>doubleSpinBoxTmin</tabstop>
+  <tabstop>doubleSpinBoxTmax</tabstop>
+  <tabstop>spinBoxEventsID</tabstop>
   <tabstop>spinBoxLowPass</tabstop>
   <tabstop>spinBoxHighPass</tabstop>
   <tabstop>spinBoxGrad</tabstop>
@@ -737,50 +767,25 @@
   <tabstop>spinBoxEeg</tabstop>
   <tabstop>spinBoxLow</tabstop>
   <tabstop>spinBoxHigh</tabstop>
-  <tabstop>tabWidgetEOGSettings</tabstop>
+  <tabstop>checkBoxEpochRejection</tabstop>
+  <tabstop>doubleSpinBoxGradReject</tabstop>
+  <tabstop>doubleSpinBoxMagReject</tabstop>
+  <tabstop>doubleSpinBoxEEGReject</tabstop>
+  <tabstop>doubleSpinBoxEOGReject</tabstop>
   <tabstop>lineEditBad</tabstop>
+  <tabstop>pushButtonBadChannels</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxTaps</tabstop>
   <tabstop>spinBoxJobs</tabstop>
   <tabstop>checkBoxEEGProj</tabstop>
   <tabstop>checkBoxSSPProj</tabstop>
   <tabstop>checkBoxSSPCompute</tabstop>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonCompute</tabstop>
+  <tabstop>tabWidgetEOGSettings</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>266</x>
-     <y>762</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>762</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>checkBoxEpochRejection</sender>
    <signal>toggled(bool)</signal>
@@ -794,6 +799,38 @@
     <hint type="destinationlabel">
      <x>238</x>
      <y>567</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCompute</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>396</x>
+     <y>753</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>333</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>748</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>8</y>
     </hint>
    </hints>
   </connection>
