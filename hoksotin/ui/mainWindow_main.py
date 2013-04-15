@@ -51,6 +51,7 @@ class MainWindow(QtGui.QMainWindow):
         #Only leaves the blank tab in tabWidget initially
         self.ui.tabWidget.removeTab(1)
         self.ui.tabWidget.removeTab(1)
+        #self.ui.tabWidget.removeTab(0)
         self.ui.pushButtonAverage.setEnabled(False)
         self.ui.pushButtonVisualize.setEnabled(False)
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
@@ -79,7 +80,7 @@ class MainWindow(QtGui.QMainWindow):
             
             print self.experiment.raw_data.info.get('filename')
             #workaround for setting up the raw object after pickling
-            #self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))
+            self.experiment.raw_data = mne.fiff.Raw(self.experiment.raw_data.info.get('filename'))
             
             print self.experiment.raw_data.info.get('filename')
             
@@ -128,11 +129,11 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
         self.maxFilterDialog.show()
-       
     
     def on_currentChanged(self):
         print self.ui.tabWidget.currentIndex()
         self.tab = self.ui.tabWidget.currentWidget()
+        #if self.tab == None: return
         if self.tab.winId == 'epoch':
             self.ui.pushButtonAverage.setEnabled(True)
         else:

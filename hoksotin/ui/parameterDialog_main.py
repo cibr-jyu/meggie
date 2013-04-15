@@ -58,7 +58,7 @@ class ParameterDialog(QtGui.QDialog):
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         try:
-            epochs = Epochs(self.parent.raw, stim_channel, mag, grad, eeg,
+            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag, grad, eeg,
                             stim, eog, epoch_name, float(tmin),
                             float(tmax), int(self.event_id))
         except:
@@ -70,7 +70,6 @@ class ParameterDialog(QtGui.QDialog):
         epochs = self.create_epochs()
         print epochs
         self.__class__.index += 1
-        #id = self.ui.spinBoxEventID.value()
         if isinstance(epochs, Epochs):
             event_set = '(ID:' + str(self.event_id) + ', ' + str(self.parent.experiment.event_set.get(self.event_id)) + ' events)'
             item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
