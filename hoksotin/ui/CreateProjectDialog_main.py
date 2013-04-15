@@ -44,7 +44,6 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return          
-           
             
         try: 
             self.workspace = Workspace()
@@ -61,7 +60,6 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.labelException.setText("Cannot assign attribute to project")
             self.messageBox.show()
             return         
-           
                       
         try:
             # TODO: user should set this workspace from the mainWindow UI    
@@ -77,7 +75,6 @@ class CreateProjectDialog(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
-
         
         self.parent.experiment = self.experiment
         self.parent.raw = self.experiment.raw_data

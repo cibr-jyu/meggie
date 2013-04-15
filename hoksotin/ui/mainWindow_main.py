@@ -53,7 +53,6 @@ class MainWindow(QtGui.QMainWindow):
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
         
-        
         #self.ui.tabEvoked = None
         '''
         Old code for activating buttons when experiment state changes
@@ -92,7 +91,12 @@ class MainWindow(QtGui.QMainWindow):
             
             # Reads the raw data info and sets it to the labels of
             InfoDialog(self.experiment.raw_data, self.ui, False)
-        
+            events = self.experiment.event_set
+            for key, value in events.iteritems():
+                item = QtGui.QListWidgetItem()
+                item.setText('Trigger ' + str(key) + ', ' + str(value) + ' events')
+                self.ui.listWidget.addItem(item)
+                   
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
