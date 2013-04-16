@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>423</height>
+    <width>375</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,8 +121,25 @@
     </item>
    </layout>
   </widget>
+  <widget class="QFrame" name="frameProgressBar">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>390</y>
+     <width>341</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
   <zorder>layoutWidget</zorder>
   <zorder>cancelOkButtonBox</zorder>
+  <zorder>frameProgressBar</zorder>
  </widget>
  <resources/>
  <connections>

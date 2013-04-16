@@ -95,7 +95,7 @@ class Ui_CreateProjectDialog(object):
         self.retranslateUi(CreateProjectDialog)
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), CreateProjectDialog.accept)
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), CreateProjectDialog.reject)
-        # QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
+        QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
         QtCore.QMetaObject.connectSlotsByName(CreateProjectDialog)
 
     def retranslateUi(self, CreateProjectDialog):
