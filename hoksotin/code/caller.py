@@ -54,9 +54,10 @@ class Caller(object):
         
         # TODO not the actual path to the needed script (the needed script
         # is an extra script in mne-python)
-        bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
+        bs = 'python /usr/local/bin/mne-python-master/bin/mne_compute_proj_eog.py '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
+        print bs
         try:
             proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)

@@ -19,11 +19,11 @@ class EogParametersDialog(QtGui.QDialog):
         
     def accept(self):
         dictionary = {'-i': self.parent.experiment.raw_data.info.get('filename')}
-        tmin = self.ui.spinBoxTmin.value()
+        tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['--tmin'] = tmin
-        tmax = self.ui.spinBoxTmax.value()
+        tmax = self.ui.doubleSpinBoxTmax.value()
         dictionary['--tmax'] = tmax
-        event_id = self.ui.lineEditEventID.text()
+        event_id = self.ui.spinBoxEventsID.value()
         dictionary['--event-id'] = event_id
         low_freq = self.ui.spinBoxLowPass.value()
         dictionary['--eog-l-freq'] = low_freq
@@ -47,12 +47,12 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['--filtersize'] = taps
         njobs = self.ui.spinBoxJobs.value()
         dictionary['--n-jobs'] = njobs
-        eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
-        dictionary['--avg-ref'] = eeg_proj
-        excl_ssp = self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked
-        dictionary['--no-proj'] = excl_ssp
-        comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
-        dictionary['--average'] = comp_ssp
+        if self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked:
+            dictionary['--avg-ref'] = ''
+        if self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked:
+            dictionary['--no-proj'] = ''
+        if self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked:
+            dictionary['--average'] = ''
         caller = Caller()
         caller.call_eog_ssp(dictionary)
         
