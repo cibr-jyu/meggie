@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>772</height>
+    <width>571</width>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -359,7 +362,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>471</width>
+           <width>476</width>
            <height>41</height>
           </rect>
          </property>
