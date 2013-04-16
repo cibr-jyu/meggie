@@ -18,7 +18,6 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
     def accept(self):
-<<<<<<< HEAD
         dictionary = {'i': self.parent.experiment.raw_data.info.get('filename')}
         tmin = self.ui.spinBoxTmin.value()
         dictionary['tmin'] = tmin
@@ -26,7 +25,6 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['tmax'] = tmax
         event_id = self.ui.lineEditEventID.text()
         dictionary['event-id'] = event_id
-=======
         dictionary = {'-i': self.parent.experiment.raw_data.info.get('filename')}
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['--tmin'] = tmin
@@ -34,7 +32,6 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['--tmax'] = tmax
         event_id = self.ui.spinBoxEventsID.value()
         dictionary['--event-id'] = event_id
->>>>>>> b380fafc3ace556f14bb581f7f78b47b63128ffe
         low_freq = self.ui.spinBoxLowPass.value()
         dictionary['eog-l-freq'] = low_freq
         high_freq = self.ui.spinBoxHighPass.value()
@@ -64,7 +61,6 @@ class EogParametersDialog(QtGui.QDialog):
         taps = self.ui.spinBoxTaps.value()
         dictionary['filtersize'] = taps
         njobs = self.ui.spinBoxJobs.value()
-<<<<<<< HEAD
         dictionary['n-jobs'] = njobs
         eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
         dictionary['avg-ref'] = eeg_proj
@@ -72,7 +68,6 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['no-proj'] = excl_ssp
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
-=======
         dictionary['--n-jobs'] = njobs
         if self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked:
             dictionary['--avg-ref'] = ''
@@ -80,7 +75,7 @@ class EogParametersDialog(QtGui.QDialog):
             dictionary['--no-proj'] = ''
         if self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked:
             dictionary['--average'] = ''
->>>>>>> b380fafc3ace556f14bb581f7f78b47b63128ffe
+
         caller = Caller()
         caller.call_eog_ssp(dictionary)
         

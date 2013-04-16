@@ -54,7 +54,6 @@ class Caller(object):
         
         # TODO not the actual path to the needed script (the needed script
         # is an extra script in mne-python)
-<<<<<<< HEAD
         # TODO use SSP-projections froma a different file?
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
@@ -116,9 +115,7 @@ class Caller(object):
         mne.write_events(eog_event_fname, events)
         """
         bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
-=======
         bs = 'python /usr/local/bin/mne-python-master/bin/mne_compute_proj_eog.py '
->>>>>>> b380fafc3ace556f14bb581f7f78b47b63128ffe
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
         print bs
