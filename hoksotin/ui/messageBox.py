@@ -10,6 +10,7 @@ class AppForm(QMainWindow):
     def create_main_frame(self):        
         page = QWidget()        
 
+        self.setWindowTitle('Error') 
         self.buttonOk = QPushButton('Ok', page)
         self.labelException = QLabel()
         vbox1 = QVBoxLayout()
