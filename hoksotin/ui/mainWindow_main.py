@@ -24,6 +24,7 @@ from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
 from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
+from ecgParametersDialog_main import EcgParametersDialog
 import messageBox
 
 from experiment import Experiment
@@ -179,6 +180,11 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.show()
+        
+    def on_pushButtonECG_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        self.ecgDialog = EcgParametersDialog(self)
+        self.ecgDialog.show()
     
        
 def main(): 
