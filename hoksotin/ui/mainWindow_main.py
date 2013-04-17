@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
  
 from mainWindow_Ui import Ui_MainWindow
-from CreateProjectDialog_main import CreateProjectDialog
+from createExperimentDialog_main import CreateExperimentDialog
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
 from maxFilterDialog_main import MaxFilterDialog
@@ -68,7 +68,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         Creates a new CreateProjectDialog and shows it
         """       
-        self.dialog = CreateProjectDialog(self)
+        self.dialog = CreateExperimentDialog(self)
         self.dialog.show()
         
         

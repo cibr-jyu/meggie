@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>733</width>
-    <height>810</height>
+    <width>914</width>
+    <height>879</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,63 +18,59 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Experiment base file</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="showFileInfoButton">
-              <property name="text">
-               <string>Show file info</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSplitter" name="splitter">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Experiment base file</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <widget class="QLineEdit" name="FilePathLineEdit"/>
-            <widget class="QPushButton" name="browseButton">
-             <property name="text">
-              <string>Browse...</string>
-             </property>
-            </widget>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
+          <item>
+           <widget class="QPushButton" name="showFileInfoButton">
             <property name="text">
-             <string>Select raw file for the experiment:</string>
+             <string>Show file info</string>
             </property>
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-      </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Select raw file for the experiment:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QLineEdit" name="FilePathLineEdit"/>
+          <widget class="QPushButton" name="browseButton">
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -160,8 +156,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>234</y>
+     <x>434</x>
+     <y>781</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -176,28 +172,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>240</y>
+     <x>434</x>
+     <y>781</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>browseButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CreateExperimentDialog</receiver>
-   <slot>openFileChooserDialog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>357</x>
-     <y>70</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>491</x>
-     <y>101</y>
     </hint>
    </hints>
   </connection>
