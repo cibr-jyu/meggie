@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eogParametersDialog.ui'
 #
-# Created: Tue Apr 16 10:16:06 2013
+# Created: Thu Apr 18 11:46:57 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,8 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(594, 772)
+        Dialog.setEnabled(True)
+        Dialog.resize(571, 755)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_13 = QtGui.QHBoxLayout()
@@ -172,7 +173,7 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayoutWidget_8 = QtGui.QWidget(self.frame)
-        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 471, 41))
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 476, 41))
         self.horizontalLayoutWidget_8.setObjectName(_fromUtf8("horizontalLayoutWidget_8"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_8)
         self.horizontalLayout_8.setMargin(0)
@@ -349,7 +350,7 @@ class Ui_Dialog(object):
         self.checkBoxEEGProj.setObjectName(_fromUtf8("checkBoxEEGProj"))
         self.verticalLayout.addWidget(self.checkBoxEEGProj)
         self.checkBoxSSPProj = QtGui.QCheckBox(self.verticalLayoutWidget)
-        self.checkBoxSSPProj.setChecked(False)
+        self.checkBoxSSPProj.setChecked(True)
         self.checkBoxSSPProj.setObjectName(_fromUtf8("checkBoxSSPProj"))
         self.verticalLayout.addWidget(self.checkBoxSSPProj)
         self.checkBoxSSPCompute = QtGui.QCheckBox(self.verticalLayoutWidget)
@@ -431,7 +432,7 @@ class Ui_Dialog(object):
         self.pushButtonBadChannels.setText(_translate("Dialog", "Browse...", None))
         self.labelTaps.setText(_translate("Dialog", "Number of taps to use for filtering:", None))
         self.checkBoxEEGProj.setText(_translate("Dialog", "Add EEG average reference proj.", None))
-        self.checkBoxSSPProj.setText(_translate("Dialog", "Include the SSP projectors currently in the fiff file", None))
+        self.checkBoxSSPProj.setText(_translate("Dialog", "Exclude the SSP projectors currently in the fiff file", None))
         self.checkBoxSSPCompute.setText(_translate("Dialog", "Compute SSP after averaging", None))
         self.tabWidgetEOGSettings.setTabText(self.tabWidgetEOGSettings.indexOf(self.tabEOG2), _translate("Dialog", "Bads etc.", None))
 

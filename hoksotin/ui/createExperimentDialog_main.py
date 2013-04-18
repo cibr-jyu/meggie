@@ -82,6 +82,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.parent.ui.tabWidget.insertTab(1, self.parent.ui.tabPreprocessing, 
                                            "Preprocessing" )
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
+        self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
         self.close()
         
         
