@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>594</width>
-    <height>772</height>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>241</width>
+           <width>244</width>
            <height>41</height>
           </rect>
          </property>
@@ -227,7 +227,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>311</width>
+           <width>314</width>
            <height>41</height>
           </rect>
          </property>
@@ -322,7 +322,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>471</width>
+           <width>476</width>
            <height>41</height>
           </rect>
          </property>
@@ -669,10 +669,10 @@
         <item>
          <widget class="QCheckBox" name="checkBoxSSPProj">
           <property name="text">
-           <string>Include the SSP projectors currently in the fiff file</string>
+           <string>Exclude the SSP projectors currently in the fiff file</string>
           </property>
           <property name="checked">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
          </widget>
         </item>

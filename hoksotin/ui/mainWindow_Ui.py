@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Mon Apr 15 14:34:24 2013
+# Created: Thu Apr 18 12:34:34 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.metaBox = QtGui.QGroupBox(self.tabRaw)
         self.metaBox.setObjectName(_fromUtf8("metaBox"))
         self.layoutWidget_2 = QtGui.QWidget(self.metaBox)
-        self.layoutWidget_2.setGeometry(QtCore.QRect(26, 35, 221, 54))
+        self.layoutWidget_2.setGeometry(QtCore.QRect(26, 35, 221, 108))
         self.layoutWidget_2.setObjectName(_fromUtf8("layoutWidget_2"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.layoutWidget_2)
         self.verticalLayout_6.setMargin(0)
@@ -60,7 +60,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
         self.labelDate = QtGui.QLabel(self.layoutWidget_2)
         self.labelDate.setObjectName(_fromUtf8("labelDate"))
-        self.gridLayout_5.addWidget(self.labelDate, 0, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.labelDate, 1, 0, 1, 1)
         self.labelDateValue = QtGui.QLabel(self.layoutWidget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -68,13 +68,16 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelDateValue.sizePolicy().hasHeightForWidth())
         self.labelDateValue.setSizePolicy(sizePolicy)
         self.labelDateValue.setObjectName(_fromUtf8("labelDateValue"))
-        self.gridLayout_5.addWidget(self.labelDateValue, 0, 1, 1, 1)
-        self.verticalLayout_6.addLayout(self.gridLayout_5)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.gridLayout_5.addWidget(self.labelDateValue, 1, 1, 1, 1)
+        self.labelExperiment = QtGui.QLabel(self.layoutWidget_2)
+        self.labelExperiment.setObjectName(_fromUtf8("labelExperiment"))
+        self.gridLayout_5.addWidget(self.labelExperiment, 0, 0, 1, 1)
+        self.labelExperimentName = QtGui.QLabel(self.layoutWidget_2)
+        self.labelExperimentName.setObjectName(_fromUtf8("labelExperimentName"))
+        self.gridLayout_5.addWidget(self.labelExperimentName, 0, 1, 1, 1)
         self.labelSubject = QtGui.QLabel(self.layoutWidget_2)
         self.labelSubject.setObjectName(_fromUtf8("labelSubject"))
-        self.horizontalLayout.addWidget(self.labelSubject)
+        self.gridLayout_5.addWidget(self.labelSubject, 2, 0, 1, 1)
         self.labelSubjectValue = QtGui.QLabel(self.layoutWidget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -82,8 +85,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelSubjectValue.sizePolicy().hasHeightForWidth())
         self.labelSubjectValue.setSizePolicy(sizePolicy)
         self.labelSubjectValue.setObjectName(_fromUtf8("labelSubjectValue"))
-        self.horizontalLayout.addWidget(self.labelSubjectValue)
-        self.verticalLayout_6.addLayout(self.horizontalLayout)
+        self.gridLayout_5.addWidget(self.labelSubjectValue, 2, 1, 1, 1)
+        self.verticalLayout_6.addLayout(self.gridLayout_5)
         self.horizontalLayout_3.addWidget(self.metaBox)
         self.channelsBox = QtGui.QGroupBox(self.tabRaw)
         self.channelsBox.setObjectName(_fromUtf8("channelsBox"))
@@ -291,7 +294,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -299,6 +302,8 @@ class Ui_MainWindow(object):
         self.metaBox.setTitle(_translate("MainWindow", "Background", None))
         self.labelDate.setText(_translate("MainWindow", "Date:", None))
         self.labelDateValue.setText(_translate("MainWindow", "DateValue", None))
+        self.labelExperiment.setText(_translate("MainWindow", "Experiment:", None))
+        self.labelExperimentName.setText(_translate("MainWindow", "TextLabel", None))
         self.labelSubject.setText(_translate("MainWindow", "Subject:", None))
         self.labelSubjectValue.setText(_translate("MainWindow", "TextLabel", None))
         self.channelsBox.setTitle(_translate("MainWindow", "Channels", None))

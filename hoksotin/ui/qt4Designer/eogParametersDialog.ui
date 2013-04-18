@@ -738,10 +738,10 @@
         <item>
          <widget class="QCheckBox" name="checkBoxSSPProj">
           <property name="text">
-           <string>Include the SSP projectors currently in the fiff file</string>
+           <string>Exclude the SSP projectors currently in the fiff file</string>
           </property>
           <property name="checked">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
          </widget>
         </item>

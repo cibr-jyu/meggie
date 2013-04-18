@@ -10,7 +10,7 @@ from workspace import Workspace
 
 #from mainWindow_mainTesti import MainWindow
 from infoDialog_Ui import Ui_infoDialog
-from CreateProjectDialog_Ui import Ui_CreateProjectDialog
+from createExperimentDialog_Ui import Ui_CreateExperimentDialog
 
 from PyQt4 import QtCore,QtGui
 # Import the pyuic4-compiled main UI module 
@@ -19,7 +19,7 @@ import os,sys
 import pickle
 
 # Create a dialog main window
-class CreateProjectDialog(QtGui.QDialog):
+class CreateExperimentDialog(QtGui.QDialog):
     fname = ''
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -30,7 +30,7 @@ class CreateProjectDialog(QtGui.QDialog):
         """
         
         # Refers to class in file CreateProjecDialog
-        self.ui = Ui_CreateProjectDialog() 
+        self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
         
         
@@ -82,6 +82,7 @@ class CreateProjectDialog(QtGui.QDialog):
         self.parent.ui.tabWidget.insertTab(1, self.parent.ui.tabPreprocessing, 
                                            "Preprocessing" )
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
+        self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
         self.close()
         
         
@@ -99,7 +100,6 @@ class CreateProjectDialog(QtGui.QDialog):
                 self.messageBox.labelException.setText(str(err))
                 self.messageBox.show()
                 
-        #QtCore.QObject.connect(self.browseButton, QtCore.SIGNAL(_fromUtf8("clicked()")), CreateProjectDialog.openFileChooserDialog)
         self.ui.FilePathLineEdit.setText(self.fname)
         
         

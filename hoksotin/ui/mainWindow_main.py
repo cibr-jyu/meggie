@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
  
 from mainWindow_Ui import Ui_MainWindow
-from CreateProjectDialog_main import CreateProjectDialog
+from createExperimentDialog_main import CreateExperimentDialog
 from infoDialog_main import InfoDialog
 from parameterDialog_main import ParameterDialog
 from maxFilterDialog_main import MaxFilterDialog
@@ -68,9 +68,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Creates a new CreateProjectDialog and shows it
         """       
-        self.dialog = CreateProjectDialog(self)
-        self.dialog.show()
-        
+        self.dialog = CreateExperimentDialog(self)
+        self.dialog.show()        
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
@@ -110,6 +109,7 @@ class MainWindow(QtGui.QMainWindow):
                 item.setText('Trigger ' + str(key) + ', ' + str(value) +
                             ' events')
                 self.ui.listWidget.addItem(item)
+            self.ui.labelExperimentName.setText(self.experiment.experiment_name)
                    
         else:
             self.messageBox = messageBox.AppForm()

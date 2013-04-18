@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialog.ui'
 #
-# Created: Tue Apr 16 12:48:34 2013
+# Created: Thu Apr 18 11:47:11 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(594, 772)
+        Dialog.resize(594, 755)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.tabWidgetECGSettings = QtGui.QTabWidget(Dialog)
@@ -42,7 +42,7 @@ class Ui_Dialog(object):
         self.frame_7.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_7.setObjectName(_fromUtf8("frame_7"))
         self.horizontalLayoutWidget_19 = QtGui.QWidget(self.frame_7)
-        self.horizontalLayoutWidget_19.setGeometry(QtCore.QRect(10, 10, 241, 41))
+        self.horizontalLayoutWidget_19.setGeometry(QtCore.QRect(10, 10, 244, 41))
         self.horizontalLayoutWidget_19.setObjectName(_fromUtf8("horizontalLayoutWidget_19"))
         self.horizontalLayout_25 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_19)
         self.horizontalLayout_25.setMargin(0)
@@ -112,7 +112,7 @@ class Ui_Dialog(object):
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_2.setObjectName(_fromUtf8("frame_2"))
         self.horizontalLayoutWidget_9 = QtGui.QWidget(self.frame_2)
-        self.horizontalLayoutWidget_9.setGeometry(QtCore.QRect(10, 10, 311, 41))
+        self.horizontalLayoutWidget_9.setGeometry(QtCore.QRect(10, 10, 314, 41))
         self.horizontalLayoutWidget_9.setObjectName(_fromUtf8("horizontalLayoutWidget_9"))
         self.horizontalLayout_9 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_9)
         self.horizontalLayout_9.setMargin(0)
@@ -156,7 +156,7 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayoutWidget_8 = QtGui.QWidget(self.frame)
-        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 471, 41))
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 476, 41))
         self.horizontalLayoutWidget_8.setObjectName(_fromUtf8("horizontalLayoutWidget_8"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_8)
         self.horizontalLayout_8.setMargin(0)
@@ -322,7 +322,7 @@ class Ui_Dialog(object):
         self.checkBoxEEGProj.setObjectName(_fromUtf8("checkBoxEEGProj"))
         self.verticalLayout.addWidget(self.checkBoxEEGProj)
         self.checkBoxSSPProj = QtGui.QCheckBox(self.verticalLayoutWidget)
-        self.checkBoxSSPProj.setChecked(False)
+        self.checkBoxSSPProj.setChecked(True)
         self.checkBoxSSPProj.setObjectName(_fromUtf8("checkBoxSSPProj"))
         self.verticalLayout.addWidget(self.checkBoxSSPProj)
         self.checkBoxSSPCompute = QtGui.QCheckBox(self.verticalLayoutWidget)
@@ -455,7 +455,7 @@ class Ui_Dialog(object):
         self.labelJobs.setText(_translate("Dialog", "Number of jobs to run in parallel:", None))
         self.labelTaps.setText(_translate("Dialog", "Number of taps to use for filtering:", None))
         self.checkBoxEEGProj.setText(_translate("Dialog", "Add EEG average reference proj.", None))
-        self.checkBoxSSPProj.setText(_translate("Dialog", "Include the SSP projectors currently in the fiff file", None))
+        self.checkBoxSSPProj.setText(_translate("Dialog", "Exclude the SSP projectors currently in the fiff file", None))
         self.checkBoxSSPCompute.setText(_translate("Dialog", "Compute SSP after averaging", None))
         self.labelBad.setText(_translate("Dialog", "Bad channels:", None))
         self.pushButtonBadChannels.setText(_translate("Dialog", "Browse...", None))
