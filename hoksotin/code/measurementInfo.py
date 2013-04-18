@@ -135,7 +135,7 @@ class MeasurementInfo(object):
             raise Exception('Field ch_names does not exist.')
         else:
             chNames = self._info.get('ch_names')
-            return [s for s in chNames if 'MEG' in s]
+            return [s for s in chNames if not 'STI' in s]
     
     @property    
     def events(self, STIChannel):

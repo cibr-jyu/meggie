@@ -3,6 +3,8 @@ Created on Apr 16, 2013
 
 @author: jaeilepp
 """
+import os
+import glob
 
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialog_Ui import Ui_Dialog
@@ -22,7 +24,8 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.comboBoxECGChannel.addItems(stim_channels)
         
     def accept(self):
-        dictionary = {'i': self.parent.experiment.raw_data.info.get('filename')}
+        fname = self.parent.experiment.raw_data.info.get('filename')
+        dictionary = {'i': fname}
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
         tmax = self.ui.doubleSpinBoxTmax.value()
@@ -68,5 +71,13 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
         caller = Caller()
         caller.call_ecg_ssp(dictionary)
+        print fname.rsplit('/', 1)[0]
+        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
+        if len(files) > 1:
+            self.parent.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked) 
+            
+            
         self.close()
 

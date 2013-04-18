@@ -7,6 +7,7 @@ Created on Mar 16, 2013
 import os,sys
 import pickle
 import subprocess
+import glob
  
 from PyQt4 import QtCore,QtGui
 
@@ -110,7 +111,14 @@ class MainWindow(QtGui.QMainWindow):
                             ' events')
                 self.ui.listWidget.addItem(item)
             self.ui.labelExperimentName.setText(self.experiment.experiment_name)
-                   
+            fname = self.experiment.raw_data.info.get('filename')
+            files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
+            files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
+            files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
+            if len(files) > 1:
+                self.ui.checkBoxECG.setCheckable(True)
+                self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
+                self.ui.checkBoxECG.setCheckable(False)   
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
