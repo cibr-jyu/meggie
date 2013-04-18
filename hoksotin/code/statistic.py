@@ -14,7 +14,7 @@ class Statistic(object):
     """
     A class for statistical operations.
     """
-
+    # TODO: How to handle doubles in sfreq?
 
     def __init__(self):
         pass
@@ -57,6 +57,12 @@ class Statistic(object):
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
         """
+        if tmin <= 0 or tmax <= 0:
+            raise Exception('Negative values for tmin and tmax not allowed.')
+        
+        if tmin >= tmax:
+            raise Exception('tmax must be greater than tmin.')
+            
         twindow, start = self.timewindow_to_samplewindow(sfreq, arr,
                                                          tmin, tmax)
         time = (np.argmax(twindow) + start) * 1000 / sfreq 
@@ -85,8 +91,8 @@ class Statistic(object):
         tmin          -- Start of the time window in milliseconds
         tmax          -- End of the time window in milliseconds
         """
-        (max, time) = self.find_maximum(sfreq, arr, tmin, tmax)
-        return (max/2, time)
+        (maximum, time) = self.find_maximum(sfreq, arr, tmin, tmax)
+        return (maximum/2, time)
     
     def find_half_maximum2d(self, sfreq, arr, tmin=0.0,
                             tmax=sys.float_info.max):
@@ -150,13 +156,12 @@ class Statistic(object):
         Raises an exception if the array is empty.
         """
         if sfreq <= 0:
-            raise Exception('Sampling frequency cannot be zero.')
+            raise Exception('Sampling frequency cannot be zero or negative.')
         if arr == []:
             raise Exception('No data found.')
         start = int(round((tmin/1000)*sfreq))
         stop = int(round((tmax/1000)*sfreq))+1
         return arr[start:stop], start
-        
     
 def main():
     s = Statistic()
