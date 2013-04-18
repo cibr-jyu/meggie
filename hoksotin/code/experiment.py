@@ -53,13 +53,14 @@ class Experiment(object):
         Sets the name for the experiment.
         
         Keyword arguments:
-        experiment_name    - - the name of the experiment 
+        experiment_name    -- the name of the experiment 
         """
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):
                 self._experiment_name = experiment_name
             else:
-                raise Exception("Use only letters and numbers in experiment name")
+                raise Exception("Use only letters and numbers in experiment \
+                name")
         else:
             raise Exception('Too long experiment name')
     
@@ -77,7 +78,7 @@ class Experiment(object):
         Raises exception if the given path doesn't exist.
         
         Keyword arguments:
-        file_path       - - the path of the saved experiment
+        file_path       -- the path of the saved experiment
         """
         if (os.path.isdir(file_path)): 
             self._file_path = file_path
@@ -98,7 +99,7 @@ class Experiment(object):
         Raises exception if the given data type is wrong. 
         
         Keyword arguments:
-        raw_data        - - the raw data file of the measured data
+        raw_data        -- the raw data file of the measured data
         """
         if (isinstance(raw_data, mne.fiff.Raw)):
             self._raw_data = raw_data
@@ -153,7 +154,8 @@ class Experiment(object):
         than letters and numbers.        
         
         Keyword arguments:
-        description     - - the _description of the experiment written by the _author
+        description     - - the _description of the experiment written
+        by the _author
         """
         if (len(description) <= 1000):
             if (re.match(
@@ -192,8 +194,9 @@ class Experiment(object):
     
     def save_experiment_settings(self):
         """
-        Saves experiment settings into a file in the root of the experiment
-        directory structure.
+        Saves (pickes) the experiment settings into a file in the root of
+        the experiment directory structure. Please note that loading is done
+        in the mainWindow class. 
         """
         
         # String conversion, because shutil doesn't accept QStrings
@@ -208,25 +211,14 @@ class Experiment(object):
         # Move the file from working directory to 
         #shutil.move(settingsFileName, str(self._file_path))
         
-        settingsFile.close()
-        
-        
-    def load_experiment_settings(self, fname):
-        """
-        Loads project settings from a file in the root of the experiment
-        directory structure.
-        
-        Keyword arguments:
-        experiment    - - experiment object to save
-        """
-        
+        settingsFile.close()        
     
     def save_experiment(self, workspace):
         """
         Creates the experiment folder.
         
         Keyword arguments:
-        workspace    - - workspace for the chosen experiment.
+        workspace    -- workspace for the chosen experiment.
         """
         self._file_path = workspace + self._experiment_name + '/'
         if os.path.exists(workspace):
@@ -242,7 +234,7 @@ class Experiment(object):
         Saves the raw data file into the experiment folder.
         
         Keyword arguments:
-        file_name      - - the full path and name of the chosen raw data file
+        file_name      -- the full path and name of the chosen raw data file
         """
         folder_name = file_name.split("_", 1)
         try:
@@ -251,15 +243,30 @@ class Experiment(object):
             else:
                 os.mkdir(self._file_path + folder_name[0])
         except OSError:
-            print "no rights to save the raw file to the chosen path or bad raw file name"
+            print "no rights to save the raw file to the chosen path \
+            or bad raw file name"
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path)
+            
+    def save_parameter_file(self, command, filename, dic):
+        """
+        Saves the command and parameters related to creation of a certain
+        output file to a separate parameter file. The resulting parameter file
+        also includes the name of the input file.  
+        
+        Keyword arguments:
+        filename    -- Name of the output file
+        command     -- command (as string) used
+        dic         -- Dictionary including commands
+        """ 
+            
             
     def write_commands(self, commands, node, parent=''):
         """
         Writes an array of commands in a tree structure.
         Used for creating a batch file.
+        TODO not in use
         
         Keyword arguments:
         commands      -- An array of commands
@@ -276,6 +283,7 @@ class Experiment(object):
     def get_subtree(self, nid, s=''):
         """
         Returns a set of commands from a subtree.
+        TODO not in use
         
         Keyword arguments:
         nid           -- ID of the leaf
