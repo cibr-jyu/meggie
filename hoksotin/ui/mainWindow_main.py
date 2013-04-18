@@ -69,8 +69,7 @@ class MainWindow(QtGui.QMainWindow):
         Creates a new CreateProjectDialog and shows it
         """       
         self.dialog = CreateExperimentDialog(self)
-        self.dialog.show()
-        
+        self.dialog.show()        
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
@@ -110,6 +109,7 @@ class MainWindow(QtGui.QMainWindow):
                 item.setText('Trigger ' + str(key) + ', ' + str(value) +
                             ' events')
                 self.ui.listWidget.addItem(item)
+            self.ui.labelExperimentName.setText(self.experiment.experiment_name)
                    
         else:
             self.messageBox = messageBox.AppForm()
