@@ -8,6 +8,7 @@ from PyQt4 import QtCore,QtGui
 from ecgParametersDialog_Ui import Ui_Dialog
 
 from caller import Caller
+from measurementInfo import MeasurementInfo
 
 class EcgParametersDialog(QtGui.QDialog):
 
@@ -17,6 +18,8 @@ class EcgParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        stim_channels = MeasurementInfo(parent.experiment.raw_data).MEG_channel_names
+        self.ui.comboBoxECGChannel.addItems(stim_channels)
         
     def accept(self):
         dictionary = {'i': self.parent.experiment.raw_data.info.get('filename')}
@@ -62,10 +65,7 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['no-proj'] = excl_ssp
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
-        if self.ui.checkBoxNoECG.checkState() == QtCore.Qt.Checked:
-            dictionary['ch_name'] = self.ui.lineEditECGChannel.text()
-        else:
-            dictionary['ch_name'] = None
+        dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
         caller = Caller()
         caller.call_ecg_ssp(dictionary)
         self.close()

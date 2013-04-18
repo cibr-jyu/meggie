@@ -124,6 +124,18 @@ class MeasurementInfo(object):
         else:
             chNames = self._info.get('ch_names')
             return [s for s in chNames if 'STI' in s]
+        
+    @property    
+    def MEG_channel_names(self):
+        """
+        Returns the names of MEG channels.
+        Raises an exception if the field ch_names does not exist.
+        """
+        if self._info.get('ch_names') is None:
+            raise Exception('Field ch_names does not exist.')
+        else:
+            chNames = self._info.get('ch_names')
+            return [s for s in chNames if 'MEG' in s]
     
     @property    
     def events(self, STIChannel):
