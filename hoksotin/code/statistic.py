@@ -49,7 +49,7 @@ class Statistic(object):
         
     def find_maximum(self, sfreq, arr, tmin=0.0, tmax=sys.float_info.max):
         """
-        Returns the last maximum and its time for a 1d numpy array.
+        Returns the first maximum and its time for a 1d numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency in Hz
@@ -120,7 +120,7 @@ class Statistic(object):
         """
         if w > len(mat[0]) or h > len(mat):
             raise Exception('Out of bounds.')
-        max = 0
+        maximum = 0
         xcoord = 0
         ycoord = 0
         i = IntegralImage()
@@ -135,12 +135,12 @@ class Statistic(object):
                 #temporary variable to help finding the maximum
                 a = i.sum_over_rectangular_area((0,0), (w-1,h-1), newmat)
                 """ Save coordinates if a new maximum is found """
-                if a > max:
+                if a > maximum:
                     xcoord = x
                     ycoord = y
-                    max = a
-        print max
-        return max, xcoord, ycoord
+                    maximum = a
+        print maximum
+        return maximum, xcoord, ycoord
     
     def timewindow_to_samplewindow(self, sfreq, arr, tmin, tmax):
         """

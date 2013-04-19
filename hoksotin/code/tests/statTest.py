@@ -19,7 +19,7 @@ class TestStatistic(unittest.TestCase):
     arr_normal = [0,25,7,5,48,6,84,2,1]
     arr_many_maximums = [0,85,85,5,48,6,85,48]
     arr_chars = ['a','b']
-    arr_negatives = [-40, -100, 0, -15]
+    arr_negatives = [-40, -100, -10, -15]
     arr_const = [2,2,2,2]
     arr_empty = []
         
@@ -37,77 +37,101 @@ class TestStatistic(unittest.TestCase):
     ex_sfreq_zero = 'Sampling frequency cannot be zero or negative.'
     ex_arr_empty = 'No data found.'
     ex_tmin_greater_than_tmax = 'tmax must be greater than tmin.'
+    
+    s = Statistic()
         
     def test_all_normal(self):
-        s = Statistic()
         
-        self.assertEqual(s.find_maximum(self.sfreq_int, self.arr_normal,
+        self.assertEqual(self.s.find_maximum(self.sfreq_int, self.arr_normal,
                                         1000, 5000), (48, 4000), 
                                         'Find_maximum normal failed')
-        pass
     
     def test_max_freq_double(self):
-        s = Statistic()
-        
-        self.assertEqual(s.find_maximum(self.sfreq_double, self.arr_normal,
-                                        1000,5000), (48, 4000),
+        # TODO: Figure out how this should work
+        self.assertEqual(self.s.find_maximum(self.sfreq_double,
+                                             self.arr_normal, 1000,5000),
+                                            (48, 4000),
                                         'Find_maximum frequency double failed')
-        pass
     
     def test_max_freq_zero(self):
-        s = Statistic()
-        
+        """
+        Should raise an exception when sfreq <= 0.
+        """
         with self.assertRaises(Exception) as e:
-            s.find_maximum(self.sfreq_zero, self.arr_normal, 1000, 5000)
+            self.s.find_maximum(self.sfreq_zero, self.arr_normal, 1000, 5000)
             
         self.assertEqual(e.exception.message, self.ex_sfreq_zero,
                          'Unexpected exception raised.')
             
-        pass
     
     def test_max_tmin_double(self):
-        s = Statistic()
         
-        self.assertEqual(s.find_maximum(self.sfreq_int, self.arr_normal,
-                                        self.tmin_double,self.tmax_int),
-                                        (48, 4000),
-                                         'Find_maximum tmin double failed')
-        pass
+        self.assertEqual(self.s.find_maximum(self.sfreq_int, self.arr_normal,
+                                             self.tmin_double,self.tmax_int),
+                                             (48, 4000),
+                                             'Find_maximum tmin double failed')
     
     def test_max_tmin_negative(self):
-        s = Statistic()
-        
+        """
+        Statistic class shouldn't be able to receive negative values for 
+        tmin and tmax.
+        """
+        # TODO: Is this really working as intended?
         with self.assertRaises(Exception) as e:
-            s.find_maximum(self.sfreq_int, self.arr_normal, 
-                           self.tmin_negative, self.tmax_int)
+            self.s.find_maximum(self.sfreq_int, self.arr_normal, 
+                                self.tmin_negative, self.tmax_int)
             
         self.assertEqual(e.exception.message, self.ex_negative_tmin_tmax,
                          'Unexpected exception raised.')    
-        pass
     
     def test_max_tmax_negative(self):
-        s = Statistic()
         
         with self.assertRaises(Exception) as e:
-            s.find_maximum(self.sfreq_int, self.arr_normal,
-                           self.tmin_int, self.tmax_negative)
+            self.s.find_maximum(self.sfreq_int, self.arr_normal,
+                                self.tmin_int, self.tmax_negative)
             
         self.assertEqual(e.exception.message, self.ex_negative_tmin_tmax,
                          'Unexpected exception raised.')
-        pass
     
     def test_max_tmax_smaller_than_tmin(self):
-        s = Statistic()
-        
+        """
+        Time-window cannot end before it begins.
+        """
         with self.assertRaises(Exception) as e:
-            s.find_maximum(self.sfreq_int, self.arr_normal,
-                           self.tmin_large, self.tmax_small)
+            self.s.find_maximum(self.sfreq_int, self.arr_normal,
+                                self.tmin_large, self.tmax_small)
             
         self.assertEqual(e.exception.message, self.ex_tmin_greater_than_tmax,
                          'Unexpected exception raised.')
-        pass
+    
+    def test_arr_many_maximums(self):
         """
-
+        Should return the first instance of the maximum and the time it
+        occurred.
+        """
+        self.assertEqual(self.s.find_maximum(self.sfreq_int,
+                                             self.arr_many_maximums,
+                                             self.tmin_int, self.tmax_int),
+                         (85,1000), 'Find_maximum with many maximums failed.')
+    
+    def test_arr_chars(self):
+        """
+        since nympy arrays should only contain numbers, a TypeError is raised.
+        """
+        with self.assertRaises(TypeError):
+            self.s.find_maximum(self.sfreq_int, self.arr_chars,
+                                self.tmin_int, self.tmax_int)
+                  
+        pass
+    
+    def test_arr_negatices(self):
+        
+        self.assertEqual(self.s.find_maximum(self.sfreq_int,
+                                             self.arr_negatives,
+                                             self.tmin_int, self.tmax_int),
+                         (-10, 2000), 'Find_maximum negative array failed.')
+        
+        """    
     def test_min(self):
         a = [0,25,4,1,5,67,2,4,6,467,7]
         m = np.array([[4,5,6],[1,2,3],[7,8,9]])
