@@ -153,7 +153,7 @@ class Caller(object):
         else:
             prefix = raw_in[:-4]
             
-        eog_event_fname = prefix + 'eog-eve.fif'
+        eog_event_fname = prefix + '_eog-eve.fif'
         
         if comp_ssp:
             eog_proj_fname = prefix + '_eog_avg_proj.fif'
@@ -182,6 +182,8 @@ class Caller(object):
         mne.write_events(eog_event_fname, events)
         
         
+    def apply_ecg(self, raw):
+        raw.add_proj('')
         """
         bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
         bs = 'python /usr/local/bin/mne-python-master/bin/mne_compute_proj_eog.py '

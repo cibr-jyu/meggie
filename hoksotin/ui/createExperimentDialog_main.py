@@ -83,6 +83,13 @@ class CreateExperimentDialog(QtGui.QDialog):
                                            "Preprocessing" )
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
         self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
+        self.parent.ui.listWidget.clear()
+        events = self.experiment.event_set
+        for key, value in events.iteritems():
+            item = QtGui.QListWidgetItem()
+            item.setText('Trigger ' + str(key) + ', ' + str(value) +
+                        ' events')
+            self.parent.ui.listWidget.addItem(item)
         self.close()
         
         

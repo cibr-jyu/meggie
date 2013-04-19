@@ -54,7 +54,9 @@ class MainWindow(QtGui.QMainWindow):
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
-        
+        self.ui.checkBoxECG.hide()
+        self.ui.checkBoxEOG.hide()
+        self.ui.checkBoxMaxFilter.hide()
         #self.ui.tabEvoked = None
         '''
         Old code for activating buttons when experiment state changes
@@ -104,6 +106,7 @@ class MainWindow(QtGui.QMainWindow):
             Sets info about trigger channels and their events to
             Triggers box in the Raw tab
             """
+            self.ui.listWidget.clear()
             events = self.experiment.event_set
             for key, value in events.iteritems():
                 item = QtGui.QListWidgetItem()
@@ -111,19 +114,12 @@ class MainWindow(QtGui.QMainWindow):
                             ' events')
                 self.ui.listWidget.addItem(item)
             self.ui.labelExperimentName.setText(self.experiment.experiment_name)
-            fname = self.experiment.raw_data.info.get('filename')
-            files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
-            files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
-            files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
-            if len(files) > 1:
-                self.ui.checkBoxECG.setCheckable(True)
-                self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
-                self.ui.checkBoxECG.setCheckable(False)   
+            self._check_boxes()
+            
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
-            self.messageBox.show()
-          
+            self.messageBox.show()  
      
     #def setup_ui_by_experiment_state(self):
         
@@ -193,8 +189,32 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
+        
+    def on_pushButtonApplyECG_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        Caller().apply_ecg(self.experiment.raw_data)
     
-       
+    def _check_boxes(self):
+        self.ui.checkBoxECG.hide()
+        self.ui.checkBoxEOG.hide()
+        self.ui.checkBoxMaxFilter.hide()
+        self.ui.checkBoxEOGApplied.hide()
+        self.ui.checkBoxECGApplied.hide()
+        fname = self.experiment.raw_data.info.get('filename')
+        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
+        if len(files) > 1:
+            self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
+            self.ui.checkBoxECG.show()
+        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_avg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog-eve.fif'))
+        if len(files) > 1:
+            self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
+            self.ui.checkBoxEOG.show()
+        #TODO: Maxfilter
+        
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()

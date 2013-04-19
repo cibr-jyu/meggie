@@ -71,13 +71,6 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
         caller = Caller()
         caller.call_ecg_ssp(dictionary)
-        print fname.rsplit('/', 1)[0]
-        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
-        if len(files) > 1:
-            self.parent.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked) 
-            
-            
+        self.parent._check_boxes()
         self.close()
 
