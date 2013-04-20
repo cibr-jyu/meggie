@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eogParametersDialog.ui'
 #
-# Created: Thu Apr 18 11:46:57 2013
+# Created: Fri Apr 19 18:14:14 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -235,7 +235,7 @@ class Ui_Dialog(object):
         self.doubleSpinBoxGradReject = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_4)
         self.doubleSpinBoxGradReject.setPrefix(_fromUtf8(""))
         self.doubleSpinBoxGradReject.setMaximum(1000000000.0)
-        self.doubleSpinBoxGradReject.setProperty("value", 2000.0)
+        self.doubleSpinBoxGradReject.setProperty("value", 3000.0)
         self.doubleSpinBoxGradReject.setObjectName(_fromUtf8("doubleSpinBoxGradReject"))
         self.horizontalLayout_14.addWidget(self.doubleSpinBoxGradReject)
         self.verticalLayout_2.addLayout(self.horizontalLayout_14)
@@ -246,7 +246,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_11.addWidget(self.labelEegReject)
         self.doubleSpinBoxEEGReject = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_4)
         self.doubleSpinBoxEEGReject.setMaximum(1000000000.0)
-        self.doubleSpinBoxEEGReject.setProperty("value", 50.0)
+        self.doubleSpinBoxEEGReject.setProperty("value", 100.0)
         self.doubleSpinBoxEEGReject.setObjectName(_fromUtf8("doubleSpinBoxEEGReject"))
         self.horizontalLayout_11.addWidget(self.doubleSpinBoxEEGReject)
         self.verticalLayout_2.addLayout(self.horizontalLayout_11)
@@ -260,7 +260,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_10.addWidget(self.labelMagReject)
         self.doubleSpinBoxMagReject = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_4)
         self.doubleSpinBoxMagReject.setMaximum(1000000000.0)
-        self.doubleSpinBoxMagReject.setProperty("value", 3000.0)
+        self.doubleSpinBoxMagReject.setProperty("value", 4000.0)
         self.doubleSpinBoxMagReject.setObjectName(_fromUtf8("doubleSpinBoxMagReject"))
         self.horizontalLayout_10.addWidget(self.doubleSpinBoxMagReject)
         self.verticalLayout_3.addLayout(self.horizontalLayout_10)

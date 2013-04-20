@@ -571,6 +571,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButtonApplyECG">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Apply ECG projections</string>
                  </property>
@@ -591,6 +594,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButtonApplyEOG">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Apply EOG projections</string>
                  </property>

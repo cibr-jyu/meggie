@@ -64,6 +64,6 @@ class EogParametersDialog(QtGui.QDialog):
         
         caller = Caller()
         caller.call_eog_ssp(dictionary)
-        self.parent._check_boxes()
+        self.parent._initialize_ui()
         self.close()
         

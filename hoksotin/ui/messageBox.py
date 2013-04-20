@@ -1,34 +1,32 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4 import QtCore,QtGui
 
 
-class AppForm(QMainWindow):
+class AppForm(QtGui.QDialog):
     def __init__(self, parent=None):
-        QMainWindow.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.create_main_frame()       
 
     def create_main_frame(self):        
-        page = QWidget()        
-
+        page = QtGui.QWidget()
+        
         self.setWindowTitle('Error') 
-        self.buttonOk = QPushButton('Ok', page)
-        self.labelException = QLabel()
-        vbox1 = QVBoxLayout()
+        self.buttonOk = QtGui.QPushButton('Ok', page)
+        self.labelException = QtGui.QLabel()
+        self.buttonOk.move(150,0)
+        vbox1 = QtGui.QVBoxLayout(self)
         vbox1.addWidget(self.labelException)
         vbox1.addWidget(self.buttonOk)
-        page.setLayout(vbox1)
-        self.setCentralWidget(page)
 
-        self.connect(self.buttonOk, SIGNAL("clicked()"), self.clicked)
+        self.connect(self.buttonOk, QtCore.SIGNAL("clicked()"), self.accept)
 
-    def clicked(self):
+    def accept(self):
         self.close()
 
 
 
 if __name__ == "__main__":
     import sys
-    app = QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     form = AppForm()
     form.show()
     app.exec_()

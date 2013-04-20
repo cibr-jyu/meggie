@@ -54,10 +54,6 @@ class MainWindow(QtGui.QMainWindow):
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
-        self.ui.checkBoxECG.hide()
-        self.ui.checkBoxEOG.hide()
-        self.ui.checkBoxMaxFilter.hide()
-        #self.ui.tabEvoked = None
         '''
         Old code for activating buttons when experiment state changes
         TODO: check and remove
@@ -72,7 +68,7 @@ class MainWindow(QtGui.QMainWindow):
         Creates a new CreateProjectDialog and shows it
         """       
         self.dialog = CreateExperimentDialog(self)
-        self.dialog.show()        
+        self.dialog.show()     
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
@@ -80,7 +76,7 @@ class MainWindow(QtGui.QMainWindow):
         
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select project directory"))
-        
+        if path == '': return
         fname = path + '/' + path.split('/')[-1] + '.pro'
         # TODO needs exception checking for corrupt/wrong type of file
         if os.path.exists(path) and os.path.isfile(fname):
@@ -90,15 +86,7 @@ class MainWindow(QtGui.QMainWindow):
             # workaround for setting up the raw object after pickling
             self.experiment.raw_data = mne.fiff.Raw(
                 self.experiment.raw_data.info.get('filename'))            
-            
-            """
-            TODO should deduce the tabs to be opened from the existing
-            files in the experiment directory
-            """
-            self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
-            self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing,
-                                        "Preprocessing")
-            
+
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)
             
@@ -114,7 +102,7 @@ class MainWindow(QtGui.QMainWindow):
                             ' events')
                 self.ui.listWidget.addItem(item)
             self.ui.labelExperimentName.setText(self.experiment.experiment_name)
-            self._check_boxes()
+            self._initialize_ui()
             
         else:
             self.messageBox = messageBox.AppForm()
@@ -125,7 +113,7 @@ class MainWindow(QtGui.QMainWindow):
         
         
          
-    def on_pushButtonEpoch_clicked(self, checked=None):
+    def on_pushButtonEventlist_clicked(self, checked=None):
         """
         Opens the epoch dialog. 
         """
@@ -194,12 +182,18 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         Caller().apply_ecg(self.experiment.raw_data)
     
-    def _check_boxes(self):
+    def _initialize_ui(self):
+        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
+                                    "Preprocessing")
+        self.ui.tabWidget.insertTab(2, self.ui.tabAnalysis, "Analysis")
         self.ui.checkBoxECG.hide()
         self.ui.checkBoxEOG.hide()
         self.ui.checkBoxMaxFilter.hide()
         self.ui.checkBoxEOGApplied.hide()
         self.ui.checkBoxECGApplied.hide()
+        self.ui.pushButtonApplyEOG.setEnabled(False)
+        self.ui.pushButtonApplyECG.setEnabled(False)
         fname = self.experiment.raw_data.info.get('filename')
         files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
@@ -207,12 +201,14 @@ class MainWindow(QtGui.QMainWindow):
         if len(files) > 1:
             self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxECG.show()
+            self.ui.pushButtonApplyECG.setEnabled(True)
         files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog-eve.fif'))
         if len(files) > 1:
             self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxEOG.show()
+            self.ui.pushButtonApplyEOG.setEnabled(True)
         #TODO: Maxfilter
         
 def main(): 

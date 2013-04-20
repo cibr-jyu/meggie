@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Fri Apr 19 15:36:44 2013
+# Created: Sat Apr 20 12:54:57 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -285,11 +285,13 @@ class Ui_MainWindow(object):
         spacerItem7 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem7)
         self.pushButtonApplyECG = QtGui.QPushButton(self.groupBoxAvailablePreprocessingSteps)
+        self.pushButtonApplyECG.setEnabled(False)
         self.pushButtonApplyECG.setObjectName(_fromUtf8("pushButtonApplyECG"))
         self.verticalLayout_2.addWidget(self.pushButtonApplyECG)
         spacerItem8 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem8)
         self.pushButtonApplyEOG = QtGui.QPushButton(self.groupBoxAvailablePreprocessingSteps)
+        self.pushButtonApplyEOG.setEnabled(False)
         self.pushButtonApplyEOG.setObjectName(_fromUtf8("pushButtonApplyEOG"))
         self.verticalLayout_2.addWidget(self.pushButtonApplyEOG)
         spacerItem9 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)

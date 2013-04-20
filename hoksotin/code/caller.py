@@ -6,6 +6,8 @@ Created on Apr 11, 2013
 """
 import subprocess
 import os
+import glob
+
 import mne
 
 class Caller(object):
@@ -23,7 +25,7 @@ class Caller(object):
         """
         #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
-            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --raw ' + filename,
+            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' + filename.rsplit('/', 1)[0] + ' --raw ' + filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
         except:
@@ -34,6 +36,12 @@ class Caller(object):
         print "the program return code was %d" % retval
         
     def call_maxfilter(self, dic, custom):
+        """
+        Performs maxfiltering with the given parameters.
+        Keyword arguments:
+        dic           -- Dictionary of parameters
+        custom        -- Additional parameters as a string
+        """
         bs = 'maxfilter '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
@@ -47,6 +55,11 @@ class Caller(object):
         print "the program return code was %d" % retval
         
     def call_ecg_ssp(self, dic):
+        """
+        Creates ECG projections using ssp for given data.
+        Keyword arguments:
+        dic           -- dictionary of parameters including the MEG-data.
+        """
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
@@ -112,6 +125,11 @@ class Caller(object):
         mne.write_events(ecg_event_fname, events)
     
     def call_eog_ssp(self, dic):
+        """
+        Creates EOG projections using ssp for given data.
+        Keyword arguments:
+        dic           -- dictionary of parameters including the MEG-data.
+        """
         #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         
         # TODO not the actual path to the needed script (the needed script
@@ -135,7 +153,7 @@ class Caller(object):
         rej_eog = dic.get('rej-eog')
         
         flat = None
-        bads = [] #TODO: Check how the whole bads-thing is supposed to work.
+        bads = dic.get('bads') #TODO: Check how the whole bads-thing is supposed to work.
         
         start = dic.get('tstart')
         taps = dic.get('filtersize')
@@ -183,7 +201,18 @@ class Caller(object):
         
         
     def apply_ecg(self, raw):
-        raw.add_proj('')
+        """
+        Applies ECG projections for MEG-data.
+        
+        """
+        fname = raw.info.get('filename')
+        proj_file = filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
+        #Checks if there is exactly one projection file
+        if len(proj_file) == 1:
+            proj = mne.read_proj(proj_file[0])
+            raw.add_proj(proj)
+            raw.save(fname[:-4] + '-ecg_applied.fif')
+        #raw.add_proj('')
         """
         bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
         bs = 'python /usr/local/bin/mne-python-master/bin/mne_compute_proj_eog.py '

@@ -55,7 +55,7 @@ class EcgParametersDialog(QtGui.QDialog):
         rej_eog = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['rej-eog'] = rej_eog
         bads = self.ui.lineEditBad.text()
-        
+        dictionary['bads'] = bads
         start = self.ui.spinBoxStart.value()
         dictionary['tstart'] = start
         taps = self.ui.spinBoxTaps.value()
@@ -71,6 +71,6 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
         caller = Caller()
         caller.call_ecg_ssp(dictionary)
-        self.parent._check_boxes()
+        self.parent._initialize_ui()
         self.close()
 

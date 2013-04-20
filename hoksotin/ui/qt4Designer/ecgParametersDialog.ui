@@ -60,7 +60,7 @@
       <attribute name="title">
        <string>ECG settings</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -647,7 +647,7 @@
                 <double>1000000000.000000000000000</double>
                </property>
                <property name="value">
-                <double>2000.000000000000000</double>
+                <double>3000.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -671,7 +671,7 @@
                 <double>1000000000.000000000000000</double>
                </property>
                <property name="value">
-                <double>50.000000000000000</double>
+                <double>100.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -699,7 +699,7 @@
                 <double>1000000000.000000000000000</double>
                </property>
                <property name="value">
-                <double>3000.000000000000000</double>
+                <double>4000.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -790,8 +790,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>381</x>
-     <y>744</y>
+     <x>562</x>
+     <y>736</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -806,12 +806,28 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>744</y>
+     <x>471</x>
+     <y>736</y>
     </hint>
     <hint type="destinationlabel">
      <x>277</x>
      <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEpochRejection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameEpochRejection</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>442</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>46</x>
+     <y>480</y>
     </hint>
    </hints>
   </connection>

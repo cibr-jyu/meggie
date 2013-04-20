@@ -78,9 +78,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         
         self.parent.experiment = self.experiment
         self.parent.raw = self.experiment.raw_data
-        self.parent.ui.tabWidget.insertTab(0, self.parent.ui.tabRaw, "Raw")
-        self.parent.ui.tabWidget.insertTab(1, self.parent.ui.tabPreprocessing, 
-                                           "Preprocessing" )
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
         self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
         self.parent.ui.listWidget.clear()
@@ -91,7 +88,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                         ' events')
             self.parent.ui.listWidget.addItem(item)
         self.close()
-        
+        self.parent._initialize_ui() 
         
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -108,7 +105,6 @@ class CreateExperimentDialog(QtGui.QDialog):
                 self.messageBox.show()
                 
         self.ui.FilePathLineEdit.setText(self.fname)
-        
         
     def on_showFileInfoButton_clicked(self):
         try:
