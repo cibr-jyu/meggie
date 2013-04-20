@@ -194,6 +194,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.hide()
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
+        
+        #Check whether ECG projections are calculated
         fname = self.experiment.raw_data.info.get('filename')
         files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
@@ -202,6 +204,8 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxECG.show()
             self.ui.pushButtonApplyECG.setEnabled(True)
+        
+        #Check whether EOG projections are calculated
         files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_proj.fif'))
         files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog-eve.fif'))
@@ -209,6 +213,14 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxEOG.show()
             self.ui.pushButtonApplyEOG.setEnabled(True)
+        
+        #Check whether ECG projections are applied
+        files = filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*ecg_applied.fif'))
+        if len(files) > 0:
+            self.ui.checkBoxECGApplied.show()
+            self.ui.checkBoxECGApplied.setCheckState(QtCore.Qt.Checked)
+            
+        #TODO: Check whether EOG projections are applied
         #TODO: Maxfilter
         
 def main(): 

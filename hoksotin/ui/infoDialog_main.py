@@ -40,10 +40,10 @@ class InfoDialog(QtGui.QDialog):
         self.ui.labelDateValue.setText(self.mi.date)
         self.ui.labelEEGValue.setText(str(self.mi.EEG_channels))
         self.ui.labelGradMEGValue.setText(str(self.mi.grad_channels))
-        self.ui.labelHighValue.setText(str(self.mi.high_pass))
-        self.ui.labelLowValue.setText(str(self.mi.low_pass))
+        self.ui.labelHighValue.setText(str(self.mi.high_pass) + ' Hz')
+        self.ui.labelLowValue.setText(str(self.mi.low_pass) + ' Hz')
         self.ui.labelMagMEGValue.setText(str(self.mi.mag_channels))
-        self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq))
+        self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq) + ' Hz')
         self.ui.labelSubjectValue.setText(self.mi.subject_name)
     
         

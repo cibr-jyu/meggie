@@ -38,7 +38,7 @@ class MeasurementInfo(object):
         if self._info.get('highpass') is None:
             raise Exception('Field highpass does not exist.')
         else:
-            return self._info.get('highpass')
+            return round(self._info.get('highpass'),2)
     
     @property
     def low_pass(self):
@@ -49,7 +49,7 @@ class MeasurementInfo(object):
         if self._info.get('lowpass') is None:
             raise Exception('Field lowpass does not exist.')
         else:
-            return self._info.get('lowpass')
+            return round(self._info.get('lowpass'),2)
     
     @property
     def sampling_freq(self):
@@ -60,7 +60,7 @@ class MeasurementInfo(object):
         if self._info.get('sfreq') is None:
             raise Exception('Field sfreq does not exist.')
         else:
-            return self._info.get('sfreq')
+            return round(self._info.get('sfreq'),2)
     
     @property        
     def mag_channels(self):
