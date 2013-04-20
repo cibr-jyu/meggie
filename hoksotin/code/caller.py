@@ -10,11 +10,17 @@ import glob
 
 import mne
 
+from experiment import Experiment
+
 class Caller(object):
     """
     Class for calling third party software
     """
     def __init__(self):
+        
+        #TODO should be same as that of mainwindow
+        self.experiment = Experiment()
+        
         pass
     
     def call_mne_browse_raw(self, filename):
@@ -52,6 +58,9 @@ class Caller(object):
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()
+        
+        
+        
         print "the program return code was %d" % retval
         
     def call_ecg_ssp(self, dic):
@@ -123,6 +132,11 @@ class Caller(object):
         
         print "Writing ECG events in %s" % ecg_event_fname
         mne.write_events(ecg_event_fname, events)
+        
+        # Write parameter file
+        #self.experiment.save_parameter_file('mne.preprocessing.compute_proj_ecg', raw_in, ecg_proj_fname, dic)
+        
+        
     
     def call_eog_ssp(self, dic):
         """
@@ -134,7 +148,7 @@ class Caller(object):
         
         # TODO not the actual path to the needed script (the needed script
         # is an extra script in mne-python)
-        # TODO use SSP-projections froma a different file?
+        # TODO use SSP-projections from a a different file?
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
@@ -198,6 +212,10 @@ class Caller(object):
         
         print "Writing EOG events in %s" % eog_event_fname
         mne.write_events(eog_event_fname, events)
+        
+        # Write parameter file
+        #self.experiment.save_parameter_file
+        ('mne.preprocessing.compute_proj_eog', raw_in, eog_proj_fname, dic)
         
         
     def apply_ecg(self, raw):

@@ -10,8 +10,11 @@ import os
 
 import time
 import re
+import csv
+
 
 import numpy as np
+
 # Better to use pickle rather than cpickle, as project paths may
 # include unicode characters
 import pickle
@@ -249,18 +252,50 @@ class Experiment(object):
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path)
             
-    def save_parameter_file(self, command, filename, dic):
+    def save_parameter_file(self, command, inputfilename, outputfilename, dic):
         """
         Saves the command and parameters related to creation of a certain
-        output file to a separate parameter file. The resulting parameter file
-        also includes the name of the input file.  
+        output file to a separate parameter file in csv-format.
+        TODO: breaks if dictionary keys of values include commas --> check
+        
+        An example of the structure of the resulting parameter file:
+        
+        jn_multimodal01_raw_sss.fif
+        jn_multimodal01_raw_sss_ecg_proj.fif 
+        mne.preprocessing.compute_proj_eog
+        tmin,0.2
+        tmax,0.5
+        .
+        .
+        .  
         
         Keyword arguments:
-        filename    -- Name of the output file
-        command     -- command (as string) used
-        dic         -- Dictionary including commands
-        """ 
-            
+        inputfilename    -- name of the file the command with parameters
+                            was executed on
+        outputfilename   -- the resulting output file from the command
+        command          -- command (as string) used
+        dic              -- dictionary including commands
+        """
+        paramfilename = outputfilename + '.param'
+        paramfullname = open(self._file_path + '/' + paramfilename, 'wb')
+        print 'writing param file'
+        csvwriter = csv.writer(paramfullname)
+        
+        csvwriter.writerow(inputfilename)
+        csvwriter.writerow(command)
+        
+        for currentkey in dic:
+            csvwriter.writerow(currentkey, dic.get(currentkey))
+        
+        paramfullname.close()
+        
+           
+        """
+           diciter = dic.iteritems(dic)
+            while True:
+                try:
+                    item = diciter.next()      
+        """
             
     def write_commands(self, commands, node, parent=''):
         """
