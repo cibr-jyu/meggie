@@ -176,6 +176,14 @@ class TestStatistic(unittest.TestCase):
                                              self.tmin_int, self.tmax_int),
                          (2, 1000), 'Find_minimum with constant array failed.')
         
+    def test_arr_empty(self):
+        
+        with self.assertRaises(Exception) as e:
+            self.s.find_maximum(self.sfreq_int, self.arr_empty,
+                                self.tmin_int, self.tmax_int)
+            self.assertEqual(e.exception.message, self.ex_arr_empty,
+                             'Unexpected exception raised with an empty array')
+        
     if __name__ == "__main__":
         #import sys;sys.argv = ['', 'TestStatistic.testMax']
         unittest.main()
