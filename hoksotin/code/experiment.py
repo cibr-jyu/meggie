@@ -167,8 +167,6 @@ class Experiment(object):
         except IOError:
             return False
         
-        # Ota experiment name pois ekana, niin actionName ei vahingossa
-        # täsmää siihen
     """
     
     
