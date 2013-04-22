@@ -119,14 +119,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QListView" name="listView">
-     <property name="inputMethodHints">
-      <set>Qt::ImhNone</set>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <widget class="QTextEdit" name="textEditDetails"/>
    </item>
   </layout>
  </widget>
