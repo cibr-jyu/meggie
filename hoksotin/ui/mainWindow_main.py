@@ -59,7 +59,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment = None
         
         """
-        One main window and one experiment only needs one caller to do its
+        One main window (and one experiment) only needs one caller to do its
         bidding. 
         """
         self.caller = Caller()
@@ -127,13 +127,14 @@ class MainWindow(QtGui.QMainWindow):
             """
             self.caller.experiment = self.experiment
             
-            
         else:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Project files not found.')
+            self.messageBox.labelException.setText \
+            ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
      
     #def setup_ui_by_experiment_state(self):
+         
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """

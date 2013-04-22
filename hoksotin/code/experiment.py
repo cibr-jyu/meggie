@@ -43,6 +43,13 @@ class Experiment(object):
         self.__index = 0
         self._event_set = []
         
+        # Add here all the possible actions that you can do to an experiment
+        self.stateDict = dict(Maxfilter=False, ECGcomputed=False,
+                              ECGapplied=False, EOGcomputed=False,
+                              EOGapplied=False, Eventlist=False,
+                              Epochs=False, Average=False)
+        
+        
     @property
     def experiment_name(self):
         """
@@ -134,6 +141,36 @@ class Experiment(object):
                 raise Exception("Use only letters and numbers in _author name")
         else:
             raise Exception('Too long _author name')
+    
+    def update_state(self, key, value):
+       self.stateDict[key] = value
+       
+       # Parent should always refer to main window, or there will be blood
+       self.parent.setup_ui_by_experiment_state()   
+        
+    """
+    for 
+    
+    if (check_file_existence('sss') \
+        or check_file_existence('tsss') \
+        or check_file_existence('mc')
+       ):
+        self.stateDict[Maxfilter] = True  
+    """
+    """    
+    def check_file_existence(self, filetypestring):
+        filename = self.file_path() + self.
+        
+        try:
+            with open(filename):
+                return True
+        except IOError:
+            return False
+        
+        # Ota experiment name pois ekana, niin actionName ei vahingossa
+        # täsmää siihen
+    """
+    
     
     def get_date(self):
         """

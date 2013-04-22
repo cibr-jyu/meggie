@@ -222,6 +222,7 @@ class Caller(object):
         self.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in, eog_proj_fname, dic)
         
+        #self.experiment.update_state(EOGcomputed, True)
         
     def apply_ecg(self, raw):
         """
