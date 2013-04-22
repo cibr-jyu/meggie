@@ -62,8 +62,8 @@ class EogParametersDialog(QtGui.QDialog):
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
         
-        caller = Caller()
-        caller.call_eog_ssp(dictionary)
+        # Uses the caller related to mainwindow
+        self.parent.caller.call_eog_ssp(dictionary)
         self.parent._initialize_ui()
         self.close()
         

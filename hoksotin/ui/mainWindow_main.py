@@ -49,8 +49,22 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-       
         
+        
+        """
+        Main window represents one experiment at a time. This experiment is
+        defined by the CreateExperimentDialog or the by the Open_experiment_
+        trigger action.
+        """
+        self.experiment = None
+        
+        """
+        One main window and one experiment only needs one caller to do its
+        bidding. 
+        """
+        self.caller = Caller()
+        
+       
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
@@ -62,13 +76,17 @@ class MainWindow(QtGui.QMainWindow):
         #self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         '''
         
-        
     def on_actionCreate_experiment_triggered(self):
         """
         Creates a new CreateProjectDialog and shows it
         """       
         self.dialog = CreateExperimentDialog(self)
-        self.dialog.show()     
+        self.dialog.show()
+        
+        """
+        Sets the experiment for caller, so it can use its information
+        """
+        self.caller.experiment = self.experiment
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
@@ -104,6 +122,12 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.labelExperimentName.setText(self.experiment.experiment_name)
             self._initialize_ui()
             
+            """
+            Sets the experiment for caller, so it can use its information
+            """
+            self.caller.experiment = self.experiment
+            
+            
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Project files not found.')
@@ -111,8 +135,6 @@ class MainWindow(QtGui.QMainWindow):
      
     #def setup_ui_by_experiment_state(self):
         
-        
-         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
         Opens the epoch dialog. 
@@ -121,7 +143,6 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.epochParameterDialog = ParameterDialog(self)
         self.epochParameterDialog.show()        
-        
         
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
@@ -139,19 +160,15 @@ class MainWindow(QtGui.QMainWindow):
         item.setData(1,evoked)
         self.ui.listWidgetAverage.addItem(item)
         evoked.plot()
-        
-        
+         
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        caller = Caller()
-        caller.call_mne_browse_raw(self.experiment.raw_data.info.get('filename'))
+        self.caller.call_mne_browse_raw(self.experiment.raw_data.info.get('filename'))
     
-        
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
         self.maxFilterDialog.show()
-    
     
     def on_currentChanged(self):
         """
@@ -180,7 +197,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        Caller().apply_ecg(self.experiment.raw_data)
+        self.caller.apply_ecg(self.experiment.raw_data)
     
     def _initialize_ui(self):
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")

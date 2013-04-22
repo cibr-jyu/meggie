@@ -277,17 +277,23 @@ class Experiment(object):
         dic              -- dictionary including commands
         """
         paramfilename = outputfilename + '.param'
-        paramfullname = open(self._file_path + '/' + paramfilename, 'wb')
-        print 'writing param file'
-        csvwriter = csv.writer(paramfullname)
+        with open(paramfilename, 'wb') as paramfullname:
+            print 'writing param file'
+            csvwriter = csv.writer(paramfullname)
+            
+            csvwriter.writerow([inputfilename] + [outputfilename] + [command])
+            #csvwriter.writerow(outputfilename)
+            #csvwriter.writerow(command)
+            
+            csvDictWriter = csv.DictWriter(paramfullname, dic.keys())
+            
+            csvDictWriter.writerow(dic)
         
-        csvwriter.writerow(inputfilename)
-        csvwriter.writerow(command)
         
-        for currentkey in dic:
-            csvwriter.writerow(currentkey, dic.get(currentkey))
+        #for currentkey in dic:
+        #    csvwriter.writerow(currentkey, dic.get(currentkey))
         
-        paramfullname.close()
+        
         
            
         """

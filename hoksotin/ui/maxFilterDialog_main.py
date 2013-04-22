@@ -147,7 +147,8 @@ class MaxFilterDialog(QtGui.QDialog):
         
         custom = self.ui.textEditCustom.toPlainText()
         
-        caller = Caller()
+        # Uses the caller related to mainwindow
+        caller = self.parent.caller
         t = Thread(target=caller.call_maxfilter,
                    args=(dictionary, custom,))
         t.start()

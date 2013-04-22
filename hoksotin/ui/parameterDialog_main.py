@@ -7,7 +7,7 @@ from PyQt4 import QtCore,QtGui
 from epochParameterDialog_UI import Ui_ParameterDialog
 
 from measurementInfo import MeasurementInfo
-from enaml.components.push_button import PushButton
+#from enaml.components.push_button import PushButton
 
 from epochs import Epochs
 

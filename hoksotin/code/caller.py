@@ -18,8 +18,11 @@ class Caller(object):
     """
     def __init__(self):
         
-        #TODO should be same as that of mainwindow
-        self.experiment = Experiment()
+        """ 
+        Caller is always related to a single experiment
+        
+        """
+        self.experiment = None
         
         pass
     
@@ -134,7 +137,9 @@ class Caller(object):
         mne.write_events(ecg_event_fname, events)
         
         # Write parameter file
-        #self.experiment.save_parameter_file('mne.preprocessing.compute_proj_ecg', raw_in, ecg_proj_fname, dic)
+        self.experiment. \
+        save_parameter_file('mne.preprocessing.compute_proj_ecg', \
+                            raw_in, ecg_proj_fname, dic)
         
         
     
@@ -214,7 +219,7 @@ class Caller(object):
         mne.write_events(eog_event_fname, events)
         
         # Write parameter file
-        #self.experiment.save_parameter_file
+        self.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in, eog_proj_fname, dic)
         
         
