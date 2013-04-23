@@ -21,6 +21,7 @@ import StringIO
 import pickle
 import time
 from threading import  Thread
+import ConfigParser
 
 # Create a dialog main window
 class CreateExperimentDialog(QtGui.QDialog):
@@ -39,18 +40,21 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
         self.ui.showFileInfoButton.setEnabled(False)
-        self.computeDialog = MaxFilterComputeDialog(self, self.parent)
+        self.computeDialog = MaxFilterComputeDialog(self)
         """
         self.computeDialog.open()
         self.computeDialog.raise_()
         self.computeDialog.activateWindow()        
         """
-        QtGui.QApplication.processEvents()
-        self.computeDialog.setVisible(False)
+        
+        #self.computeDialog.setVisible(False)
         sys.stdout = OutLog(self.computeDialog.ui.textEditDetails, sys.stdout)
                 
     def accept(self):
-        self.computeDialog.setVisible(True)
+        self.computeDialog.show()
+        self.computeDialog.raise_()
+        QtGui.QApplication.processEvents(flags=QtCore.QEventLoop.AllEvents)
+        
         self.t2 = Thread(target=self._initialize_experiment())
         t = Thread(target = self.process_events())
         
@@ -102,7 +106,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         try:
             self.workspace = Workspace()
             self.experiment = Experiment()
-            self.workspace.working_directory = '/usr/local/bin/'  #'/tmp/' 
+            #self.workspace.working_directory = '/usr/local/bin/'  #'/tmp/' 
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
             lineEditProjectName.text()

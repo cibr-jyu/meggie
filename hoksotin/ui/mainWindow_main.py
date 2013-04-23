@@ -26,6 +26,7 @@ from parameterDialog_main import ParameterDialog
 from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 from ecgParametersDialog_main import EcgParametersDialog
+from workSpaceDialog_main import WorkSpaceDialog
 import messageBox
 
 from experiment import Experiment
@@ -45,6 +46,7 @@ class MainWindow(QtGui.QMainWindow):
         '''
         Constructor
         '''
+        #self.app = QtGui.QApplication(sys.argv)
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -68,6 +70,9 @@ class MainWindow(QtGui.QMainWindow):
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
+            
+        
+            
         '''
         Old code for activating buttons when experiment state changes
         TODO: check and remove
@@ -76,21 +81,25 @@ class MainWindow(QtGui.QMainWindow):
         #self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         '''
         
-    def on_actionCreate_experiment_triggered(self):
+    def on_actionCreate_experiment_triggered(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
         """
         Creates a new CreateProjectDialog and shows it
         """       
-        self.dialog = CreateExperimentDialog(self)
-        self.dialog.show()
-        
-        """
-        Sets the experiment for caller, so it can use its information
-        """
-        self.caller.experiment = self.experiment
+        if os.path.isfile('settings.cfg'):
+            self.dialog = CreateExperimentDialog(self)
+            self.dialog.show()
+            """
+            Sets the experiment for caller, so it can use its information
+            """
+            self.caller.experiment = self.experiment
+        else:
+            self.check_workspace()
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
         if checked is None: return 
+        self.check_workspace()
         
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select project directory"))
@@ -240,6 +249,9 @@ class MainWindow(QtGui.QMainWindow):
             
         #TODO: Check whether EOG projections are applied
         #TODO: Maxfilter
+    def check_workspace(self):
+        self.workSpaceDialog = WorkSpaceDialog(self)
+        self.workSpaceDialog.show()
         
 def main(): 
     app = QtGui.QApplication(sys.argv)

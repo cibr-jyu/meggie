@@ -4,6 +4,7 @@ Created on Apr 4, 2013
 @author: jaolpeso
 """
 import os
+import ConfigParser
 
 class Workspace(object):
     """
@@ -15,7 +16,10 @@ class Workspace(object):
         """
         Constructor sets default working directory.
         """
-        self._working_directory = os.getcwd()
+        config = ConfigParser.RawConfigParser()
+        config.read('settings.cfg')
+        workspace = config.get('Workspace', 'workspace')
+        self._working_directory = workspace
         
     @property    
     def working_directory(self):

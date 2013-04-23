@@ -14,13 +14,12 @@ from infoDialog_Ui import Ui_infoDialog
 class MaxFilterComputeDialog(QtGui.QProgressDialog):
 
 
-    def __init__(self, parent, pparent):
+    def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.parent = pparent
         self.initialize()
-        
+        QtGui.QApplication.processEvents()
     def initialize(self):
         """
         try:
