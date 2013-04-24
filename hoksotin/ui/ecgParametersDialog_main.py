@@ -5,6 +5,7 @@ Created on Apr 16, 2013
 """
 import os
 import glob
+import csv
 
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialog_Ui import Ui_Dialog
@@ -22,6 +23,25 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         stim_channels = MeasurementInfo(parent.experiment.raw_data).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(stim_channels)
+        
+        paramdirectory = parent.experiment.subject_directory() 
+        globquery = paramdirectory + '*ecg_proj*param'
+        print globquery
+        globlist = glob.glob(globquery)
+        print globlist
+        #paramfilefullpath = globlist[0]  
+        #paramfullpath = paramdirectory + '/' + filename
+        #print paramfilefullpath
+        
+        with open(paramfilefullpath, 'rb') as paramfile:
+          csvreader=cvs.reader(paramfile)
+          self.paramdict(x for x in csvreader)
+          print self.paramdict
+        
+        #if ( on parametrifilu ):
+         #   set_previous_parameters()
+        
+         
         
     def accept(self):
         fname = self.parent.experiment.raw_data.info.get('filename')

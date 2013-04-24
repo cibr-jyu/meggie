@@ -60,11 +60,16 @@ class Caller(object):
                                 stderr=subprocess.STDOUT)
         for line in proc.stdout.readlines():
             print line
-        retval = proc.wait()
-        
-        
+        retval = proc.wait()      
         
         print "the program return code was %d" % retval
+        
+        """ 
+        # Write parameter file
+        self.experiment. \
+        save_parameter_file('maxfilter', \
+                            raw, , dic)
+        """
         
     def call_ecg_ssp(self, dic):
         """
