@@ -307,8 +307,6 @@ class Experiment(object):
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path)
-        
-        self.subject_directory(self._file_path + folder_name[0] + '/')
             
     def save_parameter_file(self, command, inputfilename, outputfilename, dic):
         """

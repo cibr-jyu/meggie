@@ -6,6 +6,7 @@ Created on Apr 16, 2013
 import os
 import glob
 import csv
+import ast
 
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialog_Ui import Ui_Dialog
@@ -24,25 +25,68 @@ class EcgParametersDialog(QtGui.QDialog):
         stim_channels = MeasurementInfo(parent.experiment.raw_data).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(stim_channels)
         
-        paramdirectory = parent.experiment.subject_directory() 
+        # Reading parameter file. TODO move to special module
+        paramdirectory = parent.experiment._subject_directory 
         globquery = paramdirectory + '*ecg_proj*param'
-        print globquery
         globlist = glob.glob(globquery)
-        print globlist
-        #paramfilefullpath = globlist[0]  
-        #paramfullpath = paramdirectory + '/' + filename
-        #print paramfilefullpath
         
-        with open(paramfilefullpath, 'rb') as paramfile:
-          csvreader=cvs.reader(paramfile)
-          self.paramdict(x for x in csvreader)
-          print self.paramdict
+        # Should be only one file matching
+        if ( len(globlist) == 1 ):
+            paramfilefullpath = globlist[0]              
+            
+            with open(paramfilefullpath, 'rb') as paramfile:
+              csvreader=csv.reader(paramfile)
+              
+              # skip the first three lines, as they don't include actual
+              # info about parameters 
+              for i in range(3): 
+                  next(csvreader)   
+              
+              # Read the rest of the parameter file into a dictionary as
+              # key-value pairs
+              paramdict = dict(x for x in csvreader)  
+       
+              self.set_previous_values(paramdict)     
         
-        #if ( on parametrifilu ):
-         #   set_previous_parameters()
+    def set_previous_values(self, dic):
+        """
+        Sets the values in the newly created dialog to those in the dictionary
+        given. See the *** for the specifics about the dictionary.
+        TODO exact source of dictionary information
+        """
+        self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+        self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+        self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
+        self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))
+        self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))
+        self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+        self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+        self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+        self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+        self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+        self.ui.doubleSpinBoxGradReject.setProperty("value",
+                                                     dic.get('rej-grad'))
+        self.ui.doubleSpinBoxMagReject.setProperty("value",
+                                                     dic.get('rej-mag'))
+        self.ui.doubleSpinBoxEEGReject.setProperty("value", 
+                                                   dic.get('rej-eeg'))
+        self.ui.doubleSpinBoxEOGReject.setProperty("value", 
+                                                   dic.get('reg-eog'))
+        self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+        self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+        self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+        self.ui.spinBoxJobs.setProperty("value", dic.get('njobs'))
+        self.ui.checkBoxEEGProj.setChecked(ast.literal_eval(
+                                           dic.get('avg-ref')))
         
-         
-        
+        self.ui.checkBoxSSPProj.setChecked(ast.literal_eval(
+                                           dic.get('avg-ref')))
+        # TODO check idea behind this not
+        self.ui.checkBoxSSPCompute.setChecked(not ast.literal_eval(
+                                           dic.get('no-proj')))
+        #self.ui.comboBoxECGChannel.set  dic.get('average')))
+                                           
+
     def accept(self):
         fname = self.parent.experiment.raw_data.info.get('filename')
         dictionary = {'i': fname}
