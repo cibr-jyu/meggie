@@ -29,6 +29,8 @@ class MaxFilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
+        self.ui.labelComputeMaxFilter.setVisible(False)
+        self.ui.progressBarComputeMaxFilter.setVisible(False)
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -40,6 +42,9 @@ class MaxFilterDialog(QtGui.QDialog):
         Reads values from the dialog, saves them in a dictionary and initiates
         a caller to actually call the backend.
         """
+        
+        self.ui.labelComputeMaxFilter.setVisible(True)
+        self.ui.progressBarComputeMaxFilter.setVisible(True)
         
         dictionary = {'-v': ''}
         x = self.ui.doubleSpinBoxX0.value()

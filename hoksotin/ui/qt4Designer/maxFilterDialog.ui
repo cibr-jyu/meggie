@@ -17,7 +17,7 @@
    <string>MaxFilter Settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_11">
-   <item row="2" column="0">
+   <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_15">
      <item>
       <spacer name="horizontalSpacer">
@@ -47,6 +47,21 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelComputeMaxFilter">
+     <property name="font">
+      <font>
+       <pointsize>18</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Computing MaxFilter (this may take several minutes) ...</string>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidgetMaxFilterSettings">
@@ -732,10 +747,6 @@
          </widget>
         </item>
        </layout>
-       <zorder>layoutWidget</zorder>
-       <zorder>checkBoxStorePosition</zorder>
-       <zorder>horizontalLayoutWidget</zorder>
-       <zorder>checkBoxMaxMove</zorder>
       </widget>
       <widget class="QSpinBox" name="spinBoxLineFreq">
        <property name="geometry">
@@ -778,6 +789,9 @@
         <string>Line frequency:</string>
        </property>
       </widget>
+      <zorder>checkBoxMaxMove</zorder>
+      <zorder>frame_2</zorder>
+      <zorder>labelLineFreq</zorder>
       <zorder>spinBoxLineFreq</zorder>
      </widget>
      <widget class="QWidget" name="tabCustom">
@@ -823,6 +837,16 @@
        </property>
       </widget>
      </widget>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QProgressBar" name="progressBarComputeMaxFilter">
+     <property name="maximum">
+      <number>0</number>
+     </property>
+     <property name="value">
+      <number>-1</number>
+     </property>
     </widget>
    </item>
   </layout>
