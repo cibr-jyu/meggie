@@ -39,8 +39,10 @@ class CreateExperimentDialog(QtGui.QDialog):
         # Refers to class in file CreateProjecDialog
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
+        self.ui.labelCreatingExperiment.setVisible(False)
+        self.ui.progressBarCreatingExperiment.setVisible(False)
         self.ui.showFileInfoButton.setEnabled(False)
-        self.computeDialog = MaxFilterComputeDialog(self)
+        #self.computeDialog = MaxFilterComputeDialog(self)
         """
         self.computeDialog.open()
         self.computeDialog.raise_()
@@ -48,11 +50,14 @@ class CreateExperimentDialog(QtGui.QDialog):
         """
         
         #self.computeDialog.setVisible(False)
-        sys.stdout = OutLog(self.computeDialog.ui.textEditDetails, sys.stdout)
+        #sys.stdout = OutLog(self.computeDialog.ui.textEditDetails, sys.stdout)
+            
                 
     def accept(self):
-        self.computeDialog.show()
-        self.computeDialog.raise_()
+        self.ui.labelCreatingExperiment.setVisible(True)
+        self.ui.progressBarCreatingExperiment.setVisible(True)
+        #self.computeDialog.show()
+        #self.computeDialog.raise_()
         QtGui.QApplication.processEvents(flags=QtCore.QEventLoop.AllEvents)
         
         self.t2 = Thread(target=self._initialize_experiment())
@@ -99,7 +104,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            self.computeDialog.close()
+            #self.computeDialog.close()
             return          
         QtGui.QApplication.processEvents()
         #self.computeDialog.setValue(10)    
@@ -117,7 +122,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText("Cannot assign attribute to project")
             self.messageBox.show()
-            self.computeDialog.close()
+            #self.computeDialog.close()
             return         
         try:
             # TODO: user should set this workspace from the mainWindow UI    
@@ -132,7 +137,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            self.computeDialog.close()
+            #self.computeDialog.close()
             return
 
         QtGui.QApplication.processEvents()
@@ -151,13 +156,13 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.close()
         self.parent._initialize_ui() 
 
-        self.computeDialog.close()
+        #self.computeDialog.close()
     
     def process_events(self):
         self.k=True
         while self.k:
             QtGui.QApplication.processEvents()
-        self.computeDialog.setVisible(False)
+        #self.computeDialog.setVisible(False)
         
 class OutLog:
     def __init__(self, edit, out=None, color=None):

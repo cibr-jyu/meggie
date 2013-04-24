@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'maxFilterDialog.ui'
 #
-# Created: Thu Apr 18 15:55:36 2013
+# Created: Wed Apr 24 16:17:09 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,7 +40,14 @@ class Ui_Dialog(object):
         self.pushButton = QtGui.QPushButton(Dialog)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
         self.horizontalLayout_15.addWidget(self.pushButton)
-        self.gridLayout_11.addLayout(self.horizontalLayout_15, 2, 0, 1, 1)
+        self.gridLayout_11.addLayout(self.horizontalLayout_15, 4, 0, 1, 1)
+        self.labelComputeMaxFilter = QtGui.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.labelComputeMaxFilter.setFont(font)
+        self.labelComputeMaxFilter.setScaledContents(False)
+        self.labelComputeMaxFilter.setObjectName(_fromUtf8("labelComputeMaxFilter"))
+        self.gridLayout_11.addWidget(self.labelComputeMaxFilter, 2, 0, 1, 1)
         self.tabWidgetMaxFilterSettings = QtGui.QTabWidget(Dialog)
         self.tabWidgetMaxFilterSettings.setObjectName(_fromUtf8("tabWidgetMaxFilterSettings"))
         self.tabGeneral = QtGui.QWidget()
@@ -387,6 +394,11 @@ class Ui_Dialog(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.tabWidgetMaxFilterSettings.addTab(self.tabCustom, _fromUtf8(""))
         self.gridLayout_11.addWidget(self.tabWidgetMaxFilterSettings, 1, 0, 1, 1)
+        self.progressBarComputeMaxFilter = QtGui.QProgressBar(Dialog)
+        self.progressBarComputeMaxFilter.setMaximum(0)
+        self.progressBarComputeMaxFilter.setProperty("value", -1)
+        self.progressBarComputeMaxFilter.setObjectName(_fromUtf8("progressBarComputeMaxFilter"))
+        self.gridLayout_11.addWidget(self.progressBarComputeMaxFilter, 3, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         self.tabWidgetMaxFilterSettings.setCurrentIndex(0)
@@ -447,6 +459,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "MaxFilter Settings", None))
         self.pushButton_2.setText(_translate("Dialog", "Cancel", None))
         self.pushButton.setText(_translate("Dialog", "Compute", None))
+        self.labelComputeMaxFilter.setText(_translate("Dialog", "Computing MaxFilter (this may take several minutes) ...", None))
         self.groupBoxOrigin.setTitle(_translate("Dialog", "Origin", None))
         self.checkBoxFit.setText(_translate("Dialog", "Fit to isotrak points", None))
         self.labelX0.setText(_translate("Dialog", "x0", None))
