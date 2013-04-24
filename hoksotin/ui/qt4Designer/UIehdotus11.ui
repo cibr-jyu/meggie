@@ -26,7 +26,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabRaw">
          <attribute name="title">
@@ -475,7 +475,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>200</y>
+            <y>250</y>
             <width>441</width>
             <height>211</height>
            </rect>
@@ -680,7 +680,7 @@
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>210</y>
+            <y>260</y>
             <width>218</width>
             <height>143</height>
            </rect>
@@ -715,6 +715,29 @@
             </layout>
            </item>
           </layout>
+         </widget>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="geometry">
+           <rect>
+            <x>430</x>
+            <y>30</y>
+            <width>381</width>
+            <height>231</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Events:</string>
+          </property>
+          <widget class="QListWidget" name="listWidgetEvents">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>331</width>
+             <height>191</height>
+            </rect>
+           </property>
+          </widget>
          </widget>
         </widget>
        </widget>

@@ -99,8 +99,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
         if checked is None: return 
-        self.check_workspace()
-        
+                
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select project directory"))
         if path == '': return
@@ -157,18 +156,18 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
         if checked is None: return 
-        epoch = self.ui.listWidgetEpochs.currentItem().data(1).toPyObject()
+        epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
         evoked = epoch.average()
         
         #Check if the tab has already been created
-        if self.ui.tabEvoked == None:
-            self.ui.tabEvoked = QtGui.QWidget()
-            self.ui.listWidgetAverage = self.__create_tab(self.ui.tabEvoked,
-                                                          'Evoked')
-        item = QtGui.QListWidgetItem()
-        item.setText('TestElement')
-        item.setData(1,evoked)
-        self.ui.listWidgetAverage.addItem(item)
+        #if self.ui.tabEvoked == None:
+        #    self.ui.tabEvoked = QtGui.QWidget()
+        #    self.ui.listWidgetAverage = self.__create_tab(self.ui.tabEvoked,
+        #                                                  'Evoked')
+        #item = QtGui.QListWidgetItem()
+        #item.setText('TestElement')
+        #item.setData(1,evoked)
+        #self.ui.listWidgetAverage.addItem(item)
         evoked.plot()
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):

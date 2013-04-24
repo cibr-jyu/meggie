@@ -10,13 +10,14 @@ from measurementInfo import MeasurementInfo
 #from enaml.components.push_button import PushButton
 
 from epochs import Epochs
+import brainRegions
 
 class ParameterDialog(QtGui.QDialog):
     '''
     classdocs
     '''
     index = 1
-
+    vertex = [0633,0632,0423,0422,0712,0713,0433,0432,0742,0743,1822,1823,1043,1042,1112,1113,0722,0723,1142,1143,0732,0733,2212,2213,0631,0421,0711,0431,0741,1821,1041,1111,0721,1141,0731,2211]
 
     def __init__(self, parent):
         '''
@@ -46,7 +47,7 @@ class ParameterDialog(QtGui.QDialog):
         self.fileEdit.setText(self.fname)
         """
         
-    def create_epochs(self):
+    def create_eventlist(self):
         stim_channel = str(self.ui.comboBoxStimulus.currentText())
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
@@ -57,17 +58,19 @@ class ParameterDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
+        channels = self.check_channels()
+        print channels
         try:
             epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag, grad, eeg,
                             stim, eog, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id))
+                            float(self.tmax), int(self.event_id), channels)
         except:
             return #TODO error handling
         return epochs
         
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None: return # Standard workaround
-        epochs = self.create_epochs()
+        epochs = self.create_eventlist()
         print epochs
         self.__class__.index += 1
         if isinstance(epochs, Epochs):
@@ -95,8 +98,36 @@ class ParameterDialog(QtGui.QDialog):
         """
         Called when the OK button is pressed.
         """
-        print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
-        self.close()        
+        
+        for index in xrange(self.ui.listWidgetEvents.count()):
+            item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
+            item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
+            self.parent.ui.listWidgetEvents.addItem(item)
+            
+        
+        #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        self.close()
+        
+    def check_channels(self):
+        if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
+            return ['MEG ' + str(x) for x in brainRegions.vertex]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-temporal':
+            return ['MEG ' + str(x) for x in brainRegions.left_temporal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-temporal':
+            return ['MEG ' + str(x) for x in brainRegions.right_temporal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-parietal':
+            return ['MEG ' + str(x) for x in brainRegions.left_parietal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-parietal':
+            return ['MEG ' + str(x) for x in brainRegions.right_parietal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-occipital':
+            return ['MEG ' + str(x) for x in brainRegions.left_occipital]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-occipital':
+            return ['MEG ' + str(x) for x in brainRegions.right_occipital]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-frontal':
+            return ['MEG ' + str(x) for x in brainRegions.left_frontal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
+            return ['MEG ' + str(x) for x in brainRegions.right_frontal]
+        
         """
         self.fname = self.fileEdit.text()
         stim_channel = str(self.ui.comboBoxStimulus.currentText())
