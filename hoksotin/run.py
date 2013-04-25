@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/tests/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
 
 
-import mainWindow_main
+import mainWindow_main  
 
 if __name__ == '__main__':
     mainWindow_main.main()

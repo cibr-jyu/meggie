@@ -1,7 +1,8 @@
+# coding: latin1
 '''
 Created on Mar 19, 2013
 
-@author: Jarkko Leppäkangas, Atte Rautio
+@author: Jaakko Leppï¿½kangas, Atte Rautio
 '''
 from PyQt4 import QtCore,QtGui
 from parameterDialog_ui import Ui_ParameterDialog
@@ -60,16 +61,15 @@ class ParameterDialog(QtGui.QDialog):
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         channels = self.check_channels()
-        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3,
-                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3,
-                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3,
-                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3)
+        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
+                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
+                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
+                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
         print channels
         try:
             epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
-                            grad, eeg, stim, eog, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id), channels,
-                            reject)
+                            grad, eeg, stim, eog, reject, epoch_name, float(self.tmin),
+                            float(self.tmax), int(self.event_id), channels)
         except:
             return #TODO error handling
         return epochs

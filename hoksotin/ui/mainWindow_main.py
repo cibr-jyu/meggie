@@ -27,6 +27,8 @@ from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 from ecgParametersDialog_main import EcgParametersDialog
 from workSpaceDialog_main import WorkSpaceDialog
+from addECGProjections_main import AddECGProjections
+from addEOGProjections_main import AddEOGProjections
 import messageBox
 
 from experiment import Experiment
@@ -64,7 +66,7 @@ class MainWindow(QtGui.QMainWindow):
         One main window (and one experiment) only needs one caller to do its
         bidding. 
         """
-        self.caller = Caller()
+        self.caller = Caller(self)
         
        
         # No tabs in the tabWidget initially
@@ -204,9 +206,15 @@ class MainWindow(QtGui.QMainWindow):
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
         
+    def on_pushButtonApplyEOG_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        self.addEogProjs = AddEOGProjections(self)
+        self.addEogProjs.exec_()
+        
     def on_pushButtonApplyECG_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.caller.apply_ecg(self.experiment.raw_data)
+        self.addEcgProjs = AddECGProjections(self)
+        self.addEcgProjs.exec_()
     
     def _initialize_ui(self):
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
@@ -223,30 +231,41 @@ class MainWindow(QtGui.QMainWindow):
         
         #Check whether ECG projections are calculated
         fname = self.experiment.raw_data.info.get('filename')
-        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_avg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg-eve.fif'))
+        path = self.experiment._subject_directory
+        files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
         if len(files) > 1:
             self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxECG.show()
             self.ui.pushButtonApplyECG.setEnabled(True)
         
         #Check whether EOG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_avg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_eog-eve.fif'))
+        files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(path+'*_eog_proj.fif'))
+        files += filter(os.path.isfile, glob.glob(path+'*_eog-eve.fif'))
         if len(files) > 1:
             self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxEOG.show()
             self.ui.pushButtonApplyEOG.setEnabled(True)
         
         #Check whether ECG projections are applied
-        files = filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*ecg_applied.fif'))
+        files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
         if len(files) > 0:
             self.ui.checkBoxECGApplied.show()
             self.ui.checkBoxECGApplied.setCheckState(QtCore.Qt.Checked)
-            
-        #TODO: Check whether EOG projections are applied
+        
+        #Check whether EOG projections are applied
+        files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
+        if len(files) > 0:
+            self.ui.checkBoxEOGApplied.show()
+            self.ui.checkBoxEOGApplied.setCheckState(QtCore.Qt.Checked)
+        
+        files = filter(os.path.isfile, glob.glob(path + '*sss*'))
+        if len(files) > 0:
+            self.ui.checkBoxMaxFilter.show()
+            self.ui.checkBoxMaxFilter.setCheckState(QtCore.Qt.Checked)
+        
         #TODO: Maxfilter
     def check_workspace(self):
         self.workSpaceDialog = WorkSpaceDialog(self)

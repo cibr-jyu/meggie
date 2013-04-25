@@ -10,21 +10,14 @@ import glob
 
 import mne
 
-from experiment import Experiment
-
 class Caller(object):
     """
     Class for calling third party software
     """
-    def __init__(self):
+    def __init__(self, parent):
         
-        """ 
-        Caller is always related to a single experiment
-        
-        """
-        self.experiment = None
-        
-        pass
+       
+        self.parent = parent
     
     def call_mne_browse_raw(self, filename):
         """
@@ -142,8 +135,8 @@ class Caller(object):
         mne.write_events(ecg_event_fname, events)
         
         # Write parameter file
-        self.experiment. \
-        save_parameter_file('mne.preprocessing.compute_proj_ecg', \
+        self.parent.experiment.\
+        save_parameter_file('mne.preprocessing.compute_proj_ecg',
                             raw_in, ecg_proj_fname, dic)
         
         
@@ -225,37 +218,54 @@ class Caller(object):
         mne.write_events(eog_event_fname, events)
         
         # Write parameter file
-        self.experiment.save_parameter_file
+        self.parent.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in, eog_proj_fname, dic)
         
         #self.experiment.update_state(EOGcomputed, True)
         
-    def apply_ecg(self, raw):
+    def apply_ecg(self, raw, directory):
         """
         Applies ECG projections for MEG-data.
         
+        Keyword arguments:
+        raw           -- Data to apply to
+        directory     -- Directory of the projection file
         """
-        fname = raw.info.get('filename')
-        proj_file = filter(os.path.isfile, glob.glob(fname.rsplit('/', 1)[0]+'/*_ecg_proj.fif'))
+        
+        if len(filter(os.path.isfile, 
+                      glob.glob(directory + '*-eog_applied.fif'))) > 0:
+            fname = glob.glob(directory + '*-eog_applied.fif')[0]
+        else:
+            fname = raw.info.get('filename')
+        proj_file = filter(os.path.isfile,
+                           glob.glob(directory + '*_ecg_proj.fif'))
         #Checks if there is exactly one projection file
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
             raw.save(fname[:-4] + '-ecg_applied.fif')
-        #raw.add_proj('')
+            raw = mne.fiff.Raw(fname[:-4] + '-ecg_applied.fif')
+            raw.apply_projector()
+        
+    def apply_eog(self, raw, directory):
         """
-        bs = '$MNE_ROOT/bin/mne_compute_proj_eog.py '
-        bs = 'python /usr/local/bin/mne-python-master/bin/mne_compute_proj_eog.py '
-        for i in range(len(dic)):
-            bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
-        print bs
-        try:
-            proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT)
-        except:
-            pass #TODO error handling
-        for line in proc.stdout.readlines():
-            print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval
+        Applies EOG projections for MEG-data.
+        
+        Keyword arguments:
+        raw           -- Data to apply to
+        directory     -- Directory of the projection file
         """
+        if len(filter(os.path.isfile, 
+                      glob.glob(directory + '*-ecg_applied.fif'))) > 0:
+            fname = glob.glob(directory + '*-ecg_applied.fif')[0]
+        else:
+            fname = raw.info.get('filename')
+        proj_file = filter(os.path.isfile,
+                           glob.glob(directory + '*_eog_proj.fif'))
+        #Checks if there is exactly one projection file
+        if len(proj_file) == 1:
+            proj = mne.read_proj(proj_file[0])
+            raw.add_proj(proj)
+            raw.save(fname[:-4] + '-eog_applied.fif')
+            raw = mne.fiff.Raw(fname[:-4] + '-eog_applied.fif')
+            raw.apply_projector()
