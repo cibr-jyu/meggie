@@ -187,8 +187,8 @@ class Caller(object):
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
         preload = True #TODO File
-        reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * (rej_mag),
-                      eeg=1e-6 * float(rej_eeg), eog=1e-6 * (rej_eog))
+        reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
+                      eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
         
         if (raw_in.endswith('_raw.fif') 
         or raw_in.endswith('-raw.fif')):

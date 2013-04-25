@@ -1,10 +1,10 @@
 '''
 Created on Mar 19, 2013
 
-@author: jaeilepp
+@author: Jarkko Leppäkangas, Atte Rautio
 '''
 from PyQt4 import QtCore,QtGui
-from epochParameterDialog_UI import Ui_ParameterDialog
+from parameterDialog_ui import Ui_ParameterDialog
 
 from measurementInfo import MeasurementInfo
 #from enaml.components.push_button import PushButton
@@ -17,7 +17,6 @@ class ParameterDialog(QtGui.QDialog):
     classdocs
     '''
     index = 1
-    vertex = [0633,0632,0423,0422,0712,0713,0433,0432,0742,0743,1822,1823,1043,1042,1112,1113,0722,0723,1142,1143,0732,0733,2212,2213,0631,0421,0711,0431,0741,1821,1041,1111,0721,1141,0731,2211]
 
     def __init__(self, parent):
         '''
@@ -27,7 +26,9 @@ class ParameterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_ParameterDialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(parent.experiment.raw_data).stim_channel_names
+        stim_channels = MeasurementInfo(
+                                        parent.experiment.raw_data
+                                        ).stim_channel_names
         print stim_channels
         keys = map(str, parent.experiment.event_set.keys())
         print keys
@@ -59,11 +60,16 @@ class ParameterDialog(QtGui.QDialog):
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         channels = self.check_channels()
+        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3,
+                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3,
+                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3,
+                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3)
         print channels
         try:
-            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag, grad, eeg,
-                            stim, eog, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id), channels)
+            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
+                            grad, eeg, stim, eog, epoch_name, float(self.tmin),
+                            float(self.tmax), int(self.event_id), channels,
+                            reject)
         except:
             return #TODO error handling
         return epochs

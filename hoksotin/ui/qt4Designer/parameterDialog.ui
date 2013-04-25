@@ -295,6 +295,13 @@
           <widget class="QTextEdit" name="textEditExclude"/>
          </item>
          <item>
+          <widget class="QLabel" name="labelRejections">
+           <property name="text">
+            <string>Rejection parameters</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_30">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -319,7 +326,7 @@
                   <double>1000000000.000000000000000</double>
                  </property>
                  <property name="value">
-                  <double>3000.000000000000000</double>
+                  <double>4000.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -343,7 +350,7 @@
                   <double>1000000000.000000000000000</double>
                  </property>
                  <property name="value">
-                  <double>100.000000000000000</double>
+                  <double>40.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -395,7 +402,7 @@
                   <double>1000000000.000000000000000</double>
                  </property>
                  <property name="value">
-                  <double>1000000000.000000000000000</double>
+                  <double>250.000000000000000</double>
                  </property>
                 </widget>
                </item>
