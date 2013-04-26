@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>830</width>
-    <height>701</height>
+    <width>957</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabRaw">
          <attribute name="title">
@@ -773,7 +773,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>830</width>
+     <width>957</width>
      <height>21</height>
     </rect>
    </property>
