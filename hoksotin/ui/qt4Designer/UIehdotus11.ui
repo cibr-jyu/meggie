@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
+    <width>823</width>
     <height>701</height>
    </rect>
   </property>
@@ -25,8 +25,11 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QTabWidget" name="tabWidget">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tabRaw">
          <attribute name="title">
@@ -739,6 +742,19 @@
            </property>
           </widget>
          </widget>
+         <widget class="QPushButton" name="pushButtonTFR">
+          <property name="geometry">
+           <rect>
+            <x>700</x>
+            <y>280</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>TFR</string>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -751,8 +767,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>892</width>
-     <height>29</height>
+     <width>823</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">

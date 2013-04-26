@@ -27,7 +27,9 @@ class Caller(object):
         """
         #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
-            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' + filename.rsplit('/', 1)[0] + ' --raw ' + filename,
+            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
+                                    filename.rsplit('/', 1)[0] + ' --raw ' +
+                                    filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
         except:
