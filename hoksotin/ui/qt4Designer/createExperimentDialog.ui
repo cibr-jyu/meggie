@@ -17,66 +17,7 @@
    <string>Create new experiment</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="2" column="0">
-    <widget class="QLabel" name="labelCreatingExperiment">
-     <property name="font">
-      <font>
-       <pointsize>28</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Saving experiment files (this may take a while) ...</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Experiment information</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="3" column="0">
-       <widget class="QTextEdit" name="textEditDescription"/>
-      </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="labelAuthor">
-          <property name="text">
-           <string>Experiment author:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEditAuthor"/>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="labelExperimentName">
-          <property name="text">
-           <string>Experiment name:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEditProjectName"/>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelDescription">
-        <property name="text">
-         <string>Experiment description:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="4" column="0">
     <widget class="QDialogButtonBox" name="cancelOkButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -86,89 +27,171 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QFrame" name="frameProgressBar">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Experiment base file</string>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>896</width>
+        <height>832</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>890</width>
+        <height>825</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>2</y>
+         <width>891</width>
+         <height>821</height>
+        </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>Experiment base file</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="showFileInfoButton">
-            <property name="text">
-             <string>Show file info</string>
-            </property>
+            <layout class="QGridLayout" name="gridLayout">
+             <item row="1" column="0">
+              <widget class="QSplitter" name="splitter">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QLineEdit" name="FilePathLineEdit"/>
+               <widget class="QPushButton" name="browseButton">
+                <property name="text">
+                 <string>Browse...</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="showFileInfoButton">
+                 <property name="text">
+                  <string>Show file info</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Select raw file for the experiment:</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Experiment information</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelDescription">
+             <property name="text">
+              <string>Experiment description:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="labelExperimentName">
+               <property name="text">
+                <string>Experiment name:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditProjectName"/>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="labelAuthor">
+               <property name="text">
+                <string>Experiment author:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditAuthor"/>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0">
+            <widget class="QTextEdit" name="textEditDescription"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelCreatingExperiment">
+          <property name="font">
+           <font>
+            <pointsize>28</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>Select raw file for the experiment:</string>
+           <string>Saving experiment files (this may take a while) ...</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QSplitter" name="splitter">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item>
+         <widget class="QProgressBar" name="progressBarCreatingExperiment">
+          <property name="maximum">
+           <number>0</number>
           </property>
-          <widget class="QLineEdit" name="FilePathLineEdit"/>
-          <widget class="QPushButton" name="browseButton">
-           <property name="text">
-            <string>Browse...</string>
-           </property>
-          </widget>
+          <property name="value">
+           <number>-1</number>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0">
-    <widget class="QProgressBar" name="progressBarCreatingExperiment">
-     <property name="maximum">
-      <number>0</number>
-     </property>
-     <property name="value">
-      <number>-1</number>
-     </property>
+     </widget>
     </widget>
    </item>
   </layout>
-  <zorder>cancelOkButtonBox</zorder>
-  <zorder>frameProgressBar</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>labelCreatingExperiment</zorder>
-  <zorder>progressBarCreatingExperiment</zorder>
  </widget>
  <resources/>
  <connections>
