@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Wed Apr 24 10:32:06 2013
+# Created: Mon Apr 29 13:27:18 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,19 +26,32 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(892, 701)
+        MainWindow.resize(965, 722)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_2 = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.scrollArea = QtGui.QScrollArea(self.centralwidget)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
+        self.scrollAreaWidgetContents_3 = QtGui.QWidget()
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 937, 638))
+        self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
+        self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
+        self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents_3)
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 5, 921, 631))
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.layoutWidget)
+        self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
+        self.tabWidget = QtGui.QTabWidget(self.layoutWidget)
+        self.tabWidget.setEnabled(True)
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabRaw = QtGui.QWidget()
         self.tabRaw.setObjectName(_fromUtf8("tabRaw"))
@@ -338,17 +351,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.addWidget(self.pushButtonAverage)
         self.gridLayout_4.addLayout(self.verticalLayout_11, 0, 0, 1, 1)
         self.groupBox = QtGui.QGroupBox(self.tabAnalysis)
-        self.groupBox.setGeometry(QtCore.QRect(430, 30, 351, 231))
+        self.groupBox.setGeometry(QtCore.QRect(430, 30, 381, 231))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.listWidgetEvents = QtGui.QListWidget(self.groupBox)
-        self.listWidgetEvents.setGeometry(QtCore.QRect(10, 20, 311, 191))
+        self.listWidgetEvents.setGeometry(QtCore.QRect(10, 20, 331, 191))
         self.listWidgetEvents.setObjectName(_fromUtf8("listWidgetEvents"))
+        self.pushButtonTFR = QtGui.QPushButton(self.tabAnalysis)
+        self.pushButtonTFR.setGeometry(QtCore.QRect(700, 280, 75, 23))
+        self.pushButtonTFR.setObjectName(_fromUtf8("pushButtonTFR"))
         self.tabWidget.addTab(self.tabAnalysis, _fromUtf8(""))
         self.verticalLayout_3.addWidget(self.tabWidget)
-        self.gridLayout_2.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents_3)
+        self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 965, 29))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -368,8 +385,11 @@ class Ui_MainWindow(object):
         self.actionOpen_experiment.setObjectName(_fromUtf8("actionOpen_experiment"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
+        self.actionSet_workspace = QtGui.QAction(MainWindow)
+        self.actionSet_workspace.setObjectName(_fromUtf8("actionSet_workspace"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
+        self.menuFile.addAction(self.actionSet_workspace)
         self.menuTools.addAction(self.actionPreferences)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -377,7 +397,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -428,6 +448,7 @@ class Ui_MainWindow(object):
         self.pushButtonEpochs.setText(_translate("MainWindow", "Epochs", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average", None))
         self.groupBox.setTitle(_translate("MainWindow", "Events:", None))
+        self.pushButtonTFR.setText(_translate("MainWindow", "TFR", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAnalysis), _translate("MainWindow", "Analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
@@ -435,4 +456,5 @@ class Ui_MainWindow(object):
         self.actionCreate_experiment.setText(_translate("MainWindow", "Create new experiment...", None))
         self.actionOpen_experiment.setText(_translate("MainWindow", "Open experiment...", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
+        self.actionSet_workspace.setText(_translate("MainWindow", "Set workspace...", None))
 

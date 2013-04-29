@@ -37,7 +37,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>945</width>
+         <width>937</width>
          <height>638</height>
         </rect>
        </property>
@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -805,7 +805,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>21</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -817,6 +817,7 @@
     </property>
     <addaction name="actionCreate_experiment"/>
     <addaction name="actionOpen_experiment"/>
+    <addaction name="actionSet_workspace"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -854,6 +855,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionSet_workspace">
+   <property name="text">
+    <string>Set workspace...</string>
    </property>
   </action>
  </widget>

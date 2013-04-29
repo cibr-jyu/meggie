@@ -144,7 +144,12 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()  
      
     #def setup_ui_by_experiment_state(self):
-         
+    
+    def on_actionSet_workspace_triggered(self, checked=None):
+        # Standard workaround for file dialog opening twice
+        if checked is None: return
+        self.check_workspace()
+             
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
