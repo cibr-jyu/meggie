@@ -53,8 +53,7 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
-        
+                
         
         """
         Main window represents one experiment at a time. This experiment is
@@ -281,6 +280,9 @@ class MainWindow(QtGui.QMainWindow):
     def check_workspace(self):
         self.workSpaceDialog = WorkSpaceDialog(self)
         self.workSpaceDialog.show()
+        
+    def hide_workspace_option(self):
+        self.ui.actionSet_workspace.setVisible(False)
         
 def main(): 
     app = QtGui.QApplication(sys.argv)

@@ -56,6 +56,7 @@ class CreateExperimentDialog(QtGui.QDialog):
     def accept(self):
         self.ui.labelCreatingExperiment.setVisible(True)
         self.ui.progressBarCreatingExperiment.setVisible(True)
+        self.parent.hide_workspace_option()
         #self.computeDialog.show()
         #self.computeDialog.raise_()
         QtGui.QApplication.processEvents(flags=QtCore.QEventLoop.AllEvents)
@@ -65,7 +66,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         
         t.start()
         self.t2.start()
-        
+                
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         
