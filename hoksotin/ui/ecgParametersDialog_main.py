@@ -4,8 +4,6 @@ Created on Apr 16, 2013
 @author: jaeilepp
 """
 import os
-import glob
-import csv
 import ast
 
 from PyQt4 import QtCore,QtGui
@@ -22,31 +20,21 @@ class EcgParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(parent.experiment.raw_data).MEG_channel_names
+        stim_channels = MeasurementInfo(parent.experiment.raw_data). \
+        MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(stim_channels)
         
-        # Reading parameter file. TODO move to special module
-        paramdirectory = parent.experiment._subject_directory 
-        globquery = paramdirectory + '*ecg_proj*param'
-        globlist = glob.glob(globquery)
+        """ 
+        If the dialog has been opened previously, reads the previous
+        parameters into a dictionary.
+        TODO Should call with a list of globstrings, as the mne script this 
+        dialog evokes can produce files ending with "ecg_proj.fif" or
+        "ecg_ave_proj.fif".
+        """
         
-        # Should be only one file matching
-        if ( len(globlist) == 1 ):
-            paramfilefullpath = globlist[0]              
-            
-            with open(paramfilefullpath, 'rb') as paramfile:
-              csvreader=csv.reader(paramfile)
-              
-              # skip the first three lines, as they don't include actual
-              # info about parameters 
-              for i in range(3): 
-                  next(csvreader)   
-              
-              # Read the rest of the parameter file into a dictionary as
-              # key-value pairs
-              paramdict = dict(x for x in csvreader)  
-       
-              self.set_previous_values(paramdict)     
+        paramdict = parent.experiment.create_parameter_dictionary(
+                                                            '*ecg_proj*param')
+        self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
         """
@@ -78,12 +66,11 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.spinBoxJobs.setProperty("value", dic.get('njobs'))
         self.ui.checkBoxEEGProj.setChecked(ast.literal_eval(
                                            dic.get('avg-ref')))
-        
         self.ui.checkBoxSSPProj.setChecked(ast.literal_eval(
                                            dic.get('avg-ref')))
-        # TODO check idea behind this not
-        self.ui.checkBoxSSPCompute.setChecked(not ast.literal_eval(
+        self.ui.checkBoxSSPCompute.setChecked(ast.literal_eval(
                                            dic.get('no-proj')))
+        # TODO get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
                                            
 

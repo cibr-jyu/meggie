@@ -11,7 +11,7 @@ import os
 import time
 import re
 import csv
-
+import glob
 
 import numpy as np
 
@@ -343,6 +343,44 @@ class Experiment(object):
             
             for key, value in dic.items():
                 csvwriter.writerow([key, value])
+                    
+    def create_parameter_dictionary(self, globquerystring):
+        """
+        Reads the parameters from a single file matching the globquerystring
+        and returns the parameters as a dictionary.
+        
+        TODO Should take a list of globstrings and give positive match for any
+        of them, as a dialog may produce several differently named files.
+        Probably only the newest of the found files should be added
+        to the globlist.
+        
+        Keyword arguments:
+        globquerystring    -- string for the glob to match with found files
+        """
+    
+        # Reading parameter file.
+        paramdirectory = self._subject_directory 
+        globquery = paramdirectory + globquerystring
+        globlist = glob.glob(globquery)
+        
+        # Should be only one file matching
+        if ( len(globlist) == 1 ):
+            paramfilefullpath = globlist[0]              
+            
+            with open(paramfilefullpath, 'rb') as paramfile:
+              csvreader=csv.reader(paramfile)
+              
+              # skip the first three lines, as they don't include actual
+              # info about parameters 
+              for i in range(3): 
+                  next(csvreader)   
+              
+              # Read the rest of the parameter file into a dictionary as
+              # key-value pairs
+              paramdict = dict(x for x in csvreader)
+              return paramdict
+      
+                    
                         
     def write_commands(self, commands, node, parent=''):
         """
