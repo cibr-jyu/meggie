@@ -27,6 +27,7 @@ from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 from ecgParametersDialog_main import EcgParametersDialog
 from workSpaceDialog_main import WorkSpaceDialog
+from preferencesDialog_main import PreferencesDialog
 from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
 import messageBox
@@ -149,7 +150,12 @@ class MainWindow(QtGui.QMainWindow):
         # Standard workaround for file dialog opening twice
         if checked is None: return
         self.check_workspace()
-             
+        
+    def on_actionPreferences_triggered(self, checked=None):
+        # Standard workaround for file dialog opening twice
+        if checked is None: return
+        self.dialogPreferences = PreferencesDialog()
+        self.dialogPreferences.show()
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
