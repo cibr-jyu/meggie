@@ -27,6 +27,7 @@ from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 from ecgParametersDialog_main import EcgParametersDialog
 from workSpaceDialog_main import WorkSpaceDialog
+from preferencesDialog_main import PreferencesDialog
 from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
 import messageBox
@@ -52,8 +53,7 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
-        
+                
         
         """
         Main window represents one experiment at a time. This experiment is
@@ -149,7 +149,12 @@ class MainWindow(QtGui.QMainWindow):
         # Standard workaround for file dialog opening twice
         if checked is None: return
         self.check_workspace()
-             
+        
+    def on_actionPreferences_triggered(self, checked=None):
+        # Standard workaround for file dialog opening twice
+        if checked is None: return
+        self.dialogPreferences = PreferencesDialog()
+        self.dialogPreferences.show()
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
@@ -275,6 +280,9 @@ class MainWindow(QtGui.QMainWindow):
     def check_workspace(self):
         self.workSpaceDialog = WorkSpaceDialog(self)
         self.workSpaceDialog.show()
+        
+    def hide_workspace_option(self):
+        self.ui.actionSet_workspace.setVisible(False)
         
 def main(): 
     app = QtGui.QApplication(sys.argv)
