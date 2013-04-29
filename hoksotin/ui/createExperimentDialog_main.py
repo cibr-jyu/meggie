@@ -97,7 +97,7 @@ class CreateExperimentDialog(QtGui.QDialog):
     def _initialize_experiment(self):
         self.k = True
         try:
-            if self.ui.lineEditProjectName.text() == '':
+            if self.ui.lineEditExperimentName.text() == '':
                 raise Exception('Give experiment a name!')
             
         except Exception, err:
@@ -114,7 +114,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             #self.workspace.working_directory = '/usr/local/bin/'  #'/tmp/' 
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
-            lineEditProjectName.text()
+            lineEditExperimentName.text()
             self.experiment.description = self.ui.textEditDescription.toPlainText()
             print self.experiment.file_path
 
