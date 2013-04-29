@@ -120,7 +120,7 @@ class CreateExperimentDialog(QtGui.QDialog):
 
         except AttributeError:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText("Cannot assign attribute to project")
+            self.messageBox.labelException.setText("Cannot assign attribute to experiment")
             self.messageBox.show()
             #self.computeDialog.close()
             return         
