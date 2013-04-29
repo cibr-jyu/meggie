@@ -15,7 +15,7 @@ import csv
 
 import numpy as np
 
-# Better to use pickle rather than cpickle, as project paths may
+# Better to use pickle rather than cpickle, as experiment paths may
 # include unicode characters
 import pickle
 
