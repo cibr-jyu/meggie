@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>340</height>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,10 +132,102 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="labelInclude">
              <property name="text">
               <string>Include:</string>
              </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="textEditInclude"/>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxChannelGroup">
+             <item>
+              <property name="text">
+               <string>All</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Vertex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Left-temporal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Right-temporal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Left-parietal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Right-parietal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Left-occipital</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Right-occipital</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Left-frontal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Right-frontal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 01-04</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 05-08</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 09-12</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 13-16</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 17-20</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 21-24</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>MEG 25-26</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -174,6 +266,147 @@
                 <string>eog</string>
                </property>
               </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelExclude">
+           <property name="text">
+            <string>Exclude:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="textEditExclude"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelRejections">
+           <property name="text">
+            <string>Rejection parameters</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_30">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_31">
+               <item>
+                <widget class="QLabel" name="labelGradReject_3">
+                 <property name="text">
+                  <string>Grad:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxGradReject_3">
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> fT/cm</string>
+                 </property>
+                 <property name="maximum">
+                  <double>1000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>4000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_32">
+               <item>
+                <widget class="QLabel" name="labelEegReject_3">
+                 <property name="text">
+                  <string>EEG:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject_3">
+                 <property name="suffix">
+                  <string> uV</string>
+                 </property>
+                 <property name="maximum">
+                  <double>1000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>40.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_33">
+               <item>
+                <widget class="QLabel" name="labelMagReject_3">
+                 <property name="text">
+                  <string>Mag:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject_3">
+                 <property name="suffix">
+                  <string> fT</string>
+                 </property>
+                 <property name="maximum">
+                  <double>1000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>4000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_34">
+               <item>
+                <widget class="QLabel" name="labelEogReject_3">
+                 <property name="text">
+                  <string>EOG:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxEOGReject_3">
+                 <property name="suffix">
+                  <string> uV</string>
+                 </property>
+                 <property name="maximum">
+                  <double>1000000000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>250.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>

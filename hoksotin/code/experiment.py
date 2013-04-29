@@ -35,6 +35,7 @@ class Experiment(object):
         
         self._experiment_name = 'experiment'
         self._raw_data = 'no data specified'
+        self._subject_directory = 'no directory specified'
         self._file_path = 'no path defined'
         self._author = 'unknown _author'
         self._description = 'no _description'
@@ -44,12 +45,12 @@ class Experiment(object):
         self._event_set = []
         
         # Add here all the possible actions that you can do to an experiment
+        # TODO not in use
         self.stateDict = dict(Maxfilter=False, ECGcomputed=False,
                               ECGapplied=False, EOGcomputed=False,
                               EOGapplied=False, Eventlist=False,
                               Epochs=False, Average=False)
-        
-        
+                
     @property
     def experiment_name(self):
         """
@@ -73,6 +74,24 @@ class Experiment(object):
                 name")
         else:
             raise Exception('Too long experiment name')
+    
+    @property
+    def subject_directory(self):
+        """
+        Returns the absolute path to the subject directory of the experiment.        
+        """
+        return self._subject_directory
+    
+    @subject_directory.setter
+    def subject_directory(self, subject_directory):
+        """
+        Sets the subject directory for the experiment. Should be an absolute
+        path. Not setable by user, for internal use only.
+        TODO: should probably later be a list of subject directories, if the
+        experiment is to include several of them
+        """
+        
+        self._subject_directory = subject_directory
     
     @property
     def file_path(self):
@@ -283,6 +302,8 @@ class Experiment(object):
         except OSError:
             print "no rights to save the raw file to the chosen path \
             or bad raw file name"
+        
+        self.subject_directory = str(self._file_path) + folder_name[0] + '/'
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path)
@@ -316,28 +337,13 @@ class Experiment(object):
             print 'writing param file'
             csvwriter = csv.writer(paramfullname)
             
-            csvwriter.writerow([inputfilename] + [outputfilename] + [command])
-            #csvwriter.writerow(outputfilename)
-            #csvwriter.writerow(command)
+            csvwriter.writerow([inputfilename])
+            csvwriter.writerow([outputfilename])
+            csvwriter.writerow([command])
             
-            csvDictWriter = csv.DictWriter(paramfullname, dic.keys())
-            
-            csvDictWriter.writerow(dic)
-        
-        
-        #for currentkey in dic:
-        #    csvwriter.writerow(currentkey, dic.get(currentkey))
-        
-        
-        
-           
-        """
-           diciter = dic.iteritems(dic)
-            while True:
-                try:
-                    item = diciter.next()      
-        """
-            
+            for key, value in dic.items():
+                csvwriter.writerow([key, value])
+                        
     def write_commands(self, commands, node, parent=''):
         """
         Writes an array of commands in a tree structure.

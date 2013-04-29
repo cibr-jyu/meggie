@@ -15,7 +15,8 @@ class Epochs(object):
 
 
     def __init__(self, raw, stim_channel, mag, grad, eeg, stim,
-                 eog, reject, tmin=-0.2, tmax=0.5, event_id=0):
+                 eog, reject, epoch_name, tmin=-0.2, tmax=0.5, event_id=0,
+                 channels=[]):
         """
         Constructor
         
@@ -25,6 +26,7 @@ class Epochs(object):
         tmin          -- Start time before event (default -0.2)
         tmax          -- End time after the event (default 0.5)
         event_id      -- The id of the event (default 0)
+        channels      -- Channel names to restrict the sensor channels
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if no stimulus channel given or picks are empty.
         """
@@ -39,7 +41,8 @@ class Epochs(object):
         if isinstance(raw, mne.fiff.raw.Raw):
             e = events.Events(raw, stim_channel)
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
-                                        stim=stim, eog=eog)
+                                        stim=stim, eog=eog,
+                                        selection=channels)
             if picks is None:
                 raise Exception('Picks cannot be empty.')
             self.epochs = mne.Epochs(raw, e.events, event_id,

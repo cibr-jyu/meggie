@@ -1,22 +1,23 @@
+# coding: latin1
 '''
 Created on Mar 19, 2013
 
-@author: jaeilepp
+@author: Jaakko Lepp�kangas, Atte Rautio
 '''
 from PyQt4 import QtCore,QtGui
-from epochParameterDialog_UI import Ui_ParameterDialog
+from parameterDialog_ui import Ui_ParameterDialog
 
 from measurementInfo import MeasurementInfo
 #from enaml.components.push_button import PushButton
 
 from epochs import Epochs
+import brainRegions
 
 class ParameterDialog(QtGui.QDialog):
     '''
     classdocs
     '''
     index = 1
-
 
     def __init__(self, parent):
         '''
@@ -26,7 +27,9 @@ class ParameterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_ParameterDialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(parent.experiment.raw_data).stim_channel_names
+        stim_channels = MeasurementInfo(
+                                        parent.experiment.raw_data
+                                        ).stim_channel_names
         print stim_channels
         keys = map(str, parent.experiment.event_set.keys())
         print keys
@@ -46,7 +49,7 @@ class ParameterDialog(QtGui.QDialog):
         self.fileEdit.setText(self.fname)
         """
         
-    def create_epochs(self):
+    def create_eventlist(self):
         stim_channel = str(self.ui.comboBoxStimulus.currentText())
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
@@ -57,17 +60,23 @@ class ParameterDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
+        channels = self.check_channels()
+        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
+                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
+                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
+                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
+        print channels
         try:
-            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag, grad, eeg,
-                            stim, eog, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id))
+            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
+                            grad, eeg, stim, eog, reject, epoch_name, float(self.tmin),
+                            float(self.tmax), int(self.event_id), channels)
         except:
             return #TODO error handling
         return epochs
         
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None: return # Standard workaround
-        epochs = self.create_epochs()
+        epochs = self.create_eventlist()
         print epochs
         self.__class__.index += 1
         if isinstance(epochs, Epochs):
@@ -95,8 +104,36 @@ class ParameterDialog(QtGui.QDialog):
         """
         Called when the OK button is pressed.
         """
-        print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
-        self.close()        
+        
+        for index in xrange(self.ui.listWidgetEvents.count()):
+            item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
+            item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
+            self.parent.ui.listWidgetEvents.addItem(item)
+            
+        
+        #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        self.close()
+        
+    def check_channels(self):
+        if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
+            return ['MEG ' + str(x) for x in brainRegions.vertex]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-temporal':
+            return ['MEG ' + str(x) for x in brainRegions.left_temporal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-temporal':
+            return ['MEG ' + str(x) for x in brainRegions.right_temporal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-parietal':
+            return ['MEG ' + str(x) for x in brainRegions.left_parietal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-parietal':
+            return ['MEG ' + str(x) for x in brainRegions.right_parietal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-occipital':
+            return ['MEG ' + str(x) for x in brainRegions.left_occipital]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-occipital':
+            return ['MEG ' + str(x) for x in brainRegions.right_occipital]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-frontal':
+            return ['MEG ' + str(x) for x in brainRegions.left_frontal]
+        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
+            return ['MEG ' + str(x) for x in brainRegions.right_frontal]
+        
         """
         self.fname = self.fileEdit.text()
         stim_channel = str(self.ui.comboBoxStimulus.currentText())

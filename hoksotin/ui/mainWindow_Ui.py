@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Sat Apr 20 14:54:16 2013
+# Created: Wed Apr 24 10:32:06 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -253,7 +253,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.addWidget(self.checkBoxEOGApplied)
         self.verticalLayout_9.addLayout(self.horizontalLayout_10)
         self.groupBoxAvailablePreprocessingSteps = QtGui.QGroupBox(self.tabPreprocessing)
-        self.groupBoxAvailablePreprocessingSteps.setGeometry(QtCore.QRect(10, 200, 441, 211))
+        self.groupBoxAvailablePreprocessingSteps.setGeometry(QtCore.QRect(10, 250, 441, 211))
         self.groupBoxAvailablePreprocessingSteps.setObjectName(_fromUtf8("groupBoxAvailablePreprocessingSteps"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBoxAvailablePreprocessingSteps)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
@@ -321,7 +321,7 @@ class Ui_MainWindow(object):
         self.checkBoxEOG_2.setObjectName(_fromUtf8("checkBoxEOG_2"))
         self.verticalLayout_10.addWidget(self.checkBoxEOG_2)
         self.groupBoxAvailablePreprocessingSteps_2 = QtGui.QGroupBox(self.tabAnalysis)
-        self.groupBoxAvailablePreprocessingSteps_2.setGeometry(QtCore.QRect(20, 210, 218, 143))
+        self.groupBoxAvailablePreprocessingSteps_2.setGeometry(QtCore.QRect(20, 260, 218, 143))
         self.groupBoxAvailablePreprocessingSteps_2.setObjectName(_fromUtf8("groupBoxAvailablePreprocessingSteps_2"))
         self.gridLayout_4 = QtGui.QGridLayout(self.groupBoxAvailablePreprocessingSteps_2)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
@@ -337,6 +337,12 @@ class Ui_MainWindow(object):
         self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
         self.verticalLayout_11.addWidget(self.pushButtonAverage)
         self.gridLayout_4.addLayout(self.verticalLayout_11, 0, 0, 1, 1)
+        self.groupBox = QtGui.QGroupBox(self.tabAnalysis)
+        self.groupBox.setGeometry(QtCore.QRect(430, 30, 351, 231))
+        self.groupBox.setObjectName(_fromUtf8("groupBox"))
+        self.listWidgetEvents = QtGui.QListWidget(self.groupBox)
+        self.listWidgetEvents.setGeometry(QtCore.QRect(10, 20, 311, 191))
+        self.listWidgetEvents.setObjectName(_fromUtf8("listWidgetEvents"))
         self.tabWidget.addTab(self.tabAnalysis, _fromUtf8(""))
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.gridLayout_2.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
@@ -421,6 +427,7 @@ class Ui_MainWindow(object):
         self.pushButtonEventlist.setText(_translate("MainWindow", "Eventlist", None))
         self.pushButtonEpochs.setText(_translate("MainWindow", "Epochs", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average", None))
+        self.groupBox.setTitle(_translate("MainWindow", "Events:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAnalysis), _translate("MainWindow", "Analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
