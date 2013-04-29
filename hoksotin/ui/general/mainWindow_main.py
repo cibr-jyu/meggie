@@ -167,7 +167,16 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
-        if checked is None: return 
+        if checked is None: return
+        
+        # If no events are selected, show a message to to the user and return
+        if ( self.ui.listWidgetEvents.currentItem() == None ): 
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Please select an event collection to average.')
+            self.messageBox.show()  
+            return
+         
         epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
         evoked = epoch.average()
         
