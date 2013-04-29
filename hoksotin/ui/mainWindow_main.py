@@ -86,7 +86,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionCreate_experiment_triggered(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         """
-        Creates a new CreateProjectDialog and shows it
+        Creates a new CreateExperimentDialog and shows it
         """       
         if os.path.isfile('settings.cfg'):
             self.dialog = CreateExperimentDialog(self)
@@ -103,7 +103,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return 
                 
         path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select project directory"))
+               self, "Select experiment directory"))
         if path == '': return
         fname = path + '/' + path.split('/')[-1] + '.pro'
         # TODO needs exception checking for corrupt/wrong type of file
