@@ -378,9 +378,7 @@ class Experiment(object):
               # Read the rest of the parameter file into a dictionary as
               # key-value pairs
               paramdict = dict(x for x in csvreader)
-              return paramdict
-      
-                    
+              return paramdict           
                         
     def write_commands(self, commands, node, parent=''):
         """

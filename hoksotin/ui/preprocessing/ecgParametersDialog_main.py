@@ -37,6 +37,10 @@ class EcgParametersDialog(QtGui.QDialog):
         self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
+        
+        # If no parameter fili existed, return
+        if ( dic == None ): return
+        
         """
         Sets the values in the newly created dialog to those in the dictionary
         given. See the *** for the specifics about the dictionary.
