@@ -26,7 +26,6 @@ class EpochDialog(QtGui.QDialog):
     def accept(self):
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
         self.tmax = float(self.ui.doubleSpinBoxTmax.value())
-        epoch_name = self.ui.lineEditName.text()
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
         grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
