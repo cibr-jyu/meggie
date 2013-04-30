@@ -158,7 +158,7 @@ class MeasurementInfo(object):
         Raises an exception if the personal data is not a string.
         Raises an exception if the personal data is malformed.
         """
-        subj_info = mne.fiff.show_fiff(self._info.get('filename'))
+        subj_info = mne.fiff.open.show_fiff(self._info.get('filename'))
         if not isinstance(subj_info, str):
             raise TypeError('Personal info not found.')
         name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)

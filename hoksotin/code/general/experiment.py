@@ -42,6 +42,7 @@ class Experiment(object):
         self.date = time.strftime('%Y %m %d %X')
         self.tree = Tree()
         self.__index = 0
+        self._working_file = ''
         self._event_set = []
         
         # Add here all the possible actions that you can do to an experiment
@@ -306,7 +307,7 @@ class Experiment(object):
         self.subject_directory = str(self._file_path) + folder_name[0] + '/'
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
-        self._raw_data = mne.fiff.Raw(raw_file_path)
+        self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
             
     def save_parameter_file(self, command, inputfilename, outputfilename, dic):
         """
@@ -414,3 +415,18 @@ class Experiment(object):
             return s
         return ''
     
+    @property
+    def working_file(self):
+        """
+        Returns the current working file.
+        """
+        return self._working_file
+    
+    @working_file.setter
+    def working_file(self, fname):
+        """
+        Sets the current working file.
+        Keyword arguments:
+        fname         -- Name of the new working file.
+        """
+        self._working_file = fname

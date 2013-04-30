@@ -79,8 +79,8 @@ class EcgParametersDialog(QtGui.QDialog):
                                            
 
     def accept(self):
-        fname = self.parent.experiment.raw_data.info.get('filename')
-        dictionary = {'i': fname}
+        raw = self.parent.experiment.raw_data
+        dictionary = {'i': raw}
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
         tmax = self.ui.doubleSpinBoxTmax.value()

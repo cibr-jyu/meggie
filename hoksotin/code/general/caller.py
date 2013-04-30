@@ -46,7 +46,10 @@ class Caller(object):
         dic           -- Dictionary of parameters
         custom        -- Additional parameters as a string
         """
-        bs = 'maxfilter '
+        #if '$NEUROMAG_ROOT' == '':
+        if os.environ.get('NEUROMAG_ROOT') is None:
+            os.environ['NEUROMAG_ROOT'] = '/neuro'
+        bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
         bs += custom
@@ -105,10 +108,11 @@ class Caller(object):
         preload = True #TODO File
         ch_name = dic.get('ch_name')
         
-        if raw_in.endswith('_raw.fif') or raw_in.endswith('-raw.fif'):
-            prefix = raw_in[:-8]
+        if raw_in.info.get('filename').endswith('_raw.fif') or \
+        raw_in.info.get('filename').endswith('-raw.fif'):
+            prefix = raw_in.info.get('filename')[:-8]
         else:
-            prefix = raw_in[:-4]
+            prefix = raw_in.info.get('filename')[:-4]
         
         ecg_event_fname = prefix + '_ecg-eve.fif'
         
@@ -117,15 +121,15 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
         
-        raw = mne.fiff.Raw(raw_in, preload=preload)
+        #raw = mne.fiff.Raw(raw_in, preload=preload)
         
-        projs, events = mne.preprocessing.compute_proj_ecg(raw, None,
+        projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, ch_name, reject, flat,
                             bads, eeg_proj, excl_ssp, event_id,
                             ecg_low_freq, ecg_high_freq, start)
-        raw.close()
+        #raw_in.close()
         
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -139,7 +143,7 @@ class Caller(object):
         # Write parameter file
         self.parent.experiment.\
         save_parameter_file('mne.preprocessing.compute_proj_ecg',
-                            raw_in, ecg_proj_fname, dic)
+                            raw_in.info.get('filename'), ecg_proj_fname, dic)
         
         
     
@@ -185,11 +189,11 @@ class Caller(object):
         reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
                       eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
         
-        if (raw_in.endswith('_raw.fif') 
-        or raw_in.endswith('-raw.fif')):
-            prefix = raw_in[:-8]
+        if (raw_in.info.get('filename').endswith('_raw.fif') 
+        or raw_in.info.get('filename').endswith('-raw.fif')):
+            prefix = raw_in.info.get('filename')[:-8]
         else:
-            prefix = raw_in[:-4]
+            prefix = raw_in.info.get('filename')[:-4]
             
         eog_event_fname = prefix + '_eog-eve.fif'
         
@@ -198,16 +202,16 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
             
-        raw = mne.fiff.Raw(raw_in, preload=preload)
+        #raw = mne.fiff.Raw(raw_in, preload=preload)
         
-        projs, events = mne.preprocessing.compute_proj_eog(raw, None,
+        projs, events = mne.preprocessing.compute_proj_eog(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, reject, flat, bads,
                             eeg_proj, excl_ssp, event_id,
                             eog_low_freq, eog_high_freq, start)
             
-        raw.close()
+        #raw.close()
         
         #TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -221,7 +225,8 @@ class Caller(object):
         
         # Write parameter file
         self.parent.experiment.save_parameter_file
-        ('mne.preprocessing.compute_proj_eog', raw_in, eog_proj_fname, dic)
+        ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
+          eog_proj_fname, dic)
         
         #self.experiment.update_state(EOGcomputed, True)
         
@@ -247,7 +252,6 @@ class Caller(object):
             raw.add_proj(proj)
             raw.save(fname[:-4] + '-ecg_applied.fif')
             raw = mne.fiff.Raw(fname[:-4] + '-ecg_applied.fif')
-            raw.apply_projector()
         
     def apply_eog(self, raw, directory):
         """
@@ -270,4 +274,3 @@ class Caller(object):
             raw.add_proj(proj)
             raw.save(fname[:-4] + '-eog_applied.fif')
             raw = mne.fiff.Raw(fname[:-4] + '-eog_applied.fif')
-            raw.apply_projector()

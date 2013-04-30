@@ -113,7 +113,8 @@ class MainWindow(QtGui.QMainWindow):
             
             # workaround for setting up the raw object after pickling
             self.experiment.raw_data = mne.fiff.Raw(
-                self.experiment.raw_data.info.get('filename'))            
+                self.experiment.raw_data.info.get('filename'),
+                 preload=True)            
 
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)

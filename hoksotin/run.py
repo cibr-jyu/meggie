@@ -13,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/externalmodu
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/tests/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/epoching/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/preprocessing/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/general/")
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/epoching/")
