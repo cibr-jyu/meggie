@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>223</width>
-    <height>198</height>
+    <width>293</width>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>205</width>
-        <height>149</height>
+        <width>275</width>
+        <height>257</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -42,8 +42,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>234</width>
-         <height>211</height>
+         <width>241</width>
+         <height>231</height>
         </rect>
        </property>
        <property name="title">
@@ -54,11 +54,14 @@
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>181</width>
-          <height>81</height>
+          <width>221</width>
+          <height>189</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <widget class="QComboBox" name="comboBoxChannels"/>
+         </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_13">
            <item>
@@ -69,7 +72,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+             <property name="minimum">
+              <double>7.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -83,7 +93,59 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+             <property name="minimum">
+              <double>7.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>30.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="labelFrequencyInterval">
+             <property name="text">
+              <string>Frequency interval:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>99.989999999999995</double>
+             </property>
+             <property name="value">
+              <double>3.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLabel" name="labelNcycles">
+             <property name="text">
+              <string>Number of cycles:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
+             <property name="value">
+              <double>7.000000000000000</double>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -101,7 +163,7 @@
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
@@ -109,6 +171,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>comboBoxChannels</tabstop>
+  <tabstop>doubleSpinBoxMinFreq</tabstop>
+  <tabstop>doubleSpinBoxMaxFreq</tabstop>
+  <tabstop>doubleSpinBoxFreqInterval</tabstop>
+  <tabstop>doubleSpinBoxNcycles</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -118,8 +189,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>258</x>
+     <y>303</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -134,8 +205,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>282</x>
+     <y>303</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
