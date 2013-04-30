@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -350,6 +350,19 @@
                     <width>241</width>
                     <height>141</height>
                    </rect>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelWorkingFile">
+                  <property name="geometry">
+                   <rect>
+                    <x>370</x>
+                    <y>30</y>
+                    <width>66</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>TextLabel</string>
                   </property>
                  </widget>
                 </widget>

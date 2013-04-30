@@ -125,14 +125,15 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.show()
             #self.computeDialog.close()
             return         
-        try:
-            # TODO: user should set this workspace from the mainWindow UI    
+        try:    
             self.experiment.save_experiment(self.workspace.working_directory)
             self.experiment.raw_data = self.raw
+            self.experiment.find_stim_channel()
             self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
             self.experiment.save_experiment_settings()
-            print self.experiment.raw_data.info.get('filename')
+            self.experiment.working_file = self.experiment.raw_data.info.get('filename')
+            #self.experiment.stim_channel = 'STI 014'
       
         except IOError, err:
             self.messageBox = messageBox.AppForm()

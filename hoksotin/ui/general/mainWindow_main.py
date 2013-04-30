@@ -30,6 +30,7 @@ from workSpaceDialog_main import WorkSpaceDialog
 from preferencesDialog_main import PreferencesDialog
 from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
+from TFRDialog_main import TFRDialog
 import messageBox
 
 from experiment import Experiment
@@ -93,8 +94,8 @@ class MainWindow(QtGui.QMainWindow):
             self.dialog.show()
             """
             Sets the experiment for caller, so it can use its information
-            """
             self.caller.experiment = self.experiment
+            """
         else:
             self.check_workspace()
         
@@ -235,6 +236,12 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.addEcgProjs = AddECGProjections(self)
         self.addEcgProjs.exec_()
+        
+    def on_pushButtonTFR_clicked(self, checked=None):
+        if checked is None: return # Standard workaround for file dialog opening twice
+        epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        self.tfr_dialog = TFRDialog(self, self.experiment.raw_data, epoch)
+        self.tfr_dialog.show()
     
     def _initialize_ui(self):
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")

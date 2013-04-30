@@ -9,6 +9,10 @@ import os
 import glob
 
 import mne
+from mne.time_frequency import induced_power
+
+import numpy as np
+import pylab as pl
 
 class Caller(object):
     """
@@ -274,3 +278,57 @@ class Caller(object):
             raw.add_proj(proj)
             raw.save(fname[:-4] + '-eog_applied.fif')
             raw = mne.fiff.Raw(fname[:-4] + '-eog_applied.fif')
+    
+    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
+        evoked = epochs.average()
+        data = epochs.get_data()
+        times = 1e3 * epochs.times #s to ms
+        evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
+        
+        data = data[:, ch_index:(ch_index+1), :]
+        evoked_data = evoked_data[ch_index:(ch_index+1), :]
+        
+        #Find intervals for given frequency band
+        frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
+        
+        n_cycles = frequencies / float(len(frequencies) - 1)
+        #n_cycles = frequencies / float(15)
+        Fs = raw.info['sfreq']
+        decim = 3
+        power, phase_lock = induced_power(data, Fs=Fs,
+                                          frequencies=frequencies,
+                                          n_cycles=n_cycles, n_jobs=1,
+                                          use_fft=False, decim=decim,
+                                          zero_mean=True)
+        
+        # baseline corrections with ratio
+        power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
+        pl.clf()
+        pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
+        pl.subplot(3, 1, 1)
+        pl.plot(times, evoked_data.T)
+        pl.title('Evoked response (%s)' % evoked.ch_names[ch_index])
+        pl.xlabel('time (ms)')
+        pl.ylabel('Magnetic Field (fT/cm)')
+        pl.xlim(times[0], times[-1])
+        pl.ylim(-150, 300)
+        
+        pl.subplot(3, 1, 2)
+        pl.imshow(20 * np.log10(power[0]), extent=[times[0], times[-1],
+                                                   frequencies[0],
+                                                   frequencies[-1]],
+                  aspect='auto', origin='lower')
+        pl.xlabel('Time (s)')
+        pl.ylabel('Frequency (Hz)')
+        pl.title('Induced power (%s)' % evoked.ch_names[ch_index])
+        pl.colorbar()
+        
+        pl.subplot(3, 1, 3)
+        pl.imshow(phase_lock[0], extent=[times[0], times[-1],
+                                         frequencies[0], frequencies[-1]],
+                  aspect='auto', origin='lower')
+        pl.xlabel('Time (s)')
+        pl.ylabel('Frequency (Hz)')
+        pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
+        pl.colorbar()
+        pl.show()

@@ -17,7 +17,7 @@ class Events(object):
         stim_ch       -- Name of the stimulus channel
         """
         print raw.info.get('filename')
-        self._events = mne.find_events(raw) #, stim_channel=stim_ch)
+        self._events = mne.find_events(raw, stim_channel=stim_ch) #, stim_channel=stim_ch)
         #if os.path.isfile(eveFile):
         #    self.events = mne.read_events(eveFile)
         

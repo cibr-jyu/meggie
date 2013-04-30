@@ -44,6 +44,7 @@ class Experiment(object):
         self.__index = 0
         self._working_file = ''
         self._event_set = []
+        self._stim_channel = ''
         
         # Add here all the possible actions that you can do to an experiment
         # TODO not in use
@@ -234,6 +235,51 @@ class Experiment(object):
         """
         return self._event_set
     
+    @property
+    def working_file(self):
+        """
+        Returns the current working file.
+        """
+        return self._working_file
+    
+    @working_file.setter
+    def working_file(self, fname):
+        """
+        Sets the current working file.
+        Keyword arguments:
+        fname         -- Name of the new working file.
+        """
+        self._working_file = fname
+        
+    @property
+    def stim_channel(self):
+        """
+        Property for stimulus channel.
+        """
+        return self._stim_channel
+    
+    @stim_channel.setter
+    def stim_channel(self, stim_ch):
+        """
+        channels = self._raw_data.info.get('ch_names')
+        if any('STI101' in channels for x in channels):
+            self._stim_channel = 'STI101'
+        elif any('STI 014' in channels for x in channels):
+            self._stim_channel = 'STI 014'
+        else:
+            raise Exception('No stim channel found.')
+        """
+        self._stim_channel = stim_ch
+    
+    def find_stim_channel(self):
+        channels = self._raw_data.info.get('ch_names')
+        if any('STI101' in channels for x in channels):
+            self._stim_channel = 'STI101'
+        elif any('STI 014' in channels for x in channels):
+            self._stim_channel = 'STI 014'
+        else:
+            raise Exception('No stim channel found.')
+    
     def create_event_set(self):
         """
         Creates an event set where the first element is the id
@@ -242,8 +288,9 @@ class Experiment(object):
         if the data is not of type mne.fiff.Raw.
         """
         if not isinstance(self._raw_data, mne.fiff.Raw):
-            raise TypeError('Not a raw object')
-        events = mne.find_events(self._raw_data)
+            raise TypeError('Nt a raw object')
+        events = mne.find_events(self._raw_data,
+                                 stim_channel=self._stim_channel)
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()
         for i in set(events[:,2]):
@@ -414,19 +461,3 @@ class Experiment(object):
             s += ''.join(n.name)
             return s
         return ''
-    
-    @property
-    def working_file(self):
-        """
-        Returns the current working file.
-        """
-        return self._working_file
-    
-    @working_file.setter
-    def working_file(self, fname):
-        """
-        Sets the current working file.
-        Keyword arguments:
-        fname         -- Name of the new working file.
-        """
-        self._working_file = fname

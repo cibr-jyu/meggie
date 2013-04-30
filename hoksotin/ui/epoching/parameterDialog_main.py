@@ -6,12 +6,14 @@ Created on Mar 19, 2013
 '''
 from PyQt4 import QtCore,QtGui
 from parameterDialog_ui import Ui_ParameterDialog
-
-from measurementInfo import MeasurementInfo
+from epochDialog_main import EpochDialog
 #from enaml.components.push_button import PushButton
 
 from epochs import Epochs
+from events import Events
 import brainRegions
+
+import numpy
 
 class ParameterDialog(QtGui.QDialog):
     '''
@@ -27,13 +29,7 @@ class ParameterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_ParameterDialog()
         self.ui.setupUi(self)
-        stim_channels = MeasurementInfo(
-                                        parent.experiment.raw_data
-                                        ).stim_channel_names
-        print stim_channels
         keys = map(str, parent.experiment.event_set.keys())
-        print keys
-        self.ui.comboBoxStimulus.addItems(stim_channels)
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event' + str(self.__class__.index))
         """
@@ -50,8 +46,12 @@ class ParameterDialog(QtGui.QDialog):
         """
         
     def create_eventlist(self):
-        stim_channel = str(self.ui.comboBoxStimulus.currentText())
         self.event_id = int(self.ui.comboBoxEventID.currentText())
+        event_name = self.ui.lineEditName.text()
+        print self.parent.experiment.stim_channel
+        e = Events(self.parent.experiment.raw_data, 'STI 014')
+        return e.events
+        """
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
         self.tmax = float(self.ui.doubleSpinBoxTmax.value())
         epoch_name = self.ui.lineEditName.text()
@@ -73,13 +73,21 @@ class ParameterDialog(QtGui.QDialog):
         except:
             return #TODO error handling
         return epochs
+        """
         
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None: return # Standard workaround
-        epochs = self.create_eventlist()
-        print epochs
+        events = self.create_eventlist()
+        print events
         self.__class__.index += 1
-        if isinstance(epochs, Epochs):
+        if isinstance(events, numpy.ndarray):
+            for event in events:
+                if event[2] == self.event_id:
+                    item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
+                    item.setData(1, event)
+                    self.ui.listWidgetEvents.addItem(item)
+            self.ui.listWidgetEvents.setCurrentItem(item)
+            """
             event_set = '(ID:' + str(self.event_id) + ', ' + \
                 str(self.parent.experiment.event_set.get(self.event_id)) + \
                 ' events, start: ' + str(self.tmin) + ', end: ' + \
@@ -89,6 +97,8 @@ class ParameterDialog(QtGui.QDialog):
             self.ui.listWidgetEvents.addItem(item)
             self.ui.lineEditName.setText('Event' + str(self.__class__.index))
             self.ui.listWidgetEvents.setCurrentItem(item) #select the last item
+            """
+            self.ui.lineEditName.setText('Event' + str(self.__class__.index))
             self.ui.pushButtonRemove.setEnabled(True)
         #print self.parent.experiment.event_set
         
@@ -104,15 +114,14 @@ class ParameterDialog(QtGui.QDialog):
         """
         Called when the OK button is pressed.
         """
-        
+        self.close()
+        self.epochDialog = EpochDialog(self)
+        self.epochDialog.exec_()
         for index in xrange(self.ui.listWidgetEvents.count()):
             item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
             item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
             self.parent.ui.listWidgetEvents.addItem(item)
-            
-        
         #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
-        self.close()
         
     def check_channels(self):
         if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
