@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Mon Apr 29 13:27:18 2013
+# Created: Tue Apr 30 14:50:28 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(965, 722)
+        MainWindow.resize(935, 717)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -208,6 +208,9 @@ class Ui_MainWindow(object):
         self.listWidget = QtGui.QListWidget(self.triggersBox)
         self.listWidget.setGeometry(QtCore.QRect(10, 30, 241, 141))
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
+        self.labelWorkingFile = QtGui.QLabel(self.triggersBox)
+        self.labelWorkingFile.setGeometry(QtCore.QRect(370, 30, 66, 21))
+        self.labelWorkingFile.setObjectName(_fromUtf8("labelWorkingFile"))
         self.verticalLayout_4.addWidget(self.triggersBox)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
@@ -231,7 +234,7 @@ class Ui_MainWindow(object):
         self.tabPreprocessing = QtGui.QWidget()
         self.tabPreprocessing.setObjectName(_fromUtf8("tabPreprocessing"))
         self.groupBoxPreprocessingCheckBoxes = QtGui.QGroupBox(self.tabPreprocessing)
-        self.groupBoxPreprocessingCheckBoxes.setGeometry(QtCore.QRect(10, 20, 461, 126))
+        self.groupBoxPreprocessingCheckBoxes.setGeometry(QtCore.QRect(10, 20, 270, 130))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -308,6 +311,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addItem(spacerItem9)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.gridLayout_3.addLayout(self.horizontalLayout, 0, 1, 1, 1)
+        self.groupBox_2 = QtGui.QGroupBox(self.tabPreprocessing)
+        self.groupBox_2.setGeometry(QtCore.QRect(430, 30, 381, 231))
+        self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
+        self.listWidgetEventsPre = QtGui.QListWidget(self.groupBox_2)
+        self.listWidgetEventsPre.setGeometry(QtCore.QRect(10, 20, 331, 191))
+        self.listWidgetEventsPre.setObjectName(_fromUtf8("listWidgetEventsPre"))
         self.tabWidget.addTab(self.tabPreprocessing, _fromUtf8(""))
         self.tabAnalysis = QtGui.QWidget()
         self.tabAnalysis.setObjectName(_fromUtf8("tabAnalysis"))
@@ -365,7 +374,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 965, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 935, 29))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -424,6 +433,7 @@ class Ui_MainWindow(object):
         self.labelHigh.setText(_translate("MainWindow", "High-pass:", None))
         self.labelHighValue.setText(_translate("MainWindow", "High-pass value", None))
         self.triggersBox.setTitle(_translate("MainWindow", "Triggers", None))
+        self.labelWorkingFile.setText(_translate("MainWindow", "TextLabel", None))
         self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "View with MNE_Browse_Raw", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabRaw), _translate("MainWindow", "Raw", None))
         self.groupBoxPreprocessingCheckBoxes.setTitle(_translate("MainWindow", "Preprocessing steps completed:", None))
@@ -438,6 +448,7 @@ class Ui_MainWindow(object):
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections", None))
         self.pushButtonApplyECG.setText(_translate("MainWindow", "Apply ECG projections", None))
         self.pushButtonApplyEOG.setText(_translate("MainWindow", "Apply EOG projections", None))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Events:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxPreprocessingCheckBoxes_2.setTitle(_translate("MainWindow", "Steps completed:", None))
         self.checkBox.setText(_translate("MainWindow", "Eventlist", None))

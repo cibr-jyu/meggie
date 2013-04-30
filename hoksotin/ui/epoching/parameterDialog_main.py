@@ -121,6 +121,15 @@ class ParameterDialog(QtGui.QDialog):
             item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
             item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
             self.parent.ui.listWidgetEvents.addItem(item)
+                    
+        self.parent.ui.tabWidget.setCurrentIndex(1)
+        for index in xrange(self.ui.listWidgetEvents.count()):
+            item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
+            item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
+            self.parent.ui.listWidgetEventsPre.addItem(item)
+            
+        self.parent.ui.tabWidget.setCurrentIndex(2)
+        
         #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
         
     def check_channels(self):

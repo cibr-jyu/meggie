@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>965</width>
-    <height>722</height>
+    <width>935</width>
+    <height>717</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -447,8 +447,8 @@
               <rect>
                <x>10</x>
                <y>20</y>
-               <width>461</width>
-               <height>126</height>
+               <width>270</width>
+               <height>130</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -667,6 +667,29 @@
               </item>
              </layout>
             </widget>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="geometry">
+              <rect>
+               <x>430</x>
+               <y>30</y>
+               <width>381</width>
+               <height>231</height>
+              </rect>
+             </property>
+             <property name="title">
+              <string>Events:</string>
+             </property>
+             <widget class="QListWidget" name="listWidgetEventsPre">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>331</width>
+                <height>191</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
            </widget>
            <widget class="QWidget" name="tabAnalysis">
             <attribute name="title">
@@ -817,7 +840,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>965</width>
+     <width>935</width>
      <height>29</height>
     </rect>
    </property>

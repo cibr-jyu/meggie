@@ -300,7 +300,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
-        
+
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
