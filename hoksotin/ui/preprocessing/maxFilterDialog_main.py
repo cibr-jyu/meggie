@@ -32,6 +32,7 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui.labelComputeMaxFilter.setVisible(False)
         self.ui.progressBarComputeMaxFilter.setVisible(False)
         
+        
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
@@ -63,7 +64,12 @@ class MaxFilterDialog(QtGui.QDialog):
             # TODO 
             pass            
         
-        # Check for skips and the sanity of their values
+        """ 
+        Check for skips and the sanity of their values. Skip periods should
+        not overlap, and later skip periods should come later than earlier
+        regions
+        """
+        
         skips = ''
         if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
             if ( self.ui.spinBoxSkipEnd_1.value() 
@@ -93,8 +99,14 @@ class MaxFilterDialog(QtGui.QDialog):
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '            
         
-        button_text = str(self.ui.buttonGroupFormat.checkedButton().text())
-        format = button_text.split(' ')[0].lower()
+        """ 
+        This code was used for a buttongroup that allowed selection of output
+        format of MaxFilter generated files. The format now defaults to 32-bit
+        float. MaxFilter allows other formats, but no need to show them
+        in the UI.
+        """
+        # button_text = str(self.ui.buttonGroupFormat.checkedButton().text())
+        # format = button_text.split(' ')[0].lower()
             
         if self.ui.checkBoxMaxMove.checkState() == QtCore.Qt.Checked:
             button_position = \
@@ -144,7 +156,8 @@ class MaxFilterDialog(QtGui.QDialog):
         
         if skips != '':
             dictionary['-skip'] = skips
-        dictionary['-format'] = format
+        
+        dictionary['-format'] = float
         
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
