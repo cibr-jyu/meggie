@@ -56,6 +56,7 @@ class Caller(object):
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
+        # Add user defined parameters from the "custom" tab
         bs += custom
         print bs
         proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
@@ -65,6 +66,9 @@ class Caller(object):
         retval = proc.wait()      
         
         print "the program return code was %d" % retval
+        
+        outputfile = dic.get('-o')
+        self.update_experiment_working_file(outputfile)
         
         """ 
         # Write parameter file
@@ -149,8 +153,6 @@ class Caller(object):
         save_parameter_file('mne.preprocessing.compute_proj_ecg',
                             raw_in.info.get('filename'), ecg_proj_fname, dic)
         
-        
-    
     def call_eog_ssp(self, dic):
         """
         Creates EOG projections using ssp for given data.
@@ -243,6 +245,10 @@ class Caller(object):
         directory     -- Directory of the projection file
         """
         
+        """
+        If there already is a file with eog projections applied on it, apply
+        ecg projections on this file instead of current.
+        """
         if len(filter(os.path.isfile, 
                       glob.glob(directory + '*-eog_applied.fif'))) > 0:
             fname = glob.glob(directory + '*-eog_applied.fif')[0]
@@ -254,8 +260,11 @@ class Caller(object):
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
-            raw.save(fname[:-4] + '-ecg_applied.fif')
-            raw = mne.fiff.Raw(fname[:-4] + '-ecg_applied.fif')
+            appliedfilename = fname[:-4] + '-ecg_applied.fif'
+            raw.save(appliedfilename)
+            raw = mne.fiff.Raw(appliedfilename)
+            
+        self.update_experiment_working_file(appliedfilename)
         
     def apply_eog(self, raw, directory):
         """
@@ -332,3 +341,10 @@ class Caller(object):
         pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
         pl.show()
+        
+    def update_experiment_working_file(self, fname):
+        """
+        Changes the current working file for the experiment the caller relates
+        to.
+        """
+        self.parent.experiment.working_file = fname 

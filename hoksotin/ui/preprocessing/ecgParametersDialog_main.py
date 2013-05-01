@@ -124,7 +124,7 @@ class EcgParametersDialog(QtGui.QDialog):
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
-        
+            
         # Uses the caller related to mainwindow
         self.parent.caller.call_ecg_ssp(dictionary)
         self.parent._initialize_ui()

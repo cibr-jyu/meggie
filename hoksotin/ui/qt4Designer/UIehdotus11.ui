@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -818,7 +818,7 @@
      <x>0</x>
      <y>0</y>
      <width>965</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="defaultUp">
