@@ -50,6 +50,7 @@ class ParameterDialog(QtGui.QDialog):
         event_name = self.ui.lineEditName.text()
         print self.parent.experiment.stim_channel
         e = Events(self.parent.experiment.raw_data, 'STI 014')
+        e.pick(self.event_id)
         return e.events
         """
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
@@ -82,10 +83,10 @@ class ParameterDialog(QtGui.QDialog):
         self.__class__.index += 1
         if isinstance(events, numpy.ndarray):
             for event in events:
-                if event[2] == self.event_id:
-                    item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
-                    item.setData(1, event)
-                    self.ui.listWidgetEvents.addItem(item)
+                item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
+                item.setData(1, event)
+                #item.setData(2, self.ui.lineEditName.text())
+                self.ui.listWidgetEvents.addItem(item)
             self.ui.listWidgetEvents.setCurrentItem(item)
             """
             event_set = '(ID:' + str(self.event_id) + ', ' + \
@@ -116,19 +117,20 @@ class ParameterDialog(QtGui.QDialog):
         """
         self.close()
         self.epochDialog = EpochDialog(self)
-        self.epochDialog.exec_()
+        epochs = self.epochDialog.exec_()
+        """
         for index in xrange(self.ui.listWidgetEvents.count()):
             item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
             item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
-            self.parent.ui.listWidgetEvents.addItem(item)
-                    
-        self.parent.ui.tabWidget.setCurrentIndex(1)
-        for index in xrange(self.ui.listWidgetEvents.count()):
-            item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
-            item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
-            self.parent.ui.listWidgetEventsPre.addItem(item)
+            self.parent.widget.ui.listWidgetEpochs.addItem(item)
+        """            
+        #self.parent.ui.tabWidget.setCurrentIndex(1)
+        #for index in xrange(self.ui.listWidgetEvents.count()):
+        #    item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
+        #    item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
+        #    self.parent.ui.listWidgetEventsPre.addItem(item)
             
-        self.parent.ui.tabWidget.setCurrentIndex(2)
+        #self.parent.ui.tabWidget.setCurrentIndex(2)
         
         #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
         

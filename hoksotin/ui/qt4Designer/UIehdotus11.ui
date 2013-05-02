@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>935</width>
-    <height>717</height>
+    <width>967</width>
+    <height>765</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>937</width>
-         <height>638</height>
+         <width>947</width>
+         <height>657</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -840,8 +840,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>965</width>
-     <height>23</height>
+     <width>967</width>
+     <height>29</height>
     </rect>
    </property>
    <property name="defaultUp">
