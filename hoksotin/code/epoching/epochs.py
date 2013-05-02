@@ -15,7 +15,7 @@ class Epochs(object):
 
 
     def __init__(self, raw, events, stim_channel, mag, grad, eeg, stim,
-                 eog, reject, epoch_name, category, tmin=-0.2, tmax=0.5):
+                 eog, reject, category, tmin=-0.2, tmax=0.5):
         """
         Constructor
         

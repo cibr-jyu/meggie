@@ -179,14 +179,14 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         
         # If no events are selected, show a message to to the user and return
-        if ( self.ui.listWidgetEvents.currentItem() == None ): 
+        if ( self.widget.ui.listWidgetEpochs.currentItem() == None ): 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Please select an event collection to average.')
             self.messageBox.show()  
             return
          
-        epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         evoked = epoch.average()
         
         #Check if the tab has already been created
@@ -243,7 +243,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonTFR_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        epoch = self.widget.ui.listWidgetEpocha.currentItem().data(1).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.raw_data, epoch)
         self.tfr_dialog.show()
     

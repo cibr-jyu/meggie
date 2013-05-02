@@ -16,15 +16,12 @@ import brainRegions
 import numpy
 
 class ParameterDialog(QtGui.QDialog):
-    '''
-    classdocs
-    '''
     index = 1
 
     def __init__(self, parent):
-        '''
-        Constructor
-        '''
+        """
+        Initializes the event selection dialog.
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_ParameterDialog()
@@ -32,11 +29,6 @@ class ParameterDialog(QtGui.QDialog):
         keys = map(str, parent.experiment.event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event' + str(self.__class__.index))
-        """
-        self.ui.lineEditEventID.setText('5')
-        self.ui.lineEditTmin.setText('-0.2')
-        self.ui.lineEditTmax.setText('0.5')
-        """   
         
         """        
     def on_browseButton_clicked(self, checked=None):
@@ -81,11 +73,15 @@ class ParameterDialog(QtGui.QDialog):
         events = self.create_eventlist()
         print events
         self.__class__.index += 1
+        
+        """
+        Adds the events to the list.
+        """
         if isinstance(events, numpy.ndarray):
             for event in events:
                 item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
-                item.setData(1, event)
-                #item.setData(2, self.ui.lineEditName.text())
+                item.setData(32, event)
+                item.setData(33, self.ui.lineEditName.text())
                 self.ui.listWidgetEvents.addItem(item)
             self.ui.listWidgetEvents.setCurrentItem(item)
             """
@@ -101,9 +97,11 @@ class ParameterDialog(QtGui.QDialog):
             """
             self.ui.lineEditName.setText('Event' + str(self.__class__.index))
             self.ui.pushButtonRemove.setEnabled(True)
-        #print self.parent.experiment.event_set
         
     def on_pushButtonRemove_clicked(self, checked=None):
+        """
+        Method for removing events from the list
+        """
         if checked is None: return # Standard workaround
         row = self.ui.listWidgetEvents.currentRow()
         self.ui.listWidgetEvents.takeItem(row)
