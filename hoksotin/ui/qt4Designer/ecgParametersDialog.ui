@@ -54,7 +54,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidgetECGSettings">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabECG1">
       <attribute name="title">
@@ -760,7 +760,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Qrs detection threshold (Between 0 and 1):</string>
+           <string>Qrs detection threshold (between 0 and 1):</string>
           </property>
          </widget>
         </item>
@@ -772,6 +772,9 @@
           <property name="singleStep">
            <double>0.100000000000000</double>
           </property>
+          <property name="value">
+           <double>0.600000000000000</double>
+          </property>
          </widget>
         </item>
        </layout>
@@ -782,6 +785,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>comboBoxECGChannel</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
   <tabstop>spinBoxEventsID</tabstop>
@@ -792,17 +796,22 @@
   <tabstop>spinBoxEeg</tabstop>
   <tabstop>spinBoxLow</tabstop>
   <tabstop>spinBoxHigh</tabstop>
+  <tabstop>tabWidgetECGSettings</tabstop>
   <tabstop>lineEditBad</tabstop>
-  <tabstop>pushButtonBadChannels</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxTaps</tabstop>
   <tabstop>spinBoxJobs</tabstop>
   <tabstop>checkBoxEEGProj</tabstop>
   <tabstop>checkBoxSSPProj</tabstop>
   <tabstop>checkBoxSSPCompute</tabstop>
+  <tabstop>doubleSpinBoxGradReject</tabstop>
+  <tabstop>doubleSpinBoxMagReject</tabstop>
+  <tabstop>doubleSpinBoxEEGReject</tabstop>
+  <tabstop>doubleSpinBoxEOGReject</tabstop>
+  <tabstop>doubleSpinBoxQrs</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCompute</tabstop>
-  <tabstop>tabWidgetECGSettings</tabstop>
+  <tabstop>pushButtonBadChannels</tabstop>
  </tabstops>
  <resources/>
  <connections>

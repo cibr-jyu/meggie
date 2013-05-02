@@ -45,9 +45,10 @@ class Experiment(object):
         self._working_file = ''
         self._event_set = []
         self._stim_channel = ''
+        self.mainWindow = None
         
         # Add here all the possible actions that you can do to an experiment
-        # TODO not in use
+        # TODO not in use, possibly not needed
         self.stateDict = dict(Maxfilter=False, ECGcomputed=False,
                               ECGapplied=False, EOGcomputed=False,
                               EOGapplied=False, Eventlist=False,
@@ -164,6 +165,7 @@ class Experiment(object):
             raise Exception('Too long _author name')
     
     def update_state(self, key, value):
+       
        self.stateDict[key] = value
        
        # Parent should always refer to main window, or there will be blood
@@ -189,7 +191,6 @@ class Experiment(object):
             return False
         
     """
-    
     
     def get_date(self):
         """
@@ -245,11 +246,15 @@ class Experiment(object):
     @working_file.setter
     def working_file(self, fname):
         """
-        Sets the current working file.
+        Sets the current working file and notifies the main window to show it.
         Keyword arguments:
         fname         -- Name of the new working file.
         """
-        self._working_file = fname
+        self._working_file = mne.fiff.Raw(fname, preload=True)
+        self.shortname = os.path.basename(fname)
+        #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
+        #                                         shortname)
+        
         
     @property
     def stim_channel(self):
@@ -360,7 +365,7 @@ class Experiment(object):
         """
         Saves the command and parameters related to creation of a certain
         output file to a separate parameter file in csv-format.
-        TODO: breaks if dictionary keys of values include commas --> check
+        TODO: breaks if dictionary keys or values include commas --> check
         
         An example of the structure of the resulting parameter file:
         
@@ -416,17 +421,17 @@ class Experiment(object):
             paramfilefullpath = globlist[0]              
             
             with open(paramfilefullpath, 'rb') as paramfile:
-              csvreader=csv.reader(paramfile)
-              
-              # skip the first three lines, as they don't include actual
-              # info about parameters 
-              for i in range(3): 
-                  next(csvreader)   
-              
-              # Read the rest of the parameter file into a dictionary as
-              # key-value pairs
-              paramdict = dict(x for x in csvreader)
-              return paramdict           
+                csvreader=csv.reader(paramfile)
+                
+                # skip the first three lines, as they don't include actual
+                # info about parameters
+                for i in range(3):
+                    next(csvreader)
+                
+                # Read the rest of the parameter file into a dictionary as
+                # key-value pairs
+                paramdict = dict(x for x in csvreader)
+                return paramdict           
                         
     def write_commands(self, commands, node, parent=''):
         """

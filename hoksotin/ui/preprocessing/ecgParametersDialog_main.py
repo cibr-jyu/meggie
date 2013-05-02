@@ -79,7 +79,7 @@ class EcgParametersDialog(QtGui.QDialog):
                                            
 
     def accept(self):
-        raw = self.parent.experiment.raw_data
+        raw = self.parent.experiment.working_file
         dictionary = {'i': raw}
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
@@ -109,6 +109,8 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['rej-eeg'] = rej_eeg
         rej_eog = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['rej-eog'] = rej_eog
+        qrs = self.ui.doubleSpinBoxQrs.value()
+        dictionary['qrs'] = qrs
         bads = self.ui.lineEditBad.text()
         dictionary['bads'] = bads
         start = self.ui.spinBoxStart.value()
@@ -124,7 +126,7 @@ class EcgParametersDialog(QtGui.QDialog):
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
-        
+            
         # Uses the caller related to mainwindow
         self.parent.caller.call_ecg_ssp(dictionary)
         self.parent._initialize_ui()

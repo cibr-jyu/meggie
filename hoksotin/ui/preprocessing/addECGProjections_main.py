@@ -34,11 +34,14 @@ class AddECGProjections(QtGui.QDialog):
     def accept(self):
         applied = []
         for index in xrange(self.listWidget.count()):
-            check_box = self.listWidget.itemWidget(self.listWidget.item(index))
+            check_box=self.listWidget.itemWidget(self.listWidget.item(index))
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
         mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_ecg(self.parent.experiment.raw_data, self.parent.experiment._subject_directory)
+        self.parent.caller.apply_ecg(self.parent.experiment.working_file,
+                                    self.parent.experiment._subject_directory)
+        self.parent.ui.statusbar.showMessage("Current working file: " +
+                                             self.parent.experiment.shortname)
         self.parent._initialize_ui()
         self.close()
         
