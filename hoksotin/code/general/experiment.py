@@ -250,7 +250,7 @@ class Experiment(object):
         Keyword arguments:
         fname         -- Name of the new working file.
         """
-        self._working_file = fname
+        self._working_file = mne.fiff.Raw(fname, preload=True)
         self.shortname = os.path.basename(fname)
         #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
         #                                         shortname)
@@ -421,17 +421,17 @@ class Experiment(object):
             paramfilefullpath = globlist[0]              
             
             with open(paramfilefullpath, 'rb') as paramfile:
-              csvreader=csv.reader(paramfile)
-              
-              # skip the first three lines, as they don't include actual
-              # info about parameters 
-              for i in range(3): 
-                  next(csvreader)   
-              
-              # Read the rest of the parameter file into a dictionary as
-              # key-value pairs
-              paramdict = dict(x for x in csvreader)
-              return paramdict           
+                csvreader=csv.reader(paramfile)
+                
+                # skip the first three lines, as they don't include actual
+                # info about parameters
+                for i in range(3):
+                    next(csvreader)
+                
+                # Read the rest of the parameter file into a dictionary as
+                # key-value pairs
+                paramdict = dict(x for x in csvreader)
+                return paramdict           
                         
     def write_commands(self, commands, node, parent=''):
         """

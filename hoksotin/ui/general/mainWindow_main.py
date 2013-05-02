@@ -138,6 +138,8 @@ class MainWindow(QtGui.QMainWindow):
             Sets the experiment for caller, so it can use its information
             """
             self.caller.experiment = self.experiment
+            self.ui.statusbar.showMessage("Current working file: " +
+                                          self.experiment.shortname)
             
         else:
             self.messageBox = messageBox.AppForm()

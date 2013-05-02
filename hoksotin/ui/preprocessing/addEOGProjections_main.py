@@ -38,7 +38,7 @@ class AddEOGProjections(QtGui.QDialog):
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
         mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_eog(self.parent.experiment.raw_data,
+        self.parent.caller.apply_eog(self.parent.experiment.working_file,
                                      self.parent.experiment._subject_directory)
         self.parent._initialize_ui()
         self.close()

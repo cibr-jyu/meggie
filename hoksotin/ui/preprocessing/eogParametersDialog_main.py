@@ -18,7 +18,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
     def accept(self):
-        dictionary = {'i': self.parent.experiment.raw_data}
+        dictionary = {'i': self.parent.experiment.working_file}
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
         tmax = self.ui.doubleSpinBoxTmax.value()
