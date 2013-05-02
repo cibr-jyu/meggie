@@ -170,3 +170,13 @@ class ParameterDialog(QtGui.QDialog):
         
         """
         
+    def on_pushButtonSaveEvents_clicked(self, checked=None):
+        if checked is None: return # Standard workaround
+        events = self.create_eventlist()
+        self.parent.caller.write_events(events)
+    
+    def on_pushButtonReadEvents_clicked(self, checked=None):
+        if checked is None: return # Standard workaround
+        """
+        self.parent.caller.read_events()
+        """

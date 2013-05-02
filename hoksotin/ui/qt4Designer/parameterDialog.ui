@@ -101,14 +101,14 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pushButtonSaveEvents">
             <property name="text">
              <string>Save events</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pushButtonReadEvents">
             <property name="text">
              <string>Read events</string>
             </property>
@@ -118,13 +118,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>301</width>
-         <height>71</height>
+         <height>74</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -185,8 +185,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>655</x>
-     <y>300</y>
+     <x>664</x>
+     <y>607</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -201,8 +201,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>655</x>
-     <y>300</y>
+     <x>664</x>
+     <y>607</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

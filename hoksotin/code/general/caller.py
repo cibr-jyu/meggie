@@ -8,6 +8,9 @@ import subprocess
 import os
 import glob
 
+from xlwt import *
+from xlrd import open_workbook,cellname
+
 import mne
 from mne.time_frequency import induced_power
 
@@ -351,3 +354,42 @@ class Caller(object):
         to.
         """
         self.parent.experiment.working_file = fname        
+
+    def write_events(self, events):
+        """
+        Saves the events in an excel file (.xls).
+        
+        Keyword arguments:
+        events           -- Events to save
+        """
+        wbs = Workbook()
+        ws = wbs.add_sheet('Events')
+        styleNumber = XFStyle()
+        styleNumber.num_format_str = 'general'
+        sizex = events.shape[0]
+        sizey = events.shape[1]
+        
+        
+        for i in range(sizex):
+            for j in range(sizey):
+                ws.write(i, j, events[i][j], styleNumber)
+        
+        path_to_save = self.parent.experiment.subject_directory
+        wbs.save(path_to_save + '/events.xls') #TODO: muuta filename kayttajan maarittelyn mukaiseksi
+
+    def read_events(self):
+        """
+        Reads the events from a chosen excel file.
+        """
+        
+        """
+        wbr = open_workbook('/home/jaolpeso/dates.xls')
+        sheet = wbr.sheet_by_index(0)
+        
+        for row_index in range(sheet.nrows):
+            for col_index in range(sheet.ncols):
+                print cellname(row_index,col_index),'-',
+                print sheet.cell(row_index,col_index).value
+                
+        """
+        
