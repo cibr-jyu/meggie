@@ -14,8 +14,8 @@ class Epochs(object):
     """
 
 
-    def __init__(self, raw, stim_channel, mag, grad, eeg, stim,
-                 eog, reject, epoch_name, tmin=-0.2, tmax=0.5, event_id=0):
+    def __init__(self, raw, events, stim_channel, mag, grad, eeg, stim,
+                 eog, reject, category, tmin=-0.2, tmax=0.5):
         """
         Constructor
         
@@ -38,12 +38,13 @@ class Epochs(object):
         elif grad:
             meg = 'grad'
         if isinstance(raw, mne.fiff.raw.Raw):
-            e = events.Events(raw, stim_channel)
+            #e = events.Events(raw, stim_channel)
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
-            if picks is None:
-                raise Exception('Picks cannot be empty.')
-            self.epochs = mne.Epochs(raw, e.events, event_id,
+            #if picks is None:
+            #    raise Exception('Picks cannot be empty.')
+            
+            self.epochs = mne.Epochs(raw, events, category,
                                      tmin, tmax, picks=picks)
         else:
             raise TypeError('Not a Raw object.')

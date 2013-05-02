@@ -6,7 +6,11 @@ Created on Apr 30, 2013
 
 from epochDialog_Ui import Ui_Dialog
 
+from epochs import Epochs
+
 from PyQt4 import QtCore,QtGui
+
+import numpy as np
 
 class EpochDialog(QtGui.QDialog):
     '''
@@ -31,15 +35,41 @@ class EpochDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
+        stim_channel = self.parent.parent.experiment.stim_channel
         reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
                       mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
                       eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
                       eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
-        print channels
+        events = np.ndarray((self.parent.ui.listWidgetEvents.count(),3), int)
+        
+        """
+        Reads the given event names as categories.
+        """
+        category = dict()
+        for index in xrange(self.parent.ui.listWidgetEvents.count()):
+            event = self.parent.ui.listWidgetEvents.item(index).data(32).toPyObject()
+            events[index] = (event)
+            print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
+            category[str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())] = event[2]
+            
         try:
-            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
-                            grad, eeg, stim, eog, reject, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id))
-        except:
-            return #TODO error handling
-        return epochs
+            epochs = Epochs(self.parent.parent.experiment.working_file, events,
+                            stim_channel, mag, grad, eeg, stim, eog, reject,
+                            category, float(self.tmin), float(self.tmax))
+        except Exception, err:
+            print 'Could not create epochs. \n' + str(err)
+            return
+        #for index in xrange(epochs):
+        
+        """
+        Add's the epochs to the mainWindow's list.
+        """
+        item_string = ''
+        for key, value in epochs.epochs.event_id.iteritems():
+            item_string += key + '=' + str(value) + ' ' 
+        item = QtGui.QListWidgetItem(item_string)
+        item.setData(32, epochs)
+        self.parent.parent.widget.ui.listWidgetEpochs.addItem(item)
+        
+        self.close()
+        #return epochs

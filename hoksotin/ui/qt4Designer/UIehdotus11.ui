@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>935</width>
-    <height>717</height>
+    <width>966</width>
+    <height>730</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -350,19 +350,6 @@
                     <width>241</width>
                     <height>141</height>
                    </rect>
-                  </property>
-                 </widget>
-                 <widget class="QLabel" name="labelWorkingFile">
-                  <property name="geometry">
-                   <rect>
-                    <x>370</x>
-                    <y>30</y>
-                    <width>66</width>
-                    <height>21</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>TextLabel</string>
                   </property>
                  </widget>
                 </widget>
@@ -667,29 +654,6 @@
               </item>
              </layout>
             </widget>
-            <widget class="QGroupBox" name="groupBox_2">
-             <property name="geometry">
-              <rect>
-               <x>430</x>
-               <y>30</y>
-               <width>381</width>
-               <height>231</height>
-              </rect>
-             </property>
-             <property name="title">
-              <string>Events:</string>
-             </property>
-             <widget class="QListWidget" name="listWidgetEventsPre">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>20</y>
-                <width>331</width>
-                <height>191</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
            </widget>
            <widget class="QWidget" name="tabAnalysis">
             <attribute name="title">
@@ -789,29 +753,6 @@
               </item>
              </layout>
             </widget>
-            <widget class="QGroupBox" name="groupBox">
-             <property name="geometry">
-              <rect>
-               <x>430</x>
-               <y>30</y>
-               <width>381</width>
-               <height>231</height>
-              </rect>
-             </property>
-             <property name="title">
-              <string>Events:</string>
-             </property>
-             <widget class="QListWidget" name="listWidgetEvents">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>20</y>
-                <width>331</width>
-                <height>191</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
             <widget class="QPushButton" name="pushButtonTFR">
              <property name="geometry">
               <rect>
@@ -840,8 +781,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>965</width>
-     <height>23</height>
+     <width>966</width>
+     <height>29</height>
     </rect>
    </property>
    <property name="defaultUp">

@@ -24,3 +24,6 @@ class Events(object):
     @property    
     def events(self):
         return self._events
+    
+    def pick(self, event_id):
+        self._events = mne.pick_events(self._events, include=event_id)

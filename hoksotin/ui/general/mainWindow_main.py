@@ -31,6 +31,7 @@ from preferencesDialog_main import PreferencesDialog
 from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
 from TFRDialog_main import TFRDialog
+from widgets.epochWidget_main import EpochWidget
 import messageBox
 
 from experiment import Experiment
@@ -54,7 +55,7 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-                
+        
         
         """
         Main window represents one experiment at a time. This experiment is
@@ -73,16 +74,20 @@ class MainWindow(QtGui.QMainWindow):
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
-            
         
-            
+        """Creates a listwidget for epoch analysis."""    
+        self.widget = EpochWidget(self)
+        self.widget.setGeometry(QtCore.QRect(450, 140, 381, 231))
+        self.widget.hide()
+        #self.ui.horizontalLayout.addWidget(self.widget)
         '''
         Old code for activating buttons when experiment state changes
         TODO: check and remove
         #self.ui.pushButtonAverage.setEnabled(False)
         #self.ui.pushButtonVisualize.setEnabled(False)
-        #self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         '''
+        self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
+        
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -174,14 +179,14 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         
         # If no events are selected, show a message to to the user and return
-        if ( self.ui.listWidgetEvents.currentItem() == None ): 
+        if ( self.widget.ui.listWidgetEpochs.currentItem() == None ): 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Please select an event collection to average.')
             self.messageBox.show()  
             return
          
-        epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         evoked = epoch.average()
         
         #Check if the tab has already been created
@@ -207,17 +212,14 @@ class MainWindow(QtGui.QMainWindow):
     def on_currentChanged(self):
         """
         Keeps track of the active tab.
+        Shows the epoch widget when in analysis.
         """
-        print self.ui.tabWidget.currentIndex()
-        self.tab = self.ui.tabWidget.currentWidget()
-        
-        '''
-        #if self.tab == None: return
-        if self.tab.winId == 'epoch':
-            self.ui.pushButtonAverage.setEnabled(True)
+        index = self.ui.tabWidget.currentIndex()
+        #self.tab = self.ui.tabWidget.currentWidget()
+        if index == 2 or index == 1:
+            self.widget.show()
         else:
-            self.ui.pushButtonAverage.setEnabled(False)
-        '''
+            self.widget.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -241,7 +243,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonTFR_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        epoch = self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.raw_data, epoch)
         self.tfr_dialog.show()
     

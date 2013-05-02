@@ -323,15 +323,15 @@ class Experiment(object):
         
         settingsFile.close()        
     
-    def save_experiment(self, workspace):
+    def save_experiment(self, path):
         """
         Creates the experiment folder.
         
         Keyword arguments:
-        workspace    -- workspace for the chosen experiment.
+        path    -- path for the chosen experiment.
         """
-        self._file_path = workspace + '/' + self._experiment_name + '/'
-        if os.path.exists(workspace):
+        self._file_path = path + '/' + self._experiment_name + '/'
+        if os.path.exists(path):
             try:
                 os.mkdir(self._file_path)
             except OSError:

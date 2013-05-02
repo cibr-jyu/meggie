@@ -125,17 +125,16 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.show()
             #self.computeDialog.close()
             return         
-        try:    
+        try:
             self.experiment.save_experiment(self.workspace.working_directory)
             self.experiment.raw_data = self.raw
             self.experiment.find_stim_channel()
             self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
-            self.experiment.save_experiment_settings()
-            
             self.experiment.working_file = self.experiment.raw_data.info.get('filename')
             self.parent.ui.statusbar.showMessage("Current working file: " +
                                              self.experiment.shortname)
+            self.experiment.save_experiment_settings()
             #self.experiment.stim_channel = 'STI 014'
       
         except IOError, err:
