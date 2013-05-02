@@ -348,4 +348,4 @@ class Caller(object):
         Changes the current working file for the experiment the caller relates
         to.
         """
-        self.parent.experiment.working_file = fname 
+        self.parent.experiment.working_file = fname        
