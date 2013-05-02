@@ -251,9 +251,9 @@ class Experiment(object):
         fname         -- Name of the new working file.
         """
         self._working_file = fname
-        shortname = os.path.basename(fname)
-        self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
-                                                 shortname)
+        self.shortname = os.path.basename(fname)
+        #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
+        #                                         shortname)
         
         
     @property

@@ -40,6 +40,8 @@ class AddECGProjections(QtGui.QDialog):
         mne.write_proj(self.proj_file, applied)
         self.parent.caller.apply_ecg(self.parent.experiment.raw_data,
                                     self.parent.experiment._subject_directory)
+        self.parent.ui.statusbar.showMessage("Current working file: " + 
+                                                 self.parent.experiment.shortname)
         self.parent._initialize_ui()
         self.close()
         

@@ -104,6 +104,7 @@ class Caller(object):
                   mag=1e-15 * float(rej_mag),
                   eeg=1e-6 * float(rej_eeg),
                   eog=1e-6 * float(rej_eog))
+        qrs_threshold = dic.get('qrs')
         flat = None
         bads = [] #TODO: Check how the whole bads-thing is supposed to work.
         
@@ -136,7 +137,7 @@ class Caller(object):
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, ch_name, reject, flat,
                             bads, eeg_proj, excl_ssp, event_id,
-                            ecg_low_freq, ecg_high_freq, start)
+                            ecg_low_freq, ecg_high_freq, start, qrs_threshold)
         #raw_in.close()
         
         if isinstance(preload, basestring) and os.path.exists(preload):

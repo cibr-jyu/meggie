@@ -31,7 +31,6 @@ class EpochDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        channels = self.check_channels()
         reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
                       mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
                       eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
@@ -40,7 +39,7 @@ class EpochDialog(QtGui.QDialog):
         try:
             epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
                             grad, eeg, stim, eog, reject, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id), channels)
+                            float(self.tmax), int(self.event_id))
         except:
             return #TODO error handling
         return epochs

@@ -109,6 +109,8 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['rej-eeg'] = rej_eeg
         rej_eog = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['rej-eog'] = rej_eog
+        qrs = self.ui.doubleSpinBoxQrs.value()
+        dictionary['qrs'] = qrs
         bads = self.ui.lineEditBad.text()
         dictionary['bads'] = bads
         start = self.ui.spinBoxStart.value()
