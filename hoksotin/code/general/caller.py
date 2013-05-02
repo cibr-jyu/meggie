@@ -263,7 +263,7 @@ class Caller(object):
             raw.add_proj(proj)
             appliedfilename = fname[:-4] + '-ecg_applied.fif'
             raw.save(appliedfilename)
-            raw = mne.fiff.Raw(appliedfilename)
+            raw = mne.fiff.Raw(appliedfilename, preload=True)
             
         self.update_experiment_working_file(appliedfilename)
         
@@ -286,8 +286,10 @@ class Caller(object):
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
-            raw.save(fname[:-4] + '-eog_applied.fif')
-            raw = mne.fiff.Raw(fname[:-4] + '-eog_applied.fif')
+            appliedfilename = fname[:-4] + '-eog_applied.fif'
+            raw.save(appliedfilename)
+            raw = mne.fiff.Raw(appliedfilename, preload=True)
+        self.update_experiment_working_file(appliedfilename)
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
         evoked = epochs.average()
