@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>753</height>
+    <width>1018</width>
+    <height>805</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,8 +58,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>732</width>
-        <height>701</height>
+        <width>1000</width>
+        <height>748</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -74,14 +74,14 @@
          <x>0</x>
          <y>7</y>
          <width>666</width>
-         <height>670</height>
+         <height>714</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidgetMaxFilterSettings">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tabGeneral">
            <attribute name="title">
@@ -422,14 +422,14 @@
                       <item>
                        <widget class="QLabel" name="labelBadLimit">
                         <property name="text">
-                         <string>Threshold for bads:</string>
+                         <string>Threshold for bad channel detection:</string>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QDoubleSpinBox" name="doubleSpinBoxBadLimit">
                         <property name="suffix">
-                         <string> SD</string>
+                         <string/>
                         </property>
                         <property name="value">
                          <double>7.000000000000000</double>
@@ -491,7 +491,7 @@
           </widget>
           <widget class="QWidget" name="tabTSSS">
            <attribute name="title">
-            <string>TSSS</string>
+            <string>tSSS</string>
            </attribute>
            <widget class="QCheckBox" name="checkBoxtSSS">
             <property name="enabled">
@@ -664,87 +664,95 @@
            </attribute>
            <layout class="QGridLayout" name="gridLayout_10">
             <item row="0" column="0">
-             <widget class="QFrame" name="frame_2">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QFormLayout" name="formLayout_3">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-               </property>
-               <item row="0" column="0">
-                <layout class="QVBoxLayout" name="verticalLayout">
-                 <item>
-                  <widget class="QRadioButton" name="radioButtonPositionDefault">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string>Transform data into default head position</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="radioButtonPositionFile">
-                   <property name="text">
-                    <string>Transform data to head position in a file:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_9">
-                   <item>
-                    <widget class="QLineEdit" name="lineEditFile">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="inputMask">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="pushButtonBrowsePositionFile">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="text">
-                      <string>Browse...</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="radioButtonPositionAverage">
-                   <property name="text">
-                    <string>Transform data into averaged head position</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="0">
-                <widget class="QCheckBox" name="checkBoxStorePosition">
-                 <property name="text">
-                  <string>Store head position data in an ASCII file</string>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QCheckBox" name="checkBoxStorePosition">
+                <property name="text">
+                 <string>Store head position data in an ASCII file</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBoxTransform">
+                <property name="text">
+                 <string>Transform head position</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget" native="true">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <widget class="QWidget" name="">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>30</y>
+                   <width>311</width>
+                   <height>131</height>
+                  </rect>
                  </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <widget class="QRadioButton" name="radioButtonPositionDefault">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Transform data into default head position</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButtonPositionFile">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Transform data to head position in a file:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <item>
+                     <widget class="QLineEdit" name="lineEditFile">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="inputMask">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonBrowsePositionFile">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="text">
+                       <string>Browse...</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButtonPositionAverage">
+                    <property name="text">
+                     <string>Transform data into averaged head position</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
-               </item>
-              </layout>
-             </widget>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -826,6 +834,10 @@
         </item>
        </layout>
       </widget>
+      <zorder>layoutWidget</zorder>
+      <zorder>checkBoxTransform</zorder>
+      <zorder></zorder>
+      <zorder>frame_2</zorder>
      </widget>
     </widget>
    </item>
@@ -995,8 +1007,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>513</y>
+     <x>94</x>
+     <y>542</y>
     </hint>
     <hint type="destinationlabel">
      <x>176</x>
@@ -1011,8 +1023,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>513</y>
+     <x>94</x>
+     <y>542</y>
     </hint>
     <hint type="destinationlabel">
      <x>268</x>
@@ -1043,8 +1055,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>553</x>
-     <y>724</y>
+     <x>916</x>
+     <y>794</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>
@@ -1059,8 +1071,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>639</x>
-     <y>724</y>
+     <x>1007</x>
+     <y>794</y>
     </hint>
     <hint type="destinationlabel">
      <x>538</x>
@@ -1085,7 +1097,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroupFormat"/>
- </buttongroups>
 </ui>

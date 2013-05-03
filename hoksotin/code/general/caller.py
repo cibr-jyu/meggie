@@ -404,8 +404,7 @@ class Caller(object):
         styleNumber.num_format_str = 'general'
         sizex = events.shape[0]
         sizey = events.shape[1]
-        
-        
+                
         for i in range(sizex):
             for j in range(sizey):
                 ws.write(i, j, events[i][j], styleNumber)
@@ -413,19 +412,25 @@ class Caller(object):
         path_to_save = self.parent.experiment.subject_directory
         wbs.save(path_to_save + '/events.xls') #TODO: muuta filename kayttajan maarittelyn mukaiseksi
 
-    def read_events(self):
+    def read_events(self, file):
         """
         Reads the events from a chosen excel file.
         """
-        
-        """
-        wbr = open_workbook('/home/jaolpeso/dates.xls')
+        #path_to_read = self.parent.experiment.subject_directory
+        #wbr = open_workbook(path_to_read + 'events.xls')
+        wbr = open_workbook(file)
         sheet = wbr.sheet_by_index(0)
-        
+        return sheet
+        """
         for row_index in range(sheet.nrows):
             for col_index in range(sheet.ncols):
-                print cellname(row_index,col_index),'-',
-                print sheet.cell(row_index,col_index).value
-                
+                #print cellname(row_index,col_index),'-',
+                #print sheet.cell(row_index,col_index).value
+                item = QtGui.QListWidgetItem(self.parent.ui.lineEditName.text()
+                                             + ' ' + str(sheet.cell(row_index,col_index).value)
+                                             + ', ' + str(sheet.cell(row_index,col_index+2).value))
+                item.setData(32, row_index)
+                item.setData(33, self.parent.ui.lineEditName.text())
+                self.parent.ui.listWidgetEvents.addItem(item)
+            self.parent.ui.listWidgetEvents.setCurrentItem(item)
         """
-        
