@@ -31,7 +31,9 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.ui.labelComputeMaxFilter.setVisible(False)
         self.ui.progressBarComputeMaxFilter.setVisible(False)
-        
+        # TODO: self.populateComboboxLab()
+        self.calibrationFile = None
+        self.sparseFile = None
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -162,6 +164,8 @@ class MaxFilterDialog(QtGui.QDialog):
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
             dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
+            
+        # TODO: calibration-files
         
         custom = self.ui.textEditCustom.toPlainText()
         
@@ -178,6 +182,11 @@ class MaxFilterDialog(QtGui.QDialog):
         
         self.close()
         
+    def populateGroupboxLab(self):
+        pass
+    
+    def setConfigFiles(self):
+        pass
             
     def showErrorMessage(self, message):
         """
