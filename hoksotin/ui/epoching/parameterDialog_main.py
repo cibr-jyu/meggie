@@ -13,7 +13,7 @@ from epochs import Epochs
 from events import Events
 import brainRegions
 
-import numpy
+import numpy as np
 
 class ParameterDialog(QtGui.QDialog):
     index = 1
@@ -77,7 +77,7 @@ class ParameterDialog(QtGui.QDialog):
         """
         Adds the events to the list.
         """
-        if isinstance(events, numpy.ndarray):
+        if isinstance(events, np.ndarray):
             for event in events:
                 item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
                 item.setData(32, event)
@@ -172,8 +172,15 @@ class ParameterDialog(QtGui.QDialog):
         
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         if checked is None: return # Standard workaround
-        events = self.create_eventlist()
-        self.parent.caller.write_events(events)
+        events = np.ndarray((self.ui.listWidgetEvents.count(),3), int)
+        for index in xrange(self.ui.listWidgetEvents.count()):
+            event = self.ui.listWidgetEvents.item(index).data(32).toPyObject()
+            events[index] = (event)
+        #events = self.create_eventlist()'
+        if len(events) > 0:
+            print 'Writing events...'
+            self.parent.caller.write_events(events)
+            print 'Done.'
     
     def on_pushButtonReadEvents_clicked(self, checked=None):
         if checked is None: return # Standard workaround

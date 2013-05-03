@@ -40,11 +40,11 @@ class EpochDialog(QtGui.QDialog):
                       mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
                       eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
                       eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
-        events = np.ndarray((self.parent.ui.listWidgetEvents.count(),3), int)
         
         """
         Reads the given event names as categories.
         """
+        events = np.ndarray((self.parent.ui.listWidgetEvents.count(),3), int)
         category = dict()
         for index in xrange(self.parent.ui.listWidgetEvents.count()):
             event = self.parent.ui.listWidgetEvents.item(index).data(32).toPyObject()
