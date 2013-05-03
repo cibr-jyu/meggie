@@ -348,6 +348,42 @@ class Caller(object):
         pl.colorbar()
         pl.show()
         
+        
+    def TFR_topology(self, raw, epochs, minfreq, maxfreq):
+        evoked = epochs.average()
+        data = epochs.get_data()
+        times = 1e3 * epochs.times #s to ms
+        evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
+        
+        data = data[:, ch_index:(ch_index+1), :]
+        evoked_data = evoked_data[ch_index:(ch_index+1), :]
+        
+        #Find intervals for given frequency band
+        frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
+        
+        n_cycles = frequencies / float(len(frequencies) - 1)
+        #n_cycles = frequencies / float(15)
+        Fs = raw.info['sfreq']
+        decim = 3
+        power, phase_lock = induced_power(data, Fs=Fs,
+                                          frequencies=frequencies,
+                                          n_cycles=n_cycles, n_jobs=1,
+                                          use_fft=False, decim=decim,
+                                          zero_mean=True)
+        
+        layout = read_layout('Vectorview-all')
+        baseline = (None, 0)  # set the baseline for induced power
+        mode = 'ratio'  # set mode for baseline rescaling
+        
+        title = 'TFR topology'
+        plot_topo_power(epochs, power, frequencies, layout, baseline=baseline,
+                mode=mode, decim=decim, vmin=0., vmax=14, title=title)
+        
+        
+        pl.show()
+        
+        
+        
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates
