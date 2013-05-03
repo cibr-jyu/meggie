@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>275</width>
-        <height>257</height>
+        <height>265</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -73,6 +73,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+             <property name="suffix">
+              <string> Hz</string>
+             </property>
              <property name="minimum">
               <double>7.000000000000000</double>
              </property>
@@ -94,6 +97,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+             <property name="suffix">
+              <string> Hz</string>
+             </property>
              <property name="minimum">
               <double>7.000000000000000</double>
              </property>
@@ -118,6 +124,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
+             <property name="suffix">
+              <string> Hz</string>
+             </property>
              <property name="minimum">
               <double>0.000000000000000</double>
              </property>
@@ -142,6 +151,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
+             <property name="decimals">
+              <number>0</number>
+             </property>
              <property name="value">
               <double>7.000000000000000</double>
              </property>
