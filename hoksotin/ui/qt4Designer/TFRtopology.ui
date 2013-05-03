@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogTFRtopology</class>
- <widget class="QDialog" name="DialogTFRtopology">
+ <class>DialogTFRTopology</class>
+ <widget class="QDialog" name="DialogTFRTopology">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>420</height>
+    <width>527</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Show TFR topologies </string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
@@ -27,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>445</width>
-        <height>361</height>
+        <width>509</width>
+        <height>552</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -146,6 +160,24 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Temporal decim factor:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxDecim">
+             <property name="value">
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -167,6 +199,9 @@
           <property name="text">
            <string>Induced power</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -178,22 +213,145 @@
         </item>
        </layout>
       </widget>
+      <widget class="QGroupBox" name="groupBoxBaseline">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>350</y>
+         <width>251</width>
+         <height>134</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Baseline rescaling and correction</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="labelRescaling">
+            <property name="text">
+             <string>Rescaling mode:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBoxMode">
+            <item>
+             <property name="text">
+              <string>ratio</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>logratio</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>mean</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>zscore</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>percent</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="labelBaselineStart">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Baseline start:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBoxBaselineStartNone">
+              <property name="text">
+               <string>None</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="labelBaselineEnd">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Baseline end:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBoxBaselineEndNone">
+              <property name="text">
+               <string>None</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
-   </item>
-   <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
@@ -210,12 +368,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DialogTFRtopology</receiver>
+   <receiver>DialogTFRTopology</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>303</y>
+     <x>268</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -226,16 +384,80 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DialogTFRtopology</receiver>
+   <receiver>DialogTFRTopology</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>282</x>
-     <y>303</y>
+     <x>292</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBaselineStartNone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelBaselineStart</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>417</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>112</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBaselineStartNone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxBaselineStart</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>419</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>183</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBaselineEndNone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxBaselineEnd</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>443</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>441</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBaselineEndNone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelBaselineEnd</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>442</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>72</x>
+     <y>442</y>
     </hint>
    </hints>
   </connection>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Thu May  2 17:01:50 2013
+# Created: Fri May  3 15:26:04 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(966, 730)
+        MainWindow.resize(965, 730)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -353,13 +353,16 @@ class Ui_MainWindow(object):
         self.pushButtonTFR = QtGui.QPushButton(self.tabAnalysis)
         self.pushButtonTFR.setGeometry(QtCore.QRect(700, 280, 75, 23))
         self.pushButtonTFR.setObjectName(_fromUtf8("pushButtonTFR"))
+        self.pushButtonTFRTopology = QtGui.QPushButton(self.tabAnalysis)
+        self.pushButtonTFRTopology.setGeometry(QtCore.QRect(800, 280, 84, 26))
+        self.pushButtonTFRTopology.setObjectName(_fromUtf8("pushButtonTFRTopology"))
         self.tabWidget.addTab(self.tabAnalysis, _fromUtf8(""))
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_3)
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 966, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 965, 23))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -391,7 +394,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -442,6 +445,7 @@ class Ui_MainWindow(object):
         self.pushButtonEpochs.setText(_translate("MainWindow", "Epochs", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average", None))
         self.pushButtonTFR.setText(_translate("MainWindow", "TFR", None))
+        self.pushButtonTFRTopology.setText(_translate("MainWindow", "TFR topology", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAnalysis), _translate("MainWindow", "Analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))

@@ -31,6 +31,7 @@ from preferencesDialog_main import PreferencesDialog
 from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
 from TFRDialog_main import TFRDialog
+from TFRTopologyDialog_main import TFRTopologyDialog
 from widgets.epochWidget_main import EpochWidget
 import messageBox
 
@@ -248,6 +249,11 @@ class MainWindow(QtGui.QMainWindow):
         epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.raw_data, epoch)
         self.tfr_dialog.show()
+    
+    def on_pushButtonTFRTopology_clicked(self,checked=None):
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
+        self.tfrTop_dialog = TFRTopologyDialog(self, self.experiment.raw_data, epoch)
+        self.tfrTop_dialog.show()
     
     def _initialize_ui(self):
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")

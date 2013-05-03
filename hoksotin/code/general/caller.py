@@ -13,6 +13,9 @@ from xlrd import open_workbook,cellname
 
 import mne
 from mne.time_frequency import induced_power
+from mne.layouts import read_layout
+from mne.viz import plot_topo_power, plot_topo_phase_lock
+
 
 import numpy as np
 import pylab as pl
@@ -349,14 +352,15 @@ class Caller(object):
         pl.show()
         
         
-    def TFR_topology(self, raw, epochs, minfreq, maxfreq):
+    def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
+                     blstart, blend):
         evoked = epochs.average()
         data = epochs.get_data()
         times = 1e3 * epochs.times #s to ms
-        evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
+        #evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
         
-        data = data[:, ch_index:(ch_index+1), :]
-        evoked_data = evoked_data[ch_index:(ch_index+1), :]
+        #data = data[:, ch_index:(ch_index+1), :]
+        #evoked_data = evoked_data[ch_index:(ch_index+1), :]
         
         #Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
@@ -372,16 +376,20 @@ class Caller(object):
                                           zero_mean=True)
         
         layout = read_layout('Vectorview-all')
-        baseline = (None, 0)  # set the baseline for induced power
+        baseline = (blstart, blend)  # set the baseline for induced power
         mode = 'ratio'  # set mode for baseline rescaling
         
-        title = 'TFR topology'
-        plot_topo_power(epochs, power, frequencies, layout, baseline=baseline,
-                mode=mode, decim=decim, vmin=0., vmax=14, title=title)
-        
-        
-        pl.show()
-        
+        if ( reptype == 'induced' ):
+            title='TFR topology: ' + 'Induced power'
+            plot_topo_power(epochs, power, frequencies, layout,
+                            baseline=baseline, mode=mode, decim=decim, 
+                            vmin=0., vmax=14, title=title)
+            pl.show()
+        else: 
+            title = 'TFR topology: ' + 'Phase locking'
+            plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
+                     baseline=baseline, mode=mode, decim=decim, title=title)
+            pl.show()
         
         
     def update_experiment_working_file(self, fname):
