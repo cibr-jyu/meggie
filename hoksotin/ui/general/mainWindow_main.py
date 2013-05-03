@@ -76,7 +76,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.tabWidget.removeTab(0)
         
         """Creates a listwidget for epoch analysis."""    
-                
+             
         self.widget = EpochWidget(self)
         self.widget.setGeometry(QtCore.QRect(450, 140, 381, 231))
         self.widget.hide()

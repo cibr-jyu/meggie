@@ -7,6 +7,9 @@ Created on Mar 19, 2013
 from PyQt4 import QtCore,QtGui
 from parameterDialog_ui import Ui_ParameterDialog
 from epochDialog_main import EpochDialog
+
+from tkFileDialog import askopenfilename
+from Tkinter import Tk
 #from enaml.components.push_button import PushButton
 
 from epochs import Epochs
@@ -184,6 +187,19 @@ class ParameterDialog(QtGui.QDialog):
     
     def on_pushButtonReadEvents_clicked(self, checked=None):
         if checked is None: return # Standard workaround
-        """
-        self.parent.caller.read_events()
-        """
+        
+        Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+        filename = askopenfilename() # voisi vaihtaa johonkin parempaan, huono kaytettavyys
+        
+        sheet = self.parent.caller.read_events(filename)
+        events = np.ndarray((sheet.ncols,3), int)
+        for row_index in range(sheet.nrows):
+            
+            item = QtGui.QListWidgetItem(self.ui.lineEditName.text()
+                                             + ' ' + str(int(sheet.cell(row_index,0).value))
+                                             + ', ' + str(int(sheet.cell(row_index,2).value)))
+            item.setData(32, row_index)
+            item.setData(33, self.ui.lineEditName.text())
+            self.ui.listWidgetEvents.addItem(item) #TODO item.data(32).toPyObject()?
+        self.ui.listWidgetEvents.setCurrentItem(item)
+        
