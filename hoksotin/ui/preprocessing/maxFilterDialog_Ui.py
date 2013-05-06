@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'maxFilterDialogNew.ui'
 #
-# Created: Fri May 03 15:08:32 2013
+# Created: Mon May 06 13:16:26 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,11 +35,13 @@ class Ui_Dialog(object):
         self.labelLab = QtGui.QLabel(Dialog)
         self.labelLab.setObjectName(_fromUtf8("labelLab"))
         self.horizontalLayout_10.addWidget(self.labelLab)
+        spacerItem = QtGui.QSpacerItem(100, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem)
         self.comboBoxLab = QtGui.QComboBox(Dialog)
         self.comboBoxLab.setObjectName(_fromUtf8("comboBoxLab"))
         self.horizontalLayout_10.addWidget(self.comboBoxLab)
-        spacerItem = QtGui.QSpacerItem(85, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(85, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem1)
         self.verticalLayout_5.addLayout(self.horizontalLayout_10)
         self.scrollArea = QtGui.QScrollArea(Dialog)
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
@@ -161,8 +163,8 @@ class Ui_Dialog(object):
         self.spinBoxSkipStart_2.setMaximum(100000)
         self.spinBoxSkipStart_2.setObjectName(_fromUtf8("spinBoxSkipStart_2"))
         self.gridLayout_12.addWidget(self.spinBoxSkipStart_2, 2, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_12.addItem(spacerItem1, 0, 0, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_12.addItem(spacerItem2, 0, 0, 1, 1)
         self.label_6 = QtGui.QLabel(self.frame_5)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.gridLayout_12.addWidget(self.label_6, 0, 2, 1, 1)
@@ -234,8 +236,8 @@ class Ui_Dialog(object):
         self.labelBad = QtGui.QLabel(self.frame_3)
         self.labelBad.setObjectName(_fromUtf8("labelBad"))
         self.horizontalLayout_5.addWidget(self.labelBad)
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem2)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem3)
         self.lineEditBad = QtGui.QLineEdit(self.frame_3)
         self.lineEditBad.setEnabled(False)
         self.lineEditBad.setObjectName(_fromUtf8("lineEditBad"))
@@ -405,8 +407,8 @@ class Ui_Dialog(object):
         self.verticalLayout_5.addWidget(self.scrollArea)
         self.horizontalLayout_15 = QtGui.QHBoxLayout()
         self.horizontalLayout_15.setObjectName(_fromUtf8("horizontalLayout_15"))
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_15.addItem(spacerItem3)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_15.addItem(spacerItem4)
         self.pushButton_2 = QtGui.QPushButton(Dialog)
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
         self.horizontalLayout_15.addWidget(self.pushButton_2)
@@ -460,7 +462,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "MaxFilter Settings", None))
-        self.labelLab.setText(_translate("Dialog", "Choose the laboratory whose calibration files are to be used.", None))
+        self.labelLab.setText(_translate("Dialog", "Choose the laboratory whose calibration files are to be used:", None))
         self.groupBoxOrigin.setTitle(_translate("Dialog", "Origin", None))
         self.checkBoxFit.setText(_translate("Dialog", "Fit to isotrak points", None))
         self.labelX0.setText(_translate("Dialog", "x0", None))

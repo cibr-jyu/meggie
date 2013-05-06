@@ -1,12 +1,14 @@
 '''
 Created on Mar 28, 2013
 
-@author: jaeilepp
+@author: jaeilepp, Atte Rautio
 '''
 from maxFilterDialog_Ui import Ui_Dialog
-from settings import Settings
-import messageBox
-from caller import Caller
+#from settings import Settings
+#import messageBox
+#from caller import Caller
+import glob
+import sys
 
 import os
 import subprocess
@@ -31,7 +33,7 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.ui.labelComputeMaxFilter.setVisible(False)
         self.ui.progressBarComputeMaxFilter.setVisible(False)
-        # TODO: self.populateComboboxLab()
+        self.populateComboboxLab()
         self.calibrationFile = None
         self.sparseFile = None
         
@@ -120,8 +122,8 @@ class MaxFilterDialog(QtGui.QDialog):
             'radioButtonPositionFile':
                 if self.fname != '':
                     try:
-                        if os.path.isfile(str(fname)) and \
-                        str(fname).endswith('fif'):
+                        if os.path.isfile(str(self.fname)) and \
+                        str(self.fname).endswith('fif'):
                             dictionary['-trans'] = self.fname
                         else:
                             raise Exception('Could not open file.')
@@ -182,8 +184,20 @@ class MaxFilterDialog(QtGui.QDialog):
         
         self.close()
         
-    def populateGroupboxLab(self):
-        pass
+    def populateComboboxLab(self):
+        """
+        Goes through the lab-specific config files in
+        $NEUROMAG_ROOT/databases/sss/ and returns a list of labs found.
+        """
+        #files = glob.glob('C:\MyTemp\testi\*')
+        files = os.listdir('c:\\MyTemp\\testi\\')
+        
+        for file in files:
+            
+            if file.startswith('sss_cal_'):
+                lab = file.split('sss_cal_')[1][:-4]
+                self.ui.comboBoxLab.addItem(lab)
+                
     
     def setConfigFiles(self):
         pass
@@ -195,4 +209,15 @@ class MaxFilterDialog(QtGui.QDialog):
         self.messageBox = messageBox.AppForm()
         self.messageBox.labelException.setText(str(message))
         self.messageBox.show()
+        
+def main(): 
+    app = QtGui.QApplication(sys.argv)
+    window=MaxFilterDialog(None, None)
+    window.show()
+    
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
             
