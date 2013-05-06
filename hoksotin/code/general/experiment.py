@@ -251,7 +251,7 @@ class Experiment(object):
         fname         -- Name of the new working file.
         """
         self._working_file = mne.fiff.Raw(fname, preload=True)
-        self.shortname = os.path.basename(fname)
+        #self.shortname = os.path.basename(fname)
         #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
         #                                         shortname)
         
