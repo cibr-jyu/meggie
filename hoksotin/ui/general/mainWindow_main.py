@@ -128,6 +128,8 @@ class MainWindow(QtGui.QMainWindow):
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)
             
+            #self.ui.textBrowserExperimentDescription self.experiment.description
+            
             """
             Sets info about trigger channels and their events to
             Triggers box in the Raw tab
