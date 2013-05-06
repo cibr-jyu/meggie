@@ -19,6 +19,8 @@ from mne.viz import plot_topo_power, plot_topo_phase_lock
 
 import numpy as np
 import pylab as pl
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import matplotlib.pyplot as plt
 
 class Caller(object):
     """
@@ -371,20 +373,24 @@ class Caller(object):
         decim = 3
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
-                                          n_cycles=n_cycles, n_jobs=1,
+                                          n_cycles=n_cycles, n_jobs=3,
                                           use_fft=False, decim=decim,
                                           zero_mean=True)
         
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
-        mode = 'ratio'  # set mode for baseline rescaling
+        #mode = 'ratio'  # set mode for baseline rescaling
         
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
-            plot_topo_power(epochs, power, frequencies, layout,
+            fig = plot_topo_power(epochs, power, frequencies, layout,
                             baseline=baseline, mode=mode, decim=decim, 
                             vmin=0., vmax=14, title=title)
+            canvas = FigureCanvasAgg(fig)
+            
             pl.show()
+            #pl.clf()
+            
         else: 
             title = 'TFR topology: ' + 'Phase locking'
             plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
