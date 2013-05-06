@@ -83,6 +83,8 @@ class Caller(object):
                             raw, , dic)
         """
         
+        self.parent.experiment.save_experiment_settings()
+        
     def call_ecg_ssp(self, dic):
         """
         Creates ECG projections using ssp for given data.
@@ -273,6 +275,8 @@ class Caller(object):
             
         self.update_experiment_working_file(appliedfilename)
         
+        self.parent.experiment.save_experiment_settings()
+        
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
@@ -296,6 +300,8 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
         self.update_experiment_working_file(appliedfilename)
+        
+        self.parent.experiment.save_experiment_settings()
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
         evoked = epochs.average()
@@ -389,16 +395,12 @@ class Caller(object):
             title = 'TFR topology: ' + 'Phase locking'
             fig = plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
                      baseline=baseline, mode=mode, decim=decim, title=title)
-            fig.show()
-        
-        print fig
+            fig.show()  
             
         def onclick(event):
-            print 'asdasasasasasasas'
             pl.show()
             
         def on_close(event):
-            print 'ppppppppppppppppppp'
             fig.canvas.mpl_disconnect(cid)
         
         cid = fig.canvas.mpl_connect('button_press_event', onclick)
