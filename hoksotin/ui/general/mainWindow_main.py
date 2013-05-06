@@ -124,11 +124,11 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.raw_data = mne.fiff.Raw(
                 self.experiment.raw_data.info.get('filename'),
                  preload=True)
-            
-            print self.experiment.working_file.info.get('filename')
 
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)
+            
+            #self.ui.textBrowserExperimentDescription self.experiment.description
             
             """
             Sets info about trigger channels and their events to

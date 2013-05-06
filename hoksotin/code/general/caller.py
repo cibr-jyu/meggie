@@ -83,6 +83,8 @@ class Caller(object):
                             raw, , dic)
         """
         
+        self.parent.experiment.save_experiment_settings()
+        
     def call_ecg_ssp(self, dic):
         """
         Creates ECG projections using ssp for given data.
@@ -273,6 +275,8 @@ class Caller(object):
             
         self.update_experiment_working_file(appliedfilename)
         
+        self.parent.experiment.save_experiment_settings()
+        
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
@@ -296,6 +300,8 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
         self.update_experiment_working_file(appliedfilename)
+        
+        self.parent.experiment.save_experiment_settings()
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
         evoked = epochs.average()
@@ -371,27 +377,34 @@ class Caller(object):
         decim = 3
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
-                                          n_cycles=n_cycles, n_jobs=1,
+                                          n_cycles=n_cycles, n_jobs=3,
                                           use_fft=False, decim=decim,
                                           zero_mean=True)
         
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
-        mode = 'ratio'  # set mode for baseline rescaling
+        #mode = 'ratio'  # set mode for baseline rescaling
         
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
-            plot_topo_power(epochs, power, frequencies, layout,
+            fig = plot_topo_power(epochs, power, frequencies, layout,
                             baseline=baseline, mode=mode, decim=decim, 
                             vmin=0., vmax=14, title=title)
-            pl.show()
+            fig.show()
         else: 
             title = 'TFR topology: ' + 'Phase locking'
-            plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
+            fig = plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
                      baseline=baseline, mode=mode, decim=decim, title=title)
+            fig.show()  
+            
+        def onclick(event):
             pl.show()
+            
+        def on_close(event):
+            fig.canvas.mpl_disconnect(cid)
         
-        
+        cid = fig.canvas.mpl_connect('button_press_event', onclick)
+                    
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates

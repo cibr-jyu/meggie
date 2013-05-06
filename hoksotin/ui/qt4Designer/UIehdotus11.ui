@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>965</width>
-    <height>730</height>
+    <width>998</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>937</width>
-         <height>638</height>
+         <width>976</width>
+         <height>729</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -63,7 +63,7 @@
             <bool>true</bool>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tabRaw">
             <attribute name="title">
@@ -144,6 +144,16 @@
                       </widget>
                      </item>
                     </layout>
+                   </widget>
+                   <widget class="QTextBrowser" name="textBrowserExperimentDescription">
+                    <property name="geometry">
+                     <rect>
+                      <x>30</x>
+                      <y>120</y>
+                      <width>261</width>
+                      <height>111</height>
+                     </rect>
+                    </property>
                    </widget>
                   </widget>
                  </item>
@@ -794,7 +804,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>965</width>
+     <width>998</width>
      <height>23</height>
     </rect>
    </property>

@@ -40,6 +40,9 @@ class AddEOGProjections(QtGui.QDialog):
         mne.write_proj(self.proj_file, applied)
         self.parent.caller.apply_eog(self.parent.experiment.working_file,
                                      self.parent.experiment._subject_directory)
+        self.parent.ui.statusbar.\
+        showMessage("Current working file: " + 
+                    self.parent.experiment.working_file.info.get('filename'))
         self.parent._initialize_ui()
         self.close()
         
