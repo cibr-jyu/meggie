@@ -381,17 +381,28 @@ class Caller(object):
         
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
-            plot_topo_power(epochs, power, frequencies, layout,
+            fig = plot_topo_power(epochs, power, frequencies, layout,
                             baseline=baseline, mode=mode, decim=decim, 
                             vmin=0., vmax=14, title=title)
-            pl.show()
+            fig.show()
         else: 
             title = 'TFR topology: ' + 'Phase locking'
-            plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
+            fig = plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
                      baseline=baseline, mode=mode, decim=decim, title=title)
+            fig.show()
+        
+        print fig
+            
+        def onclick(event):
+            print 'asdasasasasasasas'
             pl.show()
+            
+        def on_close(event):
+            print 'ppppppppppppppppppp'
+            fig.canvas.mpl_disconnect(cid)
         
-        
+        cid = fig.canvas.mpl_connect('button_press_event', onclick)
+                    
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates
