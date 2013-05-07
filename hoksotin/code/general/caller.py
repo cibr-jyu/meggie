@@ -4,9 +4,11 @@ Created on Apr 11, 2013
 
 @author: Jaakko Leppäkangas
 """
+
 import subprocess
 import os
 import glob
+from multiprocessing import Process
 
 from xlwt import *
 from xlrd import open_workbook,cellname
@@ -14,7 +16,7 @@ from xlrd import open_workbook,cellname
 import mne
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
-from mne.viz import plot_topo_power, plot_topo_phase_lock
+from mne.viz import plot_topo_power, plot_topo_phase_lock, plot_topo
 
 
 import numpy as np
@@ -303,7 +305,8 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
+    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, n_cycles,
+            decim):
         evoked = epochs.average()
         data = epochs.get_data()
         times = 1e3 * epochs.times #s to ms
@@ -313,12 +316,11 @@ class Caller(object):
         evoked_data = evoked_data[ch_index:(ch_index+1), :]
         
         #Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
+        frequencies = np.arange(minfreq, maxfreq, interval)
         
-        n_cycles = frequencies / float(len(frequencies) - 1)
+        #n_cycles = frequencies / float(len(frequencies) - 1)
         #n_cycles = frequencies / float(15)
         Fs = raw.info['sfreq']
-        decim = 3
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
                                           n_cycles=n_cycles, n_jobs=1,
@@ -396,15 +398,24 @@ class Caller(object):
             fig = plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
                      baseline=baseline, mode=mode, decim=decim, title=title)
             fig.show()  
-            
-        def onclick(event):
-            pl.show()
-            
-        def on_close(event):
-            fig.canvas.mpl_disconnect(cid)
         
+        def onclick(event):
+            p = Process(target=self._draw())
+            p.start()
+                
+        def onclose(event):
+            print 'ssssssssssssssssssssssssssssssssssss'
+            fig.canvas.mpl_disconnect(cid)
+            fig.canvas.mpl_disconnect(cid2)
+            
+
         cid = fig.canvas.mpl_connect('button_press_event', onclick)
-                    
+        cid2 = fig.canvas.mpl_connect('close_event', onclose)
+
+    def _draw(self):
+        print 'pppppppppppppppppppp'
+        pl.show(block=False)
+        
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates
