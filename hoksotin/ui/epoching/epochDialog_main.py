@@ -49,7 +49,7 @@ class EpochDialog(QtGui.QDialog):
         for index in xrange(self.parent.ui.listWidgetEvents.count()):
             event = self.parent.ui.listWidgetEvents.item(index).data(32).toPyObject()
             events[index] = (event)
-            print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
+            #print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())] = event[2]
             
         try:

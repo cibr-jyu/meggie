@@ -68,7 +68,7 @@
         <x>0</x>
         <y>0</y>
         <width>553</width>
-        <height>706</height>
+        <height>698</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -476,159 +476,156 @@
           </widget>
          </widget>
         </widget>
-        <widget class="QFrame" name="frameEpochRejection">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QGroupBox" name="groupBox">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>520</y>
-           <width>461</width>
-           <height>111</height>
+           <y>460</y>
+           <width>491</width>
+           <height>171</height>
           </rect>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+         <property name="title">
+          <string>Epoch rejection</string>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QWidget" name="horizontalLayoutWidget_4">
+         <widget class="QFrame" name="frameEpochRejection">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>10</y>
-            <width>441</width>
-            <height>91</height>
+            <y>30</y>
+            <width>461</width>
+            <height>111</height>
            </rect>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
-               <item>
-                <widget class="QLabel" name="labelGradReject">
-                 <property name="text">
-                  <string>Grad:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxGradReject">
-                 <property name="prefix">
-                  <string/>
-                 </property>
-                 <property name="suffix">
-                  <string> fT/cm</string>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>3000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
-               <item>
-                <widget class="QLabel" name="labelEegReject">
-                 <property name="text">
-                  <string>EEG:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject">
-                 <property name="suffix">
-                  <string> uV</string>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>100.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_10">
-               <item>
-                <widget class="QLabel" name="labelMagReject">
-                 <property name="text">
-                  <string>Mag:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject">
-                 <property name="suffix">
-                  <string> fT</string>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>4000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_15">
-               <item>
-                <widget class="QLabel" name="labelEogReject">
-                 <property name="text">
-                  <string>EOG:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxEOGReject">
-                 <property name="suffix">
-                  <string> uV</string>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QWidget" name="horizontalLayoutWidget_4">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>441</width>
+             <height>91</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <item>
+                 <widget class="QLabel" name="labelGradReject">
+                  <property name="text">
+                   <string>Grad:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBoxGradReject">
+                  <property name="prefix">
+                   <string/>
+                  </property>
+                  <property name="suffix">
+                   <string> fT/cm</string>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>3000.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <widget class="QLabel" name="labelEegReject">
+                  <property name="text">
+                   <string>EEG:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject">
+                  <property name="suffix">
+                   <string> uV</string>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>100.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <widget class="QLabel" name="labelMagReject">
+                  <property name="text">
+                   <string>Mag:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject">
+                  <property name="suffix">
+                   <string> fT</string>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>4000.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
+                <item>
+                 <widget class="QLabel" name="labelEogReject">
+                  <property name="text">
+                   <string>EOG:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBoxEOGReject">
+                  <property name="suffix">
+                   <string> uV</string>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </widget>
-        </widget>
-        <widget class="QCheckBox" name="checkBoxEpochRejection">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>475</y>
-           <width>149</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Epoch rejection</string>
-         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tabEOG2">

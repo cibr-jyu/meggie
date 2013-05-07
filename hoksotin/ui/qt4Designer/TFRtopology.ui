@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>509</width>
-        <height>552</height>
+        <height>554</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -69,7 +69,7 @@
           <x>10</x>
           <y>30</y>
           <width>221</width>
-          <height>189</height>
+          <height>191</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -85,10 +85,10 @@
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
              <property name="minimum">
-              <double>7.000000000000000</double>
+              <double>0.100000000000000</double>
              </property>
              <property name="maximum">
-              <double>30.000000000000000</double>
+              <double>200.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -109,7 +109,7 @@
               <double>7.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>30.000000000000000</double>
+              <double>600.000000000000000</double>
              </property>
              <property name="value">
               <double>30.000000000000000</double>
@@ -130,7 +130,7 @@
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
              <property name="minimum">
-              <double>0.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
              <property name="maximum">
               <double>99.989999999999995</double>
@@ -152,9 +152,12 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
+            <widget class="QSpinBox" name="spinBoxNcycles">
+             <property name="minimum">
+              <number>1</number>
+             </property>
              <property name="value">
-              <double>7.000000000000000</double>
+              <number>7</number>
              </property>
             </widget>
            </item>
@@ -360,7 +363,7 @@
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
-  <tabstop>doubleSpinBoxNcycles</tabstop>
+  <tabstop>spinBoxNcycles</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

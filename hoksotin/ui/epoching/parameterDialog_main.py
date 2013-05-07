@@ -193,20 +193,22 @@ class ParameterDialog(QtGui.QDialog):
         Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
         filename = askopenfilename() # voisi vaihtaa johonkin parempaan, huono kaytettavyys
         
-        #self.ui.listWidgetEvents.clear()
+        self.ui.listWidgetEvents.clear()
         sheet = self.parent.caller.read_events(filename)
         #events = np.ndarray((sheet.ncols,3), int)
         
         #events = np.ndarray((sheet.nrows(),4), dtype=object)
-        
         for row_index in range(sheet.nrows):
-            item = QtGui.QListWidgetItem(str(sheet.cell(row_index,0).value)
+            if not (sheet.cell(row_index, 1) is None):
+                print row_index
+                item = QtGui.QListWidgetItem(str(sheet.cell(row_index,0).value)
                                              + ' ' + str(int(sheet.cell(row_index,1).value))
                                              + ', ' + str(int(sheet.cell(row_index,3).value)))
-            event = np.ndarray([int(sheet.cell(row_index,1).value),0,int(sheet.cell(row_index,3).value)])
-            item.setData(32, event)
-            item.setData(33, str(sheet.cell(row_index,0).value))
-            self.ui.listWidgetEvents.addItem(item)
+                event = map(int, sheet.row_values(row_index)[1:4])
+                #event = np.ndarray([int(sheet.cell(row_index,1).value),0,int(sheet.cell(row_index,3).value)])
+                item.setData(32, event)
+                item.setData(33, str(sheet.cell(row_index,0).value))
+                self.ui.listWidgetEvents.addItem(item)
             
         self.ui.listWidgetEvents.setCurrentItem(item)
         

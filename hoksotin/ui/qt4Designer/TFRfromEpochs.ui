@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>314</height>
+    <width>292</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>275</width>
-        <height>265</height>
+        <width>274</width>
+        <height>289</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -42,8 +42,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>241</width>
-         <height>231</height>
+         <width>271</width>
+         <height>281</height>
         </rect>
        </property>
        <property name="title">
@@ -54,8 +54,8 @@
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>221</width>
-          <height>189</height>
+          <width>251</width>
+          <height>241</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -77,10 +77,13 @@
               <string> Hz</string>
              </property>
              <property name="minimum">
-              <double>7.000000000000000</double>
+              <double>0.100000000000000</double>
              </property>
              <property name="maximum">
-              <double>30.000000000000000</double>
+              <double>200.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>7.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -104,7 +107,7 @@
               <double>7.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>30.000000000000000</double>
+              <double>600.000000000000000</double>
              </property>
              <property name="value">
               <double>30.000000000000000</double>
@@ -150,12 +153,30 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
-             <property name="decimals">
-              <number>0</number>
+            <widget class="QSpinBox" name="spinBoxNcycles">
+             <property name="minimum">
+              <number>1</number>
              </property>
              <property name="value">
-              <double>7.000000000000000</double>
+              <number>7</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Temporal decim factor:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxDecim">
+             <property name="value">
+              <number>3</number>
              </property>
             </widget>
            </item>
@@ -189,7 +210,7 @@
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
-  <tabstop>doubleSpinBoxNcycles</tabstop>
+  <tabstop>spinBoxNcycles</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
