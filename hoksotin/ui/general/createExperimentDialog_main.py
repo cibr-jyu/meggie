@@ -152,6 +152,10 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.parent.raw = self.experiment.raw_data
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
         self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
+        
+        self.parent.ui.labelAuthorName.setText(self.experiment.author)
+        self.parent.ui.textBrowserExperimentDescription.setText(self.experiment.description)
+        
         self.parent.ui.listWidget.clear()
         events = self.experiment.event_set
         for key, value in events.iteritems():

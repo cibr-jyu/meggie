@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus11.ui'
 #
-# Created: Fri May  3 15:26:04 2013
+# Created: Tue May  7 15:05:01 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(965, 730)
+        MainWindow.resize(991, 805)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 937, 638))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 971, 697))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents_3)
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.metaBox = QtGui.QGroupBox(self.tabRaw)
         self.metaBox.setObjectName(_fromUtf8("metaBox"))
         self.formLayoutWidget_2 = QtGui.QWidget(self.metaBox)
-        self.formLayoutWidget_2.setGeometry(QtCore.QRect(30, 30, 291, 81))
+        self.formLayoutWidget_2.setGeometry(QtCore.QRect(30, 30, 291, 194))
         self.formLayoutWidget_2.setObjectName(_fromUtf8("formLayoutWidget_2"))
         self.formLayout_2 = QtGui.QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setMargin(0)
@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.labelExperimentName)
         self.labelDate = QtGui.QLabel(self.formLayoutWidget_2)
         self.labelDate.setObjectName(_fromUtf8("labelDate"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelDate)
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.labelDate)
         self.labelDateValue = QtGui.QLabel(self.formLayoutWidget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -85,10 +85,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelDateValue.sizePolicy().hasHeightForWidth())
         self.labelDateValue.setSizePolicy(sizePolicy)
         self.labelDateValue.setObjectName(_fromUtf8("labelDateValue"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.labelDateValue)
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.FieldRole, self.labelDateValue)
         self.labelSubject = QtGui.QLabel(self.formLayoutWidget_2)
         self.labelSubject.setObjectName(_fromUtf8("labelSubject"))
-        self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.labelSubject)
+        self.formLayout_2.setWidget(3, QtGui.QFormLayout.LabelRole, self.labelSubject)
         self.labelSubjectValue = QtGui.QLabel(self.formLayoutWidget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -96,7 +96,19 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.labelSubjectValue.sizePolicy().hasHeightForWidth())
         self.labelSubjectValue.setSizePolicy(sizePolicy)
         self.labelSubjectValue.setObjectName(_fromUtf8("labelSubjectValue"))
-        self.formLayout_2.setWidget(2, QtGui.QFormLayout.FieldRole, self.labelSubjectValue)
+        self.formLayout_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.labelSubjectValue)
+        self.labelAuthor = QtGui.QLabel(self.formLayoutWidget_2)
+        self.labelAuthor.setObjectName(_fromUtf8("labelAuthor"))
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelAuthor)
+        self.labelAuthorName = QtGui.QLabel(self.formLayoutWidget_2)
+        self.labelAuthorName.setObjectName(_fromUtf8("labelAuthorName"))
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.labelAuthorName)
+        self.label = QtGui.QLabel(self.formLayoutWidget_2)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.formLayout_2.setWidget(4, QtGui.QFormLayout.LabelRole, self.label)
+        self.textBrowserExperimentDescription = QtGui.QTextBrowser(self.metaBox)
+        self.textBrowserExperimentDescription.setGeometry(QtCore.QRect(30, 160, 221, 71))
+        self.textBrowserExperimentDescription.setObjectName(_fromUtf8("textBrowserExperimentDescription"))
         self.horizontalLayout_3.addWidget(self.metaBox)
         self.channelsBox = QtGui.QGroupBox(self.tabRaw)
         self.channelsBox.setObjectName(_fromUtf8("channelsBox"))
@@ -362,7 +374,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 965, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 991, 29))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -394,7 +406,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -406,6 +418,9 @@ class Ui_MainWindow(object):
         self.labelDateValue.setText(_translate("MainWindow", "DateValue", None))
         self.labelSubject.setText(_translate("MainWindow", "Subject:", None))
         self.labelSubjectValue.setText(_translate("MainWindow", "TextLabel", None))
+        self.labelAuthor.setText(_translate("MainWindow", "Author:", None))
+        self.labelAuthorName.setText(_translate("MainWindow", "TextLabel", None))
+        self.label.setText(_translate("MainWindow", "Description:", None))
         self.channelsBox.setTitle(_translate("MainWindow", "Channels", None))
         self.labelEEG.setText(_translate("MainWindow", "EEG channels:", None))
         self.labelEEGValue.setText(_translate("MainWindow", "EEG value", None))
