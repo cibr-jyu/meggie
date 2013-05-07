@@ -105,7 +105,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.experiment = self.experiment
             """
         else:
-            self.check_workspace()
+            self.check_workspace()   
         
     def on_actionOpen_experiment_triggered(self, checked=None):
          # Standard workaround for file dialog opening twice
@@ -142,6 +142,8 @@ class MainWindow(QtGui.QMainWindow):
                             ' events')
                 self.ui.listWidget.addItem(item)
             self.ui.labelExperimentName.setText(self.experiment.experiment_name)
+            self.ui.labelAuthorName.setText(self.experiment.author)
+            self.ui.textBrowserExperimentDescription.setText(self.experiment.description)
             self._initialize_ui()
             
             """
