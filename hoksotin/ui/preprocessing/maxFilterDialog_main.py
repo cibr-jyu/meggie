@@ -48,6 +48,7 @@ class MaxFilterDialog(QtGui.QDialog):
         a caller to actually call the backend.
         """
         
+        print self.setLab()
         self.ui.labelComputeMaxFilter.setVisible(True)
         self.ui.progressBarComputeMaxFilter.setVisible(True)
         
@@ -166,8 +167,14 @@ class MaxFilterDialog(QtGui.QDialog):
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
             dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
+        
+        # TODO: check what the extensions of the calibration files are.    
+        lab = self.setLab()
+        
+        dictionary['-site'] = lab
             
-        # TODO: calibration-files
+        if not (sss_cal_file == '' or ct_sparse_file == ''):
+            dictionary['']
         
         custom = self.ui.textEditCustom.toPlainText()
         
@@ -185,22 +192,43 @@ class MaxFilterDialog(QtGui.QDialog):
         self.close()
         
     def populateComboboxLab(self):
+        # TODO: fix the paths
         """
         Goes through the lab-specific config files in
         $NEUROMAG_ROOT/databases/sss/ and returns a list of labs found.
         """
         #files = glob.glob('C:\MyTemp\testi\*')
-        files = os.listdir('c:\\MyTemp\\testi\\')
+        files = os.listdir('c:\\MyTemp\\testi\\databases\\sss\\')
         
         for file in files:
             
             if file.startswith('sss_cal_'):
                 lab = file.split('sss_cal_')[1][:-4]
-                self.ui.comboBoxLab.addItem(lab)
+                if os.path.isfile('c:\\MyTemp\\testi\\databases\ctc\\' + 
+                                  'ct_sparse_' + lab + '.fif'):
+                    self.ui.comboBoxLab.addItem(lab)
                 
     
-    def setConfigFiles(self):
-        pass
+    def setLab(self):
+        # TODO: Fix the paths.
+        """
+        Checks if calibration files for the selected lab exist.
+        """
+        
+        lab = str(self.ui.comboBoxLab.currentText())
+        
+        if not os.path.isfile('c:\\MyTemp\\testi\\databases\\sss\\sss_cal_' +
+                              lab + '.dat'):
+            lab = ''
+            return lab
+        
+        if not os.path.isfile('c:\\MyTemp\\testi\\databases\ctc\\ct_sparse_' + 
+                              lab + '.fif'):
+            lab = ''
+            return lab
+        
+        return lab
+            
             
     def showErrorMessage(self, message):
         """
