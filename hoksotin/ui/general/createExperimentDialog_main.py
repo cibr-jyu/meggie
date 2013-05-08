@@ -20,7 +20,7 @@ import os,sys
 import StringIO
 import pickle
 import time
-from threading import  Thread
+from multiprocessing import Process
 import ConfigParser
 
 # Create a dialog main window
@@ -64,11 +64,11 @@ class CreateExperimentDialog(QtGui.QDialog):
         #self.computeDialog.raise_()
         QtGui.QApplication.processEvents(flags=QtCore.QEventLoop.AllEvents)
         
-        self.t2 = Thread(target=self._initialize_experiment())
-        t = Thread(target = self.process_events())
+        self.p2 = Process(target=self._initialize_experiment())
+        p = Process(target = self.process_events())
         
-        t.start()
-        self.t2.start()
+        p.start()
+        self.p2.start()
                 
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice

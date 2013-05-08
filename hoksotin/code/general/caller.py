@@ -428,13 +428,15 @@ class Caller(object):
         path_to_save = self.parent.experiment.subject_directory
         wbs.save(path_to_save + '/events.xls') #TODO: muuta filename kayttajan maarittelyn mukaiseksi
 
-    def read_events(self, file):
+    def read_events(self, filename):
         """
         Reads the events from a chosen excel file.
+        Keyword arguments:
+        filename      -- File to read from.
         """
         #path_to_read = self.parent.experiment.subject_directory
         #wbr = open_workbook(path_to_read + 'events.xls')
-        wbr = open_workbook(file)
+        wbr = open_workbook(filename)
         sheet = wbr.sheet_by_index(0)
         return sheet
         """
