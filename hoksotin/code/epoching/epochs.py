@@ -5,6 +5,10 @@ Created on Mar 12, 2013
 @author: Jaakko Leppäkangas
 """
 import mne
+from mne.layouts import read_layout
+from mne.viz import plot_topo
+
+import pylab as pl
 
 import events
 
@@ -43,7 +47,6 @@ class Epochs(object):
                                         stim=stim, eog=eog)
             #if picks is None:
             #    raise Exception('Picks cannot be empty.')
-            
             self.epochs = mne.Epochs(raw, events, category,
                                      tmin, tmax, picks=picks)
         else:
@@ -51,10 +54,21 @@ class Epochs(object):
         
     def average(self):
         """
-        Average epochs. Returns evoked data.
+        Average epochs.
+        Draws a topography representation of the evoked potentials.
         Raises an exception if cannot find any epochs.
         """
         if self.epochs is None:
             raise Exception('No epochs found.')
-        self.evoked = self.epochs.average()
-        return self.evoked
+        category = self.epochs.event_id
+        print category
+        evokeds = [self.epochs[name].average() for name in category.keys()]
+        layout = read_layout('Vectorview-all.lout')
+        fig = plot_topo(evokeds, layout, title=str(category.keys()))
+        fig.show()
+        
+        def onclick(event):
+            pl.show(block=False)
+        
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        
