@@ -9,6 +9,9 @@ from PyQt4 import QtCore,QtGui
 from TFRDialog_Ui import Ui_DialogEpochsTFR
 
 class TFRDialog(QtGui.QDialog):
+    """
+    Class containing the logic for TFRDialog.
+    """
     
     def __init__(self, parent, raw, epoch):
         QtGui.QDialog.__init__(self)
@@ -24,5 +27,6 @@ class TFRDialog(QtGui.QDialog):
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
-        self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index, minfreq, maxfreq)
+        self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index,
+                               minfreq, maxfreq)
         self.close()

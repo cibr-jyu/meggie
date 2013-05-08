@@ -11,6 +11,9 @@ from PyQt4 import QtCore,QtGui
 from addProjections_Ui import Ui_Dialog
 
 class AddEOGProjections(QtGui.QDialog):
+    """
+    Class for adding EOG projections.
+    """
     
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)

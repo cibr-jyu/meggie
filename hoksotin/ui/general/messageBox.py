@@ -2,6 +2,9 @@ from PyQt4 import QtCore,QtGui
 
 
 class AppForm(QtGui.QDialog):
+    """
+    Class for messageboxes displaying error messages.
+    """
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.create_main_frame()       

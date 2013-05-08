@@ -25,6 +25,9 @@ import ConfigParser
 
 # Create a dialog main window
 class CreateExperimentDialog(QtGui.QDialog):
+    """
+    Class containing the logic for CreateExperimentDialog.
+    """
     fname = ''
     
     
@@ -116,12 +119,14 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
             lineEditExperimentName.text()
-            self.experiment.description = self.ui.textEditDescription.toPlainText()
+            self.experiment.description = (self.ui.textEditDescription.
+                                           toPlainText())
             print self.experiment.file_path
 
         except AttributeError:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText("Cannot assign attribute to experiment")
+            self.messageBox.labelException.setText('Cannot assign attribute' +
+                                                   ' to experiment.')
             self.messageBox.show()
             #self.computeDialog.close()
             return         
@@ -130,10 +135,14 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.experiment.raw_data = self.raw
             self.experiment.find_stim_channel()
             self.experiment.create_event_set()
-            self.experiment.save_raw(os.path.basename(str(self.ui.FilePathLineEdit.text())))
-            self.experiment.working_file = self.experiment.raw_data.info.get('filename')
+            self.experiment.save_raw(os.path.basename(str(self.ui.
+                                                          FilePathLineEdit.
+                                                          text())))
+            self.experiment.working_file = (self.experiment.raw_data.
+                                            info.get('filename'))
             self.parent.ui.statusbar.showMessage("Current working file: " +
-                                             self.experiment.working_file.info.get('filename'))
+                                             (self.experiment.working_file.
+                                              info.get('filename')))
             self.experiment.save_experiment_settings()
             #self.experiment.stim_channel = 'STI 014'
       
@@ -151,10 +160,13 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.parent.experiment = self.experiment
         self.parent.raw = self.experiment.raw_data
         InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
-        self.parent.ui.labelExperimentName.setText(self.experiment.experiment_name)
+        self.parent.ui.labelExperimentName.setText(self.experiment.
+                                                   experiment_name)
         
         self.parent.ui.labelAuthorName.setText(self.experiment.author)
-        self.parent.ui.textBrowserExperimentDescription.setText(self.experiment.description)
+        self.parent.ui.textBrowserExperimentDescription.setText(self.
+                                                                experiment.
+                                                                description)
         
         self.parent.ui.listWidget.clear()
         events = self.experiment.event_set

@@ -12,7 +12,9 @@ from infoDialog_main import InfoDialog
 from infoDialog_Ui import Ui_infoDialog
 
 class MaxFilterComputeDialog(QtGui.QProgressDialog):
-
+    """
+    Class containing the logic for MaxFilterComputeDialog.
+    """
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)

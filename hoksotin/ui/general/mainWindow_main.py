@@ -44,14 +44,14 @@ from caller import Caller
 #from widgets.create_tab import Tab, EpochTab
 
 class MainWindow(QtGui.QMainWindow):
-    '''
-    classdocs
-    '''
+    """
+    Class containing the logic for the MainWindow
+    """
 
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         #self.app = QtGui.QApplication(sys.argv)
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()

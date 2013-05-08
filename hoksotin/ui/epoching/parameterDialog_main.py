@@ -19,6 +19,9 @@ import brainRegions
 import numpy as np
 
 class ParameterDialog(QtGui.QDialog):
+    """
+    Class containing the logic for ParameterDialog
+    """
     index = 1
 
     def __init__(self, parent):
@@ -82,7 +85,9 @@ class ParameterDialog(QtGui.QDialog):
         """
         if isinstance(events, np.ndarray):
             for event in events:
-                item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + str(event[0]) + ', ' + str(event[2]))
+                item = QtGui.QListWidgetItem(self.ui.lineEditName.text() +
+                                             ' ' + str(event[0]) + ', ' +
+                                             str(event[2]))
                 item.setData(32, event)
                 item.setData(33, self.ui.lineEditName.text())
                 self.ui.listWidgetEvents.addItem(item)
@@ -177,7 +182,8 @@ class ParameterDialog(QtGui.QDialog):
         if checked is None: return # Standard workaround
         events = np.ndarray((self.ui.listWidgetEvents.count(),4), dtype=object)
         for index in xrange(self.ui.listWidgetEvents.count()):
-            category = self.ui.listWidgetEvents.item(index).data(33).toPyObject()
+            category = (self.ui.listWidgetEvents.item(index).
+                        data(33).toPyObject())
             events[index,0] = str(category)
             event = self.ui.listWidgetEvents.item(index).data(32).toPyObject()
             events[index,1:] = event
@@ -202,8 +208,12 @@ class ParameterDialog(QtGui.QDialog):
             if not (sheet.cell(row_index, 1) is None):
                 print row_index
                 item = QtGui.QListWidgetItem(str(sheet.cell(row_index,0).value)
-                                             + ' ' + str(int(sheet.cell(row_index,1).value))
-                                             + ', ' + str(int(sheet.cell(row_index,3).value)))
+                                             + ' ' + str(int(sheet.cell
+                                                             (row_index,1).
+                                                             value))
+                                             + ', ' + str(int(sheet.cell
+                                                              (row_index,3)
+                                                              .value)))
                 event = map(int, sheet.row_values(row_index)[1:4])
                 #event = np.ndarray([int(sheet.cell(row_index,1).value),0,int(sheet.cell(row_index,3).value)])
                 item.setData(32, event)

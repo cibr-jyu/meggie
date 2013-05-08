@@ -9,6 +9,9 @@ from PyQt4 import QtCore,QtGui
 from TFRTopologyDialog_Ui import Ui_DialogTFRTopology
 
 class TFRTopologyDialog(QtGui.QDialog):
+    """
+    Class containing the logic for TFRTopologyDialog.
+    """
     
     def __init__(self, parent, raw, epoch):
         QtGui.QDialog.__init__(self)

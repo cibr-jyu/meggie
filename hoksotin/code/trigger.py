@@ -11,7 +11,8 @@ import csv
 
 
 def saveFile(param, path, fileName):
-    """Method for saving a dictionary of parameters to a file.
+    """
+    Method for saving a dictionary of parameters to a file.
     
     Keyword arguments:
     param    -- a dictionary of parameters 
@@ -40,10 +41,12 @@ def loadFile(path,fileName):
     
     
 
-fname = '/home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/sample_audvis_raw.fif'
+fname = ('/home/jaeilepp/Downloads/MNE-sample-data/MEG/sample/' +
+         'sample_audvis_raw.fif')
 raw = mne.fiff.Raw(fname)
 
-picks = mne.fiff.pick_types(raw.info, meg=False, eeg=False, stim=True, eog=False, exclude=[])
+picks = mne.fiff.pick_types(raw.info, meg=False, eeg=False, stim=True,
+                            eog=False, exclude=[])
 #print picks
 start, stop = raw.time_as_index([0, 15])
 data, times = raw[picks, start:(stop + 1)]

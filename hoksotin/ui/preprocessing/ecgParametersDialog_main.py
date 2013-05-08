@@ -13,6 +13,9 @@ from caller import Caller
 from measurementInfo import MeasurementInfo
 
 class EcgParametersDialog(QtGui.QDialog):
+    """
+    Class containing the logic for ecgParametersDialog.
+    """
 
 
     def __init__(self, parent):

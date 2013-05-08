@@ -8,7 +8,7 @@ import ConfigParser
 
 class Workspace(object):
     """
-    classdocs
+    Class for creating and managing the working directory.
     """
 
 

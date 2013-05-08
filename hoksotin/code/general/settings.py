@@ -8,6 +8,9 @@ import re
 
 
 class Settings(object):
+    """
+    Contains validators for different types.
+    """
     
 
     def __init__(self):

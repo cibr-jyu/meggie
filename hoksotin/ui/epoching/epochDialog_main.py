@@ -13,15 +13,15 @@ from PyQt4 import QtCore,QtGui
 import numpy as np
 
 class EpochDialog(QtGui.QDialog):
-    '''
-    classdocs
-    '''
+    """
+    class containing the logic for epochDialog
+    """
     index = 1
 
     def __init__(self, parent):
-        '''
+        """
         Constructor
-        '''
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
@@ -47,10 +47,12 @@ class EpochDialog(QtGui.QDialog):
         events = np.ndarray((self.parent.ui.listWidgetEvents.count(),3), int)
         category = dict()
         for index in xrange(self.parent.ui.listWidgetEvents.count()):
-            event = self.parent.ui.listWidgetEvents.item(index).data(32).toPyObject()
+            event = (self.parent.ui.listWidgetEvents.item(index).data(32).
+                     toPyObject())
             events[index] = (event)
             #print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
-            category[str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())] = event[2]
+            category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
+                         toPyObject())] = event[2]
             
         try:
             epochs = Epochs(self.parent.parent.experiment.working_file, events,

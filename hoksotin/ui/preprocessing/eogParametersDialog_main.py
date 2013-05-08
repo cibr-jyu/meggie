@@ -9,6 +9,9 @@ from eogParametersDialog_Ui import Ui_Dialog
 from caller import Caller
 
 class EogParametersDialog(QtGui.QDialog):
+    """
+    Class containing the logic for eogParametersDialog.
+    """
 
 
     def __init__(self, parent):

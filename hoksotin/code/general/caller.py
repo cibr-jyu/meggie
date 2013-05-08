@@ -57,8 +57,6 @@ class Caller(object):
         custom        -- Additional parameters as a string
         """
         #if '$NEUROMAG_ROOT' == '':
-        if os.environ.get('NEUROMAG_ROOT') is None:
-            os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '

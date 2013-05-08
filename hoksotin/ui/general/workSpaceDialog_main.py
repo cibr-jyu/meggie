@@ -13,7 +13,9 @@ import ConfigParser
 import os
 
 class WorkSpaceDialog(QtGui.QDialog):
-
+    """
+    Class containing the logic for WorkSpaceDialog.
+    """
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
