@@ -27,8 +27,7 @@ class Caller(object):
     Class for calling third party software
     """
     def __init__(self, parent):
-        
-       
+              
         self.parent = parent
     
     def call_mne_browse_raw(self, filename):
@@ -36,16 +35,16 @@ class Caller(object):
         Opens mne_browse_raw with the given file as a parameter
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
+        Raises an exception if cannot open mne_browse_raw.
         """
-        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
             proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-        except:
-            pass #TODO error handling
+        except Exception, err:
+            raise Exception('Could not open mne_browse_raw: %s' % (err))
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()
@@ -57,8 +56,8 @@ class Caller(object):
         Keyword arguments:
         dic           -- Dictionary of parameters
         custom        -- Additional parameters as a string
+        Raises an exception if cannot open maxfilter.
         """
-        #if '$NEUROMAG_ROOT' == '':
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
@@ -67,8 +66,11 @@ class Caller(object):
         # Add user defined parameters from the "custom" tab
         bs += custom
         print bs
-        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+        try:
+            proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+        except Exception, err:
+            raise Exception('Could not open maxfilter: %s' % (err))
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()      
@@ -140,15 +142,12 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
         
-        #raw = mne.fiff.Raw(raw_in, preload=preload)
-        
         projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, ch_name, reject, flat,
                             bads, eeg_proj, excl_ssp, event_id,
                             ecg_low_freq, ecg_high_freq, start, qrs_threshold)
-        #raw_in.close()
         
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -170,10 +169,7 @@ class Caller(object):
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
-        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         
-        # TODO not the actual path to the needed script (the needed script
-        # is an extra script in mne-python)
         # TODO use SSP-projections from a a different file?
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
@@ -193,7 +189,7 @@ class Caller(object):
         rej_eog = dic.get('rej-eog')
         
         flat = None
-        bads = dic.get('bads') #TODO: Check how the whole bads-thing is supposed to work.
+        bads = dic.get('bads')
         if bads is None:
             bads = []
         start = dic.get('tstart')
@@ -218,8 +214,6 @@ class Caller(object):
             eog_proj_fname = prefix + '_eog_avg_proj.fif'
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
-            
-        #raw = mne.fiff.Raw(raw_in, preload=preload)
         
         projs, events = mne.preprocessing.compute_proj_eog(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
@@ -227,8 +221,6 @@ class Caller(object):
                             njobs, reject, flat, bads,
                             eeg_proj, excl_ssp, event_id,
                             eog_low_freq, eog_high_freq, start)
-            
-        #raw.close()
         
         #TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -244,8 +236,6 @@ class Caller(object):
         self.parent.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
           eog_proj_fname, dic)
-        
-        #self.experiment.update_state(EOGcomputed, True)
         
     def apply_ecg(self, raw, directory):
         """
@@ -400,11 +390,9 @@ class Caller(object):
             fig.show()  
         
         def onclick(event):
-            p = Process(target=self._draw())
-            p.start()
+            pl.show(block=False)
                 
         def onclose(event):
-            print 'ssssssssssssssssssssssssssssssssssss'
             fig.canvas.mpl_disconnect(cid)
             fig.canvas.mpl_disconnect(cid2)
             
@@ -413,7 +401,6 @@ class Caller(object):
         cid2 = fig.canvas.mpl_connect('close_event', onclose)
 
     def _draw(self):
-        print 'pppppppppppppppppppp'
         pl.show(block=False)
         
     def update_experiment_working_file(self, fname):

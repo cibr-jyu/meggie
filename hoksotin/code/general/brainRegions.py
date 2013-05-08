@@ -1,9 +1,12 @@
 # coding: latin1
-'''
+"""
 Created on Apr 24, 2013
 
-@author: jaeilepp
-'''
+@author: Jaakko Leppäkangas
+"""
+"""
+Helper module for all the different channel groups.
+"""
 vertex = ['0633','0632','0423','0422','0712','0713','0433','0432',
           '0742','0743','1822','1823','1043','1042','1112','1113',
           '0722','0723','1142','1143','0732','0733','2212','2213',
