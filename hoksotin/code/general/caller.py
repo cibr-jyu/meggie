@@ -22,7 +22,7 @@ import pylab as pl
 
 class Caller(object):
     """
-    Class for calling third party software
+    Class for calling third party software.
     """
     def __init__(self, parent):
         

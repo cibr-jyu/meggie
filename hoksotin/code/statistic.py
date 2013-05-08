@@ -37,8 +37,8 @@ class Statistic(object):
         - sfreq is equal to or lower than zero.
         - arr is empty
         
-        Also raises a TypeError if arr contains somethin other than ints or
-        doubles.
+        Also raises a TypeError if arr contains something other than integers
+        or doubles.
         """
         # TODO: Are negatives allowed or not?
         if tmin <= 0 or tmax <= 0:
