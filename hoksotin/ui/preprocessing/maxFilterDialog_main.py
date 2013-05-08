@@ -34,8 +34,6 @@ class MaxFilterDialog(QtGui.QDialog):
         self.ui.labelComputeMaxFilter.setVisible(False)
         self.ui.progressBarComputeMaxFilter.setVisible(False)
         self.populateComboboxLab()
-        self.calibrationFile = None
-        self.sparseFile = None
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -171,11 +169,9 @@ class MaxFilterDialog(QtGui.QDialog):
         # TODO: check what the extensions of the calibration files are.    
         lab = self.setLab()
         
-        dictionary['-site'] = lab
+        if not lab == '':
+            dictionary['-site'] = lab
             
-        if not (sss_cal_file == '' or ct_sparse_file == ''):
-            dictionary['']
-        
         custom = self.ui.textEditCustom.toPlainText()
         
         # Uses the caller related to mainwindow
@@ -197,7 +193,7 @@ class MaxFilterDialog(QtGui.QDialog):
         Goes through the lab-specific config files in
         $NEUROMAG_ROOT/databases/sss/ and returns a list of labs found.
         """
-        #files = glob.glob('C:\MyTemp\testi\*')
+        # TODO: change c:\\MyTemp\\testi\\ into the proper env variable.
         files = os.listdir('c:\\MyTemp\\testi\\databases\\sss\\')
         
         for file in files:
@@ -213,6 +209,7 @@ class MaxFilterDialog(QtGui.QDialog):
         # TODO: Fix the paths.
         """
         Checks if calibration files for the selected lab exist.
+        Returns the selected lab or an empty string if files are not found.
         """
         
         lab = str(self.ui.comboBoxLab.currentText())
