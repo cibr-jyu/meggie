@@ -35,14 +35,14 @@ class Experiment(object):
         
         self._experiment_name = 'experiment'
         self._raw_data = 'no data specified'
+        self._raw_data_path = 'no path defined'
         self._subject_directory = 'no directory specified'
         self._file_path = 'no path defined'
         self._author = 'unknown _author'
         self._description = 'no _description'
-        self.date = time.strftime('%Y %m %d %X')
-        self.tree = Tree()
-        self.__index = 0
+        #self.__index = 0
         self._working_file = ''
+        self._working_file_path = 'no path defined'
         self._event_set = []
         self._stim_channel = ''
         self.mainWindow = None
@@ -52,7 +52,23 @@ class Experiment(object):
         self.stateDict = dict(Maxfilter=False, ECGcomputed=False,
                               ECGapplied=False, EOGcomputed=False,
                               EOGapplied=False, Eventlist=False,
-                              Epochs=False, Average=False)
+                              Epochs=False, Average=False)        
+    
+    @property
+    def raw_data_path(self):
+        return self._raw_data_path
+    
+    @raw_data_path.setter
+    def raw_data_path(self, fname):
+        self._raw_data_path = fname
+                
+    @property
+    def working_file_path(self):
+        return self._working_file_path
+    
+    @working_file_path.setter
+    def working_file_path(self, fname):
+        self._working_file_path = fname
                 
     @property
     def experiment_name(self):
@@ -138,6 +154,8 @@ class Experiment(object):
         else:
             raise Exception('Wrong data type')
     
+        self.raw_data_path = raw_data.info.get('filename')
+    
     @property
     def author(self):
         """
@@ -163,40 +181,6 @@ class Experiment(object):
                 raise Exception("Use only letters and numbers in _author name")
         else:
             raise Exception('Too long _author name')
-    
-    def update_state(self, key, value):
-       
-       self.stateDict[key] = value
-       
-       # Parent should always refer to main window, or there will be blood
-       self.parent.setup_ui_by_experiment_state()   
-        
-    """
-    for 
-    
-    if (check_file_existence('sss') \
-        or check_file_existence('tsss') \
-        or check_file_existence('mc')
-       ):
-        self.stateDict[Maxfilter] = True  
-    """
-    """    
-    def check_file_existence(self, filetypestring):
-        filename = self.file_path() + self.
-        
-        try:
-            with open(filename):
-                return True
-        except IOError:
-            return False
-        
-    """
-    
-    def get_date(self):
-        """
-        Returns the saving time and date of the experiment.
-        """
-        return self.date
     
     @property
     def description(self):
@@ -251,6 +235,7 @@ class Experiment(object):
         fname         -- Name of the new working file.
         """
         self._working_file = mne.fiff.Raw(fname, preload=True)
+        self.working_file_path = fname
         #self.shortname = os.path.basename(fname)
         #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
         #                                         shortname)
@@ -317,7 +302,7 @@ class Experiment(object):
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
-       
+        
         # Move the file from working directory to 
         #shutil.move(settingsFileName, str(self._file_path))
         
@@ -433,36 +418,29 @@ class Experiment(object):
                 paramdict = dict(x for x in csvreader)
                 return paramdict           
                         
-    def write_commands(self, commands, node, parent=''):
-        """
-        Writes an array of commands in a tree structure.
-        Used for creating a batch file.
-        TODO not in use
+    def __getstate__(self):
+        """Return state values to be pickled."""
         
-        Keyword arguments:
-        commands      -- An array of commands
-        node          -- Node id
-        parent        -- Parent of the node
-        """
-        if parent == '':
-            self.tree.create_node(commands, 'prep'+str(self.__index))
-        else:
-            self.tree.create_node(commands, node + str(self.__index), parent)
-        self.__index += 1
-        return self.__index - 1
-            
-    def get_subtree(self, nid, s=''):
-        """
-        Returns a set of commands from a subtree.
-        TODO not in use
+        odict = self.__dict__.copy()
+        del odict['_raw_data']
+        del odict['_working_file']
         
-        Keyword arguments:
-        nid           -- ID of the leaf
-        s             -- Helper for recursion
-        """
-        while nid is not None:
-            n = self.tree.get_node(nid)
-            s = self.get_subtree(n.bpointer, s)
-            s += ''.join(n.name)
-            return s
-        return ''
+        return odict
+
+    def __setstate__(self, odict):
+        """Restore state from the unpickled state values."""
+        #self.experiment_name, self.subject_directory, self.author,
+        #self.file_path, self.description,
+        #self.stim_channel, self.event_set, 
+
+        rawFullPath = odict['_raw_data_path']
+        workingFullPath = odict['_working_file_path']
+        
+        self.__dict__.update(odict)        
+        
+        raw = mne.fiff.Raw(rawFullPath, preload=True)
+        self.raw_data = raw
+        
+        self.working_file = workingFullPath
+        
+        
