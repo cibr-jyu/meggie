@@ -38,6 +38,6 @@ class CreateEpochs(object):
                                     eog=eog)
         e = epochs.Epochs(raw, events.events, picks, float(tmin), float(tmax),
                           int(event_id))
-        
-        evoked = e.average()
-        evoked.plot()
+        #e.average()
+        #evoked = e.average()
+        #evoked.plot()

@@ -396,12 +396,9 @@ class Caller(object):
             fig.show()  
             
         def onclick(event):
-            pl.show()
-            
-        def on_close(event):
-            fig.canvas.mpl_disconnect(cid)
+            pl.show(block=False)
         
-        cid = fig.canvas.mpl_connect('button_press_event', onclick)
+        fig.canvas.mpl_connect('button_press_event', onclick)
                     
     def update_experiment_working_file(self, fname):
         """

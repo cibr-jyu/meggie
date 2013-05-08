@@ -193,6 +193,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()  
             return
          
+        #Average the selected epochs
         epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         evoked = epoch.average()
         
@@ -205,7 +206,6 @@ class MainWindow(QtGui.QMainWindow):
         #item.setText('TestElement')
         #item.setData(1,evoked)
         #self.ui.listWidgetAverage.addItem(item)
-        evoked.plot()
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
