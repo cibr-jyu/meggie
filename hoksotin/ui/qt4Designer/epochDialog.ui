@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
-    <height>572</height>
+    <width>405</width>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -110,12 +110,18 @@
           <property name="text">
            <string>mag</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxGrad">
           <property name="text">
            <string>grad</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -124,6 +130,9 @@
           <property name="text">
            <string>eeg</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -131,12 +140,18 @@
           <property name="text">
            <string>stim</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxEog">
           <property name="text">
            <string>eog</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -146,7 +161,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -168,7 +183,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -330,6 +345,70 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxMag</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxMagReject_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>448</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxGrad</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxGradReject_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>112</x>
+     <y>441</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEeg</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxEEGReject_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>176</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>480</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEog</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxEOGReject_3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>334</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>331</x>
+     <y>484</y>
     </hint>
    </hints>
   </connection>
