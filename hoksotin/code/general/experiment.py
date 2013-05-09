@@ -8,7 +8,6 @@ import mne
 
 import os
 
-import time
 import re
 import csv
 import glob
@@ -18,9 +17,6 @@ import numpy as np
 # Better to use pickle rather than cpickle, as experiment paths may
 # include unicode characters
 import pickle
-
-from node import Node
-from tree import Tree
 
 class Experiment(object):
     """
