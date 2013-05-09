@@ -170,5 +170,5 @@ class MeasurementInfo(object):
         name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...', subj_info)
         middle_name = name_result.group(1).split(' ')
         if len(last_name) < 3 or len(first_name) < 3 or len(middle_name) < 3:
-            raise Exception('An error occurred while fetching subjects name.')
+            raise Exception('An error occurred while fetching subject name.')
         return last_name[2] + ' ' + first_name[2] + ' ' + middle_name[2]

@@ -39,6 +39,7 @@ class Statistic(object):
         
         Also raises a TypeError if arr contains something other than integers
         or doubles.
+        Returns the time window in samples and the start time.
         """
         # TODO: Are negatives allowed or not?
         if tmin <= 0 or tmax <= 0:
@@ -66,7 +67,7 @@ class Statistic(object):
         Keyword arguments:
         sfreq         -- Sampling frequency in Hz
         arr           -- 1d numpy array
-        tmin          -- Start of the time window in milliseconds
+        tmin          -- Start of the time window in milliseconds (default = 0)
         tmax          -- End of the time window in milliseconds
         """        
         twindow, start = self.initialize_variables(sfreq, arr, tmin, tmax)
@@ -161,9 +162,9 @@ class Statistic(object):
         """
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
-                #create a new matrix with the size of the window
+                """create a new matrix with the size of the window"""
                 newmat = mat[y:h+y,x:w+x]
-                #temporary variable to help finding the maximum
+                """temporary variable to help finding the maximum"""
                 a = i.sum_over_rectangular_area((0,0), (w-1,h-1), newmat)
                 """ Save coordinates if a new maximum is found """
                 if a > maximum:
@@ -187,7 +188,8 @@ class Statistic(object):
         start = int(round((tmin/1000)*sfreq))
         stop = int(round((tmax/1000)*sfreq))+1
         return arr[start:stop], start
-    
+
+"""    
 def main():
     s = Statistic()
     m = np.array([[1,1,1,1,1],
@@ -199,3 +201,4 @@ def main():
      
 if __name__ == "__main__":
     main()
+"""
