@@ -54,6 +54,10 @@ class Experiment(object):
                               EOGapplied=False, Eventlist=False,
                               Epochs=False, Average=False)        
     
+    
+    """
+    raw_data_path and working_file_path are only used internally 
+    """
     @property
     def raw_data_path(self):
         return self._raw_data_path
@@ -69,6 +73,7 @@ class Experiment(object):
     @working_file_path.setter
     def working_file_path(self, fname):
         self._working_file_path = fname
+       
                 
     @property
     def experiment_name(self):
@@ -419,19 +424,20 @@ class Experiment(object):
                 return paramdict           
                         
     def __getstate__(self):
-        """Return state values to be pickled."""
-        
+        """
+        Return state values to be pickled. Used to avoid pickling huge files
+        files two times to disk. 
+        """
         odict = self.__dict__.copy()
         del odict['_raw_data']
         del odict['_working_file']
-        
         return odict
 
     def __setstate__(self, odict):
-        """Restore state from the unpickled state values."""
-        #self.experiment_name, self.subject_directory, self.author,
-        #self.file_path, self.description,
-        #self.stim_channel, self.event_set, 
+        """
+        Restore state from the unpickled state values. Restores raw and working
+        files from the files in the experiment directory.
+        """ 
 
         rawFullPath = odict['_raw_data_path']
         workingFullPath = odict['_working_file_path']
@@ -439,8 +445,8 @@ class Experiment(object):
         self.__dict__.update(odict)        
         
         raw = mne.fiff.Raw(rawFullPath, preload=True)
-        self.raw_data = raw
         
+        self.raw_data = raw
         self.working_file = workingFullPath
         
         

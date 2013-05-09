@@ -79,8 +79,9 @@ class MainWindow(QtGui.QMainWindow):
         """Creates a listwidget for epoch analysis."""    
              
         self.widget = EpochWidget(self)
-        self.widget.setGeometry(QtCore.QRect(450, 140, 381, 231))
+        #self.widget.setGeometry(QtCore.QRect(0, 200, 381, 231))
         self.widget.hide()
+        
                 
         #self.ui.horizontalLayout.addWidget(self.widget)
         '''
@@ -223,8 +224,26 @@ class MainWindow(QtGui.QMainWindow):
         """
         index = self.ui.tabWidget.currentIndex()
         #self.tab = self.ui.tabWidget.currentWidget()
-        if index == 2 or index == 1:
+        
+        
+        if index == 2:
+            self.ui.tabEpoching.layout().addWidget(self.widget)
             self.widget.show()
+            #self.widget.updateGeometry()
+            #self.ui.tabEpoching.updateGeometry()
+            return
+        
+        if index == 3:
+           self.ui.tabAveraging.layout().addWidget(self.widget) 
+           self.widget.show()
+           return
+       
+        if index == 4:
+           self.ui.tabTFR.layout().addWidget(self.widget) 
+           self.widget.show()
+           return 
+            
+            #self.ui.verticalLayoutEpoching.addWidget(self.widget)
         else:
             self.widget.hide()
         
@@ -263,7 +282,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")
-        self.ui.tabWidget.insertTab(2, self.ui.tabAnalysis, "Analysis")
+
+        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, 
+                                    "Epoching")
+        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, 
+                                    "Averaging")
+        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, 
+                                    "TFR")
+        
         self.ui.checkBoxECG.hide()
         self.ui.checkBoxEOG.hide()
         self.ui.checkBoxMaxFilter.hide()
