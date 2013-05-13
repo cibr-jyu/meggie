@@ -301,25 +301,27 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq):
+    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
+            decim):
         evoked = epochs.average()
         data = epochs.get_data()
         times = 1e3 * epochs.times #s to ms
         evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
-        
+        print data
         data = data[:, ch_index:(ch_index+1), :]
         evoked_data = evoked_data[ch_index:(ch_index+1), :]
         
         #Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
+        frequencies = np.arange(minfreq, maxfreq, interval)
+        #frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
         
-        n_cycles = frequencies / float(len(frequencies) - 1)
-        #n_cycles = frequencies / float(15)
+        #n_cycles = frequencies / float(len(frequencies) - 1)
+        
         Fs = raw.info['sfreq']
-        decim = 3
+        #decim = 3
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
-                                          n_cycles=n_cycles, n_jobs=1,
+                                          n_cycles=ncycles, n_jobs=1,
                                           use_fft=False, decim=decim,
                                           zero_mean=True)
         

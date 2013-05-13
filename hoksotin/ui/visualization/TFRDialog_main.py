@@ -27,8 +27,10 @@ class TFRDialog(QtGui.QDialog):
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
+        """
         self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index,
                                minfreq, maxfreq)
+        """
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
