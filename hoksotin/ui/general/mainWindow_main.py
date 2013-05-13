@@ -227,19 +227,19 @@ class MainWindow(QtGui.QMainWindow):
         
         
         if index == 2:
-            self.ui.tabEpoching.layout().addWidget(self.widget)
+            self.widget.setParent(self.ui.tabEpoching)
             self.widget.show()
             #self.widget.updateGeometry()
             #self.ui.tabEpoching.updateGeometry()
             return
         
         if index == 3:
-           self.ui.tabAveraging.layout().addWidget(self.widget) 
+           self.widget.setParent(self.ui.tabAveraging) 
            self.widget.show()
            return
        
         if index == 4:
-           self.ui.tabTFR.layout().addWidget(self.widget) 
+           self.widget.setParent(self.ui.tabTFR) 
            self.widget.show()
            return 
             
