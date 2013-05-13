@@ -311,35 +311,50 @@ class MainWindow(QtGui.QMainWindow):
         files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
         if len(files) > 1:
+            """
             self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxECG.show()
             self.ui.pushButtonApplyECG.setEnabled(True)
+            """
+            self.ui.labelECGComputedAccept_2.show()
         
         #Check whether EOG projections are calculated
         files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_eog_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_eog-eve.fif'))
         if len(files) > 1:
+            """
             self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxEOG.show()
             self.ui.pushButtonApplyEOG.setEnabled(True)
+            """
+            self.ui.labelEOGComputedAccept_2.show()
         
         #Check whether ECG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
         if len(files) > 0:
+            """
             self.ui.checkBoxECGApplied.show()
             self.ui.checkBoxECGApplied.setCheckState(QtCore.Qt.Checked)
+            """
+            self.ui.labelECGAppliedAccept_2.show()
         
         #Check whether EOG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
         if len(files) > 0:
+            """
             self.ui.checkBoxEOGApplied.show()
             self.ui.checkBoxEOGApplied.setCheckState(QtCore.Qt.Checked)
+            """
+            self.ui.labelEOGAppliedAccept_2.show()
         
         files = filter(os.path.isfile, glob.glob(path + '*sss*'))
         if len(files) > 0:
+            """
             self.ui.checkBoxMaxFilter.show()
             self.ui.checkBoxMaxFilter.setCheckState(QtCore.Qt.Checked)
+            """
+            self.ui.labelMaxFilterAccept_2.show()
         
         #TODO: Maxfilter
     def check_workspace(self):

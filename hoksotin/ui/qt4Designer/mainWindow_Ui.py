@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
-# Created: Mon May 13 11:28:00 2013
+# Created: Mon May 13 15:39:20 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -286,12 +286,12 @@ class Ui_MainWindow(object):
         self.gridLayout_10.setObjectName(_fromUtf8("gridLayout_10"))
         self.labelMaxFilterAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
         self.labelMaxFilterAccept_2.setText(_fromUtf8(""))
-        self.labelMaxFilterAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("../trash/icons/Action-ok-icon.png")))
+        self.labelMaxFilterAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/Action-ok-icon.png")))
         self.labelMaxFilterAccept_2.setObjectName(_fromUtf8("labelMaxFilterAccept_2"))
         self.gridLayout_10.addWidget(self.labelMaxFilterAccept_2, 0, 0, 1, 1)
         self.labelECGAppliedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
         self.labelECGAppliedAccept_2.setText(_fromUtf8(""))
-        self.labelECGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("../trash/icons/Action-ok-icon.png")))
+        self.labelECGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/Action-ok-icon.png")))
         self.labelECGAppliedAccept_2.setObjectName(_fromUtf8("labelECGAppliedAccept_2"))
         self.gridLayout_10.addWidget(self.labelECGAppliedAccept_2, 1, 3, 1, 1)
         self.labelECGComputed_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
@@ -299,7 +299,7 @@ class Ui_MainWindow(object):
         self.gridLayout_10.addWidget(self.labelECGComputed_2, 1, 1, 1, 1)
         self.labelEOGComputedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
         self.labelEOGComputedAccept_2.setText(_fromUtf8(""))
-        self.labelEOGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("../trash/icons/Action-ok-icon.png")))
+        self.labelEOGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/Action-ok-icon.png")))
         self.labelEOGComputedAccept_2.setObjectName(_fromUtf8("labelEOGComputedAccept_2"))
         self.gridLayout_10.addWidget(self.labelEOGComputedAccept_2, 2, 0, 1, 1)
         self.labelEOGApplied_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
@@ -318,7 +318,7 @@ class Ui_MainWindow(object):
         self.gridLayout_10.addLayout(self.horizontalLayout_13, 0, 1, 1, 1)
         self.labelEOGAppliedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
         self.labelEOGAppliedAccept_2.setText(_fromUtf8(""))
-        self.labelEOGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("../trash/icons/Action-ok-icon.png")))
+        self.labelEOGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/Action-ok-icon.png")))
         self.labelEOGAppliedAccept_2.setObjectName(_fromUtf8("labelEOGAppliedAccept_2"))
         self.gridLayout_10.addWidget(self.labelEOGAppliedAccept_2, 2, 3, 1, 1)
         self.labelECGApplied_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
@@ -326,7 +326,7 @@ class Ui_MainWindow(object):
         self.gridLayout_10.addWidget(self.labelECGApplied_2, 1, 4, 1, 1)
         self.labelECGComputedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
         self.labelECGComputedAccept_2.setText(_fromUtf8(""))
-        self.labelECGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("../trash/icons/Action-ok-icon.png")))
+        self.labelECGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8(":/Action-ok-icon.png")))
         self.labelECGComputedAccept_2.setObjectName(_fromUtf8("labelECGComputedAccept_2"))
         self.gridLayout_10.addWidget(self.labelECGComputedAccept_2, 1, 0, 1, 1)
         self.verticalLayout_10.addLayout(self.gridLayout_10)
@@ -496,3 +496,4 @@ class Ui_MainWindow(object):
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
         self.actionSet_workspace.setText(_translate("MainWindow", "Set workspace...", None))
 
+import icons_rc

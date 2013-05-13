@@ -547,7 +547,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -557,7 +557,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -574,7 +574,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -622,7 +622,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -639,7 +639,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -877,6 +877,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../trash/icons/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
