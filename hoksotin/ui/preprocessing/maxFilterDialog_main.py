@@ -194,6 +194,8 @@ class MaxFilterDialog(QtGui.QDialog):
         $NEUROMAG_ROOT/databases/sss/ and returns a list of labs found.
         """
         # TODO: change c:\\MyTemp\\testi\\ into the proper env variable.
+        if os.environ.get('NEUROMAG_ROOT') is None:
+            os.environ['NEUROMAG_ROOT'] = '/neuro'
         files = os.listdir('c:\\MyTemp\\testi\\databases\\sss\\')
         
         for file in files:

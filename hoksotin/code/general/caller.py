@@ -56,7 +56,8 @@ class Caller(object):
         dic           -- Dictionary of parameters
         custom        -- Additional parameters as a string
         """
-        #if '$NEUROMAG_ROOT' == '':
+        if os.environ.get('NEUROMAG_ROOT') is None:
+            os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
         for i in range(len(dic)):
             bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
@@ -316,14 +317,14 @@ class Caller(object):
         frequencies = np.arange(minfreq, maxfreq, interval)
         #frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
         
-        #n_cycles = frequencies / float(len(frequencies) - 1)
+        n_cycles = frequencies / float(ncycles)
         
         Fs = raw.info['sfreq']
         #decim = 3
         try:
             power, phase_lock = induced_power(data, Fs=Fs,
                                               frequencies=frequencies,
-                                              n_cycles=ncycles, n_jobs=1,
+                                              n_cycles=n_cycles, n_jobs=1,
                                               use_fft=False, decim=decim,
                                               zero_mean=True)
         except ValueError, err:

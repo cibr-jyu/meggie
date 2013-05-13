@@ -10,8 +10,6 @@ from mne.viz import plot_topo
 
 import pylab as pl
 
-import events
-
 class Epochs(object):
     """
     A class for epochs created from the MEG data.
@@ -35,6 +33,7 @@ class Epochs(object):
         category      -- Dictionary of categories.
         tmin          -- Start time before event (default -0.2)
         tmax          -- End time after the event (default 0.5)
+        Exceptions:
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
         """
@@ -50,7 +49,8 @@ class Epochs(object):
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
             if picks is None:
-                raise Exception('Picks cannot be empty.')
+                raise Exception('Picks cannot be empty. ' + 
+                                'Select picks by checking the checkboxes.')
             self.epochs = mne.Epochs(raw, events, category,
                                      tmin, tmax, picks=picks, reject=reject)
         else:
@@ -65,7 +65,11 @@ class Epochs(object):
         if self.epochs is None:
             raise Exception('No epochs found.')
         category = self.epochs.event_id
-        print category
+        
+        """
+        Creates evoked potentials from the given events (variable 'name' 
+        refers to different categories).
+        """
         evokeds = [self.epochs[name].average() for name in category.keys()]
         layout = read_layout('Vectorview-all.lout')
         fig = plot_topo(evokeds, layout, title=str(category.keys()))

@@ -13,14 +13,13 @@ from infoDialog_Ui import Ui_infoDialog
 from createExperimentDialog_Ui import Ui_CreateExperimentDialog
 from maxFilterComputeDialog_main import MaxFilterComputeDialog
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 # Import the pyuic4-compiled main UI module 
 
-import os,sys
+import os, sys
 import StringIO
 import pickle
 import time
-from multiprocessing import Process
 import ConfigParser
 
 # Create a dialog main window
@@ -60,15 +59,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui.labelCreatingExperiment.setVisible(True)
         self.ui.progressBarCreatingExperiment.setVisible(True)
         self.parent.hide_workspace_option()
-        #self.computeDialog.show()
-        #self.computeDialog.raise_()
-        QtGui.QApplication.processEvents(flags=QtCore.QEventLoop.AllEvents)
-        
-        self.p2 = Process(target=self._initialize_experiment())
-        p = Process(target = self.process_events())
-        
-        p.start()
-        self.p2.start()
+        self._initialize_experiment()
                 
     def on_browseButton_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -125,7 +116,7 @@ class CreateExperimentDialog(QtGui.QDialog):
 
         except AttributeError:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Cannot assign attribute' +
+            self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
             #self.computeDialog.close()
@@ -140,7 +131,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                                                           text())))
             self.experiment.working_file = (self.experiment.raw_data.
                                             info.get('filename'))
-            self.parent.ui.statusbar.showMessage("Current working file: " +
+            self.parent.ui.statusbar.showMessage("Current working file: " + 
                                              (self.experiment.working_file.
                                               info.get('filename')))
             self.experiment.save_experiment_settings()
@@ -172,20 +163,12 @@ class CreateExperimentDialog(QtGui.QDialog):
         events = self.experiment.event_set
         for key, value in events.iteritems():
             item = QtGui.QListWidgetItem()
-            item.setText('Trigger ' + str(key) + ', ' + str(value) +
+            item.setText('Trigger ' + str(key) + ', ' + str(value) + 
                         ' events')
             self.parent.ui.listWidget.addItem(item)
         self.k = False
         self.close()
         self.parent._initialize_ui() 
-
-        #self.computeDialog.close()
-    
-    def process_events(self):
-        self.k=True
-        while self.k:
-            QtGui.QApplication.processEvents()
-        #self.computeDialog.setVisible(False)
         
 class OutLog:
     def __init__(self, edit, out=None, color=None):
@@ -205,23 +188,11 @@ class OutLog:
             self.edit.setTextColor(self.color)
 
         self.edit.moveCursor(QtGui.QTextCursor.End)
-        self.edit.insertPlainText( m )
+        self.edit.insertPlainText(m)
 
         if self.color:
             self.edit.setTextColor(tc)
 
         if self.out:
             self.out.write(m)
-    
-"""    
-def main(): 
-    app = QtGui.QApplication(sys.argv)
-    window=Main()
-    window.show()
-    
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()
-""" 
+            

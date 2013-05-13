@@ -66,7 +66,6 @@ class EpochDialog(QtGui.QDialog):
             #print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
-        print category    
         try:
             epochs = Epochs(self.parent.parent.experiment.working_file, events,
                             mag, grad, eeg, stim, eog, reject, category,
