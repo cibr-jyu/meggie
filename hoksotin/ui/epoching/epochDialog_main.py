@@ -3,7 +3,7 @@ Created on Apr 30, 2013
 
 @author: jaeilepp
 '''
-
+import messageBox
 from epochDialog_Ui import Ui_Dialog
 
 from epochs import Epochs
@@ -72,7 +72,10 @@ class EpochDialog(QtGui.QDialog):
                             mag, grad, eeg, stim, eog, reject, category,
                             float(self.tmin), float(self.tmax))
         except Exception, err:
-            print 'Could not create epochs. \n' + str(err)
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Could not create epochs: '
+                                                   + str(err))
+            self.messageBox.exec_()
             return
         #for index in xrange(epochs):
         
