@@ -2,13 +2,22 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
+<<<<<<< HEAD
 # Created: Fri May 10 15:15:14 2013
+=======
+# Created: Mon May 13 11:28:00 2013
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
+<<<<<<< HEAD
+=======
+import os
+
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -41,7 +50,11 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
+<<<<<<< HEAD
         self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 951, 709))
+=======
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 697))
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -241,6 +254,7 @@ class Ui_MainWindow(object):
         self.tabPreprocessing = QtGui.QWidget()
         self.tabPreprocessing.setObjectName(_fromUtf8("tabPreprocessing"))
         self.formLayout = QtGui.QFormLayout(self.tabPreprocessing)
+<<<<<<< HEAD
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.groupBoxPreprocessingCheckBoxes = QtGui.QGroupBox(self.tabPreprocessing)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
@@ -278,6 +292,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.addWidget(self.checkBoxEOGApplied)
         self.verticalLayout_9.addLayout(self.horizontalLayout_10)
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.groupBoxPreprocessingCheckBoxes)
+=======
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.groupBoxAvailablePreprocessing = QtGui.QGroupBox(self.tabPreprocessing)
         self.groupBoxAvailablePreprocessing.setMaximumSize(QtCore.QSize(400, 170))
         self.groupBoxAvailablePreprocessing.setObjectName(_fromUtf8("groupBoxAvailablePreprocessing"))
@@ -307,6 +325,68 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.addWidget(self.pushButtonApplyEOG)
         self.gridLayout_3.addLayout(self.horizontalLayout_12, 2, 0, 1, 1)
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.groupBoxAvailablePreprocessing)
+<<<<<<< HEAD
+=======
+        self.groupBoxPreprocessingCheckBoxes = QtGui.QGroupBox(self.tabPreprocessing)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBoxPreprocessingCheckBoxes.sizePolicy().hasHeightForWidth())
+        self.groupBoxPreprocessingCheckBoxes.setSizePolicy(sizePolicy)
+        self.groupBoxPreprocessingCheckBoxes.setMinimumSize(QtCore.QSize(60, 0))
+        self.groupBoxPreprocessingCheckBoxes.setObjectName(_fromUtf8("groupBoxPreprocessingCheckBoxes"))
+        self.verticalLayout_10 = QtGui.QVBoxLayout(self.groupBoxPreprocessingCheckBoxes)
+        self.verticalLayout_10.setObjectName(_fromUtf8("verticalLayout_10"))
+        self.gridLayout_10 = QtGui.QGridLayout()
+        self.gridLayout_10.setObjectName(_fromUtf8("gridLayout_10"))
+        self.labelMaxFilterAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelMaxFilterAccept_2.setText(_fromUtf8(""))
+        self.labelMaxFilterAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("/home/jaolpeso/lahdekoodit/hoksotin/ui/trash/icons/Action-ok-icon.png")))
+        self.labelMaxFilterAccept_2.setObjectName(_fromUtf8("labelMaxFilterAccept_2"))
+        self.gridLayout_10.addWidget(self.labelMaxFilterAccept_2, 0, 0, 1, 1)
+        self.labelECGAppliedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelECGAppliedAccept_2.setText(_fromUtf8(""))
+        self.labelECGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("/home/jaolpeso/lahdekoodit/hoksotin/ui/trash/icons/Action-ok-icon.png")))
+        self.labelECGAppliedAccept_2.setObjectName(_fromUtf8("labelECGAppliedAccept_2"))
+        self.gridLayout_10.addWidget(self.labelECGAppliedAccept_2, 1, 3, 1, 1)
+        self.labelECGComputed_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelECGComputed_2.setObjectName(_fromUtf8("labelECGComputed_2"))
+        self.gridLayout_10.addWidget(self.labelECGComputed_2, 1, 1, 1, 1)
+        self.labelEOGComputedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelEOGComputedAccept_2.setText(_fromUtf8(""))
+        self.labelEOGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("/home/jaolpeso/lahdekoodit/hoksotin/ui/trash/icons/Action-ok-icon.png")))
+        self.labelEOGComputedAccept_2.setObjectName(_fromUtf8("labelEOGComputedAccept_2"))
+        self.gridLayout_10.addWidget(self.labelEOGComputedAccept_2, 2, 0, 1, 1)
+        self.labelEOGApplied_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelEOGApplied_2.setObjectName(_fromUtf8("labelEOGApplied_2"))
+        self.gridLayout_10.addWidget(self.labelEOGApplied_2, 2, 4, 1, 1)
+        self.labelEOGComputed_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelEOGComputed_2.setObjectName(_fromUtf8("labelEOGComputed_2"))
+        self.gridLayout_10.addWidget(self.labelEOGComputed_2, 2, 1, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_10.addItem(spacerItem4, 2, 2, 1, 1)
+        self.horizontalLayout_13 = QtGui.QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(_fromUtf8("horizontalLayout_13"))
+        self.labelMaxFilter_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelMaxFilter_2.setObjectName(_fromUtf8("labelMaxFilter_2"))
+        self.horizontalLayout_13.addWidget(self.labelMaxFilter_2)
+        self.gridLayout_10.addLayout(self.horizontalLayout_13, 0, 1, 1, 1)
+        self.labelEOGAppliedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelEOGAppliedAccept_2.setText(_fromUtf8(""))
+        self.labelEOGAppliedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("/home/jaolpeso/lahdekoodit/hoksotin/ui/trash/icons/Action-ok-icon.png")))
+        self.labelEOGAppliedAccept_2.setObjectName(_fromUtf8("labelEOGAppliedAccept_2"))
+        self.gridLayout_10.addWidget(self.labelEOGAppliedAccept_2, 2, 3, 1, 1)
+        self.labelECGApplied_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelECGApplied_2.setObjectName(_fromUtf8("labelECGApplied_2"))
+        self.gridLayout_10.addWidget(self.labelECGApplied_2, 1, 4, 1, 1)
+        self.labelECGComputedAccept_2 = QtGui.QLabel(self.groupBoxPreprocessingCheckBoxes)
+        self.labelECGComputedAccept_2.setText(_fromUtf8(""))
+        self.labelECGComputedAccept_2.setPixmap(QtGui.QPixmap(_fromUtf8("/home/jaolpeso/lahdekoodit/hoksotin/ui/trash/icons/Action-ok-icon.png")))
+        self.labelECGComputedAccept_2.setObjectName(_fromUtf8("labelECGComputedAccept_2"))
+        self.gridLayout_10.addWidget(self.labelECGComputedAccept_2, 1, 0, 1, 1)
+        self.verticalLayout_10.addLayout(self.gridLayout_10)
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.groupBoxPreprocessingCheckBoxes)
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.tabWidget.addTab(self.tabPreprocessing, _fromUtf8(""))
         self.tabEpoching = QtGui.QWidget()
         self.tabEpoching.setObjectName(_fromUtf8("tabEpoching"))
@@ -329,8 +409,13 @@ class Ui_MainWindow(object):
         self.verticalLayoutEpoching.addWidget(self.pushButtonEventlist)
         self.gridLayout_4.addLayout(self.verticalLayoutEpoching, 0, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBoxAvailableEpoching, 0, 0, 1, 1)
+<<<<<<< HEAD
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_5.addItem(spacerItem4, 0, 1, 1, 1)
+=======
+        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem5, 0, 1, 1, 1)
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.tabWidget.addTab(self.tabEpoching, _fromUtf8(""))
         self.tabAveraging = QtGui.QWidget()
         self.tabAveraging.setObjectName(_fromUtf8("tabAveraging"))
@@ -346,8 +431,13 @@ class Ui_MainWindow(object):
         self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
         self.gridLayout_11.addWidget(self.pushButtonAverage, 0, 0, 1, 1)
         self.gridLayout_8.addWidget(self.groupBoxAvailableAveraging, 0, 0, 1, 1)
+<<<<<<< HEAD
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_8.addItem(spacerItem5, 0, 1, 1, 1)
+=======
+        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_8.addItem(spacerItem6, 0, 1, 1, 1)
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.tabWidget.addTab(self.tabAveraging, _fromUtf8(""))
         self.tabTFR = QtGui.QWidget()
         self.tabTFR.setObjectName(_fromUtf8("tabTFR"))
@@ -368,8 +458,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_13.addWidget(self.pushButtonTFRTopology)
         self.gridLayout_6.addLayout(self.verticalLayout_13, 0, 0, 1, 1)
         self.gridLayout_9.addWidget(self.groupBoxAvailableTFR, 0, 0, 1, 1)
+<<<<<<< HEAD
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_9.addItem(spacerItem6, 0, 1, 1, 1)
+=======
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_9.addItem(spacerItem7, 0, 1, 1, 1)
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.tabWidget.addTab(self.tabTFR, _fromUtf8(""))
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.gridLayout_7.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
@@ -377,7 +472,11 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
+<<<<<<< HEAD
         self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 23))
+=======
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 29))
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -409,7 +508,11 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
+<<<<<<< HEAD
         self.tabWidget.setCurrentIndex(4)
+=======
+        self.tabWidget.setCurrentIndex(1)
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -441,18 +544,30 @@ class Ui_MainWindow(object):
         self.triggersBox.setTitle(_translate("MainWindow", "Triggers", None))
         self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "View with MNE_Browse_Raw", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabRaw), _translate("MainWindow", "Raw", None))
+<<<<<<< HEAD
         self.groupBoxPreprocessingCheckBoxes.setTitle(_translate("MainWindow", "Preprocessing steps completed:", None))
         self.checkBoxMaxFilter.setText(_translate("MainWindow", "Maxfilter", None))
         self.checkBoxECG.setText(_translate("MainWindow", "ECG computed", None))
         self.checkBoxECGApplied.setText(_translate("MainWindow", "ECG applied", None))
         self.checkBoxEOG.setText(_translate("MainWindow", "EOG computed", None))
         self.checkBoxEOGApplied.setText(_translate("MainWindow", "EOG applied", None))
+=======
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.groupBoxAvailablePreprocessing.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonMaxFilter.setText(_translate("MainWindow", "MaxFilter", None))
         self.pushButtonECG.setText(_translate("MainWindow", "Calculate ECG projections", None))
         self.pushButtonApplyECG.setText(_translate("MainWindow", "Apply ECG projections", None))
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections", None))
         self.pushButtonApplyEOG.setText(_translate("MainWindow", "Apply EOG projections", None))
+<<<<<<< HEAD
+=======
+        self.groupBoxPreprocessingCheckBoxes.setTitle(_translate("MainWindow", "Preprocessing steps completed:", None))
+        self.labelECGComputed_2.setText(_translate("MainWindow", "ECG computed", None))
+        self.labelEOGApplied_2.setText(_translate("MainWindow", "EOG applied", None))
+        self.labelEOGComputed_2.setText(_translate("MainWindow", "EOG computed", None))
+        self.labelMaxFilter_2.setText(_translate("MainWindow", "MaxFilter", None))
+        self.labelECGApplied_2.setText(_translate("MainWindow", "ECG applied", None))
+>>>>>>> 0f13d4c401883d9a2e7319e9f9bcc1c1d943b7d0
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonEventlist.setText(_translate("MainWindow", "Create an epoch collection", None))
