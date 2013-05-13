@@ -760,7 +760,7 @@
                 <property name="maximumSize">
                  <size>
                   <width>500</width>
-                  <height>160</height>
+                  <height>180</height>
                  </size>
                 </property>
                 <property name="title">
