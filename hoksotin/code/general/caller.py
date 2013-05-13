@@ -307,10 +307,11 @@ class Caller(object):
         data = epochs.get_data()
         times = 1e3 * epochs.times #s to ms
         evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
-        print data
-        data = data[:, ch_index:(ch_index+1), :]
-        evoked_data = evoked_data[ch_index:(ch_index+1), :]
-        
+        try:
+            data = data[:, ch_index:(ch_index+1), :]
+            evoked_data = evoked_data[ch_index:(ch_index+1), :]
+        except Exception, err:
+            raise Exception('Could not find epoch data: ' + str(err))
         #Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         #frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
@@ -319,12 +320,14 @@ class Caller(object):
         
         Fs = raw.info['sfreq']
         #decim = 3
-        power, phase_lock = induced_power(data, Fs=Fs,
-                                          frequencies=frequencies,
-                                          n_cycles=ncycles, n_jobs=1,
-                                          use_fft=False, decim=decim,
-                                          zero_mean=True)
-        
+        try:
+            power, phase_lock = induced_power(data, Fs=Fs,
+                                              frequencies=frequencies,
+                                              n_cycles=ncycles, n_jobs=1,
+                                              use_fft=False, decim=decim,
+                                              zero_mean=True)
+        except ValueError, err:
+            raise ValueError(err)
         # baseline corrections with ratio
         power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
         pl.clf()
@@ -360,9 +363,9 @@ class Caller(object):
         
     def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend):
-        evoked = epochs.average()
+        #evoked = epochs.average()
         data = epochs.get_data()
-        times = 1e3 * epochs.times #s to ms
+        #times = 1e3 * epochs.times #s to ms
         #evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
         
         #data = data[:, ch_index:(ch_index+1), :]

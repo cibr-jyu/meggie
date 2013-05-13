@@ -4,13 +4,11 @@ Created on Mar 19, 2013
 
 @author: Jaakko Lepp�kangas, Atte Rautio
 '''
+import messageBox
+
 from PyQt4 import QtCore,QtGui
 from parameterDialog_ui import Ui_ParameterDialog
 from epochDialog_main import EpochDialog
-
-from tkFileDialog import askopenfilename
-from Tkinter import Tk
-#from enaml.components.push_button import PushButton
 
 from epochs import Epochs
 from events import Events
@@ -121,6 +119,12 @@ class ParameterDialog(QtGui.QDialog):
         """
         Called when the OK button is pressed.
         """
+        if self.ui.listWidgetEvents.count() == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Cannot create epochs ' + 
+                                                   'from empty list.')
+            self.messageBox.show()
+            return
         self.close()
         self.epochDialog = EpochDialog(self)
         epochs = self.epochDialog.exec_()

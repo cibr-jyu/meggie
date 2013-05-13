@@ -3,6 +3,8 @@ Created on Apr 26, 2013
 
 @author: jaeilepp
 '''
+import messageBox
+
 import mne
 
 from PyQt4 import QtCore,QtGui
@@ -34,6 +36,13 @@ class TFRDialog(QtGui.QDialog):
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
-        self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index, minfreq,
-                               maxfreq, interval, ncycles, decim)
+        try:
+            self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index,
+                                   minfreq, maxfreq, interval, ncycles, decim)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            #self.computeDialog.close()
+            return
         self.close()
