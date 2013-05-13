@@ -27,7 +27,8 @@ class TFRTopologyDialog(QtGui.QDialog):
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
         mode = self.ui.comboBoxMode.currentText()
-        
+        interval = self.ui.doubleSpinBoxFreqInterval.value()
+        ncycles = self.ui.doubleSpinBoxNcycles.value()
         if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
             blstart = None
         else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
@@ -42,5 +43,5 @@ class TFRTopologyDialog(QtGui.QDialog):
         
         self.parent.caller.TFR_topology(self.raw, self.epoch.epochs, reptype,
                                         minfreq, maxfreq, decim, mode, 
-                                        blstart, blend)
+                                        blstart, blend, interval, ncycles)
         self.close()

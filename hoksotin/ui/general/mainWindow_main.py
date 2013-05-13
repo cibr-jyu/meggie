@@ -314,8 +314,8 @@ class MainWindow(QtGui.QMainWindow):
             """
             self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxECG.show()
-            self.ui.pushButtonApplyECG.setEnabled(True)
             """
+            self.ui.pushButtonApplyECG.setEnabled(True)
             self.ui.labelECGComputedAccept_2.show()
         
         #Check whether EOG projections are calculated
@@ -326,8 +326,8 @@ class MainWindow(QtGui.QMainWindow):
             """
             self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
             self.ui.checkBoxEOG.show()
-            self.ui.pushButtonApplyEOG.setEnabled(True)
             """
+            self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.labelEOGComputedAccept_2.show()
         
         #Check whether ECG projections are applied
@@ -370,7 +370,3 @@ def main():
     window.show()
     
     sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()

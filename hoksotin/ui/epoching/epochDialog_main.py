@@ -53,7 +53,6 @@ class EpochDialog(QtGui.QDialog):
                       eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
                       eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
         """
-        print reject
         """
         Reads the given event names as categories.
         """
@@ -87,6 +86,6 @@ class EpochDialog(QtGui.QDialog):
         item = QtGui.QListWidgetItem(item_string)
         item.setData(32, epochs)
         self.parent.parent.widget.ui.listWidgetEpochs.addItem(item)
-        
+        self.parent.parent.widget.ui.listWidgetEpochs.setCurrentItem(item)
         self.close()
         #return epochs

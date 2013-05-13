@@ -304,6 +304,19 @@ class Caller(object):
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
+        """
+        Plots a time-frequency representation of the data for a selected
+        channel. Modified from example by Alexandre Gramfort.
+        Keyword arguments:
+        raw           -- A raw object.
+        epochs        -- Epochs extracted from the data.
+        ch_index      -- Index of the channel to be used.
+        minfreq       -- Starting frequency for the representation.
+        maxfreq       -- Ending frequency for the representation.
+        interval      -- Interval to use for the frequencies of interest.
+        ncycles       -- Value used to count the number of cycles.
+        decim         -- Temporal decimation factor.
+        """
         evoked = epochs.average()
         data = epochs.get_data()
         times = 1e3 * epochs.times #s to ms
@@ -363,19 +376,31 @@ class Caller(object):
         
         
     def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
-                     blstart, blend):
-        #evoked = epochs.average()
+                     blstart, blend, interval, ncycles):
+        """
+        Plots time-frequency representations on topographies for MEG sensors.
+        Modified from example by Alexandre Gramfort and Denis Engemann.
+        Keyword arguments:
+        raw           -- A raw object.
+        epochs        -- Epochs extracted from the data.
+        reptype       -- Type of representation (induced or phase).
+        minfreq       -- Starting frequency for the representation.
+        maxfreq       -- Ending frequency for the representation.
+        decim         -- Temporal decimation factor.
+        mode          -- Rescaling mode (logratio | ratio | zscore |
+                         mean | percent).
+        blstart       -- Starting point for baseline correction.
+        blend         -- Ending point for baseline correction.
+        interval      -- Interval to use for the frequencies of interest.
+        ncycles       -- Value used to count the number of cycles.
+        """
+        #TODO: Let the user define the title of the figure.
         data = epochs.get_data()
-        #times = 1e3 * epochs.times #s to ms
-        #evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
-        
-        #data = data[:, ch_index:(ch_index+1), :]
-        #evoked_data = evoked_data[ch_index:(ch_index+1), :]
         
         #Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
+        frequencies = np.arange(minfreq, maxfreq, interval)
         
-        n_cycles = frequencies / float(len(frequencies) - 1)
+        n_cycles = frequencies / ncycles
         #n_cycles = frequencies / float(15)
         Fs = raw.info['sfreq']
         decim = 3
@@ -405,7 +430,27 @@ class Caller(object):
             pl.show(block=False)
         
         fig.canvas.mpl_connect('button_press_event', onclick)
-                    
+        
+    def magnitude_spectrum(self, raw, ch_index):
+        """
+        Draws a magnitude spectrum of the selected channel.
+        Keyword arguments:
+        raw           -- A raw object.
+        ch_index      -- Index of the channel to be used.
+        """
+        data = raw[ch_index,:]
+        data = np.squeeze(data)
+        ch_fft = np.fft.fft(data)
+        ffta = np.absolute(ch_fft)
+        logdata = 20*np.log10(ffta)
+        hlogdata = logdata[0:int(len(logdata) / 2)]
+        fs = raw.info.get('sfreq')
+        f = np.linspace(0, fs/2, len(hlogdata))
+        pl.plot(f, hlogdata)
+        pl.ylabel('Magnitude / dB')
+        pl.xlabel('Hz')
+        pl.show()
+                            
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates

@@ -128,21 +128,6 @@ class ParameterDialog(QtGui.QDialog):
         self.close()
         self.epochDialog = EpochDialog(self)
         epochs = self.epochDialog.exec_()
-        """
-        for index in xrange(self.ui.listWidgetEvents.count()):
-            item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
-            item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
-            self.parent.widget.ui.listWidgetEpochs.addItem(item)
-        """            
-        #self.parent.ui.tabWidget.setCurrentIndex(1)
-        #for index in xrange(self.ui.listWidgetEvents.count()):
-        #    item = QtGui.QListWidgetItem(self.ui.listWidgetEvents.item(index).text())
-        #    item.setData(1, self.ui.listWidgetEvents.item(index).data(1).toPyObject())
-        #    self.parent.ui.listWidgetEventsPre.addItem(item)
-            
-        #self.parent.ui.tabWidget.setCurrentIndex(2)
-        
-        #print self.ui.listWidgetEvents.currentItem().data(1).toPyObject()
         
     def check_channels(self):
         if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
@@ -163,24 +148,6 @@ class ParameterDialog(QtGui.QDialog):
             return ['MEG ' + str(x) for x in brainRegions.left_frontal]
         elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
             return ['MEG ' + str(x) for x in brainRegions.right_frontal]
-        
-        """
-        self.fname = self.fileEdit.text()
-        stim_channel = str(self.ui.comboBoxStimulus.currentText())
-        event_id = self.ui.lineEditEventID.text()
-        tmin = self.ui.lineEditTmin.text()
-        tmax = self.ui.lineEditTmax.text()
-        reject = self.ui.lineEditReject.text()
-        meg = self.ui.checkBoxMeg.checkState() == QtCore.Qt.Checked
-        eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
-        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
-        eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        self.close()
-        self.parent.epochs = CreateEpochs(self.parent.raw, event_id,
-                                          stim_channel, tmin, tmax, reject,
-                                          meg, eeg, stim, eog)
-        
-        """
         
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         if checked is None: return # Standard workaround
