@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
-# Created: Thu May  9 20:59:43 2013
+# Created: Fri May 10 15:15:14 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(810, 805)
+        MainWindow.resize(973, 805)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 937, 694))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 951, 709))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -329,25 +329,32 @@ class Ui_MainWindow(object):
         self.verticalLayoutEpoching.addWidget(self.pushButtonEventlist)
         self.gridLayout_4.addLayout(self.verticalLayoutEpoching, 0, 0, 1, 1)
         self.gridLayout_5.addWidget(self.groupBoxAvailableEpoching, 0, 0, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem4, 0, 1, 1, 1)
         self.tabWidget.addTab(self.tabEpoching, _fromUtf8(""))
         self.tabAveraging = QtGui.QWidget()
         self.tabAveraging.setObjectName(_fromUtf8("tabAveraging"))
         self.gridLayout_8 = QtGui.QGridLayout(self.tabAveraging)
         self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
         self.groupBoxAvailableAveraging = QtGui.QGroupBox(self.tabAveraging)
+        self.groupBoxAvailableAveraging.setMaximumSize(QtCore.QSize(500, 90))
         self.groupBoxAvailableAveraging.setObjectName(_fromUtf8("groupBoxAvailableAveraging"))
         self.gridLayout_11 = QtGui.QGridLayout(self.groupBoxAvailableAveraging)
         self.gridLayout_11.setObjectName(_fromUtf8("gridLayout_11"))
         self.pushButtonAverage = QtGui.QPushButton(self.groupBoxAvailableAveraging)
+        self.pushButtonAverage.setMaximumSize(QtCore.QSize(10000, 16777215))
         self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
         self.gridLayout_11.addWidget(self.pushButtonAverage, 0, 0, 1, 1)
         self.gridLayout_8.addWidget(self.groupBoxAvailableAveraging, 0, 0, 1, 1)
+        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_8.addItem(spacerItem5, 0, 1, 1, 1)
         self.tabWidget.addTab(self.tabAveraging, _fromUtf8(""))
         self.tabTFR = QtGui.QWidget()
         self.tabTFR.setObjectName(_fromUtf8("tabTFR"))
         self.gridLayout_9 = QtGui.QGridLayout(self.tabTFR)
         self.gridLayout_9.setObjectName(_fromUtf8("gridLayout_9"))
         self.groupBoxAvailableTFR = QtGui.QGroupBox(self.tabTFR)
+        self.groupBoxAvailableTFR.setMaximumSize(QtCore.QSize(500, 180))
         self.groupBoxAvailableTFR.setObjectName(_fromUtf8("groupBoxAvailableTFR"))
         self.gridLayout_6 = QtGui.QGridLayout(self.groupBoxAvailableTFR)
         self.gridLayout_6.setObjectName(_fromUtf8("gridLayout_6"))
@@ -361,6 +368,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_13.addWidget(self.pushButtonTFRTopology)
         self.gridLayout_6.addLayout(self.verticalLayout_13, 0, 0, 1, 1)
         self.gridLayout_9.addWidget(self.groupBoxAvailableTFR, 0, 0, 1, 1)
+        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_9.addItem(spacerItem6, 0, 1, 1, 1)
         self.tabWidget.addTab(self.tabTFR, _fromUtf8(""))
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.gridLayout_7.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
@@ -368,7 +377,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 810, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 23))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
