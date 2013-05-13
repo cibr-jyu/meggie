@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>951</width>
-         <height>709</height>
+         <width>953</width>
+         <height>697</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -454,85 +454,9 @@
               <string>Preprocessing</string>
              </attribute>
              <layout class="QFormLayout" name="formLayout">
-              <item row="0" column="0">
-               <widget class="QGroupBox" name="groupBoxPreprocessingCheckBoxes">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>60</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>300</width>
-                  <height>170</height>
-                 </size>
-                </property>
-                <property name="title">
-                 <string>Preprocessing steps completed:</string>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_9">
-                 <item>
-                  <widget class="QCheckBox" name="checkBoxMaxFilter">
-                   <property name="text">
-                    <string>Maxfilter</string>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxECG">
-                     <property name="text">
-                      <string>ECG computed</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxECGApplied">
-                     <property name="text">
-                      <string>ECG applied</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_10">
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxEOG">
-                     <property name="text">
-                      <string>EOG computed</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxEOGApplied">
-                     <property name="text">
-                      <string>EOG applied</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-              </item>
+              <property name="fieldGrowthPolicy">
+               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+              </property>
               <item row="1" column="0">
                <widget class="QGroupBox" name="groupBoxAvailablePreprocessing">
                 <property name="maximumSize">
@@ -589,6 +513,133 @@
                      </property>
                      <property name="text">
                       <string>Apply EOG projections</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QGroupBox" name="groupBoxPreprocessingCheckBoxes">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>60</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="title">
+                 <string>Preprocessing steps completed:</string>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <item>
+                  <layout class="QGridLayout" name="gridLayout_10">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="labelMaxFilterAccept_2">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="3">
+                    <widget class="QLabel" name="labelECGAppliedAccept_2">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLabel" name="labelECGComputed_2">
+                     <property name="text">
+                      <string>ECG computed</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="labelEOGComputedAccept_2">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="4">
+                    <widget class="QLabel" name="labelEOGApplied_2">
+                     <property name="text">
+                      <string>EOG applied</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLabel" name="labelEOGComputed_2">
+                     <property name="text">
+                      <string>EOG computed</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <spacer name="horizontalSpacer_9">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item row="0" column="1">
+                    <layout class="QHBoxLayout" name="horizontalLayout_13">
+                     <item>
+                      <widget class="QLabel" name="labelMaxFilter_2">
+                       <property name="text">
+                        <string>MaxFilter</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="2" column="3">
+                    <widget class="QLabel" name="labelEOGAppliedAccept_2">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="4">
+                    <widget class="QLabel" name="labelECGApplied_2">
+                     <property name="text">
+                      <string>ECG applied</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="labelECGComputedAccept_2">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../trash/icons/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -768,7 +819,7 @@
      <x>0</x>
      <y>0</y>
      <width>973</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="defaultUp">

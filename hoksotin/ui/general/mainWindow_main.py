@@ -290,6 +290,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(4, self.ui.tabTFR, 
                                     "TFR")
         
+        self.ui.labelMaxFilterAccept_2.hide()
+        self.ui.labelECGComputedAccept_2.hide()
+        self.ui.labelEOGComputedAccept_2.hide()
+        self.ui.labelECGAppliedAccept_2.hide()
+        self.ui.labelEOGAppliedAccept_2.hide()
+        """
         self.ui.checkBoxECG.hide()
         self.ui.checkBoxEOG.hide()
         self.ui.checkBoxMaxFilter.hide()
@@ -297,7 +303,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.hide()
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
-        
+        """
         #Check whether ECG projections are calculated
         fname = self.experiment.raw_data.info.get('filename')
         path = self.experiment._subject_directory
