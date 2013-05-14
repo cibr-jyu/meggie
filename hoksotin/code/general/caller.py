@@ -207,17 +207,15 @@ class Caller(object):
         if (raw_in.info.get('filename').endswith('_raw.fif') 
         or raw_in.info.get('filename').endswith('-raw.fif')):
             prefix = raw_in.info.get('filename')[:-8]
-            suffix = '.fif'
         else:
-            prefix, suffix = os.path.splitext(raw_in.info.get('filename'))
-            #prefix = raw_in.info.get('filename')[:-4]
+            prefix = raw_in.info.get('filename')[:-4]
             
-        eog_event_fname = prefix + '_eog-eve' + suffix 
+        eog_event_fname = prefix + '_eog-eve.fif'
         
         if comp_ssp:
-            eog_proj_fname = prefix + '_eog_avg_proj' + suffix
+            eog_proj_fname = prefix + '_eog_avg_proj.fif'
         else:
-            eog_proj_fname = prefix + '_eog_proj' + suffix
+            eog_proj_fname = prefix + '_eog_proj.fif'
             
         #raw = mne.fiff.Raw(raw_in, preload=preload)
         
