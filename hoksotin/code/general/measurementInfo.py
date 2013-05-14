@@ -159,16 +159,33 @@ class MeasurementInfo(object):
         Raises an exception if the personal data is malformed.
         """
         subj_info = mne.fiff.open.show_fiff(self._info.get('filename'))
-        if not isinstance(subj_info, str):
+        if not isinstance(subj_info, str) or subj_info == '':
             raise TypeError('Personal info not found.')
-        name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
-        if name_result == None:
-            return 'Unknown'
-        last_name = name_result.group(1).split(' ')
-        name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', subj_info)
-        first_name = name_result.group(1).split(' ')
-        name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...', subj_info)
-        middle_name = name_result.group(1).split(' ')
-        if len(last_name) < 3 or len(first_name) < 3 or len(middle_name) < 3:
-            raise Exception('An error occurred while fetching subject name.')
-        return last_name[2] + ' ' + first_name[2] + ' ' + middle_name[2]
+        last_name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
+        middle_name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...',
+                                        subj_info)
+        first_name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', 
+                                      subj_info)
+        
+        # If the file has no name fields set, don't crash
+        # TODO: test with empty strings as names
+        if ( last_name_result == None or last_name_result.group(1) == None ):
+            last_name = ''
+        else:  
+            last_name_table = last_name_result.group(1).split(' ') 
+            last_name = last_name_table[2]
+            
+        if ( middle_name_result == None or
+            middle_name_result.group(1) == None ):
+            middle_name = ''
+        else: 
+            middle_name_table = middle_name_result.group(1).split(' ')
+            middle_name = middle_name_table[2]
+        
+        if ( first_name_result == None or first_name_result.group(1) == None ):
+            first_name = ''
+        else: 
+            first_name_table = first_name_result.group(1).split(' ')
+            first_name = first_name_table[2]
+        
+        return last_name + ' ' + first_name + ' ' + middle_name
