@@ -20,9 +20,14 @@ class MaxFilterDialog(QtGui.QDialog):
 
 
     def __init__(self, parent, raw):
-        '''
-        Constructor
-        '''
+        """
+        A dialog for collecting parameter values for MaxFilter.
+        
+        Keyword arguments:
+        
+        parent     --    The class that created this window.
+        raw        --    The raw data file to be MaxFiltered.
+        """
         QtGui.QDialog.__init__(self)
         """
         Reference to main dialog window
@@ -31,8 +36,11 @@ class MaxFilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
+        # Hides the label indicating that MaxFilter has been used.
         self.ui.labelComputeMaxFilter.setVisible(False)
         self.ui.progressBarComputeMaxFilter.setVisible(False)
+        # Checks which lab-specific calibration files are found and adds those
+        # labs to comboBoxLab.
         self.populateComboboxLab()
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
@@ -46,7 +54,6 @@ class MaxFilterDialog(QtGui.QDialog):
         a caller to actually call the backend.
         """
         
-        print self.setLab()
         self.ui.labelComputeMaxFilter.setVisible(True)
         self.ui.progressBarComputeMaxFilter.setVisible(True)
         
@@ -77,27 +84,32 @@ class MaxFilterDialog(QtGui.QDialog):
         if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
             if ( self.ui.spinBoxSkipEnd_1.value() 
             <= self.ui.spinBoxSkipStart_1.value() ):
-                self.showErrorMessage('Check skip values')
+                self.showErrorMessage('First skip ends before it starts.')
                 return 
             skips += str(self.ui.spinBoxSkipStart_1.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_1.value()) + ' '
             
         if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
             if ( self.ui.spinBoxSkipEnd_2.value() 
-                 <= self.ui.spinBoxSkipStart_2.value()
-                 or self.ui.spinBoxSkipStart_2.value() 
+                 <= self.ui.spinBoxSkipStart_2.value() ):
+                    self.showErrorMessage('Second skip ends ' +
+                                           'before it starts.')
+            if (self.ui.spinBoxSkipStart_2.value() 
                  < self.ui.spinBoxSkipEnd_1.value() ):
-                    self.showErrorMessage('Check skip values')
+                    self.showErrorMessage('Second skip starts before the ' +
+                                          'first skip ends.')
                     return
             skips += str(self.ui.spinBoxSkipStart_2.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_2.value()) + ' '
         
         if self.ui.checkBoxSkip_3.checkState() == QtCore.Qt.Checked:
             if ( self.ui.spinBoxSkipEnd_3.value() 
-                 <= self.ui.spinBoxSkipStart_3.value()
-                 or self.ui.spinBoxSkipStart_3.value() 
+                 <= self.ui.spinBoxSkipStart_3.value()):
+                    self.showErrorMessage('Third skip ends before it starts.')
+            if ( self.ui.spinBoxSkipStart_3.value() 
                  < self.ui.spinBoxSkipEnd_2.value() ):
-                    self.showErrorMessage('Check skip values')
+                    self.showErrorMessage('Third skip starts before the ' + 
+                                          'second skip ends.')
                     return
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '            
