@@ -10,7 +10,8 @@ from statistic import Statistic
 
 class TestStatistic(unittest.TestCase):
     """
-    Unit tests for the Statistic-class.
+    Unit tests for the Statistic-class. Tests are created for find-maximum
+    and find_minimum methods.
     """
     sfreq_int = 1
     sfreq_double = 1.5
@@ -42,6 +43,14 @@ class TestStatistic(unittest.TestCase):
     s = Statistic()
         
     def test_all_normal(self):
+        """
+        Test with all parameters having a normal value. sampling frequency is
+        an integer, array contains only positive numbers and only one max and
+        one min value, starting and stopping times are positive integers and
+        the stopping time ios greater than the starting time.
+        
+        If this test fails, something is seriously wrong.
+        """
         
         self.assertEqual(self.s.find_maximum(self.sfreq_int, self.arr_normal,
                                         1000, 5000), (48, 4000), 
@@ -52,7 +61,11 @@ class TestStatistic(unittest.TestCase):
                          (5, 3000), 'Find_minimum_normal failed.')
     
     def test_freq_double(self):
-        # TODO: Figure out how this should work
+        """
+        Same as the normal test except sampling frequency is a double instead
+        of an integer. 
+        """
+        #TODO: It hasn't been decided, how this should be handled.
         self.assertEqual(self.s.find_maximum(self.sfreq_double,
                                              self.arr_normal, 1000,5000),
                                             (48, 4000),
@@ -64,7 +77,8 @@ class TestStatistic(unittest.TestCase):
     
     def test_freq_zero(self):
         """
-        Should raise an exception when sfreq <= 0.
+        A test where the sampling frequency is zero. This should not be allowed
+        to happen. Should raise an exception when sfreq <= 0.
         """
         with self.assertRaises(Exception) as e:
             self.s.find_maximum(self.sfreq_zero, self.arr_normal, 1000, 5000)
@@ -82,6 +96,9 @@ class TestStatistic(unittest.TestCase):
             
     
     def test_tmin_double(self):
+        """
+        A test case for when the start time is a double.
+        """
         
         self.assertEqual(self.s.find_maximum(self.sfreq_int, self.arr_normal,
                                              self.tmin_double, self.tmax_int),
@@ -95,7 +112,7 @@ class TestStatistic(unittest.TestCase):
     def test_tmin_negative(self):
         """
         Statistic class shouldn't be able to receive negative values for 
-        tmin and tmax.
+        tmin and tmax and raises an exception for when it does. 
         """
         # TODO: Is this really working as intended?
         with self.assertRaises(Exception) as e:
@@ -116,7 +133,7 @@ class TestStatistic(unittest.TestCase):
     
     def test_tmax_smaller_than_tmin(self):
         """
-        Time-window cannot end before it begins.
+        Time-window cannot end before it begins. Raises an exception.
         """
         with self.assertRaises(Exception) as e:
             self.s.find_maximum(self.sfreq_int, self.arr_normal,
@@ -167,6 +184,9 @@ class TestStatistic(unittest.TestCase):
                          failed.')
         
     def test_find_max_arr_const(self):
+        """
+        A test for when all the values in the array are equal.
+        """
         
         self.assertEqual(self.s.find_maximum(self.sfreq_int, self.arr_const,
                                              self.tmin_int, self.tmax_int),
@@ -177,7 +197,9 @@ class TestStatistic(unittest.TestCase):
                          (2, 1000), 'Find_minimum with constant array failed.')
         
     def test_arr_empty(self):
-        
+        """
+        Empty array is not allowed. Raises an exception.
+        """
         with self.assertRaises(Exception) as e:
             self.s.find_maximum(self.sfreq_int, self.arr_empty,
                                 self.tmin_int, self.tmax_int)
@@ -185,6 +207,6 @@ class TestStatistic(unittest.TestCase):
                              'Unexpected exception raised with an empty array')
         
     if __name__ == "__main__":
-        #import sys;sys.argv = ['', 'TestStatistic.testMax']
+        
         unittest.main()
     

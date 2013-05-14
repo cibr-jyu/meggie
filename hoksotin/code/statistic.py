@@ -188,17 +188,4 @@ class Statistic(object):
         start = int(round((tmin/1000)*sfreq))
         stop = int(round((tmax/1000)*sfreq))+1
         return arr[start:stop], start
-
-"""    
-def main():
-    s = Statistic()
-    m = np.array([[1,1,1,1,1],
-                  [2,2,2,2,2],
-                  [3,3,3,3,3],
-                  [4,5,9,7,8]])
-    max = s.find_maximum_intensity(m, 2, 3)
-    print max
-     
-if __name__ == "__main__":
-    main()
-"""
+    
