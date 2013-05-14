@@ -8,9 +8,6 @@ import subprocess
 import os
 import glob
 
-from xlwt import *
-from xlrd import open_workbook,cellname
-
 import mne
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
@@ -25,8 +22,11 @@ class Caller(object):
     Class for calling third party software.
     """
     def __init__(self, parent):
-        
-       
+        """
+        Constructor
+        Keyword arguments:
+        parent        -- Parent of this object.
+        """
         self.parent = parent
     
     def call_mne_browse_raw(self, filename):
@@ -35,15 +35,14 @@ class Caller(object):
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
         """
-        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
         try:
             proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-        except:
-            pass #TODO error handling
+        except Exception, err:
+            raise Exception(str(err))
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()
@@ -127,15 +126,17 @@ class Caller(object):
         if raw_in.info.get('filename').endswith('_raw.fif') or \
         raw_in.info.get('filename').endswith('-raw.fif'):
             prefix = raw_in.info.get('filename')[:-8]
+            suffix = '.fif'
         else:
-            prefix = raw_in.info.get('filename')[:-4]
+            prefix, suffix = os.path.splitext(raw_in.info.get('filename')) 
+            #prefix = raw_in.info.get('filename')[:-4]
         
-        ecg_event_fname = prefix + '_ecg-eve.fif'
+        ecg_event_fname = prefix + '_ecg-eve' + suffix
         
         if comp_ssp:
-            ecg_proj_fname = prefix + '_ecg_avg_proj.fif'
+            ecg_proj_fname = prefix + '_ecg_avg_proj' + suffix
         else:
-            ecg_proj_fname = prefix + '_ecg_proj.fif'
+            ecg_proj_fname = prefix + '_ecg_proj' + suffix
         
         #raw = mne.fiff.Raw(raw_in, preload=preload)
         
@@ -206,15 +207,17 @@ class Caller(object):
         if (raw_in.info.get('filename').endswith('_raw.fif') 
         or raw_in.info.get('filename').endswith('-raw.fif')):
             prefix = raw_in.info.get('filename')[:-8]
+            suffix = '.fif'
         else:
-            prefix = raw_in.info.get('filename')[:-4]
+            prefix, suffix = os.path.splitext(raw_in.info.get('filename'))
+            #prefix = raw_in.info.get('filename')[:-4]
             
-        eog_event_fname = prefix + '_eog-eve.fif'
+        eog_event_fname = prefix + '_eog-eve' + suffix 
         
         if comp_ssp:
-            eog_proj_fname = prefix + '_eog_avg_proj.fif'
+            eog_proj_fname = prefix + '_eog_avg_proj' + suffix
         else:
-            eog_proj_fname = prefix + '_eog_proj.fif'
+            eog_proj_fname = prefix + '_eog_proj' + suffix
             
         #raw = mne.fiff.Raw(raw_in, preload=preload)
         
