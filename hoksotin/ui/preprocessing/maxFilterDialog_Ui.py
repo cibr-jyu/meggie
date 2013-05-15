@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'maxFilterDialogNew.ui'
 #
-# Created: Mon May 06 13:16:26 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed May 15 13:26:53 2013
+#      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
 

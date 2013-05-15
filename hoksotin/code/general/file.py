@@ -26,7 +26,7 @@ class File(object):
         fname         -- A file to open
         Raises an exception if the file cannot be opened.
         """
-        if os.path.isfile(fname) and fname.endswith('fif'):
+        if os.path.isfile(fname):# and fname.endswith('fif'):
             return mne.fiff.Raw(fname, preload=True)
             #self.raw = mne.fiff.Raw(str(fname))
         else:

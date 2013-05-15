@@ -1,7 +1,8 @@
+  # -*- coding: utf-8 -*-
 '''
 Created on Mar 28, 2013
 
-@author: jaeilepp, Atte Rautio
+@author: Jaakko Leppäkangas, Atte Rautio
 '''
 from maxFilterDialog_Ui import Ui_Dialog
 #from settings import Settings
@@ -15,6 +16,7 @@ import subprocess
 from threading import Thread
 from PyQt4 import QtCore,QtGui
 
+import messageBox
 
 class MaxFilterDialog(QtGui.QDialog):
 
@@ -53,9 +55,8 @@ class MaxFilterDialog(QtGui.QDialog):
         Reads values from the dialog, saves them in a dictionary and initiates
         a caller to actually call the backend.
         """
-        
-        self.ui.labelComputeMaxFilter.setVisible(True)
-        self.ui.progressBarComputeMaxFilter.setVisible(True)
+        t = Thread(target=self._show_progressbar)
+        t.start()
         
         dictionary = {'-v': ''}
         x = self.ui.doubleSpinBoxX0.value()
@@ -70,10 +71,10 @@ class MaxFilterDialog(QtGui.QDialog):
         
         try:
             bads = self.ui.lineEditBad.text()
-        except InputError:
-            # TODO 
-            pass            
-        
+        except InputError, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()           
         """ 
         Check for skips and the sanity of their values. Skip periods should
         not overlap, and later skip periods should come later than earlier
@@ -188,9 +189,13 @@ class MaxFilterDialog(QtGui.QDialog):
         
         # Uses the caller related to mainwindow
         caller = self.parent.caller
-        t = Thread(target=caller.call_maxfilter,
-                   args=(dictionary, custom,))
-        t.start()
+        
+        try:
+            caller.call_maxfilter(dictionary, custom)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
         
         """
         Checks the MaxFilter box in the preprocessing tab of the mainWindow
@@ -208,14 +213,15 @@ class MaxFilterDialog(QtGui.QDialog):
         # TODO: change c:\\MyTemp\\testi\\ into the proper env variable.
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
-        files = os.listdir('c:\\MyTemp\\testi\\databases\\sss\\')
+        self.root = os.environ.get('NEUROMAG_ROOT')
+        files = os.listdir(self.root + '/databases/sss/')
         
         for file in files:
             
             if file.startswith('sss_cal_'):
                 lab = file.split('sss_cal_')[1][:-4]
-                if os.path.isfile('c:\\MyTemp\\testi\\databases\ctc\\' + 
-                                  'ct_sparse_' + lab + '.fif'):
+                if os.path.isfile(self.root + '/databases/ctc/' + 
+                                  'ct_sparse_' + lab + '.fif'): 
                     self.ui.comboBoxLab.addItem(lab)
                 
     
@@ -228,18 +234,24 @@ class MaxFilterDialog(QtGui.QDialog):
         
         lab = str(self.ui.comboBoxLab.currentText())
         
-        if not os.path.isfile('c:\\MyTemp\\testi\\databases\\sss\\sss_cal_' +
+        if not os.path.isfile(self.root + '/databases/sss/sss_cal_' +
                               lab + '.dat'):
             lab = ''
             return lab
         
-        if not os.path.isfile('c:\\MyTemp\\testi\\databases\ctc\\ct_sparse_' + 
+        if not os.path.isfile(self.root + '/databases/ctc/ct_sparse_' + 
                               lab + '.fif'):
             lab = ''
             return lab
         
         return lab
             
+    def _show_progressbar(self):
+        """
+        Shows and starts the progressbar.
+        """
+        self.ui.labelComputeMaxFilter.setVisible(True)
+        self.ui.progressBarComputeMaxFilter.setVisible(True)
             
     def showErrorMessage(self, message):
         """
@@ -249,6 +261,7 @@ class MaxFilterDialog(QtGui.QDialog):
         self.messageBox.labelException.setText(str(message))
         self.messageBox.show()
         
+            
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MaxFilterDialog(None, None)

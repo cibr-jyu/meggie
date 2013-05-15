@@ -214,7 +214,13 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
+        try:
+            self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            return
         self.maxFilterDialog.show()
     
     def on_currentChanged(self):

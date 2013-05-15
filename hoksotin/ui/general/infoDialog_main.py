@@ -46,18 +46,3 @@ class InfoDialog(QtGui.QDialog):
         self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq) + ' Hz')
         self.ui.labelSubjectValue.setText(self.mi.subject_name)
     
-        
-"""
-def main():
-    app = QtGui.QApplication(sys.argv)
-    window=infoDialog()
-    
-    
-    
-    window.show()
-    
-    sys.exit(app.exec_())
-    
-if __name__ == "__main__":
-    main()
-"""

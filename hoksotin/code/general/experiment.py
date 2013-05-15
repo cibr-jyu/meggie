@@ -36,7 +36,6 @@ class Experiment(object):
         self._file_path = 'no path defined'
         self._author = 'unknown _author'
         self._description = 'no _description'
-        #self.__index = 0
         self._working_file = ''
         self._working_file_path = 'no path defined'
         self._event_set = []

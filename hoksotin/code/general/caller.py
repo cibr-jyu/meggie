@@ -37,14 +37,11 @@ class Caller(object):
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
         """
-        try:
-            proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
+        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,
                                     shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
-        except Exception, err:
-            raise Exception(str(err))
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()
