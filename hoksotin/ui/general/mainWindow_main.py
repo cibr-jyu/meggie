@@ -210,7 +210,7 @@ class MainWindow(QtGui.QMainWindow):
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.caller.call_mne_browse_raw(self.experiment.raw_data.info.get('filename'))
+        self.caller.call_mne_browse_raw(self.experiment.working_file.info.get('filename'))
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
@@ -279,6 +279,9 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog.show()
     
     def _initialize_ui(self):
+        """
+        Method for setting up the GUI.
+        """
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")
@@ -295,6 +298,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelEOGComputedAccept_2.hide()
         self.ui.labelECGAppliedAccept_2.hide()
         self.ui.labelEOGAppliedAccept_2.hide()
+        self.ui.pushButtonApplyEOG.setEnabled(False)
+        self.ui.pushButtonApplyECG.setEnabled(False)
         """
         self.ui.checkBoxECG.hide()
         self.ui.checkBoxEOG.hide()

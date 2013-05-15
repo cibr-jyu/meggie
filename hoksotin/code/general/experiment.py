@@ -155,8 +155,6 @@ class Experiment(object):
         else:
             raise Exception('Wrong data type')
     
-        self.raw_data_path = raw_data.info.get('filename')
-    
     @property
     def author(self):
         """
@@ -252,6 +250,9 @@ class Experiment(object):
     @stim_channel.setter
     def stim_channel(self, stim_ch):
         """
+        Setter for stimulus channel.
+        """
+        """
         channels = self._raw_data.info.get('ch_names')
         if any('STI101' in channels for x in channels):
             self._stim_channel = 'STI101'
@@ -263,6 +264,9 @@ class Experiment(object):
         self._stim_channel = stim_ch
     
     def find_stim_channel(self):
+        """
+        Finds the correct stimulus channel for the data.
+        """
         channels = self._raw_data.info.get('ch_names')
         if any('STI101' in channels for x in channels):
             self._stim_channel = 'STI101'
@@ -346,6 +350,7 @@ class Experiment(object):
         raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
+        self._raw_data_path = self._raw_data.info.get('filename')
             
     def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):

@@ -90,7 +90,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         QtGui.QApplication.processEvents() 
         
     def _initialize_experiment(self):
-        self.k = True
         try:
             if self.ui.lineEditExperimentName.text() == '':
                 raise Exception('Give experiment a name!')
@@ -134,7 +133,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.parent.ui.statusbar.showMessage("Current working file: " + 
                                              (self.experiment.working_file.
                                               info.get('filename')))
-            self.experiment.save_experiment_settings()
             #self.experiment.stim_channel = 'STI 014'
       
         except IOError, err:
@@ -166,7 +164,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             item.setText('Trigger ' + str(key) + ', ' + str(value) + 
                         ' events')
             self.parent.ui.listWidget.addItem(item)
-        self.k = False
+        self.experiment.save_experiment_settings()
         self.close()
         self.parent._initialize_ui() 
         

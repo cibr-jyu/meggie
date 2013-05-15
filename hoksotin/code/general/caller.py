@@ -13,6 +13,8 @@ from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 from mne.viz import plot_topo_power, plot_topo_phase_lock
 
+from xlrd import open_workbook
+from xlwt import Workbook, XFStyle
 
 import numpy as np
 import pylab as pl
@@ -24,7 +26,7 @@ class Caller(object):
     def __init__(self, parent):
         """
         Constructor
-        Keyword arguments:
+        Keyword arguments:pen_workbook
         parent        -- Parent of this object.
         """
         self.parent = parent
@@ -139,14 +141,15 @@ class Caller(object):
             ecg_proj_fname = prefix + '_ecg_proj' + suffix
         
         #raw = mne.fiff.Raw(raw_in, preload=preload)
-        
-        projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
+        try:
+            projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, ch_name, reject, flat,
                             bads, eeg_proj, excl_ssp, event_id,
                             ecg_low_freq, ecg_high_freq, start, qrs_threshold)
-        #raw_in.close()
+        except Exception, err:
+            raise Exception(err)
         
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -218,16 +221,12 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
             
-        #raw = mne.fiff.Raw(raw_in, preload=preload)
-        
         projs, events = mne.preprocessing.compute_proj_eog(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, reject, flat, bads,
                             eeg_proj, excl_ssp, event_id,
                             eog_low_freq, eog_high_freq, start)
-            
-        #raw.close()
         
         #TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -406,12 +405,12 @@ class Caller(object):
         #n_cycles = frequencies / float(15)
         Fs = raw.info['sfreq']
         decim = 3
+
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
                                           n_cycles=n_cycles, n_jobs=3,
                                           use_fft=False, decim=decim,
                                           zero_mean=True)
-        
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
         #mode = 'ratio'  # set mode for baseline rescaling
@@ -435,7 +434,7 @@ class Caller(object):
         
     def magnitude_spectrum(self, raw, ch_index):
         """
-        Draws a magnitude spectrum of the selected channel.
+        Plots magnitude spectrum of the selected channel.
         Keyword arguments:
         raw           -- A raw object.
         ch_index      -- Index of the channel to be used.

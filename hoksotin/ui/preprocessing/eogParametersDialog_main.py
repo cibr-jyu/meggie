@@ -8,6 +8,8 @@ from eogParametersDialog_Ui import Ui_Dialog
 
 from caller import Caller
 
+import messageBox
+
 class EogParametersDialog(QtGui.QDialog):
     """
     Class containing the logic for eogParametersDialog.
@@ -86,7 +88,14 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['average'] = comp_ssp
         
         # Uses the caller related to mainwindow
-        self.parent.caller.call_eog_ssp(dictionary)
+        try:
+            self.parent.caller.call_eog_ssp(dictionary)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Cannot calculate ' +
+                                                   'projections: ' + str(err))
+            self.messageBox.show()
+            return
         self.parent._initialize_ui()
         self.close()
         

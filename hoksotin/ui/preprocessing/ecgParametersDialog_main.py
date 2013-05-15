@@ -12,6 +12,8 @@ from ecgParametersDialog_Ui import Ui_Dialog
 from caller import Caller
 from measurementInfo import MeasurementInfo
 
+import messageBox
+
 class EcgParametersDialog(QtGui.QDialog):
     """
     Class containing the logic for ecgParametersDialog.
@@ -131,7 +133,14 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
             
         # Uses the caller related to mainwindow
-        self.parent.caller.call_ecg_ssp(dictionary)
+        try:
+            self.parent.caller.call_ecg_ssp(dictionary)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Cannot calculate ' +
+                    'projections: ' + str(err) + '\nCheck parameters.')
+            self.messageBox.show()
+            return
         self.parent._initialize_ui()
         self.close()
 
