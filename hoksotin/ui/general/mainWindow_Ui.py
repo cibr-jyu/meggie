@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
-# Created: Mon May 13 15:39:20 2013
+# Created: Wed May 15 15:29:16 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -331,6 +331,9 @@ class Ui_MainWindow(object):
         self.gridLayout_10.addWidget(self.labelECGComputedAccept_2, 1, 0, 1, 1)
         self.verticalLayout_10.addLayout(self.gridLayout_10)
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.groupBoxPreprocessingCheckBoxes)
+        self.pushButtonSpectrum = QtGui.QPushButton(self.tabPreprocessing)
+        self.pushButtonSpectrum.setObjectName(_fromUtf8("pushButtonSpectrum"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.pushButtonSpectrum)
         self.tabWidget.addTab(self.tabPreprocessing, _fromUtf8(""))
         self.tabEpoching = QtGui.QWidget()
         self.tabEpoching.setObjectName(_fromUtf8("tabEpoching"))
@@ -433,7 +436,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -477,6 +480,7 @@ class Ui_MainWindow(object):
         self.labelEOGComputed_2.setText(_translate("MainWindow", "EOG computed", None))
         self.labelMaxFilter_2.setText(_translate("MainWindow", "MaxFilter", None))
         self.labelECGApplied_2.setText(_translate("MainWindow", "ECG applied", None))
+        self.pushButtonSpectrum.setText(_translate("MainWindow", "Magnitude spectrum", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonEventlist.setText(_translate("MainWindow", "Create an epoch collection", None))

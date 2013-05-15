@@ -32,6 +32,7 @@ from addECGProjections_main import AddECGProjections
 from addEOGProjections_main import AddEOGProjections
 from TFRDialog_main import TFRDialog
 from TFRTopologyDialog_main import TFRTopologyDialog
+from spectrumDialog_main import SpectrumDialog
 from widgets.epochWidget_main import EpochWidget
 import messageBox
 
@@ -222,6 +223,10 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
         self.maxFilterDialog.show()
+        
+    def on_pushButtonSpectrum_clicked(self):
+        self.spectrumDialog = SpectrumDialog(self)
+        self.spectrumDialog.show()
     
     def on_currentChanged(self):
         """

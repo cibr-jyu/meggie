@@ -238,7 +238,7 @@ class Caller(object):
         # Write parameter file
         self.parent.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
-          eog_proj_fname, eogproj, dic)
+          eog_proj_fname, 'eogproj', dic)
         
         #self.experiment.update_state(EOGcomputed, True)
         
@@ -436,7 +436,7 @@ class Caller(object):
         raw           -- A raw object.
         ch_index      -- Index of the channel to be used.
         """
-        data = raw[ch_index,:]
+        data, times = raw[ch_index,:]
         data = np.squeeze(data)
         ch_fft = np.fft.fft(data)
         ffta = np.absolute(ch_fft)
