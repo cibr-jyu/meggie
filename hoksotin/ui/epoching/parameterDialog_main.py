@@ -45,7 +45,8 @@ class ParameterDialog(QtGui.QDialog):
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         event_name = self.ui.lineEditName.text()
         print self.parent.experiment.stim_channel
-        e = Events(self.parent.experiment.raw_data, 'STI 014')
+        e = Events(self.parent.experiment.raw_data, 
+                   self.parent.experiment.stim_channel)
         e.pick(self.event_id)
         return e.events
         """
