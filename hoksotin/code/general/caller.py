@@ -160,7 +160,8 @@ class Caller(object):
         # Write parameter file
         self.parent.experiment.\
         save_parameter_file('mne.preprocessing.compute_proj_ecg',
-                            raw_in.info.get('filename'), ecg_proj_fname, dic)
+                            raw_in.info.get('filename'), 
+                            ecg_proj_fname, 'ecgproj', dic)
         
     def call_eog_ssp(self, dic):
         """
@@ -241,7 +242,7 @@ class Caller(object):
         # Write parameter file
         self.parent.experiment.save_parameter_file
         ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
-          eog_proj_fname, dic)
+          eog_proj_fname, eogproj, dic)
         
         #self.experiment.update_state(EOGcomputed, True)
         

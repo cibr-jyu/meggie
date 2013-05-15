@@ -49,29 +49,6 @@ class ParameterDialog(QtGui.QDialog):
                    self.parent.experiment.stim_channel)
         e.pick(self.event_id)
         return e.events
-        """
-        self.tmin = float(self.ui.doubleSpinBoxTmin.value())
-        self.tmax = float(self.ui.doubleSpinBoxTmax.value())
-        epoch_name = self.ui.lineEditName.text()
-        mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
-        grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
-        eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
-        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
-        eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        channels = self.check_channels()
-        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
-                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
-                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
-                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
-        print channels
-        try:
-            epochs = Epochs(self.parent.experiment.raw_data, stim_channel, mag,
-                            grad, eeg, stim, eog, reject, epoch_name, float(self.tmin),
-                            float(self.tmax), int(self.event_id), channels)
-        except:
-            return #TODO error handling
-        return epochs
-        """
         
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None: return # Standard workaround
@@ -91,17 +68,6 @@ class ParameterDialog(QtGui.QDialog):
                 item.setData(33, self.ui.lineEditName.text())
                 self.ui.listWidgetEvents.addItem(item)
             self.ui.listWidgetEvents.setCurrentItem(item)
-            """
-            event_set = '(ID:' + str(self.event_id) + ', ' + \
-                str(self.parent.experiment.event_set.get(self.event_id)) + \
-                ' events, start: ' + str(self.tmin) + ', end: ' + \
-                str(self.tmax) + ')'
-            item = QtGui.QListWidgetItem(self.ui.lineEditName.text() + ' ' + event_set)
-            item.setData(1, epochs)
-            self.ui.listWidgetEvents.addItem(item)
-            self.ui.lineEditName.setText('Event' + str(self.__class__.index))
-            self.ui.listWidgetEvents.setCurrentItem(item) #select the last item
-            """
             self.ui.lineEditName.setText('Event' + str(self.__class__.index))
             self.ui.pushButtonRemove.setEnabled(True)
         

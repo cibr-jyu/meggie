@@ -347,7 +347,8 @@ class Experiment(object):
         mne.fiff.Raw.save(self._raw_data, raw_file_path)
         self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
             
-    def save_parameter_file(self, command, inputfilename, outputfilename, dic):
+    def save_parameter_file(self, command, inputfilename, outputfilename,
+                            operation, dic):
         """
         Saves the command and parameters related to creation of a certain
         output file to a separate parameter file in csv-format.
@@ -367,11 +368,14 @@ class Experiment(object):
         Keyword arguments:
         inputfilename    -- name of the file the command with parameters
                             was executed on
-        outputfilename   -- the resulting output file from the command
-        command          -- command (as string) used
-        dic              -- dictionary including commands
+        outputfilename   -- the resulting output file from the command.
+        command          -- command (as string) used.
+        operation        -- operation the command represents. Used for
+                            determining the parameter file name.
+        dic              -- dictionary including commands.
         """
-        paramfilename = outputfilename + '.param'
+        paramfilename = self.subject_directory + operation + '.param'
+        
         with open(paramfilename, 'wb') as paramfullname:
             print 'writing param file'
             csvwriter = csv.writer(paramfullname)
@@ -383,29 +387,25 @@ class Experiment(object):
             for key, value in dic.items():
                 csvwriter.writerow([key, value])
                     
-    def create_parameter_dictionary(self, globquerystring):
+    def parse_parameter_file(self, operation):
         """
-        Reads the parameters from a single file matching the globquerystring
-        and returns the parameters as a dictionary.
-        
-        TODO Should take a list of globstrings and give positive match for any
-        of them, as a dialog may produce several differently named files.
-        Probably only the newest of the found files should be added
-        to the globlist.
+        Reads the parameters from a single file matching the operation
+        and returns the parameters as a dictionary.        
         
         Keyword arguments:
-        globquerystring    -- string for the glob to match with found files
+        operation    -- string that designates the operation. See caller and
+                        e for
+                        operations and 
         """
-    
+        
         # Reading parameter file.
         paramdirectory = self._subject_directory 
-        globquery = paramdirectory + globquerystring
-        globlist = glob.glob(globquery)
+        paramfilefullpath = paramdirectory + operation + '.param'
         
-        # Should be only one file matching
-        if ( len(globlist) == 1 ):
-            paramfilefullpath = globlist[0]              
-            
+        #globquery = paramdirectory + globquerystring
+        #globlist = glob.glob(globquery)
+        
+        try:
             with open(paramfilefullpath, 'rb') as paramfile:
                 csvreader=csv.reader(paramfile)
                 
@@ -418,6 +418,8 @@ class Experiment(object):
                 # key-value pairs
                 paramdict = dict(x for x in csvreader)
                 return paramdict           
+        except IOError:
+            return None
                         
     def __getstate__(self):
         """

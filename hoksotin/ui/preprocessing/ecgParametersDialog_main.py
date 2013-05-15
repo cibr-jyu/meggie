@@ -29,19 +29,19 @@ class EcgParametersDialog(QtGui.QDialog):
         
         """ 
         If the dialog has been opened previously, reads the previous
-        parameters into a dictionary.
+        parameters from a parameter file into a dictionary. The creation of the
+        parameter file is handled by the caller.
         TODO Should call with a list of globstrings, as the mne script this 
         dialog evokes can produce files ending with "ecg_proj.fif" or
         "ecg_ave_proj.fif".
         """
         
-        paramdict = parent.experiment.create_parameter_dictionary(
-                                                            '*ecg_proj*param')
+        paramdict = parent.experiment.parse_parameter_file('ecgproj')
         self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
         
-        # If no parameter fili existed, return
+        # If no parameter file existed, return
         if ( dic == None ): return
         
         """
