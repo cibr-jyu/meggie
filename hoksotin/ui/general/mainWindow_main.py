@@ -102,10 +102,6 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.isfile('settings.cfg'):
             self.dialog = CreateExperimentDialog(self)
             self.dialog.show()
-            """
-            Sets the experiment for caller, so it can use its information
-            self.caller.experiment = self.experiment
-            """
         else:
             self.check_workspace()   
         
@@ -371,7 +367,6 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilter.setCheckState(QtCore.Qt.Checked)
             """
             self.ui.labelMaxFilterAccept_2.show()
-        
         #TODO: Maxfilter
     def check_workspace(self):
         self.workSpaceDialog = WorkSpaceDialog(self)

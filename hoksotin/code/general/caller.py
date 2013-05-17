@@ -348,7 +348,10 @@ class Caller(object):
         pl.plot(times, evoked_data.T)
         pl.title('Evoked response (%s)' % evoked.ch_names[ch_index])
         pl.xlabel('time (ms)')
-        pl.ylabel('Magnetic Field (fT/cm)')
+        if str(evoked.ch_names[ch_index]).endswith('1'):
+            pl.ylabel('Magnetic Field (fT)')
+        else:
+            pl.ylabel('Magnetic Field (fT/cm)')
         pl.xlim(times[0], times[-1])
         pl.ylim(-150, 300)
         
@@ -357,7 +360,7 @@ class Caller(object):
                                                    frequencies[0],
                                                    frequencies[-1]],
                   aspect='auto', origin='lower')
-        pl.xlabel('Time (s)')
+        pl.xlabel('Time (ms)')
         pl.ylabel('Frequency (Hz)')
         pl.title('Induced power (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
@@ -366,7 +369,7 @@ class Caller(object):
         pl.imshow(phase_lock[0], extent=[times[0], times[-1],
                                          frequencies[0], frequencies[-1]],
                   aspect='auto', origin='lower')
-        pl.xlabel('Time (s)')
+        pl.xlabel('Time (ms)')
         pl.ylabel('Frequency (Hz)')
         pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
@@ -436,7 +439,8 @@ class Caller(object):
         raw           -- A raw object.
         ch_index      -- Index of the channel to be used.
         """
-        data, times = raw[ch_index,:]
+        #data, times = raw[ch_index,:]
+        data = raw[ch_index,:][0]
         data = np.squeeze(data)
         ch_fft = np.fft.fft(data)
         ffta = np.absolute(ch_fft)
