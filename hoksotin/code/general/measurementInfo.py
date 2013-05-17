@@ -154,9 +154,8 @@ class MeasurementInfo(object):
     @property    
     def subject_name(self):
         """
-        Returns the subjects name
-        Raises an exception if the personal data is not a string.
-        Raises an exception if the personal data is malformed.
+        Returns the subjects name. If some of the name fields are nonexistent
+        or empty, substitutes information with emptry strings.
         """
         subj_info = mne.fiff.open.show_fiff(self._info.get('filename'))
         if not isinstance(subj_info, str) or subj_info == '':
