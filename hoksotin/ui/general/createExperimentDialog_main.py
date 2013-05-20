@@ -98,7 +98,8 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            #self.computeDialog.close()
+            self.ui.labelCreatingExperiment.setVisible(False)
+            self.ui.progressBarCreatingExperiment.setVisible(False)
             return          
         QtGui.QApplication.processEvents()
         #self.computeDialog.setValue(10)    
@@ -118,28 +119,30 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
-            #self.computeDialog.close()
+            self.ui.labelCreatingExperiment.setVisible(False)
+            self.ui.progressBarCreatingExperiment.setVisible(False)
             return         
         try:
-            self.experiment.save_experiment(self.workspace.working_directory)
+            #self.experiment.save_experiment(self.workspace.working_directory)
             self.experiment.raw_data = self.raw
             self.experiment.find_stim_channel()
             self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.
                                                           FilePathLineEdit.
-                                                          text())))
+                                                          text())),
+                                     self.workspace.working_directory)
             self.experiment.working_file = (self.experiment.raw_data.
                                             info.get('filename'))
             self.parent.ui.statusbar.showMessage("Current working file: " + 
                                              (self.experiment.working_file.
                                               info.get('filename')))
-            #self.experiment.stim_channel = 'STI 014'
       
-        except IOError, err:
+        except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            #self.computeDialog.close()
+            self.ui.labelCreatingExperiment.setVisible(False)
+            self.ui.progressBarCreatingExperiment.setVisible(False)
             return
 
         

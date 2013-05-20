@@ -311,14 +311,16 @@ class Experiment(object):
         #shutil.move(settingsFileName, str(self._file_path))
         
         settingsFile.close()        
-    
+    """
     def save_experiment(self, path):
-        """
+    """
+    """
         Creates the experiment folder.
         
         Keyword arguments:
         path    -- path for the chosen experiment.
-        """
+    """
+    """
         self._file_path = path + '/' + self._experiment_name + '/'
         if os.path.exists(path):
             try:
@@ -327,15 +329,27 @@ class Experiment(object):
                 print "no rights to save to the chosen path"
         else:
             raise Exception('No such path')
-        
-    def save_raw(self, file_name):
+    """    
+    def save_raw(self, file_name, path):
         """
         Saves the raw data file into the experiment folder.
         
         Keyword arguments:
         file_name      -- the full path and name of the chosen raw data file
         """
+        self._file_path = path + '/' + self._experiment_name + '/'
         folder_name = file_name.split("_", 1)
+        if os.path.exists(path):
+            try:
+                os.mkdir(self._file_path)
+                os.mkdir(self._file_path + '/' + folder_name[0])
+            except OSError:
+                raise OSError("no rights to save to the chosen path")
+        else:
+            raise Exception('No such path')
+        
+        
+        """
         try:
             if os.path.exists(self._file_path + folder_name[0]):
                 pass
@@ -344,12 +358,16 @@ class Experiment(object):
         except OSError:
             print "no rights to save the raw file to the chosen path \
             or bad raw file name"
-        
-        self.subject_directory = str(self._file_path) + folder_name[0] + '/'
-        raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
-        mne.fiff.Raw.save(self._raw_data, raw_file_path)
-        self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
-        self._raw_data_path = self._raw_data.info.get('filename')
+        """
+        if os.path.exists(self._file_path + folder_name[0]):
+            self.subject_directory = str(self._file_path) + folder_name[0] + '/'
+            raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
+            mne.fiff.Raw.save(self._raw_data, raw_file_path)
+            self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
+            self._raw_data_path = self._raw_data.info.get('filename')
+        else:
+            raise Exception('No rights to save the raw file to the chosen ' + 
+                            'path or bad raw file name.')
             
     def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):
