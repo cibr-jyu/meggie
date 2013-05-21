@@ -16,6 +16,8 @@ import brainRegions
 
 import numpy as np
 
+from xlrd import XLRDError
+
 class ParameterDialog(QtGui.QDialog):
     """
     Class containing the logic for ParameterDialog
@@ -138,7 +140,13 @@ class ParameterDialog(QtGui.QDialog):
         if filename == '':
             return
         self.ui.listWidgetEvents.clear()
-        sheet = self.parent.caller.read_events(filename)
+        try:
+            sheet = self.parent.caller.read_events(filename)
+        except XLRDError, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            return
 
         for row_index in range(sheet.nrows):
             #Check that there are no empty cells in a row

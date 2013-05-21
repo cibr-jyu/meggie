@@ -182,9 +182,8 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonAverage_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
         if checked is None: return
-        
         # If no events are selected, show a message to to the user and return
-        if ( self.widget.ui.listWidgetEpochs.currentItem() == None ): 
+        if self.widget.ui.listWidgetEpochs.currentItem() is None: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Please select an event collection to average.')
@@ -276,11 +275,23 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonTFR_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
+        if self.widget.ui.listWidgetEpochs.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('You must create epochs ' +
+                                                   'before TFR.')
+            self.messageBox.show()
+            return
         epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.working_file, epoch)
         self.tfr_dialog.show()
     
     def on_pushButtonTFRTopology_clicked(self,checked=None):
+        if self.widget.ui.listWidgetEpochs.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('You must create epochs ' +
+                                                   'before TFR.')
+            self.messageBox.show()
+            return
         epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         self.tfrTop_dialog = TFRTopologyDialog(self, self.experiment.working_file, epoch)
         self.tfrTop_dialog.show()
