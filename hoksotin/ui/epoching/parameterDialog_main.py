@@ -36,13 +36,6 @@ class ParameterDialog(QtGui.QDialog):
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event' + str(self.__class__.index))
         
-        """        
-    def on_browseButton_clicked(self, checked=None):
-        if checked is None: return # Standard workaround for file dialog opening twice
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/usr/local/bin/ParkkosenPurettu/meg/jn')
-        self.fileEdit.setText(self.fname)
-        """
-        
     def create_eventlist(self):
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         event_name = self.ui.lineEditName.text()
@@ -130,7 +123,15 @@ class ParameterDialog(QtGui.QDialog):
         #events = self.create_eventlist()'
         if len(events) > 0:
             print 'Writing events...'
-            self.parent.caller.write_events(events)
+            try:
+                self.parent.caller.write_events(events)
+            except UnicodeDecodeError, err:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText('Cannot save events: ' +
+                                                       str(err))
+                self.messageBox.show()
+                print 'Aborting...'
+                return
             print 'Done.'
     
     def on_pushButtonReadEvents_clicked(self, checked=None):

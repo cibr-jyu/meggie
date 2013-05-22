@@ -330,14 +330,14 @@ class Caller(object):
         frequencies = np.arange(minfreq, maxfreq, interval)
         #frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
         
-        n_cycles = frequencies / float(ncycles)
+        #n_cycles = frequencies / float(ncycles)
         
         Fs = raw.info['sfreq']
         #decim = 3
         try:
             power, phase_lock = induced_power(data, Fs=Fs,
                                               frequencies=frequencies,
-                                              n_cycles=n_cycles, n_jobs=1,
+                                              n_cycles=ncycles, n_jobs=1,
                                               use_fft=False, decim=decim,
                                               zero_mean=True)
         except ValueError, err:
@@ -403,14 +403,14 @@ class Caller(object):
         #Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
-        n_cycles = frequencies / ncycles
+        #n_cycles = frequencies / ncycles
         #n_cycles = frequencies / float(15)
         Fs = raw.info['sfreq']
         decim = 3
 
         power, phase_lock = induced_power(data, Fs=Fs,
                                           frequencies=frequencies,
-                                          n_cycles=n_cycles, n_jobs=3,
+                                          n_cycles=ncycles, n_jobs=3,
                                           use_fft=False, decim=decim,
                                           zero_mean=True)
         layout = read_layout('Vectorview-all')
