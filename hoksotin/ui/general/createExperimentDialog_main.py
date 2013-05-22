@@ -169,6 +169,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.parent.ui.listWidget.addItem(item)
         self.experiment.save_experiment_settings()
         self.close()
+        self.parent.add_tabs()
         self.parent._initialize_ui() 
         
 class OutLog:

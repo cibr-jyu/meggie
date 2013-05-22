@@ -15,9 +15,6 @@ import mne
 import pylab as pl
 from matplotlib.figure import Figure
 import matplotlib
-
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
  
 from mainWindow_Ui import Ui_MainWindow
 from createExperimentDialog_main import CreateExperimentDialog
@@ -139,9 +136,12 @@ class MainWindow(QtGui.QMainWindow):
                 item.setText('Trigger ' + str(key) + ', ' + str(value) +
                             ' events')
                 self.ui.listWidget.addItem(item)
-            self.ui.labelExperimentName.setText(self.experiment.experiment_name)
+            self.ui.labelExperimentName.setText(self.experiment.\
+                                                experiment_name)
             self.ui.labelAuthorName.setText(self.experiment.author)
-            self.ui.textBrowserExperimentDescription.setText(self.experiment.description)
+            self.ui.textBrowserExperimentDescription.setText(self.experiment\
+                                                             .description)
+            self.add_tabs()
             self._initialize_ui()
             
             """
@@ -149,7 +149,8 @@ class MainWindow(QtGui.QMainWindow):
             """
             self.caller.experiment = self.experiment
             self.ui.statusbar.showMessage("Current working file: " +
-                                          self.experiment.working_file.info.get('filename'))
+                                          self.experiment.working_file.\
+                                          info.get('filename'))
             
         else:
             self.messageBox = messageBox.AppForm()
@@ -191,7 +192,8 @@ class MainWindow(QtGui.QMainWindow):
             return
          
         #Average the selected epochs
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        data(32).toPyObject()
         evoked = epoch.average()
         
         #Check if the tab has already been created
@@ -206,12 +208,14 @@ class MainWindow(QtGui.QMainWindow):
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
-        self.caller.call_mne_browse_raw(self.experiment.working_file.info.get('filename'))
+        self.caller.call_mne_browse_raw(self.experiment.working_file.\
+                                        info.get('filename'))
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         if checked is None: return # Standard workaround for file dialog opening twice
         try:
-            self.maxFilterDialog = MaxFilterDialog(self, self.experiment.raw_data)
+            self.maxFilterDialog = MaxFilterDialog(self, 
+                                                   self.experiment.raw_data)
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
@@ -281,7 +285,8 @@ class MainWindow(QtGui.QMainWindow):
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.working_file, epoch)
         self.tfr_dialog.show()
     
@@ -292,22 +297,17 @@ class MainWindow(QtGui.QMainWindow):
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
-        self.tfrTop_dialog = TFRTopologyDialog(self, self.experiment.working_file, epoch)
+        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        data(32).toPyObject()
+        self.tfrTop_dialog = TFRTopologyDialog(self, 
+                                               self.experiment.working_file, 
+                                               epoch)
         self.tfrTop_dialog.show()
     
     def _initialize_ui(self):
         """
         Method for setting up the GUI.
-        """
-        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
-        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
-                                    "Preprocessing")
-
-        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
-        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
-        
+        """        
         self.ui.labelMaxFilterAccept_2.hide()
         self.ui.labelECGComputedAccept_2.hide()
         self.ui.labelEOGComputedAccept_2.hide()
@@ -376,6 +376,16 @@ class MainWindow(QtGui.QMainWindow):
             """
             self.ui.labelMaxFilterAccept_2.show()
         #TODO: Maxfilter
+        
+    def add_tabs(self):
+        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
+                                    "Preprocessing")
+
+        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
+        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
+        
     def check_workspace(self):
         self.workSpaceDialog = WorkSpaceDialog(self)
         self.workSpaceDialog.show()
