@@ -575,7 +575,7 @@
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>381</width>
+         <width>531</width>
          <height>41</height>
         </rect>
        </property>
@@ -583,19 +583,12 @@
         <item>
          <widget class="QLabel" name="labelBad">
           <property name="text">
-           <string>Bad channels:</string>
+           <string>Bad channels (eg. MEG 2443, MEG 1531):</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="lineEditBad"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonBadChannels">
-          <property name="text">
-           <string>Browse...</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
@@ -811,7 +804,6 @@
   <tabstop>doubleSpinBoxQrs</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCompute</tabstop>
-  <tabstop>pushButtonBadChannels</tabstop>
  </tabstops>
  <resources/>
  <connections>

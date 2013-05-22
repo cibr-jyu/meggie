@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addProjections.ui'
 #
-# Created: Thu Apr 25 17:45:28 2013
+# Created: Wed May 22 09:26:44 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,5 +47,5 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Select projections to add", None))
 

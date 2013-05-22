@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialog.ui'
 #
-# Created: Thu May  2 10:12:26 2013
+# Created: Wed May 22 10:32:51 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -289,7 +289,7 @@ class Ui_Dialog(object):
         self.checkBoxSSPCompute.setObjectName(_fromUtf8("checkBoxSSPCompute"))
         self.verticalLayout.addWidget(self.checkBoxSSPCompute)
         self.layoutWidget_2 = QtGui.QWidget(self.tabECG2)
-        self.layoutWidget_2.setGeometry(QtCore.QRect(10, 10, 381, 41))
+        self.layoutWidget_2.setGeometry(QtCore.QRect(10, 10, 531, 41))
         self.layoutWidget_2.setObjectName(_fromUtf8("layoutWidget_2"))
         self.horizontalLayout_29 = QtGui.QHBoxLayout(self.layoutWidget_2)
         self.horizontalLayout_29.setMargin(0)
@@ -300,9 +300,6 @@ class Ui_Dialog(object):
         self.lineEditBad = QtGui.QLineEdit(self.layoutWidget_2)
         self.lineEditBad.setObjectName(_fromUtf8("lineEditBad"))
         self.horizontalLayout_29.addWidget(self.lineEditBad)
-        self.pushButtonBadChannels = QtGui.QPushButton(self.layoutWidget_2)
-        self.pushButtonBadChannels.setObjectName(_fromUtf8("pushButtonBadChannels"))
-        self.horizontalLayout_29.addWidget(self.pushButtonBadChannels)
         self.groupBox = QtGui.QGroupBox(self.tabECG2)
         self.groupBox.setGeometry(QtCore.QRect(10, 400, 491, 161))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -416,7 +413,6 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.doubleSpinBoxEOGReject, self.doubleSpinBoxQrs)
         Dialog.setTabOrder(self.doubleSpinBoxQrs, self.pushButtonCancel)
         Dialog.setTabOrder(self.pushButtonCancel, self.pushButtonCompute)
-        Dialog.setTabOrder(self.pushButtonCompute, self.pushButtonBadChannels)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
@@ -451,8 +447,7 @@ class Ui_Dialog(object):
         self.checkBoxEEGProj.setText(_translate("Dialog", "Add EEG average reference proj.", None))
         self.checkBoxSSPProj.setText(_translate("Dialog", "Exclude the SSP projectors currently in the fiff file", None))
         self.checkBoxSSPCompute.setText(_translate("Dialog", "Compute SSP after averaging", None))
-        self.labelBad.setText(_translate("Dialog", "Bad channels:", None))
-        self.pushButtonBadChannels.setText(_translate("Dialog", "Browse...", None))
+        self.labelBad.setText(_translate("Dialog", "Bad channels (eg. MEG 2443, MEG 1531):", None))
         self.groupBox.setTitle(_translate("Dialog", "Epoch rejection", None))
         self.labelGradReject.setText(_translate("Dialog", "Grad:", None))
         self.doubleSpinBoxGradReject.setSuffix(_translate("Dialog", " fT/cm", None))

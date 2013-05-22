@@ -30,9 +30,6 @@ class CreateEpochs(object):
 
     def __init__(self, raw, event_id, stim_channel, tmin, tmax, reject,
                  meg, eeg, stim, eog):
-        '''
-        Constructor
-        '''
         events = events.Events(raw, stim_channel)
         picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
                                     eog=eog)

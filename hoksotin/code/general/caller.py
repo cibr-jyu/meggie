@@ -111,8 +111,10 @@ class Caller(object):
                   eog=1e-6 * float(rej_eog))
         qrs_threshold = dic.get('qrs')
         flat = None
-        bads = [] #TODO: Check how the whole bads-thing is supposed to work.
-        
+        bads = dic.get('bads') #TODO: Check how the whole bads-thing is supposed to work.
+        if bads is None:
+            bads = []
+
         start = dic.get('tstart')
         taps = dic.get('filtersize')
         njobs = dic.get('n-jobs')

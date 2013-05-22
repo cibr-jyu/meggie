@@ -67,7 +67,8 @@ class EogParametersDialog(QtGui.QDialog):
         rej_eog = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['rej-eog'] = rej_eog
         
-        bads = self.ui.lineEditBad.text()
+        bads = map(str.strip, str(self.ui.lineEditBad.text()).split(','))
+        dictionary['bads'] = bads
         
         start = self.ui.spinBoxStart.value()
         dictionary['tstart'] = start

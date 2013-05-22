@@ -304,12 +304,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")
 
-        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, 
-                                    "Epoching")
-        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, 
-                                    "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, 
-                                    "TFR")
+        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
+        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
         
         self.ui.labelMaxFilterAccept_2.hide()
         self.ui.labelECGComputedAccept_2.hide()
