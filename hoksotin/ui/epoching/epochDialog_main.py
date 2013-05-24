@@ -14,14 +14,12 @@ import numpy as np
 
 class EpochDialog(QtGui.QDialog):
     """
-    class containing the logic for epochDialog
+    Class containing the logic for epochDialog. Used for creating epochs from
+    a set of events.
     """
     index = 1
 
     def __init__(self, parent):
-        """
-        Constructor
-        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
@@ -46,13 +44,7 @@ class EpochDialog(QtGui.QDialog):
             reject['eeg'] = eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value()
         if eog:
             reject['eog'] = eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value()
-        
-        """
-        reject = dict(grad = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value(),
-                      mag = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value(),
-                      eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value(),
-                      eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value())
-        """
+
         """
         Reads the given event names as categories.
         """

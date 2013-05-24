@@ -20,7 +20,8 @@ from xlrd import XLRDError
 
 class ParameterDialog(QtGui.QDialog):
     """
-    Class containing the logic for ParameterDialog
+    Class containing the logic for ParameterDialog. Used for collecting desired
+    event from continuous data.
     """
     index = 1
 
@@ -112,6 +113,10 @@ class ParameterDialog(QtGui.QDialog):
             return ['MEG ' + str(x) for x in brainRegions.right_frontal]
         
     def on_pushButtonSaveEvents_clicked(self, checked=None):
+        """
+        Called when save events button is clicked. Saves all the events in the
+        list to an excel-file.
+        """
         if checked is None: return # Standard workaround
         events = np.ndarray((self.ui.listWidgetEvents.count(),4), dtype=object)
         for index in xrange(self.ui.listWidgetEvents.count()):
@@ -135,6 +140,10 @@ class ParameterDialog(QtGui.QDialog):
             print 'Done.'
     
     def on_pushButtonReadEvents_clicked(self, checked=None):
+        """
+        Called when read events button is clicked. Reads events from an 
+        excel-file.
+        """
         if checked is None: return # Standard workaround
         filename = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                     self.parent.experiment.subject_directory))
