@@ -7,6 +7,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from TFRTopologyDialog_Ui import Ui_DialogTFRTopology
+import messageBox
 
 class TFRTopologyDialog(QtGui.QDialog):
     """
@@ -28,7 +29,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         decim = self.ui.spinBoxDecim.value()
         mode = self.ui.comboBoxMode.currentText()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles = self.ui.doubleSpinBoxNcycles.value()
+        ncycles = self.ui.spinBoxNcycles.value()
         if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
             blstart = None
         else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
@@ -40,8 +41,19 @@ class TFRTopologyDialog(QtGui.QDialog):
         if ( self.ui.radioButtonInduced.isChecked() ):
             reptype = 'induced'
         else: reptype = 'phase'
-        
-        self.parent.caller.TFR_topology(self.raw, self.epoch.epochs, reptype,
-                                        minfreq, maxfreq, decim, mode, 
-                                        blstart, blend, interval, ncycles)
+        try:
+            self.parent.caller.TFR_topology(self.raw, self.epoch.epochs,
+                                            reptype, minfreq, maxfreq, decim,
+                                            mode, blstart, blend, interval,
+                                            ncycles)
+        except ValueError, err:
+            if len(str(err)) < 100:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText('Check parameters. ' +
+                                                       str(err))
+                self.messageBox.exec_()
+            else:
+                print str(err)
+            return
+            
         self.close()

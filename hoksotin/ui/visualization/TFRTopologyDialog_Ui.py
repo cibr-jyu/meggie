@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Fri May  3 16:31:47 2013
+# Created: Fri May 24 13:26:04 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,14 +42,14 @@ class Ui_DialogTFRTopology(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 552))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 554))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxFrequencies.setGeometry(QtCore.QRect(10, 110, 241, 231))
         self.groupBoxFrequencies.setObjectName(_fromUtf8("groupBoxFrequencies"))
         self.layoutWidget = QtGui.QWidget(self.groupBoxFrequencies)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 221, 189))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 221, 191))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_6.setMargin(0)
@@ -60,8 +60,9 @@ class Ui_DialogTFRTopology(object):
         self.labelMinFreq.setObjectName(_fromUtf8("labelMinFreq"))
         self.horizontalLayout_13.addWidget(self.labelMinFreq)
         self.doubleSpinBoxMinFreq = QtGui.QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBoxMinFreq.setMinimum(7.0)
-        self.doubleSpinBoxMinFreq.setMaximum(30.0)
+        self.doubleSpinBoxMinFreq.setMinimum(0.1)
+        self.doubleSpinBoxMinFreq.setMaximum(200.0)
+        self.doubleSpinBoxMinFreq.setProperty("value", 7.0)
         self.doubleSpinBoxMinFreq.setObjectName(_fromUtf8("doubleSpinBoxMinFreq"))
         self.horizontalLayout_13.addWidget(self.doubleSpinBoxMinFreq)
         self.verticalLayout_6.addLayout(self.horizontalLayout_13)
@@ -72,7 +73,7 @@ class Ui_DialogTFRTopology(object):
         self.horizontalLayout_12.addWidget(self.labelMaxFreq)
         self.doubleSpinBoxMaxFreq = QtGui.QDoubleSpinBox(self.layoutWidget)
         self.doubleSpinBoxMaxFreq.setMinimum(7.0)
-        self.doubleSpinBoxMaxFreq.setMaximum(30.0)
+        self.doubleSpinBoxMaxFreq.setMaximum(600.0)
         self.doubleSpinBoxMaxFreq.setProperty("value", 30.0)
         self.doubleSpinBoxMaxFreq.setObjectName(_fromUtf8("doubleSpinBoxMaxFreq"))
         self.horizontalLayout_12.addWidget(self.doubleSpinBoxMaxFreq)
@@ -83,7 +84,7 @@ class Ui_DialogTFRTopology(object):
         self.labelFrequencyInterval.setObjectName(_fromUtf8("labelFrequencyInterval"))
         self.horizontalLayout.addWidget(self.labelFrequencyInterval)
         self.doubleSpinBoxFreqInterval = QtGui.QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBoxFreqInterval.setMinimum(0.0)
+        self.doubleSpinBoxFreqInterval.setMinimum(0.1)
         self.doubleSpinBoxFreqInterval.setMaximum(99.99)
         self.doubleSpinBoxFreqInterval.setProperty("value", 3.0)
         self.doubleSpinBoxFreqInterval.setObjectName(_fromUtf8("doubleSpinBoxFreqInterval"))
@@ -94,10 +95,11 @@ class Ui_DialogTFRTopology(object):
         self.labelNcycles = QtGui.QLabel(self.layoutWidget)
         self.labelNcycles.setObjectName(_fromUtf8("labelNcycles"))
         self.horizontalLayout_2.addWidget(self.labelNcycles)
-        self.doubleSpinBoxNcycles = QtGui.QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBoxNcycles.setProperty("value", 7.0)
-        self.doubleSpinBoxNcycles.setObjectName(_fromUtf8("doubleSpinBoxNcycles"))
-        self.horizontalLayout_2.addWidget(self.doubleSpinBoxNcycles)
+        self.spinBoxNcycles = QtGui.QSpinBox(self.layoutWidget)
+        self.spinBoxNcycles.setMinimum(1)
+        self.spinBoxNcycles.setProperty("value", 7)
+        self.spinBoxNcycles.setObjectName(_fromUtf8("spinBoxNcycles"))
+        self.horizontalLayout_2.addWidget(self.spinBoxNcycles)
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
@@ -192,8 +194,8 @@ class Ui_DialogTFRTopology(object):
         DialogTFRTopology.setTabOrder(self.scrollArea, self.doubleSpinBoxMinFreq)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxMinFreq, self.doubleSpinBoxMaxFreq)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxMaxFreq, self.doubleSpinBoxFreqInterval)
-        DialogTFRTopology.setTabOrder(self.doubleSpinBoxFreqInterval, self.doubleSpinBoxNcycles)
-        DialogTFRTopology.setTabOrder(self.doubleSpinBoxNcycles, self.buttonBox)
+        DialogTFRTopology.setTabOrder(self.doubleSpinBoxFreqInterval, self.spinBoxNcycles)
+        DialogTFRTopology.setTabOrder(self.spinBoxNcycles, self.buttonBox)
 
     def retranslateUi(self, DialogTFRTopology):
         DialogTFRTopology.setWindowTitle(_translate("DialogTFRTopology", "Show TFR topologies ", None))

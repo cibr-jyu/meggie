@@ -90,6 +90,9 @@
              <property name="maximum">
               <double>200.000000000000000</double>
              </property>
+             <property name="value">
+              <double>7.000000000000000</double>
+             </property>
             </widget>
            </item>
           </layout>
@@ -130,7 +133,7 @@
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
              <property name="minimum">
-              <double>1.000000000000000</double>
+              <double>0.100000000000000</double>
              </property>
              <property name="maximum">
               <double>99.989999999999995</double>
