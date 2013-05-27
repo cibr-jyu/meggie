@@ -2,7 +2,7 @@
 """
 Created on Apr 11, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 import subprocess
 import os
@@ -111,7 +111,7 @@ class Caller(object):
                   eog=1e-6 * float(rej_eog))
         qrs_threshold = dic.get('qrs')
         flat = None
-        bads = dic.get('bads') #TODO: Check how the whole bads-thing is supposed to work.
+        bads = dic.get('bads')
         if bads is None:
             bads = []
 
@@ -130,7 +130,6 @@ class Caller(object):
             suffix = '.fif'
         else:
             prefix, suffix = os.path.splitext(raw_in.info.get('filename')) 
-            #prefix = raw_in.info.get('filename')[:-4]
         
         ecg_event_fname = prefix + '_ecg-eve' + suffix
         
@@ -139,7 +138,6 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj' + suffix
         
-        #raw = mne.fiff.Raw(raw_in, preload=preload)
         try:
             projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
@@ -171,11 +169,6 @@ class Caller(object):
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
-        #os.environ['MNE_ROOT'] = '/usr/local/bin/MNE-2.7.0-3106-Linux-x86_64' #TODO Remove
-        
-        # TODO not the actual path to the needed script (the needed script
-        # is an extra script in mne-python)
-        # TODO use SSP-projections from a a different file?
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
@@ -194,7 +187,7 @@ class Caller(object):
         rej_eog = dic.get('rej-eog')
         
         flat = None
-        bads = dic.get('bads') #TODO: Check how the whole bads-thing is supposed to work.
+        bads = dic.get('bads')
         if bads is None:
             bads = []
         start = dic.get('tstart')
@@ -227,7 +220,7 @@ class Caller(object):
                             eeg_proj, excl_ssp, event_id,
                             eog_low_freq, eog_high_freq, start)
         
-        #TODO Reading a file
+        # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
         
@@ -242,8 +235,6 @@ class Caller(object):
         ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
           eog_proj_fname, 'eogproj', dic)
         
-        #self.experiment.update_state(EOGcomputed, True)
-        
     def apply_ecg(self, raw, directory):
         """
         Applies ECG projections for MEG-data.
@@ -253,10 +244,9 @@ class Caller(object):
         directory     -- Directory of the projection file
         """
         
-        """
-        If there already is a file with eog projections applied on it, apply
-        ecg projections on this file instead of current.
-        """
+        
+        # If there already is a file with eog projections applied on it, apply
+        # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
                       glob.glob(directory + '*-eog_applied.fif'))) > 0:
             fname = glob.glob(directory + '*-eog_applied.fif')[0]
@@ -291,7 +281,7 @@ class Caller(object):
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '*_eog_proj.fif'))
-        #Checks if there is exactly one projection file
+        # Checks if there is exactly one projection file
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
@@ -319,21 +309,17 @@ class Caller(object):
         """
         evoked = epochs.average()
         data = epochs.get_data()
-        times = 1e3 * epochs.times #s to ms
-        evoked_data = evoked.data * 1e13 #TODO: check whether mag or grad (units fT / cm or...)
+        times = 1e3 * epochs.times # s to ms
+        evoked_data = evoked.data * 1e13
         try:
             data = data[:, ch_index:(ch_index+1), :]
             evoked_data = evoked_data[ch_index:(ch_index+1), :]
         except Exception, err:
             raise Exception('Could not find epoch data: ' + str(err))
-        #Find intervals for given frequency band
+        # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
-        #frequencies = np.arange(minfreq, maxfreq, int((maxfreq-minfreq) / 7))
-        
-        #n_cycles = frequencies / float(ncycles)
         
         Fs = raw.info['sfreq']
-        #decim = 3
         try:
             power, phase_lock = induced_power(data, Fs=Fs,
                                               frequencies=frequencies,
@@ -397,14 +383,11 @@ class Caller(object):
         interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
         """
-        #TODO: Let the user define the title of the figure.
+        # TODO: Let the user define the title of the figure.
         data = epochs.get_data()
         
-        #Find intervals for given frequency band
+        # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
-        
-        #n_cycles = frequencies / ncycles
-        #n_cycles = frequencies / float(15)
         Fs = raw.info['sfreq']
         decim = 3
 
@@ -489,21 +472,6 @@ class Caller(object):
         Keyword arguments:
         filename      -- File to read from.
         """
-        #path_to_read = self.parent.experiment.subject_directory
-        #wbr = open_workbook(path_to_read + 'events.xls')
         wbr = open_workbook(filename)
         sheet = wbr.sheet_by_index(0)
         return sheet
-        """
-        for row_index in range(sheet.nrows):
-            for col_index in range(sheet.ncols):
-                #print cellname(row_index,col_index),'-',
-                #print sheet.cell(row_index,col_index).value
-                item = QtGui.QListWidgetItem(self.parent.ui.lineEditName.text()
-                                             + ' ' + str(sheet.cell(row_index,col_index).value)
-                                             + ', ' + str(sheet.cell(row_index,col_index+2).value))
-                item.setData(32, row_index)
-                item.setData(33, self.parent.ui.lineEditName.text())
-                self.parent.ui.listWidgetEvents.addItem(item)
-            self.parent.ui.listWidgetEvents.setCurrentItem(item)
-        """

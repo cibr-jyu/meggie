@@ -2,7 +2,7 @@
 """
 Created on Mar 13, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 import mne
 
@@ -12,8 +12,8 @@ class File(object):
     """
     A class for file operations.
     """
-
-
+    
+    
     def __init__(self):
         pass 
         

@@ -2,11 +2,12 @@
 """
 Created on Mar 12, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 import mne
 
 class Events(object):
+
 
     def __init__(self, raw, stim_ch):
         """

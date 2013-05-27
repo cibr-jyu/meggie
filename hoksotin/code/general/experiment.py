@@ -24,6 +24,7 @@ class Experiment(object):
     path of the experiment file, _author, date and _description.
     """
     
+    
     def __init__(self):
         """
         Constructor sets default values for attributes.
@@ -311,25 +312,7 @@ class Experiment(object):
         #shutil.move(settingsFileName, str(self._file_path))
         
         settingsFile.close()        
-    """
-    def save_experiment(self, path):
-    """
-    """
-        Creates the experiment folder.
-        
-        Keyword arguments:
-        path    -- path for the chosen experiment.
-    """
-    """
-        self._file_path = path + '/' + self._experiment_name + '/'
-        if os.path.exists(path):
-            try:
-                os.mkdir(self._file_path)
-            except OSError:
-                print "no rights to save to the chosen path"
-        else:
-            raise Exception('No such path')
-    """    
+
     def save_raw(self, file_name, path):
         """
         Saves the raw data file into the experiment folder.
@@ -348,17 +331,6 @@ class Experiment(object):
         else:
             raise Exception('No such path')
         
-        
-        """
-        try:
-            if os.path.exists(self._file_path + folder_name[0]):
-                pass
-            else:
-                os.mkdir(self._file_path + folder_name[0])
-        except OSError:
-            print "no rights to save the raw file to the chosen path \
-            or bad raw file name"
-        """
         if os.path.exists(self._file_path + folder_name[0]):
             self.subject_directory = str(self._file_path) + folder_name[0] + '/'
             raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name

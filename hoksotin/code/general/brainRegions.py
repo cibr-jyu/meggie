@@ -13,7 +13,7 @@ class BrainRegions(object):
     This class contains channel groups which are created according to
     mne_browse_raw channel groups. The channel name can be reconstructed by
     using the prefix 'MEG ' with each channel number. The last number indicates
-    the type of the meter. Magnetometers end with number one whereas
+    the type of the meter. Magnetometers end with number one, whereas
     gradiometers end with number two and three.
     """
     vertex = ['0633','0632','0423','0422','0712','0713','0433','0432',
