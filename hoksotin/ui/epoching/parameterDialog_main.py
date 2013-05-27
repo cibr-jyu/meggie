@@ -38,9 +38,10 @@ class ParameterDialog(QtGui.QDialog):
         self.ui.lineEditName.setText('Event' + str(self.__class__.index))
         
     def create_eventlist(self):
+        """
+        Picks desired events from the raw data.
+        """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        event_name = self.ui.lineEditName.text()
-        print self.parent.experiment.stim_channel
         e = Events(self.parent.experiment.raw_data, 
                    self.parent.experiment.stim_channel)
         e.pick(self.event_id)
@@ -93,6 +94,11 @@ class ParameterDialog(QtGui.QDialog):
         epochs = self.epochDialog.exec_()
         
     def check_channels(self):
+        """
+        This method contains the logic for populating
+        the combobox with channel groups of brain regions.
+        Currently not in use.
+        """
         if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
             return ['MEG ' + str(x) for x in brainRegions.vertex]
         elif self.ui.comboBoxChannelGroup.currentText() == 'Left-temporal':
@@ -111,7 +117,7 @@ class ParameterDialog(QtGui.QDialog):
             return ['MEG ' + str(x) for x in brainRegions.left_frontal]
         elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
             return ['MEG ' + str(x) for x in brainRegions.right_frontal]
-        
+
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         """
         Called when save events button is clicked. Saves all the events in the

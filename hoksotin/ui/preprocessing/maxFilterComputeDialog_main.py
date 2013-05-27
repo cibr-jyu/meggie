@@ -1,7 +1,7 @@
 '''
 Created on Apr 22, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppakangas
 '''
 import os
 

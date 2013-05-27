@@ -17,9 +17,10 @@ class InfoDialog(QtGui.QDialog):
         Constructor
         
         Keyword arguments:
-        raw           -- Raw object
-        targetUi      -- Ui object that receives the info data
-        create_window -- Boolean that tells if a new window is created
+        raw           -- Raw object.
+        targetUi      -- Ui object that receives the info data.
+        create_window -- Boolean to determine that a new dialog window 
+        is created.
         """
         QtGui.QDialog.__init__(self)
         self.raw = raw
@@ -34,7 +35,9 @@ class InfoDialog(QtGui.QDialog):
         self.close()
         
     def _setLabelTestValues(self):
-        
+        """
+        Sets the data info to the labels.
+        """
         self.mi = MeasurementInfo(self.raw)
         
         self.ui.labelDateValue.setText(self.mi.date)

@@ -1,7 +1,7 @@
 '''
 Created on Mar 16, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppakangas
 '''
 
 import os,sys
@@ -47,55 +47,35 @@ class MainWindow(QtGui.QMainWindow):
     """
 
     def __init__(self):
-        """
-        Constructor
-        """
-        #self.app = QtGui.QApplication(sys.argv)
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
         
-        """
-        Main window represents one experiment at a time. This experiment is
-        defined by the CreateExperimentDialog or the by the Open_experiment_
-        trigger action.
-        """
+        
+        # Main window represents one experiment at a time. This experiment is
+        # defined by the CreateExperimentDialog or the by the Open_experiment_
+        # trigger action.
         self.experiment = None
         
-        """
-        One main window (and one experiment) only needs one caller to do its
-        bidding. 
-        """
+        # One main window (and one experiment) only needs one caller to do its
+        # bidding. 
         self.caller = Caller(self)
-        
        
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
         
-        """Creates a listwidget for epoch analysis."""    
-             
+        # Creates a listwidget for epoch analysis.  
         self.widget = EpochWidget(self)
-        #self.widget.setGeometry(QtCore.QRect(0, 200, 381, 231))
         self.widget.hide()
-        
-                
-        #self.ui.horizontalLayout.addWidget(self.widget)
-        '''
-        Old code for activating buttons when experiment state changes
-        TODO: check and remove
-        #self.ui.pushButtonAverage.setEnabled(False)
-        #self.ui.pushButtonVisualize.setEnabled(False)
-        '''
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         
-        
     def on_actionCreate_experiment_triggered(self, checked=None):
-        if checked is None: return # Standard workaround for file dialog opening twice
         """
         Creates a new CreateExperimentDialog and shows it
-        """       
+        """
+        if checked is None: return # Standard workaround for file dialog opening twice
         if os.path.isfile('settings.cfg'):
             self.dialog = CreateExperimentDialog(self)
             self.dialog.show()
@@ -103,7 +83,10 @@ class MainWindow(QtGui.QMainWindow):
             self.check_workspace()   
         
     def on_actionOpen_experiment_triggered(self, checked=None):
-         # Standard workaround for file dialog opening twice
+        """
+        Method for opening an existing experiment.
+        """
+        # Standard workaround for file dialog opening twice
         if checked is None: return 
                 
         path = str(QtGui.QFileDialog.getExistingDirectory(
@@ -123,12 +106,9 @@ class MainWindow(QtGui.QMainWindow):
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)
             
-            #self.ui.textBrowserExperimentDescription self.experiment.description
             
-            """
-            Sets info about trigger channels and their events to
-            Triggers box in the Raw tab
-            """
+            # Sets info about trigger channels and their events to
+            # Triggers box in the Raw tab
             self.ui.listWidget.clear()
             events = self.experiment.event_set
             for key, value in events.iteritems():
@@ -144,9 +124,7 @@ class MainWindow(QtGui.QMainWindow):
             self.add_tabs()
             self._initialize_ui()
             
-            """
-            Sets the experiment for caller, so it can use its information
-            """
+            # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
             self.ui.statusbar.showMessage("Current working file: " +
                                           self.experiment.working_file.\
@@ -157,8 +135,6 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.labelException.setText \
             ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
-     
-    #def setup_ui_by_experiment_state(self):
     
     def on_actionSet_workspace_triggered(self, checked=None):
         # Standard workaround for file dialog opening twice
@@ -181,9 +157,12 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog.show()        
         
     def on_pushButtonAverage_clicked(self, checked=None):
+        """
+        Method for plotting the evoked data as a topology.
+        """
         # Standard workaround for file dialog opening twice
         if checked is None: return
-        # If no events are selected, show a message to to the user and return
+        # If no events are selected, show a message to to the user and return.
         if self.widget.ui.listWidgetEpochs.currentItem() is None: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
@@ -191,27 +170,23 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()  
             return
          
-        #Average the selected epochs
+        # Average the selected epochs
         epoch = self.widget.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         evoked = epoch.average()
-        
-        #Check if the tab has already been created
-        #if self.ui.tabEvoked == None:
-        #    self.ui.tabEvoked = QtGui.QWidget()
-        #    self.ui.listWidgetAverage = self.__create_tab(self.ui.tabEvoked,
-        #                                                  'Evoked')
-        #item = QtGui.QListWidgetItem()
-        #item.setText('TestElement')
-        #item.setData(1,evoked)
-        #self.ui.listWidgetAverage.addItem(item)
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
+        """
+        Method for calling the mne_browe_raw.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.caller.call_mne_browse_raw(self.experiment.working_file.\
                                         info.get('filename'))
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
+        """
+        Method for calling Electa's MaxFilter.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         try:
             self.maxFilterDialog = MaxFilterDialog(self, 
@@ -224,6 +199,9 @@ class MainWindow(QtGui.QMainWindow):
         self.maxFilterDialog.show()
         
     def on_pushButtonSpectrum_clicked(self):
+        """
+        Method for plotting the spectrum magnitude.
+        """
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
     
@@ -239,8 +217,6 @@ class MainWindow(QtGui.QMainWindow):
         if index == 2:
             self.widget.setParent(self.ui.tabEpoching)
             self.widget.show()
-            #self.widget.updateGeometry()
-            #self.ui.tabEpoching.updateGeometry()
             return
         
         if index == 3:
@@ -258,26 +234,41 @@ class MainWindow(QtGui.QMainWindow):
             self.widget.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
+        """
+        Method for calculating the EOG PCA.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.show()
         
     def on_pushButtonECG_clicked(self, checked=None):
+        """
+        Method for calculating the ECG PCA.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
         
     def on_pushButtonApplyEOG_clicked(self, checked=None):
+        """
+        Method for applying the EOG-projections to the data.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.addEogProjs = AddEOGProjections(self)
         self.addEogProjs.exec_()
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
+        """
+        Method for applying the ECG-projections to the data.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.addEcgProjs = AddECGProjections(self)
         self.addEcgProjs.exec_()
         
     def on_pushButtonTFR_clicked(self, checked=None):
+        """
+        Method for plotting TFR from a single channel.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         if self.widget.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
@@ -291,6 +282,9 @@ class MainWindow(QtGui.QMainWindow):
         self.tfr_dialog.show()
     
     def on_pushButtonTFRTopology_clicked(self,checked=None):
+        """
+        Method for plotting TFR topology.
+        """
         if self.widget.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('You must create epochs ' +
@@ -378,6 +372,9 @@ class MainWindow(QtGui.QMainWindow):
         #TODO: Maxfilter
         
     def add_tabs(self):
+        """
+        Method for initializing the tabs.
+        """
         self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")

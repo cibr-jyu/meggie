@@ -3,7 +3,7 @@ from PyQt4 import QtCore,QtGui
 
 class AppForm(QtGui.QDialog):
     """
-    Class for messageboxes displaying error messages.
+    Class for creating simple messageboxes displaying error messages.
     """
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)

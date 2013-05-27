@@ -62,7 +62,11 @@ class CreateExperimentDialog(QtGui.QDialog):
         self._initialize_experiment()
                 
     def on_browseButton_clicked(self, checked=None):
-        if checked is None: return # Standard workaround for file dialog opening twice
+        """
+        Opens a browse dialog to select the raw data.
+        """
+        # Standard workaround for file dialog opening twice
+        if checked is None: return
         
         self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                            '/home/'))
@@ -79,6 +83,9 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui.FilePathLineEdit.setText(self.fname)        
         
     def on_showFileInfoButton_clicked(self):
+        """
+        Opens the infoDialog for the selected data.
+        """
         try:
             info = Ui_infoDialog()
             self.infoDialog = InfoDialog(self.raw, info, True)
@@ -90,6 +97,9 @@ class CreateExperimentDialog(QtGui.QDialog):
         QtGui.QApplication.processEvents() 
         
     def _initialize_experiment(self):
+        """
+        Initializes the experiment object with the given data.
+        """
         try:
             if self.ui.lineEditExperimentName.text() == '':
                 raise Exception('Give experiment a name!')

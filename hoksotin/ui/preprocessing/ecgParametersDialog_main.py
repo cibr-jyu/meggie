@@ -1,7 +1,7 @@
 """
 Created on Apr 16, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppakangas
 """
 import os
 import ast

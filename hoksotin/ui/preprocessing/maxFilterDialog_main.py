@@ -2,15 +2,12 @@
 '''
 Created on Mar 28, 2013
 
-@author: Jaakko Leppäkangas, Atte Rautio
+@author: Jaakko Leppakangas, Atte Rautio
 '''
 from maxFilterDialog_Ui import Ui_Dialog
-#from settings import Settings
-#import messageBox
-#from caller import Caller
+
 import glob
 import sys
-
 import os
 import subprocess
 from threading import Thread

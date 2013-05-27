@@ -1,7 +1,7 @@
 '''
 Created on Apr 23, 2013
 
-@author: jaeilepp
+@author: Jaakko Leppakangas
 '''
 from PyQt4 import QtCore,QtGui
 
@@ -25,6 +25,9 @@ class WorkSpaceDialog(QtGui.QDialog):
         self.path = ''
         
     def on_browseButton_clicked(self, checked=None):
+        """
+        Opens a filebrowser to select the workspace.
+        """
         if checked is None: return # Standard workaround for file dialog opening twice
         self.path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select a working space"))

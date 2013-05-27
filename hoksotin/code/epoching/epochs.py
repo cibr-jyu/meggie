@@ -66,10 +66,9 @@ class Epochs(object):
             raise Exception('No epochs found.')
         category = self.epochs.event_id
         
-        """
-        Creates evoked potentials from the given events (variable 'name' 
-        refers to different categories).
-        """
+        
+        # Creates evoked potentials from the given events (variable 'name' 
+        # refers to different categories).
         evokeds = [self.epochs[name].average() for name in category.keys()]
         layout = read_layout('Vectorview-all.lout')
         fig = plot_topo(evokeds, layout, title=str(category.keys()))
