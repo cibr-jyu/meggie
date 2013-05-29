@@ -8,9 +8,16 @@ import numpy
 
 class IntegralImage(object):
     
+    """
+    Class for counting sum over a chosen rectangular area of a given matrix.
+    """
+    
     def sum_over_matrix(self, matrix):
         """
-        matrix is type numpy.ndarray.  
+        First sums the horizontal and then the vertical rows of the matrix.
+        
+        Keyword arguments
+        matrix    - - matrix to be summed over, type numpy.ndarray.  
         """
         sizex = 0
         sizey = 0
@@ -55,6 +62,7 @@ class IntegralImage(object):
         Keyword arguments:
         top_left_corner     - - top-left corner of the rectangle
         bottom_right_corner - - bottom-right corner of the rectangle
+        matrix              - - matrix of type numpy.ndarray
         """
         """
         Blocks make sure that bottom-right corner of the rectangle isn't
