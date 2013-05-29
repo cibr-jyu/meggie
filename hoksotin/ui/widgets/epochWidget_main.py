@@ -1,22 +1,22 @@
-'''
+"""
 Created on May 2, 2013
 
-@author: jaeilepp
-'''
+@author: Jaakko Leppakangas
+"""
 from PyQt4 import QtCore,QtGui
 
 from epochWidget_Ui import Ui_Form
 
 class EpochWidget(QtGui.QWidget):
-    '''
-    classdocs
-    '''
+    """
+    Creates a widget that shows a list of epochs.
+    """
 
 
     def __init__(self, parent):
-        '''
-        Constructor
-        '''
+        """
+        Constructor creates a widget.
+        """
         QtGui.QWidget.__init__(self, parent)
         #QtGui.QDialog.__init__(self)
         
