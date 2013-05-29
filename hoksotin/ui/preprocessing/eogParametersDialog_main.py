@@ -1,8 +1,8 @@
-'''
+"""
 Created on Apr 12, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 from PyQt4 import QtCore,QtGui
 from eogParametersDialog_Ui import Ui_Dialog
 

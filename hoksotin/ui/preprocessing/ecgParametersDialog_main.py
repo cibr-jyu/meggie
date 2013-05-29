@@ -83,6 +83,10 @@ class EcgParametersDialog(QtGui.QDialog):
                                            
 
     def accept(self):
+        """
+        Collect the parameters for calculating PCA projections and pass them
+        to the caller class.
+        """
         raw = self.parent.experiment.working_file
         dictionary = {'i': raw}
         
