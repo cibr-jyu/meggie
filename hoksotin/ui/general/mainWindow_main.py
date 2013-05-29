@@ -19,7 +19,8 @@ import matplotlib
 from mainWindow_Ui import Ui_MainWindow
 from createExperimentDialog_main import CreateExperimentDialog
 from infoDialog_main import InfoDialog
-from parameterDialog_main import ParameterDialog
+from eventSelectionDialog_main import EventSelectionDialog
+from eventSelectionDialog_Ui import Ui_EventSelectionDialog
 from maxFilterDialog_main import MaxFilterDialog
 from eogParametersDialog_main import EogParametersDialog
 from ecgParametersDialog_main import EcgParametersDialog
@@ -153,7 +154,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return
-        self.epochParameterDialog = ParameterDialog(self)
+        self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.show()        
         
     def on_pushButtonAverage_clicked(self, checked=None):

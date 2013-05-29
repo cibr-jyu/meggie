@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ParameterDialog</class>
- <widget class="QDialog" name="ParameterDialog">
+ <class>EventSelectionDialog</class>
+ <widget class="QDialog" name="EventSelectionDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -46,7 +46,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>743</width>
+        <width>746</width>
         <height>675</height>
        </rect>
       </property>
@@ -181,7 +181,7 @@
   <connection>
    <sender>cancelOkButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ParameterDialog</receiver>
+   <receiver>EventSelectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -197,7 +197,7 @@
   <connection>
    <sender>cancelOkButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ParameterDialog</receiver>
+   <receiver>EventSelectionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
