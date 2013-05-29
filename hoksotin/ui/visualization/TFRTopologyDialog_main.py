@@ -1,7 +1,7 @@
 '''
 Created on Apr 26, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 '''
 import mne
 

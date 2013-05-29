@@ -2,12 +2,12 @@
 '''
 Created on Mar 19, 2013
 
-@author: Jaakko Lepp�kangas, Atte Rautio
+@author: Jaakko Leppakangas, Atte Rautio
 '''
 import messageBox
 
 from PyQt4 import QtCore,QtGui
-from parameterDialog_ui import Ui_ParameterDialog
+from eventSelectionDialog_Ui import Ui_EventSelectionDialog
 from epochDialog_main import EpochDialog
 
 from epochs import Epochs
@@ -18,9 +18,9 @@ import numpy as np
 
 from xlrd import XLRDError
 
-class ParameterDialog(QtGui.QDialog):
+class EventSelectionDialog(QtGui.QDialog):
     """
-    Class containing the logic for ParameterDialog. Used for collecting desired
+    Class containing the logic for EventSelectionDialog. Used for collecting desired
     event from continuous data.
     """
     index = 1
@@ -31,7 +31,7 @@ class ParameterDialog(QtGui.QDialog):
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.ui = Ui_ParameterDialog()
+        self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
         keys = map(str, parent.experiment.event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
@@ -77,7 +77,6 @@ class ParameterDialog(QtGui.QDialog):
         self.ui.listWidgetEvents.takeItem(row)
         if self.ui.listWidgetEvents.currentRow() < 0:
             self.ui.pushButtonRemove.setEnabled(False)
-        
         
     def accept(self):
         """

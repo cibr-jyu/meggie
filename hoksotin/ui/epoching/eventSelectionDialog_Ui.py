@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'parameterDialog.ui'
 #
-# Created: Thu May  2 17:55:20 2013
+# Created: Wed May 29 13:31:52 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,26 +23,26 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_ParameterDialog(object):
-    def setupUi(self, ParameterDialog):
-        ParameterDialog.setObjectName(_fromUtf8("ParameterDialog"))
-        ParameterDialog.setWindowModality(QtCore.Qt.WindowModal)
-        ParameterDialog.resize(779, 617)
-        self.gridLayout = QtGui.QGridLayout(ParameterDialog)
+class Ui_EventSelectionDialog(object):
+    def setupUi(self, EventSelectionDialog):
+        EventSelectionDialog.setObjectName(_fromUtf8("EventSelectionDialog"))
+        EventSelectionDialog.setWindowModality(QtCore.Qt.WindowModal)
+        EventSelectionDialog.resize(779, 617)
+        self.gridLayout = QtGui.QGridLayout(EventSelectionDialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.cancelOkButtonBox = QtGui.QDialogButtonBox(ParameterDialog)
+        self.cancelOkButtonBox = QtGui.QDialogButtonBox(EventSelectionDialog)
         self.cancelOkButtonBox.setEnabled(True)
         self.cancelOkButtonBox.setOrientation(QtCore.Qt.Horizontal)
         self.cancelOkButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.cancelOkButtonBox.setObjectName(_fromUtf8("cancelOkButtonBox"))
         self.gridLayout.addWidget(self.cancelOkButtonBox, 2, 0, 1, 1)
-        self.scrollArea = QtGui.QScrollArea(ParameterDialog)
+        self.scrollArea = QtGui.QScrollArea(EventSelectionDialog)
         self.scrollArea.setEnabled(True)
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 743, 675))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 746, 675))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 675))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
@@ -105,17 +105,17 @@ class Ui_ParameterDialog(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 1)
 
-        self.retranslateUi(ParameterDialog)
-        QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), ParameterDialog.accept)
-        QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), ParameterDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(ParameterDialog)
+        self.retranslateUi(EventSelectionDialog)
+        QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), EventSelectionDialog.accept)
+        QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), EventSelectionDialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(EventSelectionDialog)
 
-    def retranslateUi(self, ParameterDialog):
-        ParameterDialog.setWindowTitle(_translate("ParameterDialog", "Give parameters", None))
-        self.pushButtonAdd.setText(_translate("ParameterDialog", "Add to list >>", None))
-        self.pushButtonRemove.setText(_translate("ParameterDialog", "<< Remove", None))
-        self.pushButtonSaveEvents.setText(_translate("ParameterDialog", "Save events", None))
-        self.pushButtonReadEvents.setText(_translate("ParameterDialog", "Read events", None))
-        self.labelEventID.setText(_translate("ParameterDialog", "Event ID:", None))
-        self.labelName.setText(_translate("ParameterDialog", "Event name:      ", None))
+    def retranslateUi(self, EventSelectionDialog):
+        EventSelectionDialog.setWindowTitle(_translate("EventSelectionDialog", "Give parameters", None))
+        self.pushButtonAdd.setText(_translate("EventSelectionDialog", "Add to list >>", None))
+        self.pushButtonRemove.setText(_translate("EventSelectionDialog", "<< Remove", None))
+        self.pushButtonSaveEvents.setText(_translate("EventSelectionDialog", "Save events", None))
+        self.pushButtonReadEvents.setText(_translate("EventSelectionDialog", "Read events", None))
+        self.labelEventID.setText(_translate("EventSelectionDialog", "Event ID:", None))
+        self.labelName.setText(_translate("EventSelectionDialog", "Event name:      ", None))
 
