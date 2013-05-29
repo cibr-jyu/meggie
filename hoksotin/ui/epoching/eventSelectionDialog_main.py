@@ -1,9 +1,9 @@
 # coding: latin1
-'''
+"""
 Created on Mar 19, 2013
 
 @author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
-'''
+"""
 import messageBox
 
 from PyQt4 import QtCore,QtGui

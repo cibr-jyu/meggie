@@ -1,6 +1,5 @@
 # coding: latin1
 """
-
 @author: Jaakko Leppakangas
 """
 

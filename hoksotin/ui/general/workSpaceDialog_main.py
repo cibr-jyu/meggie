@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 23, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 from PyQt4 import QtCore,QtGui
 
 from workSpaceDialog_Ui import Ui_Dialog
