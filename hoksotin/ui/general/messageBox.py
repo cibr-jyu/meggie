@@ -24,14 +24,3 @@ class AppForm(QtGui.QDialog):
 
     def accept(self):
         self.close()
-
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    form = AppForm()
-    form.show()
-    app.exec_()
-
-
