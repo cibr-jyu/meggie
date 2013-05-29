@@ -42,7 +42,6 @@ class EcgParametersDialog(QtGui.QDialog):
         self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
-        
         # If no parameter file existed, return
         if ( dic == None ): return
         
