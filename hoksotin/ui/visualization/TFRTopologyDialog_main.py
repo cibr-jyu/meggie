@@ -1,7 +1,7 @@
 '''
 Created on Apr 26, 2013
 
-@author: jaeilepp
+@author: Janne Leppäkangas
 '''
 import mne
 
@@ -15,6 +15,15 @@ class TFRTopologyDialog(QtGui.QDialog):
     """
     
     def __init__(self, parent, raw, epoch):
+        """
+        Initializes the TFR topology dialog.
+        
+        Keyword arguments:
+        
+        parent    --   this dialog's parent
+        raw       --   a raw data file
+        epoch     --   a collection of epochs
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.raw = raw
@@ -24,6 +33,11 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui.setupUi(self)
     
     def accept(self):
+        """
+        Collects the parameter values from the dialog window and passes them
+        to the Caller. Also checks for erroneus parameter values and gives 
+        feedback to the user.
+        """
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()

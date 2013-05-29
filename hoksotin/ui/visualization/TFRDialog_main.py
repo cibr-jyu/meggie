@@ -1,7 +1,7 @@
 '''
 Created on Apr 26, 2013
 
-@author: jaeilepp
+@author: Janne Leppäkangas
 '''
 import messageBox
 
@@ -16,6 +16,15 @@ class TFRDialog(QtGui.QDialog):
     """
     
     def __init__(self, parent, raw, epoch):
+        """
+        Constructor. Sets up the dialog
+        
+        Keyword arguments:
+        
+        parent    --    Parent of the dialog
+        raw       --    raw data file
+        epoch     --    a collection of epochs
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.raw = raw
@@ -26,13 +35,12 @@ class TFRDialog(QtGui.QDialog):
         self.ui.comboBoxChannels.addItems(ch_names)
     
     def accept(self):
+        """
+        Collects parameters and calls the caller class to create a TFR.
+        """
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
-        """
-        self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index,
-                               minfreq, maxfreq)
-        """
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
