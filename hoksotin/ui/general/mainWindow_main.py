@@ -1,8 +1,8 @@
-'''
+"""
 Created on Mar 16, 2013
 
-@author: Jaakko Leppakangas
-'''
+@author: Jaakko Leppakangas, Janne Pesonen
+"""
 
 import os,sys
 import pickle
