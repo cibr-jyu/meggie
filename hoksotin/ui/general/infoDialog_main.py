@@ -23,7 +23,7 @@ class InfoDialog(QtGui.QDialog):
         Keyword arguments:
         raw           -- Raw object.
         targetUi      -- Ui object that receives the info data.
-        create_window -- Boolean to determine that a new dialog window 
+        create_window -- Boolean to determine if a new dialog window 
         is created.
         """
         QtGui.QDialog.__init__(self)

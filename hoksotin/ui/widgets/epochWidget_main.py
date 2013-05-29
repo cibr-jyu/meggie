@@ -16,7 +16,7 @@ class EpochWidget(QtGui.QWidget):
 
     def __init__(self, parent):
         """
-        Constructor creates a widget.
+        Constructor 
         """
         QtGui.QWidget.__init__(self, parent)
         

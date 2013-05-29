@@ -26,7 +26,7 @@ class Caller(object):
     def __init__(self, parent):
         """
         Constructor
-        Keyword arguments:pen_workbook
+        Keyword arguments:
         parent        -- Parent of this object.
         """
         self.parent = parent
@@ -74,12 +74,10 @@ class Caller(object):
         self.update_experiment_working_file(outputfile)
         
         """ 
-        # TODO Write parameter file
-        self.experiment. \
-        save_parameter_file('maxfilter', \
-                            raw, , dic)
+        TODO Write parameter file. Implement after the actual MaxFilter
+        calling has been tested. 
+        self.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
-        
         self.parent.experiment.save_experiment_settings()
         
     def call_ecg_ssp(self, dic):
@@ -295,6 +293,7 @@ class Caller(object):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
+        TODO should use dictionary like most other dialogs.
         Keyword arguments:
         raw           -- A raw object.
         epochs        -- Epochs extracted from the data.
@@ -367,6 +366,7 @@ class Caller(object):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
+        TODO should use dictionary like most other dialogs.
         Keyword arguments:
         raw           -- A raw object.
         epochs        -- Epochs extracted from the data.
@@ -440,6 +440,7 @@ class Caller(object):
         """
         Changes the current working file for the experiment the caller relates
         to.
+        fname    -- name of the new working file 
         """
         self.parent.experiment.working_file = fname        
 

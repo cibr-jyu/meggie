@@ -40,6 +40,14 @@ class EcgParametersDialog(QtGui.QDialog):
         self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
+        """
+        Set the initial values of the dialog widgets to those used when the
+        dialog was used (OK button was clicked) the previous time.
+        
+        Keyword arguments:
+        dic    -- the dictionary with previous values of fields, checkboxes 
+                  etc.
+        """
         # If no parameter file exists, return
         if ( dic == None ): return
         

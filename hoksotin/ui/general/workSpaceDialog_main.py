@@ -29,7 +29,8 @@ class WorkSpaceDialog(QtGui.QDialog):
         """
         Opens a filebrowser to select the workspace.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        # Standard workaround for file dialog opening twice
+        if checked is None: return 
         self.path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select a working space"))
         self.ui.FilePathLineEdit.setText(self.path)

@@ -180,8 +180,8 @@ class Experiment(object):
         Raises exception if the _description includes other characters
         than letters and numbers.        
         Keyword arguments:
-        description     - - the _description of the experiment written
-        by the _author
+        description     -- the description of the experiment written by the
+                           author
         """
         if (len(description) <= 1000):
             if (re.match(
@@ -327,10 +327,10 @@ class Experiment(object):
         .  
         
         Keyword arguments:
+        command          -- command (as string) used.
         inputfilename    -- name of the file the command with parameters
                             was executed on
         outputfilename   -- the resulting output file from the command.
-        command          -- command (as string) used.
         operation        -- operation the command represents. Used for
                             determining the parameter file name.
         dic              -- dictionary including commands.
@@ -353,9 +353,9 @@ class Experiment(object):
         Reads the parameters from a single file matching the operation
         and returns the parameters as a dictionary.        
         Keyword arguments:
-        operation    -- string that designates the operation. See caller and
-                        e for
-                        operations and 
+        operation    -- string that designates the operation. See caller class
+                        for operation names.
+                        
         """
         
         # Reading parameter file.
@@ -383,7 +383,7 @@ class Experiment(object):
     def __getstate__(self):
         """
         Return state values to be pickled. Used to avoid pickling huge files
-        files two times to disk. 
+        files two times to disk. Standard pickle method.
         """
         odict = self.__dict__.copy()
         del odict['_raw_data']
@@ -393,7 +393,8 @@ class Experiment(object):
     def __setstate__(self, odict):
         """
         Restore state from the unpickled state values. Restores raw and working
-        files from the files in the experiment directory.
+        files from the files in the experiment directory. Standard pickle
+        method.
         """ 
 
         rawFullPath = odict['_raw_data_path']

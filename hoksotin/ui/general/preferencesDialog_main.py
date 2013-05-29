@@ -15,7 +15,6 @@ class PreferencesDialog(QtGui.QDialog):
     calibration file for the experiment.
     """
 
-
     def __init__(self):
         """
         Constructor
