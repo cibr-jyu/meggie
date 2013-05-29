@@ -2,7 +2,7 @@
 """
 Created on Mar 12, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 import mne
 from mne.layouts import read_layout

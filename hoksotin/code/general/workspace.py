@@ -1,7 +1,7 @@
 """
 Created on Apr 4, 2013
 
-@author: jaolpeso
+@author: Janne Pesonen
 """
 import os
 import ConfigParser

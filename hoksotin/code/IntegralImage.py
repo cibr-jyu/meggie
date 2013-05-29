@@ -1,7 +1,7 @@
 """
 Created on Mar 14, 2013
 
-@author: jaolpeso
+@author: Janne Pesonen
 """
 
 import numpy

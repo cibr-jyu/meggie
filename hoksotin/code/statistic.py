@@ -3,7 +3,7 @@
 """
 Created on Mar 14, 2013
 
-@author: Jaakko LeppÄkangas, Atte Rautio
+@author: Jaakko Leppakangas, Atte Rautio
 """
 import numpy as np
 import sys

@@ -2,7 +2,7 @@
 """
 Created on Mar 14, 2013
 
-@author: Jaakko Leppäkangas, Atte Rautio
+@author: Jaakko Leppakangas, Atte Rautio
 """
 import unittest
 

@@ -13,9 +13,15 @@ from addProjections_Ui import Ui_Dialog
 class AddEOGProjections(QtGui.QDialog):
     """
     Class for adding EOG projections.
+    Projections should be created and saved in a file before adding them.
     """
     
     def __init__(self, parent):
+        """
+        Constructor. Initializes the dialog.
+        Keyword arguments:
+        parent        -- The parent of this object.
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
@@ -35,6 +41,9 @@ class AddEOGProjections(QtGui.QDialog):
         
         
     def accept(self):
+        """
+        Adds the projections.
+        """
         applied = []
         for index in xrange(self.listWidget.count()):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))

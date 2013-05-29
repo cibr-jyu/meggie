@@ -2,7 +2,7 @@
 """
 Created on Apr 24, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 """
 Helper module for all the different channel groups.
