@@ -32,6 +32,9 @@ class InfoDialog(QtGui.QDialog):
         self._setLabelTestValues()
     
     def on_ButtonClose_clicked(self):
+        """
+        Closes the dialog
+        """
         self.close()
         
     def _setLabelTestValues(self):
