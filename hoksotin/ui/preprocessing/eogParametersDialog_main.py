@@ -17,12 +17,18 @@ class EogParametersDialog(QtGui.QDialog):
 
 
     def __init__(self, parent):
+        """
+        Constructor. Initializes the dialog.
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in module eogParametersDialog
         self.ui.setupUi(self)
         
     def accept(self):
+        """
+        Collect the parameters and pass them to the caller class.
+        """
         dictionary = {'i': self.parent.experiment.working_file}
         
         tmin = self.ui.doubleSpinBoxTmin.value()

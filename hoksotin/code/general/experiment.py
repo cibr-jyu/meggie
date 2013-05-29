@@ -51,9 +51,8 @@ class Experiment(object):
                               Epochs=False, Average=False)        
     
     
-    """
-    raw_data_path and working_file_path are only used internally 
-    """
+    # raw_data_path and working_file_path are only used internally 
+    
     @property
     def raw_data_path(self):
         return self._raw_data_path
