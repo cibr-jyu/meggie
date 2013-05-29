@@ -40,9 +40,6 @@ from epochs import Epochs
 from events import Events
 from caller import Caller
 
-#from createEpochs import CreateEpochs
-#from widgets.create_tab import Tab, EpochTab
-
 class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
@@ -53,11 +50,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        
-        
         # Main window represents one experiment at a time. This experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
-        # trigger action.
+        # triggered action.
         self.experiment = None
         
         # One main window (and one experiment) only needs one caller to do its
@@ -87,6 +82,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
         Method for opening an existing experiment.
+        TODO: should be moved to a separate I/O module
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return 
@@ -96,6 +92,7 @@ class MainWindow(QtGui.QMainWindow):
         if path == '': return
         fname = path + '/' + path.split('/')[-1] + '.pro'
         # TODO needs exception checking for corrupt/wrong type of file
+        # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
@@ -139,12 +136,13 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()  
     
     def on_actionSet_workspace_triggered(self, checked=None):
-        # Standard workaround for file dialog opening twice
+        """
+        Opens the dialog to set the workspace.
+        """
         if checked is None: return
         self.check_workspace()
         
     def on_actionPreferences_triggered(self, checked=None):
-        # Standard workaround for file dialog opening twice
         if checked is None: return
         self.dialogPreferences = PreferencesDialog()
         self.dialogPreferences.show()
@@ -153,7 +151,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Opens the epoch dialog. 
         """
-        # Standard workaround for file dialog opening twice
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.show()        
@@ -162,7 +159,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for plotting the evoked data as a topology.
         """
-        # Standard workaround for file dialog opening twice
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
         if self.widget.ui.listWidgetEpochs.currentItem() is None: 
@@ -179,17 +175,17 @@ class MainWindow(QtGui.QMainWindow):
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
-        Method for calling the mne_browe_raw.
+        Method for calling the mne_browse_raw.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return 
         self.caller.call_mne_browse_raw(self.experiment.working_file.\
                                         info.get('filename'))
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
-        Method for calling Electa's MaxFilter.
+        Method for calling Elekta's MaxFilter.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return 
         try:
             self.maxFilterDialog = MaxFilterDialog(self, 
                                                    self.experiment.raw_data)
@@ -202,7 +198,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonSpectrum_clicked(self):
         """
-        Method for plotting the spectrum magnitude.
+        Opens the magnitude spectrum visualization dialog.
         """
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
@@ -210,7 +206,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_currentChanged(self):
         """
         Keeps track of the active tab.
-        Shows the epoch widget when in analysis.
+        Shows the epoch collection list widget when in appropriate tabs.
         """
         index = self.ui.tabWidget.currentIndex()
         #self.tab = self.ui.tabWidget.currentWidget()
@@ -231,47 +227,46 @@ class MainWindow(QtGui.QMainWindow):
            self.widget.show()
            return 
             
-            #self.ui.verticalLayoutEpoching.addWidget(self.widget)
         else:
             self.widget.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
-        Method for calculating the EOG PCA.
+        Opens the dialog for calculating the EOG PCA.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return 
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.show()
         
     def on_pushButtonECG_clicked(self, checked=None):
         """
-        Method for calculating the ECG PCA.
+        Opens the dialog for calculating the ECG PCA.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
         
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """
-        Method for applying the EOG-projections to the data.
+        Opens the dialog for applying the EOG-projections to the data.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return
         self.addEogProjs = AddEOGProjections(self)
         self.addEogProjs.exec_()
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """
-        Method for applying the ECG-projections to the data.
+        Opens the dialog for applying the ECG-projections to the data.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return
         self.addEcgProjs = AddECGProjections(self)
         self.addEcgProjs.exec_()
         
     def on_pushButtonTFR_clicked(self, checked=None):
         """
-        Method for plotting TFR from a single channel.
+        Opens the dialog for plotting TFR from a single channel.
         """
-        if checked is None: return # Standard workaround for file dialog opening twice
+        if checked is None: return
         if self.widget.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('You must create epochs ' +
@@ -285,7 +280,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonTFRTopology_clicked(self,checked=None):
         """
-        Method for plotting TFR topology.
+        Opens the dialog for plotting TFR topology.
         """
         if self.widget.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
@@ -311,15 +306,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelEOGAppliedAccept_2.hide()
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
-        """
-        self.ui.checkBoxECG.hide()
-        self.ui.checkBoxEOG.hide()
-        self.ui.checkBoxMaxFilter.hide()
-        self.ui.checkBoxEOGApplied.hide()
-        self.ui.checkBoxECGApplied.hide()
-        self.ui.pushButtonApplyEOG.setEnabled(False)
-        self.ui.pushButtonApplyECG.setEnabled(False)
-        """
+        
         #Check whether ECG projections are calculated
         fname = self.experiment.raw_data.info.get('filename')
         path = self.experiment._subject_directory
@@ -327,10 +314,6 @@ class MainWindow(QtGui.QMainWindow):
         files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
         if len(files) > 1:
-            """
-            self.ui.checkBoxECG.setCheckState(QtCore.Qt.Checked)
-            self.ui.checkBoxECG.show()
-            """
             self.ui.pushButtonApplyECG.setEnabled(True)
             self.ui.labelECGComputedAccept_2.show()
         
@@ -339,39 +322,24 @@ class MainWindow(QtGui.QMainWindow):
         files += filter(os.path.isfile, glob.glob(path+'*_eog_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_eog-eve.fif'))
         if len(files) > 1:
-            """
-            self.ui.checkBoxEOG.setCheckState(QtCore.Qt.Checked)
-            self.ui.checkBoxEOG.show()
-            """
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.labelEOGComputedAccept_2.show()
         
         #Check whether ECG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
         if len(files) > 0:
-            """
-            self.ui.checkBoxECGApplied.show()
-            self.ui.checkBoxECGApplied.setCheckState(QtCore.Qt.Checked)
-            """
             self.ui.labelECGAppliedAccept_2.show()
         
         #Check whether EOG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
         if len(files) > 0:
-            """
-            self.ui.checkBoxEOGApplied.show()
-            self.ui.checkBoxEOGApplied.setCheckState(QtCore.Qt.Checked)
-            """
             self.ui.labelEOGAppliedAccept_2.show()
         
         files = filter(os.path.isfile, glob.glob(path + '*sss*'))
         if len(files) > 0:
-            """
-            self.ui.checkBoxMaxFilter.show()
-            self.ui.checkBoxMaxFilter.setCheckState(QtCore.Qt.Checked)
-            """
             self.ui.labelMaxFilterAccept_2.show()
-        #TODO: Maxfilter
+        
+        #TODO: applied/not applied label for MaxFilter
         
     def add_tabs(self):
         """
@@ -386,6 +354,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
         
     def check_workspace(self):
+        """
+        Open the workspace chooser dialog.
+        """
         self.workSpaceDialog = WorkSpaceDialog(self)
         self.workSpaceDialog.show()
         

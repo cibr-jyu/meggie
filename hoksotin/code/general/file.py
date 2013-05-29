@@ -20,8 +20,6 @@ class File(object):
     def open_raw(self, fname):
         """
         Opens a raw file.
-        
-        
         Keyword arguments:
         fname         -- A file to open
         Raises an exception if the file cannot be opened.

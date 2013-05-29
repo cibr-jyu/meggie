@@ -12,7 +12,9 @@ from epochDialog_main import EpochDialog
 
 from epochs import Epochs
 from events import Events
-import brainRegions
+
+# TODO this is for the currently unused check_channels method. 
+#import brainRegions
 
 import numpy as np
 
@@ -48,7 +50,10 @@ class EventSelectionDialog(QtGui.QDialog):
         return e.events
         
     def on_pushButtonAdd_clicked(self, checked=None):
-        if checked is None: return # Standard workaround
+        """
+        Method for adding events to the list.
+        """
+        if checked is None: return
         events = self.create_eventlist()
         print events
         self.__class__.index += 1
@@ -70,7 +75,7 @@ class EventSelectionDialog(QtGui.QDialog):
         
     def on_pushButtonRemove_clicked(self, checked=None):
         """
-        Method for removing events from the list
+        Method for removing events from the list.
         """
         if checked is None: return # Standard workaround
         row = self.ui.listWidgetEvents.currentRow()
@@ -80,7 +85,8 @@ class EventSelectionDialog(QtGui.QDialog):
         
     def accept(self):
         """
-        Called when the OK button is pressed.
+        Called when the OK button is pressed. Opens the epoching dialog
+        (epochDialog).
         """
         if self.ui.listWidgetEvents.count() == 0:
             self.messageBox = messageBox.AppForm()

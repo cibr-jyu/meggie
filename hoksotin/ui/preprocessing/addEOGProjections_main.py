@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 25, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 import glob
 
 import mne

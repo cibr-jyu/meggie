@@ -10,13 +10,11 @@ import messageBox
 from experiment import Experiment
 from workspace import Workspace
 
-#from mainWindow_mainTesti import MainWindow
 from infoDialog_Ui import Ui_infoDialog
 from createExperimentDialog_Ui import Ui_CreateExperimentDialog
 from maxFilterComputeDialog_main import MaxFilterComputeDialog
 
-from PyQt4 import QtCore, QtGui
-# Import the pyuic4-compiled main UI module 
+from PyQt4 import QtCore, QtGui 
 
 import os, sys
 import StringIO
@@ -24,7 +22,6 @@ import pickle
 import time
 import ConfigParser
 
-# Create a dialog main window
 class CreateExperimentDialog(QtGui.QDialog):
     """
     Class containing the logic for CreateExperimentDialog.
@@ -35,10 +32,9 @@ class CreateExperimentDialog(QtGui.QDialog):
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.fname = ''
+        
+        # Reference to main dialog window
         self.parent = parent
-        """
-        Reference to main dialog window
-        """
         
         # Refers to class in file CreateProjecDialog
         self.ui = Ui_CreateExperimentDialog() 
@@ -46,16 +42,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui.labelCreatingExperiment.setVisible(False)
         self.ui.progressBarCreatingExperiment.setVisible(False)
         self.ui.showFileInfoButton.setEnabled(False)
-        #self.computeDialog = MaxFilterComputeDialog(self)
-        """
-        self.computeDialog.open()
-        self.computeDialog.raise_()
-        self.computeDialog.activateWindow()        
-        """
-        
-        #self.computeDialog.setVisible(False)
-        #sys.stdout = OutLog(self.computeDialog.ui.textEditDetails, sys.stdout)
-            
                 
     def accept(self):
         self.ui.labelCreatingExperiment.setVisible(True)
@@ -86,7 +72,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         
     def on_showFileInfoButton_clicked(self):
         """
-        Opens the infoDialog for the selected data.
+        Opens the infoDialog for the raw file selected.
         """
         try:
             info = Ui_infoDialog()
@@ -113,12 +99,10 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.ui.labelCreatingExperiment.setVisible(False)
             self.ui.progressBarCreatingExperiment.setVisible(False)
             return          
-        QtGui.QApplication.processEvents()
-        #self.computeDialog.setValue(10)    
+        QtGui.QApplication.processEvents()    
         try:
             self.workspace = Workspace()
-            self.experiment = Experiment()
-            #self.workspace.working_directory = '/usr/local/bin/'  #'/tmp/' 
+            self.experiment = Experiment() 
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
             lineEditExperimentName.text()
@@ -135,7 +119,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.ui.progressBarCreatingExperiment.setVisible(False)
             return         
         try:
-            #self.experiment.save_experiment(self.workspace.working_directory)
             self.experiment.raw_data = self.raw
             self.experiment.find_stim_channel()
             self.experiment.create_event_set()
@@ -191,6 +174,7 @@ class OutLog:
         edit = QTextEdit
         out = alternate stream ( can be the original sys.stdout )
         color = alternate color (i.e. color stderr a different color)
+        TODO WTF?
         """
         self.edit = edit
         self.out = None

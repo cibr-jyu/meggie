@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 25, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 import glob
 
 import mne
@@ -42,8 +43,8 @@ class AddECGProjections(QtGui.QDialog):
         
     def accept(self):
         """
-        Adds the projections.
-        """
+        Tells the caller to add the selected projections to the working file.
+        """       
         applied = []
         for index in xrange(self.listWidget.count()):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))

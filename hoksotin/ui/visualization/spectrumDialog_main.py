@@ -9,10 +9,9 @@ from PyQt4 import QtCore,QtGui
 from spectrumDialog_Ui import Ui_DialogSpectrum
 
 class SpectrumDialog(QtGui.QDialog):
-    '''
+    """
     Dialog to get the channel from the user and plot the magnitude spectrum.
-    '''
-
+    """
 
     def __init__(self, parent):
         '''
@@ -28,6 +27,10 @@ class SpectrumDialog(QtGui.QDialog):
         self.ui.comboBoxChannel.addItems(ch_names)
         
     def accept(self):
+        """
+        Reads values from the dialog, saves them in a dictionary and initiates
+        a caller to actually call the backend.
+        """
         ch_index = self.ui.comboBoxChannel.currentIndex()
         raw = self.parent.experiment.working_file
         print ch_index

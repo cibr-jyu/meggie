@@ -1,3 +1,4 @@
+# coding: latin1
 """
 Created on Apr 16, 2013
 
@@ -33,16 +34,13 @@ class EcgParametersDialog(QtGui.QDialog):
         If the dialog has been opened previously, reads the previous
         parameters from a parameter file into a dictionary. The creation of the
         parameter file is handled by the caller.
-        TODO Should call with a list of globstrings, as the mne script this 
-        dialog evokes can produce files ending with "ecg_proj.fif" or
-        "ecg_ave_proj.fif".
         """
         
         paramdict = parent.experiment.parse_parameter_file('ecgproj')
         self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
-        # If no parameter file existed, return
+        # If no parameter file exists, return
         if ( dic == None ): return
         
         """
@@ -81,7 +79,6 @@ class EcgParametersDialog(QtGui.QDialog):
         # TODO get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
                                            
-
     def accept(self):
         """
         Collect the parameters for calculating PCA projections and pass them

@@ -74,7 +74,7 @@ class Caller(object):
         self.update_experiment_working_file(outputfile)
         
         """ 
-        # Write parameter file
+        # TODO Write parameter file
         self.experiment. \
         save_parameter_file('maxfilter', \
                             raw, , dic)
@@ -237,8 +237,7 @@ class Caller(object):
         
     def apply_ecg(self, raw, directory):
         """
-        Applies ECG projections for MEG-data.
-        
+        Applies ECG projections for MEG-data.  
         Keyword arguments:
         raw           -- Data to apply to
         directory     -- Directory of the projection file
@@ -269,7 +268,6 @@ class Caller(object):
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
-        
         Keyword arguments:
         raw           -- Data to apply to
         directory     -- Directory of the projection file
@@ -447,8 +445,7 @@ class Caller(object):
 
     def write_events(self, events):
         """
-        Saves the events in an excel file (.xls).
-        
+        Saves the events in an excel file (.xls). 
         Keyword arguments:
         events           -- Events to save
         """

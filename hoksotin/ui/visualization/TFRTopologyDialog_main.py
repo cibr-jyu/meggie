@@ -36,7 +36,7 @@ class TFRTopologyDialog(QtGui.QDialog):
     def accept(self):
         """
         Collects the parameter values from the dialog window and passes them
-        to the Caller. Also checks for erroneus parameter values and gives 
+        to the caller. Also checks for erroneus parameter values and gives 
         feedback to the user.
         """
         minfreq = self.ui.doubleSpinBoxMinFreq.value()

@@ -11,7 +11,8 @@ from preferencesDialog_Ui import Ui_Dialog
 
 class PreferencesDialog(QtGui.QDialog):
     """
-    Dialog to set the preferences for the program.
+    Dialog to set the preferences for the program. Only allows choosing the
+    calibration file for the experiment.
     """
 
 

@@ -20,8 +20,7 @@ class InfoDialog(QtGui.QDialog):
     """
     def __init__(self, raw, targetUi, create_window):
         """
-        Constructor
-        
+        Constructor    
         Keyword arguments:
         raw           -- Raw object.
         targetUi      -- Ui object that receives the info data.

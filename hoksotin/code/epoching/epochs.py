@@ -20,7 +20,6 @@ class Epochs(object):
                  eog, reject, category, tmin=-0.2, tmax=0.5):
         """
         Constructor
-        
         Keyword arguments:
         raw           -- Raw object.
         events        -- Array of events.
@@ -58,7 +57,7 @@ class Epochs(object):
         
     def average(self):
         """
-        Average epochs.
+        Averages epochs.
         Draws a topography representation of the evoked potentials.
         Raises an exception if cannot find any epochs.
         """

@@ -15,15 +15,16 @@ import glob
 import numpy as np
 
 # Better to use pickle rather than cpickle, as experiment paths may
-# include unicode characters
+# include non-ascii characters
 import pickle
 
 class Experiment(object):
     """
-    Experiment holds information about the currently saved raw data,
-    path of the experiment file, _author, date and _description.
+    Experiment holds information about the currently saved raw data, working
+    file etc. It also stores path of the experiment file, _author, date and
+    _description. It also has methods for saving and parsing parameter files
+    and pickling and unpickling itself to and from disk.
     """
-    
     
     def __init__(self):
         """
@@ -42,17 +43,8 @@ class Experiment(object):
         self._event_set = []
         self._stim_channel = ''
         self.mainWindow = None
-        
-        # Add here all the possible actions that you can do to an experiment
-        # TODO not in use, possibly not needed
-        self.stateDict = dict(Maxfilter=False, ECGcomputed=False,
-                              ECGapplied=False, EOGcomputed=False,
-                              EOGapplied=False, Eventlist=False,
-                              Epochs=False, Average=False)        
-    
-    
+                
     # raw_data_path and working_file_path are only used internally 
-    
     @property
     def raw_data_path(self):
         return self._raw_data_path
@@ -69,7 +61,6 @@ class Experiment(object):
     def working_file_path(self, fname):
         self._working_file_path = fname
        
-                
     @property
     def experiment_name(self):
         """
@@ -80,8 +71,7 @@ class Experiment(object):
     @experiment_name.setter
     def experiment_name(self, experiment_name):
         """
-        Sets the name for the experiment.
-        
+        Sets the name for the experiment. 
         Keyword arguments:
         experiment_name    -- the name of the experiment 
         """
@@ -106,10 +96,7 @@ class Experiment(object):
         """
         Sets the subject directory for the experiment. Should be an absolute
         path. Not setable by user, for internal use only.
-        TODO: should probably later be a list of subject directories, if the
-        experiment is to include several of them
         """
-        
         self._subject_directory = subject_directory
     
     @property
@@ -124,7 +111,6 @@ class Experiment(object):
         """
         Sets the given path for the experiment file.
         Raises exception if the given path doesn't exist.
-        
         Keyword arguments:
         file_path       -- the path of the saved experiment
         """
@@ -145,7 +131,6 @@ class Experiment(object):
         """
         Sets the raw data file for the experiment.
         Raises exception if the given data type is wrong. 
-        
         Keyword arguments:
         raw_data        -- the raw data file of the measured data
         """
@@ -168,7 +153,6 @@ class Experiment(object):
         Raises exception if the _author name is too long.
         Raises exception if the _author name includes other characters
         than letters and numbers.
-        
         Keyword arguments:
         author          - - the _author of the experiment
         """
@@ -194,7 +178,6 @@ class Experiment(object):
         Raises exception if the _description is too long.
         Raises exception if the _description includes other characters
         than letters and numbers.        
-        
         Keyword arguments:
         description     - - the _description of the experiment written
         by the _author
@@ -234,10 +217,6 @@ class Experiment(object):
         """
         self._working_file = mne.fiff.Raw(fname, preload=True)
         self.working_file_path = fname
-        #self.shortname = os.path.basename(fname)
-        #self.mainWindow.ui.statusbar.showMessage("Current working file: " + 
-        #                                         shortname)
-        
         
     @property
     def stim_channel(self):
@@ -250,15 +229,6 @@ class Experiment(object):
     def stim_channel(self, stim_ch):
         """
         Setter for stimulus channel.
-        """
-        """
-        channels = self._raw_data.info.get('ch_names')
-        if any('STI101' in channels for x in channels):
-            self._stim_channel = 'STI101'
-        elif any('STI 014' in channels for x in channels):
-            self._stim_channel = 'STI 014'
-        else:
-            raise Exception('No stim channel found.')
         """
         self._stim_channel = stim_ch
     
@@ -293,12 +263,13 @@ class Experiment(object):
     
     def save_experiment_settings(self):
         """
-        Saves (pickes) the experiment settings into a file in the root of
+        Saves (pickles) the experiment settings into a file in the root of
         the experiment directory structure. Please note that loading is done
         in the mainWindow class. 
         """
         
         # String conversion, because shutil doesn't accept QStrings
+        # TODO the file should end with .exp
         settingsFileName = str(self._experiment_name + '.pro')
         
         # Actually a file object
@@ -307,17 +278,14 @@ class Experiment(object):
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
         
-        # Move the file from working directory to 
-        #shutil.move(settingsFileName, str(self._file_path))
-        
         settingsFile.close()        
 
     def save_raw(self, file_name, path):
         """
-        Saves the raw data file into the experiment folder.
-        
+        Saves the raw data file into the experiment directory.
         Keyword arguments:
         file_name      -- the full path and name of the chosen raw data file
+        path           -- path to the experiment directory
         """
         self._file_path = path + '/' + self._experiment_name + '/'
         folder_name = file_name.split("_", 1)
@@ -345,7 +313,6 @@ class Experiment(object):
         """
         Saves the command and parameters related to creation of a certain
         output file to a separate parameter file in csv-format.
-        TODO: breaks if dictionary keys or values include commas --> check
         
         An example of the structure of the resulting parameter file:
         
@@ -384,7 +351,6 @@ class Experiment(object):
         """
         Reads the parameters from a single file matching the operation
         and returns the parameters as a dictionary.        
-        
         Keyword arguments:
         operation    -- string that designates the operation. See caller and
                         e for
@@ -394,9 +360,6 @@ class Experiment(object):
         # Reading parameter file.
         paramdirectory = self._subject_directory 
         paramfilefullpath = paramdirectory + operation + '.param'
-        
-        #globquery = paramdirectory + globquerystring
-        #globlist = glob.glob(globquery)
         
         try:
             with open(paramfilefullpath, 'rb') as paramfile:
@@ -412,7 +375,9 @@ class Experiment(object):
                 paramdict = dict(x for x in csvreader)
                 return paramdict           
         except IOError:
-            return None
+            # In no dictionary is returned, the dialog just falls back to
+            # default initial values.
+            return None  
                         
     def __getstate__(self):
         """
