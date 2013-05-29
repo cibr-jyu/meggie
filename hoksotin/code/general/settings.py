@@ -2,7 +2,7 @@
 """
 Created on Mar 28, 2013
 
-@author: Jaakko Leppäkangas
+@author: Jaakko Leppakangas
 """
 import re
 

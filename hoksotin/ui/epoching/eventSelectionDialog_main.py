@@ -2,7 +2,7 @@
 '''
 Created on Mar 19, 2013
 
-@author: Jaakko Leppakangas, Atte Rautio
+@author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
 '''
 import messageBox
 

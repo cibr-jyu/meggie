@@ -1,7 +1,7 @@
 """
 Created on Apr 16, 2013
 
-@author: Jaakko Leppakangas
+@author: Kari Aliranta, Jaakko Leppakangas
 """
 import os
 import ast

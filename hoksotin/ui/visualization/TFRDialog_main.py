@@ -1,7 +1,7 @@
 '''
 Created on Apr 26, 2013
 
-@author: Janne Leppakangas
+@author: Jaakko Leppakangas
 '''
 import messageBox
 

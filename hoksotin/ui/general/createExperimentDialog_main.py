@@ -1,5 +1,7 @@
-  # -*- coding: utf-8 -*-
-
+# coding: latin1
+"""
+@author: Kari Aliranta, Jaakko Leppakangas
+"""
 
 from file import File
 from infoDialog_main import InfoDialog

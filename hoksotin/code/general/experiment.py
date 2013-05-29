@@ -1,7 +1,7 @@
 """
 Created on Mar 6, 2013
 
-@_author: Janne Pesonen
+@_author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 """
 
 import mne

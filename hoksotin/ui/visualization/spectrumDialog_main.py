@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on May 15, 2013
 
-@author: jaeilepp
-'''
+@author: Jaakko Leppakangas
+"""
 from PyQt4 import QtCore,QtGui
 
 from spectrumDialog_Ui import Ui_DialogSpectrum

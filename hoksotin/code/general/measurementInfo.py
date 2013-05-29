@@ -2,7 +2,7 @@
 """
 Created on Mar 6, 2013
 
-@author: Jaakko Leppäkangas
+@author: Kari Aliranta, Jaakko Leppakangas
 """
 import mne
 

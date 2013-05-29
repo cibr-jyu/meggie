@@ -1,7 +1,8 @@
+# coding: latin1
 """
 Created on Mar 16, 2013
 
-@author: Jaakko Leppakangas, Janne Pesonen
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Atte Rautio
 """
 
 import os,sys

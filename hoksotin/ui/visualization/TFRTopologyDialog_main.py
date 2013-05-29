@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 26, 2013
 
-@author: Janne Leppakangas
-'''
+@author: Kari Aliranta, Jaakko Leppakangas
+"""
 import mne
 
 from PyQt4 import QtCore,QtGui

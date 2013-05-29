@@ -1,8 +1,8 @@
-  # -*- coding: utf-8 -*-
+# coding: latin1
 '''
 Created on Mar 28, 2013
 
-@author: Jaakko Leppakangas, Atte Rautio
+@author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
 '''
 from maxFilterDialog_Ui import Ui_Dialog
 

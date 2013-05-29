@@ -1,3 +1,4 @@
+# coding: latin1
 """
 Created on Apr 12, 2013
 

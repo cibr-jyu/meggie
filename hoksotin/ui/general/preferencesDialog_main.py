@@ -1,7 +1,8 @@
+# coding: latin1
 """
 Created on Apr 29, 2013
 
-@author: jaolpeso
+@author: Janne Pesonen
 """
 
 from PyQt4 import QtCore, QtGui

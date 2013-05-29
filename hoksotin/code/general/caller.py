@@ -2,7 +2,7 @@
 """
 Created on Apr 11, 2013
 
-@author: Jaakko Leppakangas, Janne Pesonen
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 """
 import subprocess
 import os
