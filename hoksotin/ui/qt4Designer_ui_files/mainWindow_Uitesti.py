@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'UIehdotus10.ui'
 #
-# Created: Sat Apr 13 13:40:49 2013
+# Created: Sat Apr 13 13:41:16 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
