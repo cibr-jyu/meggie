@@ -62,7 +62,7 @@ from TFRDialog_main import TFRDialog
 from TFRTopologyDialog_main import TFRTopologyDialog
 from spectrumDialog_main import SpectrumDialog
 from widgets.epochWidget_main import EpochWidget
-from About_ui.py import Ui_About
+from about_main import AboutDialog
 import messageBox
 
 from experiment import Experiment
@@ -190,7 +190,7 @@ class MainWindow(QtGui.QMainWindow):
         Opens the About-dialog 
         """
         if checked is None: return
-        self.dialogAbout = Ui_About()
+        self.dialogAbout = AboutDialog()
         self.dialogAbout.show()    
         
     def on_pushButtonAverage_clicked(self, checked=None):

@@ -504,4 +504,4 @@ class Ui_MainWindow(object):
         self.actionSet_workspace.setText(_translate("MainWindow", "Set workspace...", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
 
-import icons_rc
+from icons import icons_rc

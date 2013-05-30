@@ -42,7 +42,6 @@ from workspace import Workspace
 
 from infoDialog_Ui import Ui_infoDialog
 from createExperimentDialog_Ui import Ui_CreateExperimentDialog
-from maxFilterComputeDialog_main import MaxFilterComputeDialog
 
 from PyQt4 import QtCore, QtGui 
 
