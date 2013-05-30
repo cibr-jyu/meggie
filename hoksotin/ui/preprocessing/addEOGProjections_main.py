@@ -50,9 +50,16 @@ class AddEOGProjections(QtGui.QDialog):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
-        mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_eog(self.parent.experiment.working_file,
+        try:
+            # Overwrites the projection file with desired vectors.
+            mne.write_proj(self.proj_file, applied)
+            self.parent.caller.apply_eog(self.parent.experiment.working_file,
                                      self.parent.experiment._subject_directory)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            return
         self.parent.ui.statusbar.\
         showMessage("Current working file: " + 
                     self.parent.experiment.working_file.info.get('filename'))

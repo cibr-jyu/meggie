@@ -3,6 +3,7 @@
 Created on Apr 11, 2013
 
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
+This module contains caller class which calls third party software.
 """
 import subprocess
 import os
@@ -36,7 +37,10 @@ class Caller(object):
         Opens mne_browse_raw with the given file as a parameter
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
+        Raises an exception if MNE_ROOT is not set.
         """
+        if os.environ.get('MNE_ROOT') is None:
+            raise Exception('Environment variable MNE_ROOT not set.')
         proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,

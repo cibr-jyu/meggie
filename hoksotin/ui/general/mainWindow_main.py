@@ -177,9 +177,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for calling the mne_browse_raw.
         """
-        if checked is None: return 
-        self.caller.call_mne_browse_raw(self.experiment.working_file.\
-                                        info.get('filename'))
+        if checked is None: return
+        try:
+            self.caller.call_mne_browse_raw(self.experiment.working_file.\
+                                            info.get('filename'))
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            return        
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
