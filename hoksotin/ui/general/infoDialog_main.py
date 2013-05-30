@@ -1,3 +1,5 @@
+# coding: latin1
+
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
@@ -25,7 +27,6 @@
 #of the authors and should not be interpreted as representing official policies, 
 #either expressed or implied, of the FreeBSD Project.
 
-# coding: latin1
 """
 @author: Jaakko Leppakangas
 Contains the InfoDialog-class used for viewing background info from

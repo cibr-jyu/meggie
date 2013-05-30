@@ -1,3 +1,5 @@
+# coding: latin1
+
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
@@ -25,7 +27,6 @@
 #of the authors and should not be interpreted as representing official policies, 
 #either expressed or implied, of the FreeBSD Project.
 
-# coding: latin1
 """
 Created on Mar 16, 2013
 
@@ -61,6 +62,7 @@ from TFRDialog_main import TFRDialog
 from TFRTopologyDialog_main import TFRTopologyDialog
 from spectrumDialog_main import SpectrumDialog
 from widgets.epochWidget_main import EpochWidget
+from About_ui.py import Ui_About
 import messageBox
 
 from experiment import Experiment
@@ -181,7 +183,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.show()        
+        self.epochParameterDialog.show()
+        
+    def on_actionAbout_triggered(self, checked=None):
+        """
+        Opens the About-dialog 
+        """
+        if checked is None: return
+        self.dialogAbout = Ui_About()
+        self.dialogAbout.show()    
         
     def on_pushButtonAverage_clicked(self, checked=None):
         """
@@ -252,14 +262,14 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         if index == 3:
-           self.widget.setParent(self.ui.tabAveraging) 
-           self.widget.show()
-           return
+            self.widget.setParent(self.ui.tabAveraging) 
+            self.widget.show()
+            return
        
         if index == 4:
-           self.widget.setParent(self.ui.tabTFR) 
-           self.widget.show()
-           return 
+            self.widget.setParent(self.ui.tabTFR) 
+            self.widget.show()
+            return 
             
         else:
             self.widget.hide()

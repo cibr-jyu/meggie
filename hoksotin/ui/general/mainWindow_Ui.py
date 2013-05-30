@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
-# Created: Wed May 15 15:29:16 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Thu May 30 15:06:02 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 697))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 721))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -404,7 +404,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 21))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -426,9 +426,12 @@ class Ui_MainWindow(object):
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
         self.actionSet_workspace = QtGui.QAction(MainWindow)
         self.actionSet_workspace.setObjectName(_fromUtf8("actionSet_workspace"))
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addAction(self.actionSet_workspace)
+        self.menuFile.addAction(self.actionAbout)
         self.menuTools.addAction(self.actionPreferences)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -499,5 +502,6 @@ class Ui_MainWindow(object):
         self.actionOpen_experiment.setText(_translate("MainWindow", "Open experiment...", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
         self.actionSet_workspace.setText(_translate("MainWindow", "Set workspace...", None))
+        self.actionAbout.setText(_translate("MainWindow", "About", None))
 
-from icons import icons_rc
+import icons_rc

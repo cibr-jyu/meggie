@@ -38,7 +38,7 @@
          <x>0</x>
          <y>0</y>
          <width>953</width>
-         <height>697</height>
+         <height>721</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -826,7 +826,7 @@
      <x>0</x>
      <y>0</y>
      <width>973</width>
-     <height>29</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -839,6 +839,7 @@
     <addaction name="actionCreate_experiment"/>
     <addaction name="actionOpen_experiment"/>
     <addaction name="actionSet_workspace"/>
+    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -881,6 +882,11 @@
   <action name="actionSet_workspace">
    <property name="text">
     <string>Set workspace...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>
