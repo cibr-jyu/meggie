@@ -33,7 +33,7 @@ class AddECGProjections(QtGui.QDialog):
         
         self.listWidget = QtGui.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
-        #add checkboxes
+        # Add checkboxes
         for proj in self.projs:
             item = QtGui.QListWidgetItem(self.listWidget)
             checkBox = QtGui.QCheckBox()
