@@ -2,7 +2,7 @@
 """
 Created on Mar 6, 2013
 
-@author: Jaakko Leppäkangas
+@author: Kari Aliranta, Jaakko Leppakangas
 """
 import mne
 
@@ -11,9 +11,8 @@ import re
 
 class MeasurementInfo(object):
     """
-    A class for collecting information from MEG-measurements.
+    A class for collecting information from MEG-measurement raw files.
     """
-
 
     def __init__(self, raw):
         """

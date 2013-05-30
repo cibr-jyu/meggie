@@ -1,9 +1,9 @@
-  # -*- coding: utf-8 -*-
-'''
+# coding: latin1
+"""
 Created on Mar 28, 2013
 
-@author: Jaakko Leppakangas, Atte Rautio
-'''
+@author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
+"""
 from maxFilterDialog_Ui import Ui_Dialog
 
 import glob
@@ -43,7 +43,8 @@ class MaxFilterDialog(QtGui.QDialog):
         self.populateComboboxLab()
         
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
-        if checked is None: return # Standard workaround for file dialog opening twice
+        # Standard workaround for file dialog opening twice
+        if checked is None: return 
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                        '/home/')     
     
@@ -77,7 +78,6 @@ class MaxFilterDialog(QtGui.QDialog):
         not overlap, and later skip periods should come later than earlier
         regions
         """
-        
         skips = ''
         if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
             if ( self.ui.spinBoxSkipEnd_1.value() 
@@ -115,8 +115,8 @@ class MaxFilterDialog(QtGui.QDialog):
         """ 
         This code was used for a buttongroup that allowed selection of output
         format of MaxFilter generated files. The format now defaults to 32-bit
-        float. MaxFilter allows other formats, but no need to show them
-        in the UI.
+        float. MaxFilter allows other formats, but there is usually no need to
+        show them in the UI.
         """
         # button_text = str(self.ui.buttonGroupFormat.checkedButton().text())
         # format = button_text.split(' ')[0].lower()
@@ -142,7 +142,7 @@ class MaxFilterDialog(QtGui.QDialog):
             'radioButtonPositionAverage':
                 pass
         
-        # TODO Stores the head position in a file 
+        # TODO Store the head position in a file 
         if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
             dictionary['-hp'] = ''
         
@@ -184,7 +184,7 @@ class MaxFilterDialog(QtGui.QDialog):
             
         custom = self.ui.textEditCustom.toPlainText()
         
-        # Uses the caller related to mainwindow
+        # Uses the caller related to mainwindow.
         caller = self.parent.caller
         
         try:
@@ -195,19 +195,18 @@ class MaxFilterDialog(QtGui.QDialog):
             self.messageBox.show()
         
         """
-        Checks the MaxFilter box in the preprocessing tab of the mainWindow
+        Checks the MaxFilter box in the preprocessing tab of the mainWindow.
         """ 
         self.parent.ui.checkBoxMaxFilter.setCheckState(2)
         
         self.close()
         
     def populateComboboxLab(self):
-        # TODO: fix the paths
         """
         Goes through the lab-specific config files in
         $NEUROMAG_ROOT/databases/sss/ and returns a list of labs found.
+        TODO: proper message to the user if NEUROMAG_ROOT isn't set.
         """
-        # TODO: change c:\\MyTemp\\testi\\ into the proper env variable.
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         self.root = os.environ.get('NEUROMAG_ROOT')
@@ -223,10 +222,10 @@ class MaxFilterDialog(QtGui.QDialog):
                 
     
     def setLab(self):
-        # TODO: Fix the paths.
         """
         Checks if calibration files for the selected lab exist.
         Returns the selected lab or an empty string if files are not found.
+        TODO: Fix the paths.
         """
         
         lab = str(self.ui.comboBoxLab.currentText())
@@ -252,7 +251,7 @@ class MaxFilterDialog(QtGui.QDialog):
             
     def showErrorMessage(self, message):
         """
-        Generic error message to be shown to the user
+        Error message to be shown to the user in a message box. 
         """
         self.messageBox = messageBox.AppForm()
         self.messageBox.labelException.setText(str(message))

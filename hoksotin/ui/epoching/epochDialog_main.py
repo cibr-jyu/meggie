@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 30, 2013
 
-@author: jaeilepp
-'''
+@author: Jaakko Leppakangas
+"""
 import messageBox
 from epochDialog_Ui import Ui_Dialog
 

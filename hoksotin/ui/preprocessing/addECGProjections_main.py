@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 25, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 import glob
 
 import mne
@@ -32,7 +33,7 @@ class AddECGProjections(QtGui.QDialog):
         
         self.listWidget = QtGui.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
-        #add checkboxes
+        # Add checkboxes
         for proj in self.projs:
             item = QtGui.QListWidgetItem(self.listWidget)
             checkBox = QtGui.QCheckBox()
@@ -42,16 +43,23 @@ class AddECGProjections(QtGui.QDialog):
         
     def accept(self):
         """
-        Adds the projections.
-        """
+        Tells the caller to add the selected projections to the working file.
+        """       
         applied = []
         for index in xrange(self.listWidget.count()):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
-        mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_ecg(self.parent.experiment.working_file,
+        try:
+            # Overwrites the projection file with desired vectors.
+            mne.write_proj(self.proj_file, applied)
+            self.parent.caller.apply_ecg(self.parent.experiment.working_file,
                                     self.parent.experiment._subject_directory)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
+            return
         self.parent.ui.statusbar.\
         showMessage("Current working file: " + 
                     self.parent.experiment.working_file.info.get('filename'))

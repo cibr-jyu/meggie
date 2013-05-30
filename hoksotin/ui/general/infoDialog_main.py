@@ -1,3 +1,8 @@
+# coding: latin1
+"""
+@author: Jaakko Leppakangas
+"""
+
 import sys
 from PyQt4 import QtCore, QtGui
 from infoDialog_Ui import Ui_infoDialog
@@ -14,12 +19,11 @@ class InfoDialog(QtGui.QDialog):
     """
     def __init__(self, raw, targetUi, create_window):
         """
-        Constructor
-        
+        Constructor    
         Keyword arguments:
         raw           -- Raw object.
         targetUi      -- Ui object that receives the info data.
-        create_window -- Boolean to determine that a new dialog window 
+        create_window -- Boolean to determine if a new dialog window 
         is created.
         """
         QtGui.QDialog.__init__(self)

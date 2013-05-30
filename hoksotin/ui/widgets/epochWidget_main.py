@@ -1,3 +1,4 @@
+# coding: latin1
 """
 Created on May 2, 2013
 
@@ -9,16 +10,15 @@ from epochWidget_Ui import Ui_Form
 
 class EpochWidget(QtGui.QWidget):
     """
-    Creates a widget that shows a list of epochs.
+    Creates a widget that shows a list of epoch collections.
     """
 
 
     def __init__(self, parent):
         """
-        Constructor creates a widget.
+        Constructor 
         """
         QtGui.QWidget.__init__(self, parent)
-        #QtGui.QDialog.__init__(self)
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)

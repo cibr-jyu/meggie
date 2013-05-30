@@ -2,7 +2,8 @@
 """
 Created on Apr 11, 2013
 
-@author: Jaakko Leppakangas
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
+This module contains caller class which calls third party software.
 """
 import subprocess
 import os
@@ -26,7 +27,7 @@ class Caller(object):
     def __init__(self, parent):
         """
         Constructor
-        Keyword arguments:pen_workbook
+        Keyword arguments:
         parent        -- Parent of this object.
         """
         self.parent = parent
@@ -36,7 +37,10 @@ class Caller(object):
         Opens mne_browse_raw with the given file as a parameter
         Keyword arguments:
         filename      -- file to open mne_browse_raw with
+        Raises an exception if MNE_ROOT is not set.
         """
+        if os.environ.get('MNE_ROOT') is None:
+            raise Exception('Environment variable MNE_ROOT not set.')
         proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,
@@ -74,12 +78,10 @@ class Caller(object):
         self.update_experiment_working_file(outputfile)
         
         """ 
-        # Write parameter file
-        self.experiment. \
-        save_parameter_file('maxfilter', \
-                            raw, , dic)
+        TODO Write parameter file. Implement after the actual MaxFilter
+        calling has been tested. 
+        self.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
-        
         self.parent.experiment.save_experiment_settings()
         
     def call_ecg_ssp(self, dic):
@@ -237,8 +239,7 @@ class Caller(object):
         
     def apply_ecg(self, raw, directory):
         """
-        Applies ECG projections for MEG-data.
-        
+        Applies ECG projections for MEG-data.  
         Keyword arguments:
         raw           -- Data to apply to
         directory     -- Directory of the projection file
@@ -269,7 +270,6 @@ class Caller(object):
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
-        
         Keyword arguments:
         raw           -- Data to apply to
         directory     -- Directory of the projection file
@@ -297,6 +297,7 @@ class Caller(object):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
+        TODO should use dictionary like most other dialogs.
         Keyword arguments:
         raw           -- A raw object.
         epochs        -- Epochs extracted from the data.
@@ -369,6 +370,7 @@ class Caller(object):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
+        TODO should use dictionary like most other dialogs.
         Keyword arguments:
         raw           -- A raw object.
         epochs        -- Epochs extracted from the data.
@@ -442,13 +444,13 @@ class Caller(object):
         """
         Changes the current working file for the experiment the caller relates
         to.
+        fname    -- name of the new working file 
         """
         self.parent.experiment.working_file = fname        
 
     def write_events(self, events):
         """
-        Saves the events in an excel file (.xls).
-        
+        Saves the events in an excel file (.xls). 
         Keyword arguments:
         events           -- Events to save
         """

@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 26, 2013
 
-@author: Janne Leppakangas
-'''
+@author: Jaakko Leppakangas
+"""
 import messageBox
 
 import mne
@@ -51,6 +52,5 @@ class TFRDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            #self.computeDialog.close()
             return
         self.close()

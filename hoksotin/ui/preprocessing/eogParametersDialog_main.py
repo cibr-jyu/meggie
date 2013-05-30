@@ -1,8 +1,9 @@
-'''
+# coding: latin1
+"""
 Created on Apr 12, 2013
 
 @author: Jaakko Leppakangas
-'''
+"""
 from PyQt4 import QtCore,QtGui
 from eogParametersDialog_Ui import Ui_Dialog
 
@@ -27,8 +28,8 @@ class EogParametersDialog(QtGui.QDialog):
         
     def accept(self):
         """
-        Collect the parameters for calculating PCA projections and pass them
-        to the caller class.
+        Collects the parameters for calculating PCA projections and passes 
+        them to the caller class.
         """
         dictionary = {'i': self.parent.experiment.working_file}
         

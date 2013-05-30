@@ -1,3 +1,8 @@
+# coding: latin1
+"""
+@author: Kari Aliranta, Jaakko Leppakangas
+"""
+
 from PyQt4 import QtCore,QtGui
 
 

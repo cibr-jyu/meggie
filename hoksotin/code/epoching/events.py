@@ -7,12 +7,13 @@ Created on Mar 12, 2013
 import mne
 
 class Events(object):
-
+    """
+    Class for getting events from the raw file, by type if need be.
+    """
 
     def __init__(self, raw, stim_ch):
         """
-        Constructor
-        
+        Constructor    
         Keyword arguments:
         raw           -- A raw object
         stim_ch       -- Name of the stimulus channel
