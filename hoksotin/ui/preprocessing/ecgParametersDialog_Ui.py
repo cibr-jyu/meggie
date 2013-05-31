@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialog.ui'
 #
-# Created: Fri May 31 12:19:41 2013
+# Created: Fri May 31 12:40:29 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -412,7 +412,7 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.pushButtonCancel, self.pushButtonCompute)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Compute ECG projections", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Meggie - Compute ECG projections", None))
         self.labelECGChannel.setText(_translate("Dialog", "Channel to use for ECG detection:", None))
         self.groupBoxEvent.setTitle(_translate("Dialog", "Events", None))
         self.labelTmin.setText(_translate("Dialog", "Start time:", None))
