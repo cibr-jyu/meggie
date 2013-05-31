@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eogParametersDialog.ui'
 #
-# Created: Wed May 22 10:32:52 2013
+# Created: Fri May 31 12:19:56 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -373,7 +373,7 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.pushButtonCancel, self.pushButtonCompute)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Compute EOG projections", None))
         self.pushButtonCancel.setText(_translate("Dialog", "Cancel", None))
         self.pushButtonCompute.setText(_translate("Dialog", "Compute", None))
         self.groupBoxFilter.setTitle(_translate("Dialog", "Filtering cut-off frequency", None))

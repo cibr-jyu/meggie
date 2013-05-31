@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Compute EOG projections</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'spectrumDialog.ui'
 #
-# Created: Wed May 15 15:21:44 2013
+# Created: Fri May 31 12:20:59 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,6 +52,6 @@ class Ui_DialogSpectrum(object):
         QtCore.QMetaObject.connectSlotsByName(DialogSpectrum)
 
     def retranslateUi(self, DialogSpectrum):
-        DialogSpectrum.setWindowTitle(_translate("DialogSpectrum", "Dialog", None))
+        DialogSpectrum.setWindowTitle(_translate("DialogSpectrum", "Magnitude spectrum", None))
         self.label.setText(_translate("DialogSpectrum", "Select a channel", None))
 

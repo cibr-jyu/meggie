@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'UIehdotus12.ui'
 #
-# Created: Thu May 30 15:06:02 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri May 31 12:18:20 2013
+#      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 721))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 697))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -404,7 +404,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 29))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -443,7 +443,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Meggie", None))
         self.metaBox.setTitle(_translate("MainWindow", "Background", None))
         self.labelExperiment.setText(_translate("MainWindow", "Experiment:", None))
         self.labelExperimentName.setText(_translate("MainWindow", "TextLabel", None))
