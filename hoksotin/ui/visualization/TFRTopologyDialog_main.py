@@ -91,14 +91,9 @@ class TFRTopologyDialog(QtGui.QDialog):
                                             reptype, minfreq, maxfreq, decim,
                                             mode, blstart, blend, interval,
                                             ncycles)
-        except ValueError, err:
-            if len(str(err)) < 100:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText('Check parameters. ' +
-                                                       str(err))
-                self.messageBox.exec_()
-            else:
-                print str(err)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(err))
+            self.messageBox.show()
             return
-            
         self.close()

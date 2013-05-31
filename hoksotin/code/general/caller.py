@@ -420,12 +420,15 @@ class Caller(object):
         frequencies = np.arange(minfreq, maxfreq, interval)
         Fs = raw.info['sfreq']
         decim = 3
-
-        power, phase_lock = induced_power(data, Fs=Fs,
-                                          frequencies=frequencies,
-                                          n_cycles=ncycles, n_jobs=3,
-                                          use_fft=False, decim=decim,
-                                          zero_mean=True)
+        
+        try:
+            power, phase_lock = induced_power(data, Fs=Fs,
+                                              frequencies=frequencies,
+                                              n_cycles=ncycles, n_jobs=3,
+                                              use_fft=False, decim=decim,
+                                              zero_mean=True)
+        except ValueError, err:
+            raise ValueError(err)
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
         #mode = 'ratio'  # set mode for baseline rescaling
