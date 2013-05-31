@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'parameterDialog.ui'
 #
-# Created: Wed May 29 13:31:52 2013
+# Created: Fri May 31 13:47:02 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 746, 675))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 743, 675))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 675))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
@@ -111,7 +111,7 @@ class Ui_EventSelectionDialog(object):
         QtCore.QMetaObject.connectSlotsByName(EventSelectionDialog)
 
     def retranslateUi(self, EventSelectionDialog):
-        EventSelectionDialog.setWindowTitle(_translate("EventSelectionDialog", "Give parameters", None))
+        EventSelectionDialog.setWindowTitle(_translate("EventSelectionDialog", "Meggie - Event selection", None))
         self.pushButtonAdd.setText(_translate("EventSelectionDialog", "Add to list >>", None))
         self.pushButtonRemove.setText(_translate("EventSelectionDialog", "<< Remove", None))
         self.pushButtonSaveEvents.setText(_translate("EventSelectionDialog", "Save events", None))

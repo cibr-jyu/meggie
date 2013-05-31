@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Give parameters</string>
+   <string>Meggie - Event selection</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">
@@ -46,7 +46,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>746</width>
+        <width>743</width>
         <height>675</height>
        </rect>
       </property>

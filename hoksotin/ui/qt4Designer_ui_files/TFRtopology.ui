@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Show TFR topologies </string>
+   <string>Meggie - Show TFR topologies </string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0">
@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>509</width>
-        <height>554</height>
+        <height>551</height>
        </rect>
       </property>
       <property name="minimumSize">

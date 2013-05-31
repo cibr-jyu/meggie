@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Fri May 24 13:26:04 2013
+# Created: Fri May 31 13:42:00 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_DialogTFRTopology(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 554))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 551))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
@@ -198,7 +198,7 @@ class Ui_DialogTFRTopology(object):
         DialogTFRTopology.setTabOrder(self.spinBoxNcycles, self.buttonBox)
 
     def retranslateUi(self, DialogTFRTopology):
-        DialogTFRTopology.setWindowTitle(_translate("DialogTFRTopology", "Show TFR topologies ", None))
+        DialogTFRTopology.setWindowTitle(_translate("DialogTFRTopology", "Meggie - Show TFR topologies ", None))
         self.groupBoxFrequencies.setTitle(_translate("DialogTFRTopology", "Frequency window", None))
         self.labelMinFreq.setText(_translate("DialogTFRTopology", "Minimum frequency:", None))
         self.labelMaxFreq.setText(_translate("DialogTFRTopology", "Maximum frequency:", None))

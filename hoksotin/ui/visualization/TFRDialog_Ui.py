@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRfromEpochs.ui'
 #
-# Created: Tue May  7 11:49:33 2013
+# Created: Fri May 31 13:40:05 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,7 +34,7 @@ class Ui_DialogEpochsTFR(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 274, 289))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 274, 286))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
@@ -79,7 +79,7 @@ class Ui_DialogEpochsTFR(object):
         self.labelFrequencyInterval.setObjectName(_fromUtf8("labelFrequencyInterval"))
         self.horizontalLayout.addWidget(self.labelFrequencyInterval)
         self.doubleSpinBoxFreqInterval = QtGui.QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBoxFreqInterval.setMinimum(0.0)
+        self.doubleSpinBoxFreqInterval.setMinimum(0.1)
         self.doubleSpinBoxFreqInterval.setMaximum(99.99)
         self.doubleSpinBoxFreqInterval.setProperty("value", 3.0)
         self.doubleSpinBoxFreqInterval.setObjectName(_fromUtf8("doubleSpinBoxFreqInterval"))
@@ -129,7 +129,7 @@ class Ui_DialogEpochsTFR(object):
         DialogEpochsTFR.setTabOrder(self.spinBoxNcycles, self.buttonBox)
 
     def retranslateUi(self, DialogEpochsTFR):
-        DialogEpochsTFR.setWindowTitle(_translate("DialogEpochsTFR", "TFR from epochs", None))
+        DialogEpochsTFR.setWindowTitle(_translate("DialogEpochsTFR", "Meggie - TFR from epochs", None))
         self.groupBoxFrequencies.setTitle(_translate("DialogEpochsTFR", "Frequency window", None))
         self.labelMinFreq.setText(_translate("DialogEpochsTFR", "Minimum frequency:", None))
         self.doubleSpinBoxMinFreq.setSuffix(_translate("DialogEpochsTFR", " Hz", None))

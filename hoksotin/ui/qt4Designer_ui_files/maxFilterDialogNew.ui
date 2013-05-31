@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MaxFilter Settings</string>
+   <string>Meggie - MaxFilter Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'maxFilterDialogNew.ui'
 #
-# Created: Wed May 15 14:38:17 2013
+# Created: Fri May 31 13:55:40 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -470,7 +470,7 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.checkBoxtSSS, self.spinBoxLineFreq)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "MaxFilter Settings", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Meggie - MaxFilter Settings", None))
         self.labelLab.setText(_translate("Dialog", "Choose the laboratory whose calibration files are to be used:", None))
         self.groupBoxOrigin.setTitle(_translate("Dialog", "Origin", None))
         self.checkBoxFit.setText(_translate("Dialog", "Fit to isotrak points", None))

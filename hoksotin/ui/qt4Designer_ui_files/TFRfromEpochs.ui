@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TFR from epochs</string>
+   <string>Meggie - TFR from epochs</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>274</width>
-        <height>289</height>
+        <height>286</height>
        </rect>
       </property>
       <property name="minimumSize">
