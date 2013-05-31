@@ -126,11 +126,6 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
-            
-            # workaround for setting up the raw object after pickling
-            self.experiment.raw_data = mne.fiff.Raw(
-                self.experiment.raw_data.info.get('filename'),
-                 preload=True)
 
             # Reads the raw data info and sets it to the labels of the Raw tab
             InfoDialog(self.experiment.raw_data, self.ui, False)

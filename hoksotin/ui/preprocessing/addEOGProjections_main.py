@@ -39,6 +39,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from addProjections_Ui import Ui_Dialog
+import messageBox
 
 class AddEOGProjections(QtGui.QDialog):
     """
