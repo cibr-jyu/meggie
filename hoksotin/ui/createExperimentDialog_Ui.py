@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'createExperimentDialog.ui'
 #
-# Created: Sat Jun  1 17:37:05 2013
+# Created: Sat Jun  1 17:35:48 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
