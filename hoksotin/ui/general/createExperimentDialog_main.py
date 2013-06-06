@@ -199,13 +199,13 @@ class CreateExperimentDialog(QtGui.QDialog):
         
 class OutLog:
     def __init__(self, edit, out=None, color=None):
-        """(edit, out=None, color=None) -> can write stdout, stderr to a
-        QTextEdit.
-        edit = QTextEdit
-        out = alternate stream ( can be the original sys.stdout )
-        color = alternate color (i.e. color stderr a different color)
-        TODO WTF?
-        """
+        
+        #(edit, out=None, color=None) -> can write stdout, stderr to a
+        #QTextEdit.
+        #edit = QTextEdit
+        #out = alternate stream ( can be the original sys.stdout )
+        #color = alternate color (i.e. color stderr a different color)
+        
         self.edit = edit
         self.out = None
         self.color = color

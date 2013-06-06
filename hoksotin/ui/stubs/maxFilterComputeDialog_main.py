@@ -54,7 +54,6 @@ class MaxFilterComputeDialog(QtGui.QProgressDialog):
         self.initialize()
         QtGui.QApplication.processEvents()
     def initialize(self):
-        """
         try:
            if self.parent.ui.lineEditProjectName.text() == '':
                raise Exception('Give experiment a name!')
@@ -108,4 +107,4 @@ class MaxFilterComputeDialog(QtGui.QProgressDialog):
                         ' events')
             self.parent.parent.ui.listWidget.addItem(item)
         self.close()
-        """
+        
