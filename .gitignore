@@ -1,3 +1,4 @@
 *.pyc
-*.py~
+*~
 settings.cfg
+*.~lock.*
