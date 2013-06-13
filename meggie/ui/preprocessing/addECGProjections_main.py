@@ -31,7 +31,7 @@
 Created on Apr 25, 2013
 
 @author: Jaakko Leppakangas
-Contains the ADDECGProjections-class used for adding ECG projections.
+Contains the AddECGProjections-class used for adding ECG projections.
 """
 import glob
 

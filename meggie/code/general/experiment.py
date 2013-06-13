@@ -51,8 +51,8 @@ import pickle
 class Experiment(object):
     """
     Experiment holds information about the currently saved raw data, working
-    file etc. It also stores path of the experiment file, _author, date and
-    _description. It also has methods for saving and parsing parameter files
+    file etc. It also stores path of the experiment file, author, date and
+    description. It also has methods for saving and parsing parameter files
     and pickling and unpickling itself to and from disk.
     """
     
@@ -66,8 +66,8 @@ class Experiment(object):
         self._raw_data_path = 'no path defined'
         self._subject_directory = 'no directory specified'
         self._file_path = 'no path defined'
-        self._author = 'unknown _author'
-        self._description = 'no _description'
+        self._author = 'unknown author'
+        self._description = 'no description'
         self._working_file = ''
         self._working_file_path = 'no path defined'
         self._event_set = []
@@ -140,7 +140,7 @@ class Experiment(object):
     def file_path(self, file_path):
         """
         Sets the given path for the experiment file.
-        Raises exception if the given path doesn't exist.
+        Raises an exception if the given path doesn't exist.
         Keyword arguments:
         file_path       -- the path of the saved experiment
         """
@@ -160,7 +160,7 @@ class Experiment(object):
     def raw_data(self, raw_data):
         """
         Sets the raw data file for the experiment.
-        Raises exception if the given data type is wrong. 
+        Raises an exception if the given data type is wrong. 
         Keyword arguments:
         raw_data        -- the raw data file of the measured data
         """
@@ -172,19 +172,19 @@ class Experiment(object):
     @property
     def author(self):
         """
-        Returns the _author of the experiment
+        Returns the author of the experiment
         """
         return self._author
     
     @author.setter
     def author(self, author):
         """
-        Sets the _author of the experiment.
-        Raises exception if the _author name is too long.
-        Raises exception if the _author name includes other characters
+        Sets the author of the experiment.
+        Raises exception if the author name is too long.
+        Raises exception if the author name includes other characters
         than letters and numbers.
         Keyword arguments:
-        author          - - the _author of the experiment
+        author          - - the author of the experiment
         """
         if (len(author) <= 50):
             if re.match("^[A-Za-z0-9 ]*$", author):
@@ -382,7 +382,7 @@ class Experiment(object):
         Reads the parameters from a single file matching the operation
         and returns the parameters as a dictionary.        
         Keyword arguments:
-        operation    -- string that designates the operation. See caller class
+        operation    -- String that designates the operation. See Caller class
                         for operation names.
                         
         """

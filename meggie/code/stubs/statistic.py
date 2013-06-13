@@ -143,7 +143,7 @@ class Statistic(object):
     def find_half_maximum(self, sfreq, arr, tmin=0.0,
                           tmax=sys.float_info.max):
         """
-        Returns half maximum for a 1d numpy array.
+        Returns the half maximum for a 1d numpy array.
         
         Keyword arguments:
         sfreq         -- Sampling frequency in Hz

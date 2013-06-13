@@ -52,8 +52,8 @@ from xlrd import XLRDError
 
 class EventSelectionDialog(QtGui.QDialog):
     """
-    Class containing the logic for EventSelectionDialog. Used for
-    collecting desired event from continuous data.
+    Class containing the logic for EventSelectionDialog. It is used for
+    collecting desired events from continuous data.
     """
     index = 1
 
@@ -81,7 +81,7 @@ class EventSelectionDialog(QtGui.QDialog):
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
-        Method for adding events to the list.
+        Method for adding events to the event list.
         """
         if checked is None: return
         events = self.create_eventlist()
@@ -105,7 +105,7 @@ class EventSelectionDialog(QtGui.QDialog):
         
     def on_pushButtonRemove_clicked(self, checked=None):
         """
-        Method for removing events from the list.
+        Method for removing events from the event list.
         """
         if checked is None: return # Standard workaround
         row = self.ui.listWidgetEvents.currentRow()
@@ -130,9 +130,8 @@ class EventSelectionDialog(QtGui.QDialog):
         
     def check_channels(self):
         """
-        This method contains the logic for populating
-        the combobox with channel groups of brain regions.
-        Currently not in use.
+        Method for populating the combobox with channel groups of brain
+        regions. Currently not in use.
         """
         if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
             return ['MEG ' + str(x) for x in brainRegions.vertex]

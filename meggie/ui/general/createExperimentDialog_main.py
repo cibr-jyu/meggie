@@ -53,8 +53,8 @@ import ConfigParser
 
 class CreateExperimentDialog(QtGui.QDialog):
     """
-    Class containing the logic for CreateExperimentDialog. Used for setting
-    up a new experiment for analyzing MEG-data.
+    Class containing the logic for CreateExperimentDialog. It is used for 
+    setting up a new experiment for analyzing MEG data.
     """
     fname = ''
     

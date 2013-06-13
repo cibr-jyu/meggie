@@ -39,7 +39,8 @@ from spectrumDialog_Ui import Ui_DialogSpectrum
 
 class SpectrumDialog(QtGui.QDialog):
     """
-    Dialog to get the channel from the user and plot the magnitude spectrum.
+    Dialog for getting the channel from the user and plotting
+    the magnitude spectrum.
     """
 
     def __init__(self, parent):

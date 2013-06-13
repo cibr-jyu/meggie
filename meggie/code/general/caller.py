@@ -114,7 +114,7 @@ class Caller(object):
         
     def call_ecg_ssp(self, dic):
         """
-        Creates ECG projections using ssp for given data.
+        Creates ECG projections using SSP for given data.
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
@@ -195,7 +195,7 @@ class Caller(object):
         
     def call_eog_ssp(self, dic):
         """
-        Creates EOG projections using ssp for given data.
+        Creates EOG projections using SSP for given data.
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
@@ -481,9 +481,9 @@ class Caller(object):
 
     def write_events(self, events):
         """
-        Saves the events in an excel file (.xls). 
+        Saves the events into an Excel file (.xls). 
         Keyword arguments:
-        events           -- Events to save
+        events           -- Events to be saved
         """
         wbs = Workbook()
         ws = wbs.add_sheet('Events')

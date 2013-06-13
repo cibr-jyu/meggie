@@ -46,13 +46,13 @@ import messageBox
 
 class MaxFilterDialog(QtGui.QDialog):
     """
-    Collects parameter values used for calling MaxFilter.
+    Collects the parameter values used for calling MaxFilter.
     """
 
 
     def __init__(self, parent, raw):
         """
-        A dialog for collecting parameter values for MaxFilter.
+        Initializes the dialog for collecting parameter values for MaxFilter.
         
         Keyword arguments:
         
@@ -255,9 +255,8 @@ class MaxFilterDialog(QtGui.QDialog):
     
     def setLab(self):
         """
-        Checks if calibration files for the selected lab exist.
-        Returns the selected lab or an empty string if files are not found.
-        TODO: Fix the paths.
+        Checks if the calibration files for the selected lab exist.
+        Returns the selected lab or an empty string if no files are found.
         """
         
         lab = str(self.ui.comboBoxLab.currentText())

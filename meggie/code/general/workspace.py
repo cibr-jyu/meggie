@@ -53,11 +53,15 @@ class Workspace(object):
         
     @property    
     def working_directory(self):
+        """
+        Getter for working_directory
+        """
         return self._working_directory
     
     @working_directory.setter
     def working_directory(self, working_directory):
         """
+        Setter for working directory
         Keyword arguments:
         self._working_directory    - - Default workspace is used for the
                                       measurement if user doesn't define.

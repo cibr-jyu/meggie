@@ -41,7 +41,7 @@ import pylab as pl
 
 class Epochs(object):
     """
-    A class for epochs created from the MEG data.
+    A class for creating epochs from the MEG data.
     """
 
 
@@ -52,15 +52,15 @@ class Epochs(object):
         Keyword arguments:
         raw           -- Raw object.
         events        -- Array of events.
-        mag           -- Boolean that tells whether magnetometers will be used.
-        grad          -- Boolean that tells whether gradiometers will be used.
-        eeg           -- Boolean that tells whether eeg-channels will be used.
-        stim          -- Boolean that tells whether stim-channels will be used.
-        eog           -- Boolean that tells whether eog-channels will be used.
+        mag           -- Boolean telling if magnetometers will be used.
+        grad          -- Boolean telling if whether gradiometers will be used.
+        eeg           -- Boolean telling if whether eeg-channels will be used.
+        stim          -- Boolean telling if whether stim-channels will be used.
+        eog           -- Boolean telling if whether eog-channels will be used.
         reject        -- Rejection parameter for epochs.
         category      -- Dictionary of categories.
-        tmin          -- Start time before event (default -0.2)
-        tmax          -- End time after the event (default 0.5)
+        tmin          -- Start time before event (default -0.2 seconds)
+        tmax          -- End time after the event (default 0.5 seconds)
         Exceptions:
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
@@ -88,7 +88,7 @@ class Epochs(object):
         """
         Averages epochs.
         Draws a topography representation of the evoked potentials.
-        Raises an exception if cannot find any epochs.
+        Raises an exception if it cannot find any epochs.
         """
         if self.epochs is None:
             raise Exception('No epochs found.')

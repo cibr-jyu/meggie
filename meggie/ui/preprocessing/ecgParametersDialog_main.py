@@ -47,7 +47,7 @@ import messageBox
 
 class EcgParametersDialog(QtGui.QDialog):
     """
-    Class containing the logic for ecgParametersDialog. Collects parameter
+    Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
     """
 
@@ -72,11 +72,11 @@ class EcgParametersDialog(QtGui.QDialog):
         
     def set_previous_values(self, dic):
         """
-        Set the initial values of the dialog widgets to those used when the
+        Sets the initial values of the dialog widgets to those used when the
         dialog was used (OK button was clicked) the previous time.
         
         Keyword arguments:
-        dic    -- the dictionary with previous values of fields, checkboxes 
+        dic    -- the dictionary with previous values of fields, checkboxes, 
                   etc.
         """
         # If no parameter file exists, return
@@ -120,7 +120,7 @@ class EcgParametersDialog(QtGui.QDialog):
                                            
     def accept(self):
         """
-        Collect the parameters for calculating PCA projections and pass them
+        Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
         raw = self.parent.experiment.working_file
