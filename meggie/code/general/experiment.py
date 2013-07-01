@@ -271,8 +271,6 @@ class Experiment(object):
             self._stim_channel = 'STI101'
         elif any('STI 014' in channels for x in channels):
             self._stim_channel = 'STI 014'
-        else:
-            raise Exception('No stim channel found.')
     
     def create_event_set(self):
         """
