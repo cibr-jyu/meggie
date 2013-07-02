@@ -134,12 +134,8 @@ class MainWindow(QtGui.QMainWindow):
             # Sets info about trigger channels and their events to
             # Triggers box in the Raw tab
             self.ui.listWidget.clear()
-            events = self.experiment.event_set
-            for key, value in events.iteritems():
-                item = QtGui.QListWidgetItem()
-                item.setText('Trigger ' + str(key) + ', ' + str(value) +
-                            ' events')
-                self.ui.listWidget.addItem(item)
+            if self.experiment.event_set != None:
+                self.populate_raw_tab_event_list()
             self.ui.labelExperimentName.setText(self.experiment.\
                                                 experiment_name)
             self.ui.labelAuthorName.setText(self.experiment.author)
@@ -160,6 +156,20 @@ class MainWindow(QtGui.QMainWindow):
             ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
     
+    
+    def populate_raw_tab_event_list(self):
+        """
+        Fills the raw tab event list with info about event IDs and
+        amount of events with those IDs
+        TODO: trigger ---> event, also in the UI
+        """
+        events = self.experiment.event_set
+        for key, value in events.iteritems():
+            item = QtGui.QListWidgetItem()
+            item.setText('Trigger ' + str(key) + ', ' + str(value) +
+                        ' events')
+            self.ui.listWidget.addItem(item)
+
     def on_actionSet_workspace_triggered(self, checked=None):
         """
         Opens the dialog to set the workspace.

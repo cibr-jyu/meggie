@@ -70,8 +70,8 @@ class Experiment(object):
         self._description = 'no description'
         self._working_file = ''
         self._working_file_path = 'no path defined'
-        self._event_set = []
-        self._stim_channel = ''
+        self._event_set = None
+        self._stim_channel = None 
         self.mainWindow = None
                 
     # raw_data_path and working_file_path are only used internally 
@@ -281,6 +281,8 @@ class Experiment(object):
         """
         if not isinstance(self._raw_data, mne.fiff.Raw):
             raise TypeError('Nt a raw object')
+        if self.stim_channel == None:
+            return
         events = mne.find_events(self._raw_data,
                                  stim_channel=self._stim_channel)
         bins = np.bincount(events[:,2]) #number of events stored in an array

@@ -49,7 +49,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/preprocessing/
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/visualization/")
 
 
-import mainWindow_main  
+import mainWindowMain  
 
 if __name__ == '__main__':
-    mainWindow_main.main()
+    mainWindowMain.main()

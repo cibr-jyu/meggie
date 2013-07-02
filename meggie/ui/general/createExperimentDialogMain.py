@@ -151,7 +151,8 @@ class CreateExperimentDialog(QtGui.QDialog):
         try:
             self.experiment.raw_data = self.raw
             self.experiment.find_stim_channel()
-            self.experiment.create_event_set()
+            if self.experiment.stim_channel != None: 
+                self.experiment.create_event_set()
             self.experiment.save_raw(os.path.basename(str(self.ui.
                                                           FilePathLineEdit.
                                                           text())),
@@ -186,17 +187,13 @@ class CreateExperimentDialog(QtGui.QDialog):
                                                                 description)
         
         self.parent.ui.listWidget.clear()
-        events = self.experiment.event_set
-        for key, value in events.iteritems():
-            item = QtGui.QListWidgetItem()
-            item.setText('Trigger ' + str(key) + ', ' + str(value) + 
-                        ' events')
-            self.parent.ui.listWidget.addItem(item)
+        if self.experiment.event_set != None:
+            self.parent.populate_raw_tab_event_list() 
         self.experiment.save_experiment_settings()
         self.close()
         self.parent.add_tabs()
         self.parent._initialize_ui() 
-        
+          
 class OutLog:
     def __init__(self, edit, out=None, color=None):
         
