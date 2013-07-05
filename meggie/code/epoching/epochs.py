@@ -34,6 +34,7 @@ Created on Mar 12, 2013
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
 import mne
+from mne import fiff
 from mne.layouts import read_layout
 from mne.viz import plot_topo
 
@@ -47,7 +48,7 @@ class Epochs(object):
     """
 
 
-    def __init__(self, raw, events, mag, grad, eeg, stim,
+    def __init__(self, parent, raw, events, mag, grad, eeg, stim,
                  eog, reject, category, tmin=-0.2, tmax=0.5):
         """
         Constructor
@@ -67,6 +68,9 @@ class Epochs(object):
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
         """
+        
+        self.parent = parent
+        
         self.raw = raw
         if mag and grad:
             meg = True
@@ -101,6 +105,11 @@ class Epochs(object):
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         evokeds = [self.epochs[name].average() for name in category.keys()]
+        
+        # Saves evoked data to disk.                
+        fiff.write_evoked(self.parent.parent.parent.experiment.subject_directory + 'sample_auditory_and_visual_eeg-ave.fif', evokeds)
+        #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
+                
         layout = read_layout('Vectorview-all.lout')
         
         self.mi = MeasurementInfo(self.raw)

@@ -38,6 +38,7 @@ import os
 import glob
 
 import mne
+from mne import fiff
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 from mne.viz import plot_topo_power, plot_topo_phase_lock
@@ -509,3 +510,4 @@ class Caller(object):
         wbr = open_workbook(filename)
         sheet = wbr.sheet_by_index(0)
         return sheet
+    
