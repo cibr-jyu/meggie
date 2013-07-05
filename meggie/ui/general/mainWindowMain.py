@@ -218,8 +218,6 @@ class MainWindow(QtGui.QMainWindow):
         epoch = self.widget.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         evoked = epoch.average()
-        #evoked.save(self.experiment.raw_data.info.get('filename') + '.fif')
-        #evoked.save('/home/jaolpeso/sample_audvis_eeg-ave.fif')
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
