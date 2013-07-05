@@ -39,6 +39,8 @@ from mne.viz import plot_topo
 
 import pylab as pl
 
+from measurementInfo import MeasurementInfo
+
 class Epochs(object):
     """
     A class for creating epochs from the MEG data.
@@ -65,6 +67,7 @@ class Epochs(object):
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
         """
+        self.raw = raw
         if mag and grad:
             meg = True
         elif mag:
@@ -99,7 +102,10 @@ class Epochs(object):
         # refers to different categories).
         evokeds = [self.epochs[name].average() for name in category.keys()]
         layout = read_layout('Vectorview-all.lout')
-        fig = plot_topo(evokeds, layout, title=str(category.keys()))
+        
+        self.mi = MeasurementInfo(self.raw)
+        #fig = plot_topo(evokeds, layout, title=str(category.keys()))
+        fig = plot_topo(evokeds, layout, title=self.mi.subject_name)
         fig.show()
         
         def onclick(event):
