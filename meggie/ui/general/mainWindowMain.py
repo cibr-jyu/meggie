@@ -73,6 +73,7 @@ from epochs import Epochs
 from events import Events
 from caller import Caller
 
+
 class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
@@ -97,8 +98,8 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.tabWidget.removeTab(0)
         
         # Creates a listwidget for epoch analysis.  
-        self.widget = EpochWidget(self)
-        self.widget.hide()
+        self.epochList = EpochWidget(self)
+        self.epochList.hide()
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         
     def on_actionCreate_experiment_triggered(self, checked=None):
@@ -164,8 +165,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Fills the raw tab event list with info about event IDs and
         amount of events with those IDs
-        TODO: trigger ---> event, also in the UI
         """
+        #TODO: trigger ---> event, also in the UI
         events = self.experiment.event_set
         for key, value in events.iteritems():
             item = QtGui.QListWidgetItem()
@@ -195,19 +196,59 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """
-        Saves the Epoch collection to a file.
+        Saves the Epoch collection to a file. The file is saved to the folder
+        of the current experiment and is named 'foo.epo', where 'foo' is all
+        the names of the items in the list in a row.
+        
+        e.g. 'event1event2.epo'
         """
         if checked is None: return
-        if self.widget.ui.listWidgetEpochs.count() <= 0 :
+        if self.epochList.ui.listWidgetEpochs.count() <= 0 :
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Epoch collection list is empty, no file was created.')
             self.messageBox.show() 
             return
         
-        for i in range(self.widget.ui.listWidgetEpochs.count()):
-            item = self.widget.ui.listWidgetEpochs.item(i)
-            print item.data(32).toPyObject()
+        epochCollectionFileName = ''
+        epochCollectionList = []
+        
+        # creates an epochCollectionList that is to be saved and generates a
+        # file name for it.
+        for i in range(self.epochList.ui.listWidgetEpochs.count()):
+            item = self.epochList.ui.listWidgetEpochs.item(i)
+            epochCollectionFileName += item.text().split('=')[0]
+            epochCollectionList.append(item)
+        
+        epochCollectionFileName += '.epo'
+        
+        self.saveEpochCollection(epochCollectionFileName, epochCollectionList)
+        
+    def saveEpochCollection(self, fileName, epochCollectionList):
+        """
+        Saves a list of epoch collections to a file. The file is saved in the
+        folder of the current experiment.
+        
+        Keyword arguments:
+        fileName            = the name of the save file.
+        epochCollectionList = The list of epoch collections to be saved.
+        """
+        #TODO: This should be moved to a FileManager-class once such a class
+        #      exists.
+        path = self.experiment.subject_directory
+
+        
+        try:
+            with(open(path + '/' + fileName, 'wb')) as fullFileName:
+                print 'Writing epoch collections to file.'
+                pickle.dump(epochCollectionList, fullFileName, 2)
+                                 
+        except IOerror as e:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Writing to the chosen directory is not allowed.')
+            self.messageBox.show()
+            return            
         
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -223,7 +264,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
-        if self.widget.ui.listWidgetEpochs.currentItem() is None: 
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Please select an event collection to average.')
@@ -231,7 +272,7 @@ class MainWindow(QtGui.QMainWindow):
             return
          
         # Average the selected epochs
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         evoked = epoch.average()
          
@@ -274,29 +315,29 @@ class MainWindow(QtGui.QMainWindow):
     def on_currentChanged(self):
         """
         Keeps track of the active tab.
-        Shows the epoch collection list widget when in appropriate tabs.
+        Shows the epoch collection list epochList when in appropriate tabs.
         """
         index = self.ui.tabWidget.currentIndex()
         #self.tab = self.ui.tabWidget.currentWidget()
         
         
         if index == 2:
-            self.widget.setParent(self.ui.tabEpoching)
-            self.widget.show()
+            self.epochList.setParent(self.ui.tabEpoching)
+            self.epochList.show()
             return
         
         if index == 3:
-            self.widget.setParent(self.ui.tabAveraging) 
-            self.widget.show()
+            self.epochList.setParent(self.ui.tabAveraging) 
+            self.epochList.show()
             return
        
         if index == 4:
-            self.widget.setParent(self.ui.tabTFR) 
-            self.widget.show()
+            self.epochList.setParent(self.ui.tabTFR) 
+            self.epochList.show()
             return 
             
         else:
-            self.widget.hide()
+            self.epochList.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
@@ -335,13 +376,13 @@ class MainWindow(QtGui.QMainWindow):
         Opens the dialog for plotting TFR from a single channel.
         """
         if checked is None: return
-        if self.widget.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('You must create epochs ' +
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         self.tfr_dialog = TFRDialog(self, self.experiment.working_file, epoch)
         self.tfr_dialog.show()
@@ -350,13 +391,13 @@ class MainWindow(QtGui.QMainWindow):
         """
         Opens the dialog for plotting TFR topology.
         """
-        if self.widget.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('You must create epochs ' +
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.widget.ui.listWidgetEpochs.currentItem().\
+        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         self.tfrTop_dialog = TFRTopologyDialog(self, 
                                                self.experiment.working_file, 
