@@ -84,7 +84,6 @@ class EpochDialog(QtGui.QDialog):
             event = (self.parent.ui.listWidgetEvents.item(index).data(32).
                      toPyObject())
             events[index] = (event)
-            #print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
         try:
@@ -97,7 +96,6 @@ class EpochDialog(QtGui.QDialog):
                                                    + str(err))
             self.messageBox.exec_()
             return
-        #for index in xrange(epochs):
         
         """
         Add's the epochs to the mainWindow's list.
