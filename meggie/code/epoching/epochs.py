@@ -33,6 +33,8 @@ Created on Mar 12, 2013
 @author: Jaakko Leppakangas
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
+import os
+
 import mne
 from mne import fiff
 from mne.layouts import read_layout
@@ -107,7 +109,9 @@ class Epochs(object):
         evokeds = [self.epochs[name].average() for name in category.keys()]
         
         # Saves evoked data to disk.                
-        fiff.write_evoked(self.parent.parent.parent.experiment.subject_directory + 'sample_auditory_and_visual_eeg-ave.fif', evokeds)
+        prefix, suffix = os.path.splitext(self.raw.info.get('filename'))
+        fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
+                          evokeds)
         #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
                 
         layout = read_layout('Vectorview-all.lout')
