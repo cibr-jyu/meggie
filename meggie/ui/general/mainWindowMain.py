@@ -274,7 +274,7 @@ class MainWindow(QtGui.QMainWindow):
         # Average the selected epochs
         epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
-        evoked = epoch.average()
+        evoked = self.caller.average(epochs)
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
