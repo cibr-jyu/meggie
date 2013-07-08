@@ -63,8 +63,6 @@ class Epochs(object):
         Raises Exception if picks are empty.
         """
         
-        self.parent = parent
-        
         self.raw = raw
         if mag and grad:
             meg = True
