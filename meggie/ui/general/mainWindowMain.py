@@ -193,6 +193,22 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.show()
         
+    def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
+        """
+        Saves the Epoch collection to a file.
+        """
+        if checked is None: return
+        if self.widget.ui.listWidgetEpochs.count() <= 0 :
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Epoch collection list is empty, no file was created.')
+            self.messageBox.show() 
+            return
+        
+        for i in range(self.widget.ui.listWidgetEpochs.count()):
+            item = self.widget.ui.listWidgetEpochs.item(i)
+            print item.data(32).toPyObject()
+        
     def on_actionAbout_triggered(self, checked=None):
         """
         Opens the About-dialog 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UIehdotus12.ui'
+# Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Fri May 31 12:18:20 2013
+# Created: Fri Jul  5 15:36:54 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -355,6 +355,9 @@ class Ui_MainWindow(object):
         self.pushButtonEventlist.setObjectName(_fromUtf8("pushButtonEventlist"))
         self.verticalLayoutEpoching.addWidget(self.pushButtonEventlist)
         self.gridLayout_4.addLayout(self.verticalLayoutEpoching, 0, 0, 1, 1)
+        self.pushButtonSaveEpochCollection = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonSaveEpochCollection.setObjectName(_fromUtf8("pushButtonSaveEpochCollection"))
+        self.gridLayout_4.addWidget(self.pushButtonSaveEpochCollection, 0, 1, 1, 1)
         self.gridLayout_5.addWidget(self.groupBoxAvailableEpoching, 0, 0, 1, 1)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_5.addItem(spacerItem5, 0, 1, 1, 1)
@@ -439,7 +442,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -487,6 +490,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonEventlist.setText(_translate("MainWindow", "Create an epoch collection", None))
+        self.pushButtonSaveEpochCollection.setText(_translate("MainWindow", "Save epoch collection", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average selected epoch collection", None))
