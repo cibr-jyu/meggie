@@ -104,8 +104,8 @@ class Epochs(object):
         layout = read_layout('Vectorview-all.lout')
         
         self.mi = MeasurementInfo(self.raw)
-        #fig = plot_topo(evokeds, layout, title=str(category.keys()))
-        fig = plot_topo(evokeds, layout, title=self.mi.subject_name)
+        fig = plot_topo(evokeds, layout, title=str(category.keys()) +
+                        ' ' + self.mi.subject_name)
         fig.show()
         
         def onclick(event):
