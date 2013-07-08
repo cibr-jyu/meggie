@@ -34,8 +34,6 @@ Created on Mar 12, 2013
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
 import mne
-from mne.layouts import read_layout
-from mne.viz import plot_topo
 
 import pylab as pl
 
@@ -43,7 +41,6 @@ class Epochs(object):
     """
     A class for creating epochs from the MEG data.
     """
-
 
     def __init__(self, raw, events, mag, grad, eeg, stim,
                  eog, reject, category, tmin=-0.2, tmax=0.5):
@@ -82,28 +79,5 @@ class Epochs(object):
             self.epochs = mne.Epochs(raw, events, category,
                                      tmin, tmax, picks=picks, reject=reject)
         else:
-            raise TypeError('Not a Raw object.')
-        
-    def average(self):
-        """
-        Averages epochs.
-        Draws a topography representation of the evoked potentials.
-        Raises an exception if it cannot find any epochs.
-        """
-        if self.epochs is None:
-            raise Exception('No epochs found.')
-        category = self.epochs.event_id
-        
-        
-        # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories).
-        evokeds = [self.epochs[name].average() for name in category.keys()]
-        layout = read_layout('Vectorview-all.lout')
-        fig = plot_topo(evokeds, layout, title=str(category.keys()))
-        fig.show()
-        
-        def onclick(event):
-            pl.show(block=False)
-        
-        fig.canvas.mpl_connect('button_press_event', onclick)
+            raise TypeError('Not a Raw object.') 
         

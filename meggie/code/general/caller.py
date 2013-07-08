@@ -40,7 +40,10 @@ import glob
 import mne
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
+from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
+
+
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
@@ -319,6 +322,31 @@ class Caller(object):
         self.update_experiment_working_file(appliedfilename)
         
         self.parent.experiment.save_experiment_settings()
+    
+    def average(self, epochs):
+        """
+        Averages epochs.
+        Draws a topography representation of the evoked potentials.
+        Raises an exception if it cannot find any epochs.
+        """
+        if epochs.epochs is None:
+            raise Exception('No epochs found.')
+        category = epochs.epochs.event_id
+        
+        # Creates evoked potentials from the given events (variable 'name' 
+        # refers to different categories).
+        evokeds = [epochs.epochs[name].average() for name in category.keys()]
+        layout = read_layout('Vectorview-all.lout')
+        fig = plot_topo(evokeds, layout, title=str(category.keys()))
+        fig.show()
+        
+        def onclick(event):
+            pl.show(block=False)
+        
+        fig.canvas.mpl_connect('button_press_event', onclick)
+      
+#    def channel_average(self):
+        # layoutista kts. mne.layouts.
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
