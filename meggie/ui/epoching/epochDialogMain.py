@@ -84,11 +84,10 @@ class EpochDialog(QtGui.QDialog):
             event = (self.parent.ui.listWidgetEvents.item(index).data(32).
                      toPyObject())
             events[index] = (event)
-            #print str(self.parent.ui.listWidgetEvents.item(index).data(33).toPyObject())
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
         try:
-            epochs = Epochs(self.parent.parent.experiment.working_file, events,
+            epochs = Epochs(self, self.parent.parent.experiment.working_file, events,
                             mag, grad, eeg, stim, eog, reject, category,
                             float(self.tmin), float(self.tmax))
         except Exception, err:
@@ -97,7 +96,6 @@ class EpochDialog(QtGui.QDialog):
                                                    + str(err))
             self.messageBox.exec_()
             return
-        #for index in xrange(epochs):
         
         """
         Add's the epochs to the mainWindow's list.

@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -547,7 +547,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -557,7 +557,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -574,7 +574,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -622,7 +622,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -639,7 +639,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/Action-ok-icon.png</pixmap>
+                      <pixmap resource="../trash/icons/icons.qrc">:/Action-ok-icon.png</pixmap>
                      </property>
                     </widget>
                    </item>
@@ -690,13 +690,6 @@
                     </widget>
                    </item>
                   </layout>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QPushButton" name="pushButtonSaveEpochCollection">
-                   <property name="text">
-                    <string>Save epoch collection</string>
-                   </property>
-                  </widget>
                  </item>
                 </layout>
                </widget>

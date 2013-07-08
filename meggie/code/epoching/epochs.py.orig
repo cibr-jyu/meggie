@@ -33,16 +33,31 @@ Created on Mar 12, 2013
 @author: Jaakko Leppakangas
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
+import os
+
 import mne
+<<<<<<< HEAD
+=======
+from mne import fiff
+from mne.layouts import read_layout
+from mne.viz import plot_topo
+>>>>>>> 3825fda69226b9f0dbc3d1752d24da5c9356bcde
 
 import pylab as pl
+
+from measurementInfo import MeasurementInfo
 
 class Epochs(object):
     """
     A class for creating epochs from the MEG data.
     """
 
+<<<<<<< HEAD
     def __init__(self, raw, events, mag, grad, eeg, stim,
+=======
+
+    def __init__(self, parent, raw, events, mag, grad, eeg, stim,
+>>>>>>> 3825fda69226b9f0dbc3d1752d24da5c9356bcde
                  eog, reject, category, tmin=-0.2, tmax=0.5):
         """
         Constructor
@@ -83,5 +98,42 @@ class Epochs(object):
             self.epochs = mne.Epochs(raw, events, category,
                                      tmin, tmax, picks=picks, reject=reject)
         else:
+<<<<<<< HEAD
+            raise TypeError('Not a Raw object.') 
+=======
             raise TypeError('Not a Raw object.')
+        
+    def average(self):
+        """
+        Averages epochs.
+        Draws a topography representation of the evoked potentials.
+        Raises an exception if it cannot find any epochs.
+        """
+        if self.epochs is None:
+            raise Exception('No epochs found.')
+        category = self.epochs.event_id
+        
+        
+        # Creates evoked potentials from the given events (variable 'name' 
+        # refers to different categories).
+        evokeds = [self.epochs[name].average() for name in category.keys()]
+        
+        # Saves evoked data to disk.                
+        prefix, suffix = os.path.splitext(self.raw.info.get('filename'))
+        fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
+                          evokeds)
+        #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
+                
+        layout = read_layout('Vectorview-all.lout')
+        
+        self.mi = MeasurementInfo(self.raw)
+        fig = plot_topo(evokeds, layout, title=str(category.keys()) +
+                        ' ' + self.mi.subject_name)
+        fig.show()
+        
+        def onclick(event):
+            pl.show(block=False)
+        
+        fig.canvas.mpl_connect('button_press_event', onclick)
+>>>>>>> 3825fda69226b9f0dbc3d1752d24da5c9356bcde
         

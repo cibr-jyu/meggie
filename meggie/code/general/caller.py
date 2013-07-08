@@ -38,6 +38,7 @@ import os
 import glob
 
 import mne
+from mne import fiff
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 from mne.viz import plot_topo
@@ -336,8 +337,19 @@ class Caller(object):
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         evokeds = [epochs.epochs[name].average() for name in category.keys()]
+        
+        # Saves evoked data to disk.                
+        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
+        fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
+                          evokeds)
+        #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
+                
         layout = read_layout('Vectorview-all.lout')
-        fig = plot_topo(evokeds, layout, title=str(category.keys()))
+        
+        self.mi = MeasurementInfo(self.raw)
+        fig = plot_topo(evokeds, layout, title=str(category.keys()) +
+                        ' ' + self.mi.subject_name)
+        
         fig.show()
         
         def onclick(event):
@@ -537,3 +549,4 @@ class Caller(object):
         wbr = open_workbook(filename)
         sheet = wbr.sheet_by_index(0)
         return sheet
+    
