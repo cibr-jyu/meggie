@@ -43,7 +43,7 @@ from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
-
+from measurementInfo import MeasurementInfo
 
 
 from xlrd import open_workbook
@@ -346,10 +346,9 @@ class Caller(object):
                 
         layout = read_layout('Vectorview-all.lout')
         
-        self.mi = MeasurementInfo(self.raw)
+        self.mi = MeasurementInfo(epochs.raw)
         fig = plot_topo(evokeds, layout, title=str(category.keys()) +
                         ' ' + self.mi.subject_name)
-        
         fig.show()
         
         def onclick(event):
