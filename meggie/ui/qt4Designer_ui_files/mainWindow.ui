@@ -665,23 +665,23 @@
               <item row="0" column="0">
                <widget class="QGroupBox" name="groupBoxAvailableEpoching">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>400</width>
+                  <width>600</width>
                   <height>90</height>
                  </size>
                 </property>
                 <property name="title">
                  <string>Available actions:</string>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <item row="0" column="0">
-                  <layout class="QVBoxLayout" name="verticalLayoutEpoching">
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
                    <item>
                     <widget class="QPushButton" name="pushButtonEventlist">
                      <property name="text">
@@ -689,14 +689,28 @@
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonSaveEpochCollection">
+                     <property name="text">
+                      <string>Save epoch collection</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
-                 <item row="0" column="1">
-                  <widget class="QPushButton" name="pushButtonSaveEpochCollection">
-                   <property name="text">
-                    <string>Save epoch collection</string>
-                   </property>
-                  </widget>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QComboBox" name="comboBoxEpochCollections"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonLoadEpochCollection">
+                     <property name="text">
+                      <string>Load epoch collection</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -705,6 +719,9 @@
                <spacer name="horizontalSpacer_7">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Expanding</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>

@@ -30,7 +30,7 @@
 """
 Created on May 2, 2013
 
-@author: Jaakko Leppakangas
+@author: Jaakko Leppakangas, Atte Rautio
 Contains the EpochWidget-class used for listing epoch collections.
 """
 from PyQt4 import QtCore,QtGui
@@ -51,3 +51,27 @@ class EpochWidget(QtGui.QWidget):
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        
+    def addItem(self, item):
+        """
+        Adds an item to the widget's list. If item is a list, adds all the
+        items in it.
+        
+        Keyword arguments:
+        item = A single item or a list of items to be added.
+        """
+        try:
+            for i in item:
+                self.ui.listWidgetEpochs.addItem(i)
+        
+        except TypeError:
+            self.ui.listWidgetEpochs.addItem(item)
+            
+    def setCurrentItem(self, item):
+        """
+        sets the current item of the widget's list.
+        
+        Keyword arguments:
+        item = item to be set as the current item.
+        """
+        self.ui.listWidgetEpochs.setCurrentItem(item)
