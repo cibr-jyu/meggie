@@ -344,7 +344,7 @@ class Caller(object):
                           evokeds)
         #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
                 
-        layout = read_layout('Vectorview-all.lout')
+        layout = read_layout('Vectorview-all')
         
         self.mi = MeasurementInfo(epochs.raw)
         fig = plot_topo(evokeds, layout, title=str(category.keys()) +

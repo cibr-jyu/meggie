@@ -84,12 +84,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        # Main window represents one experiment at a time. This experiment is
+        # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
         # triggered action.
-        self.experiment = None
+        self._experiment = None
         
-        # One main window (and one experiment) only needs one caller to do its
+        # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
         self.caller = Caller(self)
        
@@ -100,7 +100,41 @@ class MainWindow(QtGui.QMainWindow):
         # Creates a listwidget for epoch analysis.  
         self.epochList = EpochWidget(self)
         self.epochList.hide()
+        
+        #Populate the combobox  for loading epoch collections
+        #on the Epochs-tab.
+        self.populate_comboBoxEpochCollections()
+        
+        #The button for loading epoch collections should be disabled at start.
+        self.ui.pushButtonLoadEpochCollection.setEnabled(False)
+        
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
+        
+        #Connect signals and slots
+        self.ui.comboBoxEpochCollections.\
+        currentIndexChanged.connect(self.epoch_collections_updated)
+        
+    #Property definitions below
+    @property
+    def experiment(self):
+        return self._experiment
+    
+    @experiment.setter
+    def experiment(self, experiment):
+        self._experiment = experiment
+        self.populate_comboBoxEpochCollections()
+        
+    def epoch_collections_updated(self):
+        """
+        A slot for when the combo box for loading epoch collections is updated
+        or the selected item changes. Disables the load epoch collections
+        button when appropriate.
+        """
+        if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
+            self.ui.pushButtonLoadEpochCollection.setEnabled(False)
+            
+        else: self.ui.pushButtonLoadEpochCollection.setEnabled(True)
+            
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
@@ -115,14 +149,14 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
-        Method for opening an existing experiment.
+        Method for opening an existing _experiment.
         TODO: should be moved to a separate I/O module
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return 
                 
         path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select experiment directory"))
+               self, "Select _experiment directory"))
         if path == '': return
         fname = path + '/' + path.split('/')[-1] + '.pro'
         # TODO needs exception checking for corrupt/wrong type of file
@@ -194,10 +228,41 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.show()
         
+    def on_pushButtonLoadEpochCollection_clicked(self, checked=None):
+        """
+        Loads the epoch collection from the selected file and shows it on
+        the epoch collection list. 
+        """
+        if checked is None: return
+        
+        if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No .epo file found')
+            self.messageBox.show()
+            return
+            
+        else:
+            file_name = self.ui.comboBoxEpochCollections.currentText() + '.epo'
+            path = self.experiment.subject_directory
+            
+        try:
+            with open(path + '/' + file_name) as file:
+                print('Loading epoch collection from ' + file.name)
+                epoch_collection_list = pickle.load(file)
+                #self.epochList.addItem(epoch_collection_list)
+                print(epoch_collection_list)
+                
+        except IOError as e: 
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Error while opening the epoch collection file.')
+            self.messageBox.show()
+        
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """
         Saves the Epoch collection to a file. The file is saved to the folder
-        of the current experiment and is named 'foo.epo', where 'foo' is all
+        of the current _experiment and is named 'foo.epo', where 'foo' is all
         the names of the items in the list in a row.
         
         e.g. 'event1event2.epo'
@@ -222,9 +287,10 @@ class MainWindow(QtGui.QMainWindow):
         
         epochCollectionFileName += '.epo'
         
-        self.saveEpochCollection(epochCollectionFileName, epochCollectionList)
+        self.save_epoch_collection(epochCollectionFileName,\
+                                   epochCollectionList)
         
-    def saveEpochCollection(self, fileName, epochCollectionList):
+    def save_epoch_collection(self, fileName, epochCollectionList):
         """
         Saves a list of epoch collections to a file. The file is saved in the
         folder of the current experiment.
@@ -239,11 +305,11 @@ class MainWindow(QtGui.QMainWindow):
 
         
         try:
-            with(open(path + '/' + fileName, 'wb')) as fullFileName:
+            with open(path + '/' + fileName, 'wb') as fullFileName:
                 print 'Writing epoch collections to file.'
                 pickle.dump(epochCollectionList, fullFileName, 2)
                                  
-        except IOerror as e:
+        except IOError as e:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Writing to the chosen directory is not allowed.')
@@ -410,6 +476,28 @@ class MainWindow(QtGui.QMainWindow):
                                                self.experiment.working_file, 
                                                epoch)
         self.tfrTop_dialog.show()
+        
+    def populate_comboBoxEpochCollections(self):
+        """
+        Populates the combo box used for epoch collection loading on the
+        epochs-tab. The items in the combo box represent the .epo files in the
+        current experiment's folder.
+        """
+        #Clear the combo box from previous items.
+        self.ui.comboBoxEpochCollections.clear()
+        
+        self.ui.comboBoxEpochCollections.addItem('No epoch collections '\
+                                                 'selected')
+        if self.experiment is None: return
+        
+        #Add epoch collections to the combo box
+        else:
+            path = self.experiment.subject_directory
+            files = os.listdir(path)
+            for file in files:
+                if file.endswith('.epo'):
+                    item = file.split('.epo')[0]
+                    self.ui.comboBoxEpochCollections.addItem(item)           
     
     def _initialize_ui(self):
         """

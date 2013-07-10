@@ -30,7 +30,7 @@
 """
 Created on Mar 12, 2013
 
-@author: Jaakko Leppakangas
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
 import mne
