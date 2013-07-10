@@ -1,4 +1,10 @@
-﻿HUOM! Käytä muokatessa tekstieditoria, jossa päällä asetus "insert tabs as spaces" ja "tab width = 4"!
+﻿HUOM! 
+
+- Käytä muokatessa tekstieditoria, jossa päällä asetus "insert tabs as spaces" ja "tab width = 4"!
+
+- Jos saat jonkin bugin korjattua, laitan sen eteen iso V tyyliin:
+    "\ V Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen"
+
 
 *** IHAN UUTTA TOIMINNALLISUUTTA ***
 
@@ -35,6 +41,8 @@
             + Eli käyttöliittymään mahdollisuus luoda jatkuvaa dataa myös, mistään eventeistä välittämättä
         \ Ehkä hyödyllistä myös luokitella jatkuvastakin datasta luodut epookit esim. sen mukaan, onko joku triggeri tullut niiden aikana (jos esim. meditaatiotyypit painelee nappuloita)
 
+    - Tarkista ainakin TFR- ja average- välilehden napukat jatkuvalla datalla
+        
     - Tilastohommat EI liity tähän tähän mitenkään
     
 ** Kanavakeskiarvot P2 **     
@@ -106,11 +114,13 @@
         \ Event selection: Eventtien xls-tiedostotalletus ja luku --> muuta toimimaan csv:llä
         \ Event selection: Epookkien luominen tarkempien ehtojen perusteella
             + Nämä olivat niitä bit mask -pohjaisia ratkaisuja, joista Lauri näytti keväällä Espoossa, jonkin Elektan softan avulla
+        \ Event selection: otsikot listoille ja "Remove"-nappulan selvennys
         \ Epoch creation: pitäisi toimia niin, ettei ota eventtejä mag- ja grad-kanavilta, jos EOG-kanavan amplitudi ylittää "rejection-parameters"-kohdassa määritellyn arvon (EOG-checkbox voisi olla ennemmin "discard epoch by EOG channel values" tms.)
             + EEG-rejectioon liittyi myös jotakin vastaavaa
             + Checkboxit voisi selittää paremmin, ja mitä on syytä olla checkattuna oletuksena?
-            + End timeen ja start timeen yksiköksi sekuntia, ja tarkkuus kolmella desimaalilla (jos käyttäjä ajattelee millisekunteja)    
-        \ Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen
+            + End timeen ja start timeen yksiköksi sekuntia, ja tarkkuus kolmella desimaalilla (jos käyttäjä ajattelee millisekunteja)
+        \ Epoch creation: include- ja exclude-listat eivät ole oikeasti missään käytössä
+        \ V Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen 
         \ Epoch widgetin lista
             \ Näkyviin kustakin epoch collectionista, kukin omassa sarakkeessaan: eventti- tai ikkunatyypin nimi, montako ko. tyypin esiintymää sisältyy, onko kyseessä eventteihin vai itse määriteltyihin ikkuinoihin pohjautuva collection
    
@@ -184,12 +194,23 @@
     \ Kuuluisiko TFR-dialogissa olla myös baseline rescaling, kuten TRF-topology -dialogissa?
     \ Punaiset X:ät preprocessing- välilehdelle
     \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämmentävän virheilmoituksen (“No rights to save to chosen path”)
-    \ UI:n raw tabin trigger-lista --> events
+    \ UI:n raw tabin trigger-lista --> events, ja poista mahdollisuus valita siinä alkioita (+ tausta ei-valkoiseksi)
+    \ Pääikkuna ja browse_raw ikkuna yhtä aikaa auki --> pitäisi voida selata pääikkunaa
+        + Kts. se threading
     \ Tällä hetkellä ei tunnista, jos alun perin avatulle filulle on jo tehty MaxFilter (esim. mc) --> ei näy vihreänä merkkinä Preprocessing-lehdellä
     \ CurrentTabin voisi tallettaa suljettaessa myös
     \ Harmaannutettuja esimerkkisyötteitä tekstikenttiin (“Eg. MEG0121”)
     \ Messagebox yhdellä rivillä käytettäväksi
-
+    \ Sovellukselle oma kuvake, ja toolbarin napukoille kuvakkeet
+    \ Koetta avattaessa voisi sovellus oletuksena tarjota hakemistoa,
+    joka on edellisellä kerralla ollut avattuna.
+    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
+    \ Jos MaxFilter ei käytössä, vastaava nappi harmaaksi
+    \ browse_raw-mahdollisuus myös Preprocessing-välilehdelle
+    \ MatPlotLibin pitäisi kuvan tallentamiselle tarjota hakemistoa,
+    josta koe on avattu (esim. magnitude spectrum)
+    \ Listojen ja painikkeiden järjestys esim. epoching-välilehdellä ja sen jälkeen --> toisinpäin
+    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
     
 *** ASENNUKSEEN YMS. LIITTYVIÄ TEHTÄVIÄ *** 
     - Testaa Canopy ja päivitä asennusohjeita
