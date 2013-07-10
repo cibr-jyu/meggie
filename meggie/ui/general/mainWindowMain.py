@@ -342,10 +342,11 @@ class MainWindow(QtGui.QMainWindow):
         i = 0
         # Average the selected epochs
         for item in selectedEpochs:
-            epochs.append(item.data(32).toPyObject())
-            self.caller.average(item.data(32).toPyObject())
+            epoch = item.data(32).toPyObject()
+            epochs.append(epoch)
+            self.caller.average(epoch)
+            self.caller.draw_evoked_potentials(epoch)
         
-        self.caller.average(epochs[0])
         #evoked = self.caller.average(epochs)
          
          
