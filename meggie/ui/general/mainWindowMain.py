@@ -270,11 +270,18 @@ class MainWindow(QtGui.QMainWindow):
             ('Please select an event collection to average.')
             self.messageBox.show()  
             return
-         
+        
+        selectedEpochs = self.epochList.ui.listWidgetEpochs.selectedItems()
+        epochs = []
+        i = 0
         # Average the selected epochs
-        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
-        data(32).toPyObject()
-        evoked = self.caller.average(epochs)
+        for item in selectedEpochs:
+            epochs.append(item.data(32).toPyObject())
+            self.caller.average(item.data(32).toPyObject())
+        
+        self.caller.average(epochs[0])
+        #evoked = self.caller.average(epochs)
+         
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
