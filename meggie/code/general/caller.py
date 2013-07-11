@@ -327,33 +327,41 @@ class Caller(object):
     def average(self, epochs):
         """
         Averages epochs.
-        Draws a topography representation of the evoked potentials.
         Raises an exception if it cannot find any epochs.
         """
         if epochs.epochs is None:
             raise Exception('No epochs found.')
-        category = epochs.epochs.event_id
+        self.category = epochs.epochs.event_id
         
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
-        evokeds = [epochs.epochs[name].average() for name in category.keys()]
+        self.evokeds = [epochs.epochs[name].average() for name in self.\
+                        category.keys()]
         
         # Saves evoked data to disk.                
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
         fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
-                          evokeds)
-        #TODO johonkin muualle tallennus? Mika tiedostonimeksi?
-                
+                          self.evokeds)
+        
+        
+    def draw_evoked_potentials(self, epochs):
+        """
+        Draws a topography representation of the evoked potentials.
+        
+        Keyword arguments:
+        epochs
+        evokeds
+        category
+        """
         layout = read_layout('Vectorview-all')
         
         self.mi = MeasurementInfo(epochs.raw)
-        fig = plot_topo(evokeds, layout, title=str(category.keys()) +
-                        ' ' + self.mi.subject_name)
+        fig = plot_topo(self.evokeds, layout, title=str(self.category.keys()))
+        fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
         
         def onclick(event):
-            pl.show(block=False)
-        
+            pl.show(block=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
 #    def channel_average(self):
