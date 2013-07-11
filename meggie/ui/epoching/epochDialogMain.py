@@ -67,13 +67,17 @@ class EpochDialog(QtGui.QDialog):
         
         reject = dict()
         if mag:
-            reject['mag'] = 1e-12 * self.ui.doubleSpinBoxMagReject_3.value()
+            reject['mag'] = 1e-12 * self.ui.\
+            doubleSpinBoxMagReject_3.value()
         if grad:
-            reject['grad'] = 1e-12 * self.ui.doubleSpinBoxGradReject_3.value()
+            reject['grad'] = 1e-12 * self.ui.\
+            doubleSpinBoxGradReject_3.value()
         if eeg:
-            reject['eeg'] = eeg = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value()
+            reject['eeg'] = eeg = 1e-6 * self.ui.\
+            doubleSpinBoxEEGReject_3.value()
         if eog:
-            reject['eog'] = eog = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value()
+            reject['eog'] = eog = 1e-6 * self.ui.\
+            doubleSpinBoxEOGReject_3.value()
 
         """
         Reads the given event names as categories.

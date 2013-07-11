@@ -235,6 +235,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
+        #Don't try to load a file if none exist or are selected
         if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
@@ -245,77 +246,54 @@ class MainWindow(QtGui.QMainWindow):
         else:
             file_name = self.ui.comboBoxEpochCollections.currentText() + '.epo'
             path = self.experiment.subject_directory
-            
+            epoch_collection_list = []
+        
+        #Unpickle the list containing pickled epoch collections as strings   
         try:
             with open(path + '/' + file_name) as file:
                 print('Loading epoch collection from ' + file.name)
-                epoch_collection_list = pickle.load(file)
-                #self.epochList.addItem(epoch_collection_list)
-                print(epoch_collection_list)
+                epoch_collection_str_list = pickle.load(file)
+                for item in epoch_collection_str_list:
+                    
+                    #Unpickle the individual epoch collections
+                    try:
+                        epoch_collection = pickle.loads(item)
+                        epoch_collection.__init__()
+                        epoch_collection_list.append(epoch_collection)
+                        
+                    except UnpicklingError as e:    
+                        self.messageBox = messageBox.AppForm()
+                        self.messageBox.labelException.setText \
+                        ('Error while opening the epoch collection file.')
+                        self.messageBox.show()
                 
-        except IOError as e: 
+        except UnpicklingError as e: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Error while opening the epoch collection file.')
             self.messageBox.show()
         
+        #Add the epoch collections to the main window's list widget
+        for item in epoch_collection_list:
+            self.epochList.addItem(item)
+            self.epochList.setCurrentItem(item)
+        
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """
-        Saves the Epoch collection to a file. The file is saved to the folder
-        of the current _experiment and is named 'foo.epo', where 'foo' is all
-        the names of the items in the list in a row.
-        
-        e.g. 'event1event2.epo'
+        Saves the epoch collections 
         """
+        
         if checked is None: return
-        if self.epochList.ui.listWidgetEpochs.count() <= 0 :
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Epoch collection list is empty, no file was created.')
-            self.messageBox.show() 
-            return
         
-        epochCollectionFileName = ''
-        epochCollectionList = []
-        
-        # creates an epochCollectionList that is to be saved and generates a
-        # file name for it.
         for i in range(self.epochList.ui.listWidgetEpochs.count()):
             item = self.epochList.ui.listWidgetEpochs.item(i)
-            epochCollectionFileName += item.text().split('=')[0]
-            epochCollectionList.append(item)
-        
-        epochCollectionFileName += '.epo'
-        
-        self.save_epoch_collection(epochCollectionFileName,\
-                                   epochCollectionList)
-        
-    def save_epoch_collection(self, fileName, epochCollectionList):
-        """
-        Saves a list of epoch collections to a file. The file is saved in the
-        folder of the current experiment.
-        
-        Keyword arguments:
-        fileName            = the name of the save file.
-        epochCollectionList = The list of epoch collections to be saved.
-        """
-        #TODO: This should be moved to a FileManager-class once such a class
-        #      exists.
-        path = self.experiment.subject_directory
+            epochs = item.data(32).toPyObject()
+            epochs.epochs.save(self.experiment.subject_directory + 'epochs/'\
+                               'testi.fif')
+            printepochs = open(self.experiment.subject_directory + 'epochs/'\
+                               'testi.fif')
+            print printepochs.epochs.get_data()
 
-        
-        try:
-            with open(path + '/' + fileName, 'wb') as fullFileName:
-                print 'Writing epoch collections to file.'
-                pickle.dump(epochCollectionList, fullFileName, 2)
-                                 
-        except IOError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Writing to the chosen directory is not allowed.')
-            self.messageBox.show()
-            return            
-        
     def on_actionAbout_triggered(self, checked=None):
         """
         Opens the About-dialog 
@@ -485,11 +463,11 @@ class MainWindow(QtGui.QMainWindow):
         
         #Add epoch collections to the combo box
         else:
-            path = self.experiment.subject_directory
+            path = self.experiment.subject_directory + 'epochs/'
             files = os.listdir(path)
             for file in files:
-                if file.endswith('.epo'):
-                    item = file.split('.epo')[0]
+                if file.endswith('.fif'):
+                    item = file.split('.fif')[0]
                     self.ui.comboBoxEpochCollections.addItem(item)           
     
     def _initialize_ui(self):
