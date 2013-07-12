@@ -298,6 +298,10 @@ class MainWindow(QtGui.QMainWindow):
             epochs = item.data(32).toPyObject()
             epochs.epochs.save(self.experiment.epochs_directory + \
                                str(item.text() + '.fif'))
+            
+        #Populate the combobox for loading epoch-collections so that the newly
+        #created files are visible.
+        self.populate_comboBoxEpochCollections()
 
     def on_actionAbout_triggered(self, checked=None):
         """
