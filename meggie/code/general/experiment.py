@@ -30,7 +30,7 @@
 """
 Created on Mar 6, 2013
 
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Atte Rautio
 Contains the Experiment-class used for managing experiment files.
 """
 
@@ -44,27 +44,51 @@ import glob
 
 import numpy as np
 
+from PyQt4.QtCore import QObject, pyqtSignal
+
 # Better to use pickle rather than cpickle, as experiment paths may
 # include non-ascii characters
 import pickle
 
-class Experiment(object):
-    """
+class Experiment(QObject):
+    
+    """A class that holds experiment info.
+    
     Experiment holds information about the currently saved raw data, working
     file etc. It also stores path of the experiment file, author, date and
     description. It also has methods for saving and parsing parameter files
     and pickling and unpickling itself to and from disk.
+    
+    Properties:
+    experiment_name   = The name of the experiment
+    raw_data          = A raw data file
+    raw_data_path     = the absolute path of the raw data file
+    subject_directory = A directory containing the subject-specific files
+    epochs_directory  = A directory containing the .fif files of epochs
+    file_path         = The path of the saved experiment
+    author            = the name of the experiment's author
+    description       = A user defined description of the experiment
+    working_file      = The current file being modified
+    working_file_path = The absolute path of the current working file
+    event_set         = A set of events
+    stim_channel      = The channel containing triggers in the raw data file
+    mainWindow        = The window used for modifying the experiment    
+    
     """
+    
+    #custom signals:
+    epochs_directory_value_changed = pyqtSignal()
     
     def __init__(self):
         """
         Constructor sets default values for attributes.
         """
-        
+        QObject.__init__(self)
         self._experiment_name = 'experiment'
         self._raw_data = 'no data specified'
         self._raw_data_path = 'no path defined'
         self._subject_directory = 'no directory specified'
+        self._epochs_directory = 'no directory specified'
         self._file_path = 'no path defined'
         self._author = 'unknown author'
         self._description = 'no description'
@@ -128,6 +152,23 @@ class Experiment(object):
         path. Not setable by user, for internal use only.
         """
         self._subject_directory = subject_directory
+        
+    @property
+    def epochs_directory(self):
+        """return the absolute path to current subject's epochs directory
+        """
+        return self._epochs_directory
+    
+    @epochs_directory.setter
+    def epochs_directory(self, epochs_directory):
+        """Set epoch_directory to directory
+        
+        Set epoch directory to directory. Emits an 
+        epochs_directory_value_changed signal.
+        
+        """
+        self._epochs_directory = epochs_directory
+        self.epochs_directory_value_changed.emit()
     
     @property
     def file_path(self):
@@ -329,11 +370,20 @@ class Experiment(object):
             raise Exception('No such path')
         
         if os.path.exists(self._file_path + folder_name[0]):
-            self.subject_directory = str(self._file_path) + folder_name[0] + '/'
-            raw_file_path = str(self._file_path) + folder_name[0] + '/' + file_name
+            self.subject_directory = str(self._file_path) + \
+            folder_name[0] + '/'
+            raw_file_path = str(self._file_path) + folder_name[0] + \
+            '/' + file_name
             mne.fiff.Raw.save(self._raw_data, raw_file_path)
             self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
             self._raw_data_path = self._raw_data.info.get('filename')
+            
+            try:
+                self.epochs_directory = self.subject_directory + 'epochs/'
+                os.mkdir(self.epochs_directory)
+            except OSError:
+                raise OSError("no rights to save to the chosen path")
+            
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
@@ -411,7 +461,7 @@ class Experiment(object):
                         
     def __getstate__(self):
         """
-        Return state values to be pickled. Used to avoid pickling huge files
+        Return state values to be pickled. Used to avoid pickling huge
         files two times to disk. Standard pickle method.
         """
         odict = self.__dict__.copy()
@@ -425,6 +475,7 @@ class Experiment(object):
         files from the files in the experiment directory. Standard pickle
         method.
         """ 
+        QObject.__init__(self)
 
         rawFullPath = odict['_raw_data_path']
         workingFullPath = odict['_working_file_path']

@@ -78,6 +78,9 @@ class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
     """
+    
+    #custom signals
+    experiment_value_changed = QtCore.pyqtSignal()
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -108,11 +111,12 @@ class MainWindow(QtGui.QMainWindow):
         #The button for loading epoch collections should be disabled at start.
         self.ui.pushButtonLoadEpochCollection.setEnabled(False)
         
-        self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        
         #Connect signals and slots
+        self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.ui.comboBoxEpochCollections.\
         currentIndexChanged.connect(self.epoch_collections_updated)
+        self.experiment_value_changed.connect\
+        (self.populate_comboBoxEpochCollections)
         
     #Property definitions below
     @property
@@ -122,7 +126,10 @@ class MainWindow(QtGui.QMainWindow):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
-        self.populate_comboBoxEpochCollections()
+        self.experiment_value_changed.emit()
+        #Connect populate_comboBoxEpochCollections to the new experiment.
+        self.experiment.epochs_directory_value_changed.connect\
+        (self.populate_comboBoxEpochCollections)
         
     def epoch_collections_updated(self):
         """
@@ -233,6 +240,7 @@ class MainWindow(QtGui.QMainWindow):
         Loads the epoch collection from the selected file and shows it on
         the epoch collection list. 
         """
+        """
         if checked is None: return
         
         #Don't try to load a file if none exist or are selected
@@ -277,10 +285,10 @@ class MainWindow(QtGui.QMainWindow):
         for item in epoch_collection_list:
             self.epochList.addItem(item)
             self.epochList.setCurrentItem(item)
+        """
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
-        """
-        Saves the epoch collections 
+        """Save the epoch collections to a .fif file 
         """
         
         if checked is None: return
@@ -288,11 +296,8 @@ class MainWindow(QtGui.QMainWindow):
         for i in range(self.epochList.ui.listWidgetEpochs.count()):
             item = self.epochList.ui.listWidgetEpochs.item(i)
             epochs = item.data(32).toPyObject()
-            epochs.epochs.save(self.experiment.subject_directory + 'epochs/'\
-                               'testi.fif')
-            printepochs = open(self.experiment.subject_directory + 'epochs/'\
-                               'testi.fif')
-            print printepochs.epochs.get_data()
+            epochs.epochs.save(self.experiment.epochs_directory + \
+                               str(item.text() + '.fif'))
 
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -457,10 +462,12 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog.show()
         
     def populate_comboBoxEpochCollections(self):
-        """
-        Populates the combo box used for epoch collection loading on the
+        """Populate the combo box listing available epoch collections.
+        
+        Populate the combo box used for epoch collection loading on the
         epochs-tab. The items in the combo box represent the .epo files in the
         current experiment's folder.
+        
         """
         #Clear the combo box from previous items.
         self.ui.comboBoxEpochCollections.clear()
@@ -471,7 +478,7 @@ class MainWindow(QtGui.QMainWindow):
         
         #Add epoch collections to the combo box
         else:
-            path = self.experiment.subject_directory + 'epochs/'
+            path = self.experiment.epochs_directory
             files = os.listdir(path)
             for file in files:
                 if file.endswith('.fif'):
