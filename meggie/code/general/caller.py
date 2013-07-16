@@ -382,7 +382,7 @@ class Caller(object):
         
         def onclick(event):
             pl.show(block=False)
-            pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
+            #pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         """
