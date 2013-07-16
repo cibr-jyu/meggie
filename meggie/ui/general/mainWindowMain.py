@@ -319,7 +319,13 @@ class MainWindow(QtGui.QMainWindow):
             ('Please select an event collection to average.')
             self.messageBox.show()  
             return
-        
+        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
+        toPyObject()
+        evoked = self.caller.average(epochs)
+        self.caller.draw_evoked_potentials(epochs)
+
+        """
+        #This code is for multiselection of epochs on mainwindows epochs list.
         selectedEpochs = self.epochList.ui.listWidgetEpochs.selectedItems()
         epochs = []
         i = 0
@@ -327,11 +333,9 @@ class MainWindow(QtGui.QMainWindow):
         for item in selectedEpochs:
             epoch = item.data(32).toPyObject()
             epochs.append(epoch)
-            self.caller.average(epoch)
-            self.caller.draw_evoked_potentials(epoch)
-        
-        #evoked = self.caller.average(epochs)
-         
+            #self.caller.average(epoch)
+            #self.caller.draw_evoked_potentials(epoch)
+        """
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """

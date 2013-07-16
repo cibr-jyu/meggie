@@ -45,7 +45,6 @@ from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
 from measurementInfo import MeasurementInfo
 
-
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 
@@ -332,18 +331,36 @@ class Caller(object):
         if epochs.epochs is None:
             raise Exception('No epochs found.')
         self.category = epochs.epochs.event_id
-        
+        """
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
+        """
         self.evokeds = [epochs.epochs[name].average() for name in self.\
                         category.keys()]
-        
-        # Saves evoked data to disk.                
+                
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
+        # Saves evoked data to disk.                
         fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
                           self.evokeds)
         
+        """
+        #This code is for multiselection on mainwindows epochs list.
+        #Method receives list of epochs objects instead of one epochs object.
+        #TODO: Needs to create new Epoch object to include all chosen events,
+        #otherwise can't handle averaging of the chosen epochs.
+        self.category = dict()
         
+        for epoch in epochs:
+            if epoch.epochs is None:
+                raise Exception('No epochs found.')
+            for key in epoch.epochs.event_id.keys():
+                self.category[key] = epoch.epochs.event_id.get(key)
+        epochs_to_average = mne.Epochs(raw, events, self.category,
+                                     tmin, tmax, picks=picks, reject=reject)
+        self.evokeds = [epochs_to_average.epochs[name].average() for name in self.\
+                        category.keys()]
+        """
+                
     def draw_evoked_potentials(self, epochs):
         """
         Draws a topography representation of the evoked potentials.
@@ -356,14 +373,29 @@ class Caller(object):
         layout = read_layout('Vectorview-all')
         
         self.mi = MeasurementInfo(epochs.raw)
+        
         fig = plot_topo(self.evokeds, layout, title=str(self.category.keys()))
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
+        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
+        fig.savefig(prefix + '_averaged_epochs.svg', facecolor='black', transparent=True)
         
         def onclick(event):
-            pl.show(block=True)
+            pl.show(block=False)
+            pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
+        """
+        #This code is for multiselection on maindows epochs list.
+        event_names = ''
+        for id in self.category:
+            event_names += str(id.keys()) + ' '
+        fig = []
+        i = 0
+        for evoked in self.evokeds:
+            fig[i] = plot_topo(evoked, layout, title=str(evoked.keys()))    
+        """
+        
 #    def channel_average(self):
         # layoutista kts. mne.layouts.
     
