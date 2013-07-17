@@ -382,7 +382,7 @@ class Caller(object):
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
-        fig.savefig(prefix + '_averaged_epochs.svg', facecolor='black', transparent=True)
+        #fig.savefig(prefix + '_averaged_epochs.svg', facecolor='black', transparent=True)
         
         def onclick(event):
             pl.show(block=False)
