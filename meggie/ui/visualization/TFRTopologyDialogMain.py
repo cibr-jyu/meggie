@@ -45,7 +45,7 @@ class TFRTopologyDialog(QtGui.QDialog):
     parameter values and passes them to the Caller-class.
     """
     
-    def __init__(self, parent, raw, epoch):
+    def __init__(self, parent, raw, epochs):
         """
         Initializes the TFR topology dialog.
         
@@ -53,13 +53,13 @@ class TFRTopologyDialog(QtGui.QDialog):
         
         parent    --   this dialog's parent
         raw       --   a raw data file
-        epoch     --   a collection of epochs
+        epochs    --   a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.raw = raw
-        self.epoch = epoch
-        ch_names = self.epoch.epochs.ch_names
+        self.epochs = epochs
+        ch_names = self.epochs.ch_names
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
     
@@ -87,7 +87,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             reptype = 'induced'
         else: reptype = 'phase'
         try:
-            self.parent.caller.TFR_topology(self.raw, self.epoch.epochs,
+            self.parent.caller.TFR_topology(self.raw, self.epochs,
                                             reptype, minfreq, maxfreq, decim,
                                             mode, blstart, blend, interval,
                                             ncycles)

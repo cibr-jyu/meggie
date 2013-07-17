@@ -323,15 +323,15 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def average(self, epochs, rawFileName = ''):
-        """
+    def average(self, epochs):
+        """Average epochs.
+        
         Average epochs and save the evoked dataset to a file.
         Raise an exception if epochs are not found.
         
         Keyword arguments:
         
         epochs      = Epochs averaged
-        rawFileName = The file name of the original raw data file
         """
         if epochs is None:
             raise Exception('No epochs found.')
@@ -343,9 +343,25 @@ class Caller(object):
         self.evokeds = [epochs[name].average() for name in self.\
                         category.keys()]
                 
-        # Saves evoked data to disk.                
-        fiff.write_evoked(rawFileName + '_auditory_and_visual_eeg-ave' +\
-                          '.fif', self.evokeds)
+        # Saves evoked data to disk.
+        saveFolder = self.parent.experiment.epochs_directory + 'average/'
+        
+        #Get the name of the raw-data file from the current experiment.
+        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
+                                                     raw_data_path)[1])[0]                      
+        
+        if os.path.exists(saveFolder) is False:
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                print 'Writing to selected folder is not allowed.'
+            
+        try:                
+            fiff.write_evoked(saveFolder + rawFileName +\
+                              '_auditory_and_visual_eeg-ave' + '.fif',\
+                              self.evokeds)
+        except IOError:
+            print 'Writing to selected folder is not allowed.'
         
         """
         #This code is for multiselection on mainwindows epochs list.
@@ -376,12 +392,13 @@ class Caller(object):
         """
         layout = read_layout('Vectorview-all')
         
-        self.mi = MeasurementInfo(epochs.raw)
+        self.mi = MeasurementInfo(self.parent.experiment.raw_data)
         
         fig = plot_topo(self.evokeds, layout, title=str(self.category.keys()))
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
-        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
+        prefix, suffix = os.path.splitext(self.parent.experiment.\
+                                          raw_data.info.get('filename'))
         #fig.savefig(prefix + '_averaged_epochs.svg', facecolor='black', transparent=True)
         
         def onclick(event):

@@ -46,7 +46,7 @@ class TFRDialog(QtGui.QDialog):
     values and passes them to the Caller-class.
     """
     
-    def __init__(self, parent, raw, epoch):
+    def __init__(self, parent, raw, epochs):
         """
         Constructor. Sets up the dialog
         
@@ -54,13 +54,13 @@ class TFRDialog(QtGui.QDialog):
         
         parent    --    Parent of the dialog
         raw       --    raw data file
-        epoch     --    a collection of epochs
+        epochs    --    a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.raw = raw
-        self.epoch = epoch
-        ch_names = self.epoch.epochs.ch_names
+        self.epochs = epochs
+        ch_names = self.epochs.ch_names
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
@@ -76,7 +76,7 @@ class TFRDialog(QtGui.QDialog):
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
         try:
-            self.parent.caller.TFR(self.raw, self.epoch.epochs, ch_index,
+            self.parent.caller.TFR(self.raw, self.epochs, ch_index,
                                    minfreq, maxfreq, interval, ncycles, decim)
         except Exception, err:
             self.messageBox = messageBox.AppForm()

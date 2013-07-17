@@ -145,7 +145,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
-        Creates a new CreateExperimentDialog and shows it
+        Create a new CreateExperimentDialog and show it
         """
         if checked is None: return # Standard workaround for file dialog opening twice
         if os.path.isfile('settings.cfg'):
@@ -156,9 +156,9 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
-        Method for opening an existing _experiment.
-        TODO: should be moved to a separate I/O module
+        Open an existing _experiment.
         """
+        #TODO: should be moved to a separate I/O module
         # Standard workaround for file dialog opening twice
         if checked is None: return 
                 
@@ -204,8 +204,8 @@ class MainWindow(QtGui.QMainWindow):
     
     def populate_raw_tab_event_list(self):
         """
-        Fills the raw tab event list with info about event IDs and
-        amount of events with those IDs
+        Fill the raw tab event list with info about event IDs and
+        amount of events with those IDs.
         """
         #TODO: trigger ---> event, also in the UI
         events = self.experiment.event_set
@@ -217,19 +217,21 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_actionSet_workspace_triggered(self, checked=None):
         """
-        Opens the dialog to set the workspace.
+        Open the dialog to set the workspace.
         """
         if checked is None: return
         self.check_workspace()
         
     def on_actionPreferences_triggered(self, checked=None):
+        """Open the preferences-dialog.
+        """
         if checked is None: return
         self.dialogPreferences = PreferencesDialog()
         self.dialogPreferences.show()
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
-        Opens the epoch dialog. 
+        Open the epoch dialog. 
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
@@ -266,8 +268,8 @@ class MainWindow(QtGui.QMainWindow):
         for i in range(self.epochList.ui.listWidgetEpochs.count()):
             item = self.epochList.ui.listWidgetEpochs.item(i)
             epochs = item.data(32).toPyObject()
-            epochs.epochs.save(self.experiment.epochs_directory + \
-                               str(item.text() + '.fif'))
+            epochs.save(self.experiment.epochs_directory +\
+                        str(item.text() + '.fif'))
             
         #Populate the combobox for loading epoch-collections so that the newly
         #created files are visible.
@@ -275,7 +277,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_actionAbout_triggered(self, checked=None):
         """
-        Opens the About-dialog 
+        Open the About-dialog. 
         """
         if checked is None: return
         self.dialogAbout = AboutDialog()
@@ -283,7 +285,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonAverage_clicked(self, checked=None):
         """
-        Method for plotting the evoked data as a topology.
+        Plot the evoked data as a topology.
         """
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
@@ -295,9 +297,8 @@ class MainWindow(QtGui.QMainWindow):
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
         toPyObject()
-        rawFileName = os.path.splitext(self.experiment._raw_data_path)[0]
-        evoked = self.caller.average(epochs, rawFileName)
-        #self.caller.draw_evoked_potentials(epochs)
+        evoked = self.caller.average(epochs)
+        self.caller.draw_evoked_potentials(epochs)
 
         """
         #This code is for multiselection of epochs on mainwindows epochs list.
@@ -314,7 +315,7 @@ class MainWindow(QtGui.QMainWindow):
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
-        Method for calling the mne_browse_raw.
+        Call mne_browse_raw.
         """
         if checked is None: return
         try:
@@ -328,7 +329,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
-        Method for calling Elekta's MaxFilter.
+        Call Elekta's MaxFilter.
         """
         if checked is None: return 
         try:
@@ -343,15 +344,15 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonSpectrum_clicked(self):
         """
-        Opens the magnitude spectrum visualization dialog.
+        Open the magnitude spectrum visualization dialog.
         """
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
     
     def on_currentChanged(self):
         """
-        Keeps track of the active tab.
-        Shows the epoch collection list epochList when in appropriate tabs.
+        Keep track of the active tab.
+        Show the epoch collection list epochList when in appropriate tabs.
         """
         index = self.ui.tabWidget.currentIndex()
         #self.tab = self.ui.tabWidget.currentWidget()
@@ -377,7 +378,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
-        Opens the dialog for calculating the EOG PCA.
+        Open the dialog for calculating the EOG PCA.
         """
         if checked is None: return 
         self.eogDialog = EogParametersDialog(self)
@@ -385,7 +386,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonECG_clicked(self, checked=None):
         """
-        Opens the dialog for calculating the ECG PCA.
+        Open the dialog for calculating the ECG PCA.
         """
         if checked is None: return
         self.ecgDialog = EcgParametersDialog(self)
@@ -393,7 +394,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """
-        Opens the dialog for applying the EOG-projections to the data.
+        Open the dialog for applying the EOG-projections to the data.
         """
         if checked is None: return
         self.addEogProjs = AddEOGProjections(self)
@@ -401,7 +402,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """
-        Opens the dialog for applying the ECG-projections to the data.
+        Open the dialog for applying the ECG-projections to the data.
         """
         if checked is None: return
         self.addEcgProjs = AddECGProjections(self)
@@ -409,7 +410,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonTFR_clicked(self, checked=None):
         """
-        Opens the dialog for plotting TFR from a single channel.
+        Open the dialog for plotting TFR from a single channel.
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
