@@ -108,7 +108,7 @@ class EpochDialog(QtGui.QDialog):
         for key, value in epochs.epochs.event_id.iteritems():
             item_string += key + '=' + str(value) + ' ' 
         item = QtGui.QListWidgetItem(item_string)
-        item.setData(32, epochs)
+        item.setData(32, epochs.epochs)
         self.parent.parent.epochList.addItem(item)
         self.parent.parent.epochList.setCurrentItem(item)
         self.close()

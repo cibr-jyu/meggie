@@ -323,25 +323,29 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def average(self, epochs):
+    def average(self, epochs, rawFileName = ''):
         """
-        Averages epochs.
-        Raises an exception if it cannot find any epochs.
+        Average epochs and save the evoked dataset to a file.
+        Raise an exception if epochs are not found.
+        
+        Keyword arguments:
+        
+        epochs      = Epochs averaged
+        rawFileName = The file name of the original raw data file
         """
-        if epochs.epochs is None:
+        if epochs is None:
             raise Exception('No epochs found.')
-        self.category = epochs.epochs.event_id
+        self.category = epochs.event_id
         """
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        self.evokeds = [epochs.epochs[name].average() for name in self.\
+        self.evokeds = [epochs[name].average() for name in self.\
                         category.keys()]
                 
-        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
         # Saves evoked data to disk.                
-        fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
-                          self.evokeds)
+        fiff.write_evoked(rawFileName + '_auditory_and_visual_eeg-ave' +\
+                          '.fif', self.evokeds)
         
         """
         #This code is for multiselection on mainwindows epochs list.

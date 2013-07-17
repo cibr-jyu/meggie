@@ -236,56 +236,26 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog.show()
         
     def on_pushButtonLoadEpochCollection_clicked(self, checked=None):
-        """
-        Loads the epoch collection from the selected file and shows it on
+        """Load epoch collections from a file.
+        Load the epoch collection from the selected file and shows it on
         the epoch collection list. 
         """
-        """
+        #Workaround for the method executing twice
         if checked is None: return
         
-        #Don't try to load a file if none exist or are selected
-        if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No .epo file found')
-            self.messageBox.show()
-            return
-            
-        else:
-            file_name = self.ui.comboBoxEpochCollections.currentText() + '.epo'
-            path = self.experiment.subject_directory
-            epoch_collection_list = []
-        
-        #Unpickle the list containing pickled epoch collections as strings   
+        fname = self.ui.comboBoxEpochCollections.currentText()
+        fpath = self.experiment.epochs_directory + fname
         try:
-            with open(path + '/' + file_name) as file:
-                print('Loading epoch collection from ' + file.name)
-                epoch_collection_str_list = pickle.load(file)
-                for item in epoch_collection_str_list:
-                    
-                    #Unpickle the individual epoch collections
-                    try:
-                        epoch_collection = pickle.loads(item)
-                        epoch_collection.__init__()
-                        epoch_collection_list.append(epoch_collection)
-                        
-                    except UnpicklingError as e:    
-                        self.messageBox = messageBox.AppForm()
-                        self.messageBox.labelException.setText \
-                        ('Error while opening the epoch collection file.')
-                        self.messageBox.show()
-                
-        except UnpicklingError as e: 
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Error while opening the epoch collection file.')
-            self.messageBox.show()
+            epochs = mne.read_epochs(str(fpath) + '.fif')
+        except Exception as e:
+            print 'Loading failed: ' + str(e)
+            return
         
-        #Add the epoch collections to the main window's list widget
-        for item in epoch_collection_list:
-            self.epochList.addItem(item)
-            self.epochList.setCurrentItem(item)
-        """
+        #Create a QlistWidgetItem from the epochs and add the item to the list.
+        item = QtGui.QListWidgetItem(fname)
+        item.setData(32, epochs)
+        self.epochList.addItem(item)
+        self.epochList.setCurrentItem(item)
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
@@ -325,8 +295,9 @@ class MainWindow(QtGui.QMainWindow):
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
         toPyObject()
-        evoked = self.caller.average(epochs)
-        self.caller.draw_evoked_potentials(epochs)
+        rawFileName = os.path.splitext(self.experiment._raw_data_path)[0]
+        evoked = self.caller.average(epochs, rawFileName)
+        #self.caller.draw_evoked_potentials(epochs)
 
         """
         #This code is for multiselection of epochs on mainwindows epochs list.
