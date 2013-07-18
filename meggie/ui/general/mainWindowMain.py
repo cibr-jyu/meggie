@@ -145,7 +145,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
-        Creates a new CreateExperimentDialog and shows it
+        Create a new CreateExperimentDialog and show it
         """
         if checked is None: return # Standard workaround for file dialog opening twice
         if os.path.isfile('settings.cfg'):
@@ -156,9 +156,9 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
-        Method for opening an existing _experiment.
-        TODO: should be moved to a separate I/O module
+        Open an existing _experiment.
         """
+        #TODO: should be moved to a separate I/O module
         # Standard workaround for file dialog opening twice
         if checked is None: return 
                 
@@ -204,8 +204,8 @@ class MainWindow(QtGui.QMainWindow):
     
     def populate_raw_tab_event_list(self):
         """
-        Fills the raw tab event list with info about event IDs and
-        amount of events with those IDs
+        Fill the raw tab event list with info about event IDs and
+        amount of events with those IDs.
         """
         #TODO: trigger ---> event, also in the UI
         events = self.experiment.event_set
@@ -217,87 +217,63 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_actionSet_workspace_triggered(self, checked=None):
         """
-        Opens the dialog to set the workspace.
+        Open the dialog to set the workspace.
         """
         if checked is None: return
         self.check_workspace()
         
     def on_actionPreferences_triggered(self, checked=None):
+        """Open the preferences-dialog.
+        """
         if checked is None: return
         self.dialogPreferences = PreferencesDialog()
         self.dialogPreferences.show()
         
     def on_pushButtonEventlist_clicked(self, checked=None):
         """
-        Opens the epoch dialog. 
+        Open the epoch dialog. 
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.show()
         
     def on_pushButtonLoadEpochCollection_clicked(self, checked=None):
-        """
-        Loads the epoch collection from the selected file and shows it on
+        """Load epoch collections from a file.
+        Load the epoch collection from the selected file and shows it on
         the epoch collection list. 
         """
-        """
+        #Workaround for the method executing twice
         if checked is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory        
         
-        #Don't try to load a file if none exist or are selected
-        if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No .epo file found')
-            self.messageBox.show()
-            return
-            
-        else:
-            file_name = self.ui.comboBoxEpochCollections.currentText() + '.epo'
-            path = self.experiment.subject_directory
-            epoch_collection_list = []
-        
-        #Unpickle the list containing pickled epoch collections as strings   
+        fname = self.ui.comboBoxEpochCollections.currentText()
+        fpath = self.experiment.epochs_directory + fname
         try:
-            with open(path + '/' + file_name) as file:
-                print('Loading epoch collection from ' + file.name)
-                epoch_collection_str_list = pickle.load(file)
-                for item in epoch_collection_str_list:
-                    
-                    #Unpickle the individual epoch collections
-                    try:
-                        epoch_collection = pickle.loads(item)
-                        epoch_collection.__init__()
-                        epoch_collection_list.append(epoch_collection)
-                        
-                    except UnpicklingError as e:    
-                        self.messageBox = messageBox.AppForm()
-                        self.messageBox.labelException.setText \
-                        ('Error while opening the epoch collection file.')
-                        self.messageBox.show()
-                
-        except UnpicklingError as e: 
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Error while opening the epoch collection file.')
-            self.messageBox.show()
+            epochs = mne.read_epochs(str(fpath) + '.fif')
+        except Exception as e:
+            print 'Loading failed: ' + str(e)
+            return
         
-        #Add the epoch collections to the main window's list widget
-        for item in epoch_collection_list:
-            self.epochList.addItem(item)
-            self.epochList.setCurrentItem(item)
-        """
+        #Create a QlistWidgetItem from the epochs and add the item to the list.
+        item = QtGui.QListWidgetItem(fname)
+        item.setData(32, epochs)
+        self.epochList.addItem(item)
+        self.epochList.setCurrentItem(item)
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
         """
         
         if checked is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory
         
         for i in range(self.epochList.ui.listWidgetEpochs.count()):
             item = self.epochList.ui.listWidgetEpochs.item(i)
             epochs = item.data(32).toPyObject()
-            epochs.epochs.save(self.experiment.epochs_directory + \
-                               str(item.text() + '.fif'))
+            epochs.save(self.experiment.epochs_directory +\
+                        str(item.text() + '.fif'))
             
         #Populate the combobox for loading epoch-collections so that the newly
         #created files are visible.
@@ -305,7 +281,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_actionAbout_triggered(self, checked=None):
         """
-        Opens the About-dialog 
+        Open the About-dialog. 
         """
         if checked is None: return
         self.dialogAbout = AboutDialog()
@@ -313,7 +289,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonAverage_clicked(self, checked=None):
         """
-        Method for plotting the evoked data as a topology.
+        Plot the evoked data as a topology.
         """
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
@@ -343,7 +319,7 @@ class MainWindow(QtGui.QMainWindow):
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
-        Method for calling the mne_browse_raw.
+        Call mne_browse_raw.
         """
         if checked is None: return
         try:
@@ -357,7 +333,7 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
-        Method for calling Elekta's MaxFilter.
+        Call Elekta's MaxFilter.
         """
         if checked is None: return 
         try:
@@ -372,15 +348,15 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonSpectrum_clicked(self):
         """
-        Opens the magnitude spectrum visualization dialog.
+        Open the magnitude spectrum visualization dialog.
         """
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
     
     def on_currentChanged(self):
         """
-        Keeps track of the active tab.
-        Shows the epoch collection list epochList when in appropriate tabs.
+        Keep track of the active tab.
+        Show the epoch collection list epochList when in appropriate tabs.
         """
         index = self.ui.tabWidget.currentIndex()
         #self.tab = self.ui.tabWidget.currentWidget()
@@ -406,7 +382,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
-        Opens the dialog for calculating the EOG PCA.
+        Open the dialog for calculating the EOG PCA.
         """
         if checked is None: return 
         self.eogDialog = EogParametersDialog(self)
@@ -414,7 +390,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonECG_clicked(self, checked=None):
         """
-        Opens the dialog for calculating the ECG PCA.
+        Open the dialog for calculating the ECG PCA.
         """
         if checked is None: return
         self.ecgDialog = EcgParametersDialog(self)
@@ -422,7 +398,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """
-        Opens the dialog for applying the EOG-projections to the data.
+        Open the dialog for applying the EOG-projections to the data.
         """
         if checked is None: return
         self.addEogProjs = AddEOGProjections(self)
@@ -430,7 +406,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """
-        Opens the dialog for applying the ECG-projections to the data.
+        Open the dialog for applying the ECG-projections to the data.
         """
         if checked is None: return
         self.addEcgProjs = AddECGProjections(self)
@@ -438,7 +414,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonTFR_clicked(self, checked=None):
         """
-        Opens the dialog for plotting TFR from a single channel.
+        Open the dialog for plotting TFR from a single channel.
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
@@ -483,6 +459,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxEpochCollections.addItem('No epoch collections '\
                                                  'selected')
         if self.experiment is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory
         
         #Add epoch collections to the combo box
         else:

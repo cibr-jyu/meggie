@@ -43,19 +43,37 @@ from PyQt4 import QtCore,QtGui
 import numpy as np
 
 class EpochDialog(QtGui.QDialog):
+    
     """
     Class containing the logic for epochDialog. Used for creating epochs from
     a set of events.
     """
     index = 1
 
-    def __init__(self, parent):
+    def __init__(self, parent, collectionName = ''):
+        """Class constructor.
+        
+        Class attributes:
+        
+        parent         = The parent of the created object
+        collectionName = The name of the created epoch collection
+        
+        """
+        
         QtGui.QDialog.__init__(self)
         self.parent = parent
+        self.collectionName = collectionName
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
     def accept(self):
+        """Create an epoch collection based on the given parameter values.
+        
+        Create an epoch collection based on the parameter values given in the
+        window. After the epochs are created, they are added to the
+        main window's epoch list.
+        
+        """
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
         self.tmax = float(self.ui.doubleSpinBoxTmax.value())
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
@@ -103,12 +121,9 @@ class EpochDialog(QtGui.QDialog):
         
         """
         Add's the epochs to the mainWindow's list.
-        """
-        item_string = ''
-        for key, value in epochs.epochs.event_id.iteritems():
-            item_string += key + '=' + str(value) + ' ' 
-        item = QtGui.QListWidgetItem(item_string)
-        item.setData(32, epochs)
+        """ 
+        item = QtGui.QListWidgetItem(self.collectionName)
+        item.setData(32, epochs.epochs)
         self.parent.parent.epochList.addItem(item)
         self.parent.parent.epochList.setCurrentItem(item)
         self.close()

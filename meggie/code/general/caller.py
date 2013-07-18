@@ -324,18 +324,23 @@ class Caller(object):
         self.parent.experiment.save_experiment_settings()
     
     def average(self, epochs):
+        """Average epochs.
+        
+        Average epochs and save the evoked dataset to a file.
+        Raise an exception if epochs are not found.
+        
+        Keyword arguments:
+        
+        epochs      = Epochs averaged
         """
-        Averages epochs.
-        Raises an exception if it cannot find any epochs.
-        """
-        if epochs.epochs is None:
+        if epochs is None:
             raise Exception('No epochs found.')
-        self.category = epochs.epochs.event_id
+        self.category = epochs.event_id
         """
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        self.evokeds = [epochs.epochs[name].average() for name in self.\
+        self.evokeds = [epochs[name].average() for name in self.\
                         category.keys()]
                 
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
@@ -347,6 +352,24 @@ class Caller(object):
         """
         fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
                           self.evokeds)
+        saveFolder = self.parent.experiment.epochs_directory + 'average/'
+        
+        #Get the name of the raw-data file from the current experiment.
+        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
+                                                     raw_data_path)[1])[0]                      
+        
+        if os.path.exists(saveFolder) is False:
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                print 'Writing to selected folder is not allowed.'
+            
+        try:                
+            fiff.write_evoked(saveFolder + rawFileName +\
+                              '_auditory_and_visual_eeg-ave' + '.fif',\
+                              self.evokeds)
+        except IOError:
+            print 'Writing to selected folder is not allowed.'
         
         """
         #Reading a written evoked dataset and saving it to disk.
@@ -390,15 +413,18 @@ class Caller(object):
         """
         layout = read_layout('Vectorview-all')
         
-        self.mi = MeasurementInfo(epochs.raw)
+        self.mi = MeasurementInfo(self.parent.experiment.raw_data)
         
         fig = plot_topo(self.evokeds, layout, title=str(self.category.keys()))
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
-        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
-                
+        prefix, suffix = os.path.splitext(self.parent.experiment.\
+                                          raw_data.info.get('filename'))
+        
+        
         def onclick(event):
             pl.show(block=False)
+            #pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         """
