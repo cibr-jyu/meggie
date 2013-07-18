@@ -342,22 +342,18 @@ class Caller(object):
         """
         self.evokeds = [epochs[name].average() for name in self.\
                         category.keys()]
-                
-        prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
-
-        """
-        Saves evoked data to disk. Seems that the written data is a list
-        of evoked datasets of different events if more than one chosen when
-        creating epochs.
-        """
-        fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
-                          self.evokeds)
+        
         saveFolder = self.parent.experiment.epochs_directory + 'average/'
         
         #Get the name of the raw-data file from the current experiment.
         rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
                                                      raw_data_path)[1])[0]                      
         
+        """
+        Saves evoked data to disk. Seems that the written data is a list
+        of evoked datasets of different events if more than one chosen when
+        creating epochs.
+        """
         if os.path.exists(saveFolder) is False:
             try:
                 os.mkdir(saveFolder)
