@@ -41,9 +41,12 @@ import mne
 from mne import fiff
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
+
+"""
 from mne.layouts import _pair_grad_sensors
 from mne.layouts import _pair_grad_sensors_from_ch_names
 from mne.layouts import _merge_grad_data
+"""
 
 from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
@@ -328,7 +331,7 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-   def average(self, epochs):
+    def average(self, epochs):
         """Average epochs.
         
         Average epochs and save the evoked dataset to a file.
@@ -482,9 +485,11 @@ class Caller(object):
         
         pl.show()
         
-        # TODO nyt pitäisi vielä keskiarvoistaa nämä mergetetyt
         
         """
+        # TODO nyt pitäisi vielä keskiarvoistaa nämä mergetetyt
+        
+        
         # Get all the channel names in evoked
         # info = evoked[0].info
         ch_names = evoked[0].ch_names
