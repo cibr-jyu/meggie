@@ -62,7 +62,7 @@ class Caller(object):
         parent        -- Parent of this object.
         """
         self.parent = parent
-    
+        
     def call_mne_browse_raw(self, filename):
         """
         Opens mne_browse_raw with the given file as a parameter
@@ -339,9 +339,27 @@ class Caller(object):
                         category.keys()]
                 
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
-        # Saves evoked data to disk.                
+
+        """
+        Saves evoked data to disk. Seems that the written data is a list
+        of evoked datasets of different events if more than one chosen when
+        creating epochs.
+        """
         fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
                           self.evokeds)
+        
+        """
+        #Reading a written evoked dataset and saving it to disk.
+        #TODO: setno names must be set if more than one event category.
+        #fiff.Evoked can read only one dataset at a time.
+        """
+        #read_evoked = fiff.Evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix) #setno=?)
+        
+        """
+        Saving an evoked dataset. Can save only one dataset at a time.
+        """
+        #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
+        
         
         """
         #This code is for multiselection on mainwindows epochs list.
@@ -378,11 +396,9 @@ class Caller(object):
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
-        #fig.savefig(prefix + '_averaged_epochs.svg', facecolor='black', transparent=True)
-        
+                
         def onclick(event):
             pl.show(block=False)
-            #pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         """
