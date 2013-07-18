@@ -41,6 +41,10 @@ import mne
 from mne import fiff
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
+from mne.layouts import _pair_grad_sensors
+from mne.layouts import _pair_grad_sensors_from_ch_names
+from mne.layouts import _merge_grad_data
+
 from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
 from measurementInfo import MeasurementInfo
@@ -328,6 +332,7 @@ class Caller(object):
         """
         Averages epochs.
         Raises an exception if it cannot find any epochs.
+        TODO: miksi self categoryssä ja evokedissa?
         """
         if epochs.epochs is None:
             raise Exception('No epochs found.')
@@ -341,8 +346,7 @@ class Caller(object):
         # Saves evoked data to disk.                
         prefix, suffix = os.path.splitext(epochs.raw.info.get('filename'))
         fiff.write_evoked(prefix + '_auditory_and_visual_eeg-ave' + suffix,
-                          self.evokeds)
-        
+                          self.evokeds)    
         
     def draw_evoked_potentials(self, epochs):
         """
@@ -364,8 +368,93 @@ class Caller(object):
             pl.show(block=True)
         fig.canvas.mpl_connect('button_press_event', onclick)
       
-#    def channel_average(self):
-        # layoutista kts. mne.layouts.
+    def average_channels(self, epochs, lobeName, channelList=None):
+        """
+        Shows the averages for averaged channels in lobeName, or channelList
+        if it exists. Only for gradiometers.
+        
+        Keyword arguments:
+        epochs       --        
+        lobename     --    
+        channelList  -- 
+        """
+        
+        if not channelList == None:
+            channelsToAve = channelsList
+        else:
+            channelsToAve = mne.selection.read_selection(lobeName)
+            
+        if epochs.epochs is None:
+            raise Exception('No epochs found.')
+        category = epochs.epochs.event_id
+        
+        # Returns channel indices for grad channel pairs in channelList
+        gradsIdxs = _pair_grad_sensors_from_ch_names(channelList)
+        
+        # Creates evoked potentials from the given events (variable 'name' 
+        # refers to different categories). Keeps only the data for channels
+        # given in gradChannels.
+        evoked = [epochs.epochs[name].average(gradsIdxs) for name in 
+                  category.keys()]
+        
+        evokedToAve = mne.fiff.pick_channels_evoked(evoked, channelsToAve)
+               
+        # Merges the grad channel pairs
+        evokedToChannelAve = Evoked(None)
+        gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
+        
+        # Average the gradData
+        evokedToChannelAve.data = np.mean(gradData, axis=0)
+        
+        pl.clf()
+        evokedToChannelAve[0].plot()
+        
+        pl.show()
+        
+        # TODO nyt pitäisi vielä keskiarvoistaa nämä mergetetyt
+        
+        """
+        # Get all the channel names in evoked
+        # info = evoked[0].info
+        ch_names = evoked[0].ch_names
+        if not all([e.ch_names == ch_names for e in evoked]):
+            raise ValueError('All evoked.picks must be the same')
+        ch_names = _clean_names(ch_names) # TODO missä tuo clean on?
+        
+        # Check that the channels we want to show actually are in the evoked
+        # channel list
+        channelListSet = set(channelList)
+        ch_namesSet = set(ch_names)
+        channelsToAverage = channelListSet.intersection(ch_namesSet) 
+        
+        # Get only the gradiometer channels
+        channelsToAverageGrad = None
+        for a in channelsToAverage:
+            if (a[-1] == 2 or a[-1] == 3):
+                channelsToAverageGrad.append(a)
+         
+        averagedFinal = None
+        # Get index from channel names, to get the data from evoked.
+        # Then do the actual vector summing and averaging
+        for chname in channelsToAverageGrad:
+            ch_idx = ch_names.index(chname)
+            evoked.data[ch_idx:(ch_idx+1),:]
+        """
+    
+        """
+         Nuo channelsToAveragen kanavat pitäisi nyt keskiarvoistaa sillä
+         Matlab-algoritmilla. Muista kuitenkin ensin valita niistä vain
+         vain gradiometrikanavat (päättyy lukuihin 2 ja 3). Kaksi saman
+         "kolmikon" gradiometriparia pitäisi aina laskea keskenään (molemmat
+         neliöön ja laske sitten yhteen, ja ota koko roskasta neliöjuuri)
+        """
+        
+        # Jokaisesta channelsToAveragen kanavasta ilmeisesti pitäisi ottaa
+        # ch_idx = ch_names.index(kanavannimitähän), jotta voi piirtää
+        
+        """
+        Piirtäminen, kts. vizin _plot_topo_onpick
+        """
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
