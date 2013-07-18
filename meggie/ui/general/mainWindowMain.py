@@ -244,6 +244,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         #Workaround for the method executing twice
         if checked is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory        
         
         fname = self.ui.comboBoxEpochCollections.currentText()
         fpath = self.experiment.epochs_directory + fname
@@ -264,6 +266,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         
         if checked is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory
         
         for i in range(self.epochList.ui.listWidgetEpochs.count()):
             item = self.epochList.ui.listWidgetEpochs.item(i)
@@ -455,6 +459,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxEpochCollections.addItem('No epoch collections '\
                                                  'selected')
         if self.experiment is None: return
+        if os.path.exists(self.experiment.epochs_directory) is False:
+            self.experiment.create_epochs_directory
         
         #Add epoch collections to the combo box
         else:

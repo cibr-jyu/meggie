@@ -124,8 +124,16 @@ class EventSelectionDialog(QtGui.QDialog):
                                                    'from empty list.')
             self.messageBox.show()
             return
+        
+        if self.ui.lineEditCollectionName.text().isEmpty():
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Give the collection a ' +
+                                                   'name before proceeding.')
+            self.messageBox.show()
+            return
         self.close()
-        self.epochDialog = EpochDialog(self)
+        self.epochDialog = EpochDialog(self, self.ui.\
+                                       lineEditCollectionName.text())
         epochs = self.epochDialog.exec_()
         
     def check_channels(self):

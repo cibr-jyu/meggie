@@ -312,6 +312,15 @@ class Experiment(QObject):
             self._stim_channel = 'STI101'
         elif any('STI 014' in channels for x in channels):
             self._stim_channel = 'STI 014'
+            
+    def create_epochs_directory(self):
+        """Create a directory for saving epochs under the subject directory.
+        """
+        try:
+            self.epochs_directory = self.subject_directory + 'epochs/'
+            os.mkdir(self.epochs_directory)
+        except OSError:
+            raise OSError("no rights to save to the chosen path")                
     
     def create_event_set(self):
         """
@@ -377,12 +386,7 @@ class Experiment(QObject):
             mne.fiff.Raw.save(self._raw_data, raw_file_path)
             self._raw_data = mne.fiff.Raw(raw_file_path, preload=True)
             self._raw_data_path = self._raw_data.info.get('filename')
-            
-            try:
-                self.epochs_directory = self.subject_directory + 'epochs/'
-                os.mkdir(self.epochs_directory)
-            except OSError:
-                raise OSError("no rights to save to the chosen path")
+            self.create_epochs_directory()
             
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 

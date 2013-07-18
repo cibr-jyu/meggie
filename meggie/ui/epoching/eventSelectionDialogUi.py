@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Sat Jun  1 13:21:29 2013
+# Created: Wed Jul 17 15:00:31 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,7 +36,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 778, 675))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 775, 675))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 675))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
@@ -53,7 +53,7 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonRemove.setObjectName(_fromUtf8("pushButtonRemove"))
         self.verticalLayout.addWidget(self.pushButtonRemove)
         self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
-        self.layoutWidget.setGeometry(QtCore.QRect(450, 2, 313, 541))
+        self.layoutWidget.setGeometry(QtCore.QRect(450, 2, 329, 541))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_4.setMargin(0)
@@ -71,7 +71,7 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_8.addWidget(self.pushButtonReadEvents)
         self.verticalLayout_4.addLayout(self.horizontalLayout_8)
         self.layoutWidget1 = QtGui.QWidget(self.scrollAreaWidgetContents)
-        self.layoutWidget1.setGeometry(QtCore.QRect(0, 0, 301, 74))
+        self.layoutWidget1.setGeometry(QtCore.QRect(0, 0, 305, 138))
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.layoutWidget1)
         self.verticalLayout_3.setMargin(0)
@@ -96,6 +96,17 @@ class Ui_EventSelectionDialog(object):
         self.lineEditName.setObjectName(_fromUtf8("lineEditName"))
         self.horizontalLayout_5.addWidget(self.lineEditName)
         self.verticalLayout_3.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.labelCollectionName = QtGui.QLabel(self.layoutWidget1)
+        self.labelCollectionName.setObjectName(_fromUtf8("labelCollectionName"))
+        self.horizontalLayout.addWidget(self.labelCollectionName)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.lineEditCollectionName = QtGui.QLineEdit(self.layoutWidget1)
+        self.lineEditCollectionName.setObjectName(_fromUtf8("lineEditCollectionName"))
+        self.horizontalLayout.addWidget(self.lineEditCollectionName)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 1)
         self.cancelOkButtonBox = QtGui.QDialogButtonBox(EventSelectionDialog)
@@ -118,4 +129,5 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonReadEvents.setText(_translate("EventSelectionDialog", "Read events from file...", None))
         self.labelEventID.setText(_translate("EventSelectionDialog", "Event ID:", None))
         self.labelName.setText(_translate("EventSelectionDialog", "Event name:      ", None))
+        self.labelCollectionName.setText(_translate("EventSelectionDialog", "Collection name:", None))
 
