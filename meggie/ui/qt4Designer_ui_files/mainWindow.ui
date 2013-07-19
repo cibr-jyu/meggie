@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>973</width>
-    <height>805</height>
+    <width>964</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>953</width>
-         <height>697</height>
+         <width>942</width>
+         <height>726</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -181,7 +181,7 @@
                       <rect>
                        <x>30</x>
                        <y>30</y>
-                       <width>251</width>
+                       <width>260</width>
                        <height>112</height>
                       </rect>
                      </property>
@@ -743,13 +743,83 @@
                 <property name="maximumSize">
                  <size>
                   <width>500</width>
-                  <height>90</height>
+                  <height>240</height>
                  </size>
                 </property>
                 <property name="title">
                  <string>Available actions:</string>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_11">
+                <layout class="QGridLayout" name="gridLayout_4">
+                 <item row="1" column="0">
+                  <widget class="QGroupBox" name="groupBoxChannelAverages">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="title">
+                    <string>Channel Averages</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_11">
+                    <item row="0" column="1">
+                     <widget class="QLabel" name="labelChannelAverages">
+                      <property name="text">
+                       <string>Show channel averages for:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="QPushButton" name="pushButtonChannelAverages">
+                      <property name="text">
+                       <string>Show channel averages</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_14">
+                      <item>
+                       <widget class="QRadioButton" name="radioButtonLobe">
+                        <property name="text">
+                         <string>Lobe:</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">buttonGroupChannelAverage</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="comboBoxLobes"/>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="3" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QRadioButton" name="radioButtonCustomChannels">
+                        <property name="text">
+                         <string>Custom channels:</string>
+                        </property>
+                        <attribute name="buttonGroup">
+                         <string notr="true">buttonGroupChannelAverage</string>
+                        </attribute>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
                  <item row="0" column="0">
                   <widget class="QPushButton" name="pushButtonAverage">
                    <property name="maximumSize">
@@ -849,8 +919,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>973</width>
-     <height>29</height>
+     <width>964</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -914,8 +984,42 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="../trash/icons/icons.qrc"/>
- </resources>
- <connections/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radioButtonLobe</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>comboBoxLobes</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>456</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>289</x>
+     <y>455</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonCustomChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>plainTextEditCustomChannelsToAverage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>235</x>
+     <y>494</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroupChannelAverage"/>
+ </buttongroups>
 </ui>

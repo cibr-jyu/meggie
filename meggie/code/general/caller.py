@@ -39,17 +39,19 @@ import glob
 
 import mne
 from mne import fiff
+from mne.fiff import evoked
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 
-"""
-from mne.layouts import _pair_grad_sensors
-from mne.layouts import _pair_grad_sensors_from_ch_names
-from mne.layouts import _merge_grad_data
-"""
+from mne.layouts.layout import _pair_grad_sensors
+from mne.layouts.layout import _pair_grad_sensors_from_ch_names
+from mne.layouts.layout import _merge_grad_data
+
 
 from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
+from mne.viz import _clean_names
+
 from measurementInfo import MeasurementInfo
 
 
@@ -447,6 +449,8 @@ class Caller(object):
         Shows the averages for averaged channels in lobeName, or channelList
         if it exists. Only for gradiometers.
         
+        # TODO should plot channel for all selected event types
+        
         Keyword arguments:
         epochs       --        
         lobename     --    
@@ -457,27 +461,32 @@ class Caller(object):
             channelsToAve = channelsList
         else:
             channelsToAve = mne.selection.read_selection(lobeName)
-            
-        if epochs.epochs is None:
-            raise Exception('No epochs found.')
-        category = epochs.epochs.event_id
         
-        # Returns channel indices for grad channel pairs in channelList
-        gradsIdxs = _pair_grad_sensors_from_ch_names(channelList)
+        # Remove whitespaces from channel names (channel names in Evoked
+        # objects are without whitespaces)    
+        channelsToAve = _clean_names(channelsToAve)
+        
+        if epochs is None:
+            raise Exception('No epochs found.')
+        category = epochs.event_id
+        
         
         # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories). Keeps only the data for channels
-        # given in gradChannels.
-        evoked = [epochs.epochs[name].average(gradsIdxs) for name in 
-                  category.keys()]
+        # refers to different categories).
+        evokeds = [epochs[name].average() for name in category.keys()]
         
-        evokedToAve = mne.fiff.pick_channels_evoked(evoked, channelsToAve)
+        # Pick only the desired channels from the evokeds.
+        evokedToAve = mne.fiff.pick_channels_evoked(evokeds[0], channelsToAve)
                
-        # Merges the grad channel pairs
-        evokedToChannelAve = Evoked(None)
+        # Returns channel indices for grad channel pairs in evokedToAve.
+        gradsIdxs = _pair_grad_sensors_from_ch_names(evokedToAve.\
+                                                     info['ch_names'])   
+            
+        # Merges the grad channel pairs in evokedToAve
+        evokedToChannelAve = mne.fiff.evoked.Evoked(None)
         gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
         
-        # Average the gradData
+        # TODO Average the gradData
         evokedToChannelAve.data = np.mean(gradData, axis=0)
         
         pl.clf()

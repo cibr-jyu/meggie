@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Tue Jul  9 12:03:07 2013
+# Created: Fri Jul 19 15:33:29 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(973, 805)
+        MainWindow.resize(964, 829)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 953, 697))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 942, 726))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -111,7 +111,7 @@ class Ui_MainWindow(object):
         self.channelsBox = QtGui.QGroupBox(self.tabRaw)
         self.channelsBox.setObjectName(_fromUtf8("channelsBox"))
         self.layoutWidget_7 = QtGui.QWidget(self.channelsBox)
-        self.layoutWidget_7.setGeometry(QtCore.QRect(30, 30, 251, 112))
+        self.layoutWidget_7.setGeometry(QtCore.QRect(30, 30, 260, 112))
         self.layoutWidget_7.setObjectName(_fromUtf8("layoutWidget_7"))
         self.verticalLayout_8 = QtGui.QVBoxLayout(self.layoutWidget_7)
         self.verticalLayout_8.setMargin(0)
@@ -376,14 +376,50 @@ class Ui_MainWindow(object):
         self.gridLayout_8 = QtGui.QGridLayout(self.tabAveraging)
         self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
         self.groupBoxAvailableAveraging = QtGui.QGroupBox(self.tabAveraging)
-        self.groupBoxAvailableAveraging.setMaximumSize(QtCore.QSize(500, 90))
+        self.groupBoxAvailableAveraging.setMaximumSize(QtCore.QSize(500, 240))
         self.groupBoxAvailableAveraging.setObjectName(_fromUtf8("groupBoxAvailableAveraging"))
-        self.gridLayout_11 = QtGui.QGridLayout(self.groupBoxAvailableAveraging)
-        self.gridLayout_11.setObjectName(_fromUtf8("gridLayout_11"))
+        self.gridLayout_4 = QtGui.QGridLayout(self.groupBoxAvailableAveraging)
+        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.pushButtonAverage = QtGui.QPushButton(self.groupBoxAvailableAveraging)
         self.pushButtonAverage.setMaximumSize(QtCore.QSize(10000, 16777215))
         self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
-        self.gridLayout_11.addWidget(self.pushButtonAverage, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.pushButtonAverage, 0, 0, 1, 1)
+        self.groupBoxChannelAverages = QtGui.QGroupBox(self.groupBoxAvailableAveraging)
+        self.groupBoxChannelAverages.setMinimumSize(QtCore.QSize(0, 50))
+        self.groupBoxChannelAverages.setObjectName(_fromUtf8("groupBoxChannelAverages"))
+        self.gridLayout_11 = QtGui.QGridLayout(self.groupBoxChannelAverages)
+        self.gridLayout_11.setObjectName(_fromUtf8("gridLayout_11"))
+        self.labelChannelAverages = QtGui.QLabel(self.groupBoxChannelAverages)
+        self.labelChannelAverages.setObjectName(_fromUtf8("labelChannelAverages"))
+        self.gridLayout_11.addWidget(self.labelChannelAverages, 0, 1, 1, 1)
+        self.pushButtonChannelAverages = QtGui.QPushButton(self.groupBoxChannelAverages)
+        self.pushButtonChannelAverages.setObjectName(_fromUtf8("pushButtonChannelAverages"))
+        self.gridLayout_11.addWidget(self.pushButtonChannelAverages, 4, 1, 1, 1)
+        self.horizontalLayout_14 = QtGui.QHBoxLayout()
+        self.horizontalLayout_14.setObjectName(_fromUtf8("horizontalLayout_14"))
+        self.radioButtonLobe = QtGui.QRadioButton(self.groupBoxChannelAverages)
+        self.radioButtonLobe.setChecked(True)
+        self.radioButtonLobe.setObjectName(_fromUtf8("radioButtonLobe"))
+        self.buttonGroupChannelAverage = QtGui.QButtonGroup(MainWindow)
+        self.buttonGroupChannelAverage.setObjectName(_fromUtf8("buttonGroupChannelAverage"))
+        self.buttonGroupChannelAverage.addButton(self.radioButtonLobe)
+        self.horizontalLayout_14.addWidget(self.radioButtonLobe)
+        self.comboBoxLobes = QtGui.QComboBox(self.groupBoxChannelAverages)
+        self.comboBoxLobes.setObjectName(_fromUtf8("comboBoxLobes"))
+        self.horizontalLayout_14.addWidget(self.comboBoxLobes)
+        self.gridLayout_11.addLayout(self.horizontalLayout_14, 1, 1, 1, 1)
+        self.horizontalLayout_15 = QtGui.QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(_fromUtf8("horizontalLayout_15"))
+        self.radioButtonCustomChannels = QtGui.QRadioButton(self.groupBoxChannelAverages)
+        self.radioButtonCustomChannels.setObjectName(_fromUtf8("radioButtonCustomChannels"))
+        self.buttonGroupChannelAverage.addButton(self.radioButtonCustomChannels)
+        self.horizontalLayout_15.addWidget(self.radioButtonCustomChannels)
+        self.plainTextEditCustomChannelsToAverage = QtGui.QPlainTextEdit(self.groupBoxChannelAverages)
+        self.plainTextEditCustomChannelsToAverage.setEnabled(False)
+        self.plainTextEditCustomChannelsToAverage.setObjectName(_fromUtf8("plainTextEditCustomChannelsToAverage"))
+        self.horizontalLayout_15.addWidget(self.plainTextEditCustomChannelsToAverage)
+        self.gridLayout_11.addLayout(self.horizontalLayout_15, 3, 1, 1, 1)
+        self.gridLayout_4.addWidget(self.groupBoxChannelAverages, 1, 0, 1, 1)
         self.gridLayout_8.addWidget(self.groupBoxAvailableAveraging, 0, 0, 1, 1)
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_8.addItem(spacerItem6, 0, 1, 1, 1)
@@ -416,7 +452,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 973, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 964, 26))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -451,7 +487,9 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(3)
+        QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
+        QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -504,6 +542,11 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average selected epoch collection", None))
+        self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))
+        self.labelChannelAverages.setText(_translate("MainWindow", "Show channel averages for:", None))
+        self.pushButtonChannelAverages.setText(_translate("MainWindow", "Show channel averages", None))
+        self.radioButtonLobe.setText(_translate("MainWindow", "Lobe:", None))
+        self.radioButtonCustomChannels.setText(_translate("MainWindow", "Custom channels:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAveraging), _translate("MainWindow", "Averaging", None))
         self.groupBoxAvailableTFR.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonTFR.setText(_translate("MainWindow", "TFR visualization", None))
@@ -519,3 +562,4 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(_translate("MainWindow", "About", None))
 
 from icons import icons_rc
+

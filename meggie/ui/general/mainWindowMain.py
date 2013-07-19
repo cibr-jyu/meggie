@@ -113,6 +113,9 @@ class MainWindow(QtGui.QMainWindow):
         #on the Epochs-tab.
         self.populate_comboBoxEpochCollections()
         
+        #Populate the combobox for selecting lobes for channel averages.
+        self.populate_comboBoxLobes()
+        
         #The button for loading epoch collections should be disabled at start.
         self.ui.pushButtonLoadEpochCollection.setEnabled(False)
         
@@ -457,6 +460,24 @@ class MainWindow(QtGui.QMainWindow):
                                                epoch)
         self.tfrTop_dialog.show()
         
+    def on_pushButtonChannelAverages_clicked(self, checked=None):
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Please select an event collection to channel average.')
+            self.messageBox.show()  
+            return
+        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
+        toPyObject()
+        
+        if self.ui.radioButtonLobe.isChecked() == True:
+            self.caller.average_channels(epochs, self.ui.comboBoxLobes.\
+                                         currentText(), None)
+        else:
+            customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
+            plainText
+            self.caller.average_channels(epochs, None, customChannels)
+        
     def populate_comboBoxEpochCollections(self):
         """Populate the combo box listing available epoch collections.
         
@@ -482,6 +503,24 @@ class MainWindow(QtGui.QMainWindow):
                 if file.endswith('.fif'):
                     item = file.split('.fif')[0]
                     self.ui.comboBoxEpochCollections.addItem(item)           
+    
+    def populate_comboBoxLobes(self):
+        """
+        Populate the combo box listing available lobes for to use for
+        channel averaging.
+        """
+        self.ui.comboBoxLobes.clear()
+        
+        self.ui.comboBoxLobes.addItem('Vertex')
+        self.ui.comboBoxLobes.addItem('Left-temporal')
+        self.ui.comboBoxLobes.addItem('Right-temporal')
+        self.ui.comboBoxLobes.addItem('Left-parietal')
+        self.ui.comboBoxLobes.addItem('Right-parietal')
+        self.ui.comboBoxLobes.addItem('Left-occipital')
+        self.ui.comboBoxLobes.addItem('Right-occipital')
+        self.ui.comboBoxLobes.addItem('Left-frontal')
+        self.ui.comboBoxLobes.addItem('Right-frontal')
+    
     
     def _initialize_ui(self):
         """
