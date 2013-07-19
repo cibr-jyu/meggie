@@ -35,9 +35,9 @@ Contains the EpochWidget-class used for listing epoch collections.
 """
 from PyQt4 import QtCore,QtGui
 
-from epochWidgetUi import Ui_Form
+from epochParamsWidgetUi import Ui_Form
 
-class EpochWidget(QtGui.QWidget):
+class EpochParamsWidget(QtGui.QWidget):
     """
     Creates a widget that shows a list of epoch collections.
     """
@@ -51,60 +51,45 @@ class EpochWidget(QtGui.QWidget):
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
-        self.parent = parent
         
-    def addItem(self, item, suffix = 1):
+    def addItem(self, item):
         """
-        Add an item to the widget's list.
-        
-        If item is a list, adds all the items in it.
+        Adds an item to the widget's list. If item is a list, adds all the
+        items in it.
         
         Keyword arguments:
-        item   = a single item or a list of items to be added.
-        suffix = a suffix given to the item to make the text unique.
+        item = A single item or a list of items to be added.
         """
-        try:
-            for i in item:
-                #Check if there already is an item with the same text in the
-                #list.
-                if not self.ui.listWidgetEpochs.findItems(i.text(),\
-                                                          QtCore.Qt.\
-                                                          MatchFixedString):
-                    if suffix is 1:
-                        self.ui.listWidgetEpochs.addItem(i)
-                    else:
-                        qstr_suffix = QtCore.QString('')
-                        qstr_suffix.append(QString('%1').arg(suffix))
-                        i.setText(i.text() + qstr_suffix)
-                        self.ui.listWidgetEpochs.addItem(i)
-                
-                else:
-                    suffix += 1
-                    self.addItem(i, suffix)
-                    #reset the suffix back to zero.
-                    suffix = 1
         
-        except TypeError:
-            if not self.ui.listWidgetEpochs.findItems(item.text(), QtCore.Qt.\
-                                                      MatchFixedString):
-                if suffix is 1:
-                    self.ui.listWidgetEpochs.addItem(item)
-                else:
-                    qstr_suffix = QtCore.QString('')
-                    qstr_suffix.append(QString('%1').arg(suffix))
-                    item.setText(item.text() + qstr_suffix)
-                    self.ui.listWidgetEpochs.addItem(item)
-                
-            else:
-                suffix += 1
-                self.addItem(item, suffix)
             
-    def setCurrentItem(self, item):
+    def set_parameters(self, item):
         """
-        sets the current item of the widget's list.
+        Sets the parameters of the currently chosen epochs on epochWidget.
         
         Keyword arguments:
         item = item to be set as the current item.
         """
-        self.ui.listWidgetEpochs.setCurrentItem(item)
-        self.parent.epochParamsList.set_parameters(item)
+        epochs = item.data(32).toPyObject()
+        parameters = ''
+        
+        for key,value in epochs.reject.items():
+            #parameters += key + ' = ' + str(value) + '\n'
+            if key == 'mag':
+                parameters += key + ': ' + str(value / 1e-12) + ' fT' + '\n'
+            if key == 'grad':
+                parameters += key + ': ' + str(value / 1e-12) + ' fT/cm' + '\n'
+            if key == 'eeg':
+                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
+            if key == 'eog':
+                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
+        
+        
+        
+        parameters += 'tmin = ' + str(epochs.tmin) + '\n'
+        parameters += 'tmax = ' + str(epochs.tmax) + '\n'
+        self.ui.textEditEpochParams.setText(parameters)
+        
+        """
+        for reject in item.data(32).toPyObject().reject.values():
+            self.ui.textEditEpochParams.setText(str(reject))
+        """

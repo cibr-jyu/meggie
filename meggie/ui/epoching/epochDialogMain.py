@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -121,7 +121,7 @@ class EpochDialog(QtGui.QDialog):
         
         """
         Add's the epochs to the mainWindow's list.
-        """ 
+        """
         item = QtGui.QListWidgetItem(self.collectionName)
         item.setData(32, epochs.epochs)
         self.parent.parent.epochList.addItem(item)
