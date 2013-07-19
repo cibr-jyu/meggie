@@ -369,28 +369,28 @@ class MainWindow(QtGui.QMainWindow):
         
         if index == 2:
             self.epochList.setParent(self.ui.tabEpoching)
-            self.epochParamsList.setParent(self.ui.tabEpoching)
+            #self.epochParamsList.setParent(self.ui.tabEpoching)
             self.epochList.show()
-            self.epochParamsList.show()
+            #self.epochParamsList.show()
             return
         
         if index == 3:
             self.epochList.setParent(self.ui.tabAveraging)
-            self.epochParamsList.setParent(self.ui.tabAveraging) 
+            #self.epochParamsList.setParent(self.ui.tabAveraging) 
             self.epochList.show()
-            self.epochParamsList.show()
+            #self.epochParamsList.show()
             return
        
         if index == 4:
             self.epochList.setParent(self.ui.tabTFR) 
-            self.epochParamsList.setParent(self.ui.tabTFR)
+            #self.epochParamsList.setParent(self.ui.tabTFR)
             self.epochList.show()
-            self.epochParamsList.show()
+            #self.epochParamsList.show()
             return 
             
         else:
             self.epochList.hide()
-            self.epochParamsList.hide()
+            #self.epochParamsList.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
