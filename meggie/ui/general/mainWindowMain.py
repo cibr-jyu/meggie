@@ -65,6 +65,7 @@ from TFRDialogMain import TFRDialog
 from TFRTopologyDialogMain import TFRTopologyDialog
 from spectrumDialogMain import SpectrumDialog
 from widgets.epochWidgetMain import EpochWidget
+from widgets.epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
 import messageBox
 
@@ -103,6 +104,10 @@ class MainWindow(QtGui.QMainWindow):
         # Creates a listwidget for epoch analysis.  
         self.epochList = EpochWidget(self)
         self.epochList.hide()
+        
+        # Creates a listwidget for parameters of chosen epochs on epochList.
+        self.epochParamsList = EpochParamsWidget(self)
+        self.epochParamsList.hide()
         
         #Populate the combobox  for loading epoch collections
         #on the Epochs-tab.
@@ -364,21 +369,28 @@ class MainWindow(QtGui.QMainWindow):
         
         if index == 2:
             self.epochList.setParent(self.ui.tabEpoching)
+            self.epochParamsList.setParent(self.ui.tabEpoching)
             self.epochList.show()
+            self.epochParamsList.show()
             return
         
         if index == 3:
-            self.epochList.setParent(self.ui.tabAveraging) 
+            self.epochList.setParent(self.ui.tabAveraging)
+            self.epochParamsList.setParent(self.ui.tabAveraging) 
             self.epochList.show()
+            self.epochParamsList.show()
             return
        
         if index == 4:
             self.epochList.setParent(self.ui.tabTFR) 
+            self.epochParamsList.setParent(self.ui.tabTFR)
             self.epochList.show()
+            self.epochParamsList.show()
             return 
             
         else:
             self.epochList.hide()
+            self.epochParamsList.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
