@@ -51,6 +51,7 @@ class EpochWidget(QtGui.QWidget):
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        self.parent = parent
         
     def addItem(self, item):
         """
@@ -75,3 +76,4 @@ class EpochWidget(QtGui.QWidget):
         item = item to be set as the current item.
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
+        self.parent.epochParamsList.set_parameters(item)
