@@ -247,8 +247,10 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonLoadEpochCollection_clicked(self, checked=None):
         """Load epoch collections from a file.
+        
         Load the epoch collection from the selected file and shows it on
-        the epoch collection list. 
+        the epoch collection list.
+         
         """
         #Workaround for the method executing twice
         if checked is None: return

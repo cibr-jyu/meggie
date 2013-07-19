@@ -62,11 +62,34 @@ class EpochParamsWidget(QtGui.QWidget):
         """
         
             
-    def setCurrentItem(self, item):
+    def set_parameters(self, item):
         """
-        sets the current item of the widget's list.
+        Sets the parameters of the currently chosen epochs on epochWidget.
         
         Keyword arguments:
         item = item to be set as the current item.
         """
+        epochs = item.data(32).toPyObject()
+        parameters = ''
         
+        for key,value in epochs.reject.items():
+            #parameters += key + ' = ' + str(value) + '\n'
+            if key == 'mag':
+                parameters += key + ': ' + str(value / 1e-12) + ' fT' + '\n'
+            if key == 'grad':
+                parameters += key + ': ' + str(value / 1e-12) + ' fT/cm' + '\n'
+            if key == 'eeg':
+                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
+            if key == 'eog':
+                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
+        
+        
+        
+        parameters += 'tmin = ' + str(epochs.tmin) + '\n'
+        parameters += 'tmax = ' + str(epochs.tmax) + '\n'
+        self.ui.textEditEpochParams.setText(parameters)
+        
+        """
+        for reject in item.data(32).toPyObject().reject.values():
+            self.ui.textEditEpochParams.setText(str(reject))
+        """

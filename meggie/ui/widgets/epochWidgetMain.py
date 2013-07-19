@@ -51,21 +51,53 @@ class EpochWidget(QtGui.QWidget):
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        self.parent = parent
         
-    def addItem(self, item):
+    def addItem(self, item, suffix = 1):
         """
-        Adds an item to the widget's list. If item is a list, adds all the
-        items in it.
+        Add an item to the widget's list.
+        
+        If item is a list, adds all the items in it.
         
         Keyword arguments:
-        item = A single item or a list of items to be added.
+        item   = a single item or a list of items to be added.
+        suffix = a suffix given to the item to make the text unique.
         """
         try:
             for i in item:
-                self.ui.listWidgetEpochs.addItem(i)
+                #Check if there already is an item with the same text in the
+                #list.
+                if not self.ui.listWidgetEpochs.findItems(i.text(),\
+                                                          QtCore.Qt.\
+                                                          MatchFixedString):
+                    if suffix is 1:
+                        self.ui.listWidgetEpochs.addItem(i)
+                    else:
+                        qstr_suffix = QtCore.QString('')
+                        qstr_suffix.append(QString('%1').arg(suffix))
+                        i.setText(i.text() + qstr_suffix)
+                        self.ui.listWidgetEpochs.addItem(i)
+                
+                else:
+                    suffix += 1
+                    self.addItem(i, suffix)
+                    #reset the suffix back to zero.
+                    suffix = 1
         
         except TypeError:
-            self.ui.listWidgetEpochs.addItem(item)
+            if not self.ui.listWidgetEpochs.findItems(item.text(), QtCore.Qt.\
+                                                      MatchFixedString):
+                if suffix is 1:
+                    self.ui.listWidgetEpochs.addItem(item)
+                else:
+                    qstr_suffix = QtCore.QString('')
+                    qstr_suffix.append(QString('%1').arg(suffix))
+                    item.setText(item.text() + qstr_suffix)
+                    self.ui.listWidgetEpochs.addItem(item)
+                
+            else:
+                suffix += 1
+                self.addItem(item, suffix)
             
     def setCurrentItem(self, item):
         """
@@ -75,3 +107,4 @@ class EpochWidget(QtGui.QWidget):
         item = item to be set as the current item.
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
+        self.parent.epochParamsList.set_parameters(item)

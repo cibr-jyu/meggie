@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epochParamsWidget.ui'
 #
-# Created: Fri Jul 19 12:30:12 2013
+# Created: Fri Jul 19 14:18:52 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,10 +33,9 @@ class Ui_Form(object):
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout = QtGui.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.listWidgetEpochParams = QtGui.QListWidget(self.groupBox)
-        self.listWidgetEpochParams.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
-        self.listWidgetEpochParams.setObjectName(_fromUtf8("listWidgetEpochParams"))
-        self.gridLayout.addWidget(self.listWidgetEpochParams, 0, 0, 1, 1)
+        self.textEditEpochParams = QtGui.QTextEdit(self.groupBox)
+        self.textEditEpochParams.setObjectName(_fromUtf8("textEditEpochParams"))
+        self.gridLayout.addWidget(self.textEditEpochParams, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
