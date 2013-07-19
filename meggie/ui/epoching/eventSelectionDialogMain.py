@@ -125,12 +125,6 @@ class EventSelectionDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         
-        if self.ui.lineEditCollectionName.text().isEmpty():
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Give the collection a ' +
-                                                   'name before proceeding.')
-            self.messageBox.show()
-            return
         self.close()
         self.epochDialog = EpochDialog(self, self.ui.\
                                        lineEditCollectionName.text())
