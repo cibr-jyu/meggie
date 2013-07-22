@@ -1,4 +1,5 @@
 # coding: latin1
+from matplotlib.pyplot import subplots_adjust
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -60,6 +61,7 @@ from xlwt import Workbook, XFStyle
 
 import numpy as np
 import pylab as pl
+import matplotlib.pyplot as plt
 
 class Caller(object):
     """
@@ -458,9 +460,13 @@ class Caller(object):
         """
         
         if not channelList == None:
-            channelsToAve = channelsList
+            channelsToAve, averageTitle = channelList
         else:
             channelsToAve = mne.selection.read_selection(lobeName)
+            averageTitle = lobeName
+        
+        # pyPlot doesn't seem to like QStrings, need to convert to string
+        averageTitleString = str(averageTitle)
         
         # Remove whitespaces from channel names (channel names in Evoked
         # objects are without whitespaces)    
@@ -470,82 +476,48 @@ class Caller(object):
             raise Exception('No epochs found.')
         category = epochs.event_id
         
-        
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         evokeds = [epochs[name].average() for name in category.keys()]
         
-        # Pick only the desired channels from the evokeds.
-        evokedToAve = mne.fiff.pick_channels_evoked(evokeds[0], channelsToAve)
-               
-        # Returns channel indices for grad channel pairs in evokedToAve.
-        gradsIdxs = _pair_grad_sensors_from_ch_names(evokedToAve.\
-                                                     info['ch_names'])   
+        gradDataList = []
+        for i in range(0, len(evokeds)):
+            # Pick only the desired channels from the evokeds.
+            evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i], channelsToAve)
+                   
+            # Returns channel indices for grad channel pairs in evokedToAve.
+            gradsIdxs = _pair_grad_sensors_from_ch_names(evokedToAve.\
+                                                         info['ch_names'])
             
-        # Merges the grad channel pairs in evokedToAve
-        # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
-        gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
-        
-        # Averages the gradData
-        averagedGradData = np.mean(gradData, axis=0)
-        
-        pl.clf()
-        
-        # Times information should be the same as in original evokeds
-        pl.plot(evokeds[0].times , averagedGradData)
-        
-        # TODO Mikä yksikkö tässä, ja pitääkö skaalata?
-        # pl.ylabel('Magnitude / dB')
-        pl.xlabel('Time (s)')
-        
-        pl.show()
-        
-        
-        """
-        # TODO nyt pitäisi vielä keskiarvoistaa nämä mergetetyt
-        
-        
-        # Get all the channel names in evoked
-        # info = evoked[0].info
-        ch_names = evoked[0].ch_names
-        if not all([e.ch_names == ch_names for e in evoked]):
-            raise ValueError('All evoked.picks must be the same')
-        ch_names = _clean_names(ch_names) # TODO missä tuo clean on?
-        
-        # Check that the channels we want to show actually are in the evoked
-        # channel list
-        channelListSet = set(channelList)
-        ch_namesSet = set(ch_names)
-        channelsToAverage = channelListSet.intersection(ch_namesSet) 
-        
-        # Get only the gradiometer channels
-        channelsToAverageGrad = None
-        for a in channelsToAverage:
-            if (a[-1] == 2 or a[-1] == 3):
-                channelsToAverageGrad.append(a)
-         
-        averagedFinal = None
-        # Get index from channel names, to get the data from evoked.
-        # Then do the actual vector summing and averaging
-        for chname in channelsToAverageGrad:
-            ch_idx = ch_names.index(chname)
-            evoked.data[ch_idx:(ch_idx+1),:]
-        """
-    
-        """
-         Nuo channelsToAveragen kanavat pitäisi nyt keskiarvoistaa sillä
-         Matlab-algoritmilla. Muista kuitenkin ensin valita niistä vain
-         vain gradiometrikanavat (päättyy lukuihin 2 ja 3). Kaksi saman
-         "kolmikon" gradiometriparia pitäisi aina laskea keskenään (molemmat
-         neliöön ja laske sitten yhteen, ja ota koko roskasta neliöjuuri)
-        """
-        
-        # Jokaisesta channelsToAveragen kanavasta ilmeisesti pitäisi ottaa
-        # ch_idx = ch_names.index(kanavannimitähän), jotta voi piirtää
-        
-        """
-        Piirtäminen, kts. vizin _plot_topo_onpick
-        """
+            # Merges the grad channel pairs in evokedToAve
+            # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
+            gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
+            
+            # Averages the gradData
+            averagedGradData = np.mean(gradData, axis=0)
+            
+            # Links the event name and the corresponding data
+            gradDataList.append((evokeds[i].comment, averagedGradData))
+                
+        plt.clf()
+        fig = plt.figure()
+        mi = MeasurementInfo(self.parent.experiment.raw_data)
+        fig.canvas.set_window_title(mi.subject_name + 
+             '-- channel average for ' + averageTitleString)
+        fig.suptitle('Channel average for ' + averageTitleString)
+        subplots_adjust(hspace=1)
+                
+        # Draw a separate plot for each event type
+        for index, (eventName, data) in enumerate(gradDataList):
+            ca = fig.add_subplot(len(gradDataList), 1, index+1) 
+            ca.set_title(eventName)
+            # Times information is the same as in original evokeds
+            ca.plot(evokeds[0].times , data)
+            
+            ca.set_xlabel('Time (s)')
+            # TODO Mikä yksikkö tässä, ja pitääkö skaalata?
+            ca.set_ylabel('Magnitude / dB')                    
+        fig.show()
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
