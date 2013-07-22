@@ -34,7 +34,7 @@ class Ui_Form(object):
         self.gridLayout = QtGui.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.listWidgetEpochs = QtGui.QListWidget(self.groupBox)
-        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.listWidgetEpochs.setObjectName(_fromUtf8("listWidgetEpochs"))
         self.gridLayout.addWidget(self.listWidgetEpochs, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 1)
