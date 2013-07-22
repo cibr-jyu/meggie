@@ -33,7 +33,8 @@ Created on May 2, 2013
 @author: Jaakko Leppakangas, Atte Rautio
 Contains the EpochWidget-class used for listing epoch collections.
 """
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import pyqtSignal
 
 from epochWidgetUi import Ui_Form
 
@@ -42,6 +43,7 @@ class EpochWidget(QtGui.QWidget):
     Creates a widget that shows a list of epoch collections.
     """
 
+    on_selection_changed = pyqtSignal()
 
     def __init__(self, parent):
         """
@@ -52,6 +54,10 @@ class EpochWidget(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.parent = parent
+        
+        # Connect listWidgetEpochs.currentItemChanged method to change
+        # parameters on epochParamsWidget
+        self.ui.listWidgetEpochs.currentItemChanged.connect(self.set_as_selected)
         
     def addItem(self, item, suffix = 1):
         """
@@ -108,3 +114,10 @@ class EpochWidget(QtGui.QWidget):
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
         self.parent.epochParamsList.set_parameters(item)
+
+    def set_as_selected(self):
+        item = self.ui.listWidgetEpochs.currentItem()
+        self.parent.epochParamsList.set_parameters(item)
+        
+        
+        
