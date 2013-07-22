@@ -306,7 +306,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
-            ('Please select an event collection to average.')
+            ('Please select an epoch collection to average.')
             self.messageBox.show()  
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
@@ -463,10 +463,14 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog.show()
         
     def on_pushButtonChannelAverages_clicked(self, checked=None):
+        """
+        Shows the channels average graph.
+        """
+        if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
-            ('Please select an event collection to channel average.')
+            ('Please select an epoch collection to channel average.')
             self.messageBox.show()  
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\

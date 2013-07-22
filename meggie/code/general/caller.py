@@ -447,14 +447,14 @@ class Caller(object):
     def average_channels(self, epochs, lobeName, channelList=None):
         """
         Shows the averages for averaged channels in lobeName, or channelList
-        if it exists. Only for gradiometers.
+        if it is provided. Only for gradiometer channels.
         
         # TODO should plot channel for all selected event types
         
         Keyword arguments:
-        epochs       --        
-        lobename     --    
-        channelList  -- 
+        epochs       -- epochs to average.
+        lobename     -- the lobe over which to average.
+        channelList  -- manually input list of channels.
         """
         
         if not channelList == None:
@@ -483,14 +483,20 @@ class Caller(object):
                                                      info['ch_names'])   
             
         # Merges the grad channel pairs in evokedToAve
-        evokedToChannelAve = mne.fiff.evoked.Evoked(None)
+        # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
         gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
         
-        # TODO Average the gradData
-        evokedToChannelAve.data = np.mean(gradData, axis=0)
+        # Averages the gradData
+        averagedGradData = np.mean(gradData, axis=0)
         
         pl.clf()
-        evokedToChannelAve[0].plot()
+        
+        # Times information should be the same as in original evokeds
+        pl.plot(evokeds[0].times , averagedGradData)
+        
+        # TODO Mikä yksikkö tässä, ja pitääkö skaalata?
+        # pl.ylabel('Magnitude / dB')
+        pl.xlabel('Time (s)')
         
         pl.show()
         
