@@ -52,16 +52,6 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         
-    def addItem(self, item):
-        """
-        Adds an item to the widget's list. If item is a list, adds all the
-        items in it.
-        
-        Keyword arguments:
-        item = A single item or a list of items to be added.
-        """
-        
-            
     def set_parameters(self, item):
         """
         Sets the parameters of the currently chosen epochs on epochWidget.
@@ -72,6 +62,41 @@ class EpochParamsWidget(QtGui.QWidget):
         epochs = item.data(32).toPyObject()
         parameters = ''
         
+        # Dictionary handles counts for different events.
+        event_counts = dict()
+        event_counts['1'] = 0
+        event_counts['2'] = 0
+        event_counts['3'] = 0
+        event_counts['4'] = 0
+        event_counts['5'] = 0
+        event_counts['8'] = 0
+        event_counts['16'] = 0
+        event_counts['32'] = 0
+        for event in epochs.events:
+            if event[2] == 1:
+                event_counts['1'] += 1
+            if event[2] == 2:
+                event_counts['2'] += 1
+            if event[2] == 3:
+                event_counts['3'] += 1
+            if event[2] == 4:
+                event_counts['4'] += 1
+            if event[2] == 5:
+                event_counts['5'] += 1
+            if event[2] == 8:
+                event_counts['8'] += 1
+            if event[2] == 16:
+                event_counts['16'] += 1
+            if event[2] == 32:
+                event_counts['32'] += 1
+        
+        # Adds event names, ids and event counts on mainWindows parameters
+        # list.
+        for key,value in epochs.event_id.items():
+            parameters += key + ': ID ' + str(value) + ', ' + \
+            str(event_counts[str(value)]) + ' events\n'
+        
+        # Adds rejection parameters.
         for key,value in epochs.reject.items():
             #parameters += key + ' = ' + str(value) + '\n'
             if key == 'mag':
@@ -85,11 +110,7 @@ class EpochParamsWidget(QtGui.QWidget):
         
         
         
-        parameters += 'tmin = ' + str(epochs.tmin) + '\n'
-        parameters += 'tmax = ' + str(epochs.tmax) + '\n'
+        parameters += 'Start time: ' + str(epochs.tmin) + ' s\n'
+        parameters += 'End time: ' + str(epochs.tmax) + ' s\n'
         self.ui.textEditEpochParams.setText(parameters)
         
-        """
-        for reject in item.data(32).toPyObject().reject.values():
-            self.ui.textEditEpochParams.setText(str(reject))
-        """
