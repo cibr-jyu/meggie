@@ -56,6 +56,9 @@ class EventSelectionDialog(QtGui.QDialog):
     collecting desired events from continuous data.
     """
     index = 1
+    
+    #custom signals:
+    epochs_created = QtCore.pyqtSignal(QtCore.QObject, str)
 
     def __init__(self, parent):
         """
@@ -128,6 +131,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.close()
         self.epochDialog = EpochDialog(self, self.ui.\
                                        lineEditCollectionName.text())
+        self.epochDialog.epochs_created.connect(self.epochs_created)
         epochs = self.epochDialog.exec_()
         
     def check_channels(self):

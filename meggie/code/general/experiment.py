@@ -72,7 +72,10 @@ class Experiment(QObject):
     working_file_path = The absolute path of the current working file
     event_set         = A set of events
     stim_channel      = The channel containing triggers in the raw data file
-    mainWindow        = The window used for modifying the experiment    
+    mainWindow        = The window used for modifying the experiment
+    
+    signals:
+    void epochs_directory_value_changed(Epochs epochs)    
     
     """
     

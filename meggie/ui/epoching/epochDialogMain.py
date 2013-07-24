@@ -48,7 +48,9 @@ class EpochDialog(QtGui.QDialog):
     Class containing the logic for epochDialog. Used for creating epochs from
     a set of events.
     """
-    index = 1
+    
+    #Custom signals:
+    epochs_created = QtCore.pyqtSignal(QtCore.QObject, str)
 
     def __init__(self, parent, collectionName = ''):
         """Class constructor.
@@ -118,13 +120,6 @@ class EpochDialog(QtGui.QDialog):
                                                    + str(err))
             self.messageBox.exec_()
             return
-        
-        """
-        Add's the epochs to the mainWindow's list.
-        """
-        item = QtGui.QListWidgetItem(self.collectionName)
-        item.setData(32, epochs.epochs)
-        self.parent.parent.epochList.addItem(item)
-        self.parent.parent.epochList.setCurrentItem(item)
+        self.epochs_created.emit(epochs, self.collectionName)
         self.close()
         #return epochs
