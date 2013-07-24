@@ -84,4 +84,21 @@ class Validator(object):
         min           -- Lower limit for the value
         max           -- Upper limit for the value
         """
+    
+    def validate_channelList(self, channelList):
+        """
+        Checks whether the channels in channelList are valid MEG channels.
+        The channels must be already stripped of the 'MEG' string in the
+        beginning, i.e. must be of the form 0222, 0223 etc.
+        
+        Keyword arguments:
+        channelList   -- list of channels to check
+        
+        """
+        
+        for channel in channelList:
+            if channel
+            
+            
+        
         

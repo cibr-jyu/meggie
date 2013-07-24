@@ -38,6 +38,7 @@ import os,sys
 import pickle
 import subprocess
 import glob
+from sets import Set
  
 from PyQt4 import QtCore,QtGui
 
@@ -479,13 +480,28 @@ class MainWindow(QtGui.QMainWindow):
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
         toPyObject()
         
+        #try:
         if self.ui.radioButtonLobe.isChecked() == True:
             self.caller.average_channels(epochs, self.ui.comboBoxLobes.\
                                          currentText(), None)
         else:
-            customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
-            plainText
+            #try:
+            strippedStrings = map(str.strip,
+                        str(self.ui.plainTextEditCustomChannelsToAverage.\
+                        toPlainText()).split(','))
+            
+            customChannels = set()
+            for string in strippedStrings:
+                customChannels.add('MEG'+ string)
+                          
             self.caller.average_channels(epochs, None, customChannels)
+            """
+            except Exception, err:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText(str(err))
+                self.messageBox.show()
+                return        
+            """
         
     def populate_comboBoxEpochCollections(self):
         """Populate the combo box listing available epoch collections.
