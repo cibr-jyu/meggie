@@ -33,14 +33,16 @@ Created on Mar 12, 2013
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
+from PyQt4.QtCore import QObject
+
 import mne
 
 import pylab as pl
 
-class Epochs(object):
+class Epochs(QObject):
     """
     A class for creating epochs from the MEG data.
-    """
+    """ 
 
     def __init__(self, raw, events, mag, grad, eeg, stim,
                  eog, reject, category, tmin=-0.2, tmax=0.5):
@@ -62,7 +64,7 @@ class Epochs(object):
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
         """
-        
+        QObject.__init__(self)
         self.raw = raw
         if mag and grad:
             meg = True

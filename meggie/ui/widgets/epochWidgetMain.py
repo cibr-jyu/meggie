@@ -42,8 +42,10 @@ class EpochWidget(QtGui.QWidget):
     """
     Creates a widget that shows a list of epoch collections.
     """
-
+    
+    #Custom signals:
     on_selection_changed = pyqtSignal()
+    item_added = pyqtSignal(QtGui.QListWidgetItem)
 
     def __init__(self, parent):
         """
@@ -61,49 +63,56 @@ class EpochWidget(QtGui.QWidget):
         
     def addItem(self, item, suffix = 1):
         """
-        Add an item to the widget's list.
+        Add an item or items to the widget's list.
         
-        If item is a list, adds all the items in it.
+        If item is a list, add all the items in it.
+        Emit an item_added signal
         
         Keyword arguments:
-        item   = a single item or a list of items to be added.
-        suffix = a suffix given to the item to make the text unique.
+        item   = a single QListWidgetItem or a list of QListWidgetItems
+                 to be added.
+        suffix = a suffix given to the item to make the item's text unique.
+        
         """
         try:
             for i in item:
-                #Check if there already is an item with the same text in the
-                #list.
-                if not self.ui.listWidgetEpochs.findItems(i.text(),\
-                                                          QtCore.Qt.\
-                                                          MatchFixedString):
-                    if suffix is 1:
-                        self.ui.listWidgetEpochs.addItem(i)
-                    else:
-                        qstr_suffix = QtCore.QString('')
-                        qstr_suffix.append(QString('%1').arg(suffix))
-                        i.setText(i.text() + qstr_suffix)
-                        self.ui.listWidgetEpochs.addItem(i)
-                
-                else:
-                    suffix += 1
-                    self.addItem(i, suffix)
-                    #reset the suffix back to zero.
-                    suffix = 1
+                #A recursive call for each individual item
+                self.addItem(i)
         
         except TypeError:
-            if not self.ui.listWidgetEpochs.findItems(item.text(), QtCore.Qt.\
-                                                      MatchFixedString):
-                if suffix is 1:
+            #If suffix is 1 there's no need to add it to the item's text. I.e.
+            #Name "Epochs" doesn't have to become "Epochs1"
+            if suffix is 1:
+                if not self.ui.listWidgetEpochs.findItems(item.text(),\
+                                                          QtCore.Qt.\
+                                                          MatchFixedString):
                     self.ui.listWidgetEpochs.addItem(item)
+                    self.item_added.emit(item)
                 else:
-                    qstr_suffix = QtCore.QString('')
-                    qstr_suffix.append(QString('%1').arg(suffix))
-                    item.setText(item.text() + qstr_suffix)
-                    self.ui.listWidgetEpochs.addItem(item)
+                    suffix += 1
+                    self.addItem(item, suffix)
                 
             else:
-                suffix += 1
-                self.addItem(item, suffix)
+                qstr_suffix = QtCore.QString('')
+                qstr_suffix.append(QtCore.QString('%1').arg(suffix))
+
+                if not self.ui.listWidgetEpochs.findItems(item.text() +\
+                                                          qstr_suffix,\
+                                                          QtCore.Qt.\
+                                                          MatchFixedString):
+                    item.setText(item.text() + qstr_suffix)
+                    self.ui.listWidgetEpochs.addItem(item)
+                    self.item_added.emit(item)
+                    
+                else:
+                    suffix += 1
+                    self.addItem(item, suffix)
+                    
+    def clearItems(self):
+        """Remove all the items from the widget's list.
+        """
+        while self.ui.listWidgetEpochs.count() > 0:
+            self.ui.listWidgetEpochs.takeItem(0)
             
     def setCurrentItem(self, item):
         """
@@ -113,11 +122,11 @@ class EpochWidget(QtGui.QWidget):
         item = item to be set as the current item.
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
-        self.parent.epochParamsList.set_parameters(item)
+        #self.parent.epochParamsList.set_parameters(item)
 
     def set_as_selected(self):
         item = self.ui.listWidgetEpochs.currentItem()
-        self.parent.epochParamsList.set_parameters(item)
+        #self.parent.epochParamsList.set_parameters(item)
         
         
         
