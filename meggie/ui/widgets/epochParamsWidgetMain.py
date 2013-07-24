@@ -66,7 +66,7 @@ class EpochParamsWidget(QtGui.QWidget):
         event_counts = dict()
         
         # Adds items to dictionary for corresponding events.
-        for key,value in epochs.event_id.items():
+        for value in epochs.event_id.values():
             event_counts[str(value)] = 0
         
         # Adds number of events to corresponding event.
