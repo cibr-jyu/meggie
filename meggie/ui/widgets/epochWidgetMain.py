@@ -122,11 +122,13 @@ class EpochWidget(QtGui.QWidget):
         item = item to be set as the current item.
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
-        #self.parent.epochParamsList.set_parameters(item)
-
+        
     def set_as_selected(self):
         item = self.ui.listWidgetEpochs.currentItem()
-        #self.parent.epochParamsList.set_parameters(item)
-        
-        
-        
+        """
+        parameters = self.parent.epochParamsList.set_parameters(item)
+        item.setData(33, parameters)
+        self.parent.epochParamsList.show_parameters(parameters)
+        #TODO: maybe give item obejct instead of parameters string to method: 
+        #self.parent.epochParamsList.show_parameters(item)
+        """
