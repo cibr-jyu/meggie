@@ -109,10 +109,6 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParamsList = EpochParamsWidget(self)
         self.epochParamsList.hide()
         
-        #Populate the combobox  for loading epoch collections
-        #on the Epochs-tab.
-        self.populate_comboBoxEpochCollections()
-        
         #Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
         
@@ -124,7 +120,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxEpochCollections.\
         currentIndexChanged.connect(self.epoch_collections_updated)
         self.experiment_value_changed.connect\
-        (self.populate_comboBoxEpochCollections)
+        (self.load_epoch_collections)
+        self.epochList.item_added.connect(self.epochs_added)
         
     #Property definitions below
     @property
@@ -243,33 +240,83 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
+        self.epochParameterDialog.handle_new_epochs.connect(self.handle_new_epochs)
         self.epochParameterDialog.show()
         
-    def on_pushButtonLoadEpochCollection_clicked(self, checked=None):
-        """Load epoch collections from a file.
-        
-        Load the epoch collection from the selected file and shows it on
-        the epoch collection list.
-         
+    @QtCore.pyqtSlot(QtGui.QListWidgetItem)
+    def epochs_added(self, item):
+        """A slot for saving epochs from the added QListWidgetItem to a file
         """
-        #Workaround for the method executing twice
-        if checked is None: return
         if os.path.exists(self.experiment.epochs_directory) is False:
-            self.experiment.create_epochs_directory        
-        
-        fname = self.ui.comboBoxEpochCollections.currentText()
+            self.experiment.create_epochs_directory
+            
+        fname = str(item.text()) + '.fif'
         fpath = self.experiment.epochs_directory + fname
-        try:
-            epochs = mne.read_epochs(str(fpath) + '.fif')
-        except Exception as e:
-            print 'Loading failed: ' + str(e)
+        
+        if os.path.exists(fpath):
             return
         
-        #Create a QlistWidgetItem from the epochs and add the item to the list.
-        item = QtGui.QListWidgetItem(fname)
-        item.setData(32, epochs)
+        else:
+            epochs = item.data(32).toPyObject()
+            epochs.save(fpath)
+        
+    @QtCore.pyqtSlot(QtCore.QObject, str)
+    def handle_new_epochs(self, epochs, collectionName):
+        """A slot for adding newly created epochs to the epochlist.
+        
+        Keyword arguments:
+        epochs         = Meggie's own Epochs object. The actual epochs are 
+                         accessed with epochs.epochs.
+        collectionName = The name of the epoch collection
+        """
+        item = QtGui.QListWidgetItem(collectionName)
+        item.setData(32, epochs.epochs)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
+        
+    @QtCore.pyqtSlot()
+    def handle_new_experiment(self):
+        """Clear the epoch list and load new epochs for the new experiment.
+        """
+        if self.experiment is None:
+            return
+        
+        else:
+            self.epochList.clearItems()
+            self.load_epoch_collections()
+        
+    def load_epoch_collections(self):
+        """Load epoch collections from a folder.
+        
+        Load the epoch collections from workspace/experiment/epochs/ 
+        and show them on the epoch collection list.
+         
+        """
+        if not os.path.exists(self.experiment.epochs_directory):
+            self.experiment.create_epochs_directory
+            return        
+        
+        path = self.experiment.epochs_directory
+        files = os.listdir(path)
+        for file in files:
+            
+            if file.endswith('.fif'):            
+                try:
+                    epochs = mne.read_epochs(path + file)
+            
+                except Exception as e:
+                    print 'Loading failed: ' + str(e)
+                    break
+        
+                #Create a QlistWidgetItem from the epochs and add
+                #the item to the list.
+                fname = file.split('.fif')[0]        
+                item = QtGui.QListWidgetItem(fname)
+                item.setData(32, epochs)
+                self.epochList.addItem(item)
+                self.epochList.setCurrentItem(item)
+        
+        
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
@@ -491,7 +538,7 @@ class MainWindow(QtGui.QMainWindow):
         """Populate the combo box listing available epoch collections.
         
         Populate the combo box used for epoch collection loading on the
-        epochs-tab. The items in the combo box represent the .epo files in the
+        epochs-tab. The items in the combo box represent the files in the
         current experiment's folder.
         
         """
