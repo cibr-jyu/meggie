@@ -28,10 +28,10 @@
 #either expressed or implied, of the FreeBSD Project.
 
 """
-Created on May 2, 2013
+Created on July 19, 2013
 
-@author: Jaakko Leppakangas, Atte Rautio
-Contains the EpochWidget-class used for listing epoch collections.
+@author: Janne Pesonen
+Contains the EpochParamsWidget-class used for listing epoch parameters.
 """
 from PyQt4 import QtCore,QtGui
 
@@ -39,7 +39,7 @@ from epochParamsWidgetUi import Ui_Form
 
 class EpochParamsWidget(QtGui.QWidget):
     """
-    Creates a widget that shows a list of epoch collections.
+    Creates a list that shows parameters of chosen epoch collection.
     """
 
 
@@ -55,9 +55,10 @@ class EpochParamsWidget(QtGui.QWidget):
     def set_parameters(self, item):
         """
         Sets the parameters of the currently chosen epochs on epochWidget.
+        Asks item for epoch parameters.
         
         Keyword arguments:
-        item = item to be set as the current item.
+        item = current item on the epochs widget.
         """
         epochs = item.data(32).toPyObject()
         parameters = ''
@@ -97,5 +98,14 @@ class EpochParamsWidget(QtGui.QWidget):
         
         parameters += 'Start time: ' + str(epochs.tmin) + ' s\n'
         parameters += 'End time: ' + str(epochs.tmax) + ' s\n'
+        return parameters
+        
+    def show_parameters(self, parameters):
+        """
+        Sets text for the epoch parameters list.
+        
+        Keyword arguments:
+        parameters = string that holds parameters for chosen epochs
+        """
         self.ui.textEditEpochParams.setText(parameters)
         
