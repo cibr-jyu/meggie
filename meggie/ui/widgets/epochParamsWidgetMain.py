@@ -62,33 +62,18 @@ class EpochParamsWidget(QtGui.QWidget):
         epochs = item.data(32).toPyObject()
         parameters = ''
         
-        # Dictionary handles counts for different events.
+        # Dictionary stores numbers of different events.
         event_counts = dict()
-        event_counts['1'] = 0
-        event_counts['2'] = 0
-        event_counts['3'] = 0
-        event_counts['4'] = 0
-        event_counts['5'] = 0
-        event_counts['8'] = 0
-        event_counts['16'] = 0
-        event_counts['32'] = 0
+        
+        # Adds items to dictionary for corresponding events.
+        for key,value in epochs.event_id.items():
+            event_counts[str(value)] = 0
+        
+        # Adds number of events to corresponding event.
         for event in epochs.events:
-            if event[2] == 1:
-                event_counts['1'] += 1
-            if event[2] == 2:
-                event_counts['2'] += 1
-            if event[2] == 3:
-                event_counts['3'] += 1
-            if event[2] == 4:
-                event_counts['4'] += 1
-            if event[2] == 5:
-                event_counts['5'] += 1
-            if event[2] == 8:
-                event_counts['8'] += 1
-            if event[2] == 16:
-                event_counts['16'] += 1
-            if event[2] == 32:
-                event_counts['32'] += 1
+            for key in event_counts.keys():
+                if event[2] == int(key):
+                    event_counts[key] += 1
         
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
