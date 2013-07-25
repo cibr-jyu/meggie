@@ -117,8 +117,6 @@ class MainWindow(QtGui.QMainWindow):
         
         #Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.ui.comboBoxEpochCollections.\
-        currentIndexChanged.connect(self.epoch_collections_updated)
         self.experiment_value_changed.connect\
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
@@ -132,21 +130,6 @@ class MainWindow(QtGui.QMainWindow):
     def experiment(self, experiment):
         self._experiment = experiment
         self.experiment_value_changed.emit()
-        #Connect populate_comboBoxEpochCollections to the new experiment.
-        self.experiment.epochs_directory_value_changed.connect\
-        (self.populate_comboBoxEpochCollections)
-        
-    def epoch_collections_updated(self):
-        """
-        A slot for when the combo box for loading epoch collections is updated
-        or the selected item changes. Disables the load epoch collections
-        button when appropriate.
-        """
-        if self.ui.comboBoxEpochCollections.currentIndex() <= 0:
-            self.ui.pushButtonLoadEpochCollection.setEnabled(False)
-            
-        else: self.ui.pushButtonLoadEpochCollection.setEnabled(True)
-            
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
@@ -240,7 +223,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.handle_new_epochs.connect(self.handle_new_epochs)
+        self.epochParameterDialog.epochs_created.\
+        connect(self.handle_new_epochs)
         self.epochParameterDialog.show()
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
@@ -296,6 +280,7 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.create_epochs_directory
             return        
         
+        self.epochList.clearItems()
         path = self.experiment.epochs_directory
         files = os.listdir(path)
         for file in files:
@@ -532,33 +517,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
             plainText
-            self.caller.average_channels(epochs, None, customChannels)
-        
-    def populate_comboBoxEpochCollections(self):
-        """Populate the combo box listing available epoch collections.
-        
-        Populate the combo box used for epoch collection loading on the
-        epochs-tab. The items in the combo box represent the files in the
-        current experiment's folder.
-        
-        """
-        #Clear the combo box from previous items.
-        self.ui.comboBoxEpochCollections.clear()
-        
-        self.ui.comboBoxEpochCollections.addItem('No epoch collections '\
-                                                 'selected')
-        if self.experiment is None: return
-        if os.path.exists(self.experiment.epochs_directory) is False:
-            self.experiment.create_epochs_directory
-        
-        #Add epoch collections to the combo box
-        else:
-            path = self.experiment.epochs_directory
-            files = os.listdir(path)
-            for file in files:
-                if file.endswith('.fif'):
-                    item = file.split('.fif')[0]
-                    self.ui.comboBoxEpochCollections.addItem(item)           
+            self.caller.average_channels(epochs, None, customChannels)           
     
     def populate_comboBoxLobes(self):
         """

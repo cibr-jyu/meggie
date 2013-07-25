@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Mon Jul 22 14:09:30 2013
+# Created: Wed Jul 24 15:32:14 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -377,9 +377,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.comboBoxEpochCollections = QtGui.QComboBox(self.groupBoxAvailableEpoching)
-        self.comboBoxEpochCollections.setObjectName(_fromUtf8("comboBoxEpochCollections"))
-        self.horizontalLayout_2.addWidget(self.comboBoxEpochCollections)
+        self.pushButtonDeleteEpochs = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonDeleteEpochs.setObjectName(_fromUtf8("pushButtonDeleteEpochs"))
+        self.horizontalLayout_2.addWidget(self.pushButtonDeleteEpochs)
         self.pushButtonLoadEpochCollection = QtGui.QPushButton(self.groupBoxAvailableEpoching)
         self.pushButtonLoadEpochCollection.setObjectName(_fromUtf8("pushButtonLoadEpochCollection"))
         self.horizontalLayout_2.addWidget(self.pushButtonLoadEpochCollection)
@@ -527,7 +527,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -576,9 +576,10 @@ class Ui_MainWindow(object):
         self.pushButtonSpectrum.setText(_translate("MainWindow", "Magnitude spectrum", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions:", None))
-        self.pushButtonEventlist.setText(_translate("MainWindow", "Create an epoch collection", None))
-        self.pushButtonSaveEpochCollection.setText(_translate("MainWindow", "Save epoch collection", None))
-        self.pushButtonLoadEpochCollection.setText(_translate("MainWindow", "Load epoch collection", None))
+        self.pushButtonEventlist.setText(_translate("MainWindow", "Create epochs", None))
+        self.pushButtonSaveEpochCollection.setText(_translate("MainWindow", "Save selected epochs", None))
+        self.pushButtonDeleteEpochs.setText(_translate("MainWindow", "Delete selected epochs", None))
+        self.pushButtonLoadEpochCollection.setText(_translate("MainWindow", "Load epochs", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))

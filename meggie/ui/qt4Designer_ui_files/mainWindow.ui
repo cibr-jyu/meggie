@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -714,14 +714,14 @@
                     <item>
                      <widget class="QPushButton" name="pushButtonEventlist">
                       <property name="text">
-                       <string>Create an epoch collection</string>
+                       <string>Create epochs</string>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <widget class="QPushButton" name="pushButtonSaveEpochCollection">
                       <property name="text">
-                       <string>Save epoch collection</string>
+                       <string>Save selected epochs</string>
                       </property>
                      </widget>
                     </item>
@@ -730,12 +730,16 @@
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_2">
                     <item>
-                     <widget class="QComboBox" name="comboBoxEpochCollections"/>
+                     <widget class="QPushButton" name="pushButtonDeleteEpochs">
+                      <property name="text">
+                       <string>Delete selected epochs</string>
+                      </property>
+                     </widget>
                     </item>
                     <item>
                      <widget class="QPushButton" name="pushButtonLoadEpochCollection">
                       <property name="text">
-                       <string>Load epoch collection</string>
+                       <string>Load epochs</string>
                       </property>
                      </widget>
                     </item>
@@ -980,8 +984,6 @@
                </item>
               </layout>
              </widget>
-             <zorder>gridLayoutWidget_3</zorder>
-             <zorder></zorder>
             </widget>
            </widget>
           </item>
