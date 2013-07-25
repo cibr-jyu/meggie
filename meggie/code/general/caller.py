@@ -37,6 +37,7 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
+from sets import Set
 
 import mne
 from mne import fiff
@@ -446,21 +447,26 @@ class Caller(object):
             fig[i] = plot_topo(evoked, layout, title=str(evoked.keys()))    
         """
       
-    def average_channels(self, epochs, lobeName, channelList=None):
+    def average_channels(self, epochs, lobeName, channelSet=None):
         """
-        Shows the averages for averaged channels in lobeName, or channelList
+        Shows the averages for averaged channels in lobeName, or channelSet
         if it is provided. Only for gradiometer channels.
-        
-        # TODO should plot channel for all selected event types
         
         Keyword arguments:
         epochs       -- epochs to average.
         lobename     -- the lobe over which to average.
-        channelList  -- manually input list of channels.
+        channelSet  -- manually input list of channels.
         """
         
-        if not channelList == None:
-            channelsToAve, averageTitle = channelList
+        if not channelSet == None:
+            if not isinstance(channelSet, set) or len(channelSet) < 2 or \
+                   not channelSet.issubset(set(epochs.ch_names)):
+                raise ValueError('Please check that you have at least two ' + 
+                'channels, the channels are actual channels in the epochs ' +
+                'data and they are in the right form')
+                return           
+            channelsToAve = channelSet
+            averageTitle = str(channelSet).strip('[]')
         else:
             channelsToAve = mne.selection.read_selection(lobeName)
             averageTitle = lobeName
@@ -482,8 +488,9 @@ class Caller(object):
         
         gradDataList = []
         for i in range(0, len(evokeds)):
-            # Pick only the desired channels from the evokeds.
-            evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i], channelsToAve)
+            # Picks only the desired channels from the evokeds.
+            evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
+                                                        channelsToAve)
                    
             # Returns channel indices for grad channel pairs in evokedToAve.
             gradsIdxs = _pair_grad_sensors_from_ch_names(evokedToAve.\

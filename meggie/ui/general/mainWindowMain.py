@@ -38,6 +38,7 @@ import os,sys
 import pickle
 import subprocess
 import glob
+from sets import Set
  
 from PyQt4 import QtCore,QtGui
 
@@ -223,8 +224,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epochs_created.\
-        connect(self.handle_new_epochs)
+        self.epochParameterDialog.handle_new_epochs.connect(self.handle_new_epochs)
         self.epochParameterDialog.show()
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
@@ -517,7 +517,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
             plainText
-            self.caller.average_channels(epochs, None, customChannels)           
+            self.caller.average_channels(epochs, None, customChannels)
     
     def populate_comboBoxLobes(self):
         """
