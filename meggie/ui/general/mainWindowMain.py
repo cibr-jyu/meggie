@@ -224,7 +224,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.handle_new_epochs.connect(self.handle_new_epochs)
+        self.epochParameterDialog.epochs_created.connect(self.handle_new_epochs)
         self.epochParameterDialog.show()
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
