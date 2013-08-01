@@ -225,3 +225,49 @@
     - Lopulta Ticket-systeemi bugeille ja vaatimuksille
     
     
+--------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+*** TORSTAI 25.7 TAPAAMINEN ***
+    
+    
+** Käyttöliittymätoiminnallisuutta **
+    \ working file ei päivity näkyviin mainwindowin alareunaan, jos suorita mitään prosessia
+    \ muutetaan steppien suoritus selkeämmiksi preprocessing tabissa (Tiina piirsi meille taululle esimerkin, joka voitaisiin toteuttaa)
+    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/experiment info, eli textlabeleina
+    \ raw-tabin nimeksi esim. info
+    \ experiment info ja file info erikseen raw-tabille tai jopa oma tabi molemmille
+    \ preprocessing-tabille painike filtteröintiä varten
+    \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
+    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
+    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
+    \ defaulttina mag ja grad epoch parametreissa valittuna
+    \ event selection dialogiin lisätään siitä aukeavan epoch creation dialogin sisältö
+    \ epochien lisääminen ohjelmaan esim. import-buttonilla muualla tehtyjen epochien prosessointia varten
+    \ channel averagessa mahdollisuus tallentaa kaikki kategoriat kerralla tai yksitellen
+
+** Batch toiminnallisuutta **
+    \ experimentille ei anneta raw:ta, vaan ainoastaan esim. experiment name, author ja description
+    \ experimentille lisätään subjectit erillisessä dialogissa
+
+** ECG/EOG-projektiot **
+    \ ecg/eog-projektioiden laskemisen pystyi tekemään jo projisoidulle datalle, tämän toiminnallisuutta syytä miettiä
+    \ tarkistetaan mikä working file on käytössä projektioiden laskemisessa
+
+** Visualisointia **
+    \ TFR-visualization skaalaa pitää muuttaa ja käyrä ei piirry oikein
+    \ TFR piirtää vanhan ikkunan päälle uuden, mutta olisi ilmeisesti hyvä avata uusi ikkuna ja säilyttää aiemmin piirretty
+    \ eri eventtien piirtäminen päällekkäin samaan kuvaajaan channel averagessa (olikohan kyseessä eventit, aivoalueet tai jotain muuta?)
+    \ channel averageen set scale ja mihin se asettuu
+    \ visualisoinneissa käyrien väreissä saisi olla ylhäällä mikä eventti kyseessä
+    \ mahdollista valita epochien parametrilistasta mitkä eventit piirretään päällekkäin/keskiarvoistetaan
+    \ käyttäjälle valittavaksi tehdäänkö visualisointia aika- vai taajuustasossa
+    \ mne power spectral densityn toteuttaminen, niin että piirretään samaan ikkunaan esim. ennen ja jälkeen filtteröintiä muodostuneet kuvaajat:
+        - käyttäjä saa ruksia mitkä käyrät piirretään
+        - http://www.martinos.org/mne/auto_examples/time_frequency/plot_compute_raw_data_spectrum.html#example-time-frequency-plot-compute-raw-data-spectrum-py
+    \ (keskiarvoistettavan kanavan lisäksi valinta mitä tiedostoa käsitellään?)
+
+** Muuta **
+    \ mne_browse_raw:lle oikeat säädöt ohjeisiin
+    \ jos prosessien aikana tallennettuja tiedostoja poistetaan manuaalisesti työkansiosta, niiden tiedot jää edelleen ohjelmaan muistiin, mikä sekoittaa
+    prosessien uudelleen suorittamista

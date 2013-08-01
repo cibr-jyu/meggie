@@ -94,11 +94,26 @@ class EpochParamsWidget(QtGui.QWidget):
             if key == 'eog':
                 parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
         
-        
-        
         parameters += 'Start time: ' + str(epochs.tmin) + ' s\n'
         parameters += 'End time: ' + str(epochs.tmax) + ' s\n'
+        
+        """
+        # Dictionary stores all parameter data.
+        for key,value in epochs.reject.items():
+            if key == 'mag':
+                event_counts[key] = value / 1e-12    # str(value / 1e-12)?
+            if key == 'grad':
+                event_counts[key] = value / 1e-12
+            if key == 'eeg':
+                event_counts[key] = value / 1e-6
+            if key == 'eog':
+                event_counts[key] = value / 1e-6
+                
+        return event_counts
+        """
         return parameters
+        
+        
         
     def show_parameters(self, parameters):
         """
