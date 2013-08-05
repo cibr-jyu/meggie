@@ -74,6 +74,7 @@ from experiment import Experiment
 from epochs import Epochs
 from events import Events
 from caller import Caller
+from fileManager import FileManager
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -110,11 +111,11 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParamsList = EpochParamsWidget(self)
         self.epochParamsList.hide()
         
+        self.fileManager = FileManager()
+        self.epocher = Epochs()
+        
         #Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
-        
-        #The button for loading epoch collections should be disabled at start.
-        self.ui.pushButtonLoadEpochCollection.setEnabled(False)
         
         #Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
@@ -218,13 +219,14 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogPreferences = PreferencesDialog()
         self.dialogPreferences.show()
         
-    def on_pushButtonEventlist_clicked(self, checked=None):
+    def on_pushButtonCreateEpochs_clicked(self, checked=None):
         """
         Open the epoch dialog. 
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epochs_created.connect(self.handle_new_epochs)
+        self.epochParameterDialog.epoch_params_ready.\
+        connect(self.create_new_epochs)
         self.epochParameterDialog.show()
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
@@ -234,27 +236,34 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.exists(self.experiment.epochs_directory) is False:
             self.experiment.create_epochs_directory
             
-        fname = str(item.text()) + '.fif'
+        fname = str(item.text())
         fpath = self.experiment.epochs_directory + fname
+        self.fileManager.save_epoch_item(fpath, item)
         
-        if os.path.exists(fpath):
-            return
-        
-        else:
-            epochs = item.data(32).toPyObject()
-            epochs.save(fpath)
-        
-    @QtCore.pyqtSlot(QtCore.QObject, str)
-    def handle_new_epochs(self, epochs, collectionName):
-        """A slot for adding newly created epochs to the epochlist.
+    @QtCore.pyqtSlot(dict)
+    def create_new_epochs(self, epoch_params):
+        """A slot for creating new epochs with the given parameter values.
         
         Keyword arguments:
-        epochs         = Meggie's own Epochs object. The actual epochs are 
-                         accessed with epochs.epochs.
-        collectionName = The name of the epoch collection
+        
+        epoch_params = A dictionary containing the parameter values for
+                       creating the epochs minus the raw data.
         """
-        item = QtGui.QListWidgetItem(collectionName)
-        item.setData(32, epochs.epochs)
+        #Raw data is not present in the dictionary so get it from the
+        #current experiment.
+        
+        epochs = self.epocher.create_epochs_from_dict(epoch_params,
+                                                      self.experiment.\
+                                                      working_file)
+        
+        epoch_params['raw'] = self.experiment.working_file_path
+        
+        #Create a QListWidgetItem and add the actual epochs to slot 32.
+        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
+        item.setData(32, epochs)
+        
+        item.setData(33, epoch_params)
+        
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
         

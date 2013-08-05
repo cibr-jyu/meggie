@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Wed Jul 24 15:32:14 2013
+# Created: Fri Jul 26 15:04:52 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -368,21 +368,21 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
-        self.pushButtonEventlist = QtGui.QPushButton(self.groupBoxAvailableEpoching)
-        self.pushButtonEventlist.setObjectName(_fromUtf8("pushButtonEventlist"))
-        self.horizontalLayout_10.addWidget(self.pushButtonEventlist)
-        self.pushButtonSaveEpochCollection = QtGui.QPushButton(self.groupBoxAvailableEpoching)
-        self.pushButtonSaveEpochCollection.setObjectName(_fromUtf8("pushButtonSaveEpochCollection"))
-        self.horizontalLayout_10.addWidget(self.pushButtonSaveEpochCollection)
+        self.pushButtonCreateEpochs = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonCreateEpochs.setObjectName(_fromUtf8("pushButtonCreateEpochs"))
+        self.horizontalLayout_10.addWidget(self.pushButtonCreateEpochs)
+        self.pushButtonSaveEpochs = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonSaveEpochs.setObjectName(_fromUtf8("pushButtonSaveEpochs"))
+        self.horizontalLayout_10.addWidget(self.pushButtonSaveEpochs)
         self.verticalLayout_2.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.pushButtonDeleteEpochs = QtGui.QPushButton(self.groupBoxAvailableEpoching)
         self.pushButtonDeleteEpochs.setObjectName(_fromUtf8("pushButtonDeleteEpochs"))
         self.horizontalLayout_2.addWidget(self.pushButtonDeleteEpochs)
-        self.pushButtonLoadEpochCollection = QtGui.QPushButton(self.groupBoxAvailableEpoching)
-        self.pushButtonLoadEpochCollection.setObjectName(_fromUtf8("pushButtonLoadEpochCollection"))
-        self.horizontalLayout_2.addWidget(self.pushButtonLoadEpochCollection)
+        self.pushButtonLoadEpochs = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonLoadEpochs.setObjectName(_fromUtf8("pushButtonLoadEpochs"))
+        self.horizontalLayout_2.addWidget(self.pushButtonLoadEpochs)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.gridLayout_5.addWidget(self.groupBoxAvailableEpoching, 1, 0, 1, 1)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -576,10 +576,10 @@ class Ui_MainWindow(object):
         self.pushButtonSpectrum.setText(_translate("MainWindow", "Magnitude spectrum", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions:", None))
-        self.pushButtonEventlist.setText(_translate("MainWindow", "Create epochs", None))
-        self.pushButtonSaveEpochCollection.setText(_translate("MainWindow", "Save selected epochs", None))
+        self.pushButtonCreateEpochs.setText(_translate("MainWindow", "Create epochs", None))
+        self.pushButtonSaveEpochs.setText(_translate("MainWindow", "Save selected epochs", None))
         self.pushButtonDeleteEpochs.setText(_translate("MainWindow", "Delete selected epochs", None))
-        self.pushButtonLoadEpochCollection.setText(_translate("MainWindow", "Load epochs", None))
+        self.pushButtonLoadEpochs.setText(_translate("MainWindow", "Load epochs", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))

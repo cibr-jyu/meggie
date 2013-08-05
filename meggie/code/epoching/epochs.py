@@ -40,32 +40,45 @@ import mne
 import pylab as pl
 
 class Epochs(QObject):
+    
     """
-    A class for creating epochs from the MEG data.
-    """ 
+    A class for creating and handling epochs.
+    
+    Public functions:
+    
+    create_epochs(raw, events, mag, grad, eeg, stim, eog, reject,
+                  category, tmin, tmax)
+    """
 
-    def __init__(self, raw, events, mag, grad, eeg, stim,
-                 eog, reject, category, tmin=-0.2, tmax=0.5):
+    def __init__(self):
         """
         Constructor
+        """
+        QObject.__init__(self)
+        
+    def create_epochs(self, raw, events, mag, grad, eeg, stim,
+                      eog, reject, category, tmin, tmax):
+        """Create a new set of epochs.
+        
         Keyword arguments:
-        raw           -- Raw object.
-        events        -- Array of events.
-        mag           -- Boolean telling if magnetometers will be used.
-        grad          -- Boolean telling if whether gradiometers will be used.
-        eeg           -- Boolean telling if whether eeg-channels will be used.
-        stim          -- Boolean telling if whether stim-channels will be used.
-        eog           -- Boolean telling if whether eog-channels will be used.
-        reject        -- Rejection parameter for epochs.
-        category      -- Dictionary of categories.
-        tmin          -- Start time before event (default -0.2 seconds)
-        tmax          -- End time after the event (default 0.5 seconds)
+        raw           = A raw data object.
+        events        = Array of events.
+        mag           = Boolean telling if magnetometers will be used.
+        grad          = Boolean telling if whether gradiometers will be used.
+        eeg           = Boolean telling if whether eeg-channels will be used.
+        stim          = Boolean telling if whether stim-channels will be used.
+        eog           = Boolean telling if whether eog-channels will be used.
+        reject        = Rejection parameter for epochs.
+        category      = Dictionary of categories.
+        tmin          = Start time before event
+        tmax          = End time after the event
+        
         Exceptions:
         Raises TypeError if the raw object isn't of type mne.fiff.Raw.
         Raises Exception if picks are empty.
+        
+        Returns a set of epochs
         """
-        QObject.__init__(self)
-        self.raw = raw
         if mag and grad:
             meg = True
         elif mag:
@@ -80,8 +93,34 @@ class Epochs(QObject):
             if picks is None:
                 raise Exception('Picks cannot be empty. ' + 
                                 'Select picks by checking the checkboxes.')
-            self.epochs = mne.Epochs(raw, events, category,
-                                     tmin, tmax, picks=picks, reject=reject)
+            epochs = mne.Epochs(raw, events, category,
+                                tmin, tmax, picks=picks, reject=reject)
+            return epochs
         else:
             raise TypeError('Not a Raw object.')
         
+    def create_epochs_from_dict(self, dict, raw):
+        """Create a set of epochs with parameters stored in a dict.
+        
+        Keyword arguments:
+        
+        dict = A dictionary containing the parameter values for epoching minus
+               the raw data object.
+        raw  = the raw data object
+        
+        Return a set of epochs.
+        """
+        events = dict['events']
+        mag = dict['mag']
+        grad = dict['grad']
+        eeg = dict['eeg']
+        stim = dict['stim']
+        eog = dict['eog']
+        reject = dict['reject']
+        category = dict['category']
+        tmin = dict['tmin']
+        tmax = dict['tmax']
+        
+        epochs = self.create_epochs(raw, events, mag, grad, eeg, stim, eog,
+                                    reject, category, tmin, tmax)
+        return epochs        

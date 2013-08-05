@@ -33,7 +33,7 @@ Contains the CreateExperimentDialog-class that holds the logic for
 CreateExperimentDialog-window.
 """
 
-from file import File
+from fileManager import FileManager
 from infoDialogMain import InfoDialog
 import messageBox
 
@@ -90,7 +90,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                                                            '/home/'))
         if self.fname != '':
             try:
-                f = File()
+                f = FileManager()
                 self.raw = f.open_raw(self.fname)
                 self.ui.showFileInfoButton.setEnabled(True)
             except Exception, err:

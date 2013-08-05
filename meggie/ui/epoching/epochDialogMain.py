@@ -111,9 +111,9 @@ class EpochDialog(QtGui.QDialog):
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
         try:
-            epochs = Epochs(self.parent.parent.experiment.working_file, events,
-                            mag, grad, eeg, stim, eog, reject, category,
-                            float(self.tmin), float(self.tmax))
+            epochs = Epochs(self.parent.parent.experiment.working_file,
+                            events, mag, grad, eeg, stim, eog, reject,
+                            category, float(self.tmin), float(self.tmax))
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Could not create epochs: '

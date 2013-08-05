@@ -51,19 +51,19 @@ import numpy as np
 from xlrd import XLRDError
 
 class EventSelectionDialog(QtGui.QDialog):
+    
     """
     Class containing the logic for EventSelectionDialog. It is used for
     collecting desired events from continuous data.
     """
+    
     index = 1
     
     #custom signals:
-    epochs_created = QtCore.pyqtSignal(QtCore.QObject, str)
+    epoch_params_ready = QtCore.pyqtSignal(dict)
 
     def __init__(self, parent):
-        """
-        Initializes the event selection dialog.
-        """
+        """Initialize the event selection dialog."""
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
@@ -72,9 +72,61 @@ class EventSelectionDialog(QtGui.QDialog):
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event' + str(self.__class__.index))
         
+    def collect_parameter_values(self):
+        """Collect the parameter values for epoch creation from the ui.
+        
+        Collect the parameter values for epoch creation from the ui and return
+        them in a dictionary.
+        """
+        tmin = float(self.ui.doubleSpinBoxTmin.value())
+        tmax = float(self.ui.doubleSpinBoxTmax.value())
+        mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
+        grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
+        eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
+        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
+        eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
+        stim_channel = self.parent.experiment.stim_channel
+        
+        collectionName = self.ui.lineEditCollectionName.text()
+        
+        reject = dict()
+        if mag:
+            reject['mag'] = 1e-12 * self.ui.\
+            doubleSpinBoxMagReject_3.value()
+        if grad:
+            reject['grad'] = 1e-12 * self.ui.\
+            doubleSpinBoxGradReject_3.value()
+        if eeg:
+            reject['eeg'] = eeg = 1e-6 * self.ui.\
+            doubleSpinBoxEEGReject_3.value()
+        if eog:
+            reject['eog'] = eog = 1e-6 * self.ui.\
+            doubleSpinBoxEOGReject_3.value()
+
+
+        #Read the given event names as categories.
+
+        events = np.ndarray((self.ui.listWidgetEvents.count(),3), int)
+        category = dict()
+        for index in xrange(self.ui.listWidgetEvents.count()):
+            event = (self.ui.listWidgetEvents.item(index).data(32).
+                     toPyObject())
+            events[index] = (event)
+            category[str(self.ui.listWidgetEvents.item(index).data(33).
+                         toPyObject())] = event[2]
+                         
+        #Create a dictionary containing all the parameters
+        #Note: Raw is not collected here.
+        param_dict = {'events' : events, 'mag' : mag, 'grad' : grad,
+                      'eeg' : eeg, 'stim' : stim, 'eog' : eog,
+                      'reject' : reject, 'category' : category,
+                      'tmin' : float(tmin), 'tmax' : float(tmax),
+                      'collectionName' : collectionName}
+        return param_dict
+        
     def create_eventlist(self):
         """
-        Picks desired events from the raw data.
+        Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         e = Events(self.parent.experiment.raw_data, 
@@ -117,22 +169,24 @@ class EventSelectionDialog(QtGui.QDialog):
             self.ui.pushButtonRemove.setEnabled(False)
         
     def accept(self):
-        """
-        Called when the OK button is pressed. Opens the epoching dialog
-        (epochDialog).
+        """Save the parameters in a dictionary and send it forward.
+        
+        Collect all the parameters provided for epoch creations in a
+        dictionary and send it forward using a QSignal. Show the user an error
+        message if no events are selected for epoching.
+        
+        Emit an epoch_params_ready signal.
         """
         if self.ui.listWidgetEvents.count() == 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Cannot create epochs ' + 
+            self.errorMessage = messageBox.AppForm()
+            self.errorMessage.labelException.setText('Cannot create epochs ' + 
                                                    'from empty list.')
-            self.messageBox.show()
+            self.errorMessage.show()
             return
         
+        param_dict = self.collect_parameter_values()
+        self.epoch_params_ready.emit(param_dict)
         self.close()
-        self.epochDialog = EpochDialog(self, self.ui.\
-                                       lineEditCollectionName.text())
-        self.epochDialog.epochs_created.connect(self.epochs_created)
-        epochs = self.epochDialog.exec_()
         
     def check_channels(self):
         """

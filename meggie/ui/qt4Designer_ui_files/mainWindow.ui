@@ -712,14 +712,14 @@
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_10">
                     <item>
-                     <widget class="QPushButton" name="pushButtonEventlist">
+                     <widget class="QPushButton" name="pushButtonCreateEpochs">
                       <property name="text">
                        <string>Create epochs</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButtonSaveEpochCollection">
+                     <widget class="QPushButton" name="pushButtonSaveEpochs">
                       <property name="text">
                        <string>Save selected epochs</string>
                       </property>
@@ -737,7 +737,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButtonLoadEpochCollection">
+                     <widget class="QPushButton" name="pushButtonLoadEpochs">
                       <property name="text">
                        <string>Load epochs</string>
                       </property>

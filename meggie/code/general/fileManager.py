@@ -35,16 +35,24 @@ Contains the File-class for file operations.
 """
 import mne
 
-import os
+from PyQt4.QtCore import QObject
 
-class File(object):
+import os
+import pickle
+
+class FileManager(QObject):
     """
     A class for file operations.
+    
+    public functions:
+    
+    open_raw(self, fname)
+    save_epoch_item(self, fpath, item, overwirte = False)
     """
     
     
     def __init__(self):
-        pass 
+        QObject.__init__(self) 
         
     def open_raw(self, fname):
         """
@@ -58,3 +66,36 @@ class File(object):
             #self.raw = mne.fiff.Raw(str(fname))
         else:
             raise Exception('Could not open file.')
+        
+    def save_epoch_item(self, fpath, item, overwrite = False):
+        """Save epochs and the parameter values used to create them.
+        
+        The epochs are saved to fpath.fif. the parameter values are saved
+        to fpath.param. Epochs are read from the QListWidgetItem's data
+        slot 32, parameter values are in a dict at data slot 33.
+        
+        Keyword arguments:
+        
+        fpath     = The full path and base name of the files
+        item      = A QListWidgetItem containing epochs
+                    and their parameter values.
+        overwrite = A boolean telling whether existing files should be
+                    replaced. False by default. 
+        """
+        if os.path.exists(fpath + '.fif') and overwrite is False:
+            return
+        
+        #First save the epochs
+        epochs = item.data(32).toPyObject()
+        epochs.save(fpath + '.fif')
+        
+        #Then save the parameters using pickle.
+        parameters = item.data(33).toPyObject()
+        parameterFileName = str(fpath + '.param')
+        
+        parameterFile = open(parameterFileName, 'wb')
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(parameters, parameterFile, 2)
+        
+        parameterFile.close() 
