@@ -36,24 +36,60 @@ Contains the File-class for file operations.
 import mne
 
 from PyQt4.QtCore import QObject
+from PyQt4 import QtGui
 
 import os
 import pickle
 
 class FileManager(QObject):
+    
     """
     A class for file operations.
     
     public functions:
     
+    load_epoch_item(self, folder, name)
     open_raw(self, fname)
+    pickle(self, picklable, path)
     save_epoch_item(self, fpath, item, overwirte = False)
-    """
-    
+    unpickle(self, fpath)
+    """ 
     
     def __init__(self):
+        """Constructor"""
         QObject.__init__(self) 
         
+    def load_epoch_item(self, folder, name):
+        """Load epochs and the parameters used to create them from a file.
+        
+        Search the specified folder for 'name.fif' and 'name.param' -files and
+        construct a QListWidget item from them. Epochs are stored in the item's
+        data slot 32, parameter values are stored in data slot 33.
+        
+        Keyword arguments:
+        
+        folder -- The folder containing the required files.
+        name   -- Both the base name of the files and the name of the created
+                  QListWidget item.
+                 
+        Return a QListWidgetItem containing the epochs and their parameters.
+        """
+        try:
+            epochs = mne.read_epochs(folder + name + '.fif')
+            
+        except Exception as e:
+            print 'Could not load epochs' + str(e)
+            return
+        
+        parameters = self.unpickle(folder + name + '.param')
+        
+        #Create and return the QListWidgetItem
+        item = QtGui.QListWidgetItem(name)
+        item.setData(32, epochs)
+        item.setData(33, parameters)
+        
+        return item
+    
     def open_raw(self, fname):
         """
         Opens a raw file.
@@ -67,6 +103,25 @@ class FileManager(QObject):
         else:
             raise Exception('Could not open file.')
         
+    def pickle(self, picklable, fpath):
+        """pickle a picklable object to a file indicated by fpath
+        
+        Keyword arguments:
+        
+        picklable -- A picklable object.
+        fpath     -- Path to the pickled file
+        """
+        try:
+            pickleFile = open(fpath, 'wb')
+            
+        except IOError as e:
+            return str(e)
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(picklable, pickleFile, 2)
+        
+        pickleFile.close()
+        
     def save_epoch_item(self, fpath, item, overwrite = False):
         """Save epochs and the parameter values used to create them.
         
@@ -76,10 +131,10 @@ class FileManager(QObject):
         
         Keyword arguments:
         
-        fpath     = The full path and base name of the files
-        item      = A QListWidgetItem containing epochs
+        fpath     -- The full path and base name of the files
+        item      -- A QListWidgetItem containing epochs
                     and their parameter values.
-        overwrite = A boolean telling whether existing files should be
+        overwrite -- A boolean telling whether existing files should be
                     replaced. False by default. 
         """
         if os.path.exists(fpath + '.fif') and overwrite is False:
@@ -93,9 +148,19 @@ class FileManager(QObject):
         parameters = item.data(33).toPyObject()
         parameterFileName = str(fpath + '.param')
         
-        parameterFile = open(parameterFileName, 'wb')
+        self.pickle(parameters, parameterFileName)
         
-        # Protocol 2 used because of file object being pickled
-        pickle.dump(parameters, parameterFile, 2)
+    def unpickle(self, fpath):
+        """Unpickle an object from a file at fpath.
         
-        parameterFile.close() 
+        Keyword arguments:
+        
+        fpath -- the path to the pickled file.
+        
+        Return the unpickled object or None if unpickling failed.
+        """
+        try:
+            return pickle.load( open(fpath, 'rb') )
+        
+        except IOError:
+            return None

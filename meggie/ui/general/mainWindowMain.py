@@ -294,23 +294,12 @@ class MainWindow(QtGui.QMainWindow):
         files = os.listdir(path)
         for file in files:
             
-            if file.endswith('.fif'):            
-                try:
-                    epochs = mne.read_epochs(path + file)
-            
-                except Exception as e:
-                    print 'Loading failed: ' + str(e)
-                    break
-        
-                #Create a QlistWidgetItem from the epochs and add
-                #the item to the list.
-                fname = file.split('.fif')[0]        
-                item = QtGui.QListWidgetItem(fname)
-                item.setData(32, epochs)
+            if file.endswith('.fif'):
+                
+                name = file[:-4]            
+                item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
-                self.epochList.setCurrentItem(item)
-        
-        
+                self.epochList.setCurrentItem(item)        
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
