@@ -168,7 +168,6 @@ class MainWindow(QtGui.QMainWindow):
             
             # Sets info about trigger channels and their events to
             # Triggers box in the Raw tab
-            self.ui.listWidget.clear()
             if self.experiment.event_set != None:
                 self.populate_raw_tab_event_list()
             self.ui.labelExperimentName.setText(self.experiment.\
@@ -199,11 +198,23 @@ class MainWindow(QtGui.QMainWindow):
         """
         #TODO: trigger ---> event, also in the UI
         events = self.experiment.event_set
+        
+        
+        events_string = ''
+        for key, value in events.iteritems():
+            events_string += 'Event ' + str(key) + ', ' + str(value) +\
+            ' events\n'
+        self.ui.labelEvents.setText(events_string)
+        
+        
+        
+        """
         for key, value in events.iteritems():
             item = QtGui.QListWidgetItem()
             item.setText('Trigger ' + str(key) + ', ' + str(value) +
                         ' events')
             self.ui.listWidget.addItem(item)
+        """
 
     def on_actionSet_workspace_triggered(self, checked=None):
         """

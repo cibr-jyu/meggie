@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Fri Jul 26 15:04:52 2013
+# Created: Wed Aug  7 11:50:39 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -213,12 +213,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_3.addWidget(self.filtersBox)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
-        self.triggersBox = QtGui.QGroupBox(self.tabRaw)
-        self.triggersBox.setObjectName(_fromUtf8("triggersBox"))
-        self.listWidget = QtGui.QListWidget(self.triggersBox)
-        self.listWidget.setGeometry(QtCore.QRect(10, 30, 241, 141))
-        self.listWidget.setObjectName(_fromUtf8("listWidget"))
-        self.verticalLayout_4.addWidget(self.triggersBox)
+        self.eventsBox = QtGui.QGroupBox(self.tabRaw)
+        self.eventsBox.setObjectName(_fromUtf8("eventsBox"))
+        self.labelEvents = QtGui.QLabel(self.eventsBox)
+        self.labelEvents.setGeometry(QtCore.QRect(30, 30, 301, 181))
+        self.labelEvents.setObjectName(_fromUtf8("labelEvents"))
+        self.verticalLayout_4.addWidget(self.eventsBox)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -527,7 +527,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -558,7 +558,8 @@ class Ui_MainWindow(object):
         self.labelLowValue.setText(_translate("MainWindow", "Low-pass value", None))
         self.labelHigh.setText(_translate("MainWindow", "High-pass:", None))
         self.labelHighValue.setText(_translate("MainWindow", "High-pass value", None))
-        self.triggersBox.setTitle(_translate("MainWindow", "Triggers", None))
+        self.eventsBox.setTitle(_translate("MainWindow", "Events", None))
+        self.labelEvents.setText(_translate("MainWindow", "No events", None))
         self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "View with MNE_Browse_Raw", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabRaw), _translate("MainWindow", "Raw", None))
         self.groupBoxAvailablePreprocessing.setTitle(_translate("MainWindow", "Available actions:", None))
