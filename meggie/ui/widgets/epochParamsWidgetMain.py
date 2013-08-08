@@ -115,12 +115,44 @@ class EpochParamsWidget(QtGui.QWidget):
         
         
         
-    def show_parameters(self, parameters):
+    def show_parameters(self, item):
         """
         Sets text for the epoch parameters list.
         
         Keyword arguments:
         parameters = string that holds parameters for chosen epochs
         """
-        self.ui.textEditEpochParams.setText(parameters)
+        
+        # Set default/empty values for epoch parameters.
+        self.ui.labelTmin.clear()
+        self.ui.labelTmax.clear()
+        params = item.data(33).toPyObject()
+        self.ui.checkBoxGrad.setChecked(False)
+        self.ui.checkBoxMag.setChecked(False)
+        self.ui.checkBoxEeg.setChecked(False)
+        self.ui.checkBoxStim.setChecked(False)
+        self.ui.checkBoxEog.setChecked(False)
+        self.ui.labelGradReject_3.setText('Grad: None')
+        self.ui.labelMagReject_3.setText('Mag: None')
+        self.ui.labelEegReject_3.setText('Eeg: None')
+        self.ui.labelEogReject_3.setText('Eog: None')
+        
+        # Set parameters from currently chosen epochs.
+        self.ui.labelTmin.setText('Start time: ' + str(params[QtCore.QString('tmin')]) + ' s')
+        self.ui.labelTmax.setText('End time: ' + str(params[QtCore.QString('tmax')]) + ' s')
+        reject_params = params[QtCore.QString(u'reject')].keys()
+        if QtCore.QString(u'mag') in reject_params:
+            self.ui.checkBoxMag.setChecked(True)
+            self.ui.labelMagReject_3.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT\n')
+        if QtCore.QString(u'grad') in reject_params:
+            self.ui.checkBoxGrad.setChecked(True)
+            self.ui.labelGradReject_3.setText('Grad: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'grad')] / 1e-12) + ' fT/cm\n')
+        if QtCore.QString(u'eeg') in reject_params:
+            self.ui.checkBoxEeg.setChecked(True)
+            self.ui.labelEegReject_3.setText('Eeg: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eeg')] / 1e-6) + 'uV\n')
+        if QtCore.QString(u'stim') in reject_params:
+            self.ui.checkBoxStim.setChecked(True)
+        if QtCore.QString(u'eog') in reject_params:
+            self.ui.checkBoxEog.setChecked(True)
+            self.ui.labelEogReject_3.setText('Eog: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV\n')    
         
