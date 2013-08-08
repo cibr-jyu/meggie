@@ -367,6 +367,42 @@ class MainWindow(QtGui.QMainWindow):
             #self.caller.average(epoch)
             #self.caller.draw_evoked_potentials(epoch)
         """
+        
+    def on_pushButtonDeleteEpochs_clicked(self, checked=None):
+        """Delete the selected epoch item and the files related to it.
+        """
+        if checked is None:
+            return
+        
+        if self.epochList.isEmpty():
+            return
+        
+        elif self.epochList.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No epochs selected.')
+            self.messageBox.show()
+            
+        else:
+            item = str(self.epochList.currentItem().text())
+            reply = QtGui.QMessageBox.question(self, 'delete epochs',
+                                               'Permanently remove '\
+                                               + item + '.fif and '\
+                                               + item + '.param?',
+                                               QtGui.QMessageBox.Yes |
+                                               QtGui.QMessageBox.No,
+                                               QtGui.QMessageBox.No)
+            
+            if reply == QtGui.QMessageBox.Yes:
+                
+                if self.fileManager.delete_file_at\
+                (self.experiment.epochs_directory, [item + '.fif',
+                                                    item + '.param']):
+                    
+                    self.epochList.remove_item(self.epochList.currentItem())
+                
+            else:
+                return
          
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """

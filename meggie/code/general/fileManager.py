@@ -48,6 +48,7 @@ class FileManager(QObject):
     
     public functions:
     
+    delete_file_at(self, folder, name)
     load_epoch_item(self, folder, name)
     open_raw(self, fname)
     pickle(self, picklable, path)
@@ -57,7 +58,38 @@ class FileManager(QObject):
     
     def __init__(self):
         """Constructor"""
-        QObject.__init__(self) 
+        QObject.__init__(self)
+        
+    def delete_file_at(self, folder, files):
+        """Delete files from a folder.
+        
+        Keyword arguments:
+        
+        folder -- The location of the deleted files
+        files  -- The files to be deleted. Can be a single file or a list of
+                  files in the same folder.
+                  
+        Return True if operation was succesful, otherwise return False.
+        """
+        
+        try:
+            for file in files:
+                try:
+                    os.remove(folder + file)
+        
+                except OSError as e:
+                    print str(e)
+                    return False
+        
+        except TypeError:
+            try:
+                os.remove(folder + file)
+        
+            except OSError as e:
+                print str(e)
+                return False
+        
+        return True
         
     def load_epoch_item(self, folder, name):
         """Load epochs and the parameters used to create them from a file.
