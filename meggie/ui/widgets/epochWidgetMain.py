@@ -146,6 +146,7 @@ class EpochWidget(QtGui.QWidget):
         
     def set_as_selected(self):
         item = self.ui.listWidgetEpochs.currentItem()
+        self.parent.epochParamsList.show_parameters(item)
         """
         parameters = self.parent.epochParamsList.set_parameters(item)
         item.setData(33, parameters)

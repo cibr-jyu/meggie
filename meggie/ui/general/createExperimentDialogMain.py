@@ -186,7 +186,6 @@ class CreateExperimentDialog(QtGui.QDialog):
                                                                 experiment.
                                                                 description)
         
-        self.parent.ui.listWidget.clear()
         if self.experiment.event_set != None:
             self.parent.populate_raw_tab_event_list() 
         self.experiment.save_experiment_settings()
