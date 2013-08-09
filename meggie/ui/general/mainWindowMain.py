@@ -586,14 +586,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI.
         """        
-        self.ui.labelMaxFilterAccept_2.hide()
-        self.ui.labelECGComputedAccept_2.hide()
-        self.ui.labelEOGComputedAccept_2.hide()
-        self.ui.labelECGAppliedAccept_2.hide()
-        self.ui.labelEOGAppliedAccept_2.hide()
-        self.ui.pushButtonApplyEOG.setEnabled(False)
-        self.ui.pushButtonApplyECG.setEnabled(False)
-        
+        self.ui.checkBoxMaxFilterComputed.setChecked(False)
+        self.ui.checkBoxECGComputed.setChecked(False)
+        self.ui.checkBoxECGApplied.setChecked(False)
+        self.ui.checkBoxEOGComputed.setChecked(False)
+        self.ui.checkBoxEOGApplied.setChecked(False)
         #Check whether ECG projections are calculated
         fname = self.experiment.raw_data.info.get('filename')
         path = self.experiment._subject_directory
@@ -602,29 +599,28 @@ class MainWindow(QtGui.QMainWindow):
         files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
         if len(files) > 1:
             self.ui.pushButtonApplyECG.setEnabled(True)
-            self.ui.labelECGComputedAccept_2.show()
-        
+            self.ui.checkBoxECGComputed.setChecked(True)
         #Check whether EOG projections are calculated
         files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_eog_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_eog-eve.fif'))
         if len(files) > 1:
             self.ui.pushButtonApplyEOG.setEnabled(True)
-            self.ui.labelEOGComputedAccept_2.show()
+            self.ui.checkBoxEOGComputed.setChecked(True)
         
         #Check whether ECG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
         if len(files) > 0:
-            self.ui.labelECGAppliedAccept_2.show()
+            self.ui.checkBoxECGApplied.setChecked(True)
         
         #Check whether EOG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
         if len(files) > 0:
-            self.ui.labelEOGAppliedAccept_2.show()
+            self.ui.checkBoxEOGApplied.setChecked(True)
         
         files = filter(os.path.isfile, glob.glob(path + '*sss*'))
         if len(files) > 0:
-            self.ui.labelMaxFilterAccept_2.show()
+            self.ui.checkBoxMaxFilterComputed.setChecked(True)
         
         #TODO: applied/not applied label for MaxFilter
         
