@@ -117,42 +117,67 @@ class EpochParamsWidget(QtGui.QWidget):
         
     def show_parameters(self, item):
         """
-        Sets text for the epoch parameters list.
+        Sets parameters for the currently chosen epochs.
         
         Keyword arguments:
-        parameters = string that holds parameters for chosen epochs
+        item = epochWidget item that is currently chosen,
+               includes .fif and .param files
         """
         
         # Set default/empty values for epoch parameters.
         self.ui.labelTmin.clear()
         self.ui.labelTmax.clear()
         params = item.data(33).toPyObject()
-        self.ui.checkBoxGrad.setChecked(False)
-        self.ui.checkBoxMag.setChecked(False)
-        self.ui.checkBoxEeg.setChecked(False)
-        self.ui.checkBoxStim.setChecked(False)
-        self.ui.checkBoxEog.setChecked(False)
+        
+        
         self.ui.labelGradReject_3.setText('Grad: None')
         self.ui.labelMagReject_3.setText('Mag: None')
         self.ui.labelEegReject_3.setText('EEG: None')
         self.ui.labelEogReject_3.setText('EOG: None')
+        self.ui.textBrowserEvents.setText('')
         
         # Set parameters from currently chosen epochs.
+        
+       
+        epochs = item.data(32).toPyObject()
+        
+        # Dictionary stores numbers of different events.
+        event_counts = dict()
+        
+        # Adds items to dictionary for corresponding events.
+        for value in epochs.event_id.values():
+            event_counts[str(value)] = 0
+        
+        # Adds number of events to corresponding event.
+        for event in epochs.events:
+            for key in event_counts.keys():
+                if event[2] == int(key):
+                    event_counts[key] += 1
+        
+        """
+        categories = 'Events: '
+        for key in params[QtCore.QString(u'category')]:
+            categories += key + ' '
+        """
+        categories = ''
+        # Adds event names, ids and event counts on mainWindows parameters
+        # list.
+        for key,value in epochs.event_id.items():
+            categories += key + ': ID ' + str(value) + ', ' + \
+            str(event_counts[str(value)]) + ' events\n'
+        
+        self.ui.textBrowserEvents.setText(categories)
         self.ui.labelTmin.setText('Start time: ' + str(params[QtCore.QString('tmin')]) + ' s')
         self.ui.labelTmax.setText('End time: ' + str(params[QtCore.QString('tmax')]) + ' s')
         reject_params = params[QtCore.QString(u'reject')].keys()
         if QtCore.QString(u'mag') in reject_params:
-            self.ui.checkBoxMag.setChecked(True)
             self.ui.labelMagReject_3.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT')
         if QtCore.QString(u'grad') in reject_params:
-            self.ui.checkBoxGrad.setChecked(True)
             self.ui.labelGradReject_3.setText('Grad: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'grad')] / 1e-12) + ' fT/cm')
         if QtCore.QString(u'eeg') in reject_params:
-            self.ui.checkBoxEeg.setChecked(True)
             self.ui.labelEegReject_3.setText('EEG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eeg')] / 1e-6) + 'uV')
         if QtCore.QString(u'stim') in reject_params:
             self.ui.checkBoxStim.setChecked(True)
         if QtCore.QString(u'eog') in reject_params:
-            self.ui.checkBoxEog.setChecked(True)
             self.ui.labelEogReject_3.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
         
