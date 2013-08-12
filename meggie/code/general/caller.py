@@ -565,7 +565,8 @@ class Caller(object):
             raise ValueError(err)
         # baseline corrections with ratio
         power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
-        pl.clf()
+        fig = pl.figure()
+        #pl.clf()
         pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
         pl.subplot(3, 1, 1)
         pl.plot(times, evoked_data.T)
@@ -596,7 +597,7 @@ class Caller(object):
         pl.ylabel('Frequency (Hz)')
         pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
-        pl.show()
+        fig.show()
         
         
     def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
