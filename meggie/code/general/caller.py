@@ -49,13 +49,11 @@ from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 
-
 from mne.viz import plot_topo
 from mne.viz import plot_topo_power, plot_topo_phase_lock
 from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
-
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
@@ -63,6 +61,7 @@ from xlwt import Workbook, XFStyle
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 
 class Caller(object):
     """
@@ -422,18 +421,78 @@ class Caller(object):
         """
         layout = read_layout('Vectorview-all')
         
+        
+        
+        
+        """
+        COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
+          '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
+        """
+        
+        
+        
+        
+        
+        colors = ['y','m','c','r','g','b','w','k']
+        colors_events = []
+        i = 0
+        for value in self.category.values():
+            if value == 1:
+                colors_events.append('w')
+                #i += 1
+            if value == 2:
+                colors_events.append('b')
+                #i += 1
+            if value == 3:
+                colors_events.append('r')
+                #i += 1
+            if value == 4:
+                colors_events.append('c')
+                #i += 1
+            if value == 5:
+                colors_events.append('m')
+                #i += 1
+            if value == 8:
+                colors_events.append('g')
+                #i += 1
+            if value == 16:
+                colors_events.append('y')
+                #i += 1
+            if value == 32:
+                colors_events.append('k')
+                #i += 1
+        
+        """
+        # TODO: need plots with labels to create a legend.
+        x = np.arange(1,5)
+        pl.plot(x, x*1.5, label='')
+        """
+        
+        
         self.mi = MeasurementInfo(self.parent.experiment.raw_data)
         
-        fig = plot_topo(self.evokeds, layout, title=str(self.category.keys()))
+        #title = str(self.category.keys())
+        title = ''
+        fig = plot_topo(self.evokeds, layout, color=colors_events, title=title)
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
+        
+        items = []
+        for key in self.category.keys():
+            items.append(key)
+        
+        # Add a legend to show which color belongs to which event.
+        fontP = FontProperties()
+        fontP.set_size(12)
+        l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4, prop=fontP)
+        l.draggable(True)
+        
         prefix, suffix = os.path.splitext(self.parent.experiment.\
                                           raw_data.info.get('filename'))
         
-        
         def onclick(event):
             pl.show(block=False)
-            #pl.savefig(prefix + '_averaged_epochs_single_channel.svg', facecolor='black', transparent=True)
+            
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         """
