@@ -635,7 +635,7 @@ class Caller(object):
         else:
             pl.ylabel('Magnetic Field (fT/cm)')
         pl.xlim(times[0], times[-1])
-        pl.ylim(-150, 300)
+        #pl.ylim(-150, 300)
         
         pl.subplot(3, 1, 2)
         pl.imshow(20 * np.log10(power[0]), extent=[times[0], times[-1],
