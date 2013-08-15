@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Fri Aug  9 12:56:09 2013
+# Created: Tue Aug 13 14:28:05 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -419,8 +419,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.pushButtonLoadEpochs)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.gridLayout_5.addWidget(self.groupBoxAvailableEpoching, 1, 0, 1, 1)
+        self.horizontalLayout_18 = QtGui.QHBoxLayout()
+        self.horizontalLayout_18.setObjectName(_fromUtf8("horizontalLayout_18"))
+        self.pushButtonModifyEpochs = QtGui.QPushButton(self.gridLayoutWidget_2)
+        self.pushButtonModifyEpochs.setObjectName(_fromUtf8("pushButtonModifyEpochs"))
+        self.horizontalLayout_18.addWidget(self.pushButtonModifyEpochs)
         spacerItem14 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_5.addItem(spacerItem14, 1, 1, 1, 1)
+        self.horizontalLayout_18.addItem(spacerItem14)
+        self.gridLayout_5.addLayout(self.horizontalLayout_18, 1, 1, 1, 1)
         self.tabWidget.addTab(self.tabEpoching, _fromUtf8(""))
         self.tabAveraging = QtGui.QWidget()
         self.tabAveraging.setObjectName(_fromUtf8("tabAveraging"))
@@ -561,7 +567,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -615,6 +621,7 @@ class Ui_MainWindow(object):
         self.pushButtonSaveEpochs.setText(_translate("MainWindow", "Save selected epochs", None))
         self.pushButtonDeleteEpochs.setText(_translate("MainWindow", "Delete selected epochs", None))
         self.pushButtonLoadEpochs.setText(_translate("MainWindow", "Load epochs", None))
+        self.pushButtonModifyEpochs.setText(_translate("MainWindow", "Modify selected epochs", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))

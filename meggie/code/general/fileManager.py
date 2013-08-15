@@ -114,7 +114,15 @@ class FileManager(QObject):
             return
         
         parameters = self.unpickle(folder + name + '.param')
+        #The events need to be converted back to QListWidgetItems.
+        event_list = []
+        event_dict = parameters['events']
+        for key in event_dict:
+            for event in event_dict[key]:
+                event_tuple = (event, key)
+                event_list.append(event_tuple)
         
+        parameters['events'] = event_list
         #Create and return the QListWidgetItem
         item = QtGui.QListWidgetItem(name)
         item.setData(32, epochs)
@@ -178,9 +186,26 @@ class FileManager(QObject):
         
         #Then save the parameters using pickle.
         parameters = item.data(33).toPyObject()
+        #toPyObject turns the dict keys into QStrings so convert them back to
+        #strings.
+        parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
+        
+        event_dict = {}
+        event_list = parameters_str['events']
+        for item in event_list:
+            key = str(item[1])
+            event = item[0]
+            #Create an empty list for the new key
+            if key not in event_dict:
+                event_dict[key] = []
+            
+            event_dict[key].append(event)
+        
+        parameters_str['events'] = event_dict
+        
         parameterFileName = str(fpath + '.param')
         
-        self.pickle(parameters, parameterFileName)
+        self.pickle(parameters_str, parameterFileName)
         
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.

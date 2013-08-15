@@ -38,6 +38,7 @@ from PyQt4.QtCore import QObject
 import mne
 
 import pylab as pl
+import numpy as np
 
 class Epochs(QObject):
     
@@ -110,14 +111,22 @@ class Epochs(QObject):
         
         Return a set of epochs.
         """
-        events = dict['events']
+        #Events are stored as a list of QListWidgetItems. Read them and create
+        #a dict for categories.
+        category = {}
+        event_list = dict['events']
+        events = np.ndarray((len(event_list),3), int)
+        for i in xrange(len(event_list)):
+            event = event_list[i][0]
+            events[i] = event
+            category[str(event_list[i][1])] = event[2]
+        
         mag = dict['mag']
         grad = dict['grad']
         eeg = dict['eeg']
         stim = dict['stim']
         eog = dict['eog']
         reject = dict['reject']
-        category = dict['category']
         tmin = dict['tmin']
         tmax = dict['tmax']
         
