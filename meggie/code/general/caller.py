@@ -477,11 +477,10 @@ class Caller(object):
         fig.canvas.set_window_title(self.mi.subject_name)
         fig.show()
         
+        # Create a legend to show which color belongs to which event.
         items = []
         for key in self.category.keys():
             items.append(key)
-        
-        # Add a legend to show which color belongs to which event.
         fontP = FontProperties()
         fontP.set_size(12)
         l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4, prop=fontP)
