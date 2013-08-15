@@ -240,12 +240,13 @@ TEHTY    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/
     \ preprocessing-tabille painike filtteröintiä varten
     \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
     \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
+TEHTY(puuttuu rejection-otsikko rejection parametrejä varten)    \ parametrilista epocheille
     \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
 TEHTY    \ defaulttina mag ja grad epoch parametreissa valittuna
 TEHTY    \ event selection dialogiin lisätään siitä aukeavan epoch creation dialogin sisältö
-    \ epochien lisääminen ohjelmaan esim. import-buttonilla muualla tehtyjen epochien prosessointia varten
+    \ epochien lisääminen ohjelmaan esim. import-buttonilla muualla tehtyjen epochien prosessointia varten (epochien tallennus csv-muotoon käyttäjän valinnan mukaan)
     \ channel averagessa mahdollisuus tallentaa kaikki kategoriat kerralla tai yksitellen
-TEHTY	\ epocheja pitää pystyä poistamaan listasta
+TEHTY    \ epocheja pitää pystyä poistamaan listasta
 
 ** Batch toiminnallisuutta **
     \ experimentille ei anneta raw:ta, vaan ainoastaan esim. experiment name, author ja description
@@ -272,3 +273,6 @@ TEHTY(avg)    \ visualisoinneissa käyrien väreissä saisi olla ylhäällä mik
     \ mne_browse_raw:lle oikeat säädöt ohjeisiin
     \ jos prosessien aikana tallennettuja tiedostoja poistetaan manuaalisesti työkansiosta, niiden tiedot jää edelleen ohjelmaan muistiin, mikä sekoittaa
     prosessien uudelleen suorittamista
+
+
+
