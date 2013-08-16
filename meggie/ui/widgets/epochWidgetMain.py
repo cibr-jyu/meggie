@@ -46,6 +46,7 @@ class EpochWidget(QtGui.QWidget):
     #Custom signals:
     on_selection_changed = pyqtSignal()
     item_added = pyqtSignal(QtGui.QListWidgetItem)
+    #last_epoch_item_removed = pyqtSignal()
 
     def __init__(self, parent):
         """
@@ -59,7 +60,7 @@ class EpochWidget(QtGui.QWidget):
         
         # Connect listWidgetEpochs.currentItemChanged method to change
         # parameters on epochParamsWidget
-        self.ui.listWidgetEpochs.currentItemChanged.connect(self.set_as_selected)
+        self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
         
     def addItem(self, item, suffix = 1):
         """
@@ -150,9 +151,12 @@ class EpochWidget(QtGui.QWidget):
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
         
-    def set_as_selected(self):
+    def selection_changed(self):
         item = self.ui.listWidgetEpochs.currentItem()
-        self.parent.epochParamsList.show_parameters(item)
+        if self.ui.listWidgetEpochs.currentItem() is None:
+            self.parent.epochParamsList.clear_parameters()
+        else:
+            self.parent.epochParamsList.show_parameters(item)
         """
         parameters = self.parent.epochParamsList.set_parameters(item)
         item.setData(33, parameters)

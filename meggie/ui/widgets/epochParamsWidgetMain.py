@@ -181,3 +181,12 @@ class EpochParamsWidget(QtGui.QWidget):
         if QtCore.QString(u'eog') in reject_params:
             self.ui.labelEogReject_3.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
         
+    def clear_parameters(self):
+        self.ui.labelTmin.setText('Start time:')
+        self.ui.labelTmax.setText('End time:')
+        self.ui.labelGradReject_3.setText('Grad:')   #setText('Grad: None')
+        self.ui.labelMagReject_3.setText('Mag:')   #setText('Mag: None')
+        self.ui.labelEegReject_3.setText('EEG:')   #setText('EEG: None')
+        self.ui.labelEogReject_3.setText('EOG')   #setText('EOG: None')
+        self.ui.textBrowserEvents.clear()   #setText('')
+        
