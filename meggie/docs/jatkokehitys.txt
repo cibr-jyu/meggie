@@ -257,7 +257,7 @@ TEHTY    \ epocheja pitää pystyä poistamaan listasta
     \ tarkistetaan mikä working file on käytössä projektioiden laskemisessa
 
 ** Visualisointia **
-    \ TFR-visualization skaalaa pitää muuttaa ja käyrä ei piirry oikein (kuvan piirtokohdassa on komento ylim, otetaan se pois niin kuva skaalautuu automaattisesti oikein)
+TEHTY    \ TFR-visualization skaalaa pitää muuttaa ja käyrä ei piirry oikein (kuvan piirtokohdassa on komento ylim, otetaan se pois niin kuva skaalautuu automaattisesti oikein)
 TEHTY    \ TFR piirtää vanhan ikkunan päälle uuden, mutta olisi ilmeisesti hyvä avata uusi ikkuna ja säilyttää aiemmin piirretty
     \ eri eventtien piirtäminen päällekkäin samaan kuvaajaan channel averagessa
     \ channel averageen set scale ja mihin se asettuu
