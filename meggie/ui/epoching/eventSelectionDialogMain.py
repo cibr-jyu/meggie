@@ -37,6 +37,7 @@ EventSelectionDialog-window.
 import messageBox
 
 from PyQt4 import QtCore,QtGui
+from PyQt4.QtCore import QString
 from eventSelectionDialogUi import Ui_EventSelectionDialog
 from epochDialogMain import EpochDialog
 
@@ -57,20 +58,48 @@ class EventSelectionDialog(QtGui.QDialog):
     collecting desired events from continuous data.
     """
     
-    index = 1
-    
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict)
 
-    def __init__(self, parent):
-        """Initialize the event selection dialog."""
+    def __init__(self, parent, params = None):
+        """Initialize the event selection dialog.
+        
+        Keyword arguments:
+        
+        parent -- Set the parent of this dialog
+        params -- A dictionary containing parameter values to fill the
+                  the different fields in the dialog with.
+        """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
         keys = map(str, parent.experiment.event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
-        self.ui.lineEditName.setText('Event' + str(self.__class__.index))
+        self.ui.lineEditName.setText('Event')
+        self.used_names = []
+        if params is not None:
+            self.fill_parameters(params)
+        
+    def add_events(self, events, event_name):
+        """Add a list of events or a single event to the ui's eventlist.
+        
+        Keyword arguments:
+        
+        events     -- Events to add.
+        event_name -- The user-defined name of the events. Default is 'event'.
+        """
+        for event in events:
+            item = QtGui.QListWidgetItem(event_name + ' ' + str(event[0]) +
+                                         ', ' + str(event[2]))
+                
+            item.setData(32, event)
+            item.setData(33, event_name)
+            self.ui.listWidgetEvents.addItem(item)
+            self.ui.listWidgetEvents.setCurrentItem(item)
+        
+        if self.used_names.count(event_name) < 1:    
+            self.used_names.append(event_name)
         
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
@@ -102,26 +131,20 @@ class EventSelectionDialog(QtGui.QDialog):
         if eog:
             reject['eog'] = eog = 1e-6 * self.ui.\
             doubleSpinBoxEOGReject_3.value()
+            
+        events = []
+        for i in xrange(self.ui.listWidgetEvents.count()):
+            event = self.ui.listWidgetEvents.item(i).data(32).toPyObject()
+            event_name = self.ui.listWidgetEvents.item(i).data(33).toPyObject()
+            event_tup = (event, event_name)
+            events.append(event_tup)
 
-
-        #Read the given event names as categories.
-
-        events = np.ndarray((self.ui.listWidgetEvents.count(),3), int)
-        category = dict()
-        for index in xrange(self.ui.listWidgetEvents.count()):
-            event = (self.ui.listWidgetEvents.item(index).data(32).
-                     toPyObject())
-            events[index] = (event)
-            category[str(self.ui.listWidgetEvents.item(index).data(33).
-                         toPyObject())] = event[2]
-                         
         #Create a dictionary containing all the parameters
         #Note: Raw is not collected here.
         param_dict = {'events' : events, 'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
-                      'reject' : reject, 'category' : category,
-                      'tmin' : float(tmin), 'tmax' : float(tmax),
-                      'collectionName' : collectionName}
+                      'reject' : reject, 'tmin' : float(tmin),
+                      'tmax' : float(tmax), 'collectionName' : collectionName}
         return param_dict
         
     def create_eventlist(self):
@@ -132,31 +155,70 @@ class EventSelectionDialog(QtGui.QDialog):
         e = Events(self.parent.experiment.raw_data, 
                    self.parent.experiment.stim_channel)
         e.pick(self.event_id)
+        print str(e.events)
         return e.events
+    
+    def fill_parameters(self, params):
+        """Fill the fields in the dialog with parameters values from a dict.
         
+        Keyword arguments:
+        
+        params -- A dict containing the parameter values to be used.
+        """
+        #toPyObject() which is used to convert the data in a QListWidgetItem
+        #back in to a dict turns the keys into QStrings for some reason.
+        params_str = dict((str(key), value) for
+                          key, value in params.iteritems())
+        for item in params_str['events']:
+            events = []
+            events.append(item[0])
+            event_name = item[1]
+            self.add_events(events, event_name)
+            
+        if params_str['mag'] is True:
+            self.ui.checkBoxMag.setChecked(True)
+            
+        if params_str['grad'] is True:
+            self.ui.checkBoxGrad.setChecked(True)
+            
+        if params_str['eeg'] is True:
+            self.ui.checkBoxEeg.setChecked(True)
+            
+        if params_str['stim'] is True:
+            self.ui.checkBoxStim.setChecked(True)
+        
+        if params_str['eog'] is True:
+            self.ui.checkBoxEog.setChecked(True)
+            
+        reject = params_str['reject']
+        if reject.has_key('mag'):
+            self.ui.doubleSpinBoxMagReject_3.setValue(reject['mag'])
+        
+        if reject.has_key('grad'):
+            self.ui.doubleSpinBoxGradReject_3.setValue(reject['Grad'])
+            
+        if reject.has_key('eeg'):
+            self.ui.doubleSpinBoxEegReject_3.setValue(reject['eeg'])
+            
+        if reject.has_key('eog'):
+            self.ui.doubleSpinBoxEogReject_3.setValue(reject['eog'])
+            
+        self.ui.doubleSpinBoxTmin.setValue(params_str['tmin'])
+        self.ui.doubleSpinBoxTmax.setValue(params_str['tmax'])
+        self.ui.lineEditCollectionName.setText(params_str['collectionName'])
+                    
     def on_pushButtonAdd_clicked(self, checked=None):
         """
         Method for adding events to the event list.
         """
         if checked is None: return
+        name = self.set_event_name(self.ui.lineEditName.text())
         events = self.create_eventlist()
-        print events
-        self.__class__.index += 1
-        
-        """
-        Adds the events to the list.
-        """
-        if isinstance(events, np.ndarray):
-            for event in events:
-                item = QtGui.QListWidgetItem(self.ui.lineEditName.text() +
-                                             ' ' + str(event[0]) + ', ' +
-                                             str(event[2]))
-                item.setData(32, event)
-                item.setData(33, self.ui.lineEditName.text())
-                self.ui.listWidgetEvents.addItem(item)
-            self.ui.listWidgetEvents.setCurrentItem(item)
-            self.ui.lineEditName.setText('Event' + str(self.__class__.index))
-            self.ui.pushButtonRemove.setEnabled(True)
+        self.add_events(events, name)
+
+
+        self.ui.lineEditName.setText('Event')
+        self.ui.pushButtonRemove.setEnabled(True)
         
     def on_pushButtonRemove_clicked(self, checked=None):
         """
@@ -274,4 +336,32 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.ui.listWidgetEvents.addItem(item)
             
         self.ui.listWidgetEvents.setCurrentItem(item)
+        
+    def set_event_name(self, name, suffix = 1):
+        """Set the event name to name. If name exists, add suffix to it
+        
+        Keyword arguments:
+        
+        name   -- The name to be set.
+        Suffix -- The suffix that is added to the name when greater than 1.
+        
+        Return the name that was set.
+        """
+        if suffix == 1 and self.used_names.count(name) == 0:
+            return name
+        
+        elif suffix == 1 and self.used_names.count(name) > 0:
+            suffix += 1
+            name = self.set_event_name(name, suffix)
+            return name
+            
+        elif suffix > 1 and self.used_names.count(name + str(suffix)) == 0:
+            name = name + str(suffix)
+            return name
+          
+        elif suffix > 1 and self.used_names.count(name + str(suffix)) > 0:
+            suffix += 1
+            name = self.set_event_name(name, suffix)
+            return name
+             
         

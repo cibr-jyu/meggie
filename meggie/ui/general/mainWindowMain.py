@@ -310,7 +310,19 @@ class MainWindow(QtGui.QMainWindow):
                 name = file[:-4]            
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
-                self.epochList.setCurrentItem(item)        
+                self.epochList.setCurrentItem(item)
+                
+    def on_pushButtonModifyEpochs_clicked(self, checked = None):
+        """Modify currently selected epochs.
+        """
+        if checked is None: return
+        if self.epochList.currentItem() is None: return
+
+        params = self.epochList.currentItem().data(33).toPyObject()
+        self.epochParameterDialog = EventSelectionDialog(self, params)
+        self.epochParameterDialog.epoch_params_ready.\
+        connect(self.create_new_epochs)
+        self.epochParameterDialog.show()
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 

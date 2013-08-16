@@ -56,6 +56,8 @@ class EpochWidget(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.parent = parent
+        #Epochs are QListWidgetItems
+        self.epochs = []
         
         # Connect listWidgetEpochs.currentItemChanged method to change
         # parameters on epochParamsWidget
@@ -87,6 +89,7 @@ class EpochWidget(QtGui.QWidget):
                                                           QtCore.Qt.\
                                                           MatchFixedString):
                     self.ui.listWidgetEpochs.addItem(item)
+                    self.epochs.append(item)
                     self.item_added.emit(item)
                 else:
                     suffix += 1
@@ -102,6 +105,7 @@ class EpochWidget(QtGui.QWidget):
                                                           MatchFixedString):
                     item.setText(item.text() + qstr_suffix)
                     self.ui.listWidgetEpochs.addItem(item)
+                    self.epochs.append(item)
                     self.item_added.emit(item)
                     
                 else:
@@ -113,10 +117,13 @@ class EpochWidget(QtGui.QWidget):
         """
         while self.ui.listWidgetEpochs.count() > 0:
             self.ui.listWidgetEpochs.takeItem(0)
+            self.epochs = []
             
     def currentItem(self):
         """return The currently selected item from the widget's list."""
-        return self.ui.listWidgetEpochs.currentItem() 
+        if self.ui.listWidgetEpochs.count() == 0: return None
+        else:
+            return self.ui.listWidgetEpochs.currentItem() 
             
     def isEmpty(self):
         """Return True if the widget is empty, otherwise return False."""
@@ -134,6 +141,7 @@ class EpochWidget(QtGui.QWidget):
         """
         row = self.ui.listWidgetEpochs.row(item)
         self.ui.listWidgetEpochs.takeItem(row)
+        self.epochs.remove(item)
             
     def setCurrentItem(self, item):
         """
