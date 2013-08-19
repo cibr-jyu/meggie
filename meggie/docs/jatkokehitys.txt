@@ -232,7 +232,7 @@
     
     
 ** Käyttöliittymätoiminnallisuutta **
-TEHTY    \ working file ei päivity näkyviin mainwindowin alareunaan, jos ei suorita mitään prosessia
+TEHTY    \ working filen päivittyminen mainwindowin alareunaan, jos ei suorita mitään prosessia
 TEHTY    \ muutetaan steppien suoritus selkeämmiksi preprocessing tabissa (Tiina piirsi meille taululle esimerkin, joka voitaisiin toteuttaa)
 TEHTY    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/experiment info, eli textlabeleina
     \ raw-tabin nimeksi esim. info
@@ -241,7 +241,7 @@ TEHTY    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/
     \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
     \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
 TEHTY(puuttuu rejection-otsikko rejection parametrejä varten)    \ parametrilista epocheille
-    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
+TEHTY(modifiointi luo uudet epochit ja jättää vanhat)    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
 TEHTY    \ defaulttina mag ja grad epoch parametreissa valittuna
 TEHTY    \ event selection dialogiin lisätään siitä aukeavan epoch creation dialogin sisältö
     \ epochien lisääminen ohjelmaan esim. import-buttonilla muualla tehtyjen epochien prosessointia varten (epochien tallennus csv-muotoon käyttäjän valinnan mukaan)
@@ -258,10 +258,10 @@ TEHTY    \ epocheja pitää pystyä poistamaan listasta
 
 ** Visualisointia **
 TEHTY    \ TFR-visualization skaalaa pitää muuttaa ja käyrä ei piirry oikein (kuvan piirtokohdassa on komento ylim, otetaan se pois niin kuva skaalautuu automaattisesti oikein)
-TEHTY    \ TFR piirtää vanhan ikkunan päälle uuden, mutta olisi ilmeisesti hyvä avata uusi ikkuna ja säilyttää aiemmin piirretty
+TEHTY    \ TFR piirtää vanhan ikkunan päälle uuden, mutta pitää avata uusi ikkuna ja säilyttää aiemmin piirretty
     \ eri eventtien piirtäminen päällekkäin samaan kuvaajaan channel averagessa
     \ channel averageen set scale ja mihin se asettuu
-TEHTY(avg)    \ visualisoinneissa käyrien väreissä saisi olla ylhäällä mikä eventti kyseessä
+TEHTY(avg, värejä pitää vielä muokata oikeiksi)    \ visualisoinneissa käyrien väreissä saisi olla ylhäällä mikä eventti kyseessä
     \ mahdollista valita epochien parametrilistasta mitkä eventit piirretään päällekkäin/keskiarvoistetaan
     \ käyttäjälle valittavaksi tehdäänkö visualisointia aika- vai taajuustasossa
     \ mne power spectral densityn toteuttaminen, niin että piirretään samaan ikkunaan esim. ennen ja jälkeen filtteröintiä muodostuneet kuvaajat:
