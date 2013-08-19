@@ -57,6 +57,7 @@ from measurementInfo import MeasurementInfo
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
+import csv
 
 import numpy as np
 import pylab as pl
@@ -757,12 +758,18 @@ class Caller(object):
         sizex = events.shape[0]
         sizey = events.shape[1]
                 
+        path_to_save = self.parent.experiment.subject_directory
+        
+        # Saves events to csv file for easier modification with text editors.
+        csv_file = open(path_to_save + '/events.csv', 'w')
+        csv_file_writer = csv.writer(csv_file)
+        csv_file_writer.writerows(events)
+        csv_file.close()
+
         for i in range(sizex):
             for j in range(sizey):
                 ws.write(i, j, events[i][j], styleNumber)
-        
-        path_to_save = self.parent.experiment.subject_directory
-        wbs.save(path_to_save + '/events.xls') 
+        wbs.save(path_to_save + '/events.xls')
         #TODO: muuta filename kayttajan maarittelyn mukaiseksi
 
     def read_events(self, filename):
