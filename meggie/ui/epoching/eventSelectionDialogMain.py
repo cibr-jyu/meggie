@@ -96,10 +96,11 @@ class EventSelectionDialog(QtGui.QDialog):
             item.setData(32, event)
             item.setData(33, event_name)
             self.ui.listWidgetEvents.addItem(item)
-            self.ui.listWidgetEvents.setCurrentItem(item)
         
         if self.used_names.count(event_name) < 1:    
             self.used_names.append(event_name)
+        
+        self.ui.pushButtonRemove.setEnabled(True)
         
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
@@ -196,7 +197,7 @@ class EventSelectionDialog(QtGui.QDialog):
             self.ui.doubleSpinBoxMagReject_3.setValue(reject['mag'])
         
         if reject.has_key('grad'):
-            self.ui.doubleSpinBoxGradReject_3.setValue(reject['Grad'])
+            self.ui.doubleSpinBoxGradReject_3.setValue(reject['grad'])
             
         if reject.has_key('eeg'):
             self.ui.doubleSpinBoxEegReject_3.setValue(reject['eeg'])
@@ -219,15 +220,18 @@ class EventSelectionDialog(QtGui.QDialog):
 
 
         self.ui.lineEditName.setText('Event')
-        self.ui.pushButtonRemove.setEnabled(True)
         
     def on_pushButtonRemove_clicked(self, checked=None):
         """
         Method for removing events from the event list.
         """
         if checked is None: return # Standard workaround
-        row = self.ui.listWidgetEvents.currentRow()
-        self.ui.listWidgetEvents.takeItem(row)
+        if len(self.ui.listWidgetEvents.selectedItems()) == 0: return
+        
+        for item in self.ui.listWidgetEvents.selectedItems():
+            row = self.ui.listWidgetEvents.row(item)
+            self.ui.listWidgetEvents.takeItem(row)
+            
         if self.ui.listWidgetEvents.currentRow() < 0:
             self.ui.pushButtonRemove.setEnabled(False)
         
