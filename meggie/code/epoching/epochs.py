@@ -40,6 +40,8 @@ import mne
 import pylab as pl
 import numpy as np
 
+import csv
+
 class Epochs(QObject):
     
     """
@@ -132,4 +134,13 @@ class Epochs(QObject):
         
         epochs = self.create_epochs(raw, events, mag, grad, eeg, stim, eog,
                                     reject, category, tmin, tmax)
+        
+        """
+        #TODO: epochs need to be saved in csv format but this takes too long.
+        csv_file = open('/home/jaolpeso' + '/epochs.csv', 'w')
+        csv_file_writer = csv.writer(csv_file)
+        csv_file_writer.writerows(epochs)
+        csv_file.close()
+        """
+        
         return epochs        
