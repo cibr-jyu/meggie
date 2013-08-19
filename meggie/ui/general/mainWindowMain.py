@@ -133,6 +133,27 @@ class MainWindow(QtGui.QMainWindow):
         self._experiment = experiment
         self.experiment_value_changed.emit()
         
+    def delete_epochs(self, item):
+        """Delete the QListWidgetItem containing epochs.
+        
+        Keyword arguments:
+        item -- A QListWidgetItem containing epochs to remove.
+        
+        Return True if operation was successful, else return False.
+        """
+
+                
+        if self.fileManager.delete_file_at\
+        (self.experiment.epochs_directory, [str(item.text()) + '.fif',
+                                            str(item.text()) + '.param']):
+                    
+            self.epochList.remove_item(item)
+            return True
+            
+        else:
+            return False
+         
+        
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
         Create a new CreateExperimentDialog and show it
@@ -311,6 +332,31 @@ class MainWindow(QtGui.QMainWindow):
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
+        
+    @QtCore.pyqtSlot(dict)
+    def modifyEpochs(self, epoch_params):
+        """Overwrite the existing epoch_item with new epochs.
+        
+        Keyword arguments:
+        epoch_params -- A dict containing the parametervalues for the epochs.
+        """
+        
+        epochs = self.epocher.create_epochs_from_dict(epoch_params,
+                                                      self.experiment.\
+                                                      working_file)
+        
+        epoch_params['raw'] = self.experiment.working_file_path
+        
+        #Create a QListWidgetItem and add the actual epochs to slot 32.
+        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
+        item.setData(32, epochs)
+        
+        item.setData(33, epoch_params)
+        
+        if self.delete_epochs(self.epochList.currentItem()):
+        
+            self.epochList.addItem(item)
+            self.epochList.setCurrentItem(item)
                 
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
@@ -321,26 +367,13 @@ class MainWindow(QtGui.QMainWindow):
         params = self.epochList.currentItem().data(33).toPyObject()
         self.epochParameterDialog = EventSelectionDialog(self, params)
         self.epochParameterDialog.epoch_params_ready.\
-        connect(self.create_new_epochs)
+        connect(self.modifyEpochs)
         self.epochParameterDialog.show()
         
     def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
         """
-        
-        if checked is None: return
-        if os.path.exists(self.experiment.epochs_directory) is False:
-            self.experiment.create_epochs_directory
-        
-        for i in range(self.epochList.ui.listWidgetEpochs.count()):
-            item = self.epochList.ui.listWidgetEpochs.item(i)
-            epochs = item.data(32).toPyObject()
-            epochs.save(self.experiment.epochs_directory +\
-                        str(item.text() + '.fif'))
-            
-        #Populate the combobox for loading epoch-collections so that the newly
-        #created files are visible.
-        self.populate_comboBoxEpochCollections()
+        pass
 
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -396,26 +429,18 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             
         else:
-            item = str(self.epochList.currentItem().text())
-            reply = QtGui.QMessageBox.question(self, 'delete epochs',
+             item_str = item.text()
+             reply = QtGui.QMessageBox.question(self, 'delete epochs',
                                                'Permanently remove '\
-                                               + item + '.fif and '\
-                                               + item + '.param?',
+                                               + item_str + '.fif and '\
+                                               + item_str + '.param?',
                                                QtGui.QMessageBox.Yes |
                                                QtGui.QMessageBox.No,
                                                QtGui.QMessageBox.No)
             
-            if reply == QtGui.QMessageBox.Yes:
-                
-                if self.fileManager.delete_file_at\
-                (self.experiment.epochs_directory, [item + '.fif',
-                                                    item + '.param']):
-                    
-                    self.epochList.remove_item(self.epochList.currentItem())
-                
-            else:
-                return
-         
+             if reply == QtGui.QMessageBox.Yes:
+                 self.delete_epochs(self.epochList.currentItem())
+            
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
         Call mne_browse_raw.

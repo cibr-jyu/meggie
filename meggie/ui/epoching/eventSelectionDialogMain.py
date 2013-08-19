@@ -117,6 +117,7 @@ class EventSelectionDialog(QtGui.QDialog):
         stim_channel = self.parent.experiment.stim_channel
         
         collectionName = self.ui.lineEditCollectionName.text()
+        collectionName.replace(0, 1, collectionName[0].toUpper())
         
         reject = dict()
         if mag:

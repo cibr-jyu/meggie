@@ -57,8 +57,6 @@ class EpochWidget(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.parent = parent
-        #Epochs are QListWidgetItems
-        self.epochs = []
         
         # Connect listWidgetEpochs.currentItemChanged method to change
         # parameters on epochParamsWidget
@@ -66,9 +64,11 @@ class EpochWidget(QtGui.QWidget):
         
     def addItem(self, item, suffix = 1):
         """
-        Add an item or items to the widget's list.
+        Add an item or items to the widget's list and sort the list.
         
-        If item is a list, add all the items in it.
+        If item is a list, add all the items in it. Item text is converted to
+        start with an uppercase letter and the list is also sorted in ascending
+        order.
         Emit an item_added signal
         
         Keyword arguments:
@@ -90,7 +90,7 @@ class EpochWidget(QtGui.QWidget):
                                                           QtCore.Qt.\
                                                           MatchFixedString):
                     self.ui.listWidgetEpochs.addItem(item)
-                    self.epochs.append(item)
+                    self.ui.listWidgetEpochs.sortItems()
                     self.item_added.emit(item)
                 else:
                     suffix += 1
@@ -106,7 +106,7 @@ class EpochWidget(QtGui.QWidget):
                                                           MatchFixedString):
                     item.setText(item.text() + qstr_suffix)
                     self.ui.listWidgetEpochs.addItem(item)
-                    self.epochs.append(item)
+                    self.ui.listWidgetEpochs.sortItems()
                     self.item_added.emit(item)
                     
                 else:
@@ -118,7 +118,6 @@ class EpochWidget(QtGui.QWidget):
         """
         while self.ui.listWidgetEpochs.count() > 0:
             self.ui.listWidgetEpochs.takeItem(0)
-            self.epochs = []
             
     def currentItem(self):
         """return The currently selected item from the widget's list."""
@@ -142,7 +141,6 @@ class EpochWidget(QtGui.QWidget):
         """
         row = self.ui.listWidgetEpochs.row(item)
         self.ui.listWidgetEpochs.takeItem(row)
-        self.epochs.remove(item)
             
     def setCurrentItem(self, item):
         """
