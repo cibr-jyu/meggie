@@ -230,7 +230,7 @@ class Experiment(QObject):
         Keyword arguments:
         author          - - the author of the experiment
         """
-        if (len(author) <= 50):
+        if (len(author) <= 30):
             if re.match("^[A-Za-z0-9 ]*$", author):
                 self._author = author
             else:
