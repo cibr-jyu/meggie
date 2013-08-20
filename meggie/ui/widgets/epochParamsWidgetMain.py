@@ -130,10 +130,11 @@ class EpochParamsWidget(QtGui.QWidget):
         params = item.data(33).toPyObject()
         if params is None: return
         
-        self.ui.labelGradReject_3.setText('Grad: None')
-        self.ui.labelMagReject_3.setText('Mag: None')
-        self.ui.labelEegReject_3.setText('EEG: None')
-        self.ui.labelEogReject_3.setText('EOG: None')
+        self.ui.labelGradReject.setText('Grad: None')
+        self.ui.labelMagReject.setText('Mag: None')
+        self.ui.labelEegReject.setText('EEG: None')
+        self.ui.labelStimReject.setText('Stim: None')
+        self.ui.labelEogReject.setText('EOG: None')
         self.ui.textBrowserEvents.setText('')
         
         # Set parameters from currently chosen epochs.
@@ -171,22 +172,24 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui.labelTmax.setText('End time: ' + str(params[QtCore.QString('tmax')]) + ' s')
         reject_params = params[QtCore.QString(u'reject')].keys()
         if QtCore.QString(u'mag') in reject_params:
-            self.ui.labelMagReject_3.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT')
+            self.ui.labelMagReject.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT')
         if QtCore.QString(u'grad') in reject_params:
-            self.ui.labelGradReject_3.setText('Grad: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'grad')] / 1e-12) + ' fT/cm')
+            self.ui.labelGradReject.setText('Grad: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'grad')] / 1e-12) + ' fT/cm')
         if QtCore.QString(u'eeg') in reject_params:
-            self.ui.labelEegReject_3.setText('EEG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eeg')] / 1e-6) + 'uV')
+            self.ui.labelEegReject.setText('EEG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eeg')] / 1e-6) + 'uV')
         if QtCore.QString(u'stim') in reject_params:
             self.ui.checkBoxStim.setChecked(True)
+            self.ui.labelStimReject.setText('Stim: Yes')
         if QtCore.QString(u'eog') in reject_params:
-            self.ui.labelEogReject_3.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
+            self.ui.labelEogReject.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
         
     def clear_parameters(self):
         self.ui.labelTmin.setText('Start time:')
         self.ui.labelTmax.setText('End time:')
-        self.ui.labelGradReject_3.setText('Grad:')   #setText('Grad: None')
-        self.ui.labelMagReject_3.setText('Mag:')   #setText('Mag: None')
-        self.ui.labelEegReject_3.setText('EEG:')   #setText('EEG: None')
-        self.ui.labelEogReject_3.setText('EOG')   #setText('EOG: None')
+        self.ui.labelGradReject.setText('Grad:')   #setText('Grad: None')
+        self.ui.labelMagReject.setText('Mag:')   #setText('Mag: None')
+        self.ui.labelEegReject.setText('EEG:')   #setText('EEG: None')
+        self.ui.labelStimReject.setText('Stim:')   #setText('EEG: None')
+        self.ui.labelEogReject.setText('EOG')   #setText('EOG: None')
         self.ui.textBrowserEvents.clear()   #setText('')
         

@@ -122,6 +122,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment_value_changed.connect\
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
+        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
         
     #Property definitions below
     @property
@@ -229,7 +230,7 @@ class MainWindow(QtGui.QMainWindow):
         for key, value in events.iteritems():
             events_string += 'Event ' + str(key) + ', ' + str(value) +\
             ' events\n'
-        self.ui.labelEvents.setText(events_string)
+        self.ui.textBrowserEvents.setText(events_string)
         
         
         
@@ -649,6 +650,7 @@ class MainWindow(QtGui.QMainWindow):
         Method for setting up the GUI.
         """        
         self.ui.checkBoxMaxFilterComputed.setChecked(False)
+        self.ui.checkBoxMaxFilterApplied.setChecked(False)
         self.ui.checkBoxECGComputed.setChecked(False)
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
@@ -683,14 +685,14 @@ class MainWindow(QtGui.QMainWindow):
         files = filter(os.path.isfile, glob.glob(path + '*sss*'))
         if len(files) > 0:
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
-        
+            self.ui.checkBoxMaxFilterApplied.setChecked(True)
         #TODO: applied/not applied label for MaxFilter
         
     def add_tabs(self):
         """
         Method for initializing the tabs.
         """
-        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Raw")
+        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Info")
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")
 

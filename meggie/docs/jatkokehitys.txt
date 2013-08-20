@@ -235,12 +235,12 @@
 TEHTY    \ working filen päivittyminen mainwindowin alareunaan, jos ei suorita mitään prosessia
 TEHTY    \ muutetaan steppien suoritus selkeämmiksi preprocessing tabissa (Tiina piirsi meille taululle esimerkin, joka voitaisiin toteuttaa)
 TEHTY    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/experiment info, eli textlabeleina
-    \ raw-tabin nimeksi esim. info
-    \ experiment info ja file info erikseen raw-tabille tai jopa oma tabi molemmille
+TEHTY    \ raw-tabin nimeksi esim. info
+TEHTY    \ experiment info ja file info erikseen raw-tabille tai jopa oma tabi molemmille
     \ preprocessing-tabille painike filtteröintiä varten
     \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
-    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
-TEHTY(puuttuu rejection-otsikko rejection parametrejä varten)    \ parametrilista epocheille
+TEHTY    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
+TEHTY    \ parametrilista epocheille
 TEHTY(modifiointi luo uudet epochit ja jättää vanhat)    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
 TEHTY    \ defaulttina mag ja grad epoch parametreissa valittuna
 TEHTY    \ event selection dialogiin lisätään siitä aukeavan epoch creation dialogin sisältö
