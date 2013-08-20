@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>944</width>
-         <height>721</height>
+         <width>942</width>
+         <height>726</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -866,6 +866,13 @@
                 </property>
                </widget>
               </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="pushButtonFilter">
+                <property name="text">
+                 <string>Filter</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
             <widget class="QWidget" name="tabEpoching">
@@ -1223,7 +1230,7 @@
      <x>0</x>
      <y>0</y>
      <width>964</width>
-     <height>29</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="defaultUp">

@@ -263,4 +263,4 @@ class Ui_DialogFilter(object):
         self.radioButtonBandpassFft.setText(_translate("DialogFilter", "fft", None))
         self.radioButtonBandpassIir.setText(_translate("DialogFilter", "iir", None))
 
-from mplWidget import MplWidget
+from mplwidget import MplWidget

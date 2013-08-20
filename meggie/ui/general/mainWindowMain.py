@@ -68,6 +68,7 @@ from spectrumDialogMain import SpectrumDialog
 from widgets.epochWidgetMain import EpochWidget
 from widgets.epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
+from filterDialogMain import FilterDialog
 import messageBox
 
 from experiment import Experiment
@@ -601,6 +602,15 @@ class MainWindow(QtGui.QMainWindow):
             customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
             plainText
             self.caller.average_channels(epochs, None, customChannels)
+            
+    def on_pushButtonFilter_clicked(self, checked=None):
+        """
+        Show the dialog for filtering.
+        """
+        if checked is None: return
+    
+        self.filterDialog = FilterDialog(self)
+        self.filterDialog.show()
     
     def populate_comboBoxLobes(self):
         """

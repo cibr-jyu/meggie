@@ -47,7 +47,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/epoching/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/general/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/preprocessing/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/visualization/")
-
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/filtering/")
 
 import mainWindowMain  
 
