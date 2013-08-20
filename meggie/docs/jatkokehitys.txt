@@ -239,7 +239,7 @@ TEHTY    \ raw-tabin nimeksi esim. info
 TEHTY    \ experiment info ja file info erikseen raw-tabille tai jopa oma tabi molemmille
     \ preprocessing-tabille painike filtteröintiä varten
     \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
-TEHTY(ei toiminnallisuutta lisätty vielä)    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
+TEHTY    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
 TEHTY    \ parametrilista epocheille
 TEHTY(modifiointi luo uudet epochit ja jättää vanhat)    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
 TEHTY    \ defaulttina mag ja grad epoch parametreissa valittuna

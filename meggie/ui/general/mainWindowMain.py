@@ -122,6 +122,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment_value_changed.connect\
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
+        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
         
     #Property definitions below
     @property
