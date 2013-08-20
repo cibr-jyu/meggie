@@ -128,7 +128,7 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui.labelTmin.clear()
         self.ui.labelTmax.clear()
         params = item.data(33).toPyObject()
-        
+        if params is None: return
         
         self.ui.labelGradReject.setText('Grad: None')
         self.ui.labelMagReject.setText('Mag: None')

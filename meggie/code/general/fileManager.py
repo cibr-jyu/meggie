@@ -73,21 +73,15 @@ class FileManager(QObject):
         """
         
         try:
+            os.remove(folder + files)
+            
+        except OSError as e:
             for file in files:
                 try:
                     os.remove(folder + file)
         
                 except OSError as e:
-                    print str(e)
                     return False
-        
-        except TypeError:
-            try:
-                os.remove(folder + file)
-        
-            except OSError as e:
-                print str(e)
-                return False
         
         return True
         
@@ -106,14 +100,25 @@ class FileManager(QObject):
                  
         Return a QListWidgetItem containing the epochs and their parameters.
         """
+        item = QtGui.QListWidgetItem(name)
         try:
-            epochs = mne.read_epochs(folder + name + '.fif')
+            epochs = mne.read_epochs(folder + name)
+            item.setData(32, epochs)
             
-        except Exception as e:
-            print 'Could not load epochs' + str(e)
-            return
+        except Exception:
+            try:
+                epochs = mne.read_epochs(folder + name + '.fif')
+                item.setData(32, epochs)
+            
+            except Exception as e:
+                print str(e)
+                return
         
-        parameters = self.unpickle(folder + name + '.param')
+        try:
+            parameters = self.unpickle(folder + name + '.param')
+            
+        except IOError:
+            return item
         #The events need to be converted back to QListWidgetItems.
         event_list = []
         event_dict = parameters['events']
@@ -124,11 +129,26 @@ class FileManager(QObject):
         
         parameters['events'] = event_list
         #Create and return the QListWidgetItem
-        item = QtGui.QListWidgetItem(name)
-        item.setData(32, epochs)
+
         item.setData(33, parameters)
         
         return item
+    
+    def load_epochs(self, fname):
+        """Load epochs from a folder.
+        
+        Keyword arguments:
+        fname -- the name of the fif-file containing epochs.
+        
+        return epochs in a QListWidgetItem 
+        """
+        split = os.path.split(fname)
+        folder = split[0] + '/'
+        name = os.path.splitext(split[1])[0]
+        if name == '': return
+        else:
+            item = self.load_epoch_item(folder, name)
+            return item        
     
     def open_raw(self, fname):
         """
@@ -186,6 +206,7 @@ class FileManager(QObject):
         
         #Then save the parameters using pickle.
         parameters = item.data(33).toPyObject()
+        if parameters is None: return
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
         parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
@@ -215,9 +236,6 @@ class FileManager(QObject):
         fpath -- the path to the pickled file.
         
         Return the unpickled object or None if unpickling failed.
+        Raise an IOError if unpickling fails.
         """
-        try:
-            return pickle.load( open(fpath, 'rb') )
-        
-        except IOError:
-            return None
+        return pickle.load( open(fpath, 'rb') )
