@@ -144,8 +144,12 @@ class MainWindow(QtGui.QMainWindow):
 
                 
         if self.fileManager.delete_file_at\
-        (self.experiment.epochs_directory, [str(item.text()) + '.fif',
-                                            str(item.text()) + '.param']):
+        (self.experiment.epochs_directory, str(item.text()) + '.fif'):
+        
+            if os.path.exists(self.experiment.epochs_directory +
+                              str(item.text()) + '.param'):
+                self.fileManager.delete_file_at\
+                (self.experiment.epochs_directory, str(item.text()) + '.param')
                     
             self.epochList.remove_item(item)
             return True
@@ -357,6 +361,24 @@ class MainWindow(QtGui.QMainWindow):
         
             self.epochList.addItem(item)
             self.epochList.setCurrentItem(item)
+            
+    def on_pushButtonLoadEpochs_clicked(self, checked=None):
+        """Load epochs from a folder.
+        
+        Epochs are copied to /experiment/epochs. If parameters are available,
+        they are saved as well.
+        """
+        if checked is None: return
+        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load epochs',
+                                                      self.experiment.
+                                                      epochs_directory))
+        if fname == '': return
+        if not os.path.isfile(fname): return
+        
+        item = self.fileManager.load_epochs(fname)
+        if item is None: return
+        
+        self.epochList.addItem(item)
                 
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
@@ -370,10 +392,18 @@ class MainWindow(QtGui.QMainWindow):
         connect(self.modifyEpochs)
         self.epochParameterDialog.show()
         
-    def on_pushButtonSaveEpochCollection_clicked(self, checked=None):
+    def on_pushButtonSaveEpochs_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
         """
-        pass
+        if checked is None: return
+        fname = str(QtGui.QFileDialog.getSaveFileName(self, 'Save epochs',
+                                                      self.experiment.
+                                                      epochs_directory))
+        
+        if fname == '': return
+        else: 
+            epochs = self.epochList.currentItem().data(32).toPyObject()
+            epochs.save(fname)
 
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -399,19 +429,6 @@ class MainWindow(QtGui.QMainWindow):
         toPyObject()
         evoked = self.caller.average(epochs)
         self.caller.draw_evoked_potentials(epochs)
-
-        """
-        #This code is for multiselection of epochs on mainwindows epochs list.
-        selectedEpochs = self.epochList.ui.listWidgetEpochs.selectedItems()
-        epochs = []
-        i = 0
-        # Average the selected epochs
-        for item in selectedEpochs:
-            epoch = item.data(32).toPyObject()
-            epochs.append(epoch)
-            #self.caller.average(epoch)
-            #self.caller.draw_evoked_potentials(epoch)
-        """
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
@@ -428,18 +445,26 @@ class MainWindow(QtGui.QMainWindow):
             ('No epochs selected.')
             self.messageBox.show()
             
-        else:
-             item_str = item.text()
-             reply = QtGui.QMessageBox.question(self, 'delete epochs',
-                                               'Permanently remove '\
-                                               + item_str + '.fif and '\
-                                               + item_str + '.param?',
-                                               QtGui.QMessageBox.Yes |
+        item_str = self.epochList.currentItem().text()
+            
+        root = self.experiment.epochs_directory
+        message = 'Permanently remove '
+        if os.path.exists(root + item_str + '.fif'):
+            message += item_str + '.fif'
+        
+            if os.path.exists(root + item_str + '.param'):
+                message += ' and ' + item_str + '.param?'
+                
+            else:
+                message += '?'
+            
+            reply = QtGui.QMessageBox.question(self, 'delete epochs',
+                                               message, QtGui.QMessageBox.Yes |
                                                QtGui.QMessageBox.No,
                                                QtGui.QMessageBox.No)
             
-             if reply == QtGui.QMessageBox.Yes:
-                 self.delete_epochs(self.epochList.currentItem())
+            if reply == QtGui.QMessageBox.Yes:
+                self.delete_epochs(self.epochList.currentItem())
             
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
