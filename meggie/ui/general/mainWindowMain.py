@@ -104,9 +104,14 @@ class MainWindow(QtGui.QMainWindow):
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
         
+        # Creates a label on status bar to show current working file message.
+        self.statusLabel = QtGui.QLabel()
+        self.ui.statusbar.addWidget(self.statusLabel)
+        
         # Creates a listwidget for epoch analysis.  
         self.epochList = EpochWidget(self)
         self.epochList.hide()
+        
         
         # Creates a listwidget for parameters of chosen epochs on epochList.
         self.epochParamsList = EpochParamsWidget(self)
@@ -124,6 +129,7 @@ class MainWindow(QtGui.QMainWindow):
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
+        
         
     #Property definitions below
     @property
@@ -207,9 +213,10 @@ class MainWindow(QtGui.QMainWindow):
             
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
-            self.ui.statusbar.showMessage("Current working file: " +
+            self.statusLabel.setText("Current working file: " +
                                           self.experiment.working_file.\
                                           info.get('filename'))
+            
             
         else:
             self.messageBox = messageBox.AppForm()
@@ -697,6 +704,12 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
         #TODO: applied/not applied label for MaxFilter
+        
+        # QLabel created on __init__ can't take normal string objects.
+        self.statusLabel.setText(QtCore.QString("Current working file: " +
+                                          self.experiment.working_file.\
+                                          info.get('filename')))
+        
         
     def add_tabs(self):
         """

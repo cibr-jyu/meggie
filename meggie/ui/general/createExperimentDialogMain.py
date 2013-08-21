@@ -159,10 +159,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                                      self.workspace.working_directory)
             self.experiment.working_file = (self.experiment.raw_data.
                                             info.get('filename'))
-            self.parent.ui.statusbar.showMessage("Current working file: " + 
-                                             (self.experiment.working_file.
-                                              info.get('filename')))
-      
+            
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
