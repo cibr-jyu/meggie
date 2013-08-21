@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epochParamsWidget.ui'
 #
-# Created: Tue Aug 20 10:12:56 2013
+# Created: Wed Aug 21 11:03:00 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(420, 292)
+        Form.resize(419, 328)
         self.groupBox = QtGui.QGroupBox(Form)
-        self.groupBox.setGeometry(QtCore.QRect(9, 9, 421, 281))
+        self.groupBox.setGeometry(QtCore.QRect(10, 0, 401, 321))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.labelEvents = QtGui.QLabel(self.groupBox)
         self.labelEvents.setGeometry(QtCore.QRect(10, 60, 61, 21))
@@ -39,10 +39,10 @@ class Ui_Form(object):
         self.textBrowserEvents.setGeometry(QtCore.QRect(70, 70, 331, 91))
         self.textBrowserEvents.setObjectName(_fromUtf8("textBrowserEvents"))
         self.groupBoxRejections = QtGui.QGroupBox(self.groupBox)
-        self.groupBoxRejections.setGeometry(QtCore.QRect(10, 170, 411, 111))
+        self.groupBoxRejections.setGeometry(QtCore.QRect(10, 160, 411, 121))
         self.groupBoxRejections.setObjectName(_fromUtf8("groupBoxRejections"))
         self.verticalLayoutWidget = QtGui.QWidget(self.groupBoxRejections)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 30, 381, 81))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 30, 381, 83))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
@@ -83,6 +83,12 @@ class Ui_Form(object):
         self.labelTmax = QtGui.QLabel(self.layoutWidget)
         self.labelTmax.setObjectName(_fromUtf8("labelTmax"))
         self.horizontalLayout.addWidget(self.labelTmax)
+        self.labelWorkingFile = QtGui.QLabel(self.groupBox)
+        self.labelWorkingFile.setGeometry(QtCore.QRect(10, 280, 91, 21))
+        self.labelWorkingFile.setObjectName(_fromUtf8("labelWorkingFile"))
+        self.textBrowserWorkingFile = QtGui.QTextBrowser(self.groupBox)
+        self.textBrowserWorkingFile.setGeometry(QtCore.QRect(80, 280, 321, 31))
+        self.textBrowserWorkingFile.setObjectName(_fromUtf8("textBrowserWorkingFile"))
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -99,4 +105,5 @@ class Ui_Form(object):
         self.labelStimReject.setText(_translate("Form", "Stim:", None))
         self.labelTmin.setText(_translate("Form", "Start time:", None))
         self.labelTmax.setText(_translate("Form", "End time:", None))
+        self.labelWorkingFile.setText(_translate("Form", "Filename:", None))
 

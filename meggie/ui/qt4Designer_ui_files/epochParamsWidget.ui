@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>292</height>
+    <width>419</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>9</y>
-     <width>421</width>
-     <height>281</height>
+     <x>10</x>
+     <y>0</y>
+     <width>401</width>
+     <height>321</height>
     </rect>
    </property>
    <property name="title">
@@ -58,9 +58,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>160</y>
       <width>411</width>
-      <height>111</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="title">
@@ -72,7 +72,7 @@
        <x>10</x>
        <y>30</y>
        <width>381</width>
-       <height>81</height>
+       <height>83</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -125,8 +125,6 @@
       </item>
      </layout>
     </widget>
-    <zorder>verticalLayoutWidget</zorder>
-    <zorder>verticalLayoutWidget</zorder>
    </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
@@ -153,6 +151,29 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="labelWorkingFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>280</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Filename:</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowserWorkingFile">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>280</y>
+      <width>321</width>
+      <height>31</height>
+     </rect>
+    </property>
    </widget>
   </widget>
  </widget>

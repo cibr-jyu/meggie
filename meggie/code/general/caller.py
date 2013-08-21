@@ -484,7 +484,8 @@ class Caller(object):
             items.append(key)
         fontP = FontProperties()
         fontP.set_size(12)
-        l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4, prop=fontP)
+        l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
+                       prop=fontP)
         l.draggable(True)
         
         prefix, suffix = os.path.splitext(self.parent.experiment.\
