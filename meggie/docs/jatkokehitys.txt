@@ -2,8 +2,8 @@
 
 - Käytä muokatessa tekstieditoria, jossa päällä asetus "insert tabs as spaces" ja "tab width = 4"!
 
-- Jos saat jonkin bugin korjattua, laitan sen eteen iso V tyyliin:
-    "\ V Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen"
+- Jos saat jonkin bugin korjattua, laitan sen eteen iso TEHTY tyyliin:
+    "\ TEHTY Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen"
     
 - Jos jokin bugi on työn alla, laita sen eteen iso A samaan tyyliin
 
@@ -148,6 +148,9 @@
         \ Experimentin sulkeminen manuaalisesti tai automaattisesti uutta experimenttiä avattaessa
         ---> UI-nollaus yms.
 
+    - Matplotlib-ikkunoiden sekakäyttöongelmien ratkaiseminen
+        \ Kun käppyröitä piirrellessä saattaa jäädä puskuriin grafiikkaa, joka sitten toista käppyrää piirrettäessä tulee sieltä saman tien esiin
+     
 ** Muita isompia projekteja **
     - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
         \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia

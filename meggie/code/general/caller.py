@@ -61,6 +61,7 @@ import csv
 
 import numpy as np
 import pylab as pl
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
