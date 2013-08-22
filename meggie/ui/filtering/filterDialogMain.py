@@ -41,7 +41,12 @@ class FilterDialog(QtGui.QDialog):
         
         # Give parameters to plot() if you want to preview only the first 10s
         # or so.
-        previewFigure = self.parent.experiment.working_file.plot(show=False)
+        previewFigure = self.parent.experiment.working_file.plot(show=False, n_channels=10)
         
-        self.ui.widgetMpl.canvas.figure = previewFigure 
+        self.ui.widgetMpl.canvas.figure = previewFigure
         self.ui.widgetMpl.canvas.draw()
+        
+        # TODO This should scale the preview info to fit the preview frame 
+        self.ui.widgetMpl.canvas.updateGeometry()
+        previewFigure.clear()
+        
