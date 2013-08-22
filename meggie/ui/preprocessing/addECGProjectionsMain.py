@@ -90,9 +90,6 @@ class AddECGProjections(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
-        self.parent.ui.statusbar.\
-        showMessage("Current working file: " + 
-                    self.parent.experiment.working_file.info.get('filename'))
         self.parent._initialize_ui()
         self.close()
         

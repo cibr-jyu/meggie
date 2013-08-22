@@ -52,72 +52,13 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         
-    def set_parameters(self, item):
-        """
-        Sets the parameters of the currently chosen epochs on epochWidget.
-        Asks item for epoch parameters.
-        
-        Keyword arguments:
-        item = current item on the epochs widget.
-        """
-        epochs = item.data(32).toPyObject()
-        parameters = ''
-        
-        # Dictionary stores numbers of different events.
-        event_counts = dict()
-        
-        # Adds items to dictionary for corresponding events.
-        for value in epochs.event_id.values():
-            event_counts[str(value)] = 0
-        
-        # Adds number of events to corresponding event.
-        for event in epochs.events:
-            for key in event_counts.keys():
-                if event[2] == int(key):
-                    event_counts[key] += 1
-        
-        # Adds event names, ids and event counts on mainWindows parameters
-        # list.
-        for key,value in epochs.event_id.items():
-            parameters += key + ': ID ' + str(value) + ', ' + \
-            str(event_counts[str(value)]) + ' events\n'
-        
-        # Adds rejection parameters.
-        for key,value in epochs.reject.items():
-            #parameters += key + ' = ' + str(value) + '\n'
-            if key == 'mag':
-                parameters += key + ': ' + str(value / 1e-12) + ' fT' + '\n'
-            if key == 'grad':
-                parameters += key + ': ' + str(value / 1e-12) + ' fT/cm' + '\n'
-            if key == 'eeg':
-                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
-            if key == 'eog':
-                parameters += key + ': ' + str(value / 1e-6) + 'uV' + '\n'
-        
-        parameters += 'Start time: ' + str(epochs.tmin) + ' s\n'
-        parameters += 'End time: ' + str(epochs.tmax) + ' s\n'
-        
-        """
-        # Dictionary stores all parameter data.
-        for key,value in epochs.reject.items():
-            if key == 'mag':
-                event_counts[key] = value / 1e-12    # str(value / 1e-12)?
-            if key == 'grad':
-                event_counts[key] = value / 1e-12
-            if key == 'eeg':
-                event_counts[key] = value / 1e-6
-            if key == 'eog':
-                event_counts[key] = value / 1e-6
-                
-        return event_counts
-        """
-        return parameters
+
         
         
         
     def show_parameters(self, item):
         """
-        Sets parameters for the currently chosen epochs.
+        Sets parameters from the currently chosen epochs.
         
         Keyword arguments:
         item = epochWidget item that is currently chosen,
@@ -127,18 +68,15 @@ class EpochParamsWidget(QtGui.QWidget):
         # Set default/empty values for epoch parameters.
         self.ui.labelTmin.clear()
         self.ui.labelTmax.clear()
-        params = item.data(33).toPyObject()
-        if params is None: return
-        
         self.ui.labelGradReject.setText('Grad: None')
         self.ui.labelMagReject.setText('Mag: None')
         self.ui.labelEegReject.setText('EEG: None')
         self.ui.labelStimReject.setText('Stim: None')
         self.ui.labelEogReject.setText('EOG: None')
         self.ui.textBrowserEvents.setText('')
-        
-        # Set parameters from currently chosen epochs.
-        
+
+        params = item.data(33).toPyObject()
+        if params is None: return
        
         epochs = item.data(32).toPyObject()
         
@@ -155,11 +93,6 @@ class EpochParamsWidget(QtGui.QWidget):
                 if event[2] == int(key):
                     event_counts[key] += 1
         
-        """
-        categories = 'Events: '
-        for key in params[QtCore.QString(u'category')]:
-            categories += key + ' '
-        """
         categories = ''
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
@@ -170,6 +103,27 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui.textBrowserEvents.setText(categories)
         self.ui.labelTmin.setText('Start time: ' + str(params[QtCore.QString('tmin')]) + ' s')
         self.ui.labelTmax.setText('End time: ' + str(params[QtCore.QString('tmax')]) + ' s')
+
+        # Creates dictionary of strings instead of qstrings for rejections.
+        params_rejections_str = dict((str(key), value) for
+                          key, value in params[QtCore.QString(u'reject')].iteritems())
+        if 'mag' in params_rejections_str:
+            self.ui.labelMagReject.setText('Mag: ' + str(params_rejections_str['mag'] / 1e-12) + ' fT')
+        if 'grad' in params_rejections_str:
+            self.ui.labelGradReject.setText('Grad: ' + str(params_rejections_str['grad'] / 1e-12) + ' fT/cm')
+        if 'eeg' in params_rejections_str:
+            self.ui.labelEegReject.setText('EEG: ' + str(params_rejections_str['eeg'] / 1e-6) + 'uV')
+        if 'stim' in params_rejections_str:
+            #self.ui.checkBoxStim.setChecked(True)
+            self.ui.labelStimReject.setText('Stim: Yes')
+        if 'eog' in params_rejections_str:
+            self.ui.labelEogReject.setText('EOG: ' + str(params_rejections_str['eog'] / 1e-6) + 'uV')    
+        
+        self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
+        
+        
+            
+        """
         reject_params = params[QtCore.QString(u'reject')].keys()
         if QtCore.QString(u'mag') in reject_params:
             self.ui.labelMagReject.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT')
@@ -182,6 +136,7 @@ class EpochParamsWidget(QtGui.QWidget):
             self.ui.labelStimReject.setText('Stim: Yes')
         if QtCore.QString(u'eog') in reject_params:
             self.ui.labelEogReject.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
+        """
         
     def clear_parameters(self):
         self.ui.labelTmin.setText('Start time:')
@@ -192,4 +147,4 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui.labelStimReject.setText('Stim:')   #setText('EEG: None')
         self.ui.labelEogReject.setText('EOG')   #setText('EOG: None')
         self.ui.textBrowserEvents.clear()   #setText('')
-        
+        self.ui.textBrowserWorkingFile.clear()
