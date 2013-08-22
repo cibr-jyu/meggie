@@ -391,25 +391,6 @@ class Caller(object):
         Saving an evoked dataset. Can save only one dataset at a time.
         """
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
-        
-        
-        """
-        #This code is for multiselection on mainwindows epochs list.
-        #Method receives list of epochs objects instead of one epochs object.
-        #TODO: Needs to create new Epoch object to include all chosen events,
-        #otherwise can't handle averaging of the chosen epochs.
-        self.category = dict()
-        
-        for epoch in epochs:
-            if epoch.epochs is None:
-                raise Exception('No epochs found.')
-            for key in epoch.epochs.event_id.keys():
-                self.category[key] = epoch.epochs.event_id.get(key)
-        epochs_to_average = mne.Epochs(raw, events, self.category,
-                                     tmin, tmax, picks=picks, reject=reject)
-        self.evokeds = [epochs_to_average.epochs[name].average() for name in self.\
-                        category.keys()]
-        """
                 
     def draw_evoked_potentials(self, epochs):
         """
@@ -434,7 +415,7 @@ class Caller(object):
         
         
         
-        colors = ['y','m','c','r','g','b','w','k']
+        #colors = ['y','m','c','r','g','b','w','k']
         colors_events = []
         i = 0
         for value in self.category.values():
@@ -460,15 +441,8 @@ class Caller(object):
                 colors_events.append('y')
                 #i += 1
             if value == 32:
-                colors_events.append('k')
+                colors_events.append('#CD7F32')
                 #i += 1
-        
-        """
-        # TODO: need plots with labels to create a legend.
-        x = np.arange(1,5)
-        pl.plot(x, x*1.5, label='')
-        """
-        
         
         self.mi = MeasurementInfo(self.parent.experiment.raw_data)
         
@@ -486,7 +460,13 @@ class Caller(object):
         fontP.set_size(12)
         l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
                        prop=fontP)
-        l.draggable(True)
+        
+        l.set_frame_on(False)
+        # Sets the color of the event names text as white instead of black.
+        for text in l.get_texts():
+            text.set_color('w')
+        # TODO: draggable doesn't work with l.set_frame_on(False)
+        # l.draggable(True)
         
         prefix, suffix = os.path.splitext(self.parent.experiment.\
                                           raw_data.info.get('filename'))
@@ -495,18 +475,7 @@ class Caller(object):
             pl.show(block=False)
             
         fig.canvas.mpl_connect('button_press_event', onclick)
-      
-        """
-        #This code is for multiselection on maindows epochs list.
-        event_names = ''
-        for id in self.category:
-            event_names += str(id.keys()) + ' '
-        fig = []
-        i = 0
-        for evoked in self.evokeds:
-            fig[i] = plot_topo(evoked, layout, title=str(evoked.keys()))    
-        """
-      
+        
     def average_channels(self, epochs, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet

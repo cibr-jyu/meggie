@@ -103,28 +103,28 @@ class EpochParamsWidget(QtGui.QWidget):
         self.ui.textBrowserEvents.setText(categories)
         self.ui.labelTmin.setText('Start time: ' + str(params[QtCore.QString('tmin')]) + ' s')
         self.ui.labelTmax.setText('End time: ' + str(params[QtCore.QString('tmax')]) + ' s')
-        reject_params = params[QtCore.QString(u'reject')].keys()
-        
-        
-        
-        """
-        #TODO: create dictionary of strings instead of qstrings, following
-        if 'mag' in reject_params_str:
-            self.ui.labelMagReject.setText('Mag: ' + str(reject_params_str('mag') / 1e-12) + ' fT')
-        if 'grad' in reject_params_str:
-            self.ui.labelGradReject.setText('Grad: ' + str(reject_params_str('grad') / 1e-12) + ' fT/cm')
-        if 'eeg' in reject_params_str:
-            self.ui.labelEegReject.setText('EEG: ' + str(reject_params_str('eeg') / 1e-6) + 'uV')
-        if 'stim' in reject_params_str:
-            self.ui.checkBoxStim.setChecked(True)
+
+        # Creates dictionary of strings instead of qstrings for rejections.
+        params_rejections_str = dict((str(key), value) for
+                          key, value in params[QtCore.QString(u'reject')].iteritems())
+        if 'mag' in params_rejections_str:
+            self.ui.labelMagReject.setText('Mag: ' + str(params_rejections_str['mag'] / 1e-12) + ' fT')
+        if 'grad' in params_rejections_str:
+            self.ui.labelGradReject.setText('Grad: ' + str(params_rejections_str['grad'] / 1e-12) + ' fT/cm')
+        if 'eeg' in params_rejections_str:
+            self.ui.labelEegReject.setText('EEG: ' + str(params_rejections_str['eeg'] / 1e-6) + 'uV')
+        if 'stim' in params_rejections_str:
+            #self.ui.checkBoxStim.setChecked(True)
             self.ui.labelStimReject.setText('Stim: Yes')
-        if 'eog' in reject_params_str:
-            self.ui.labelEogReject.setText('EOG: ' + str(reject_params_str('eog') / 1e-6) + 'uV')    
-        """
+        if 'eog' in params_rejections_str:
+            self.ui.labelEogReject.setText('EOG: ' + str(params_rejections_str['eog'] / 1e-6) + 'uV')    
+        
+        self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
         
         
             
-        
+        """
+        reject_params = params[QtCore.QString(u'reject')].keys()
         if QtCore.QString(u'mag') in reject_params:
             self.ui.labelMagReject.setText('Mag: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'mag')] / 1e-12) + ' fT')
         if QtCore.QString(u'grad') in reject_params:
@@ -136,8 +136,7 @@ class EpochParamsWidget(QtGui.QWidget):
             self.ui.labelStimReject.setText('Stim: Yes')
         if QtCore.QString(u'eog') in reject_params:
             self.ui.labelEogReject.setText('EOG: ' + str(params[QtCore.QString(u'reject')][QtCore.QString(u'eog')] / 1e-6) + 'uV')    
-        self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
-        
+        """
         
     def clear_parameters(self):
         self.ui.labelTmin.setText('Start time:')
