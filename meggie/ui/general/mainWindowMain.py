@@ -69,6 +69,7 @@ from widgets.epochWidgetMain import EpochWidget
 from widgets.epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
+from consoleMain import Console
 import messageBox
 
 from experiment import Experiment
@@ -129,6 +130,11 @@ class MainWindow(QtGui.QMainWindow):
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
+        
+        # For output logging.
+        self.console = Console()
+        #self.console.show()
+        
         
         
     #Property definitions below
@@ -732,10 +738,17 @@ class MainWindow(QtGui.QMainWindow):
         
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
-
+        
+    def write(self, output):
+        self.console.show_log(output)
+        
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
+    
+    # sys.stdout redirects the output to any object that implements
+    # a write(str) method, in this case the write method of MainWindow.
+    #sys.stdout=sys.stderr=window
     window.show()
     
     sys.exit(app.exec_())
