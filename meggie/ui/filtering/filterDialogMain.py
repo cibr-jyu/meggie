@@ -1,3 +1,4 @@
+# coding: latin1
 '''
 Created on Aug 20, 2013
 
@@ -50,6 +51,22 @@ class FilterDialog(QtGui.QDialog):
         # experiment._working_file.data on se, joka pitäisi ottaa plotattavaksi
         # 
         
+        """
+        Pitäisi:
+        1. Ottaa working filen data
+        2. Lukea filteriparametrit
+        3. Soveltaa filteröintiä working filen dataan
+        4. Laittaa filteröity data previewfileen
+        5. Plotata previewfile 
+        6. Jos sitten painetaan OK-nappia, tehdä tuosta previewfilestä working file
+        (esim. nimellä "entinenworkingfilennimi"+ filtered.fif
+        7. Cancel-napin tapauksessa hävittää se previewfile 
+        8. Jos taas painaa OK:ta ennen preview-nappia, pitää vain filteröidä
+        working fileä suoraan (tähän on erillinen metodi)
+        
+        """
+        workingfiledata = self.parent.experiment.working_file._raw_data
+        
         
         # Give parameters to plot() if you want to preview only the first 10s
         # or so.
@@ -64,9 +81,37 @@ class FilterDialog(QtGui.QDialog):
         # but doesn't work
         self.ui.widgetMpl.canvas.updateGeometry()
         
+        # TODO the preview figure should accept clicks, because of scrollbars
+        # etc.
         def onclick(event):
             fig.canvas.mpl_connect('button_press_event', onclick)
         
+        
+    def get_filter_parameters(self):
+        
+        checkedButton = QAbstractButton(self.ui.buttonGroupFilterMethods.checkedButton()) 
+        checkedButtonName = checkedButton.objectName()
+        
+        filterType = self.get_filter_type_string(checkedbuttonName)
+        
+        dictionary= { 'filterType' : filterType }
+        
+        if checkedButtonName == 'radioButtonLowpass':
+            dictionary = { 'filterType' : 'lowpass' }
+            
+            return dictionary
+        
+        if checkedButtonName == 'radioButtonHighpass':
+            dictionary = { 'filterType' : 'highpass' }
+            
+            return dictionary
+            
+        if checkedButtonName == 'radioButtonBandpass':
+            dictionary = { 'filterType' : 'bandpass'  }
+        
+            return dictionary
+    
+    
     def accept(self):
         """
         Collects the parameters and passes them
@@ -77,8 +122,7 @@ class FilterDialog(QtGui.QDialog):
         
         
         
-        if self.ui.checkBoxLowpass.isChecked() == True:
-            dictionary = {  }
+        
         
         self.close()
     

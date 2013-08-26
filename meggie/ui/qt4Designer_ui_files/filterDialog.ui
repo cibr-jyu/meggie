@@ -82,17 +82,10 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxLowpass">
-           <property name="text">
-            <string>Lowpass filter</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QFrame" name="frame">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -163,6 +156,19 @@
            </layout>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="radioButtonLowpass">
+           <property name="text">
+            <string>Lowpass filter</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupFilterTypes</string>
+           </attribute>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -188,13 +194,6 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxHighpass">
-           <property name="text">
-            <string>Highpass filter</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QFrame" name="frame_2">
            <property name="enabled">
@@ -263,6 +262,16 @@
            </layout>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="radioButtonHighpass">
+           <property name="text">
+            <string>Highpass filter</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupFilterTypes</string>
+           </attribute>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -282,13 +291,6 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxBandpass">
-           <property name="text">
-            <string>bandpass</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QFrame" name="frame_3">
            <property name="enabled">
@@ -385,6 +387,16 @@
            </layout>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="radioButtonBandpass">
+           <property name="text">
+            <string>Bandpass filter</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">buttonGroupFilterTypes</string>
+           </attribute>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -436,55 +448,56 @@
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxLowpass</sender>
+   <sender>radioButtonLowpass</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>143</x>
-     <y>40</y>
+     <x>144</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>198</x>
-     <y>90</y>
+     <x>153</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxHighpass</sender>
+   <sender>radioButtonHighpass</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_2</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>106</x>
-     <y>311</y>
+     <x>201</x>
+     <y>313</y>
     </hint>
     <hint type="destinationlabel">
-     <x>194</x>
-     <y>343</y>
+     <x>200</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxBandpass</sender>
+   <sender>radioButtonBandpass</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>91</x>
-     <y>576</y>
+     <x>233</x>
+     <y>580</y>
     </hint>
     <hint type="destinationlabel">
-     <x>193</x>
-     <y>601</y>
+     <x>230</x>
+     <y>595</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroupFilterMethods"/>
+  <buttongroup name="buttonGroupFilterTypes"/>
  </buttongroups>
 </ui>
