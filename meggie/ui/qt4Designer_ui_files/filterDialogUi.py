@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'filterDialog.ui'
 #
-# Created: Thu Aug  8 15:06:20 2013
+# Created: Mon Aug 26 16:20:36 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,10 +82,10 @@ class Ui_DialogFilter(object):
         self.labelLowpassCutoff = QtGui.QLabel(self.frame)
         self.labelLowpassCutoff.setObjectName(_fromUtf8("labelLowpassCutoff"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.labelLowpassCutoff)
-        self.doubleSpinBox = QtGui.QDoubleSpinBox(self.frame)
-        self.doubleSpinBox.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.doubleSpinBox.setObjectName(_fromUtf8("doubleSpinBox"))
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBox)
+        self.doubleSpinBoxLowpassCutoff = QtGui.QDoubleSpinBox(self.frame)
+        self.doubleSpinBoxLowpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxLowpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxLowpassCutoff"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxLowpassCutoff)
         self.labelLowpassTransitionWidth = QtGui.QLabel(self.frame)
         self.labelLowpassTransitionWidth.setObjectName(_fromUtf8("labelLowpassTransitionWidth"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelLowpassTransitionWidth)
@@ -140,10 +140,10 @@ class Ui_DialogFilter(object):
         self.labelHighpassCutoff = QtGui.QLabel(self.frame_2)
         self.labelHighpassCutoff.setObjectName(_fromUtf8("labelHighpassCutoff"))
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.labelHighpassCutoff)
-        self.doubleSpinBox_2 = QtGui.QDoubleSpinBox(self.frame_2)
-        self.doubleSpinBox_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.doubleSpinBox_2.setObjectName(_fromUtf8("doubleSpinBox_2"))
-        self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBox_2)
+        self.doubleSpinBoxHighpassCutoff = QtGui.QDoubleSpinBox(self.frame_2)
+        self.doubleSpinBoxHighpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxHighpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxHighpassCutoff"))
+        self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxHighpassCutoff)
         self.labelHighpassTransitionWidth = QtGui.QLabel(self.frame_2)
         self.labelHighpassTransitionWidth.setObjectName(_fromUtf8("labelHighpassTransitionWidth"))
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelHighpassTransitionWidth)
@@ -189,10 +189,10 @@ class Ui_DialogFilter(object):
         self.labelBandpassCutoffLow = QtGui.QLabel(self.frame_3)
         self.labelBandpassCutoffLow.setObjectName(_fromUtf8("labelBandpassCutoffLow"))
         self.formLayout_3.setWidget(0, QtGui.QFormLayout.LabelRole, self.labelBandpassCutoffLow)
-        self.doubleSpinBoxBandCutoff = QtGui.QDoubleSpinBox(self.frame_3)
-        self.doubleSpinBoxBandCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.doubleSpinBoxBandCutoff.setObjectName(_fromUtf8("doubleSpinBoxBandCutoff"))
-        self.formLayout_3.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxBandCutoff)
+        self.doubleSpinBoxBandLowpassCutoff = QtGui.QDoubleSpinBox(self.frame_3)
+        self.doubleSpinBoxBandLowpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.doubleSpinBoxBandLowpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxBandLowpassCutoff"))
+        self.formLayout_3.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxBandLowpassCutoff)
         self.labelBandpassTransitionWidthLow = QtGui.QLabel(self.frame_3)
         self.labelBandpassTransitionWidthLow.setObjectName(_fromUtf8("labelBandpassTransitionWidthLow"))
         self.formLayout_3.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelBandpassTransitionWidthLow)

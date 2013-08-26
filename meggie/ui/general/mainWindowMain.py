@@ -648,7 +648,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
     
         self.filterDialog = FilterDialog(self)
-        self.filterDialog.show()
+        self.filterDialog.exec_()
     
     def populate_comboBoxLobes(self):
         """
