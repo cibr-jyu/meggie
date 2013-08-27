@@ -132,7 +132,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
         
         # For output logging.
-        self.console = Console()
+        #self.console = Console()
         #self.console.show()
         
         
@@ -424,6 +424,11 @@ class MainWindow(QtGui.QMainWindow):
         else: 
             epochs = self.epochList.currentItem().data(32).toPyObject()
             epochs.save(fname)
+            
+        #Also copy the related csv-file to the chosen folder
+        self.fileManager.copy(self.experiment.epochs_directory +
+                              str(self.epochList.currentItem().text()) +
+                              '.csv', fname + '.csv')
 
     def on_actionAbout_triggered(self, checked=None):
         """
