@@ -37,6 +37,7 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
+from copy import deepcopy
 from sets import Set
 
 import mne
@@ -707,6 +708,38 @@ class Caller(object):
         pl.ylabel('Magnitude / dB')
         pl.xlabel('Hz')
         pl.show()
+                            
+    def filter(self, dic, commit=False):
+        """
+        Filters the raw file in place according to parameters in paramDict.
+        Depending on the parameters, the filter is lowpass, highpass or
+        bandpass filter.
+        
+        Keyword arguments:
+        dic            -- Dictionary with filtering parameters
+        commit         -- Boolean. If True, commits the filtering to the actual
+                          working file; if False, returns a separate filtered
+                          file for preview purposes.
+        Returns a deepcopied instance of working file, if commit == False.
+        """
+        
+        raw_in = dic.get('i')
+        l_freq = dic.get('l_freq')
+        l_trans = dic.get('l_trans_bandwidth')
+        h_freq = dic.get('h_freq')
+        h_trans = dic.get('h_trans_bandwidth')
+        method = dic.get('method')
+        
+        if commit == True:
+            raw_in.filter(l_freq, h_freq, None, None, l_trans, h_trans, 2, 
+                        method, None, None)
+        else:
+            rawToPreview = deepcopy(raw_in)
+            return rawToPreview.filter(l_freq, h_freq, None, None, l_trans,
+                                       h_trans, 2, method, None, None)
+        
+        
+        
                             
     def update_experiment_working_file(self, fname):
         """

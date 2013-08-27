@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
+    <width>848</width>
     <height>865</height>
    </rect>
   </property>
@@ -116,7 +116,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxTransBandwifth">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxLowpassTransBandwidth">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -137,7 +137,7 @@
                  <string>fft</string>
                 </property>
                 <attribute name="buttonGroup">
-                 <string notr="true">buttonGroupFilterMethods</string>
+                 <string notr="true">buttonGroupLowpassMethod</string>
                 </attribute>
                </widget>
               </item>
@@ -147,7 +147,7 @@
                  <string>iir</string>
                 </property>
                 <attribute name="buttonGroup">
-                 <string notr="true">buttonGroupFilterMethods</string>
+                 <string notr="true">buttonGroupLowpassMethod</string>
                 </attribute>
                </widget>
               </item>
@@ -228,7 +228,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxTransBandwifth_2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassTransBandwidth">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -248,6 +248,9 @@
                 <property name="text">
                  <string>fft</string>
                 </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroupHighpassMethod</string>
+                </attribute>
                </widget>
               </item>
               <item>
@@ -255,6 +258,9 @@
                 <property name="text">
                  <string>iir</string>
                 </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroupHighpassMethod</string>
+                </attribute>
                </widget>
               </item>
              </layout>
@@ -325,7 +331,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandTransBandwidthHigh_2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandTransBandwidthLow">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -373,6 +379,9 @@
                 <property name="text">
                  <string>fft</string>
                 </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroupBandpassMethod</string>
+                </attribute>
                </widget>
               </item>
               <item>
@@ -380,6 +389,9 @@
                 <property name="text">
                  <string>iir</string>
                 </property>
+                <attribute name="buttonGroup">
+                 <string notr="true">buttonGroupBandpassMethod</string>
+                </attribute>
                </widget>
               </item>
              </layout>
@@ -497,7 +509,9 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroupFilterMethods"/>
   <buttongroup name="buttonGroupFilterTypes"/>
+  <buttongroup name="buttonGroupLowpassMethod"/>
+  <buttongroup name="buttonGroupHighpassMethod"/>
+  <buttongroup name="buttonGroupBandpassMethod"/>
  </buttongroups>
 </ui>

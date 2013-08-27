@@ -29,6 +29,7 @@ class FilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
+        self.previewFile = None
         self.previewFigure = None
         
     def on_pushButtonPreview_clicked(self, checked=None):
@@ -47,9 +48,7 @@ class FilterDialog(QtGui.QDialog):
         # and save memory. 
         if self.previewFigure != None:
             plt.close(self.previewFigure)
-        
-        # experiment._working_file.data on se, joka pitäisi ottaa plotattavaksi
-        # 
+   
         
         """
         Pitäisi:
@@ -63,15 +62,16 @@ class FilterDialog(QtGui.QDialog):
         7. Cancel-napin tapauksessa hävittää se previewfile 
         8. Jos taas painaa OK:ta ennen preview-nappia, pitää vain filteröidä
         working fileä suoraan (tähän on erillinen metodi)
-        
         """
-        workingfiledata = self.parent.experiment.working_file._raw_data
         
+        # Plot the filtered channels with mne.fiff.raw.plot (which is based
+        # on pylab, therefore needing manual cleaning of pyplot state
+        # environment.
         
-        # Give parameters to plot() if you want to preview only the first 10s
-        # or so.
-        self.previewFigure = self.parent.experiment.working_file.plot(show=False,
-                                                                 n_channels=10)
+        filterParameterDictionary = self.get_filter_parameters()
+        self.previewFile = caller.filter(filterParameterDictionary, False)
+        
+        self.previewFigure = self.previewFile.plot(show=False, n_channels=10)
         
         #previewFigure.set_canvas(self.ui.widgetMpl.canvas)
         self.ui.widgetMpl.canvas.figure = self.previewFigure
@@ -88,29 +88,46 @@ class FilterDialog(QtGui.QDialog):
         
         
     def get_filter_parameters(self):
-        
-        checkedButton = QAbstractButton(self.ui.buttonGroupFilterMethods.checkedButton()) 
+        """
+        Gets the filtering parameters from the UI fields. Uses default
+        working file as the filterin target file.
+        """
+        checkedButton = self.ui.buttonGroupFilterTypes.checkedButton() 
         checkedButtonName = checkedButton.objectName()
         
         filterType = self.get_filter_type_string(checkedbuttonName)
         
-        dictionary= { 'filterType' : filterType }
+        raw = parent.experiment.working_file
+        dictionary = { 'i' : raw }
         
         if checkedButtonName == 'radioButtonLowpass':
-            dictionary = { 'filterType' : 'lowpass' }
             
+            dictionary['l_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
+            dictionary['l_trans_bandwidth'] = self.ui.\
+                        doubleSpinBoxLowpassTransBandwidth.value()
+            dictionary['method'] = self.ui.buttonGroupLowpassMethod.\
+                                    checkedButton().text
             return dictionary
         
         if checkedButtonName == 'radioButtonHighpass':
-            dictionary = { 'filterType' : 'highpass' }
-            
+            dictionary['h_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
+            dictionary['h_trans_bandwidth'] = self.ui.\
+                        doubleSpinBoxHighpassTransBandwidth.value()
+            dictionary['method'] = self.ui.buttonGroupHighpassMethod.\
+                                    checkedButton().text
             return dictionary
             
         if checkedButtonName == 'radioButtonBandpass':
-            dictionary = { 'filterType' : 'bandpass'  }
-        
-            return dictionary
-    
+            dictionary['l_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
+            dictionary['l_trans_bandwidth'] = self.ui.\
+                        doubleSpinBoxLowpassTransBandwidth.value()
+            dictionary['h_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
+            dictionary['h_trans_bandwidth'] = self.ui.\
+                        doubleSpinBoxHighpassTransBandwidth.value()
+                        
+            dictionary['method'] = self.ui.buttonGroupBandpassMethod.\
+                                    checkedButton().text
+            return dictionary    
     
     def accept(self):
         """
@@ -120,9 +137,10 @@ class FilterDialog(QtGui.QDialog):
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         
-        
-        
-        
+        if self.previewFile == None:
+            caller.filter(filterParameterDictionary, True)
+        else:
+            parent.experiment.working_file = self.previewFile
         
         self.close()
     
