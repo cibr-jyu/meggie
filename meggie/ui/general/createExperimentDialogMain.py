@@ -58,7 +58,6 @@ class CreateExperimentDialog(QtGui.QDialog):
     """
     fname = ''
     
-    
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.fname = ''
