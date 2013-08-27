@@ -36,15 +36,12 @@ Contains the Statistic-class used for statistical operations.
 import numpy as np
 import sys
 
-from IntegralImage import IntegralImage
-
 from PyQt4 import QtCore
 
 class Statistic(QtCore.QObject):
     """
     A class for statistical operations.
     """
-    # TODO: How to handle doubles in sfreq?
 
     def __init__(self):
         QtCore.QObject.__init__(self)
@@ -82,7 +79,7 @@ class Statistic(QtCore.QObject):
         """        
         min = np.min(sample_arr)
         index = np.where(sample_arr==min)[0]
-        return min, index
+        return min, index[0]
         
     def find_minimum2d(self, sample_arr):
         """
@@ -108,7 +105,7 @@ class Statistic(QtCore.QObject):
         """        
         max = np.max(sample_arr)
         index = np.where(sample_arr==max)[0]
-        return max, index
+        return max, index[0]
     
     def find_maximum2d(self, sample_arr):
         """"
@@ -126,14 +123,45 @@ class Statistic(QtCore.QObject):
     
     def find_half_maximum(self, sample_arr):
         """
-        Returns the half maximum for a sample_arr.
+        Returns the 2 closest half maximums and their indexes for sample_arr.
         
         Keyword arguments:
         
         sample_arr -- a 1d array containing integers or floats
+        
+        Return a list containing the half_max value, its index before the max
+        and its index after the max.
         """
-        half_max = np.max(sample_arr) / 2
-        return half_max
+        half_max_arr = []
+        max, max_index = self.find_maximum(sample_arr)
+        half_max = max/2
+        half_max_arr.append(half_max)
+        
+        #First find the half_max_index before the max value.
+        i = max_index
+        while i >= 0 and sample_arr[i] > half_max:
+            i -= 1
+        else:
+            if (np.absolute(sample_arr[i+1] - half_max) < 
+                np.absolute(sample_arr[i] - half_max)):
+                half_max_index_minus = i + 1
+            else:
+                half_max_index_minus = i
+            half_max_arr.append(half_max_index_minus)
+        
+        #Then find the half_max_index after the max value.
+        i = max_index
+        while i < len(sample_arr) - 1 and sample_arr[i] > half_max:
+            i += 1
+        else:
+            if (np.absolute(sample_arr[i-1] - half_max) < 
+                np.absolute(sample_arr[i] - half_max)):
+                half_max_index_plus = i-1
+            else:
+                half_max_index_plus = i
+            half_max_arr.append(half_max_index_plus)                
+        
+        return half_max_arr
     
     def find_half_maximum2d(self, sample_arr):
         """

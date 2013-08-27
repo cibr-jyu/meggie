@@ -132,7 +132,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
         
         # For output logging.
-        self.console = Console()
+        #self.console = Console()
         #self.console.show()
         
         
@@ -164,6 +164,11 @@ class MainWindow(QtGui.QMainWindow):
                               str(item.text()) + '.param'):
                 self.fileManager.delete_file_at\
                 (self.experiment.epochs_directory, str(item.text()) + '.param')
+                
+            if os.path.exists(self.experiment.epochs_directory +
+                              str(item.text()) + '.csv'):
+                self.fileManager.delete_file_at\
+                (self.experiment.epochs_directory, str(item.text()) + '.csv')
                     
             self.epochList.remove_item(item)
             return True
@@ -419,6 +424,11 @@ class MainWindow(QtGui.QMainWindow):
         else: 
             epochs = self.epochList.currentItem().data(32).toPyObject()
             epochs.save(fname)
+            
+        #Also copy the related csv-file to the chosen folder
+        self.fileManager.copy(self.experiment.epochs_directory +
+                              str(self.epochList.currentItem().text()) +
+                              '.csv', fname + '.csv')
 
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -463,23 +473,15 @@ class MainWindow(QtGui.QMainWindow):
         item_str = self.epochList.currentItem().text()
             
         root = self.experiment.epochs_directory
-        message = 'Permanently remove '
-        if os.path.exists(root + item_str + '.fif'):
-            message += item_str + '.fif'
-        
-            if os.path.exists(root + item_str + '.param'):
-                message += ' and ' + item_str + '.param?'
-                
-            else:
-                message += '?'
+        message = 'Permanently remove epochs and the related files?'
             
-            reply = QtGui.QMessageBox.question(self, 'delete epochs',
-                                               message, QtGui.QMessageBox.Yes |
-                                               QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
+        reply = QtGui.QMessageBox.question(self, 'delete epochs',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
             
-            if reply == QtGui.QMessageBox.Yes:
-                self.delete_epochs(self.epochList.currentItem())
+        if reply == QtGui.QMessageBox.Yes:
+            self.delete_epochs(self.epochList.currentItem())
             
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """

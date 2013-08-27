@@ -30,7 +30,7 @@
 """
 Created on Mar 13, 2013
 
-@author: Jaakko Leppakangas
+@author: Jaakko Leppakangas, Atte Rautio
 Contains the File-class for file operations.
 """
 import mne
@@ -40,6 +40,10 @@ from PyQt4 import QtGui
 
 import os
 import pickle
+import csv
+import shutil
+
+from statistic import Statistic
 
 class FileManager(QObject):
     
@@ -48,6 +52,8 @@ class FileManager(QObject):
     
     public functions:
     
+    copy(self, original, target)
+    create_csv_epochs(self, epochs)
     delete_file_at(self, folder, name)
     load_epoch_item(self, folder, name)
     open_raw(self, fname)
@@ -59,6 +65,81 @@ class FileManager(QObject):
     def __init__(self):
         """Constructor"""
         QObject.__init__(self)
+        
+    def copy(self, original, target):
+        """Copy the file at original to target.
+        
+        return True if no exceptions were raised, otherwise return
+        the exception 
+        """
+        try:
+            shutil.copyfile(original, target)
+        
+        except Error as e:
+            return e
+        
+        except IOError as e:
+            return e
+        
+        return True
+        
+    def create_csv_epochs(self, epochs):
+        """Create a list used for creating a csv file based on epochs.
+        
+        The file contains the
+        epoch,  channel, min, min_time, max, max_time,
+        half_max, half_max_time- and half_max_time+ in that order.
+        
+        Keyword arguments:
+        
+        epochs -- An instance of epochs.
+        
+        return a list of rows to write.
+        """
+        stat = Statistic()
+        data = epochs.get_data()
+        rows = []
+        #Create the first row with headings for the fields
+        rows.append(['epoch','channel','min','min_time','max','max_time',
+                     'half_max','half_max_time-','half_max_time+'])
+        
+        #create the actual rows
+        for i in range(len(data)):
+            
+            for j in range(len(data[i])):
+                
+                row = []
+                row.append(i)
+                
+                row.append(epochs.ch_names[j])
+                
+                min, min_time = stat.find_minimum(data[i][j])
+                row.append(min)
+                row.append(epochs.times[min_time])
+                
+                max, max_time = stat.find_maximum(data[i][j])
+                row.append(max)
+                row.append(epochs.times[max_time])
+                
+                half_max, half_max_time_b, half_max_time_a =\
+                stat.find_half_maximum(data[i][j])
+                
+                row.append(half_max)
+                #If half_max_times are -1, the half_max value is not reached
+                #inside the epoch window.
+                if half_max_time_b == -1:
+                    row.append(None)
+                else:
+                    row.append(epochs.times[half_max_time_b])
+                    
+                if half_max_time_a == -1:
+                    row.append(None)
+                else:
+                    row.append(epochs.times[half_max_time_a])
+                
+                rows.append(row)
+                
+        return rows    
         
     def delete_file_at(self, folder, files):
         """Delete files from a folder.
@@ -227,6 +308,19 @@ class FileManager(QObject):
         parameterFileName = str(fpath + '.param')
         
         self.pickle(parameters_str, parameterFileName)
+        
+        csv_rows = self.create_csv_epochs(epochs)
+        
+        #Create a csv file of the epochs
+        with open(fpath + '.csv', 'wb') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            row_number = 1
+            for row in csv_rows:
+                if row_number % 1000 == 0:
+                    print ('Csv file: Writing row ' + str(row_number) +
+                           ' of ' + str(len(csv_rows))) 
+                csv_writer.writerow(row)
+                row_number += 1
         
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.
