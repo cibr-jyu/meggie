@@ -24,4 +24,14 @@ class Console(QtGui.QWidget):
         Shows the logged output string.
         """
         self.ui.textEditConsole.append(output)
+        # Repaint method paints the ui in real time, while update method only
+        # after process ends.
+        self.repaint()
+        
+        
+    def show_error_log(self, error):
+        """
+        Shows the error output string.
+        """
+        self.ui.textEditConsoleError.append(error)
         self.repaint()

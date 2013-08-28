@@ -277,5 +277,72 @@ TEHTY(avg, värejä pitää vielä muokata oikeiksi)    \ visualisoinneissa käy
     \ jos prosessien aikana tallennettuja tiedostoja poistetaan manuaalisesti työkansiosta, niiden tiedot jää edelleen ohjelmaan muistiin, mikä sekoittaa
     prosessien uudelleen suorittamista
 
+--------------------------------------------------------------------------------------------------------------------------------------
+
+*** KESKIVIIKKO 28.8 TAPAAMINEN ***
 
 
+** Epoching **
+    \ create epoch dialogissa add to list -painike eventtinimen jälkeen/vierelle loogisempi sijoittaa
+    \ eventtinimen jälkeen tulee juokseva numero vaikka vaihtaa nimen, poistetaan
+    \ epochien start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
+    \ (rejection parametreihin olisi hyvä laittaa esim. -1 jotta sitä ei otettaisi huomioon)
+    \ epoch dialogissa checkboxien merkitys tarkistetaan
+    \ epoch -dialogissa ok-painikkeen tekstiksi create epochs
+    \ kokeillaan muuttaa harmaaksi texteditien taustat jotta ne ei näyttäisi siltä että niiden tekstiä pystytään editoimaan
+    \ epoch collectioneihin lisäksi "collection"-sana epoch widgetiin
+    \ importetuilla epocheilla ei ole tällä hetkellä parametrejä epoch parameters osiossa (ainakin eventit pitäisi nähdä)
+    \ save averaged epochs nappi, average epochsien alle kanavakeskiarvot
+    \ keskiarvoistetuille epocheille statistiikka (tunnuslukutaulukko?)
+    \ statistiikka epocheista tarvitaan vasta avg tabilla
+    \ valikko käyttäjälle mitä statistiikkaa epocheista halutaan tallentaa
+    \ statistiikan tallennus eri paikkaan kuin save epochs
+    \ create epochs nappi ei erotu selkeästi muiden joukosta
+    \ create, modify, delete samalle tasolle
+    \ rejectioniin grad default 3000 eikä 4000
+    \ epoch dialogissa oma lista eventtikategorioista (helpottaisi yksittäisen eventtikategorian poistamisen epocheista, tätä ei välttämättä tarvita jos toteutetaan, että eventtejä
+    voidaan valita epoching-välilehden epochs parameters osiossa ja tämän perusteella suorittaa toimenpiteitä, kuten keskiarvoistusta ja visualisointia)
+    \ epochien modify ei tuo mukana rejection arvoja
+    \ehkä multiselection epoch widgetiin, jotta voisi poistaa useamman epoch collectionin kerralla
+    \ avg tabiin lista keskiarvoistetuille epocheille
+    \ keskiarvoistuksen yhteydessä valinta mitä eventtejä kyseisestä epoch collectionista otetaan huomioon
+    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+
+** Kanavakeskiarvot **
+    \ kanavakeskiarvojen tallentaminen
+    \ kanavakeskiarvot ulos sekä fiffeinä että excel(csv?) tiedostoina
+    \ csv ilman kanavakeskiarvoja ja -keskiarvojen kanssa
+    \ kanavakeskiarvoista ulos tunnuslukutaulukko, fif ja raaka csv
+    \ checkboxeina aivoalueet mitkä halutaan keskiarvoistaa, yksi checkbox voisi olla select all
+    \ show ja save erikseen myös channel averageen
+    \ kanavakeskiarvoistukseen valittavaksi mille eventeille keskiarvostus tehdään
+    \ kanavakeskiarvoon aikasarja/lobe/triggeri/koehenkilö (siis jokaiselle näistä oma aikasarja)
+    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+
+** Visualisointia **
+    \ MNE esimerkeistä 'visualize channel over epochs as image' toteuttaminen (tehdään keskiarvoistetuille epocheille)
+    \ average epochissa värejä voisi muuttaa
+    \ kanavakeskiarvoikkunat samaan skaalaan?
+    \ avg epochien visualisoinnissa valinnaksi mitä eventtejä visualisoidaan päällekkäin kyseisestä avg collectionista
+    \ eri rejektioiden arvoilla tehtyjä samoja eventtikategorioita (esim. left ear) voisi visualisoida, jotta näkee mitä eri rejektioiden arvot tekee datalle
+
+** Filteröintiä **
+    \ filteröinti (low,high,band) laitetaan osaksi available actioneja (huom. ei visualisointipalikka)
+    \ filteröinnissä mahdollisuus tehdä samaan aikaan low, high ja bandpass
+    \ filteröinti-ikkunassa preview näyttäisi taajuusasteet
+
+** TFR **
+    \ TFR:ssä voidaan valita eventit joille tehdään (ikkunassa näytetään joku tunniste, esim. eventtinimellä right ear, left ear)
+    \ jotain TFR-juttuja oli: epoch/channel tfr:ään, plot talteen; aikasarjoihin aika ja arvo sillä hetkellä
+    
+** Yleistä **
+    \ luominen, visualisointi ja tallentaminen lajitellaan tabeille omiin osioihin
+    \ visualize signal trial epoching välilehdelle alas
+    \ experimentiin save info/update info -painike
+    \ subjectien lisäys -painike experimentiin
+    \ experiment infossa lista lisätyistä subjecteista
+    \ MNE_browse_raw oikeat säädöt kohdalleen
+    \ MNE_browse_raw preprocessing tabiin samaan kohtaan kuin infossa
+    \ bugi: ECG/EOG ensin exclude SSP projectors kohdassa defaulttina ruksi, computen jälkeen ruksi siirtyy kohtaan compute ssp after averaging
