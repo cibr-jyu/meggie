@@ -29,6 +29,7 @@ class FilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
+        self.filterParameterDictionary = None
         self.previewFile = None
         self.previewFigure = None
         
@@ -68,8 +69,9 @@ class FilterDialog(QtGui.QDialog):
         # on pylab, therefore needing manual cleaning of pyplot state
         # environment.
         
-        filterParameterDictionary = self.get_filter_parameters()
-        self.previewFile = caller.filter(filterParameterDictionary, False)
+        self.filterParameterDictionary = self.get_filter_parameters()
+        self.previewFile = self.parent.caller.\
+                                  filter(self.filterParameterDictionary, False)
         
         self.previewFigure = self.previewFile.plot(show=False, n_channels=10)
         
@@ -92,29 +94,29 @@ class FilterDialog(QtGui.QDialog):
         Gets the filtering parameters from the UI fields. Uses default
         working file as the filterin target file.
         """
-        checkedButton = self.ui.buttonGroupFilterTypes.checkedButton() 
-        checkedButtonName = checkedButton.objectName()
+        checkedButtonFilterType = self.ui.buttonGroupFilterTypes.checkedButton() 
+        checkedButtonName = checkedButtonFilterType.objectName()
         
         #filterType = self.get_filter_type_string(checkedbuttonName)
         
-        raw = parent.experiment.working_file
+        raw = self.parent.experiment.working_file
         dictionary = { 'i' : raw }
         
         if checkedButtonName == 'radioButtonLowpass':
             
-            dictionary['l_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
+            dictionary['h_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
             dictionary['l_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
-            dictionary['method'] = self.ui.buttonGroupLowpassMethod.\
-                                    checkedButton().text
+            dictionary['method'] = str(self.ui.buttonGroupLowpassMethod.\
+                                    checkedButton().text())
             return dictionary
         
         if checkedButtonName == 'radioButtonHighpass':
-            dictionary['h_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
+            dictionary['l_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
             dictionary['h_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
-            dictionary['method'] = self.ui.buttonGroupHighpassMethod.\
-                                    checkedButton().text
+            dictionary['method'] = str(self.ui.buttonGroupHighpassMethod.\
+                                    checkedButton().text())
             return dictionary
             
         if checkedButtonName == 'radioButtonBandpass':
@@ -125,26 +127,28 @@ class FilterDialog(QtGui.QDialog):
             dictionary['h_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
                         
-            dictionary['method'] = self.ui.buttonGroupBandpassMethod.\
-                                    checkedButton().text
+            dictionary['method'] = str(self.ui.buttonGroupBandpassMethod.\
+                                    checkedButton().text())
             return dictionary    
     
     def accept(self):
         """
-        Collects the parameters and passes them
-        to the caller class.
+        TODO comment
         """
+        # TODO remove extra checks
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         
         if self.previewFile == None:
-            caller.filter(filterParameterDictionary, True)
+            self.filterParameterDictionary = self.get_filter_parameters()
+            self.parent.caller.filter(self.filterParameterDictionary, True)
         else:
-            parent.experiment.working_file = self.previewFile
+            self.parent.experiment._working_file = self.previewFile
         
         self.close()
     
     def reject(self):
+        # TODO remove extra checks
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         self.close()

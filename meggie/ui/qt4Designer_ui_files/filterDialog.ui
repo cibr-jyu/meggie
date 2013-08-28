@@ -106,6 +106,15 @@
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>50.000000000000000</double>
+              </property>
              </widget>
             </item>
             <item row="1" column="0">
@@ -119,6 +128,15 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxLowpassTransBandwidth">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -135,6 +153,9 @@
                <widget class="QRadioButton" name="radioButtonLowPassFft">
                 <property name="text">
                  <string>fft</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
                  <string notr="true">buttonGroupLowpassMethod</string>
@@ -218,6 +239,15 @@
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>600.000000000000000</double>
+              </property>
              </widget>
             </item>
             <item row="1" column="0">
@@ -231,6 +261,15 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassTransBandwidth">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -247,6 +286,9 @@
                <widget class="QRadioButton" name="radioButtonHighpassFft">
                 <property name="text">
                  <string>fft</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
                  <string notr="true">buttonGroupHighpassMethod</string>
@@ -321,6 +363,15 @@
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>50.000000000000000</double>
+              </property>
              </widget>
             </item>
             <item row="1" column="0">
@@ -334,6 +385,15 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxBandTransBandwidthLow">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -349,6 +409,15 @@
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>600.000000000000000</double>
+              </property>
              </widget>
             </item>
             <item row="3" column="0">
@@ -362,6 +431,15 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxBandTransBandwidthHigh">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -378,6 +456,9 @@
                <widget class="QRadioButton" name="radioButtonBandpassFft">
                 <property name="text">
                  <string>fft</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
                  <string notr="true">buttonGroupBandpassMethod</string>

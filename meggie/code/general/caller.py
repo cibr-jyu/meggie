@@ -731,16 +731,14 @@ class Caller(object):
         method = dic.get('method')
         
         if commit == True:
-            raw_in.filter(l_freq, h_freq, None, None, l_trans, h_trans, 2, 
+            raw_in.filter(l_freq, h_freq, None, None, l_trans, h_trans, 3, 
                         method, None, None)
         else:
             rawToPreview = deepcopy(raw_in)
-            return rawToPreview.filter(l_freq, h_freq, None, None, l_trans,
-                                       h_trans, 2, method, None, None)
-        
-        
-        
-                            
+            rawToPreview.filter(l_freq, h_freq, None, None, l_trans,
+                                       h_trans, 3, method, None, None)
+            return rawToPreview
+                          
     def update_experiment_working_file(self, fname):
         """
         Changes the current working file for the experiment the caller relates
