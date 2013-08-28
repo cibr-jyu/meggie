@@ -95,7 +95,7 @@ class FilterDialog(QtGui.QDialog):
         checkedButton = self.ui.buttonGroupFilterTypes.checkedButton() 
         checkedButtonName = checkedButton.objectName()
         
-        filterType = self.get_filter_type_string(checkedbuttonName)
+        #filterType = self.get_filter_type_string(checkedbuttonName)
         
         raw = parent.experiment.working_file
         dictionary = { 'i' : raw }

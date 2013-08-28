@@ -421,7 +421,7 @@
   <customwidget>
    <class>MplWidget</class>
    <extends>QWidget</extends>
-   <header>mplwidget.h</header>
+   <header>mplWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -509,9 +509,9 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroupFilterTypes"/>
+  <buttongroup name="buttonGroupBandpassMethod"/>
   <buttongroup name="buttonGroupLowpassMethod"/>
   <buttongroup name="buttonGroupHighpassMethod"/>
-  <buttongroup name="buttonGroupBandpassMethod"/>
+  <buttongroup name="buttonGroupFilterTypes"/>
  </buttongroups>
 </ui>

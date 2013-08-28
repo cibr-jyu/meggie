@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+#
 # Form implementation generated from reading ui file 'filterDialog.ui'
 #
-# Created: Tue Aug 27 18:50:02 2013
+# Created: Tue Aug 27 18:51:40 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -277,4 +277,4 @@ class Ui_DialogFilter(object):
         self.radioButtonBandpassIir.setText(_translate("DialogFilter", "iir", None))
         self.radioButtonBandpass.setText(_translate("DialogFilter", "Bandpass filter", None))
 
-from mplwidget import MplWidget
+from mplWidget import MplWidget

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#
 # Form implementation generated from reading ui file 'filterDialog.ui'
 #
 # Created: Tue Aug 27 18:51:40 2013
