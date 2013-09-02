@@ -10,25 +10,36 @@
     <x>0</x>
     <y>0</y>
     <width>828</width>
-    <height>467</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Meggie - Epoch Creation</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="cancelOkButtonBox">
-     <property name="enabled">
-      <bool>true</bool>
+   <item row="4" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <property name="leftMargin">
+      <number>600</number>
      </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+     <property name="topMargin">
+      <number>0</number>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCreateEpochs">
+       <property name="text">
+        <string>Create epochs</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="1" column="0">
     <widget class="QScrollArea" name="scrollArea">
@@ -47,7 +58,7 @@
         <x>0</x>
         <y>0</y>
         <width>810</width>
-        <height>412</height>
+        <height>451</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -62,7 +73,7 @@
          <x>1</x>
          <y>0</y>
          <width>766</width>
-         <height>356</height>
+         <height>444</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -72,41 +83,6 @@
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <widget class="QLabel" name="labelEventID">
-                  <property name="text">
-                   <string>Event ID:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="comboBoxEventID"/>
-                </item>
-               </layout>
-              </item>
-              <item row="0" column="1" rowspan="2">
-               <layout class="QVBoxLayout" name="verticalLayout">
-                <item>
-                 <widget class="QPushButton" name="pushButtonAdd">
-                  <property name="text">
-                   <string>Add to list &gt;&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButtonRemove">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="text">
-                   <string>&lt;&lt; Remove</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
               <item row="1" column="0">
                <layout class="QHBoxLayout" name="horizontalLayout_5">
                 <item>
@@ -133,6 +109,47 @@
                  <widget class="QLineEdit" name="lineEditName"/>
                 </item>
                </layout>
+              </item>
+              <item row="0" column="1" rowspan="2">
+               <layout class="QVBoxLayout" name="verticalLayout"/>
+              </item>
+              <item row="0" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QLabel" name="labelEventID">
+                  <property name="text">
+                   <string>Event ID:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="comboBoxEventID"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="pushButtonAdd">
+                <property name="text">
+                 <string>Add to list &gt;&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButtonRemove">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>&lt;&lt; Remove</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -171,6 +188,12 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
+                  <property name="suffix">
+                   <string> s</string>
+                  </property>
+                  <property name="decimals">
+                   <number>3</number>
+                  </property>
                   <property name="minimum">
                    <double>-10.000000000000000</double>
                   </property>
@@ -195,6 +218,12 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax">
+                  <property name="suffix">
+                   <string> s</string>
+                  </property>
+                  <property name="decimals">
+                   <number>3</number>
+                  </property>
                   <property name="maximum">
                    <double>9.900000000000000</double>
                   </property>
@@ -271,9 +300,6 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_10"/>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QLabel" name="labelRejections">
@@ -307,7 +333,7 @@
                      <double>1000000000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>4000.000000000000000</double>
+                     <double>3000.000000000000000</double>
                     </property>
                    </widget>
                   </item>
@@ -393,6 +419,19 @@
               </item>
              </layout>
             </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
          </layout>
@@ -436,34 +475,34 @@
  <resources/>
  <connections>
   <connection>
-   <sender>cancelOkButtonBox</sender>
-   <signal>accepted()</signal>
+   <sender>pushButtonCreateEpochs</sender>
+   <signal>clicked()</signal>
    <receiver>EventSelectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>673</x>
-     <y>457</y>
+     <x>754</x>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>513</x>
+     <y>488</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>cancelOkButtonBox</sender>
-   <signal>rejected()</signal>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked()</signal>
    <receiver>EventSelectionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>673</x>
-     <y>457</y>
+     <x>642</x>
+     <y>479</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>560</x>
+     <y>476</y>
     </hint>
    </hints>
   </connection>

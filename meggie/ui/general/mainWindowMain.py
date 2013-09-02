@@ -132,8 +132,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
         
         # For output logging.
-        #self.console = Console()
-        #self.console.show()
+        self.console = Console()
+        self.console.show()
         
         
         
@@ -744,13 +744,16 @@ class MainWindow(QtGui.QMainWindow):
     def write(self, output):
         self.console.show_log(output)
         
+        
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
     
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.
+    # sys.stdout=sys.stderr=window
     #sys.stdout=sys.stderr=window
+    
     window.show()
     
     sys.exit(app.exec_())

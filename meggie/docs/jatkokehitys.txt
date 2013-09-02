@@ -283,23 +283,23 @@ TEHTY(avg, värejä pitää vielä muokata oikeiksi)    \ visualisoinneissa käy
 
 
 ** Epoching **
-    \ create epoch dialogissa add to list -painike eventtinimen jälkeen/vierelle loogisempi sijoittaa
+TEHTY    \ create epoch dialogissa add to list -painike eventtinimen jälkeen/vierelle loogisempi sijoittaa
     \ eventtinimen jälkeen tulee juokseva numero vaikka vaihtaa nimen, poistetaan
-    \ epochien start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
+TEHTY    \ epochien start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
     \ (rejection parametreihin olisi hyvä laittaa esim. -1 jotta sitä ei otettaisi huomioon)
     \ epoch dialogissa checkboxien merkitys tarkistetaan
-    \ epoch -dialogissa ok-painikkeen tekstiksi create epochs
-    \ kokeillaan muuttaa harmaaksi texteditien taustat jotta ne ei näyttäisi siltä että niiden tekstiä pystytään editoimaan
+TEHTY    \ epoch -dialogissa ok-painikkeen tekstiksi create epochs
+x    \ kokeillaan muuttaa harmaaksi texteditien taustat jotta ne ei näyttäisi siltä että niiden tekstiä pystytään editoimaan
     \ epoch collectioneihin lisäksi "collection"-sana epoch widgetiin
     \ importetuilla epocheilla ei ole tällä hetkellä parametrejä epoch parameters osiossa (ainakin eventit pitäisi nähdä)
-    \ save averaged epochs nappi, average epochsien alle kanavakeskiarvot
+x    \ save averaged epochs nappi, average epochsien alle kanavakeskiarvot
     \ keskiarvoistetuille epocheille statistiikka (tunnuslukutaulukko?)
-    \ statistiikka epocheista tarvitaan vasta avg tabilla
+x    \ statistiikka epocheista tarvitaan vasta avg tabilla
     \ valikko käyttäjälle mitä statistiikkaa epocheista halutaan tallentaa
     \ statistiikan tallennus eri paikkaan kuin save epochs
-    \ create epochs nappi ei erotu selkeästi muiden joukosta
-    \ create, modify, delete samalle tasolle
-    \ rejectioniin grad default 3000 eikä 4000
+x    \ create epochs nappi ei erotu selkeästi muiden joukosta
+x    \ create, modify, delete samalle tasolle
+x    \ rejectioniin grad default 3000 eikä 4000
     \ epoch dialogissa oma lista eventtikategorioista (helpottaisi yksittäisen eventtikategorian poistamisen epocheista, tätä ei välttämättä tarvita jos toteutetaan, että eventtejä
     voidaan valita epoching-välilehden epochs parameters osiossa ja tämän perusteella suorittaa toimenpiteitä, kuten keskiarvoistusta ja visualisointia)
     \ epochien modify ei tuo mukana rejection arvoja
