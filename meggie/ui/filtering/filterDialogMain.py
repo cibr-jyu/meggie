@@ -49,20 +49,11 @@ class FilterDialog(QtGui.QDialog):
         # and save memory. 
         if self.previewFigure != None:
             plt.close(self.previewFigure)
-   
         
         """
-        Pitäisi:
-        1. Ottaa working filen data
-        2. Lukea filteriparametrit
-        3. Soveltaa filteröintiä working filen dataan
-        4. Laittaa filteröity data previewfileen
-        5. Plotata previewfile 
-        6. Jos sitten painetaan OK-nappia, tehdä tuosta previewfilestä working file
-        (esim. nimellä "entinenworkingfilennimi"+ filtered.fif
-        7. Cancel-napin tapauksessa hävittää se previewfile 
-        8. Jos taas painaa OK:ta ennen preview-nappia, pitää vain filteröidä
-        working fileä suoraan (tähän on erillinen metodi)
+        Pit�isi:
+        1. 
+        
         """
         
         # Plot the filtered channels with mne.fiff.raw.plot (which is based
@@ -88,48 +79,94 @@ class FilterDialog(QtGui.QDialog):
         def onclick(event):
             fig.canvas.mpl_connect('button_press_event', onclick)
         
-        
     def get_filter_parameters(self):
         """
         Gets the filtering parameters from the UI fields. Uses default
-        working file as the filterin target file.
+        working file as the filtering target file.
         """
-        checkedButtonFilterType = self.ui.buttonGroupFilterTypes.checkedButton() 
-        checkedButtonName = checkedButtonFilterType.objectName()
-        
-        #filterType = self.get_filter_type_string(checkedbuttonName)
         
         raw = self.parent.experiment.working_file
         dictionary = { 'i' : raw }
         
-        if checkedButtonName == 'radioButtonLowpass':
+        if self.ui.checkBoxLowpass.isChecked() == True:
+            dictionary['lowpass'] = True
             
-            dictionary['h_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
-            dictionary['l_trans_bandwidth'] = self.ui.\
+            dictionary['low_h_freq'] = self.ui.\
+                                       doubleSpinBoxLowpassCutoff.value()
+            dictionary['low_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
-            dictionary['method'] = str(self.ui.buttonGroupLowpassMethod.\
-                                    checkedButton().text())
-            return dictionary
+            dictionary['low_length'] = str(self.ui.\
+                                    doubleSpinBoxLowpassFilterLength.value())
+        else:
+            dictionary['lowpass'] = True
         
-        if checkedButtonName == 'radioButtonHighpass':
-            dictionary['l_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
-            dictionary['h_trans_bandwidth'] = self.ui.\
-                        doubleSpinBoxHighpassTransBandwidth.value()
-            dictionary['method'] = str(self.ui.buttonGroupHighpassMethod.\
-                                    checkedButton().text())
-            return dictionary
+        if self.ui.checkBoxHighpass.isChecked() == True:
+            dictionary['lowpass'] = True
             
-        if checkedButtonName == 'radioButtonBandpass':
-            dictionary['l_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()
-            dictionary['l_trans_bandwidth'] = self.ui.\
-                        doubleSpinBoxLowpassTransBandwidth.value()
-            dictionary['h_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()
-            dictionary['h_trans_bandwidth'] = self.ui.\
+            dictionary['high_l_freq'] = self.ui.\
+                                        doubleSpinBoxHighpassCutoff.value()
+            dictionary['high_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
+            dictionary['high_length'] = str(self.ui.\
+                                    doubleSpinBoxHighpassFilterLength.value())
+        else:
+            dictionary['lowpass'] = True
+        
+        if self.ui.checkBoxBandstop1.isChecked() == True:
+            dictionary['bandstop1'] = True
+            
+            dictionary['bandstop1_l_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq1.value() - \
+                self.ui.doubleSpinBoxBandstopWidth1/2
+                
+            dictionary['bandstop1_h_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq1.value() + \
+                self.ui.doubleSpinBoxBandstopWidth1/2
                         
-            dictionary['method'] = str(self.ui.buttonGroupBandpassMethod.\
-                                    checkedButton().text())
-            return dictionary    
+            dictionary['bandstop1_trans_bandwidth'] = self.ui.\
+                                    doubleSpinBoxBandstopwidth1.value()
+            
+            dictionary['bandstop1_length'] = str(self.ui.\
+                                    doubleSpinBoxBandstopFilterLength1.value())
+        else:
+            dictionary['bandstop1'] = False
+        
+        if self.ui.checkBoxBandstop2.isChecked() == True:
+            dictionary['bandstop2'] = True
+            
+            dictionary['bandstop2_l_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq2.value() - \
+                self.ui.doubleSpinBoxBandstopWidth2/2
+            
+            dictionary['bandstop2_h_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq2.value() + \
+                self.ui.doubleSpinBoxBandstopWidth2/2
+            
+            dictionary['bandstop2_trans_bandwidth'] = self.ui.\
+                                    doubleSpinBoxBandstopwidth2.value()
+                                    
+            dictionary['bandstop2_length'] = str(self.ui.\
+                                    doubleSpinBoxBandstopFilterLength2.value())
+        else:
+            dictionary['bandstop2'] = False
+            
+        if self.ui.checkBoxBandstop3.isChecked() == True:
+            dictionary['bandstop3'] = True
+            
+            dictionary['bandstop3_l_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq3.value() - \
+                self.ui.doubleSpinBoxBandstopWidth3/2
+            
+            dictionary['bandstop3_h_freq'] = \
+                self.ui.doubleSpinBoxBandstopFreq3.value() + \
+                self.ui.doubleSpinBoxBandstopWidth3/2
+            
+            dictionary['bandstop3_length'] = str(self.ui.\
+                                    doubleSpinBoxBandstopFilterLength3.value())
+        else:
+            dictionary['bandstop3'] = False
+            
+        return dictionary    
     
     def accept(self):
         """
