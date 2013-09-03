@@ -179,18 +179,28 @@ class EventSelectionDialog(QtGui.QDialog):
             
         if params_str['mag'] is True:
             self.ui.checkBoxMag.setChecked(True)
+        else:
+            self.ui.checkBoxMag.setChecked(False)
             
         if params_str['grad'] is True:
             self.ui.checkBoxGrad.setChecked(True)
+        else:
+            self.ui.checkBoxGrag.setChecked(False)
             
         if params_str['eeg'] is True:
             self.ui.checkBoxEeg.setChecked(True)
+        else:
+            self.ui.checkBoxEeg.setChecked(False)
             
         if params_str['stim'] is True:
             self.ui.checkBoxStim.setChecked(True)
+        else:
+            self.ui.checkBoxStim.setChecked(False)
         
         if params_str['eog'] is True:
             self.ui.checkBoxEog.setChecked(True)
+        else:
+            self.ui.checkBoxEog.setChecked(False)
             
         reject = params_str['reject']
         if reject.has_key('mag'):
