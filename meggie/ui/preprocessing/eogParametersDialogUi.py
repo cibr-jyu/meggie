@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eogParametersDialog.ui'
 #
-# Created: Fri May 31 12:40:35 2013
+# Created: Tue Sep  3 09:59:57 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setEnabled(True)
-        Dialog.resize(571, 755)
+        Dialog.resize(576, 755)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_13 = QtGui.QHBoxLayout()
@@ -51,7 +51,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 553, 698))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 558, 698))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(540, 690))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.tabWidgetEOGSettings = QtGui.QTabWidget(self.scrollAreaWidgetContents)
@@ -174,15 +174,15 @@ class Ui_Dialog(object):
         self.horizontalLayout_5.addWidget(self.spinBoxEeg)
         self.horizontalLayout_9.addLayout(self.horizontalLayout_5)
         self.groupBoxEvent = QtGui.QGroupBox(self.tabEOG1)
-        self.groupBoxEvent.setGeometry(QtCore.QRect(10, 10, 529, 99))
+        self.groupBoxEvent.setGeometry(QtCore.QRect(10, 10, 541, 99))
         self.groupBoxEvent.setObjectName(_fromUtf8("groupBoxEvent"))
         self.frame = QtGui.QFrame(self.groupBoxEvent)
-        self.frame.setGeometry(QtCore.QRect(10, 30, 491, 61))
+        self.frame.setGeometry(QtCore.QRect(10, 30, 511, 61))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayoutWidget_8 = QtGui.QWidget(self.frame)
-        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 476, 41))
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 494, 41))
         self.horizontalLayoutWidget_8.setObjectName(_fromUtf8("horizontalLayoutWidget_8"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_8)
         self.horizontalLayout_8.setMargin(0)
@@ -193,6 +193,7 @@ class Ui_Dialog(object):
         self.labelTmin.setObjectName(_fromUtf8("labelTmin"))
         self.horizontalLayout.addWidget(self.labelTmin)
         self.doubleSpinBoxTmin = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_8)
+        self.doubleSpinBoxTmin.setDecimals(3)
         self.doubleSpinBoxTmin.setMinimum(-99.99)
         self.doubleSpinBoxTmin.setSingleStep(0.05)
         self.doubleSpinBoxTmin.setProperty("value", -0.2)
@@ -205,6 +206,7 @@ class Ui_Dialog(object):
         self.labelTmax.setObjectName(_fromUtf8("labelTmax"))
         self.horizontalLayout_2.addWidget(self.labelTmax)
         self.doubleSpinBoxTmax = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_8)
+        self.doubleSpinBoxTmax.setDecimals(3)
         self.doubleSpinBoxTmax.setMinimum(-99.99)
         self.doubleSpinBoxTmax.setSingleStep(0.05)
         self.doubleSpinBoxTmax.setProperty("value", 0.2)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epochParamsWidget.ui'
 #
-# Created: Wed Aug 21 11:03:00 2013
+# Created: Tue Sep  3 12:55:31 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -88,6 +88,18 @@ class Ui_Form(object):
         self.labelWorkingFile.setObjectName(_fromUtf8("labelWorkingFile"))
         self.textBrowserWorkingFile = QtGui.QTextBrowser(self.groupBox)
         self.textBrowserWorkingFile.setGeometry(QtCore.QRect(80, 280, 321, 31))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(241, 241, 240))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(241, 241, 240))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
+        self.textBrowserWorkingFile.setPalette(palette)
+        self.textBrowserWorkingFile.setFrameShape(QtGui.QFrame.NoFrame)
         self.textBrowserWorkingFile.setObjectName(_fromUtf8("textBrowserWorkingFile"))
 
         self.retranslateUi(Form)

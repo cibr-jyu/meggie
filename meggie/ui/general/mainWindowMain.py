@@ -113,7 +113,6 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList = EpochWidget(self)
         self.epochList.hide()
         
-        
         # Creates a listwidget for parameters of chosen epochs on epochList.
         self.epochParamsList = EpochParamsWidget(self)
         self.epochParamsList.hide()
@@ -130,7 +129,7 @@ class MainWindow(QtGui.QMainWindow):
         (self.load_epoch_collections)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
-        
+                        
         # For output logging.
         self.console = Console()
         self.console.show()
@@ -752,7 +751,6 @@ def main():
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.
     # sys.stdout=sys.stderr=window
-    #sys.stdout=sys.stderr=window
     
     window.show()
     
