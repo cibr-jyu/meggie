@@ -142,21 +142,19 @@ class Statistic(QtCore.QObject):
         while i >= 0 and sample_arr[i] > half_max:
             i -= 1
         else:
-            if (np.absolute(sample_arr[i+1] - half_max) < 
-                np.absolute(sample_arr[i] - half_max)):
-                half_max_index_minus = i + 1
-            else:
-                half_max_index_minus = i
+            if i < 0:
+                half_max_index_minus = -1
+            
+            else: half_max_index_minus = i
             half_max_arr.append(half_max_index_minus)
         
         #Then find the half_max_index after the max value.
         i = max_index
-        while i < len(sample_arr) - 1 and sample_arr[i] > half_max:
+        while i <= len(sample_arr) - 1 and sample_arr[i] > half_max:
             i += 1
         else:
-            if (np.absolute(sample_arr[i-1] - half_max) < 
-                np.absolute(sample_arr[i] - half_max)):
-                half_max_index_plus = i-1
+            if i >= len(sample_arr):
+                half_max_index_plus = -1
             else:
                 half_max_index_plus = i
             half_max_arr.append(half_max_index_plus)                
@@ -172,6 +170,25 @@ class Statistic(QtCore.QObject):
         sample_arr -- An array containing integers or floats.
         """
         return [self.find_half_maximum(row) for row in sample_arr]
+    
+    def integrate(self, sample_arr, start, stop):
+        """Calculate the integral in sample_arr from start to stop.
+        
+        Keyword arguments:
+        
+        sample_arr -- An array containing ints or floats
+        start      -- The start index of the integral
+        stop       -- The last index of the integral.
+        
+        return the integral between start and stop.
+        """
+        i = start
+        integral = 0
+        while i <= stop and i < len(sample_arr):
+            integral += sample_arr[i]
+            i += 1
+            
+        return integral
     
     def find_maximum_intensity(self, mat, w, h):
         """

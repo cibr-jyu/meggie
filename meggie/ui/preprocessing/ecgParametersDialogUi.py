@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialog.ui'
 #
-# Created: Fri May 31 12:40:29 2013
+# Created: Tue Sep  3 09:59:59 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(569, 737)
+        Dialog.resize(576, 737)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.tabWidgetECGSettings = QtGui.QTabWidget(Dialog)
@@ -34,7 +34,7 @@ class Ui_Dialog(object):
         self.tabECG1 = QtGui.QWidget()
         self.tabECG1.setObjectName(_fromUtf8("tabECG1"))
         self.layoutWidget = QtGui.QWidget(self.tabECG1)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 511, 611))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 531, 611))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_5.setMargin(0)
@@ -51,12 +51,12 @@ class Ui_Dialog(object):
         self.groupBoxEvent = QtGui.QGroupBox(self.layoutWidget)
         self.groupBoxEvent.setObjectName(_fromUtf8("groupBoxEvent"))
         self.frame = QtGui.QFrame(self.groupBoxEvent)
-        self.frame.setGeometry(QtCore.QRect(10, 30, 491, 61))
+        self.frame.setGeometry(QtCore.QRect(10, 30, 511, 61))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayoutWidget_8 = QtGui.QWidget(self.frame)
-        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 476, 41))
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 494, 41))
         self.horizontalLayoutWidget_8.setObjectName(_fromUtf8("horizontalLayoutWidget_8"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_8)
         self.horizontalLayout_8.setMargin(0)
@@ -67,6 +67,7 @@ class Ui_Dialog(object):
         self.labelTmin.setObjectName(_fromUtf8("labelTmin"))
         self.horizontalLayout.addWidget(self.labelTmin)
         self.doubleSpinBoxTmin = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_8)
+        self.doubleSpinBoxTmin.setDecimals(3)
         self.doubleSpinBoxTmin.setMinimum(-99.99)
         self.doubleSpinBoxTmin.setSingleStep(0.05)
         self.doubleSpinBoxTmin.setProperty("value", -0.2)
@@ -79,6 +80,7 @@ class Ui_Dialog(object):
         self.labelTmax.setObjectName(_fromUtf8("labelTmax"))
         self.horizontalLayout_2.addWidget(self.labelTmax)
         self.doubleSpinBoxTmax = QtGui.QDoubleSpinBox(self.horizontalLayoutWidget_8)
+        self.doubleSpinBoxTmax.setDecimals(3)
         self.doubleSpinBoxTmax.setMinimum(-99.99)
         self.doubleSpinBoxTmax.setSingleStep(0.05)
         self.doubleSpinBoxTmax.setProperty("value", 0.4)

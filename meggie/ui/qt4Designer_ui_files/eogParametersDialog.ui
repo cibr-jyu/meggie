@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
+    <width>576</width>
     <height>755</height>
    </rect>
   </property>
@@ -67,7 +67,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>553</width>
+        <width>558</width>
         <height>698</height>
        </rect>
       </property>
@@ -365,7 +365,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>529</width>
+           <width>541</width>
            <height>99</height>
           </rect>
          </property>
@@ -377,7 +377,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>491</width>
+            <width>511</width>
             <height>61</height>
            </rect>
           </property>
@@ -392,7 +392,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>476</width>
+             <width>494</width>
              <height>41</height>
             </rect>
            </property>
@@ -410,6 +410,9 @@
                <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
                 <property name="suffix">
                  <string> s</string>
+                </property>
+                <property name="decimals">
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-99.989999999999995</double>
@@ -437,6 +440,9 @@
                <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax">
                 <property name="suffix">
                  <string> s</string>
+                </property>
+                <property name="decimals">
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-99.989999999999995</double>

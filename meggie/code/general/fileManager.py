@@ -83,25 +83,26 @@ class FileManager(QObject):
         
         return True
         
-    def create_csv_epochs(self, epochs):
-        """Create a list used for creating a csv file based on epochs.
+    def create_key_csv_evoked(self, evoked):
+        """Create a list used for creating a csv file of key values in evoked.
         
         The file contains the
         epoch,  channel, min, min_time, max, max_time,
-        half_max, half_max_time- and half_max_time+ in that order.
+        half_max, half_max_time-, half_max_time+ and integral in that order.
         
         Keyword arguments:
         
-        epochs -- An instance of epochs.
+        evoked -- An instance of evoked data.
         
         return a list of rows to write.
         """
+        #TODO adjust into saving key values of averaged data.
         stat = Statistic()
-        data = epochs.get_data()
+        data = evoked.data
         rows = []
         #Create the first row with headings for the fields
-        rows.append(['epoch','channel','min','min_time','max','max_time',
-                     'half_max','half_max_time-','half_max_time+'])
+        rows.append(['channel','min','min_time','max','max_time',
+                     'half_max','half_max_time-','half_max_time+', 'integral'])
         
         #create the actual rows
         for i in range(len(data)):
@@ -109,17 +110,16 @@ class FileManager(QObject):
             for j in range(len(data[i])):
                 
                 row = []
-                row.append(i)
                 
-                row.append(epochs.ch_names[j])
+                row.append(evoked.ch_names[j])
                 
                 min, min_time = stat.find_minimum(data[i][j])
                 row.append(min)
-                row.append(epochs.times[min_time])
+                row.append(evoked.times[min_time])
                 
                 max, max_time = stat.find_maximum(data[i][j])
                 row.append(max)
-                row.append(epochs.times[max_time])
+                row.append(evoked.times[max_time])
                 
                 half_max, half_max_time_b, half_max_time_a =\
                 stat.find_half_maximum(data[i][j])
@@ -130,12 +130,17 @@ class FileManager(QObject):
                 if half_max_time_b == -1:
                     row.append(None)
                 else:
-                    row.append(epochs.times[half_max_time_b])
+                    row.append(evoked.times[half_max_time_b])
                     
                 if half_max_time_a == -1:
                     row.append(None)
                 else:
-                    row.append(epochs.times[half_max_time_a])
+                    row.append(evoked.times[half_max_time_a])
+                    
+                integral = stat.integrate(data[i], half_max_time_b,
+                                          half_max_time_a)
+                
+                row.append(integral)
                 
                 rows.append(row)
                 
@@ -307,20 +312,7 @@ class FileManager(QObject):
         
         parameterFileName = str(fpath + '.param')
         
-        self.pickle(parameters_str, parameterFileName)
-        
-        csv_rows = self.create_csv_epochs(epochs)
-        
-        #Create a csv file of the epochs
-        with open(fpath + '.csv', 'wb') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            row_number = 1
-            for row in csv_rows:
-                if row_number % 1000 == 0:
-                    print ('Csv file: Writing row ' + str(row_number) +
-                           ' of ' + str(len(csv_rows))) 
-                csv_writer.writerow(row)
-                row_number += 1
+        self.pickle(parameters_str, parameterFileName)  
         
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.
