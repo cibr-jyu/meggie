@@ -45,6 +45,7 @@ from mne import fiff
 from mne.fiff import evoked
 from mne.time_frequency import induced_power
 from mne.layouts import read_layout
+from mne import filter
 
 from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
@@ -486,7 +487,7 @@ class Caller(object):
         Keyword arguments:
         epochs       -- epochs to average.
         lobename     -- the lobe over which to average.
-        channelSet  -- manually input list of channels.
+        channelSet   -- manually input list of channels. 
         """
         
         if not channelSet == None:
@@ -709,35 +710,34 @@ class Caller(object):
         pl.xlabel('Hz')
         pl.show()
                             
-    def filter(self, dic, commit=False):
+    def filter(self, dataToFilter, samplerate, dic):
         """
-        Filters the raw file in place according to parameters in paramDict.
+        Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is lowpass, highpass or
-        bandpass filter.
+        bandstop (notch) filter.
         
         Keyword arguments:
-        dic            -- Dictionary with filtering parameters
-        commit         -- Boolean. If True, commits the filtering to the actual
-                          working file; if False, returns a separate filtered
-                          file for preview purposes.
-        Returns a deepcopied instance of working file, if commit == False.
+        
+        dataToFilter         -- array of data to filter
+        samplerate           -- intended samplerate of the array
+        dic                  -- Dictionary with filtering parameters
+        
         """
         
-        raw_in = dic.get('i')
-        l_freq = dic.get('l_freq')
-        l_trans = dic.get('l_trans_bandwidth')
-        h_freq = dic.get('h_freq')
-        h_trans = dic.get('h_trans_bandwidth')
-        method = dic.get('method')
         
-        if commit == True:
-            raw_in.filter(l_freq, h_freq, None, None, l_trans, h_trans, 3, 
-                        method, None, None)
-        else:
-            rawToPreview = deepcopy(raw_in)
-            rawToPreview.filter(l_freq, h_freq, None, None, l_trans,
-                                       h_trans, 3, method, None, None)
-            return rawToPreview
+        if dic.get('lowpass') == True:
+            filteredData = filter.low_pass_filter(dataToFilter, samplerate, 
+                        dic.get('low_cutoff_freq'), dic.get('low_length'),
+                        dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
+                        True)
+        
+        if dic.get('highpass') == True:
+            filteredData = filter.high_pass_filter(dataToFilter, samplerate, 
+                        dic.get('high_cutoff_freq'), dic.get('high_length'),
+                        dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
+                        True)
+        
+        return filteredData
                           
     def update_experiment_working_file(self, fname):
         """

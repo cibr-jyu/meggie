@@ -30,7 +30,7 @@ class FilterDialog(QtGui.QDialog):
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
         self.filterParameterDictionary = None
-        self.previewFile = None
+        self.dataToFilter = None
         self.previewFigure = None
         
     def on_pushButtonPreview_clicked(self, checked=None):
@@ -42,7 +42,7 @@ class FilterDialog(QtGui.QDialog):
         
     def drawPreview(self):
         """
-        Draws the preview into the preview window with with raw.plot()
+        Draws the frequency and impulse response into the preview window.
         """
         
         # Clear the previous figure to keep the pyplot state environment clean
@@ -52,7 +52,11 @@ class FilterDialog(QtGui.QDialog):
         
         """
         Pit‰isi:
-        1. 
+        (0. Previewin pit‰isi laskea xfit-tyylinen k‰ppyr‰)
+        - Kiskoa datataulukko raw-filest‰ (vaatii sampleraten lukemista)
+        - Lukea parametrit UI:sta ja p‰‰tt‰‰, mit‰ kaikki metodeja kutsutaan
+        - K‰ytt‰‰ filterimetodeita dataan (j‰rjestyksell‰ ei v‰li‰)
+        - Kopioida data takaisin ja muuttaa ao. infokentti‰
         
         """
         
@@ -64,7 +68,8 @@ class FilterDialog(QtGui.QDialog):
         self.previewFile = self.parent.caller.\
                                   filter(self.filterParameterDictionary, False)
         
-        self.previewFigure = self.previewFile.plot(show=False, n_channels=10)
+        # TODO draw the image
+        # self.previewFigure = 
         
         #previewFigure.set_canvas(self.ui.widgetMpl.canvas)
         self.ui.widgetMpl.canvas.figure = self.previewFigure
@@ -85,13 +90,12 @@ class FilterDialog(QtGui.QDialog):
         working file as the filtering target file.
         """
         
-        raw = self.parent.experiment.working_file
-        dictionary = { 'i' : raw }
+        dictionary = {}
         
         if self.ui.checkBoxLowpass.isChecked() == True:
             dictionary['lowpass'] = True
             
-            dictionary['low_h_freq'] = self.ui.\
+            dictionary['low_cutoff_freq'] = self.ui.\
                                        doubleSpinBoxLowpassCutoff.value()
             dictionary['low_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
@@ -101,9 +105,9 @@ class FilterDialog(QtGui.QDialog):
             dictionary['lowpass'] = True
         
         if self.ui.checkBoxHighpass.isChecked() == True:
-            dictionary['lowpass'] = True
+            dictionary['highpass'] = True
             
-            dictionary['high_l_freq'] = self.ui.\
+            dictionary['high_cutoff_freq'] = self.ui.\
                                         doubleSpinBoxHighpassCutoff.value()
             dictionary['high_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
@@ -170,22 +174,35 @@ class FilterDialog(QtGui.QDialog):
     
     def accept(self):
         """
-        TODO comment
+        Get the parameters dictionary and relay it to caller.filter to
+        actually do the filtering.
         """
-        # TODO remove extra checks
+        
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         
-        if self.previewFile == None:
-            self.filterParameterDictionary = self.get_filter_parameters()
-            self.parent.caller.filter(self.filterParameterDictionary, True)
-        else:
-            self.parent.experiment._working_file = self.previewFile
+        paramDict = self.get_filter_parameters()
         
+        self.dataToFilter = self.parent.experiment.working_file._data
+        samplerate = self.parent.experiment.working_file.info['sfreq']
+        filteredData = self.parent.caller.filter(self.dataToFilter, 
+                                                 samplerate, paramDict)
+        
+        # Replace the data in the working file with the filtered data
+        self.parent.experiment.working_file._data = filteredData
+        
+        # Update the working file info fields with the new values
+        if paramDict['lowpass'] == True:
+            self.parent.experiment.working_file.info['lowpass'] = \
+                paramDict['low_cutoff_freq']
+        
+        if paramDict['highpass'] == True:
+            self.parent.experiment.working_file.info['highpass'] = \
+                paramDict['high_cutoff_freq']
+                
         self.close()
     
     def reject(self):
-        # TODO remove extra checks
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         self.close()
