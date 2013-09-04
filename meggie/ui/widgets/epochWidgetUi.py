@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epochWidget.ui'
 #
-# Created: Mon Jul  8 14:26:00 2013
+# Created: Wed Sep  4 16:18:13 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,23 +26,31 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(380, 231)
+        Form.resize(409, 334)
         self.gridLayout_2 = QtGui.QGridLayout(Form)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.groupBox = QtGui.QGroupBox(Form)
-        self.groupBox.setObjectName(_fromUtf8("groupBox"))
-        self.gridLayout = QtGui.QGridLayout(self.groupBox)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.listWidgetEpochs = QtGui.QListWidget(self.groupBox)
-        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.verticalLayout_14 = QtGui.QVBoxLayout()
+        self.verticalLayout_14.setObjectName(_fromUtf8("verticalLayout_14"))
+        self.groupBoxEpochs = QtGui.QGroupBox(Form)
+        self.groupBoxEpochs.setObjectName(_fromUtf8("groupBoxEpochs"))
+        self.listWidgetEpochs = QtGui.QListWidget(self.groupBoxEpochs)
+        self.listWidgetEpochs.setGeometry(QtCore.QRect(10, 30, 361, 121))
+        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.listWidgetEpochs.setObjectName(_fromUtf8("listWidgetEpochs"))
-        self.gridLayout.addWidget(self.listWidgetEpochs, 0, 0, 1, 1)
-        self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 1)
+        self.groupBoxEvents = QtGui.QGroupBox(self.groupBoxEpochs)
+        self.groupBoxEvents.setGeometry(QtCore.QRect(0, 150, 391, 151))
+        self.groupBoxEvents.setObjectName(_fromUtf8("groupBoxEvents"))
+        self.listWidgetEvents = QtGui.QListWidget(self.groupBoxEvents)
+        self.listWidgetEvents.setGeometry(QtCore.QRect(10, 30, 361, 111))
+        self.listWidgetEvents.setObjectName(_fromUtf8("listWidgetEvents"))
+        self.verticalLayout_14.addWidget(self.groupBoxEpochs)
+        self.gridLayout_2.addLayout(self.verticalLayout_14, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
-        self.groupBox.setTitle(_translate("Form", "Epochs:", None))
+        self.groupBoxEpochs.setTitle(_translate("Form", "Epochs:", None))
+        self.groupBoxEvents.setTitle(_translate("Form", "Events:", None))
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>380</width>
-    <height>231</height>
+    <width>409</width>
+    <height>334</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,20 +15,51 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Epochs:</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_14">
+     <item>
+      <widget class="QGroupBox" name="groupBoxEpochs">
+       <property name="title">
+        <string>Epochs:</string>
+       </property>
        <widget class="QListWidget" name="listWidgetEpochs">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>361</width>
+          <height>121</height>
+         </rect>
+        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
         </property>
        </widget>
-      </item>
-     </layout>
-    </widget>
+       <widget class="QGroupBox" name="groupBoxEvents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>150</y>
+          <width>391</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Events:</string>
+        </property>
+        <widget class="QListWidget" name="listWidgetEvents">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>361</width>
+           <height>111</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

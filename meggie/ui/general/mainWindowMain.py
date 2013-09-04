@@ -114,8 +114,10 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.hide()
         
         # Creates a listwidget for parameters of chosen epochs on epochList.
+        """
         self.epochParamsList = EpochParamsWidget(self)
         self.epochParamsList.hide()
+        """
         
         self.fileManager = FileManager()
         self.epocher = Epochs()
@@ -132,7 +134,7 @@ class MainWindow(QtGui.QMainWindow):
                         
         # For output logging.
         self.console = Console()
-        self.console.show()
+        #self.console.show()
         
         
         
@@ -259,7 +261,92 @@ class MainWindow(QtGui.QMainWindow):
                         ' events')
             self.ui.listWidget.addItem(item)
         """
+        
+    def show_epoch_collection_parameters(self, item):
+        """
+        Sets parameters from the currently chosen epochs.
+        
+        Keyword arguments:
+        item = epochWidget item that is currently chosen,
+               includes .fif and .param files
+        """
+        
+        # Set default/empty values for epoch parameters.
+        self.clear_epoch_collection_parameters()
+        
+        params = item.data(33).toPyObject()
+        if params is None: return
+       
+        epochs = item.data(32).toPyObject()
+        
+        # Dictionary stores numbers of different events.
+        event_counts = dict()
+        
+        # Adds items to dictionary for corresponding events.
+        for value in epochs.event_id.values():
+            event_counts[str(value)] = 0
+        
+        # Adds number of events to corresponding event.
+        for event in epochs.events:
+            for key in event_counts.keys():
+                if event[2] == int(key):
+                    event_counts[key] += 1
+        
+        categories = ''
+        # Adds event names, ids and event counts on mainWindows parameters
+        # list.
+        for key,value in epochs.event_id.items():
+            categories += key + ': ID ' + str(value) + ', ' + \
+            str(event_counts[str(value)]) + ' events\n'
+        
+        
+        # TODO: create category items to add on the listWidgetEvents widget. 
+        #self.epochList.ui.listWidgetEvents.setText(categories)
+        
+        self.ui.textBrowserTmin.setText(str(params[QtCore.QString('tmin')]) + ' s')
+        self.ui.textBrowserTmax.setText(str(params[QtCore.QString('tmax')]) + ' s')
 
+        # Creates dictionary of strings instead of qstrings for rejections.
+        params_rejections_str = dict((str(key), value) for
+                          key, value in params[QtCore.QString(u'reject')].\
+                          iteritems())
+        if 'mag' in params_rejections_str:
+            self.ui.textBrowserMag.setText(str(params_rejections_str['mag']\
+                                                 / 1e-12) + ' fT')
+        if 'grad' in params_rejections_str:
+            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']\
+                                                 / 1e-12) + ' fT/cm')
+        if 'eeg' in params_rejections_str:
+            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg']\
+                                                / 1e-6) + 'uV')
+        if 'stim' in params_rejections_str:
+            #self.ui.checkBoxStim.setChecked(True)
+            self.ui.textBrowserStim.setText('Yes')
+        if 'eog' in params_rejections_str:
+            self.ui.textBrowserEOG.setText(str(params_rejections_str['eog']\
+                                                / 1e-6) + 'uV')    
+        
+        filename_full_path = str(params[QtCore.QString(u'raw')])
+        filename_list = filename_full_path.split('/')
+        filename = filename_list[len(filename_list) - 1]
+        self.ui.textBrowserWorkingFile.setText(filename)
+        #self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
+        
+        
+    def clear_epoch_collection_parameters(self):
+        """
+        Clears epoch collection parameters on mainWindow Epoching tab.
+        """
+        self.ui.textBrowserTmin.clear()
+        self.ui.textBrowserTmax.clear()
+        self.ui.textBrowserGrad.clear()
+        self.ui.textBrowserMag.clear()
+        self.ui.textBrowserEEG.clear()
+        self.ui.textBrowserStim.clear()
+        self.ui.textBrowserEOG.clear()
+        #self.ui.textBrowserEvents.clear()   #setText('')
+        self.ui.textBrowserWorkingFile.clear()
+        
     def on_actionSet_workspace_triggered(self, checked=None):
         """
         Open the dialog to set the workspace.
@@ -528,32 +615,29 @@ class MainWindow(QtGui.QMainWindow):
         
         
         if index == 2:
-            #self.epochList.setParent(self.ui.tabEpoching)
-            #self.epochParamsList.setParent(self.ui.groupBox)
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-            self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
+            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
             self.epochList.show()
-            self.epochParamsList.show()
+            #self.epochParamsList.show()
             return
         
         if index == 3:
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
-            self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
+            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
             self.epochList.show()
-            self.epochParamsList.show()
+            #self.epochParamsList.show()
             return
        
         if index == 4:
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
-            self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
+            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
             self.epochList.show()
-            self.epochParamsList.show()
             #self.epochParamsList.show()
             return 
             
         else:
             self.epochList.hide()
-            self.epochParamsList.hide()
+            #self.epochParamsList.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
