@@ -42,6 +42,8 @@ import numpy as np
 
 import csv
 
+import messageBox
+
 class Epochs(QObject):
     
     """
@@ -93,12 +95,22 @@ class Epochs(QObject):
         if isinstance(raw, mne.fiff.raw.Raw):
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
-            if picks is None:
+            if len(picks) == 0:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText \
+                ('Picks cannot be empty. ' + 
+                                'Select picks by checking the checkboxes.')
+                self.messageBox.show()  
+                """
                 raise Exception('Picks cannot be empty. ' + 
                                 'Select picks by checking the checkboxes.')
-            epochs = mne.Epochs(raw, events, category,
+                """
+                
+                
+            else:
+                epochs = mne.Epochs(raw, events, category,
                                 tmin, tmax, picks=picks, reject=reject)
-            return epochs
+                return epochs
         else:
             raise TypeError('Not a Raw object.')
         

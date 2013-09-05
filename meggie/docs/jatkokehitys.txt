@@ -350,3 +350,4 @@ OSITTAIN(epoching ja preprocessing tabilla eroteltu kokonaisuuksia)    \ luomine
 
 ** Bugeja **
     \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+TEHTY    \ Jos yhtään rejektionia ei ole valittunaEpoch collectionia tehtäessä käyttäjälle ei näytetä virhettä

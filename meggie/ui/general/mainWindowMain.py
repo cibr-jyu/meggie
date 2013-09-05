@@ -323,18 +323,28 @@ class MainWindow(QtGui.QMainWindow):
         if 'mag' in params_rejections_str:
             self.ui.textBrowserMag.setText(str(params_rejections_str['mag']\
                                                  / 1e-12) + ' fT')
+        else:
+            self.ui.textBrowserMag.setText('-1')
         if 'grad' in params_rejections_str:
             self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']\
                                                  / 1e-12) + ' fT/cm')
+        else:
+            self.ui.textBrowserGrad.setText('-1')
         if 'eeg' in params_rejections_str:
             self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg']\
                                                 / 1e-6) + 'uV')
+        else:
+            self.ui.textBrowserEEG.setText('-1')
         if 'stim' in params_rejections_str:
             #self.ui.checkBoxStim.setChecked(True)
             self.ui.textBrowserStim.setText('Yes')
+        else:
+            self.ui.textBrowserStim.setText('-1')
         if 'eog' in params_rejections_str:
             self.ui.textBrowserEOG.setText(str(params_rejections_str['eog']\
-                                                / 1e-6) + 'uV')    
+                                                / 1e-6) + 'uV')
+        else:
+            self.ui.textBrowserEOG.setText('-1')
         
         filename_full_path = str(params[QtCore.QString(u'raw')])
         filename_list = filename_full_path.split('/')
