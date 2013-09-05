@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'epochWidget.ui'
 #
-# Created: Wed Sep  4 16:18:13 2013
+# Created: Thu Sep  5 14:23:15 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,13 +35,14 @@ class Ui_Form(object):
         self.groupBoxEpochs.setObjectName(_fromUtf8("groupBoxEpochs"))
         self.listWidgetEpochs = QtGui.QListWidget(self.groupBoxEpochs)
         self.listWidgetEpochs.setGeometry(QtCore.QRect(10, 30, 361, 121))
-        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+        self.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.listWidgetEpochs.setObjectName(_fromUtf8("listWidgetEpochs"))
         self.groupBoxEvents = QtGui.QGroupBox(self.groupBoxEpochs)
         self.groupBoxEvents.setGeometry(QtCore.QRect(0, 150, 391, 151))
         self.groupBoxEvents.setObjectName(_fromUtf8("groupBoxEvents"))
         self.listWidgetEvents = QtGui.QListWidget(self.groupBoxEvents)
         self.listWidgetEvents.setGeometry(QtCore.QRect(10, 30, 361, 111))
+        self.listWidgetEvents.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.listWidgetEvents.setObjectName(_fromUtf8("listWidgetEvents"))
         self.verticalLayout_14.addWidget(self.groupBoxEpochs)
         self.gridLayout_2.addLayout(self.verticalLayout_14, 0, 0, 1, 1)
@@ -51,6 +52,6 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
-        self.groupBoxEpochs.setTitle(_translate("Form", "Epochs:", None))
-        self.groupBoxEvents.setTitle(_translate("Form", "Events:", None))
+        self.groupBoxEpochs.setTitle(_translate("Form", "Epoch collections:", None))
+        self.groupBoxEvents.setTitle(_translate("Form", "Events in currently selected epoch collection:", None))
 

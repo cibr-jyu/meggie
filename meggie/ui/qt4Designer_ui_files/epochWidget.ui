@@ -19,7 +19,7 @@
      <item>
       <widget class="QGroupBox" name="groupBoxEpochs">
        <property name="title">
-        <string>Epochs:</string>
+        <string>Epoch collections:</string>
        </property>
        <widget class="QListWidget" name="listWidgetEpochs">
         <property name="geometry">
@@ -31,7 +31,7 @@
          </rect>
         </property>
         <property name="selectionMode">
-         <enum>QAbstractItemView::MultiSelection</enum>
+         <enum>QAbstractItemView::SingleSelection</enum>
         </property>
        </widget>
        <widget class="QGroupBox" name="groupBoxEvents">
@@ -44,7 +44,7 @@
          </rect>
         </property>
         <property name="title">
-         <string>Events:</string>
+         <string>Events in currently selected epoch collection:</string>
         </property>
         <widget class="QListWidget" name="listWidgetEvents">
          <property name="geometry">
@@ -54,6 +54,9 @@
            <width>361</width>
            <height>111</height>
           </rect>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </widget>

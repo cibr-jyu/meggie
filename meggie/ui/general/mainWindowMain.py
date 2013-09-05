@@ -296,8 +296,18 @@ class MainWindow(QtGui.QMainWindow):
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
         for key,value in epochs.event_id.items():
+            item = QtGui.QListWidgetItem()
+            item.setText(key + ': ID ' + str(value) + ', ' + \
+            str(event_counts[str(value)]) + ' events')
+            
+            self.epochList.ui.listWidgetEvents.addItem(item)
+            """
             categories += key + ': ID ' + str(value) + ', ' + \
             str(event_counts[str(value)]) + ' events\n'
+            """
+        
+        
+        
         
         
         # TODO: create category items to add on the listWidgetEvents widget. 
@@ -337,6 +347,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Clears epoch collection parameters on mainWindow Epoching tab.
         """
+        while self.epochList.ui.listWidgetEvents.count() > 0:
+            self.epochList.ui.listWidgetEvents.takeItem(0)
         self.ui.textBrowserTmin.clear()
         self.ui.textBrowserTmax.clear()
         self.ui.textBrowserGrad.clear()
