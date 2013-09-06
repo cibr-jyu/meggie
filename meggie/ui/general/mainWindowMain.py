@@ -548,6 +548,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonAverage_clicked(self, checked=None):
         """
+        Create averaged epoch collection (evoked dataset).
         Plot the evoked data as a topology.
         """
         if checked is None: return
@@ -570,12 +571,35 @@ class MainWindow(QtGui.QMainWindow):
                 event_name = (str(event.text())).split(':')
                 category_user_chosen[event_name[0]] = epochs.event_id.get(event_name[0])
             evoked = self.caller.average(epochs,category_user_chosen)
+            category = category_user_chosen
         else:
             #category = epochs.event_id
             evoked = self.caller.average(epochs,category)
         
+        category_str = ''
+        for key in category.keys():
+            category_str += key + ' '
+        
+        item = QtGui.QListWidgetItem()
+        epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
+        item.setText(epoch_collection.text() + ' ( ' + category_str + ')')
+        item.setData(32, evoked)
+        item.setData(33, category)
+        
+        self.ui.listWidgetEvokeds.addItem(item)
+        #self.ui.listWidgetEvokeds.setCurrentItem(item)
+        
         #evoked = self.caller.average(epochs,category)
-        self.caller.draw_evoked_potentials(epochs)
+        
+    def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
+        """
+        Plot the evoked data as a topology
+        """
+        if checked is None: return
+        item = self.ui.listWidgetEvokeds.currentItem()
+        evoked = item.data(32).toPyObject()
+        category = item.data(33).toPyObject()
+        self.caller.draw_evoked_potentials(evoked,category)
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.

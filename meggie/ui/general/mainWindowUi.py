@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainWindow3.ui'
+# Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Wed Sep  4 16:32:56 2013
+# Created: Fri Sep  6 13:52:46 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -706,8 +706,13 @@ class Ui_MainWindow(object):
         self.plainTextEditCustomChannelsToAverage.setObjectName(_fromUtf8("plainTextEditCustomChannelsToAverage"))
         self.horizontalLayout_15.addWidget(self.plainTextEditCustomChannelsToAverage)
         self.gridLayout_11.addLayout(self.horizontalLayout_15, 3, 1, 1, 1)
-        self.pushButtonAverage = QtGui.QPushButton(self.groupBoxAvailableAveraging)
-        self.pushButtonAverage.setGeometry(QtCore.QRect(17, 25, 242, 31))
+        self.horizontalLayoutWidget = QtGui.QWidget(self.groupBoxAvailableAveraging)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 30, 431, 33))
+        self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout_2.setMargin(0)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.pushButtonAverage = QtGui.QPushButton(self.horizontalLayoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -715,6 +720,10 @@ class Ui_MainWindow(object):
         self.pushButtonAverage.setSizePolicy(sizePolicy)
         self.pushButtonAverage.setMaximumSize(QtCore.QSize(10000, 16777215))
         self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
+        self.horizontalLayout_2.addWidget(self.pushButtonAverage)
+        self.pushButtonVisualizeAveragedEpochs = QtGui.QPushButton(self.horizontalLayoutWidget)
+        self.pushButtonVisualizeAveragedEpochs.setObjectName(_fromUtf8("pushButtonVisualizeAveragedEpochs"))
+        self.horizontalLayout_2.addWidget(self.pushButtonVisualizeAveragedEpochs)
         self.gridLayout_4.addWidget(self.groupBoxAvailableAveraging, 1, 0, 1, 1)
         self.groupBoxEpochsAveraging = QtGui.QGroupBox(self.gridLayoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -725,6 +734,13 @@ class Ui_MainWindow(object):
         self.groupBoxEpochsAveraging.setTitle(_fromUtf8(""))
         self.groupBoxEpochsAveraging.setObjectName(_fromUtf8("groupBoxEpochsAveraging"))
         self.gridLayout_4.addWidget(self.groupBoxEpochsAveraging, 0, 0, 1, 1)
+        self.groupBoxEvokeds = QtGui.QGroupBox(self.tabAveraging)
+        self.groupBoxEvokeds.setGeometry(QtCore.QRect(480, 20, 391, 161))
+        self.groupBoxEvokeds.setObjectName(_fromUtf8("groupBoxEvokeds"))
+        self.listWidgetEvokeds = QtGui.QListWidget(self.groupBoxEvokeds)
+        self.listWidgetEvokeds.setGeometry(QtCore.QRect(10, 30, 361, 121))
+        self.listWidgetEvokeds.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.listWidgetEvokeds.setObjectName(_fromUtf8("listWidgetEvokeds"))
         self.tabWidget.addTab(self.tabAveraging, _fromUtf8(""))
         self.tabTFR = QtGui.QWidget()
         self.tabTFR.setObjectName(_fromUtf8("tabTFR"))
@@ -794,7 +810,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -871,6 +887,8 @@ class Ui_MainWindow(object):
         self.labelChannelAverages.setText(_translate("MainWindow", "Show channel averages for:", None))
         self.radioButtonCustomChannels.setText(_translate("MainWindow", "Custom channels:", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average selected epoch collection", None))
+        self.pushButtonVisualizeAveragedEpochs.setText(_translate("MainWindow", "Visualize averaged epochs", None))
+        self.groupBoxEvokeds.setTitle(_translate("MainWindow", "Evoked datasets (averaged epoch collections):", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAveraging), _translate("MainWindow", "Averaging", None))
         self.groupBoxAvailableTFR.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonTFRTopology.setText(_translate("MainWindow", "TFR topology vizualization", None))

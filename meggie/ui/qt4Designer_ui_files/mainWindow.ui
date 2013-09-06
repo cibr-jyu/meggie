@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -1815,30 +1815,43 @@
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QPushButton" name="pushButtonAverage">
+                 <widget class="QWidget" name="horizontalLayoutWidget">
                   <property name="geometry">
                    <rect>
-                    <x>17</x>
-                    <y>25</y>
-                    <width>242</width>
-                    <height>31</height>
+                    <x>10</x>
+                    <y>30</y>
+                    <width>431</width>
+                    <height>33</height>
                    </rect>
                   </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>10000</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Average selected epoch collection</string>
-                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QPushButton" name="pushButtonAverage">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>10000</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>Average selected epoch collection</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonVisualizeAveragedEpochs">
+                     <property name="text">
+                      <string>Visualize averaged epochs</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </widget>
                </item>
@@ -1856,6 +1869,32 @@
                 </widget>
                </item>
               </layout>
+             </widget>
+             <widget class="QGroupBox" name="groupBoxEvokeds">
+              <property name="geometry">
+               <rect>
+                <x>480</x>
+                <y>20</y>
+                <width>391</width>
+                <height>161</height>
+               </rect>
+              </property>
+              <property name="title">
+               <string>Evoked datasets (averaged epoch collections):</string>
+              </property>
+              <widget class="QListWidget" name="listWidgetEvokeds">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>30</y>
+                 <width>361</width>
+                 <height>121</height>
+                </rect>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::SingleSelection</enum>
+               </property>
+              </widget>
              </widget>
             </widget>
             <widget class="QWidget" name="tabTFR">

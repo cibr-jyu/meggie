@@ -350,7 +350,6 @@ class Caller(object):
         epochs      = Epochs averaged
         """
         
-        self.category = category
         if epochs is None:
             raise Exception('No epochs found.')
         #self.category = epochs.event_id
@@ -358,7 +357,7 @@ class Caller(object):
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        self.evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
+        evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
         saveFolder = self.parent.experiment.epochs_directory + 'average/'
         
@@ -380,10 +379,11 @@ class Caller(object):
         try:                
             fiff.write_evoked(saveFolder + rawFileName +\
                               '_auditory_and_visual_eeg-ave' + '.fif',\
-                              self.evokeds)
+                              evokeds)
         except IOError:
             print 'Writing to selected folder is not allowed.'
         
+        return evokeds
         """
         #Reading a written evoked dataset and saving it to disk.
         #TODO: setno names must be set if more than one event category.
@@ -396,7 +396,7 @@ class Caller(object):
         """
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
                 
-    def draw_evoked_potentials(self, epochs):
+    def draw_evoked_potentials(self, evokeds, category):
         """
         Draws a topography representation of the evoked potentials.
         
@@ -422,7 +422,7 @@ class Caller(object):
         #colors = ['y','m','c','r','g','b','w','k']
         colors_events = []
         i = 0
-        for value in self.category.values():
+        for value in category.values():
             if value == 1:
                 colors_events.append('w')
                 #i += 1
@@ -452,7 +452,7 @@ class Caller(object):
         
         #title = str(self.category.keys())
         title = ''
-        fig = plot_topo(self.evokeds, layout, color=colors_events, title=title)
+        fig = plot_topo(evokeds, layout, color=colors_events, title=title)
         fig.canvas.set_window_title(self.mi.subject_name)
         
         # Paint figure background with white color.
@@ -462,7 +462,7 @@ class Caller(object):
         
         # Create a legend to show which color belongs to which event.
         items = []
-        for key in self.category.keys():
+        for key in category.keys():
             items.append(key)
         fontP = FontProperties()
         fontP.set_size(12)
