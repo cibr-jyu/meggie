@@ -560,7 +560,21 @@ class MainWindow(QtGui.QMainWindow):
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
         toPyObject()
-        evoked = self.caller.average(epochs)
+        category = epochs.event_id
+        
+        # New dictionary for event categories must be created, if user
+        # manually chooses different event categories to be averaged. 
+        if len(self.epochList.ui.listWidgetEvents.selectedItems()):
+            category_user_chosen = dict()
+            for event in self.epochList.ui.listWidgetEvents.selectedItems():
+                event_name = (str(event.text())).split(':')
+                category_user_chosen[event_name[0]] = epochs.event_id.get(event_name[0])
+            evoked = self.caller.average(epochs,category_user_chosen)
+        else:
+            #category = epochs.event_id
+            evoked = self.caller.average(epochs,category)
+        
+        #evoked = self.caller.average(epochs,category)
         self.caller.draw_evoked_potentials(epochs)
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):

@@ -339,7 +339,7 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def average(self, epochs):
+    def average(self, epochs, category):
         """Average epochs.
         
         Average epochs and save the evoked dataset to a file.
@@ -349,15 +349,16 @@ class Caller(object):
         
         epochs      = Epochs averaged
         """
+        
+        self.category = category
         if epochs is None:
             raise Exception('No epochs found.')
-        self.category = epochs.event_id
+        #self.category = epochs.event_id
         """
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        self.evokeds = [epochs[name].average() for name in self.\
-                        category.keys()]
+        self.evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
         saveFolder = self.parent.experiment.epochs_directory + 'average/'
         
@@ -453,6 +454,10 @@ class Caller(object):
         title = ''
         fig = plot_topo(self.evokeds, layout, color=colors_events, title=title)
         fig.canvas.set_window_title(self.mi.subject_name)
+        
+        # Paint figure background with white color.
+        #fig.set_facecolor('w')
+        
         fig.show()
         
         # Create a legend to show which color belongs to which event.
