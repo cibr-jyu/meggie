@@ -287,28 +287,28 @@ TEHTY    \ create epoch dialogissa add to list -painike eventtinimen jälkeen/vi
     \ eventtinimen jälkeen tulee juokseva numero vaikka vaihtaa nimen, poistetaan
 TEHTY    \ epochien start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
 TEHTY    \ ECG/EOG dialogeissa start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
-    \ (rejection parametreihin olisi hyvä laittaa esim. -1 jotta sitä ei otettaisi huomioon)
+TEHTY    \ (rejection parametreihin olisi hyvä laittaa esim. -1 jotta sitä ei otettaisi huomioon)
     \ epoch dialogissa checkboxien merkitys tarkistetaan
 TEHTY    \ epoch -dialogissa ok-painikkeen tekstiksi create epochs
 TEHTY    \ kokeillaan muuttaa harmaaksi texteditien taustat jotta ne ei näyttäisi siltä että niiden tekstiä pystytään editoimaan
-    \ epoch collectioneihin lisäksi "collection"-sana epoch widgetiin
+TEHTY    \ epoch collectioneihin lisäksi "collection"-sana epoch widgetiin
     \ importetuilla epocheilla ei ole tällä hetkellä parametrejä epoch parameters osiossa (ainakin eventit pitäisi nähdä)
     \ save averaged epochs nappi, average epochsien alle kanavakeskiarvot
-    \ keskiarvoistetuille epocheille statistiikka (tunnuslukutaulukko?)
-    \ statistiikka epocheista tarvitaan vasta avg tabilla
+TEHTY(ei vielä lisätty meggieen nappia)    \ keskiarvoistetuille epocheille statistiikka (tunnuslukutaulukko?)
+(tällä hetkellä epoching tabilla)    \ statistiikka epocheista tarvitaan vasta avg tabilla
     \ valikko käyttäjälle mitä statistiikkaa epocheista halutaan tallentaa
     \ statistiikan tallennus eri paikkaan kuin save epochs
 TEHTY    \ create epochs nappi ei erotu selkeästi muiden joukosta
 TEHTY    \ create, modify, delete samalle tasolle
 TEHTY    \ rejectioniin grad default 3000 eikä 4000
-    \ epoch dialogissa oma lista eventtikategorioista (helpottaisi yksittäisen eventtikategorian poistamisen epocheista, tätä ei välttämättä tarvita jos toteutetaan, että eventtejä
+TEHTY    \ epoch dialogissa oma lista eventtikategorioista (helpottaisi yksittäisen eventtikategorian poistamisen epocheista, tätä ei välttämättä tarvita jos toteutetaan, että eventtejä
     voidaan valita epoching-välilehden epochs parameters osiossa ja tämän perusteella suorittaa toimenpiteitä, kuten keskiarvoistusta ja visualisointia)
     \ epochien modify ei tuo mukana rejection arvoja
-    \ ehkä multiselection epoch widgetiin, jotta voisi poistaa useamman epoch collectionin kerralla
-    \ avg tabiin lista keskiarvoistetuille epocheille
-    \ keskiarvoistuksen yhteydessä valinta mitä eventtejä kyseisestä epoch collectionista otetaan huomioon
-    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
-    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+EI TOTEUTETA    \ ehkä multiselection epoch widgetiin, jotta voisi poistaa useamman epoch collectionin kerralla
+TEHTY    \ avg tabiin lista keskiarvoistetuille epocheille
+TEHTY    \ keskiarvoistuksen yhteydessä valinta mitä eventtejä kyseisestä epoch collectionista otetaan huomioon
+TEHTY(dialogia ei ole meggiessä vielä)    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+OSITTAIN TEHTY    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
 
 ** Kanavakeskiarvot **
     \ kanavakeskiarvojen tallentaminen
@@ -324,10 +324,10 @@ TEHTY    \ rejectioniin grad default 3000 eikä 4000
 
 ** Visualisointia **
     \ MNE esimerkeistä 'visualize channel over epochs as image' toteuttaminen (tehdään keskiarvoistetuille epocheille)
-    \ average epochissa värejä voisi muuttaa
+(hankala muuttaa koska mne käyttää omia layouteja, kokeile stylsheetejä)    \ average epochissa värejä voisi muuttaa
     \ kanavakeskiarvoikkunat samaan skaalaan?
-    \ avg epochien visualisoinnissa valinnaksi mitä eventtejä visualisoidaan päällekkäin kyseisestä avg collectionista
-    \ eri rejektioiden arvoilla tehtyjä samoja eventtikategorioita (esim. left ear) voisi visualisoida, jotta näkee mitä eri rejektioiden arvot tekee datalle
+TEHTY    \ avg epochien visualisoinnissa valinnaksi mitä eventtejä visualisoidaan päällekkäin kyseisestä avg collectionista
+(pystyy tekemään meggiellä)    \ eri rejektioiden arvoilla tehtyjä samoja eventtikategorioita (esim. left ear) voisi visualisoida, jotta näkee mitä eri rejektioiden arvot tekee datalle
 
 ** Filteröintiä **
     \ filteröinti (low,high,band) laitetaan osaksi available actioneja (huom. ei visualisointipalikka)
@@ -345,7 +345,7 @@ OSITTAIN(epoching ja preprocessing tabilla eroteltu kokonaisuuksia)    \ luomine
     \ subjectien lisäys -painike experimentiin
     \ experiment infossa lista lisätyistä subjecteista
     \ MNE_browse_raw oikeat säädöt kohdalleen
-    \ MNE_browse_raw preprocessing tabiin samaan kohtaan kuin infossa
+TEHTY    \ MNE_browse_raw preprocessing tabiin samaan kohtaan kuin infossa
     \ bugi: ECG/EOG ensin exclude SSP projectors kohdassa defaulttina ruksi, computen jälkeen ruksi siirtyy kohtaan compute ssp after averaging
 
 ** Bugeja **
