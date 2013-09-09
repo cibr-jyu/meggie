@@ -582,7 +582,7 @@ class MainWindow(QtGui.QMainWindow):
         
         item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        item.setText(epoch_collection.text() + ' ( ' + category_str + ')')
+        item.setText(epoch_collection.text() + ': ' + category_str + ' ')
         item.setData(32, evoked)
         item.setData(33, category)
         
@@ -600,6 +600,69 @@ class MainWindow(QtGui.QMainWindow):
         evoked = item.data(32).toPyObject()
         category = item.data(33).toPyObject()
         self.caller.draw_evoked_potentials(evoked,category)
+        
+    def on_pushButtonSaveEvoked_clicked(self, checked=None):
+        """
+        Save the evoked data
+        """
+        if checked is None: return
+        item = self.ui.listWidgetEvokeds.currentItem()
+        evokeds = item.data(32).toPyObject()
+        
+        item_text = str(item.text())
+        item_text_splitted = item_text.split(':')
+        evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
+        saveFolder = self.experiment.epochs_directory + 'average/'
+        if os.path.exists(saveFolder) is False:
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                print 'Writing to selected folder is not allowed.'
+            
+        try:                
+            # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
+            print 'Writing evoked data as ' + evoked_collection_name + ' ...'
+            fiff.write_evoked(saveFolder + evoked_collection_name, evokeds)
+            print '[done]'
+        except IOError:
+            print 'Writing to selected folder is not allowed.'
+        
+    def on_pushButtonLoadEvoked_clicked(self, checked=None):
+        """
+        Load evoked data
+        """
+        if checked is None: return
+        
+    def load_evoked_collections(self):
+        """Load evoked collections from a folder.
+        
+        Load the evoked collections from workspace/experiment/epochs/ 
+        and show them on the evoked collection list.
+         
+        """
+        if not os.path.exists(self.experiment.epochs_directory + 'average/'):
+            self.experiment.create_epochs_directory + 'average/'
+            return        
+        
+        self.ui.listWidgetEvokeds.clear()
+        #self.epochList.clearItems()
+        path = self.experiment.epochs_directory + 'average/'
+        files = os.listdir(path)
+        for file in files:
+            
+            if file.endswith('.fif'):
+                
+                name = file[:-4]            
+                # TODO: Add load_evoked_item method on fileManager to read
+                # evoked datasets and create QListWidgetItem object in the
+                # same method. Connect loadk_evoked_item to
+                # experiment_value_changed signal on mainWindow __init__
+                # (constructor: self.experiment_value_changed.connect\
+                # (self.load_evoked_collections)).
+                item = self.fileManager.load_evoked_item(path, name)
+                self.ui.listWidgetEvokeds.addItem(item)
+                self.ui.listWidgetEvokeds.setCurrentItem(item)
+    
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
