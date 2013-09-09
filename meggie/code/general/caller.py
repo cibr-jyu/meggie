@@ -512,8 +512,10 @@ class Caller(object):
         averageTitleString = str(averageTitle)
         
         # Remove whitespaces from channel names (channel names in Evoked
-        # objects are without whitespaces)    
-        channelsToAve = _clean_names(channelsToAve)
+        # objects are without whitespaces)
+        # Update: channel names in Evoked objects are now with whitespaces or
+        # some data files have different formatting.
+        #channelsToAve = _clean_names(channelsToAve)
         
         if epochs is None:
             raise Exception('No epochs found.')
@@ -525,6 +527,7 @@ class Caller(object):
         
         gradDataList = []
         for i in range(0, len(evokeds)):
+            print evokeds[i].info['ch_names']
             # Picks only the desired channels from the evokeds.
             evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
                                                         channelsToAve)
