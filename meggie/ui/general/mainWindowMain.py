@@ -733,7 +733,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
     
         self.filterDialog = FilterDialog(self)
-        self.filterDialog.exec_()
+        self.filterDialog.show()
     
     def populate_comboBoxLobes(self):
         """
