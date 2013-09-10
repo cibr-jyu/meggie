@@ -129,6 +129,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.experiment_value_changed.connect\
         (self.load_epoch_collections)
+        self.experiment_value_changed.connect\
+        (self.load_evoked_collections)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
                         
@@ -441,6 +443,8 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.epochList.clearItems()
             self.load_epoch_collections()
+            self.ui.listWidgetEvokeds.clear()
+            self.load_evoked_collections()
         
     def load_epoch_collections(self):
         """Load epoch collections from a folder.
@@ -608,7 +612,9 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         item = self.ui.listWidgetEvokeds.currentItem()
         evokeds = item.data(32).toPyObject()
-        
+        for i in range(len(evokeds)):
+            print len(evokeds)
+            print evokeds[i]
         item_text = str(item.text())
         item_text_splitted = item_text.split(':')
         evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
@@ -632,11 +638,12 @@ class MainWindow(QtGui.QMainWindow):
         Load evoked data
         """
         if checked is None: return
+        # TODO: see on_pushButtonLoadEpochs_clicked
         
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
         
-        Load the evoked collections from workspace/experiment/epochs/ 
+        Load the evoked collections from workspace/experiment/epochs/average/
         and show them on the evoked collection list.
          
         """

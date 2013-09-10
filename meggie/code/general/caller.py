@@ -365,10 +365,12 @@ class Caller(object):
         rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
                                                      raw_data_path)[1])[0]                      
         
+        return evokeds
         """
         Saves evoked data to disk. Seems that the written data is a list
         of evoked datasets of different events if more than one chosen when
         creating epochs.
+        """
         """
         if os.path.exists(saveFolder) is False:
             try:
@@ -382,8 +384,7 @@ class Caller(object):
                               evokeds)
         except IOError:
             print 'Writing to selected folder is not allowed.'
-        
-        return evokeds
+        """
         """
         #Reading a written evoked dataset and saving it to disk.
         #TODO: setno names must be set if more than one event category.
