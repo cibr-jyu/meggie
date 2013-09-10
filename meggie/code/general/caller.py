@@ -339,7 +339,7 @@ class Caller(object):
         
         self.parent.experiment.save_experiment_settings()
     
-    def average(self, epochs):
+    def average(self, epochs, category):
         """Average epochs.
         
         Average epochs and save the evoked dataset to a file.
@@ -349,15 +349,15 @@ class Caller(object):
         
         epochs      = Epochs averaged
         """
+        
         if epochs is None:
             raise Exception('No epochs found.')
-        self.category = epochs.event_id
+        #self.category = epochs.event_id
         """
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        self.evokeds = [epochs[name].average() for name in self.\
-                        category.keys()]
+        evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
         saveFolder = self.parent.experiment.epochs_directory + 'average/'
         
@@ -365,10 +365,12 @@ class Caller(object):
         rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
                                                      raw_data_path)[1])[0]                      
         
+        return evokeds
         """
         Saves evoked data to disk. Seems that the written data is a list
         of evoked datasets of different events if more than one chosen when
         creating epochs.
+        """
         """
         if os.path.exists(saveFolder) is False:
             try:
@@ -379,10 +381,10 @@ class Caller(object):
         try:                
             fiff.write_evoked(saveFolder + rawFileName +\
                               '_auditory_and_visual_eeg-ave' + '.fif',\
-                              self.evokeds)
+                              evokeds)
         except IOError:
             print 'Writing to selected folder is not allowed.'
-        
+        """
         """
         #Reading a written evoked dataset and saving it to disk.
         #TODO: setno names must be set if more than one event category.
@@ -395,7 +397,7 @@ class Caller(object):
         """
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
                 
-    def draw_evoked_potentials(self, epochs):
+    def draw_evoked_potentials(self, evokeds, category):
         """
         Draws a topography representation of the evoked potentials.
         
@@ -421,7 +423,7 @@ class Caller(object):
         #colors = ['y','m','c','r','g','b','w','k']
         colors_events = []
         i = 0
-        for value in self.category.values():
+        for value in category.values():
             if value == 1:
                 colors_events.append('w')
                 #i += 1
@@ -451,13 +453,17 @@ class Caller(object):
         
         #title = str(self.category.keys())
         title = ''
-        fig = plot_topo(self.evokeds, layout, color=colors_events, title=title)
+        fig = plot_topo(evokeds, layout, color=colors_events, title=title)
         fig.canvas.set_window_title(self.mi.subject_name)
+        
+        # Paint figure background with white color.
+        #fig.set_facecolor('w')
+        
         fig.show()
         
         # Create a legend to show which color belongs to which event.
         items = []
-        for key in self.category.keys():
+        for key in category.keys():
             items.append(key)
         fontP = FontProperties()
         fontP.set_size(12)
@@ -507,8 +513,10 @@ class Caller(object):
         averageTitleString = str(averageTitle)
         
         # Remove whitespaces from channel names (channel names in Evoked
-        # objects are without whitespaces)    
-        channelsToAve = _clean_names(channelsToAve)
+        # objects are without whitespaces)
+        # Update: channel names in Evoked objects are now with whitespaces or
+        # some data files have different formatting.
+        #channelsToAve = _clean_names(channelsToAve)
         
         if epochs is None:
             raise Exception('No epochs found.')
@@ -520,6 +528,7 @@ class Caller(object):
         
         gradDataList = []
         for i in range(0, len(evokeds)):
+            print evokeds[i].info['ch_names']
             # Picks only the desired channels from the evokeds.
             evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
                                                         channelsToAve)

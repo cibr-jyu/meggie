@@ -129,6 +129,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.experiment_value_changed.connect\
         (self.load_epoch_collections)
+        self.experiment_value_changed.connect\
+        (self.load_evoked_collections)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
                         
@@ -296,8 +298,18 @@ class MainWindow(QtGui.QMainWindow):
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
         for key,value in epochs.event_id.items():
+            item = QtGui.QListWidgetItem()
+            item.setText(key + ': ID ' + str(value) + ', ' + \
+            str(event_counts[str(value)]) + ' events')
+            
+            self.epochList.ui.listWidgetEvents.addItem(item)
+            """
             categories += key + ': ID ' + str(value) + ', ' + \
             str(event_counts[str(value)]) + ' events\n'
+            """
+        
+        
+        
         
         
         # TODO: create category items to add on the listWidgetEvents widget. 
@@ -313,18 +325,28 @@ class MainWindow(QtGui.QMainWindow):
         if 'mag' in params_rejections_str:
             self.ui.textBrowserMag.setText(str(params_rejections_str['mag']\
                                                  / 1e-12) + ' fT')
+        else:
+            self.ui.textBrowserMag.setText('-1')
         if 'grad' in params_rejections_str:
             self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']\
                                                  / 1e-12) + ' fT/cm')
+        else:
+            self.ui.textBrowserGrad.setText('-1')
         if 'eeg' in params_rejections_str:
             self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg']\
                                                 / 1e-6) + 'uV')
+        else:
+            self.ui.textBrowserEEG.setText('-1')
         if 'stim' in params_rejections_str:
             #self.ui.checkBoxStim.setChecked(True)
             self.ui.textBrowserStim.setText('Yes')
+        else:
+            self.ui.textBrowserStim.setText('-1')
         if 'eog' in params_rejections_str:
             self.ui.textBrowserEOG.setText(str(params_rejections_str['eog']\
-                                                / 1e-6) + 'uV')    
+                                                / 1e-6) + 'uV')
+        else:
+            self.ui.textBrowserEOG.setText('-1')
         
         filename_full_path = str(params[QtCore.QString(u'raw')])
         filename_list = filename_full_path.split('/')
@@ -337,6 +359,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Clears epoch collection parameters on mainWindow Epoching tab.
         """
+        while self.epochList.ui.listWidgetEvents.count() > 0:
+            self.epochList.ui.listWidgetEvents.takeItem(0)
         self.ui.textBrowserTmin.clear()
         self.ui.textBrowserTmax.clear()
         self.ui.textBrowserGrad.clear()
@@ -419,6 +443,8 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.epochList.clearItems()
             self.load_epoch_collections()
+            self.ui.listWidgetEvokeds.clear()
+            self.load_evoked_collections()
         
     def load_epoch_collections(self):
         """Load epoch collections from a folder.
@@ -526,6 +552,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonAverage_clicked(self, checked=None):
         """
+        Create averaged epoch collection (evoked dataset).
         Plot the evoked data as a topology.
         """
         if checked is None: return
@@ -538,8 +565,111 @@ class MainWindow(QtGui.QMainWindow):
             return
         epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
         toPyObject()
-        evoked = self.caller.average(epochs)
-        self.caller.draw_evoked_potentials(epochs)
+        category = epochs.event_id
+        
+        # New dictionary for event categories must be created, if user
+        # manually chooses different event categories to be averaged. 
+        if len(self.epochList.ui.listWidgetEvents.selectedItems()):
+            category_user_chosen = dict()
+            for event in self.epochList.ui.listWidgetEvents.selectedItems():
+                event_name = (str(event.text())).split(':')
+                category_user_chosen[event_name[0]] = epochs.event_id.get(event_name[0])
+            evoked = self.caller.average(epochs,category_user_chosen)
+            category = category_user_chosen
+        else:
+            #category = epochs.event_id
+            evoked = self.caller.average(epochs,category)
+        
+        category_str = ''
+        for key in category.keys():
+            category_str += key + ' '
+        
+        item = QtGui.QListWidgetItem()
+        epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
+        item.setText(epoch_collection.text() + ': ' + category_str + ' ')
+        item.setData(32, evoked)
+        item.setData(33, category)
+        
+        self.ui.listWidgetEvokeds.addItem(item)
+        #self.ui.listWidgetEvokeds.setCurrentItem(item)
+        
+        #evoked = self.caller.average(epochs,category)
+        
+    def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
+        """
+        Plot the evoked data as a topology
+        """
+        if checked is None: return
+        item = self.ui.listWidgetEvokeds.currentItem()
+        evoked = item.data(32).toPyObject()
+        category = item.data(33).toPyObject()
+        self.caller.draw_evoked_potentials(evoked,category)
+        
+    def on_pushButtonSaveEvoked_clicked(self, checked=None):
+        """
+        Save the evoked data
+        """
+        if checked is None: return
+        item = self.ui.listWidgetEvokeds.currentItem()
+        evokeds = item.data(32).toPyObject()
+        for i in range(len(evokeds)):
+            print len(evokeds)
+            print evokeds[i]
+        item_text = str(item.text())
+        item_text_splitted = item_text.split(':')
+        evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
+        saveFolder = self.experiment.epochs_directory + 'average/'
+        if os.path.exists(saveFolder) is False:
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                print 'Writing to selected folder is not allowed.'
+            
+        try:                
+            # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
+            print 'Writing evoked data as ' + evoked_collection_name + ' ...'
+            fiff.write_evoked(saveFolder + evoked_collection_name, evokeds)
+            print '[done]'
+        except IOError:
+            print 'Writing to selected folder is not allowed.'
+        
+    def on_pushButtonLoadEvoked_clicked(self, checked=None):
+        """
+        Load evoked data
+        """
+        if checked is None: return
+        # TODO: see on_pushButtonLoadEpochs_clicked
+        
+    def load_evoked_collections(self):
+        """Load evoked collections from a folder.
+        
+        Load the evoked collections from workspace/experiment/epochs/average/
+        and show them on the evoked collection list.
+         
+        """
+        if not os.path.exists(self.experiment.epochs_directory + 'average/'):
+            self.experiment.create_epochs_directory + 'average/'
+            return        
+        
+        self.ui.listWidgetEvokeds.clear()
+        #self.epochList.clearItems()
+        path = self.experiment.epochs_directory + 'average/'
+        files = os.listdir(path)
+        for file in files:
+            
+            if file.endswith('.fif'):
+                
+                name = file[:-4]            
+                # TODO: Add load_evoked_item method on fileManager to read
+                # evoked datasets and create QListWidgetItem object in the
+                # same method. Connect loadk_evoked_item to
+                # experiment_value_changed signal on mainWindow __init__
+                # (constructor: self.experiment_value_changed.connect\
+                # (self.load_evoked_collections)).
+                item = self.fileManager.load_evoked_item(path, name)
+                self.ui.listWidgetEvokeds.addItem(item)
+                self.ui.listWidgetEvokeds.setCurrentItem(item)
+    
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.

@@ -185,7 +185,7 @@ class EventSelectionDialog(QtGui.QDialog):
         if params_str['grad'] is True:
             self.ui.checkBoxGrad.setChecked(True)
         else:
-            self.ui.checkBoxGrag.setChecked(False)
+            self.ui.checkBoxGrad.setChecked(False)
             
         if params_str['eeg'] is True:
             self.ui.checkBoxEeg.setChecked(True)
