@@ -60,6 +60,7 @@ from eogParametersDialogMain import EogParametersDialog
 from ecgParametersDialogMain import EcgParametersDialog
 from workSpaceDialogMain import WorkSpaceDialog
 from preferencesDialogMain import PreferencesDialog
+from evokedStatsDialogMain import EvokedStatsDialog
 from addECGProjectionsMain import AddECGProjections
 from addEOGProjectionsMain import AddEOGProjections
 from TFRDialogMain import TFRDialog
@@ -590,6 +591,16 @@ class MainWindow(QtGui.QMainWindow):
         #self.ui.listWidgetEvokeds.setCurrentItem(item)
         
         #evoked = self.caller.average(epochs,category)
+        
+    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
+        """Open the evokedStatsDialog for viewing statistical data.
+        """
+        #Currently a mock code
+        if checked is None: return
+        if self.ui.listWidgetEvokeds.count() == 0: return
+        evoked = self.ui.listWidgetEvokeds.item(0).data(32).toPyObject()
+        self.evokedStatsDialog = EvokedStatsDialog(evoked[0])
+        self.evokedStatsDialog.exec_()
         
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
         """

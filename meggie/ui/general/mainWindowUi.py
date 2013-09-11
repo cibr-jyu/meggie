@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Mon Sep  9 12:13:58 2013
+# Created: Wed Sep 11 11:56:12 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -732,9 +732,6 @@ class Ui_MainWindow(object):
         self.listWidgetEvokeds.setGeometry(QtCore.QRect(10, 30, 361, 121))
         self.listWidgetEvokeds.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.listWidgetEvokeds.setObjectName(_fromUtf8("listWidgetEvokeds"))
-        self.pushButtonVisualizeAveragedEpochs = QtGui.QPushButton(self.tabAveraging)
-        self.pushButtonVisualizeAveragedEpochs.setGeometry(QtCore.QRect(490, 230, 201, 31))
-        self.pushButtonVisualizeAveragedEpochs.setObjectName(_fromUtf8("pushButtonVisualizeAveragedEpochs"))
         self.horizontalLayoutWidget = QtGui.QWidget(self.tabAveraging)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(490, 180, 361, 41))
         self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
@@ -747,6 +744,18 @@ class Ui_MainWindow(object):
         self.pushButtonLoadEvoked = QtGui.QPushButton(self.horizontalLayoutWidget)
         self.pushButtonLoadEvoked.setObjectName(_fromUtf8("pushButtonLoadEvoked"))
         self.horizontalLayout_2.addWidget(self.pushButtonLoadEvoked)
+        self.widget = QtGui.QWidget(self.tabAveraging)
+        self.widget.setGeometry(QtCore.QRect(490, 230, 343, 33))
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.widget)
+        self.horizontalLayout_10.setMargin(0)
+        self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        self.pushButtonVisualizeAveragedEpochs = QtGui.QPushButton(self.widget)
+        self.pushButtonVisualizeAveragedEpochs.setObjectName(_fromUtf8("pushButtonVisualizeAveragedEpochs"))
+        self.horizontalLayout_10.addWidget(self.pushButtonVisualizeAveragedEpochs)
+        self.pushButtonOpenEvokedStatsDialog = QtGui.QPushButton(self.widget)
+        self.pushButtonOpenEvokedStatsDialog.setObjectName(_fromUtf8("pushButtonOpenEvokedStatsDialog"))
+        self.horizontalLayout_10.addWidget(self.pushButtonOpenEvokedStatsDialog)
         self.tabWidget.addTab(self.tabAveraging, _fromUtf8(""))
         self.tabTFR = QtGui.QWidget()
         self.tabTFR.setObjectName(_fromUtf8("tabTFR"))
@@ -894,9 +903,10 @@ class Ui_MainWindow(object):
         self.radioButtonCustomChannels.setText(_translate("MainWindow", "Custom channels:", None))
         self.pushButtonAverage.setText(_translate("MainWindow", "Average selected epoch collection", None))
         self.groupBoxEvokeds.setTitle(_translate("MainWindow", "Evoked datasets (averaged epoch collections):", None))
-        self.pushButtonVisualizeAveragedEpochs.setText(_translate("MainWindow", "Visualize averaged epochs", None))
         self.pushButtonSaveEvoked.setText(_translate("MainWindow", "Save evoked", None))
         self.pushButtonLoadEvoked.setText(_translate("MainWindow", "Load evoked", None))
+        self.pushButtonVisualizeAveragedEpochs.setText(_translate("MainWindow", "Visualize averaged epochs", None))
+        self.pushButtonOpenEvokedStatsDialog.setText(_translate("MainWindow", "Show evoked stats", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAveraging), _translate("MainWindow", "Averaging", None))
         self.groupBoxAvailableTFR.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonTFRTopology.setText(_translate("MainWindow", "TFR topology vizualization", None))
