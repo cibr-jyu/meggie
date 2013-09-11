@@ -91,32 +91,36 @@ class FilterDialog(QtGui.QDialog):
         """
         
         dictionary = {}
+        dictionary['isEmpty'] = True
         
         if self.ui.checkBoxLowpass.isChecked() == True:
+            dictionary['isEmpty'] = False
             dictionary['lowpass'] = True
             
             dictionary['low_cutoff_freq'] = self.ui.\
                                        doubleSpinBoxLowpassCutoff.value()
             dictionary['low_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
-            dictionary['low_length'] = str(self.ui.\
-                                    doubleSpinBoxLowpassFilterLength.value())
+            dictionary['low_length'] = str(self.ui.lineEditLowpassLength.\
+                                           text())
         else:
-            dictionary['lowpass'] = True
+            dictionary['lowpass'] = False
         
         if self.ui.checkBoxHighpass.isChecked() == True:
+            dictionary['isEmpty'] = False
             dictionary['highpass'] = True
             
             dictionary['high_cutoff_freq'] = self.ui.\
                                         doubleSpinBoxHighpassCutoff.value()
             dictionary['high_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
-            dictionary['high_length'] = str(self.ui.\
-                                    doubleSpinBoxHighpassFilterLength.value())
+            dictionary['high_length'] = str(self.ui.lineEditHighpassLength.\
+                                            text())
         else:
-            dictionary['lowpass'] = True
+            dictionary['highpass'] = False
         
         if self.ui.checkBoxBandstop1.isChecked() == True:
+            dictionary['isEmpty'] = False
             dictionary['bandstop1'] = True
             
             dictionary['bandstop1_l_freq'] = \
@@ -131,11 +135,12 @@ class FilterDialog(QtGui.QDialog):
                                     doubleSpinBoxBandstopwidth1.value()
             
             dictionary['bandstop1_length'] = str(self.ui.\
-                                    doubleSpinBoxBandstopFilterLength1.value())
+                                             lineEditBandstopLength1.text())
         else:
             dictionary['bandstop1'] = False
         
         if self.ui.checkBoxBandstop2.isChecked() == True:
+            dictionary['isEmpty'] = False
             dictionary['bandstop2'] = True
             
             dictionary['bandstop2_l_freq'] = \
@@ -150,11 +155,12 @@ class FilterDialog(QtGui.QDialog):
                                     doubleSpinBoxBandstopwidth2.value()
                                     
             dictionary['bandstop2_length'] = str(self.ui.\
-                                    doubleSpinBoxBandstopFilterLength2.value())
+                                             lineEditBandstopLength2.text())
         else:
             dictionary['bandstop2'] = False
             
         if self.ui.checkBoxBandstop3.isChecked() == True:
+            dictionary['isEmpty'] = False
             dictionary['bandstop3'] = True
             
             dictionary['bandstop3_l_freq'] = \
@@ -166,7 +172,7 @@ class FilterDialog(QtGui.QDialog):
                 self.ui.doubleSpinBoxBandstopWidth3/2
             
             dictionary['bandstop3_length'] = str(self.ui.\
-                                    doubleSpinBoxBandstopFilterLength3.value())
+                                             lineEditBandstopLength3.text())
         else:
             dictionary['bandstop3'] = False
             
@@ -177,14 +183,24 @@ class FilterDialog(QtGui.QDialog):
         Get the parameters dictionary and relay it to caller.filter to
         actually do the filtering.
         """
-        
         if self.previewFigure != None:
             plt.close(self.previewFigure)
         
         paramDict = self.get_filter_parameters()
+        if paramDict.get('isEmpty') == True:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText('Please select ' +
+                                                       'filter(s) to apply')
+                self.messageBox.show()
+                return    
         
         self.dataToFilter = self.parent.experiment.working_file._data
         samplerate = self.parent.experiment.working_file.info['sfreq']
+        
+         # Check if the filter frequency values are sane or not.
+        # TODO preferably catch a custom exception from caller.filter
+        self._validateFilterFreq(paramDict, samplerate)
+        
         filteredData = self.parent.caller.filter(self.dataToFilter, 
                                                  samplerate, paramDict)
         
@@ -192,15 +208,36 @@ class FilterDialog(QtGui.QDialog):
         self.parent.experiment.working_file._data = filteredData
         
         # Update the working file info fields with the new values
-        if paramDict['lowpass'] == True:
+        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
             self.parent.experiment.working_file.info['lowpass'] = \
                 paramDict['low_cutoff_freq']
         
-        if paramDict['highpass'] == True:
+        if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
             self.parent.experiment.working_file.info['highpass'] = \
                 paramDict['high_cutoff_freq']
                 
         self.close()
+    
+    
+    def _validateFilterFreq(self, paramDict, samplerate):
+        """
+        Checks the validity of filter cutoff frequency values.
+        """
+        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
+            if ( paramDict['low_cutoff_freq'] > samplerate/2 ):
+                self.show_filter_freq_error(samplerate)
+    
+        if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
+            if ( paramDict['high_cutoff_freq'] > samplerate/2 ):
+                self.show_filter_freq_error(samplerate)
+    
+    def _show_filter_freq_error(self, samplerate):
+        self.messageBox = messageBox.AppForm()
+        self.messageBox.labelException.setText('Cutoff frequencies ' +
+                    'should be lower than samplerate/2 ' +
+                    '(' + 'current samplerate is ' + str(samplerate) + ' Hz)')
+        self.messageBox.show()
+        return
     
     def reject(self):
         if self.previewFigure != None:

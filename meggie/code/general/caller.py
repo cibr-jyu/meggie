@@ -733,20 +733,19 @@ class Caller(object):
         
         """
         
-        
-        if dic.get('lowpass') == True:
-            filteredData = filter.low_pass_filter(dataToFilter, samplerate, 
+        if dic.get('lowpass') == True:                
+            dataToFilter = filter.low_pass_filter(dataToFilter, samplerate, 
                         dic.get('low_cutoff_freq'), dic.get('low_length'),
                         dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
         if dic.get('highpass') == True:
-            filteredData = filter.high_pass_filter(dataToFilter, samplerate, 
+            dataToFilter = filter.high_pass_filter(dataToFilter, samplerate, 
                         dic.get('high_cutoff_freq'), dic.get('high_length'),
                         dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
-        return filteredData
+        return dataToFilter
                           
     def update_experiment_working_file(self, fname):
         """
