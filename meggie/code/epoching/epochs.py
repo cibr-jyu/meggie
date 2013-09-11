@@ -101,11 +101,6 @@ class Epochs(QObject):
                 ('Picks cannot be empty. ' + 
                                 'Select picks by checking the checkboxes.')
                 self.messageBox.show()  
-                """
-                raise Exception('Picks cannot be empty. ' + 
-                                'Select picks by checking the checkboxes.')
-                """
-                
                 
             else:
                 epochs = mne.Epochs(raw, events, category,
