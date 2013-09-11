@@ -365,10 +365,12 @@ class Caller(object):
         rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
                                                      raw_data_path)[1])[0]                      
         
+        return evokeds
         """
         Saves evoked data to disk. Seems that the written data is a list
         of evoked datasets of different events if more than one chosen when
         creating epochs.
+        """
         """
         if os.path.exists(saveFolder) is False:
             try:
@@ -382,8 +384,7 @@ class Caller(object):
                               evokeds)
         except IOError:
             print 'Writing to selected folder is not allowed.'
-        
-        return evokeds
+        """
         """
         #Reading a written evoked dataset and saving it to disk.
         #TODO: setno names must be set if more than one event category.
@@ -732,20 +733,19 @@ class Caller(object):
         
         """
         
-        
-        if dic.get('lowpass') == True:
-            filteredData = filter.low_pass_filter(dataToFilter, samplerate, 
+        if dic.get('lowpass') == True:                
+            dataToFilter = filter.low_pass_filter(dataToFilter, samplerate, 
                         dic.get('low_cutoff_freq'), dic.get('low_length'),
                         dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
         if dic.get('highpass') == True:
-            filteredData = filter.high_pass_filter(dataToFilter, samplerate, 
+            dataToFilter = filter.high_pass_filter(dataToFilter, samplerate, 
                         dic.get('high_cutoff_freq'), dic.get('high_length'),
                         dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
-        return filteredData
+        return dataToFilter
                           
     def update_experiment_working_file(self, fname):
         """

@@ -262,6 +262,13 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         
         param_dict = self.collect_parameter_values()
+        if len(param_dict['reject']) == 0:
+            self.errorMessage = messageBox.AppForm()
+            self.errorMessage.labelException.setText('Picks cannot be empty. ' + 
+                                'Select picks by checking the checkboxes.')
+            self.errorMessage.show()
+            
+            return
         self.epoch_params_ready.emit(param_dict)
         self.close()
         

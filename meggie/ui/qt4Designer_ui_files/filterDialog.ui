@@ -103,6 +103,12 @@
             </item>
             <item row="0" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxLowpassCutoff">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -125,6 +131,12 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelLowpassTransitionWidth">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Transition band width:</string>
               </property>
@@ -160,18 +172,12 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxLowpassFilterLength">
+             <widget class="QLineEdit" name="lineEditLowpassLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
               </property>
              </widget>
             </item>
@@ -291,18 +297,12 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassFilterLength">
+             <widget class="QLineEdit" name="lineEditHighpassLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
               </property>
              </widget>
             </item>
@@ -416,18 +416,12 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFilterLength1">
+             <widget class="QLineEdit" name="lineEditBandstopLength1">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
               </property>
              </widget>
             </item>
@@ -534,18 +528,12 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFilterLength2">
+             <widget class="QLineEdit" name="lineEditBandstopLength2">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
               </property>
              </widget>
             </item>
@@ -652,18 +640,12 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFilterLength3">
+             <widget class="QLineEdit" name="lineEditBandstopLength3">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
               </property>
              </widget>
             </item>
@@ -808,11 +790,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroupLowpassMethod"/>
-  <buttongroup name="buttonGroupHighpassMethod"/>
-  <buttongroup name="buttonGroupBandstop1"/>
-  <buttongroup name="buttonGroupBandstop2"/>
-  <buttongroup name="buttonGroupBandstop3"/>
- </buttongroups>
 </ui>

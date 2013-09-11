@@ -236,6 +236,79 @@ class FileManager(QObject):
             item = self.load_epoch_item(folder, name)
             return item        
     
+    def load_evoked_item(self, folder, name):
+        """Load evokeds to the list when mainWindow is initialized
+        
+        Keyword arguments:
+        folder -- the path to the evoked .fif folder
+        name -- the base name of the evoked .fif file
+        
+        """
+        category = dict()
+        evokeds = []
+        i = 0
+        item = QtGui.QListWidgetItem(name)
+        try:
+            evoked = mne.fiff.Evoked(folder + name)
+            item.setData(32, evoked)
+            
+        except Exception:
+            try:
+                #evoked = mne.fiff.Evoked(folder + name + '.fif', setno=0)
+                while mne.fiff.Evoked(folder + name + '.fif', setno=i) is not None:
+                    evoked = mne.fiff.Evoked(folder + name + '.fif', setno=i)
+                    if i < 5:
+                        category[evoked.comment] = i + 1
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                    if i == 5:
+                        category[evoked.comment] = 8
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                    if i == 6:
+                        category[evoked.comment] = 16
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                    if i == 7:    
+                        category[evoked.comment] = 32
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                    
+                    
+            
+            except Exception as e:
+                #print str(e)
+                pass
+                #return
+        
+        
+        item.setData(32, evokeds)
+        item.setData(33, category)
+        return item
+        """
+        try:
+            parameters = self.unpickle(folder + name + '.param')
+            
+        except IOError:
+            return item
+        #The events need to be converted back to QListWidgetItems.
+        event_list = []
+        event_dict = parameters['events']
+        for key in event_dict:
+            for event in event_dict[key]:
+                event_tuple = (event, key)
+                event_list.append(event_tuple)
+        
+        parameters['events'] = event_list
+        #Create and return the QListWidgetItem
+
+        item.setData(33, parameters)
+        """
+    
     def open_raw(self, fname):
         """
         Opens a raw file.

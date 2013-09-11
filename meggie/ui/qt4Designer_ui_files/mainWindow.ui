@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>950</width>
-         <height>721</height>
+         <width>948</width>
+         <height>726</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -1658,7 +1658,7 @@
                 <rect>
                  <x>10</x>
                  <y>30</y>
-                 <width>191</width>
+                 <width>197</width>
                  <height>111</height>
                 </rect>
                </property>
@@ -2022,7 +2022,7 @@
      <x>0</x>
      <y>0</y>
      <width>970</width>
-     <height>29</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="defaultUp">
