@@ -45,6 +45,7 @@ from PyQt4 import QtCore,QtGui
 import mne
 from mne import fiff
 from mne.datasets import sample
+from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 
 import pylab as pl
 from matplotlib.figure import Figure
@@ -593,7 +594,27 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetEvokeds.addItem(item)
         #self.ui.listWidgetEvokeds.setCurrentItem(item)
         
+         
+        
         #evoked = self.caller.average(epochs,category)
+        
+    def on_pushButtonVisualizeEpochChannel_clicked(self, checked=None):
+        """Plot image over epochs channel
+        """
+        # TODO: no button on mainWindow.ui yet
+        # TODO: create dialog for user chosen parameters
+        picks_channel = []
+        picks = ['MEG 2443', 'MEG 2113']
+        for name in picks:
+            if name.startswith('MEG'):
+                if name.endswith(('2', '3')):
+                    key = name[-4:-1]
+                    picks_channel.append(int(key))
+        
+        mne.viz.plot_image_epochs(epochs, picks_channel, sigma=0.5, vmin=-100,
+                    vmax=250, colorbar=True, order=None, show=True)
+        
+        
         
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
         """
