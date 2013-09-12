@@ -61,6 +61,7 @@ from eogParametersDialogMain import EogParametersDialog
 from ecgParametersDialogMain import EcgParametersDialog
 from workSpaceDialogMain import WorkSpaceDialog
 from preferencesDialogMain import PreferencesDialog
+from evokedStatsDialogMain import EvokedStatsDialog
 from addECGProjectionsMain import AddECGProjections
 from addEOGProjectionsMain import AddEOGProjections
 from TFRDialogMain import TFRDialog
@@ -594,27 +595,17 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetEvokeds.addItem(item)
         #self.ui.listWidgetEvokeds.setCurrentItem(item)
         
-         
-        
         #evoked = self.caller.average(epochs,category)
         
-    def on_pushButtonVisualizeEpochChannel_clicked(self, checked=None):
-        """Plot image over epochs channel
+    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
+        """Open the evokedStatsDialog for viewing statistical data.
         """
-        # TODO: no button on mainWindow.ui yet
-        # TODO: create dialog for user chosen parameters
-        picks_channel = []
-        picks = ['MEG 2443', 'MEG 2113']
-        for name in picks:
-            if name.startswith('MEG'):
-                if name.endswith(('2', '3')):
-                    key = name[-4:-1]
-                    picks_channel.append(int(key))
-        
-        mne.viz.plot_image_epochs(epochs, picks_channel, sigma=0.5, vmin=-100,
-                    vmax=250, colorbar=True, order=None, show=True)
-        
-        
+        #Currently a mock code
+        if checked is None: return
+        if self.ui.listWidgetEvokeds.count() == 0: return
+        evoked = self.ui.listWidgetEvokeds.item(0).data(32).toPyObject()
+        self.evokedStatsDialog = EvokedStatsDialog(evoked[0])
+        self.evokedStatsDialog.exec_()
         
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
         """

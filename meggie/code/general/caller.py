@@ -37,6 +37,8 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
+
+# TODO probably not needed
 from copy import deepcopy
 from sets import Set
 
@@ -44,9 +46,10 @@ import mne
 from mne import fiff
 from mne.fiff import evoked
 from mne.time_frequency import induced_power
-from mne.layouts import read_layout
+
 from mne import filter
 
+from mne.layouts import read_layout
 from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
