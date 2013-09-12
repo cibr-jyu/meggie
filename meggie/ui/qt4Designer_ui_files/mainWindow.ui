@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>948</width>
-         <height>726</height>
+         <width>950</width>
+         <height>721</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -1713,6 +1713,19 @@
                </layout>
               </widget>
              </widget>
+             <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>610</y>
+                <width>261</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Visualize selected epoch channels...</string>
+              </property>
+             </widget>
             </widget>
             <widget class="QWidget" name="tabAveraging">
              <attribute name="title">
@@ -1909,7 +1922,7 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <property name="geometry">
                <rect>
                 <x>490</x>
@@ -2022,7 +2035,7 @@
      <x>0</x>
      <y>0</y>
      <width>970</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="defaultUp">
