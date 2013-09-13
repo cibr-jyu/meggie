@@ -22,11 +22,9 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.epochs = epochs
         if epochs is None: return
-        
-        #for i in range(304):
+        # Fills channels list with epoch collection channel names.
         for channel in epochs.ch_names:
             item = QtGui.QListWidgetItem()
-            #item.setText(self.epochs.ch_names[i])
             item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
         
@@ -39,6 +37,3 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         vmax = self.ui.spinBoxVmax.value()
         mne.viz.plot_image_epochs(self.epochs, pick, sigma=sigma, vmin=vmin,
                     vmax=vmax, colorbar=True, order=None, show=True)
-        #fig.canvas.set_window_title()
-        #fig.show()
-        
