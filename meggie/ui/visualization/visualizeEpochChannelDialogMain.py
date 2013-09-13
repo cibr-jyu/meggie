@@ -35,5 +35,6 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         sigma = self.ui.doubleSpinBoxSigma.value()
         vmin = self.ui.spinBoxVmin.value()
         vmax = self.ui.spinBoxVmax.value()
+        # plot_image_epochs averages the epochs before visualizing. 
         mne.viz.plot_image_epochs(self.epochs, pick, sigma=sigma, vmin=vmin,
                     vmax=vmax, colorbar=True, order=None, show=True)
