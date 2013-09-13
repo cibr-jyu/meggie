@@ -23,32 +23,22 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         self.epochs = epochs
         if epochs is None: return
         
-        for i in range(304):
+        #for i in range(304):
+        for channel in epochs.ch_names:
             item = QtGui.QListWidgetItem()
-            item.setText(self.epochs.ch_names[i])
+            #item.setText(self.epochs.ch_names[i])
+            item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
         
     def on_pushButtonVisualizeChannels_clicked(self, checked=None):
         
         if checked is None: return
-        """
-        picks_channel = []
-        picks = ['MEG 2443', 'MEG 2113']
-        for name in picks:
-            if name.startswith('MEG'):
-                if name.endswith(('2', '3')):
-                    key = name[-4:-1]
-                    picks_channel.append(int(key))
-        """
         pick = self.epochs.ch_names.index(self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
         vmin = self.ui.spinBoxVmin.value()
         vmax = self.ui.spinBoxVmax.value()
-        #epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).toPyObject()
         mne.viz.plot_image_epochs(self.epochs, pick, sigma=sigma, vmin=vmin,
                     vmax=vmax, colorbar=True, order=None, show=True)
-        
-        
-        
-        
+        #fig.canvas.set_window_title()
+        #fig.show()
         
