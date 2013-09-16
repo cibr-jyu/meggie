@@ -242,6 +242,14 @@ class EventSelectionDialog(QtGui.QDialog):
             row = self.ui.listWidgetEvents.row(item)
             self.ui.listWidgetEvents.takeItem(row)
             
+            #If the item was the last one with a certain name, remove the name
+            #from the used names -list.
+            name = item.data(33).toPyObject()
+            if len(self.ui.listWidgetEvents.findItems(name + ' ',
+                                                      QtCore.Qt.\
+                                                      MatchStartsWith)) == 0:
+                self.used_names.remove(name)
+            
         if self.ui.listWidgetEvents.currentRow() < 0:
             self.ui.pushButtonRemove.setEnabled(False)
         
