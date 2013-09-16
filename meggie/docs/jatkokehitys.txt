@@ -360,7 +360,7 @@ TEHTY    \ Jos yhtään rejektionia ei ole valittunaEpoch collectionia tehtäess
         \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia
     \ Tooltipit
 TEHTY    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
-    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+TEHTY    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
     \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
     \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
 TEHTY    \ Ikkunan otsikossa voisi näkyä experimentin nimi
