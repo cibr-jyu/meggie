@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'visualizeEpochChannelDialog.ui'
 #
-# Created: Thu Sep 12 15:50:18 2013
+# Created: Fri Sep 13 11:18:51 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,9 +33,9 @@ class Ui_VisualizeEpochChannelDialog(object):
         self.labelChannels = QtGui.QLabel(VisualizeEpochChannelDialog)
         self.labelChannels.setGeometry(QtCore.QRect(20, 10, 91, 21))
         self.labelChannels.setObjectName(_fromUtf8("labelChannels"))
-        self.pushButtonVisualizeChannels = QtGui.QPushButton(VisualizeEpochChannelDialog)
-        self.pushButtonVisualizeChannels.setGeometry(QtCore.QRect(240, 170, 281, 31))
-        self.pushButtonVisualizeChannels.setObjectName(_fromUtf8("pushButtonVisualizeChannels"))
+        self.pushButtonVisualizeChannel = QtGui.QPushButton(VisualizeEpochChannelDialog)
+        self.pushButtonVisualizeChannel.setGeometry(QtCore.QRect(240, 170, 281, 31))
+        self.pushButtonVisualizeChannel.setObjectName(_fromUtf8("pushButtonVisualizeChannel"))
         self.verticalLayoutWidget = QtGui.QWidget(VisualizeEpochChannelDialog)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(240, 30, 271, 121))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
@@ -94,8 +94,8 @@ class Ui_VisualizeEpochChannelDialog(object):
 
     def retranslateUi(self, VisualizeEpochChannelDialog):
         VisualizeEpochChannelDialog.setWindowTitle(_translate("VisualizeEpochChannelDialog", "Meggie - Visualize epoch channels", None))
-        self.labelChannels.setText(_translate("VisualizeEpochChannelDialog", "Pick channels:", None))
-        self.pushButtonVisualizeChannels.setText(_translate("VisualizeEpochChannelDialog", "Visualize selected channels", None))
+        self.labelChannels.setText(_translate("VisualizeEpochChannelDialog", "Pick channel:", None))
+        self.pushButtonVisualizeChannel.setText(_translate("VisualizeEpochChannelDialog", "Visualize selected channel", None))
         self.labelSigma.setText(_translate("VisualizeEpochChannelDialog", "Gaussian smoothing:", None))
         self.labelVmin.setText(_translate("VisualizeEpochChannelDialog", "Min value:", None))
         self.labelVmax.setText(_translate("VisualizeEpochChannelDialog", "Max value:", None))

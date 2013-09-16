@@ -33,10 +33,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>Pick channels:</string>
+    <string>Pick channel:</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonVisualizeChannels">
+  <widget class="QPushButton" name="pushButtonVisualizeChannel">
    <property name="geometry">
     <rect>
      <x>240</x>
@@ -46,7 +46,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Visualize selected channels</string>
+    <string>Visualize selected channel</string>
    </property>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget">

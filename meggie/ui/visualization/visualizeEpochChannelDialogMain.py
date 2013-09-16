@@ -28,7 +28,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
             item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
         
-    def on_pushButtonVisualizeChannels_clicked(self, checked=None):
+    def on_pushButtonVisualizeChannel_clicked(self, checked=None):
         
         if checked is None: return
         pick = self.epochs.ch_names.index(self.ui.listWidgetChannels.currentItem().text())
