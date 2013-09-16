@@ -309,18 +309,27 @@ class FileManager(QObject):
         item.setData(33, parameters)
         """
     
-    def open_raw(self, fname):
+    def open_raw(self, fname, pre_load = True):
         """
         Opens a raw file.
         Keyword arguments:
         fname         -- A file to open
+        pre_load      -- A boolean telling, whether to read the entire data
+                         in the file.
         Raises an exception if the file cannot be opened.
         """
-        if os.path.isfile(fname):# and fname.endswith('fif'):
-            return mne.fiff.Raw(fname, preload=True)
+        #if os.path.isfile(fname):# and fname.endswith('fif'):
+        try:
+            return mne.fiff.Raw(fname, preload = pre_load)
             #self.raw = mne.fiff.Raw(str(fname))
-        else:
-            raise Exception('Could not open file.')
+        except IOError:
+            raise IOError('File does not exist or is not a raw-file')
+        
+        except OSError:
+            raise OSError('You do not have permission to read the file.')
+        
+        except ValueError:
+            raise ValueError('File is not a raw-file')
         
     def pickle(self, picklable, fpath):
         """pickle a picklable object to a file indicated by fpath
