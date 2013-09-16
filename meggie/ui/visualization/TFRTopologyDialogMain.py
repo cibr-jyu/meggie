@@ -36,7 +36,7 @@ Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 import mne
 
 from PyQt4 import QtCore,QtGui
-from TFRTopologyDialogUi import Ui_DialogTFRTopology
+from TFRtopologyUi import Ui_DialogTFRTopology
 import messageBox
 
 class TFRTopologyDialog(QtGui.QDialog):

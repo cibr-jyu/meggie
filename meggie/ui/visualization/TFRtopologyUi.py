@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Fri May 31 13:42:00 2013
+# Created: Mon Sep 16 14:15:42 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_DialogTFRTopology(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 551))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 509, 554))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
@@ -191,11 +191,19 @@ class Ui_DialogTFRTopology(object):
         QtCore.QObject.connect(self.checkBoxBaselineEndNone, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxBaselineEnd.setDisabled)
         QtCore.QObject.connect(self.checkBoxBaselineEndNone, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.labelBaselineEnd.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(DialogTFRTopology)
-        DialogTFRTopology.setTabOrder(self.scrollArea, self.doubleSpinBoxMinFreq)
+        DialogTFRTopology.setTabOrder(self.scrollArea, self.radioButtonInduced)
+        DialogTFRTopology.setTabOrder(self.radioButtonInduced, self.radioButtonPhase)
+        DialogTFRTopology.setTabOrder(self.radioButtonPhase, self.doubleSpinBoxMinFreq)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxMinFreq, self.doubleSpinBoxMaxFreq)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxMaxFreq, self.doubleSpinBoxFreqInterval)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxFreqInterval, self.spinBoxNcycles)
-        DialogTFRTopology.setTabOrder(self.spinBoxNcycles, self.buttonBox)
+        DialogTFRTopology.setTabOrder(self.spinBoxNcycles, self.spinBoxDecim)
+        DialogTFRTopology.setTabOrder(self.spinBoxDecim, self.comboBoxMode)
+        DialogTFRTopology.setTabOrder(self.comboBoxMode, self.doubleSpinBoxBaselineStart)
+        DialogTFRTopology.setTabOrder(self.doubleSpinBoxBaselineStart, self.checkBoxBaselineStartNone)
+        DialogTFRTopology.setTabOrder(self.checkBoxBaselineStartNone, self.doubleSpinBoxBaselineEnd)
+        DialogTFRTopology.setTabOrder(self.doubleSpinBoxBaselineEnd, self.checkBoxBaselineEndNone)
+        DialogTFRTopology.setTabOrder(self.checkBoxBaselineEndNone, self.buttonBox)
 
     def retranslateUi(self, DialogTFRTopology):
         DialogTFRTopology.setWindowTitle(_translate("DialogTFRTopology", "Meggie - Show TFR topologies ", None))

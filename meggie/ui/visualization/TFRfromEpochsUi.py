@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRfromEpochs.ui'
 #
-# Created: Fri May 31 13:40:05 2013
+# Created: Mon Sep 16 14:07:04 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,7 +34,7 @@ class Ui_DialogEpochsTFR(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 274, 286))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 274, 289))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
@@ -126,7 +126,8 @@ class Ui_DialogEpochsTFR(object):
         DialogEpochsTFR.setTabOrder(self.doubleSpinBoxMinFreq, self.doubleSpinBoxMaxFreq)
         DialogEpochsTFR.setTabOrder(self.doubleSpinBoxMaxFreq, self.doubleSpinBoxFreqInterval)
         DialogEpochsTFR.setTabOrder(self.doubleSpinBoxFreqInterval, self.spinBoxNcycles)
-        DialogEpochsTFR.setTabOrder(self.spinBoxNcycles, self.buttonBox)
+        DialogEpochsTFR.setTabOrder(self.spinBoxNcycles, self.spinBoxDecim)
+        DialogEpochsTFR.setTabOrder(self.spinBoxDecim, self.buttonBox)
 
     def retranslateUi(self, DialogEpochsTFR):
         DialogEpochsTFR.setWindowTitle(_translate("DialogEpochsTFR", "Meggie - TFR from epochs", None))
