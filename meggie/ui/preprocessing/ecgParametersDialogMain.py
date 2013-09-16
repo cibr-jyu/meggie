@@ -67,8 +67,8 @@ class EcgParametersDialog(QtGui.QDialog):
         parameter file is handled by the caller.
         """
         
-        paramdict = parent.experiment.parse_parameter_file('ecgproj')
-        self.set_previous_values(paramdict)     
+        #paramdict = parent.experiment.parse_parameter_file('ecgproj')
+        #self.set_previous_values(paramdict)     
         
     def set_previous_values(self, dic):
         """

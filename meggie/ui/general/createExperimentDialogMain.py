@@ -77,8 +77,6 @@ class CreateExperimentDialog(QtGui.QDialog):
     def accept(self):
         """Create the new experiment.
         """
-        #TODO: Tässä avataan vasta tiedosto ja jos ei onnistu, herjataan.
-        self.ui.labelCreatingExperiment.setVisible(True)
         self.parent.hide_workspace_option()
         self._initialize_experiment()
         
@@ -95,12 +93,12 @@ class CreateExperimentDialog(QtGui.QDialog):
         """
         Opens a browse dialog to select the raw data.
         """
-        #TODO: BrowseButton hakee ainoastaan tiedoston nimen. Ei vielä avata.
         # Standard workaround for file dialog opening twice
         if checked is None: return
         
         self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                            '/home/'))
+      
         
         if self.fname != '':        
             self.ui.FilePathLineEdit.setText(self.fname)        
@@ -109,8 +107,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         """
         Opens the infoDialog for the raw file selected.
         """
-        #TODO: Avataan tiedosto Preload falsella, niin lukee vain otsikkorivit
-        if checked is None: return
         try:
             f = FileManager()
             self.raw = f.open_raw(self.fname, pre_load = False)
@@ -148,9 +144,8 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Give experiment a name.')
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            return 
-             
+            return          
+   
         try:
             self.workspace = Workspace()
             self.experiment = Experiment() 
@@ -166,18 +161,16 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            return 
-        
+       
         try:
-                f = FileManager()
-                raw = f.open_raw(self.fname)
-                self.ui.showFileInfoButton.setEnabled(True)
+            f = FileManager()
+            raw = f.open_raw(self.fname)
+            self.ui.showFileInfoButton.setEnabled(True)
         except Exception as e:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText(str(e))
-                self.messageBox.show()
-                return         
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(e))
+            self.messageBox.show()
+            return         
                 
         try:
             self.experiment.raw_data = raw
@@ -195,8 +188,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            self.ui.progressBarCreatingExperiment.setVisible(False)
             return
 
         
@@ -219,7 +210,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.experiment.save_experiment_settings()
         self.close()
         self.parent.add_tabs()
-        self.parent._initialize_ui()
+        self.parent._initialize_ui() 
           
 class OutLog:
     def __init__(self, edit, out=None, color=None):

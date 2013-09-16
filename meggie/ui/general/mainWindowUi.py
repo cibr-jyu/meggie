@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Thu Sep 12 14:02:31 2013
+# Created: Mon Sep 16 12:12:21 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -800,6 +800,8 @@ class Ui_MainWindow(object):
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
         self.menuTools = QtGui.QMenu(self.menubar)
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -820,10 +822,11 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addAction(self.actionSet_workspace)
-        self.menuFile.addAction(self.actionAbout)
         self.menuTools.addAction(self.actionPreferences)
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
         self.toolBar.addAction(self.actionCreate_experiment)
         self.toolBar.addAction(self.actionOpen_experiment)
 
@@ -918,10 +921,11 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabTFR), _translate("MainWindow", "TFR", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.actionCreate_experiment.setText(_translate("MainWindow", "Create new experiment...", None))
-        self.actionOpen_experiment.setText(_translate("MainWindow", "Open experiment...", None))
+        self.actionCreate_experiment.setText(_translate("MainWindow", "Create New Experiment...", None))
+        self.actionOpen_experiment.setText(_translate("MainWindow", "Open Experiment...", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
-        self.actionSet_workspace.setText(_translate("MainWindow", "Set workspace...", None))
+        self.actionSet_workspace.setText(_translate("MainWindow", "Set Workspace...", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
 

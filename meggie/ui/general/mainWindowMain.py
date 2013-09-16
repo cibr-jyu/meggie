@@ -613,6 +613,21 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog = EvokedStatsDialog(evoked_list)
         self.evokedStatsDialog.exec_()
         
+    def on_pushButtonVisualizeEpochChannels_clicked(self, checked = None):
+        """Plot image over epochs channel
+        """
+        if checked is None: return
+        if self.epochList.ui.listWidgetEpochs.count() == 0:
+            # TODO: show messagebox
+            print 'Create epochs before visualizing.'
+            return
+        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
+        toPyObject()
+        
+        self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
+        self.visualizeEpochChannelsDialog.exec_()
+        
+    
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
         """
         Plot the evoked data as a topology
@@ -666,8 +681,7 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
-            self.experiment.create_epochs_directory + 'average/'
-            return        
+            return  
         
         self.ui.listWidgetEvokeds.clear()
         #self.epochList.clearItems()
@@ -948,7 +962,7 @@ class MainWindow(QtGui.QMainWindow):
         self.statusLabel.setText(QtCore.QString("Current working file: " +
                                           self.experiment.working_file.\
                                           info.get('filename')))
-        
+        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
         
     def add_tabs(self):
         """

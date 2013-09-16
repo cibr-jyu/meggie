@@ -46,6 +46,8 @@ import numpy as np
 
 from PyQt4.QtCore import QObject, pyqtSignal
 
+import messageBox
+
 # Better to use pickle rather than cpickle, as experiment paths may
 # include non-ascii characters
 import pickle
@@ -136,11 +138,16 @@ class Experiment(QObject):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):
                 self._experiment_name = experiment_name
             else:
-                raise Exception("Use only letters and numbers in experiment \
-                name")
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText \
+                ('Use only letters and numbers in experiment name')
+                self.messageBox.show()
+                raise Exception('Use only letters and numbers in experiment' +
+                                'name')
+                
         else:
             raise Exception('Too long experiment name')
-    
+            
     @property
     def subject_directory(self):
         """
@@ -231,7 +238,7 @@ class Experiment(QObject):
         author          - - the author of the experiment
         """
         if (len(author) <= 30):
-            if re.match("^[A-Za-z0-9 ]*$", author):
+            if re.match("^[A-Za-zƒ‰÷ˆ≈Â0-9 ]*$", author):
                 self._author = author
             else:
                 raise Exception("Use only letters and numbers in _author name")
@@ -258,7 +265,7 @@ class Experiment(QObject):
         """
         if (len(description) <= 1000):
             if (re.match(
-                "^[A-Za-z0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
+                "^[A-Za-zƒ‰÷ˆ≈Â0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
                  description) or len(description) == 0):
                 self._description = description
             else:
@@ -323,7 +330,7 @@ class Experiment(QObject):
             self.epochs_directory = self.subject_directory + 'epochs/'
             os.mkdir(self.epochs_directory)
         except OSError:
-            raise OSError("no rights to save to the chosen path")                
+            raise OSError('no rights to save to the chosen path')                
     
     def create_event_set(self):
         """
@@ -377,7 +384,10 @@ class Experiment(QObject):
                 os.mkdir(self._file_path)
                 os.mkdir(self._file_path + '/' + folder_name[0])
             except OSError:
-                raise OSError("no rights to save to the chosen path")
+                raise Exception('No rights to save to the chosen path or' + 
+                              ' experiment name already exists')
+                return
+                
         else:
             raise Exception('No such path')
         

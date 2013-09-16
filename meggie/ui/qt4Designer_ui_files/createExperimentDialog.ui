@@ -31,7 +31,7 @@
         <x>0</x>
         <y>0</y>
         <width>665</width>
-        <height>547</height>
+        <height>546</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -152,28 +152,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelCreatingExperiment">
-          <property name="font">
-           <font>
-            <pointsize>18</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Saving experiment files (this may take a while) ...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QProgressBar" name="progressBarCreatingExperiment">
-          <property name="maximum">
-           <number>0</number>
-          </property>
-          <property name="value">
-           <number>-1</number>
-          </property>
          </widget>
         </item>
        </layout>
