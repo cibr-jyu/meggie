@@ -356,12 +356,12 @@ TEHTY    \ Jos yhtään rejektionia ei ole valittunaEpoch collectionia tehtäess
 
 *** Bugien korjausta ***
 
-    - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
+TARKISTETAAN    - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
         \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia
     \ Tooltipit
 TEHTY    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
-    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
-    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
+ALOITETTU    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+TARKISTETAAN    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
     \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
 TEHTY    \ Ikkunan otsikossa voisi näkyä experimentin nimi
 TEHTY    \ Create ja open experiment - avaako raw filen tarpeettomasti tuplana?
@@ -371,10 +371,9 @@ TEHTY    \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämm
 TEHTY    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
 TEHTY    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
     - Lopulta Ticket-systeemi bugeille ja vaatimuksille
-    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+TEHTY    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
     
 TEHTY    \ poista createexperimentdialogista progress bar
 
     \ power spectral density magnitude spectrumin tilalle
-
-
+KESKEN(Atella)    \ muuta tab order oikeaksi kaikkialla

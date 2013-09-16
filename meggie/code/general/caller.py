@@ -70,6 +70,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
+import messageBox
+
 class Caller(object):
     """
     Class for calling third party software.
@@ -199,6 +201,13 @@ class Caller(object):
                             ecg_low_freq, ecg_high_freq, start, qrs_threshold)
         except Exception, err:
             raise Exception(err)
+        
+        if len(events) == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('No ECG events found. ' + \
+                                                   'Change settings.')
+            self.messageBox.show()
+            return -1
         
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)

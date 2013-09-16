@@ -197,7 +197,10 @@ class EcgParametersDialog(QtGui.QDialog):
             
         # Uses the caller related to mainwindow
         try:
-            self.parent.caller.call_ecg_ssp(dictionary)
+            # Returns -1 if no events found with current settings.
+            event_checker = self.parent.caller.call_ecg_ssp(dictionary)
+            if event_checker == -1:
+                return
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Cannot calculate ' +
