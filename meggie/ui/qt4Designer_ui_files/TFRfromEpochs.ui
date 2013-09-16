@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>274</width>
-        <height>286</height>
+        <height>289</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -211,6 +211,7 @@
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
   <tabstop>spinBoxNcycles</tabstop>
+  <tabstop>spinBoxDecim</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

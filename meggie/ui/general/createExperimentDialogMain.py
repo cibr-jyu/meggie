@@ -69,10 +69,23 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
         self.ui.showFileInfoButton.setEnabled(False)
+        
+        self.ui.FilePathLineEdit.textChanged.connect(self.file_path_changed)
                 
     def accept(self):
+        """Create the new experiment.
+        """
         self.parent.hide_workspace_option()
         self._initialize_experiment()
+        
+    def file_path_changed(self):
+        """A slot for enabling or disabling show file info button.
+        """
+        if self.ui.FilePathLineEdit.text() == '':
+            self.ui.showFileInfoButton.setEnabled(False)
+            
+        else: self.ui.showFileInfoButton.setEnabled(True)
+        
                 
     def on_browseButton_clicked(self, checked=None):
         """
@@ -83,46 +96,54 @@ class CreateExperimentDialog(QtGui.QDialog):
         
         self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                            '/home/'))
-        if self.fname != '':
-            try:
-                f = FileManager()
-                self.raw = f.open_raw(self.fname)
-                self.ui.showFileInfoButton.setEnabled(True)
-            except Exception, err:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText(str(err))
-                self.messageBox.show()
-                
-        self.ui.FilePathLineEdit.setText(self.fname)        
+      
         
-    def on_showFileInfoButton_clicked(self):
+        if self.fname != '':        
+            self.ui.FilePathLineEdit.setText(self.fname)        
+        
+    def on_showFileInfoButton_clicked(self, checked = None):
         """
         Opens the infoDialog for the raw file selected.
         """
         try:
-            info = Ui_infoDialog()
-            self.infoDialog = InfoDialog(self.raw, info, True)
-            self.infoDialog.show()
-        except Exception, err:
+            f = FileManager()
+            self.raw = f.open_raw(self.fname, pre_load = False)
+            self.ui.showFileInfoButton.setEnabled(True)
+            
+        except IOError as e:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox.labelException.setText(str(e))
             self.messageBox.show()
+            return
+        
+        except OSError as e:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(e))
+            self.messageBox.show()
+            return
+        
+        except ValueError as e:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(e))
+            self.messageBox.show()
+            return
+            
+        info = Ui_infoDialog()
+        self.infoDialog = InfoDialog(self.raw, info, True)
+        self.infoDialog.show()
+
         QtGui.QApplication.processEvents() 
         
     def _initialize_experiment(self):
         """
         Initializes the experiment object with the given data.
         """
-        try:
-            if self.ui.lineEditExperimentName.text() == '':
-                raise Exception('Give experiment a name!')
-            
-        except Exception, err:
+        if self.ui.lineEditExperimentName.text() == '':
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox.labelException.setText('Give experiment a name.')
             self.messageBox.show()
             return          
-        QtGui.QApplication.processEvents()    
+   
         try:
             self.workspace = Workspace()
             self.experiment = Experiment() 
@@ -138,9 +159,19 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
-            return         
+       
         try:
-            self.experiment.raw_data = self.raw
+            f = FileManager()
+            raw = f.open_raw(self.fname)
+            self.ui.showFileInfoButton.setEnabled(True)
+        except Exception as e:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(str(e))
+            self.messageBox.show()
+            return         
+                
+        try:
+            self.experiment.raw_data = raw
             self.experiment.find_stim_channel()
             if self.experiment.stim_channel != None: 
                 self.experiment.create_event_set()

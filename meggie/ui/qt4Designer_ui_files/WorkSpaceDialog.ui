@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>403</width>
-        <height>115</height>
+        <height>107</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -89,6 +89,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>FilePathLineEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

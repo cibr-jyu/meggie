@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>509</width>
-        <height>551</height>
+        <height>554</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -363,10 +363,18 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
+  <tabstop>radioButtonInduced</tabstop>
+  <tabstop>radioButtonPhase</tabstop>
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
   <tabstop>spinBoxNcycles</tabstop>
+  <tabstop>spinBoxDecim</tabstop>
+  <tabstop>comboBoxMode</tabstop>
+  <tabstop>doubleSpinBoxBaselineStart</tabstop>
+  <tabstop>checkBoxBaselineStartNone</tabstop>
+  <tabstop>doubleSpinBoxBaselineEnd</tabstop>
+  <tabstop>checkBoxBaselineEndNone</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

@@ -38,7 +38,7 @@ import messageBox
 import mne
 
 from PyQt4 import QtCore,QtGui
-from TFRDialogUi import Ui_DialogEpochsTFR
+from TFRfromEpochsUi import Ui_DialogEpochsTFR
 
 class TFRDialog(QtGui.QDialog):
     """

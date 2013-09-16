@@ -36,7 +36,7 @@ WorkSpaceDialog-window.
 """
 from PyQt4 import QtCore,QtGui
 
-from workSpaceDialogUi import Ui_Dialog
+from WorkSpaceDialogUi import Ui_Dialog
 import messageBox
 
 import sys
