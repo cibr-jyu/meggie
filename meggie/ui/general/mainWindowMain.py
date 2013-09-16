@@ -659,7 +659,8 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
-            self.experiment.create_epochs_directory + 'average/'
+            #os.path.mkdir(self.experiment.epochs_directory + 'average/')
+            #self.experiment.create_epochs_directory + 'average/'
             return        
         
         self.ui.listWidgetEvokeds.clear()
