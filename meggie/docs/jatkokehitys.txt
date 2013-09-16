@@ -351,3 +351,31 @@ TEHTY    \ MNE_browse_raw preprocessing tabiin samaan kohtaan kuin infossa
 ** Bugeja **
     \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
 TEHTY    \ Jos yhtään rejektionia ei ole valittunaEpoch collectionia tehtäessä käyttäjälle ei näytetä virhettä
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+*** Bugien korjausta ***
+
+    - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
+        \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia
+    \ Tooltipit
+    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
+    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
+    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
+    \ Ikkunan otsikossa voisi näkyä experimentin nimi
+    \ Create ja open experiment - avaako raw filen tarpeettomasti tuplana?
+    \ About-dialogin avaava kohta erilliseen Help-menuun
+    \ Menuissa joka sana isolla, on käytäntö englanniksi
+    \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämmentävän virheilmoituksen (“No rights to save to chosen path”)
+    \ Koetta avattaessa voisi sovellus oletuksena tarjota hakemistoa,
+    joka on edellisellä kerralla ollut avattuna.
+    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
+    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
+    - Lopulta Ticket-systeemi bugeille ja vaatimuksille
+    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+
+
+
+
+

@@ -200,6 +200,7 @@ class FilterDialog(QtGui.QDialog):
          # Check if the filter frequency values are sane or not.
         # TODO preferably catch a custom exception from caller.filter
         self._validateFilterFreq(paramDict, samplerate)
+        self._validateFilterLength(paramDict)
         
         filteredData = self.parent.caller.filter(self.dataToFilter, 
                                                  samplerate, paramDict)
@@ -225,17 +226,44 @@ class FilterDialog(QtGui.QDialog):
         """
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
             if ( paramDict['low_cutoff_freq'] > samplerate/2 ):
-                self.show_filter_freq_error(samplerate)
+                self._show_filter_freq_error(samplerate)
     
         if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
             if ( paramDict['high_cutoff_freq'] > samplerate/2 ):
-                self.show_filter_freq_error(samplerate)
+                self._show_filter_freq_error(samplerate)
     
     def _show_filter_freq_error(self, samplerate):
         self.messageBox = messageBox.AppForm()
         self.messageBox.labelException.setText('Cutoff frequencies ' +
                     'should be lower than samplerate/2 ' +
                     '(' + 'current samplerate is ' + str(samplerate) + ' Hz)')
+        self.messageBox.show()
+        return
+    
+    def _validateFilterLength(self, paramDict):
+        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
+            lowLengthString = paramDict['low_length']
+            if ( not lowLengthString.endswith('ms') and 
+                 not lowLengthString.endswith('s') ):
+                self._showLengthError('low pass')
+    
+        if 'highpass' in paramDict and paramDict['highpass'] == True:
+            highLengthString = paramDict['high_length']
+            if ( not highLengthString.endswith('ms') and 
+                 not highLengthString.endswith('s') ):
+                self._showLengthError('high pass')
+    
+    def _showLengthError(self, filterSource):
+        """
+        Show the error for wrong type of filter length string.
+        
+        Keyword arguments:
+        
+        filterSource     -- which filter UI box is the source of error.
+        """
+        self.messageBox = messageBox.AppForm()
+        self.messageBox.labelException.setText('Check filter length for ' + \
+                        filterSource + '. It should end with \'s\' or \'ms\'')
         self.messageBox.show()
         return
     

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Wed Sep 11 11:56:12 2013
+# Created: Thu Sep 12 14:02:31 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -632,7 +632,7 @@ class Ui_MainWindow(object):
         self.groupBoxAvailableEpoching.setGeometry(QtCore.QRect(10, 390, 441, 181))
         self.groupBoxAvailableEpoching.setObjectName(_fromUtf8("groupBoxAvailableEpoching"))
         self.verticalLayoutWidget_8 = QtGui.QWidget(self.groupBoxAvailableEpoching)
-        self.verticalLayoutWidget_8.setGeometry(QtCore.QRect(10, 30, 191, 111))
+        self.verticalLayoutWidget_8.setGeometry(QtCore.QRect(10, 30, 197, 111))
         self.verticalLayoutWidget_8.setObjectName(_fromUtf8("verticalLayoutWidget_8"))
         self.verticalLayout_13 = QtGui.QVBoxLayout(self.verticalLayoutWidget_8)
         self.verticalLayout_13.setMargin(0)
@@ -658,6 +658,9 @@ class Ui_MainWindow(object):
         self.pushButtonLoadEpochs = QtGui.QPushButton(self.verticalLayoutWidget_9)
         self.pushButtonLoadEpochs.setObjectName(_fromUtf8("pushButtonLoadEpochs"))
         self.verticalLayout_2.addWidget(self.pushButtonLoadEpochs)
+        self.pushButtonVisualizeEpochChannels = QtGui.QPushButton(self.tabEpoching)
+        self.pushButtonVisualizeEpochChannels.setGeometry(QtCore.QRect(20, 610, 261, 31))
+        self.pushButtonVisualizeEpochChannels.setObjectName(_fromUtf8("pushButtonVisualizeEpochChannels"))
         self.tabWidget.addTab(self.tabEpoching, _fromUtf8(""))
         self.tabAveraging = QtGui.QWidget()
         self.tabAveraging.setObjectName(_fromUtf8("tabAveraging"))
@@ -744,16 +747,16 @@ class Ui_MainWindow(object):
         self.pushButtonLoadEvoked = QtGui.QPushButton(self.horizontalLayoutWidget)
         self.pushButtonLoadEvoked.setObjectName(_fromUtf8("pushButtonLoadEvoked"))
         self.horizontalLayout_2.addWidget(self.pushButtonLoadEvoked)
-        self.widget = QtGui.QWidget(self.tabAveraging)
-        self.widget.setGeometry(QtCore.QRect(490, 230, 343, 33))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.tabAveraging)
+        self.layoutWidget.setGeometry(QtCore.QRect(490, 230, 343, 33))
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.layoutWidget)
         self.horizontalLayout_10.setMargin(0)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
-        self.pushButtonVisualizeAveragedEpochs = QtGui.QPushButton(self.widget)
+        self.pushButtonVisualizeAveragedEpochs = QtGui.QPushButton(self.layoutWidget)
         self.pushButtonVisualizeAveragedEpochs.setObjectName(_fromUtf8("pushButtonVisualizeAveragedEpochs"))
         self.horizontalLayout_10.addWidget(self.pushButtonVisualizeAveragedEpochs)
-        self.pushButtonOpenEvokedStatsDialog = QtGui.QPushButton(self.widget)
+        self.pushButtonOpenEvokedStatsDialog = QtGui.QPushButton(self.layoutWidget)
         self.pushButtonOpenEvokedStatsDialog.setObjectName(_fromUtf8("pushButtonOpenEvokedStatsDialog"))
         self.horizontalLayout_10.addWidget(self.pushButtonOpenEvokedStatsDialog)
         self.tabWidget.addTab(self.tabAveraging, _fromUtf8(""))
@@ -825,7 +828,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen_experiment)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -894,6 +897,7 @@ class Ui_MainWindow(object):
         self.pushButtonDeleteEpochs.setText(_translate("MainWindow", "Delete selected epochs", None))
         self.pushButtonSaveEpochs.setText(_translate("MainWindow", "Save selected epochs", None))
         self.pushButtonLoadEpochs.setText(_translate("MainWindow", "Load epochs", None))
+        self.pushButtonVisualizeEpochChannels.setText(_translate("MainWindow", "Visualize selected epoch channels...", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableAveraging.setTitle(_translate("MainWindow", "Available actions:", None))
         self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))
