@@ -68,8 +68,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         # Refers to class in file CreateProjecDialog
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
-        self.ui.labelCreatingExperiment.setVisible(False)
-        self.ui.progressBarCreatingExperiment.setVisible(False)
         self.ui.showFileInfoButton.setEnabled(False)
         
         self.ui.FilePathLineEdit.textChanged.connect(self.file_path_changed)
