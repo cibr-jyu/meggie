@@ -594,6 +594,9 @@ class MainWindow(QtGui.QMainWindow):
         item.setData(33, category)
         
         self.ui.listWidgetEvokeds.addItem(item)
+        #self.ui.listWidgetEvokeds.setCurrentItem(item)
+        
+        #evoked = self.caller.average(epochs,category)
         
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
         """Open the evokedStatsDialog for viewing statistical data.
@@ -604,20 +607,6 @@ class MainWindow(QtGui.QMainWindow):
         evoked = self.ui.listWidgetEvokeds.item(0).data(32).toPyObject()
         self.evokedStatsDialog = EvokedStatsDialog(evoked[0])
         self.evokedStatsDialog.exec_()
-        
-    def on_pushButtonVisualizeEpochChannels_clicked(self, checked = None):
-        """Plot image over epochs channel
-        """
-        if checked is None: return
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
-            # TODO: show messagebox
-            print 'Create epochs before visualizing.'
-            return
-        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
-        toPyObject()
-        
-        self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
-        self.visualizeEpochChannelsDialog.exec_()
         
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
         """
@@ -672,6 +661,7 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
+            self.experiment.create_epochs_directory + 'average/'
             return        
         
         self.ui.listWidgetEvokeds.clear()

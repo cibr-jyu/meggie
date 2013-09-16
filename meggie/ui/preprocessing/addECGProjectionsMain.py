@@ -80,16 +80,18 @@ class AddECGProjections(QtGui.QDialog):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
-        try:
-            # Overwrites the projection file with desired vectors.
-            mne.write_proj(self.proj_file, applied)
-            self.parent.caller.apply_ecg(self.parent.experiment.working_file,
-                                    self.parent.experiment._subject_directory)
+        #try:
+        # Overwrites the projection file with desired vectors.
+        mne.write_proj(self.proj_file, applied)
+        self.parent.caller.apply_ecg(self.parent.experiment.working_file,
+                                self.parent.experiment._subject_directory)
+        """
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            return
+            raise
+        """
         self.parent._initialize_ui()
         self.close()
         
