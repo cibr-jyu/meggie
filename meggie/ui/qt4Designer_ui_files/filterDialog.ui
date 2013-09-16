@@ -125,7 +125,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>50.000000000000000</double>
+               <double>40.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -160,7 +160,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>10.000000000000000</double>
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -250,13 +250,13 @@
                <number>3</number>
               </property>
               <property name="maximum">
-               <double>10000.000000000000000</double>
+               <double>1000000000.000000000000000</double>
               </property>
               <property name="singleStep">
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>600.000000000000000</double>
+               <double>0.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -285,7 +285,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>10.000000000000000</double>
+               <double>0.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -487,7 +487,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>50.000000000000000</double>
+               <double>100.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -599,7 +599,7 @@
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>50.000000000000000</double>
+               <double>150.000000000000000</double>
               </property>
              </widget>
             </item>
