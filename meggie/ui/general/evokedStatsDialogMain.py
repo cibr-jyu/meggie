@@ -18,6 +18,12 @@ class EvokedStatsDialog(QtGui.QDialog):
     """
     
     def __init__(self, evoked=None):
+        """Constructor.
+        
+        Keyword arguments:
+        
+        evoked = a list of evoked-objects.
+        """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
         self.ui.setupUi(self)
@@ -28,6 +34,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         for channel in evoked.ch_names:
             item = QtGui.QListWidgetItem(channel)
             self.ui.listWidgetChannels.addItem(item)
+            
+        
             
         self.selected_items = []
         
@@ -51,6 +59,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                     checkBox_state_changed)
         
         self.statUpdater = Statistic()
+        self.item_selection = []
         
         #Multiselection: Do some cool average thing for the channels.
         #Save CSV: Create a CSV file of the key values displayed on the right side
@@ -77,6 +86,25 @@ class EvokedStatsDialog(QtGui.QDialog):
     def on_pushButtonClearSelections_clicked(self):
         """Reset the values in the dialog's spinboxes.
         """
+        self.reset_data_values()
+        
+    def on_pushButtonSetSelected_clicked(self):
+        """Update the information widgets based on selected channels.
+        
+        If only one channel is selected, it's information is shown. If multiple
+        channels are selected, their averages are shown.
+        """
+        self.reset_data_values()
+        if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
+        for item in self.ui.listWidgetChannels.selectedItems():
+            self.item_selection.append(str(item.text()))
+        
+        #TODO: If item_selection has multiple channels, they should be averaged first.    
+        self.update_info(self.item_selection[0])
+        
+    def reset_data_values(self):
+        """Reset all the spinboxes and labels displaying data.
+        """
         self.ui.checkBoxLFrontal.setChecked(False)
         self.ui.checkBoxLOcci.setChecked(False)
         self.ui.checkBoxLParietal.setChecked(False)
@@ -88,19 +116,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.checkBoxVertex.setChecked(False)
         self.ui.labelSelectedChannel.setText('No Channels selected.')
         self.resetSpinBoxes()
-        
-    def on_pushButtonSetSelected_clicked(self):
-        """Update the information widgets based on selected channels.
-        
-        If only one channel is selected, it's information is shown. If multiple
-        channels are selected, their averages are shown.
-        """
-        if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
-        self.ui.listWidgetChannels.setCurrentItem(self.ui.
-                                                  listWidgetChannels.
-                                                  selectedItems()[0])
-        self.update_info()
-        
+        self.item_selection = []
+    
     def resetSpinBoxes(self):
         """Reset the values in the dialog's spinboxes.
         """
@@ -114,12 +131,15 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMinAmplitude.setValue(0)
         self.ui.doubleSpinBoxMinTime.setValue(0)
         
-    def update_info(self):
-        """Update the info widgets with data based on the selected items.
+    def update_info(self, name):
+        """Update the info widgets with data based on item.
+        
+        Keyword arguments:
+        
+        name -- Name of the channel whose data is to be displayed.
         """
         data = self.evoked.data
-        ch_index = self.evoked.ch_names.index(self.ui.listWidgetChannels.\
-                                              currentItem().text())
+        ch_index = self.evoked.ch_names.index(name)
         #First collect all the necessary bits of information
         
         min, time_min_i = self.statUpdater.find_minimum(data[ch_index])
@@ -146,6 +166,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         integral = integral * 1e12
         
         #Then update the appropriate fields in the dialog.
+        self.ui.labelSelectedChannel.setText(name)
         self.ui.doubleSpinBoxDuration.setValue(duration)
         self.ui.doubleSpinBoxHalfMaxAfter.setValue(time_after)
         self.ui.doubleSpinBoxHalfMaxAmplitude.setValue(half_max)
@@ -155,15 +176,3 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMaxTime.setValue(time_max)
         self.ui.doubleSpinBoxMinAmplitude.setValue(min)
         self.ui.doubleSpinBoxMinTime.setValue(time_min)
-
-if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
-    
-    epochs = mne.read_epochs('/space/atmiraut/meggieWorkspace/Boris/jn/epochs/Epochs.fif')
-    evoked = epochs.average()
-    
-    window = EvokedStatsDialog(evoked)
-    
-    window.show()
-    
-    sys.exit(app.exec_())

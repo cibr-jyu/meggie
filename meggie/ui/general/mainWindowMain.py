@@ -602,8 +602,13 @@ class MainWindow(QtGui.QMainWindow):
         #Currently a mock code
         if checked is None: return
         if self.ui.listWidgetEvokeds.count() == 0: return
-        evoked = self.ui.listWidgetEvokeds.item(0).data(32).toPyObject()
-        self.evokedStatsDialog = EvokedStatsDialog(evoked[0])
+        
+        evoked_list = []
+        for i in range(len(self.ui.listWidgetEvokeds.count())):
+            evoked = self.ui.listWidgetEvokeds.item(i).data(32).toPyObject()
+            evoked_list.append(evoked)
+            
+        self.evokedStatsDialog = EvokedStatsDialog(evoked_list)
         self.evokedStatsDialog.exec_()
         
     def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
