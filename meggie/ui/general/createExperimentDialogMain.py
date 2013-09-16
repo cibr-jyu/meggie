@@ -68,13 +68,9 @@ class CreateExperimentDialog(QtGui.QDialog):
         # Refers to class in file CreateProjecDialog
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
-        self.ui.labelCreatingExperiment.setVisible(False)
-        self.ui.progressBarCreatingExperiment.setVisible(False)
         self.ui.showFileInfoButton.setEnabled(False)
                 
     def accept(self):
-        self.ui.labelCreatingExperiment.setVisible(True)
-        self.ui.progressBarCreatingExperiment.setVisible(True)
         self.parent.hide_workspace_option()
         self._initialize_experiment()
                 
@@ -125,8 +121,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            self.ui.progressBarCreatingExperiment.setVisible(False)
             return          
         QtGui.QApplication.processEvents()    
         try:
@@ -144,8 +138,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            self.ui.progressBarCreatingExperiment.setVisible(False)
             return         
         try:
             self.experiment.raw_data = self.raw
@@ -163,8 +155,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
-            self.ui.labelCreatingExperiment.setVisible(False)
-            self.ui.progressBarCreatingExperiment.setVisible(False)
             return
 
         

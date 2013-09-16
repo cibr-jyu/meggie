@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'createExperimentDialog.ui'
 #
-# Created: Sat Jun  1 17:37:05 2013
+# Created: Mon Sep 16 11:59:51 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_CreateExperimentDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_2 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 665, 547))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 665, 546))
         self.scrollAreaWidgetContents_2.setMinimumSize(QtCore.QSize(645, 540))
         self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
         self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents_2)
@@ -100,17 +100,6 @@ class Ui_CreateExperimentDialog(object):
         self.labelDescription.setObjectName(_fromUtf8("labelDescription"))
         self.gridLayout_2.addWidget(self.labelDescription, 2, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.groupBox_2)
-        self.labelCreatingExperiment = QtGui.QLabel(self.layoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(18)
-        self.labelCreatingExperiment.setFont(font)
-        self.labelCreatingExperiment.setObjectName(_fromUtf8("labelCreatingExperiment"))
-        self.verticalLayout_2.addWidget(self.labelCreatingExperiment)
-        self.progressBarCreatingExperiment = QtGui.QProgressBar(self.layoutWidget)
-        self.progressBarCreatingExperiment.setMaximum(0)
-        self.progressBarCreatingExperiment.setProperty("value", -1)
-        self.progressBarCreatingExperiment.setObjectName(_fromUtf8("progressBarCreatingExperiment"))
-        self.verticalLayout_2.addWidget(self.progressBarCreatingExperiment)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.cancelOkButtonBox = QtGui.QDialogButtonBox(CreateExperimentDialog)
@@ -134,5 +123,4 @@ class Ui_CreateExperimentDialog(object):
         self.labelAuthor.setText(_translate("CreateExperimentDialog", "Experiment author:", None))
         self.labelExperimentName.setText(_translate("CreateExperimentDialog", "Experiment name:", None))
         self.labelDescription.setText(_translate("CreateExperimentDialog", "Experiment description:", None))
-        self.labelCreatingExperiment.setText(_translate("CreateExperimentDialog", "Saving experiment files (this may take a while) ...", None))
 
