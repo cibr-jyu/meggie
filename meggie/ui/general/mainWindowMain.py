@@ -45,6 +45,7 @@ from PyQt4 import QtCore,QtGui
 import mne
 from mne import fiff
 from mne.datasets import sample
+from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 
 import pylab as pl
 from matplotlib.figure import Figure
@@ -55,6 +56,7 @@ from createExperimentDialogMain import CreateExperimentDialog
 from infoDialogMain import InfoDialog
 from eventSelectionDialogMain import EventSelectionDialog
 from eventSelectionDialogUi import Ui_EventSelectionDialog
+from visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
 from maxFilterDialogMain import MaxFilterDialog
 from eogParametersDialogMain import EogParametersDialog
 from ecgParametersDialogMain import EcgParametersDialog
@@ -659,8 +661,7 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
-            #os.path.mkdir(self.experiment.epochs_directory + 'average/')
-            #self.experiment.create_epochs_directory + 'average/'
+            self.experiment.create_epochs_directory + 'average/'
             return        
         
         self.ui.listWidgetEvokeds.clear()
