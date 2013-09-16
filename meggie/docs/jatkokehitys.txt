@@ -371,7 +371,7 @@ TEHTY    \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämm
 TEHTY    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
 TEHTY    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
     - Lopulta Ticket-systeemi bugeille ja vaatimuksille
-    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+TEHTY    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
     
 TEHTY    \ poista createexperimentdialogista progress bar
 
