@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>970</width>
-    <height>829</height>
+    <height>863</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,7 @@
          <x>0</x>
          <y>0</y>
          <width>950</width>
-         <height>721</height>
+         <height>755</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -1712,6 +1712,9 @@
                 </item>
                </layout>
               </widget>
+              <zorder>verticalLayoutWidget_8</zorder>
+              <zorder>verticalLayoutWidget_9</zorder>
+              <zorder>pushButton</zorder>
              </widget>
              <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
               <property name="geometry">
@@ -1726,6 +1729,10 @@
                <string>Visualize selected epoch channels...</string>
               </property>
              </widget>
+             <zorder>horizontalLayoutWidget_6</zorder>
+             <zorder>groupBoxAvailableEpoching</zorder>
+             <zorder>pushButtonVisualizeEpochChannels</zorder>
+             <zorder>pushButton</zorder>
             </widget>
             <widget class="QWidget" name="tabAveraging">
              <attribute name="title">
@@ -2078,6 +2085,8 @@
    </attribute>
    <addaction name="actionCreate_experiment"/>
    <addaction name="actionOpen_experiment"/>
+   <addaction name="separator"/>
+   <addaction name="actionShow_Hide_Console"/>
   </widget>
   <action name="actionCreate_experiment">
    <property name="text">
@@ -2102,6 +2111,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionShow_Hide_Console">
+   <property name="text">
+    <string>Show / Hide Console</string>
    </property>
   </action>
  </widget>

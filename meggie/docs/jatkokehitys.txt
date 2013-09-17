@@ -323,7 +323,7 @@ OSITTAIN TEHTY    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskia
     \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
 
 ** Visualisointia **
-    \ MNE esimerkeistä 'visualize channel over epochs as image' toteuttaminen (tehdään keskiarvoistetuille epocheille)
+TEHTY    \ MNE esimerkeistä 'visualize channel over epochs as image' toteuttaminen (tehdään keskiarvoistetuille epocheille)
 (hankala muuttaa koska mne käyttää omia layouteja, kokeile stylsheetejä)    \ average epochissa värejä voisi muuttaa
     \ kanavakeskiarvoikkunat samaan skaalaan?
 TEHTY    \ avg epochien visualisoinnissa valinnaksi mitä eventtejä visualisoidaan päällekkäin kyseisestä avg collectionista
