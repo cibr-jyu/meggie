@@ -241,6 +241,13 @@ class MainWindow(QtGui.QMainWindow):
             ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
     
+    def on_actionShow_Hide_Console_triggered(self, checked=None):
+        """
+        Show / Hide console window.
+        """
+        if checked is None: return
+        self.console.show()
+        
     
     def populate_raw_tab_event_list(self):
         """
@@ -996,7 +1003,7 @@ def main():
     
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.
-    # sys.stdout=sys.stderr=window
+    #sys.stdout=sys.stderr=window
     
     window.show()
     

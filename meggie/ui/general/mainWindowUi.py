@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Mon Sep 16 12:12:21 2013
+# Created: Tue Sep 17 10:37:36 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(970, 829)
+        MainWindow.resize(970, 863)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 950, 721))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 950, 755))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -819,6 +819,8 @@ class Ui_MainWindow(object):
         self.actionSet_workspace.setObjectName(_fromUtf8("actionSet_workspace"))
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.actionShow_Hide_Console = QtGui.QAction(MainWindow)
+        self.actionShow_Hide_Console.setObjectName(_fromUtf8("actionShow_Hide_Console"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addAction(self.actionSet_workspace)
@@ -829,9 +831,11 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
         self.toolBar.addAction(self.actionCreate_experiment)
         self.toolBar.addAction(self.actionOpen_experiment)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionShow_Hide_Console)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -928,4 +932,5 @@ class Ui_MainWindow(object):
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
         self.actionSet_workspace.setText(_translate("MainWindow", "Set Workspace...", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
+        self.actionShow_Hide_Console.setText(_translate("MainWindow", "Show / Hide Console", None))
 
