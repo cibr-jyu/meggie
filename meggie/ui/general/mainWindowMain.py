@@ -139,8 +139,6 @@ class MainWindow(QtGui.QMainWindow):
                         
         # For output logging.
         self.console = Console()
-        #self.console.show()
-        
         
         
     #Property definitions below
@@ -246,7 +244,10 @@ class MainWindow(QtGui.QMainWindow):
         Show / Hide console window.
         """
         if checked is None: return
-        self.console.show()
+        if self.console.isVisible():
+            self.console.hide()
+        else:
+            self.console.show()
         
     
     def populate_raw_tab_event_list(self):
