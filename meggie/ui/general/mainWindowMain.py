@@ -561,7 +561,7 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogAbout = AboutDialog()
         self.dialogAbout.show()    
         
-    def on_pushButtonAverage_clicked(self, checked=None):
+    def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
         Plot the evoked data as a topology.
@@ -636,7 +636,7 @@ class MainWindow(QtGui.QMainWindow):
         self.visualizeEpochChannelsDialog.exec_()
         
     
-    def on_pushButtonVisualizeAveragedEpochs_clicked(self, checked=None):
+    def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """
         Plot the evoked data as a topology
         """

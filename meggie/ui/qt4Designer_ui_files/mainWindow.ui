@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
+    <width>1148</width>
     <height>863</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>950</width>
+         <width>1128</width>
          <height>755</height>
         </rect>
        </property>
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -1712,9 +1712,6 @@
                 </item>
                </layout>
               </widget>
-              <zorder>verticalLayoutWidget_8</zorder>
-              <zorder>verticalLayoutWidget_9</zorder>
-              <zorder>pushButton</zorder>
              </widget>
              <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
               <property name="geometry">
@@ -1729,10 +1726,6 @@
                <string>Visualize selected epoch channels...</string>
               </property>
              </widget>
-             <zorder>horizontalLayoutWidget_6</zorder>
-             <zorder>groupBoxAvailableEpoching</zorder>
-             <zorder>pushButtonVisualizeEpochChannels</zorder>
-             <zorder>pushButton</zorder>
             </widget>
             <widget class="QWidget" name="tabAveraging">
              <attribute name="title">
@@ -1748,6 +1741,19 @@
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="title">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
                 <widget class="QGroupBox" name="groupBoxAvailableAveraging">
                  <property name="maximumSize">
@@ -1835,44 +1841,6 @@
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QPushButton" name="pushButtonAverage">
-                  <property name="geometry">
-                   <rect>
-                    <x>30</x>
-                    <y>30</y>
-                    <width>251</width>
-                    <height>31</height>
-                   </rect>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>10000</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Average selected epoch collection</string>
-                  </property>
-                 </widget>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="title">
-                  <string/>
-                 </property>
                 </widget>
                </item>
               </layout>
@@ -1880,7 +1848,7 @@
              <widget class="QGroupBox" name="groupBoxEvokeds">
               <property name="geometry">
                <rect>
-                <x>480</x>
+                <x>700</x>
                 <y>20</y>
                 <width>391</width>
                 <height>161</height>
@@ -1894,7 +1862,7 @@
                 <rect>
                  <x>10</x>
                  <y>30</y>
-                 <width>361</width>
+                 <width>371</width>
                  <height>121</height>
                 </rect>
                </property>
@@ -1903,58 +1871,107 @@
                </property>
               </widget>
              </widget>
-             <widget class="QWidget" name="horizontalLayoutWidget">
+             <widget class="QPushButton" name="pushButtonCreateEvoked">
               <property name="geometry">
                <rect>
-                <x>490</x>
+                <x>470</x>
+                <y>50</y>
+                <width>231</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>10000</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Create evoked dataset</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label">
+              <property name="geometry">
+               <rect>
+                <x>470</x>
+                <y>80</y>
+                <width>231</width>
+                <height>141</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QWidget" name="verticalLayoutWidget_4">
+              <property name="geometry">
+               <rect>
+                <x>710</x>
                 <y>180</y>
-                <width>361</width>
-                <height>41</height>
+                <width>371</width>
+                <height>80</height>
                </rect>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
-                <widget class="QPushButton" name="pushButtonSaveEvoked">
-                 <property name="text">
-                  <string>Save evoked</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QPushButton" name="pushButtonSaveEvoked">
+                   <property name="text">
+                    <string>Save evoked</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonLoadEvoked">
+                   <property name="text">
+                    <string>Load evoked</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonLoadEvoked">
-                 <property name="text">
-                  <string>Load evoked</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <item>
+                  <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
+                   <property name="text">
+                    <string>Visualize evoked dataset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
+                   <property name="text">
+                    <string>Show evoked stats</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>490</x>
-                <y>230</y>
-                <width>343</width>
-                <height>33</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_10">
-               <item>
-                <widget class="QPushButton" name="pushButtonVisualizeAveragedEpochs">
-                 <property name="text">
-                  <string>Visualize averaged epochs</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
-                 <property name="text">
-                  <string>Show evoked stats</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+             <zorder>gridLayoutWidget</zorder>
+             <zorder>groupBoxEvokeds</zorder>
+             <zorder>pushButtonCreateEvoked</zorder>
+             <zorder>label</zorder>
+             <zorder>verticalLayoutWidget_4</zorder>
+             <zorder>groupBoxAvailableAveraging</zorder>
             </widget>
             <widget class="QWidget" name="tabTFR">
              <attribute name="title">
@@ -2041,7 +2058,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>970</width>
+     <width>1148</width>
      <height>29</height>
     </rect>
    </property>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>964</width>
-    <height>829</height>
+    <width>1148</width>
+    <height>863</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>944</width>
-         <height>721</height>
+         <width>1128</width>
+         <height>755</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -965,295 +965,767 @@
                 </item>
                </layout>
               </widget>
-              <zorder>pushButtonMNE_Browse_Raw_2</zorder>
-              <zorder>verticalLayoutWidget_2</zorder>
              </widget>
             </widget>
             <widget class="QWidget" name="tabEpoching">
              <attribute name="title">
               <string>Epoching</string>
              </attribute>
-             <widget class="QGroupBox" name="groupBoxAvailableEpoching">
+             <widget class="QWidget" name="horizontalLayoutWidget_6">
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>270</y>
-                <width>201</width>
-                <height>231</height>
+                <y>10</y>
+                <width>891</width>
+                <height>371</height>
                </rect>
               </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="title">
-               <string>Available actions:</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_26">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_13">
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
                  <item>
-                  <widget class="QPushButton" name="pushButtonCreateEpochs">
-                   <property name="text">
-                    <string>Create epochs...</string>
+                  <widget class="QGroupBox" name="groupBoxEpochsEpoching">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonModifyEpochs">
-                   <property name="text">
-                    <string>Modify selected epochs...</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonDeleteEpochs">
-                   <property name="text">
-                    <string>Delete selected epochs</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonSaveEpochs">
-                   <property name="text">
-                    <string>Save selected epochs</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonLoadEpochs">
-                   <property name="text">
-                    <string>Load epochs</string>
+                   <property name="title">
+                    <string/>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="horizontalLayoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>451</width>
-                <height>251</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
                <item>
-                <widget class="QGroupBox" name="groupBoxEpochsEpoching">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
+                <widget class="QGroupBox" name="groupBox">
                  <property name="title">
-                  <string/>
+                  <string>Epoch collection parameters:</string>
                  </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="geometry">
-               <rect>
-                <x>500</x>
-                <y>20</y>
-                <width>321</width>
-                <height>471</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Epoch parameters:</string>
-              </property>
-              <widget class="QWidget" name="verticalLayoutWidget_5">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>301</width>
-                 <height>441</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_11">
-                  <item>
-                   <widget class="QLabel" name="labelTmin">
-                    <property name="text">
-                     <string>Start time:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="labelTmax">
-                    <property name="text">
-                     <string>End time:</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
+                 <widget class="QLabel" name="labelTmin">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>30</y>
+                    <width>71</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Start time:</string>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserTmin">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>30</y>
+                    <width>101</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="sizeIncrement">
+                   <size>
+                    <width>0</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelTmax">
+                  <property name="geometry">
+                   <rect>
+                    <x>200</x>
+                    <y>30</y>
+                    <width>61</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>End time:</string>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserTmax">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="geometry">
+                   <rect>
+                    <x>270</x>
+                    <y>30</y>
+                    <width>101</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="sizeIncrement">
+                   <size>
+                    <width>0</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserMag">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>100</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="sizeIncrement">
+                   <size>
+                    <width>0</width>
+                    <height>31</height>
+                   </size>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Sunken</enum>
+                  </property>
+                 </widget>
                  <widget class="QLabel" name="labelRejections">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>70</y>
+                    <width>81</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
+                    <weight>50</weight>
+                    <bold>false</bold>
                    </font>
                   </property>
                   <property name="text">
                    <string>Rejections:</string>
                   </property>
                  </widget>
+                 <widget class="QLabel" name="labelMagReject">
+                  <property name="geometry">
+                   <rect>
+                    <x>40</x>
+                    <y>100</y>
+                    <width>41</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Mag:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserGrad">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>140</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelGradReject">
+                  <property name="geometry">
+                   <rect>
+                    <x>40</x>
+                    <y>140</y>
+                    <width>41</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Grad:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelEegReject">
+                  <property name="geometry">
+                   <rect>
+                    <x>40</x>
+                    <y>180</y>
+                    <width>41</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>EEG:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserEEG">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>180</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserEOG">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>220</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelEogReject">
+                  <property name="geometry">
+                   <rect>
+                    <x>40</x>
+                    <y>220</y>
+                    <width>41</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>EOG:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserStim">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>260</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelStimReject">
+                  <property name="geometry">
+                   <rect>
+                    <x>40</x>
+                    <y>260</y>
+                    <width>41</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Stim:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="labelWorkingFile">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>300</y>
+                    <width>231</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Epoch collection source file:</string>
+                  </property>
+                 </widget>
+                 <widget class="QTextBrowser" name="textBrowserWorkingFile">
+                  <property name="geometry">
+                   <rect>
+                    <x>90</x>
+                    <y>330</y>
+                    <width>281</width>
+                    <height>31</height>
+                   </rect>
+                  </property>
+                  <property name="palette">
+                   <palette>
+                    <active>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </active>
+                    <inactive>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>242</red>
+                        <green>241</green>
+                        <blue>240</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </inactive>
+                    <disabled>
+                     <colorrole role="Base">
+                      <brush brushstyle="SolidPattern">
+                       <color alpha="255">
+                        <red>255</red>
+                        <green>255</green>
+                        <blue>255</blue>
+                       </color>
+                      </brush>
+                     </colorrole>
+                    </disabled>
+                   </palette>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QGroupBox" name="groupBoxAvailableEpoching">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>390</y>
+                <width>441</width>
+                <height>181</height>
+               </rect>
+              </property>
+              <property name="title">
+               <string>Available actions:</string>
+              </property>
+              <widget class="QWidget" name="verticalLayoutWidget_8">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>30</y>
+                 <width>197</width>
+                 <height>111</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_13">
+                <item>
+                 <widget class="QPushButton" name="pushButtonCreateEpochs">
+                  <property name="text">
+                   <string>Create epochs...</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_12">
-                  <item>
-                   <widget class="QLabel" name="labelGradReject">
-                    <property name="text">
-                     <string>Grad:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="labelMagReject">
-                    <property name="text">
-                     <string>Mag:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="labelEegReject">
-                    <property name="text">
-                     <string>EEG:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="labelEogReject">
-                    <property name="text">
-                     <string>EOG:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="labelStimReject">
-                    <property name="text">
-                     <string>Stim:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_6">
-                    <item>
-                     <widget class="QLabel" name="labelEvents_2">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Events:</string>
-                      </property>
-                      <property name="scaledContents">
-                       <bool>true</bool>
-                      </property>
-                      <property name="wordWrap">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QTextBrowser" name="textBrowserEvents_2"/>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="labelWorkingFile">
-                      <property name="text">
-                       <string>Epochs created from file:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QTextBrowser" name="textBrowserWorkingFile">
-                      <property name="palette">
-                       <palette>
-                        <active>
-                         <colorrole role="Base">
-                          <brush brushstyle="SolidPattern">
-                           <color alpha="255">
-                            <red>242</red>
-                            <green>241</green>
-                            <blue>240</blue>
-                           </color>
-                          </brush>
-                         </colorrole>
-                        </active>
-                        <inactive>
-                         <colorrole role="Base">
-                          <brush brushstyle="SolidPattern">
-                           <color alpha="255">
-                            <red>242</red>
-                            <green>241</green>
-                            <blue>240</blue>
-                           </color>
-                          </brush>
-                         </colorrole>
-                        </inactive>
-                        <disabled>
-                         <colorrole role="Base">
-                          <brush brushstyle="SolidPattern">
-                           <color alpha="255">
-                            <red>255</red>
-                            <green>255</green>
-                            <blue>255</blue>
-                           </color>
-                          </brush>
-                         </colorrole>
-                        </disabled>
-                       </palette>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="pushButtonModifyEpochs">
+                  <property name="text">
+                   <string>Modify selected epochs...</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonDeleteEpochs">
+                  <property name="text">
+                   <string>Delete selected epochs</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="verticalLayoutWidget_9">
+               <property name="geometry">
+                <rect>
+                 <x>230</x>
+                 <y>30</y>
+                 <width>191</width>
+                 <height>71</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <widget class="QPushButton" name="pushButtonSaveEpochs">
+                  <property name="text">
+                   <string>Save selected epochs</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonLoadEpochs">
+                  <property name="text">
+                   <string>Load epochs</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
              </widget>
-             <zorder>groupBoxAvailableEpoching</zorder>
-             <zorder>groupBoxAvailableEpoching</zorder>
-             <zorder>horizontalLayoutWidget</zorder>
-             <zorder>groupBox</zorder>
-             <zorder>pushButtonSaveEpochs</zorder>
+             <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>610</y>
+                <width>261</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Visualize selected epoch channels...</string>
+              </property>
+             </widget>
             </widget>
             <widget class="QWidget" name="tabAveraging">
              <attribute name="title">
@@ -1265,10 +1737,23 @@
                 <x>10</x>
                 <y>10</y>
                 <width>451</width>
-                <height>511</height>
+                <height>611</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="title">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
                 <widget class="QGroupBox" name="groupBoxAvailableAveraging">
                  <property name="maximumSize">
@@ -1356,49 +1841,136 @@
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QPushButton" name="pushButtonAverage">
-                  <property name="geometry">
-                   <rect>
-                    <x>17</x>
-                    <y>25</y>
-                    <width>242</width>
-                    <height>31</height>
-                   </rect>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>10000</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Average selected epoch collection</string>
-                  </property>
-                 </widget>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="title">
-                  <string/>
-                 </property>
                 </widget>
                </item>
               </layout>
              </widget>
+             <widget class="QGroupBox" name="groupBoxEvokeds">
+              <property name="geometry">
+               <rect>
+                <x>700</x>
+                <y>20</y>
+                <width>391</width>
+                <height>161</height>
+               </rect>
+              </property>
+              <property name="title">
+               <string>Evoked datasets (averaged epoch collections):</string>
+              </property>
+              <widget class="QListWidget" name="listWidgetEvokeds">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>30</y>
+                 <width>371</width>
+                 <height>121</height>
+                </rect>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::SingleSelection</enum>
+               </property>
+              </widget>
+             </widget>
+             <widget class="QPushButton" name="pushButtonCreateEvoked">
+              <property name="geometry">
+               <rect>
+                <x>470</x>
+                <y>50</y>
+                <width>231</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>10000</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Create evoked dataset</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="label">
+              <property name="geometry">
+               <rect>
+                <x>470</x>
+                <y>80</y>
+                <width>231</width>
+                <height>141</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QWidget" name="verticalLayoutWidget_4">
+              <property name="geometry">
+               <rect>
+                <x>710</x>
+                <y>180</y>
+                <width>371</width>
+                <height>80</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QPushButton" name="pushButtonSaveEvoked">
+                   <property name="text">
+                    <string>Save evoked</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonLoadEvoked">
+                   <property name="text">
+                    <string>Load evoked</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <item>
+                  <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
+                   <property name="text">
+                    <string>Visualize evoked dataset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
+                   <property name="text">
+                    <string>Show evoked stats</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
              <zorder>gridLayoutWidget</zorder>
+             <zorder>groupBoxEvokeds</zorder>
+             <zorder>pushButtonCreateEvoked</zorder>
+             <zorder>label</zorder>
+             <zorder>verticalLayoutWidget_4</zorder>
              <zorder>groupBoxAvailableAveraging</zorder>
             </widget>
             <widget class="QWidget" name="tabTFR">
@@ -1411,7 +1983,7 @@
                 <x>10</x>
                 <y>10</y>
                 <width>901</width>
-                <height>531</height>
+                <height>551</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_8">
@@ -1486,7 +2058,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>964</width>
+     <width>1148</width>
      <height>29</height>
     </rect>
    </property>
@@ -1500,7 +2072,6 @@
     <addaction name="actionCreate_experiment"/>
     <addaction name="actionOpen_experiment"/>
     <addaction name="actionSet_workspace"/>
-    <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -1508,8 +2079,15 @@
     </property>
     <addaction name="actionPreferences"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -1524,15 +2102,17 @@
    </attribute>
    <addaction name="actionCreate_experiment"/>
    <addaction name="actionOpen_experiment"/>
+   <addaction name="separator"/>
+   <addaction name="actionShow_Hide_Console"/>
   </widget>
   <action name="actionCreate_experiment">
    <property name="text">
-    <string>Create new experiment...</string>
+    <string>Create New Experiment...</string>
    </property>
   </action>
   <action name="actionOpen_experiment">
    <property name="text">
-    <string>Open experiment...</string>
+    <string>Open Experiment...</string>
    </property>
   </action>
   <action name="actionPreferences">
@@ -1542,12 +2122,17 @@
   </action>
   <action name="actionSet_workspace">
    <property name="text">
-    <string>Set workspace...</string>
+    <string>Set Workspace...</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionShow_Hide_Console">
+   <property name="text">
+    <string>Show / Hide Console</string>
    </property>
   </action>
  </widget>
