@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'evokedStatsDialog.ui'
 #
-# Created: Wed Sep 11 16:42:07 2013
+# Created: Wed Sep 18 12:49:00 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -419,6 +419,34 @@ class Ui_EvokedStatsDialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), EvokedStatsDialog.reject)
         QtCore.QObject.connect(self.pushButtonClearSelections, QtCore.SIGNAL(_fromUtf8("clicked()")), self.listWidgetChannels.clearSelection)
         QtCore.QMetaObject.connectSlotsByName(EvokedStatsDialog)
+        EvokedStatsDialog.setTabOrder(self.scrollArea, self.comboBoxEvoked)
+        EvokedStatsDialog.setTabOrder(self.comboBoxEvoked, self.listWidgetChannels)
+        EvokedStatsDialog.setTabOrder(self.listWidgetChannels, self.pushButtonSetSelected)
+        EvokedStatsDialog.setTabOrder(self.pushButtonSetSelected, self.pushButtonClearSelections)
+        EvokedStatsDialog.setTabOrder(self.pushButtonClearSelections, self.pushButtonAverage)
+        EvokedStatsDialog.setTabOrder(self.pushButtonAverage, self.checkBoxVertex)
+        EvokedStatsDialog.setTabOrder(self.checkBoxVertex, self.checkBoxLTemp)
+        EvokedStatsDialog.setTabOrder(self.checkBoxLTemp, self.checkBoxRTemp)
+        EvokedStatsDialog.setTabOrder(self.checkBoxRTemp, self.checkBoxLParietal)
+        EvokedStatsDialog.setTabOrder(self.checkBoxLParietal, self.checkBoxRParietal)
+        EvokedStatsDialog.setTabOrder(self.checkBoxRParietal, self.checkBoxLOcci)
+        EvokedStatsDialog.setTabOrder(self.checkBoxLOcci, self.checkBoxROcci)
+        EvokedStatsDialog.setTabOrder(self.checkBoxROcci, self.checkBoxLFrontal)
+        EvokedStatsDialog.setTabOrder(self.checkBoxLFrontal, self.checkBoxRFrontal)
+        EvokedStatsDialog.setTabOrder(self.checkBoxRFrontal, self.pushButtonVisualize)
+        EvokedStatsDialog.setTabOrder(self.pushButtonVisualize, self.pushButtonCSV)
+        EvokedStatsDialog.setTabOrder(self.pushButtonCSV, self.buttonBox)
+        EvokedStatsDialog.setTabOrder(self.buttonBox, self.doubleSpinBoxStart)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxStart, self.doubleSpinBoxStop)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxStop, self.doubleSpinBoxIntegral)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxIntegral, self.doubleSpinBoxHalfMaxAmplitude)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxHalfMaxAmplitude, self.doubleSpinBoxHalfMaxBefore)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxHalfMaxBefore, self.doubleSpinBoxHalfMaxAfter)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxHalfMaxAfter, self.doubleSpinBoxDuration)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxDuration, self.doubleSpinBoxMinTime)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxMinTime, self.doubleSpinBoxMaxAmplitude)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxMaxAmplitude, self.doubleSpinBoxMaxTime)
+        EvokedStatsDialog.setTabOrder(self.doubleSpinBoxMaxTime, self.doubleSpinBoxMinAmplitude)
 
     def retranslateUi(self, EvokedStatsDialog):
         EvokedStatsDialog.setWindowTitle(_translate("EvokedStatsDialog", "Evoked data statistics", None))

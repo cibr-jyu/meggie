@@ -87,7 +87,7 @@
         </rect>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabEOG1">
         <attribute name="title">
@@ -788,8 +788,31 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>doubleSpinBoxTmin</tabstop>
+  <tabstop>doubleSpinBoxTmax</tabstop>
+  <tabstop>spinBoxEventsID</tabstop>
+  <tabstop>spinBoxLowPass</tabstop>
+  <tabstop>spinBoxHighPass</tabstop>
+  <tabstop>spinBoxGrad</tabstop>
+  <tabstop>spinBoxMag</tabstop>
+  <tabstop>spinBoxEeg</tabstop>
+  <tabstop>spinBoxLow</tabstop>
+  <tabstop>spinBoxHigh</tabstop>
+  <tabstop>doubleSpinBoxGradReject</tabstop>
+  <tabstop>doubleSpinBoxMagReject</tabstop>
+  <tabstop>doubleSpinBoxEEGReject</tabstop>
+  <tabstop>doubleSpinBoxEOGReject</tabstop>
+  <tabstop>lineEditBad</tabstop>
+  <tabstop>spinBoxStart</tabstop>
+  <tabstop>spinBoxTaps</tabstop>
+  <tabstop>spinBoxJobs</tabstop>
+  <tabstop>checkBoxEEGProj</tabstop>
+  <tabstop>checkBoxSSPProj</tabstop>
+  <tabstop>checkBoxSSPCompute</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCompute</tabstop>
+  <tabstop>tabWidgetEOGSettings</tabstop>
  </tabstops>
  <resources/>
  <connections>

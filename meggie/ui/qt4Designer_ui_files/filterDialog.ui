@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>961</height>
+    <height>992</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -675,6 +675,30 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>checkBoxLowpass</tabstop>
+  <tabstop>doubleSpinBoxLowpassCutoff</tabstop>
+  <tabstop>doubleSpinBoxLowpassTransBandwidth</tabstop>
+  <tabstop>lineEditLowpassLength</tabstop>
+  <tabstop>checkBoxHighpass</tabstop>
+  <tabstop>doubleSpinBoxHighpassCutoff</tabstop>
+  <tabstop>doubleSpinBoxHighpassTransBandwidth</tabstop>
+  <tabstop>lineEditHighpassLength</tabstop>
+  <tabstop>checkBoxBandstop1</tabstop>
+  <tabstop>doubleSpinBoxBandstopFreq1</tabstop>
+  <tabstop>doubleSpinBoxBandstopWidth1</tabstop>
+  <tabstop>lineEditBandstopLength1</tabstop>
+  <tabstop>checkBoxBandstop2</tabstop>
+  <tabstop>doubleSpinBoxBandstopFreq2</tabstop>
+  <tabstop>doubleSpinBoxBandstopwidth2</tabstop>
+  <tabstop>lineEditBandstopLength2</tabstop>
+  <tabstop>checkBoxBandstop3</tabstop>
+  <tabstop>doubleSpinBoxBandstopFreq3</tabstop>
+  <tabstop>doubleSpinBoxBandstopWidth3</tabstop>
+  <tabstop>lineEditBandstopLength3</tabstop>
+  <tabstop>pushButtonPreview</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

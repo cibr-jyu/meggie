@@ -17,7 +17,7 @@
    <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidgetECGSettings">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabECG1">
       <attribute name="title">
@@ -34,8 +34,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>618</width>
-            <height>538</height>
+            <width>620</width>
+            <height>529</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -827,6 +827,19 @@
  </widget>
  <tabstops>
   <tabstop>tabWidgetECGSettings</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>comboBoxECGChannel</tabstop>
+  <tabstop>doubleSpinBoxTmin</tabstop>
+  <tabstop>doubleSpinBoxTmax</tabstop>
+  <tabstop>spinBoxEventsID</tabstop>
+  <tabstop>spinBoxLowPass</tabstop>
+  <tabstop>spinBoxHighPass</tabstop>
+  <tabstop>spinBoxLow</tabstop>
+  <tabstop>spinBoxHigh</tabstop>
+  <tabstop>spinBoxGrad</tabstop>
+  <tabstop>spinBoxMag</tabstop>
+  <tabstop>spinBoxEeg</tabstop>
+  <tabstop>doubleSpinBoxQrs</tabstop>
   <tabstop>lineEditBad</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxTaps</tabstop>

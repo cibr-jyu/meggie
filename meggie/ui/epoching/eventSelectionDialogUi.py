@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Mon Sep  2 14:32:19 2013
+# Created: Wed Sep 18 12:46:11 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -250,6 +250,27 @@ class Ui_EventSelectionDialog(object):
         QtCore.QObject.connect(self.pushButtonCreateEpochs, QtCore.SIGNAL(_fromUtf8("clicked()")), EventSelectionDialog.accept)
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(_fromUtf8("clicked()")), EventSelectionDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(EventSelectionDialog)
+        EventSelectionDialog.setTabOrder(self.scrollArea, self.comboBoxEventID)
+        EventSelectionDialog.setTabOrder(self.comboBoxEventID, self.lineEditName)
+        EventSelectionDialog.setTabOrder(self.lineEditName, self.pushButtonAdd)
+        EventSelectionDialog.setTabOrder(self.pushButtonAdd, self.pushButtonRemove)
+        EventSelectionDialog.setTabOrder(self.pushButtonRemove, self.lineEditCollectionName)
+        EventSelectionDialog.setTabOrder(self.lineEditCollectionName, self.doubleSpinBoxTmin)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxTmin, self.doubleSpinBoxTmax)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxTmax, self.checkBoxMag)
+        EventSelectionDialog.setTabOrder(self.checkBoxMag, self.checkBoxGrad)
+        EventSelectionDialog.setTabOrder(self.checkBoxGrad, self.checkBoxEeg)
+        EventSelectionDialog.setTabOrder(self.checkBoxEeg, self.checkBoxStim)
+        EventSelectionDialog.setTabOrder(self.checkBoxStim, self.checkBoxEog)
+        EventSelectionDialog.setTabOrder(self.checkBoxEog, self.doubleSpinBoxGradReject_3)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxGradReject_3, self.doubleSpinBoxMagReject_3)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxMagReject_3, self.doubleSpinBoxEEGReject_3)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxEEGReject_3, self.doubleSpinBoxEOGReject_3)
+        EventSelectionDialog.setTabOrder(self.doubleSpinBoxEOGReject_3, self.pushButtonSaveEvents)
+        EventSelectionDialog.setTabOrder(self.pushButtonSaveEvents, self.pushButtonReadEvents)
+        EventSelectionDialog.setTabOrder(self.pushButtonReadEvents, self.pushButtonCancel)
+        EventSelectionDialog.setTabOrder(self.pushButtonCancel, self.pushButtonCreateEpochs)
+        EventSelectionDialog.setTabOrder(self.pushButtonCreateEpochs, self.listWidgetEvents)
 
     def retranslateUi(self, EventSelectionDialog):
         EventSelectionDialog.setWindowTitle(_translate("EventSelectionDialog", "Meggie - Epoch Creation", None))

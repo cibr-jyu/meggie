@@ -472,6 +472,30 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>comboBoxEventID</tabstop>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>pushButtonAdd</tabstop>
+  <tabstop>pushButtonRemove</tabstop>
+  <tabstop>lineEditCollectionName</tabstop>
+  <tabstop>doubleSpinBoxTmin</tabstop>
+  <tabstop>doubleSpinBoxTmax</tabstop>
+  <tabstop>checkBoxMag</tabstop>
+  <tabstop>checkBoxGrad</tabstop>
+  <tabstop>checkBoxEeg</tabstop>
+  <tabstop>checkBoxStim</tabstop>
+  <tabstop>checkBoxEog</tabstop>
+  <tabstop>doubleSpinBoxGradReject_3</tabstop>
+  <tabstop>doubleSpinBoxMagReject_3</tabstop>
+  <tabstop>doubleSpinBoxEEGReject_3</tabstop>
+  <tabstop>doubleSpinBoxEOGReject_3</tabstop>
+  <tabstop>pushButtonSaveEvents</tabstop>
+  <tabstop>pushButtonReadEvents</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonCreateEpochs</tabstop>
+  <tabstop>listWidgetEvents</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

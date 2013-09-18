@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eogParametersDialog.ui'
 #
-# Created: Tue Sep  3 09:59:57 2013
+# Created: Wed Sep 18 12:27:58 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -368,11 +368,34 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.tabWidgetEOGSettings.setCurrentIndex(0)
+        self.tabWidgetEOGSettings.setCurrentIndex(1)
         QtCore.QObject.connect(self.pushButtonCompute, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.accept)
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.scrollArea, self.doubleSpinBoxTmin)
+        Dialog.setTabOrder(self.doubleSpinBoxTmin, self.doubleSpinBoxTmax)
+        Dialog.setTabOrder(self.doubleSpinBoxTmax, self.spinBoxEventsID)
+        Dialog.setTabOrder(self.spinBoxEventsID, self.spinBoxLowPass)
+        Dialog.setTabOrder(self.spinBoxLowPass, self.spinBoxHighPass)
+        Dialog.setTabOrder(self.spinBoxHighPass, self.spinBoxGrad)
+        Dialog.setTabOrder(self.spinBoxGrad, self.spinBoxMag)
+        Dialog.setTabOrder(self.spinBoxMag, self.spinBoxEeg)
+        Dialog.setTabOrder(self.spinBoxEeg, self.spinBoxLow)
+        Dialog.setTabOrder(self.spinBoxLow, self.spinBoxHigh)
+        Dialog.setTabOrder(self.spinBoxHigh, self.doubleSpinBoxGradReject)
+        Dialog.setTabOrder(self.doubleSpinBoxGradReject, self.doubleSpinBoxMagReject)
+        Dialog.setTabOrder(self.doubleSpinBoxMagReject, self.doubleSpinBoxEEGReject)
+        Dialog.setTabOrder(self.doubleSpinBoxEEGReject, self.doubleSpinBoxEOGReject)
+        Dialog.setTabOrder(self.doubleSpinBoxEOGReject, self.lineEditBad)
+        Dialog.setTabOrder(self.lineEditBad, self.spinBoxStart)
+        Dialog.setTabOrder(self.spinBoxStart, self.spinBoxTaps)
+        Dialog.setTabOrder(self.spinBoxTaps, self.spinBoxJobs)
+        Dialog.setTabOrder(self.spinBoxJobs, self.checkBoxEEGProj)
+        Dialog.setTabOrder(self.checkBoxEEGProj, self.checkBoxSSPProj)
+        Dialog.setTabOrder(self.checkBoxSSPProj, self.checkBoxSSPCompute)
+        Dialog.setTabOrder(self.checkBoxSSPCompute, self.pushButtonCancel)
         Dialog.setTabOrder(self.pushButtonCancel, self.pushButtonCompute)
+        Dialog.setTabOrder(self.pushButtonCompute, self.tabWidgetEOGSettings)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Meggie - Compute EOG projections", None))

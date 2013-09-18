@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialog.ui'
 #
-# Created: Mon Sep 16 12:53:04 2013
+# Created: Wed Sep 18 12:25:42 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_2 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 618, 538))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 620, 529))
         self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_7.setObjectName(_fromUtf8("gridLayout_7"))
@@ -417,11 +417,24 @@ class Ui_Dialog(object):
         self.gridLayout.addLayout(self.horizontalLayout_16, 1, 1, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.tabWidgetECGSettings.setCurrentIndex(0)
+        self.tabWidgetECGSettings.setCurrentIndex(1)
         QtCore.QObject.connect(self.pushButtonCompute, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), Dialog.accept)
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        Dialog.setTabOrder(self.tabWidgetECGSettings, self.lineEditBad)
+        Dialog.setTabOrder(self.tabWidgetECGSettings, self.scrollArea)
+        Dialog.setTabOrder(self.scrollArea, self.comboBoxECGChannel)
+        Dialog.setTabOrder(self.comboBoxECGChannel, self.doubleSpinBoxTmin)
+        Dialog.setTabOrder(self.doubleSpinBoxTmin, self.doubleSpinBoxTmax)
+        Dialog.setTabOrder(self.doubleSpinBoxTmax, self.spinBoxEventsID)
+        Dialog.setTabOrder(self.spinBoxEventsID, self.spinBoxLowPass)
+        Dialog.setTabOrder(self.spinBoxLowPass, self.spinBoxHighPass)
+        Dialog.setTabOrder(self.spinBoxHighPass, self.spinBoxLow)
+        Dialog.setTabOrder(self.spinBoxLow, self.spinBoxHigh)
+        Dialog.setTabOrder(self.spinBoxHigh, self.spinBoxGrad)
+        Dialog.setTabOrder(self.spinBoxGrad, self.spinBoxMag)
+        Dialog.setTabOrder(self.spinBoxMag, self.spinBoxEeg)
+        Dialog.setTabOrder(self.spinBoxEeg, self.doubleSpinBoxQrs)
+        Dialog.setTabOrder(self.doubleSpinBoxQrs, self.lineEditBad)
         Dialog.setTabOrder(self.lineEditBad, self.spinBoxStart)
         Dialog.setTabOrder(self.spinBoxStart, self.spinBoxTaps)
         Dialog.setTabOrder(self.spinBoxTaps, self.spinBoxJobs)

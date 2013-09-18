@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'filterDialog.ui'
 #
-# Created: Mon Sep  9 12:40:05 2013
+# Created: Wed Sep 18 12:50:26 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DialogFilter(object):
     def setupUi(self, DialogFilter):
         DialogFilter.setObjectName(_fromUtf8("DialogFilter"))
-        DialogFilter.resize(1280, 961)
+        DialogFilter.resize(1280, 992)
         self.gridLayout_2 = QtGui.QGridLayout(DialogFilter)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.pushButtonPreview = QtGui.QPushButton(DialogFilter)
@@ -89,7 +89,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxLowpassCutoff.setDecimals(3)
         self.doubleSpinBoxLowpassCutoff.setMaximum(10000.0)
         self.doubleSpinBoxLowpassCutoff.setSingleStep(10.0)
-        self.doubleSpinBoxLowpassCutoff.setProperty("value", 50.0)
+        self.doubleSpinBoxLowpassCutoff.setProperty("value", 40.0)
         self.doubleSpinBoxLowpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxLowpassCutoff"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxLowpassCutoff)
         self.labelLowpassTransitionWidth = QtGui.QLabel(self.frame)
@@ -105,7 +105,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxLowpassTransBandwidth.setDecimals(3)
         self.doubleSpinBoxLowpassTransBandwidth.setMaximum(10000.0)
         self.doubleSpinBoxLowpassTransBandwidth.setSingleStep(10.0)
-        self.doubleSpinBoxLowpassTransBandwidth.setProperty("value", 10.0)
+        self.doubleSpinBoxLowpassTransBandwidth.setProperty("value", 5.0)
         self.doubleSpinBoxLowpassTransBandwidth.setObjectName(_fromUtf8("doubleSpinBoxLowpassTransBandwidth"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxLowpassTransBandwidth)
         self.labelLowpassFilterLength = QtGui.QLabel(self.frame)
@@ -150,9 +150,9 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxHighpassCutoff = QtGui.QDoubleSpinBox(self.frame_2)
         self.doubleSpinBoxHighpassCutoff.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.doubleSpinBoxHighpassCutoff.setDecimals(3)
-        self.doubleSpinBoxHighpassCutoff.setMaximum(10000.0)
+        self.doubleSpinBoxHighpassCutoff.setMaximum(1000000000.0)
         self.doubleSpinBoxHighpassCutoff.setSingleStep(10.0)
-        self.doubleSpinBoxHighpassCutoff.setProperty("value", 600.0)
+        self.doubleSpinBoxHighpassCutoff.setProperty("value", 0.5)
         self.doubleSpinBoxHighpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxHighpassCutoff"))
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxHighpassCutoff)
         self.labelHighpassTransitionWidth = QtGui.QLabel(self.frame_2)
@@ -163,7 +163,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxHighpassTransBandwidth.setDecimals(3)
         self.doubleSpinBoxHighpassTransBandwidth.setMaximum(10000.0)
         self.doubleSpinBoxHighpassTransBandwidth.setSingleStep(10.0)
-        self.doubleSpinBoxHighpassTransBandwidth.setProperty("value", 10.0)
+        self.doubleSpinBoxHighpassTransBandwidth.setProperty("value", 0.5)
         self.doubleSpinBoxHighpassTransBandwidth.setObjectName(_fromUtf8("doubleSpinBoxHighpassTransBandwidth"))
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxHighpassTransBandwidth)
         self.labelHighpassFilterLength = QtGui.QLabel(self.frame_2)
@@ -253,7 +253,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxBandstopFreq2.setDecimals(3)
         self.doubleSpinBoxBandstopFreq2.setMaximum(10000.0)
         self.doubleSpinBoxBandstopFreq2.setSingleStep(10.0)
-        self.doubleSpinBoxBandstopFreq2.setProperty("value", 50.0)
+        self.doubleSpinBoxBandstopFreq2.setProperty("value", 100.0)
         self.doubleSpinBoxBandstopFreq2.setObjectName(_fromUtf8("doubleSpinBoxBandstopFreq2"))
         self.formLayout_5.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq2)
         self.labelBandpassTransitionWidthLow_3 = QtGui.QLabel(self.frame_5)
@@ -301,7 +301,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxBandstopFreq3.setDecimals(3)
         self.doubleSpinBoxBandstopFreq3.setMaximum(10000.0)
         self.doubleSpinBoxBandstopFreq3.setSingleStep(10.0)
-        self.doubleSpinBoxBandstopFreq3.setProperty("value", 50.0)
+        self.doubleSpinBoxBandstopFreq3.setProperty("value", 150.0)
         self.doubleSpinBoxBandstopFreq3.setObjectName(_fromUtf8("doubleSpinBoxBandstopFreq3"))
         self.formLayout_4.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxBandstopFreq3)
         self.labelBandpassTransitionWidthLow_2 = QtGui.QLabel(self.frame_4)
@@ -338,6 +338,27 @@ class Ui_DialogFilter(object):
         QtCore.QObject.connect(self.checkBoxBandstop2, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.frame_5.setEnabled)
         QtCore.QObject.connect(self.checkBoxBandstop3, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.frame_4.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogFilter)
+        DialogFilter.setTabOrder(self.checkBoxLowpass, self.doubleSpinBoxLowpassCutoff)
+        DialogFilter.setTabOrder(self.doubleSpinBoxLowpassCutoff, self.doubleSpinBoxLowpassTransBandwidth)
+        DialogFilter.setTabOrder(self.doubleSpinBoxLowpassTransBandwidth, self.lineEditLowpassLength)
+        DialogFilter.setTabOrder(self.lineEditLowpassLength, self.checkBoxHighpass)
+        DialogFilter.setTabOrder(self.checkBoxHighpass, self.doubleSpinBoxHighpassCutoff)
+        DialogFilter.setTabOrder(self.doubleSpinBoxHighpassCutoff, self.doubleSpinBoxHighpassTransBandwidth)
+        DialogFilter.setTabOrder(self.doubleSpinBoxHighpassTransBandwidth, self.lineEditHighpassLength)
+        DialogFilter.setTabOrder(self.lineEditHighpassLength, self.checkBoxBandstop1)
+        DialogFilter.setTabOrder(self.checkBoxBandstop1, self.doubleSpinBoxBandstopFreq1)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopFreq1, self.doubleSpinBoxBandstopWidth1)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopWidth1, self.lineEditBandstopLength1)
+        DialogFilter.setTabOrder(self.lineEditBandstopLength1, self.checkBoxBandstop2)
+        DialogFilter.setTabOrder(self.checkBoxBandstop2, self.doubleSpinBoxBandstopFreq2)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopFreq2, self.doubleSpinBoxBandstopwidth2)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopwidth2, self.lineEditBandstopLength2)
+        DialogFilter.setTabOrder(self.lineEditBandstopLength2, self.checkBoxBandstop3)
+        DialogFilter.setTabOrder(self.checkBoxBandstop3, self.doubleSpinBoxBandstopFreq3)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopFreq3, self.doubleSpinBoxBandstopWidth3)
+        DialogFilter.setTabOrder(self.doubleSpinBoxBandstopWidth3, self.lineEditBandstopLength3)
+        DialogFilter.setTabOrder(self.lineEditBandstopLength3, self.pushButtonPreview)
+        DialogFilter.setTabOrder(self.pushButtonPreview, self.buttonBox)
 
     def retranslateUi(self, DialogFilter):
         DialogFilter.setWindowTitle(_translate("DialogFilter", "Filtering", None))

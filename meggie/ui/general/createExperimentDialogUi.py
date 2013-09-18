@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'createExperimentDialog.ui'
 #
-# Created: Mon Sep 16 11:59:51 2013
+# Created: Wed Sep 18 12:23:19 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_CreateExperimentDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_2 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 665, 546))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 665, 549))
         self.scrollAreaWidgetContents_2.setMinimumSize(QtCore.QSize(645, 540))
         self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
         self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents_2)
@@ -112,6 +112,13 @@ class Ui_CreateExperimentDialog(object):
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), CreateExperimentDialog.accept)
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), CreateExperimentDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(CreateExperimentDialog)
+        CreateExperimentDialog.setTabOrder(self.scrollArea, self.FilePathLineEdit)
+        CreateExperimentDialog.setTabOrder(self.FilePathLineEdit, self.browseButton)
+        CreateExperimentDialog.setTabOrder(self.browseButton, self.showFileInfoButton)
+        CreateExperimentDialog.setTabOrder(self.showFileInfoButton, self.lineEditExperimentName)
+        CreateExperimentDialog.setTabOrder(self.lineEditExperimentName, self.lineEditAuthor)
+        CreateExperimentDialog.setTabOrder(self.lineEditAuthor, self.textEditDescription)
+        CreateExperimentDialog.setTabOrder(self.textEditDescription, self.cancelOkButtonBox)
 
     def retranslateUi(self, CreateExperimentDialog):
         CreateExperimentDialog.setWindowTitle(_translate("CreateExperimentDialog", "Meggie - Create new experiment", None))

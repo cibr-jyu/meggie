@@ -31,7 +31,7 @@
         <x>0</x>
         <y>0</y>
         <width>665</width>
-        <height>546</height>
+        <height>549</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -171,6 +171,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>FilePathLineEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>showFileInfoButton</tabstop>
+  <tabstop>lineEditExperimentName</tabstop>
+  <tabstop>lineEditAuthor</tabstop>
+  <tabstop>textEditDescription</tabstop>
+  <tabstop>cancelOkButtonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

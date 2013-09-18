@@ -1196,6 +1196,37 @@ MEG 2211</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>comboBoxEvoked</tabstop>
+  <tabstop>listWidgetChannels</tabstop>
+  <tabstop>pushButtonSetSelected</tabstop>
+  <tabstop>pushButtonClearSelections</tabstop>
+  <tabstop>pushButtonAverage</tabstop>
+  <tabstop>checkBoxVertex</tabstop>
+  <tabstop>checkBoxLTemp</tabstop>
+  <tabstop>checkBoxRTemp</tabstop>
+  <tabstop>checkBoxLParietal</tabstop>
+  <tabstop>checkBoxRParietal</tabstop>
+  <tabstop>checkBoxLOcci</tabstop>
+  <tabstop>checkBoxROcci</tabstop>
+  <tabstop>checkBoxLFrontal</tabstop>
+  <tabstop>checkBoxRFrontal</tabstop>
+  <tabstop>pushButtonVisualize</tabstop>
+  <tabstop>pushButtonCSV</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>doubleSpinBoxStart</tabstop>
+  <tabstop>doubleSpinBoxStop</tabstop>
+  <tabstop>doubleSpinBoxIntegral</tabstop>
+  <tabstop>doubleSpinBoxHalfMaxAmplitude</tabstop>
+  <tabstop>doubleSpinBoxHalfMaxBefore</tabstop>
+  <tabstop>doubleSpinBoxHalfMaxAfter</tabstop>
+  <tabstop>doubleSpinBoxDuration</tabstop>
+  <tabstop>doubleSpinBoxMinTime</tabstop>
+  <tabstop>doubleSpinBoxMaxAmplitude</tabstop>
+  <tabstop>doubleSpinBoxMaxTime</tabstop>
+  <tabstop>doubleSpinBoxMinAmplitude</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
