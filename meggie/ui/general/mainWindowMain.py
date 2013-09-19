@@ -592,12 +592,16 @@ class MainWindow(QtGui.QMainWindow):
             evoked = self.caller.average(epochs,category)
         
         category_str = ''
+        i = 0
         for key in category.keys():
-            category_str += key + ' '
-        
+            if i == 0:
+                category_str += key
+                i = 1
+            else:
+                category_str += '-' + key
         item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        item.setText(epoch_collection.text() + ': ' + category_str + ' ')
+        item.setText(epoch_collection.text() + '[' + category_str + ']')
         item.setData(32, evoked)
         item.setData(33, category)
         
@@ -656,9 +660,12 @@ class MainWindow(QtGui.QMainWindow):
         for i in range(len(evokeds)):
             print len(evokeds)
             print evokeds[i]
+        """
         item_text = str(item.text())
         item_text_splitted = item_text.split(':')
         evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
+        """
+        evoked_collection_name = str(item.text()) + '_evoked.fif'
         saveFolder = self.experiment.epochs_directory + 'average/'
         if os.path.exists(saveFolder) is False:
             try:
