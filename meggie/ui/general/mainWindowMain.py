@@ -746,6 +746,54 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.delete_epochs(self.epochList.currentItem())
             
+    def on_pushButtonDeleteEvoked_clicked(self, checked=None):
+        """Delete the selected evoked item and the files related to it.
+        """
+        
+        """
+        if checked is None:
+            return
+        
+        if self.ui.listWidgetEvokeds.isEmpty():
+            return
+        
+        elif self.ui.listWidgetEvokeds.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No evokeds selected.')
+            self.messageBox.show()
+            
+        item_str = self.ui.listWidgetEvokeds.currentItem().text()
+            
+        root = self.experiment.epochs_directory + 'average/'
+        message = 'Permanently remove evokeds and the related files?'
+            
+        reply = QtGui.QMessageBox.question(self, 'delete evokeds',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+            
+        if reply == QtGui.QMessageBox.Yes:
+            #self.delete_epochs(self.ui.listWidgetEvokeds.currentItem())
+            if self.fileManager.delete_file_at\
+            (self.experiment.epochs_directory, item_str + '.fif'):
+        
+                if os.path.exists():
+                    self.fileManager.delete_file_at\
+                    (self.experiment.epochs_directory, str(item.text()) + '.param')
+                
+            if os.path.exists(self.experiment.epochs_directory +
+                              str(item.text()) + '.csv'):
+                self.fileManager.delete_file_at\
+                (self.experiment.epochs_directory, str(item.text()) + '.csv')
+                    
+            self.epochList.remove_item(item)
+            return True
+            
+        else:
+            return False
+        """
+            
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
         Call mne_browse_raw.
