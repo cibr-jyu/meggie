@@ -592,12 +592,16 @@ class MainWindow(QtGui.QMainWindow):
             evoked = self.caller.average(epochs,category)
         
         category_str = ''
+        i = 0
         for key in category.keys():
-            category_str += key + ' '
-        
+            if i == 0:
+                category_str += key
+                i = 1
+            else:
+                category_str += '-' + key
         item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        item.setText(epoch_collection.text() + ': ' + category_str + ' ')
+        item.setText(epoch_collection.text() + '[' + category_str + ']' + '_evoked.fif')
         item.setData(32, evoked)
         item.setData(33, category)
         
@@ -658,9 +662,12 @@ class MainWindow(QtGui.QMainWindow):
         for i in range(len(evokeds)):
             print len(evokeds)
             print evokeds[i]
+        """
         item_text = str(item.text())
         item_text_splitted = item_text.split(':')
         evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
+        """
+        evoked_collection_name = str(item.text())
         saveFolder = self.experiment.epochs_directory + 'average/'
         if os.path.exists(saveFolder) is False:
             try:
@@ -701,14 +708,14 @@ class MainWindow(QtGui.QMainWindow):
             
             if file.endswith('.fif'):
                 
-                name = file[:-4]            
+                #name = file[:-4]            
                 # TODO: Add load_evoked_item method on fileManager to read
                 # evoked datasets and create QListWidgetItem object in the
                 # same method. Connect loadk_evoked_item to
                 # experiment_value_changed signal on mainWindow __init__
                 # (constructor: self.experiment_value_changed.connect\
                 # (self.load_evoked_collections)).
-                item = self.fileManager.load_evoked_item(path, name)
+                item = self.fileManager.load_evoked_item(path, file)
                 self.ui.listWidgetEvokeds.addItem(item)
                 self.ui.listWidgetEvokeds.setCurrentItem(item)
     
@@ -741,6 +748,43 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.delete_epochs(self.epochList.currentItem())
             
+    def on_pushButtonDeleteEvoked_clicked(self, checked=None):
+        """Delete the selected evoked item and the files related to it.
+        """
+                
+        if checked is None:
+            return
+        
+        if self.ui.listWidgetEvokeds.count() == 0:
+            return
+        
+        elif self.ui.listWidgetEvokeds.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No evokeds selected.')
+            self.messageBox.show()
+            
+        item_str = self.ui.listWidgetEvokeds.currentItem().text()
+            
+        root = self.experiment.epochs_directory + 'average/'
+        message = 'Permanently remove evokeds and the related files?'
+            
+        reply = QtGui.QMessageBox.question(self, 'delete evokeds',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+            
+        if reply == QtGui.QMessageBox.Yes:
+            #self.delete_epochs(self.ui.listWidgetEvokeds.currentItem())
+            if self.fileManager.delete_file_at\
+            (root, item_str):
+                item = self.ui.listWidgetEvokeds.currentItem()
+                row = self.ui.listWidgetEvokeds.row(item)
+                self.ui.listWidgetEvokeds.takeItem(row)
+                return
+        else:
+            return
+                    
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
         Call mne_browse_raw.

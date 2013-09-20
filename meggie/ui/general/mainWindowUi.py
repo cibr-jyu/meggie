@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainWindow2.ui'
+# Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Wed Sep 18 12:02:58 2013
+# Created: Thu Sep 19 14:59:01 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -727,7 +727,7 @@ class Ui_MainWindow(object):
         self.listWidgetEvokeds.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.listWidgetEvokeds.setObjectName(_fromUtf8("listWidgetEvokeds"))
         self.pushButtonCreateEvoked = QtGui.QPushButton(self.tabAveraging)
-        self.pushButtonCreateEvoked.setGeometry(QtCore.QRect(470, 50, 231, 31))
+        self.pushButtonCreateEvoked.setGeometry(QtCore.QRect(450, 50, 251, 31))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -736,26 +736,31 @@ class Ui_MainWindow(object):
         self.pushButtonCreateEvoked.setMaximumSize(QtCore.QSize(10000, 16777215))
         self.pushButtonCreateEvoked.setObjectName(_fromUtf8("pushButtonCreateEvoked"))
         self.label = QtGui.QLabel(self.tabAveraging)
-        self.label.setGeometry(QtCore.QRect(470, 80, 231, 141))
+        self.label.setGeometry(QtCore.QRect(450, 80, 251, 141))
         self.label.setScaledContents(False)
         self.label.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
         self.label.setWordWrap(True)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayoutWidget_4 = QtGui.QWidget(self.tabAveraging)
-        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(710, 180, 371, 80))
+        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(710, 180, 371, 161))
         self.verticalLayoutWidget_4.setObjectName(_fromUtf8("verticalLayoutWidget_4"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_6.setMargin(0)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.pushButtonSaveEvoked = QtGui.QPushButton(self.verticalLayoutWidget_4)
         self.pushButtonSaveEvoked.setObjectName(_fromUtf8("pushButtonSaveEvoked"))
-        self.horizontalLayout_2.addWidget(self.pushButtonSaveEvoked)
+        self.gridLayout.addWidget(self.pushButtonSaveEvoked, 0, 0, 1, 1)
+        self.pushButtonDeleteEvoked = QtGui.QPushButton(self.verticalLayoutWidget_4)
+        self.pushButtonDeleteEvoked.setObjectName(_fromUtf8("pushButtonDeleteEvoked"))
+        self.gridLayout.addWidget(self.pushButtonDeleteEvoked, 1, 0, 1, 1)
         self.pushButtonLoadEvoked = QtGui.QPushButton(self.verticalLayoutWidget_4)
         self.pushButtonLoadEvoked.setObjectName(_fromUtf8("pushButtonLoadEvoked"))
-        self.horizontalLayout_2.addWidget(self.pushButtonLoadEvoked)
-        self.verticalLayout_6.addLayout(self.horizontalLayout_2)
+        self.gridLayout.addWidget(self.pushButtonLoadEvoked, 0, 1, 1, 1)
+        self.verticalLayout_6.addLayout(self.gridLayout)
+        spacerItem12 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.verticalLayout_6.addItem(spacerItem12)
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
         self.pushButtonVisualizeEvokedDataset = QtGui.QPushButton(self.verticalLayoutWidget_4)
@@ -922,6 +927,7 @@ class Ui_MainWindow(object):
         self.pushButtonCreateEvoked.setText(_translate("MainWindow", "Create evoked dataset", None))
         self.label.setText(_translate("MainWindow", "Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.", None))
         self.pushButtonSaveEvoked.setText(_translate("MainWindow", "Save evoked", None))
+        self.pushButtonDeleteEvoked.setText(_translate("MainWindow", "Delete evoked", None))
         self.pushButtonLoadEvoked.setText(_translate("MainWindow", "Load evoked", None))
         self.pushButtonVisualizeEvokedDataset.setText(_translate("MainWindow", "Visualize evoked dataset", None))
         self.pushButtonOpenEvokedStatsDialog.setText(_translate("MainWindow", "Show evoked stats", None))
