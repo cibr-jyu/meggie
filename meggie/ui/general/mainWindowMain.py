@@ -180,6 +180,20 @@ class MainWindow(QtGui.QMainWindow):
         else:
             return False
          
+
+    def on_actionQuit_triggered(self, checked=None):
+        """
+        Closes the program.
+        """
+        if checked is None: return
+        reply = QtGui.QMessageBox.question(self, 'Close Meggie',
+                                           'Are you sure you want to quit' + \
+                                           ' Meggie?', QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.close()
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """

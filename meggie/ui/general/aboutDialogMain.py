@@ -53,3 +53,7 @@ class AboutDialog(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_Dialog() 
         self.ui.setupUi(self)
+        
+    def on_pushButtonClose_clicked(self, checked=None):
+        if checked is None: return
+        self.close()

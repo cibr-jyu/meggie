@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Thu Sep 19 14:59:01 2013
+# Created: Mon Sep 23 11:32:57 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -832,9 +832,13 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionShow_Hide_Console = QtGui.QAction(MainWindow)
         self.actionShow_Hide_Console.setObjectName(_fromUtf8("actionShow_Hide_Console"))
+        self.actionQuit = QtGui.QAction(MainWindow)
+        self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addAction(self.actionSet_workspace)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionQuit)
         self.menuTools.addAction(self.actionPreferences)
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -946,4 +950,5 @@ class Ui_MainWindow(object):
         self.actionSet_workspace.setText(_translate("MainWindow", "Set Workspace...", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
         self.actionShow_Hide_Console.setText(_translate("MainWindow", "Show / Hide Console", None))
+        self.actionQuit.setText(_translate("MainWindow", "Quit", None))
 

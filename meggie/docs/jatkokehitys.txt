@@ -377,14 +377,14 @@ TEHTY    \ poista createexperimentdialogista progress bar
 
 *** Bugien korjausta 2 ***
 
-TYÖN ALLA    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
+TEHTY    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
 TEHTY    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
     \ raakadata luetaan kahteen kertaan experimentiä ladattaessa
     \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
         - jos ei ole tilaa levyllä tekee silti experiment kansion <- tämän voisi poistaa
-    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
+TEHTY    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
         + About-dialogi myös
-    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa 
+EI LÖYTYNYT RATKAISUA    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa 
     \ addECGparameters ei pääse kirjoittamaan (levy täynnä) ---> tee tilaa levylle ---> yritä samaa nappia, seurauksena self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
 
 *** Tärkeätä uutta ***

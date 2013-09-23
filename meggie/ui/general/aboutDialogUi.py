@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'About.ui'
 #
-# Created: Fri May 31 12:42:41 2013
+# Created: Mon Sep 23 12:35:15 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,12 +26,20 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(784, 540)
+        Dialog.resize(921, 591)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.textBrowser = QtGui.QTextBrowser(Dialog)
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
-        self.gridLayout.addWidget(self.textBrowser, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.textBrowser, 1, 0, 1, 1)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.pushButtonClose = QtGui.QPushButton(Dialog)
+        self.pushButtonClose.setObjectName(_fromUtf8("pushButtonClose"))
+        self.horizontalLayout_2.addWidget(self.pushButtonClose)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -72,4 +80,5 @@ class Ui_Dialog(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; color:#000000; background-color:#f9f9f9;\">The views and conclusions contained in the software and documentation are those</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; color:#000000; background-color:#f9f9f9;\">of the authors and should not be interpreted as representing official policies, </span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; color:#000000; background-color:#f9f9f9;\">either expressed or implied, of the FreeBSD Project.</span></p></body></html>", None))
+        self.pushButtonClose.setText(_translate("Dialog", "Close", None))
 
