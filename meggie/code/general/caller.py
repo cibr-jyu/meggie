@@ -468,6 +468,9 @@ class Caller(object):
         fig = plot_topo(evokeds, layout, color=colors_events, title=title)
         fig.canvas.set_window_title(self.mi.subject_name)
         
+        # fig.set_rasterized(True) <-- this didn't help with the problem of 
+        # drawing figures everytime figure size changes.
+        
         # Paint figure background with white color.
         #fig.set_facecolor('w')
         
