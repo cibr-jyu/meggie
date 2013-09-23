@@ -44,6 +44,8 @@ from epochDialogMain import EpochDialog
 from epochs import Epochs
 from events import Events
 
+import mne
+
 # TODO this is for the currently unused check_channels method. 
 #import brainRegions
 
@@ -61,17 +63,19 @@ class EventSelectionDialog(QtGui.QDialog):
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict)
 
-    def __init__(self, parent, params = None):
+    def __init__(self, parent, raw, params = None):
         """Initialize the event selection dialog.
         
         Keyword arguments:
         
         parent -- Set the parent of this dialog
+        raw    -- Raw data
         params -- A dictionary containing parameter values to fill the
                   the different fields in the dialog with.
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
+        self.raw = raw
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
         keys = map(str, parent.experiment.event_set.keys())
@@ -140,6 +144,25 @@ class EventSelectionDialog(QtGui.QDialog):
             event_name = self.ui.listWidgetEvents.item(i).data(33).toPyObject()
             event_tup = (event, event_name)
             events.append(event_tup)
+            
+        #Check if any picks are found with current parameter values.
+        
+        if mag and grad:
+            meg = True
+        elif mag:
+            meg = 'mag'
+        elif grad:
+            meg = 'grad'
+        else: meg = False
+        
+        picks = mne.fiff.pick_types(self.raw.info, meg=meg, eeg=eeg,
+                                    stim=stim, eog=eog)
+        if len(picks) == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No picks found with current parameter values')
+            self.messageBox.show()
+            return  
 
         #Create a dictionary containing all the parameters
         #Note: Raw is not collected here.
@@ -154,8 +177,7 @@ class EventSelectionDialog(QtGui.QDialog):
         Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.parent.experiment.raw_data, 
-                   self.parent.experiment.stim_channel)
+        e = Events(self.raw)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
@@ -270,6 +292,9 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         
         param_dict = self.collect_parameter_values()
+        if param_dict is None:
+            return
+        
         if len(param_dict['reject']) == 0:
             self.errorMessage = messageBox.AppForm()
             self.errorMessage.labelException.setText('Picks cannot be empty. ' + 
@@ -277,6 +302,7 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage.show()
             
             return
+        
         self.epoch_params_ready.emit(param_dict)
         self.close()
         

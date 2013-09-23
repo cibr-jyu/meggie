@@ -190,7 +190,10 @@ class MainWindow(QtGui.QMainWindow):
             self.dialog = CreateExperimentDialog(self)
             self.dialog.show()
         else:
-            self.check_workspace()   
+            self.check_workspace()
+            if os.path.isfile('settings.cfg'):
+                self.dialog = CreateExperimentDialog(self)
+                self.dialog.show()   
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
@@ -401,7 +404,8 @@ class MainWindow(QtGui.QMainWindow):
         Open the epoch dialog. 
         """
         if checked is None: return
-        self.epochParameterDialog = EventSelectionDialog(self)
+        self.epochParameterDialog = EventSelectionDialog(self, self.\
+                                                         experiment.raw_data)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
@@ -530,7 +534,9 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.currentItem() is None: return
 
         params = self.epochList.currentItem().data(33).toPyObject()
-        self.epochParameterDialog = EventSelectionDialog(self, params)
+        self.epochParameterDialog = EventSelectionDialog(self, self.\
+                                                         experiment.raw_data,
+                                                         params)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.modifyEpochs)
         self.epochParameterDialog.show()
@@ -1035,7 +1041,7 @@ class MainWindow(QtGui.QMainWindow):
         Open the workspace chooser dialog.
         """
         self.workSpaceDialog = WorkSpaceDialog(self)
-        self.workSpaceDialog.show()
+        self.workSpaceDialog.exec_()
         
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
