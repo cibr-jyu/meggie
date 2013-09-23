@@ -161,12 +161,12 @@
         \ Erillinen batch-alue käyttöliittymään?
     
 ** Helposti korjattavia pikkubugeja yms. **
-    \ Averagea klikatessa ei tee mitään (ei edes näytä virheilmoitusta), jos epookkikokoelmaan ei ole valittu mag- tai grad-kanavia
+TEHTY    \ Averagea klikatessa ei tee mitään (ei edes näytä virheilmoitusta), jos epookkikokoelmaan ei ole valittu mag- tai grad-kanavia
     \ Tooltipit
-    \ UI-elementeille järkevät nimet, eikä pelkkiä button_2:ia
-    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
-    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
-    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
+TEHTY    \ UI-elementeille järkevät nimet, eikä pelkkiä button_2:ia
+TEHTY    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
+TEHTY    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+TEHTY    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
     \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
         + Ja workspacen vaihto preferences-dialogiin, jahka siihen tulee myös muuta
     \ Ecg-eog -projektiodialogin filterin cut-off - muuttaa dataa, ei ole selvää käyttäjälle
@@ -176,7 +176,7 @@
         + About-dialogi myös
     \ Yhtä aikaa useamman kanavan spektri näkyviin, esim. valitse listasta ne kanavat
     \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
-    \ Ikkunan otsikossa voisi näkyä experimentin nimi
+TEHTY    \ Ikkunan otsikossa voisi näkyä experimentin nimi
     \ TFR-topologiadialogin oudot exception-message-ikkunat (laita esim. cyclejä liikaa)
         + Ei toimi samoin kuin normi TFR-dialogissa
         + Poimii joblibin poikkeuksia, jotka kumman pitkiä (Kts. se virhe)
@@ -194,8 +194,8 @@
         + Kts. TFR viz.- ja Average-dialogit
     \ Dialogien (esim. epoch creation) sisältö selkeämmin jaotelluksi
         + Ja scrollbareja yms. tarvittaessa
-    \ Menuissa joka sana isolla, on käytäntö englanniksi
-    \ Tarkista MatPlotLib-ikkunoiden ja graafien otsikot (esim. magnitude spectrum)
+TEHTY    \ Menuissa joka sana isolla, on käytäntö englanniksi
+TEHTY    \ Tarkista MatPlotLib-ikkunoiden ja graafien otsikot (esim. magnitude spectrum)
     \ Kuuluisiko TFR-dialogissa olla myös baseline rescaling, kuten TRF-topology -dialogissa?
     \ Punaiset X:ät preprocessing- välilehdelle
     \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämmentävän virheilmoituksen (“No rights to save to chosen path”)
@@ -212,10 +212,8 @@
     \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
     \ Jos MaxFilter ei käytössä, vastaava nappi harmaaksi
     \ browse_raw-mahdollisuus myös Preprocessing-välilehdelle
-    \ MatPlotLibin pitäisi kuvan tallentamiselle tarjota hakemistoa,
-    josta koe on avattu (esim. magnitude spectrum)
     \ Listojen ja painikkeiden järjestys esim. epoching-välilehdellä ja sen jälkeen --> toisinpäin
-    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
+TEHTY    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
     \ Jos ecg-dialogissa käyttäjä antaa väärän kanavan, virheilmoitus ei ole fiksu
     \ Useamman kerran samalla dialogilla magnitude spectrum piirtäessä piirtää samaan ikkunaan
     \ Luokat yleisesti periytymään QObjecteista, ei Objecteista, niin signaalit luokkien välillä toimii
@@ -377,4 +375,18 @@ TEHTY    \ poista createexperimentdialogista progress bar
 
     \ power spectral density magnitude spectrumin tilalle
 
+*** Bugien korjausta 2 ***
 
+    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
+    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
+    \ raakadata luetaan kahteen kertaan experimentiä ladattaessa
+    \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
+        - jos ei ole tilaa levyllä tekee silti experiment kansion <- tämän voisi poistaa
+    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
+        + About-dialogi myös
+    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa 
+    \ addECGparameters ei pääse kirjoittamaan (levy täynnä) ---> tee tilaa levylle ---> yritä samaa nappia, seurauksena self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
+
+*** Tärkeätä uutta ***
+
+    \ power spectral density magnitude spectrumin tilalle
