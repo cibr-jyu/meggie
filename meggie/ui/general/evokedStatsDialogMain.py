@@ -29,15 +29,9 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.evoked = evoked
         if evoked is None: return
-        self.ui.doubleSpinBoxStart.setValue(evoked.times[0])
-        self.ui.doubleSpinBoxStop.setValue(evoked.times[len(evoked.times)-1])
-        for channel in evoked.ch_names:
-            item = QtGui.QListWidgetItem(channel)
-            self.ui.listWidgetChannels.addItem(item)
-            
-        
             
         self.selected_items = []
+        self.populateComboBoxEvoked()
         
         self.ui.checkBoxLFrontal.stateChanged.connect(self.
                                                       checkBox_state_changed)
@@ -102,6 +96,12 @@ class EvokedStatsDialog(QtGui.QDialog):
         #TODO: If item_selection has multiple channels, they should be averaged first.    
         self.update_info(self.item_selection[0])
         
+    def populateComboBoxEvoked(self):
+        """Populate the combo box above the channel list with evoked set names.
+        """
+        for evoked in self.evoked:
+            self.ui.comboBoxEvoked.addItem(evoked[1])
+        
     def reset_data_values(self):
         """Reset all the spinboxes and labels displaying data.
         """
@@ -138,8 +138,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         
         name -- Name of the channel whose data is to be displayed.
         """
-        data = self.evoked.data
-        ch_index = self.evoked.ch_names.index(name)
+        data = self.evoked[0].data
+        ch_index = self.evoked[0].ch_names.index(name)
         #First collect all the necessary bits of information
         
         min, time_min_i = self.statUpdater.find_minimum(data[ch_index])
@@ -149,10 +149,10 @@ class EvokedStatsDialog(QtGui.QDialog):
         
         #time_min_i, time_max_i, time_before_i and time_after_i are actually
         #index values fetch the actual times from evoked.times.
-        time_min = self.evoked.times[time_min_i]
-        time_max = self.evoked.times[time_max_i]
-        time_before = self.evoked.times[time_before_i]
-        time_after = self.evoked.times[time_after_i]
+        time_min = self.evoked[0].times[time_min_i]
+        time_max = self.evoked[0].times[time_max_i]
+        time_before = self.evoked[0].times[time_before_i]
+        time_after = self.evoked[0].times[time_after_i]
         
         duration = time_after - time_before
         integral = self.statUpdater.integrate(data[ch_index], time_before_i,

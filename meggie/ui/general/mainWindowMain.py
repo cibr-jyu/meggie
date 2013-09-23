@@ -618,8 +618,10 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.listWidgetEvokeds.count() == 0: return
         
         evoked_list = []
-        for i in range(len(self.ui.listWidgetEvokeds.count())):
-            evoked = self.ui.listWidgetEvokeds.item(i).data(32).toPyObject()
+        for i in range(self.ui.listWidgetEvokeds.count()):
+            evoked = self.ui.listWidgetEvokeds.item(i).data(32).toPyObject(),\
+                     self.ui.listWidgetEvokeds.item(i).text()
+                      
             evoked_list.append(evoked)
             
         self.evokedStatsDialog = EvokedStatsDialog(evoked_list)
