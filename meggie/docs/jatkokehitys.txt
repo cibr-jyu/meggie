@@ -377,9 +377,9 @@ TEHTY    \ poista createexperimentdialogista progress bar
 
 *** Bugien korjausta 2 ***
 
-    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
-    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
-KARI    \ raakadata luetaan kahteen kertaan experimentiä ladattaessa
+TEHTY    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
+TEHTY    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
+    \ raakadata luetaan kahteen kertaan experimentiä ladattaessa
     \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
         - jos ei ole tilaa levyllä tekee silti experiment kansion <- tämän voisi poistaa
 TEHTY    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
