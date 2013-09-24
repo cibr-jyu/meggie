@@ -43,6 +43,8 @@ import pickle
 import csv
 import shutil
 
+import messageBox
+
 from statistic import Statistic
 
 class FileManager(QObject):
@@ -235,6 +237,23 @@ class FileManager(QObject):
         else:
             item = self.load_epoch_item(folder, name)
             return item        
+
+    def load_evokeds(self, fname):
+        """Load evokeds from a folder.
+        
+        Keyword arguments:
+        fname -- the name of the fif-file containing evokeds.
+        
+        return evokeds in a QListWidgetItem 
+        """
+        split = os.path.split(fname)
+        folder = split[0] + '/'
+        name = os.path.splitext(split[1])[0]
+        if name == '': return
+        else:
+            item = self.load_evoked_item(folder, name)
+            return item        
+    
     
     def load_evoked_item(self, folder, file):
         """Load evokeds to the list when mainWindow is initialized
@@ -252,8 +271,8 @@ class FileManager(QObject):
             # Do this in case only one evoked dataset in .fif file.
             evoked = mne.fiff.Evoked(folder + file)
             item.setData(32, evoked)
-            # For some weird reason when reading only one dataset
-            # mne.fiff.Evoked adds string 'epoch_' in front of the event name.
+            # For some reason when reading datasets mne.fiff.Evoked adds
+            # string 'epoch_' in front of the event name.
             event_name = evoked.comment.split('_', 1)
             category[event_name[1]] = 1
             item.setData(33, category)
@@ -262,24 +281,24 @@ class FileManager(QObject):
             try:
                 while mne.fiff.Evoked(folder + file, setno=i) is not None:
                     evoked = mne.fiff.Evoked(folder + file, setno=i)
-                    event_name = evoked.comment
+                    event_name = evoked.comment.split('_', 1)
                     if i < 5:
-                        category[event_name] = i + 1
+                        category[event_name[1]] = i + 1
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 5:
-                        category[event_name] = 8
+                        category[event_name[1]] = 8
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 6:
-                        category[event_name] = 16
+                        category[event_name[1]] = 16
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 7:    
-                        category[event_name] = 32
+                        category[event_name[1]] = 32
                         i += 1
                         evokeds.append(evoked)
                         continue
@@ -287,8 +306,14 @@ class FileManager(QObject):
                     
             
             except Exception as e:
-                #print str(e)
-                pass
+                if mne.fiff.Evoked(folder + file, setno=0) is not None:
+                    item.setData(32, evokeds)
+                    item.setData(33, category)
+                    return item  
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText('Not evoked data type.')
+                self.messageBox.show()
+                return
                 #return
         
         
