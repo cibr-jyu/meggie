@@ -707,8 +707,22 @@ class MainWindow(QtGui.QMainWindow):
         """
         Load evoked data
         """
+        
+        """
         if checked is None: return
-        # TODO: see on_pushButtonLoadEpochs_clicked
+        
+        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
+                                                      self.experiment.                                                      
+                                                      epochs_directory + \
+                                                      'average/'))
+        if fname == '': return
+        if not os.path.isfile(fname): return
+        
+        item = self.fileManager.load_evokeds(fname)
+        if item is None: return
+        
+        self.ui.listWidgetEvokeds.addItem(item)
+        """
         
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
@@ -718,6 +732,7 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
+            self.ui.listWidgetEvokeds.clear()
             return  
         
         self.ui.listWidgetEvokeds.clear()
@@ -796,12 +811,22 @@ class MainWindow(QtGui.QMainWindow):
             
         if reply == QtGui.QMessageBox.Yes:
             #self.delete_epochs(self.ui.listWidgetEvokeds.currentItem())
-            if self.fileManager.delete_file_at\
-            (root, item_str):
-                item = self.ui.listWidgetEvokeds.currentItem()
-                row = self.ui.listWidgetEvokeds.row(item)
-                self.ui.listWidgetEvokeds.takeItem(row)
+            item = self.ui.listWidgetEvokeds.currentItem()
+            row = self.ui.listWidgetEvokeds.row(item)
+            self.ui.listWidgetEvokeds.takeItem(row)
+            self.fileManager.delete_file_at(root, item_str)
+            
+            # TODO: What to do if can't delete the .fif file.
+            """
+            if self.fileManager.delete_file_at(root, item_str):
                 return
+            else:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText('Unable to delete the'\
+                                                        + ' file.')
+                self.messageBox.show()
+                return
+            """
         else:
             return
                     

@@ -383,10 +383,13 @@ TEHTY    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createpro
     \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
         - jos ei ole tilaa levyllä tekee silti experiment kansion <- tämän voisi poistaa
 TEHTY    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
-        + About-dialogi myös
+TEHTY        + About-dialogi myös
 EI LÖYTYNYT RATKAISUA    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa 
     \ addECGparameters ei pääse kirjoittamaan (levy täynnä) ---> tee tilaa levylle ---> yritä samaa nappia, seurauksena self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
+    \ jos experiment on valmiiksi avattuna ja evoked listassa on datasettejä ja tämän jälkeen tekee uuden experimentin, niin evoked setit jää edelleen listaan näkyviin ja niitä voi visualisoida
 
 *** Tärkeätä uutta ***
 
+    \ enemmän outputtia käyttäjälle kun tehdään pitkään kestävää laskentaa
     \ power spectral density magnitude spectrumin tilalle
+    
