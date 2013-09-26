@@ -11,8 +11,8 @@ class ListWidget(QtGui.QListWidget):
     """
     classdocs
     """
-    def __init__(self):
-        QtGui.QListWidget.__init__(self)
+    def __init__(self, parent = None):
+        QtGui.QListWidget.__init__(self, parent)
         
     def addItem(self, item, suffix = 1):
         """

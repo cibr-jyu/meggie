@@ -80,6 +80,7 @@ from epochs import Epochs
 from events import Events
 from caller import Caller
 from fileManager import FileManager
+from listWidget import ListWidget
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -115,6 +116,10 @@ class MainWindow(QtGui.QMainWindow):
         # Creates a listwidget for epoch analysis.  
         self.epochList = EpochWidget(self)
         self.epochList.hide()
+        
+        self.evokedList = ListWidget(self.ui.widgetEvokeds)
+        self.evokedList.setMinimumWidth(345)
+        self.evokedList.setMaximumHeight(120)
         
         # Creates a listwidget for parameters of chosen epochs on epochList.
         """
@@ -472,7 +477,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.epochList.clearItems()
             self.load_epoch_collections()
-            self.ui.listWidgetEvokeds.clear()
+            self.evokedList.clear()
             self.load_evoked_collections()
         
     def load_epoch_collections(self):
@@ -625,8 +630,8 @@ class MainWindow(QtGui.QMainWindow):
         item.setData(32, evoked)
         item.setData(33, category)
         
-        self.ui.listWidgetEvokeds.addItem(item)
-        #self.ui.listWidgetEvokeds.setCurrentItem(item)
+        self.evokedList.addItem(item)
+        #self.evokedList.setCurrentItem(item)
         
         #evoked = self.caller.average(epochs,category)
         
@@ -635,12 +640,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         #Currently a mock code
         if checked is None: return
-        if self.ui.listWidgetEvokeds.count() == 0: return
+        if self.evokedList.count() == 0: return
         
         evoked_list = []
-        for i in range(self.ui.listWidgetEvokeds.count()):
-            evoked = self.ui.listWidgetEvokeds.item(i).data(32).toPyObject(),\
-                     self.ui.listWidgetEvokeds.item(i).text()
+        for i in range(self.evokedList.count()):
+            evoked = self.evokedList.item(i).data(32).toPyObject(),\
+                     self.evokedList.item(i).text()
                       
             evoked_list.append(evoked)
             
@@ -667,7 +672,7 @@ class MainWindow(QtGui.QMainWindow):
         Plot the evoked data as a topology
         """
         if checked is None: return
-        item = self.ui.listWidgetEvokeds.currentItem()
+        item = self.evokedList.currentItem()
         evoked = item.data(32).toPyObject()
         category = item.data(33).toPyObject()
         self.caller.draw_evoked_potentials(evoked,category)
@@ -677,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
         Save the evoked data
         """
         if checked is None: return
-        item = self.ui.listWidgetEvokeds.currentItem()
+        item = self.evokedList.currentItem()
         evokeds = item.data(32).toPyObject()
         for i in range(len(evokeds)):
             print len(evokeds)
@@ -721,7 +726,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.fileManager.load_evokeds(fname)
         if item is None: return
         
-        self.ui.listWidgetEvokeds.addItem(item)
+        self.evokedList.addItem(item)
         """
         
     def load_evoked_collections(self):
@@ -732,10 +737,10 @@ class MainWindow(QtGui.QMainWindow):
          
         """
         if not os.path.exists(self.experiment.epochs_directory + 'average/'):
-            self.ui.listWidgetEvokeds.clear()
+            self.evokedList.clear()
             return  
         
-        self.ui.listWidgetEvokeds.clear()
+        self.evokedList.clear()
         #self.epochList.clearItems()
         path = self.experiment.epochs_directory + 'average/'
         files = os.listdir(path)
@@ -751,8 +756,8 @@ class MainWindow(QtGui.QMainWindow):
                 # (constructor: self.experiment_value_changed.connect\
                 # (self.load_evoked_collections)).
                 item = self.fileManager.load_evoked_item(path, file)
-                self.ui.listWidgetEvokeds.addItem(item)
-                self.ui.listWidgetEvokeds.setCurrentItem(item)
+                self.evokedList.addItem(item)
+                self.evokedList.setCurrentItem(item)
     
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
@@ -790,16 +795,16 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         
-        if self.ui.listWidgetEvokeds.count() == 0:
+        if self.evokedList.count() == 0:
             return
         
-        elif self.ui.listWidgetEvokeds.currentItem() is None:
+        elif self.evokedList.currentItem() is None:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('No evokeds selected.')
             self.messageBox.show()
             
-        item_str = self.ui.listWidgetEvokeds.currentItem().text()
+        item_str = self.evokedList.currentItem().text()
             
         root = self.experiment.epochs_directory + 'average/'
         message = 'Permanently remove evokeds and the related files?'
@@ -810,10 +815,10 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            #self.delete_epochs(self.ui.listWidgetEvokeds.currentItem())
-            item = self.ui.listWidgetEvokeds.currentItem()
-            row = self.ui.listWidgetEvokeds.row(item)
-            self.ui.listWidgetEvokeds.takeItem(row)
+            #self.delete_epochs(self.ui.evokedList.currentItem())
+            item = self.evokedList.currentItem()
+            row = self.evokedList.row(item)
+            self.evokedList.takeItem(row)
             self.fileManager.delete_file_at(root, item_str)
             
             # TODO: What to do if can't delete the .fif file.
