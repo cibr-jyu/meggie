@@ -638,18 +638,17 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
         """Open the evokedStatsDialog for viewing statistical data.
         """
-        #Currently a mock code
+        #Currently a mock code.
+        #TODO: Pass evokeds in a dictionary
         if checked is None: return
         if self.evokedList.count() == 0: return
         
-        evoked_list = []
+        evoked_dict = {}
         for i in range(self.evokedList.count()):
-            evoked = self.evokedList.item(i).data(32).toPyObject(),\
-                     self.evokedList.item(i).text()
-                      
-            evoked_list.append(evoked)
+            evoked_dict[str(self.evokedList.item(i).text())] = \
+            self.evokedList.item(i).data(32).toPyObject()
             
-        self.evokedStatsDialog = EvokedStatsDialog(evoked_list)
+        self.evokedStatsDialog = EvokedStatsDialog(evoked_dict)
         self.evokedStatsDialog.exec_()
         
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked = None):
@@ -673,6 +672,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         item = self.evokedList.currentItem()
+        if item is None: return
         evoked = item.data(32).toPyObject()
         category = item.data(33).toPyObject()
         self.caller.draw_evoked_potentials(evoked,category)

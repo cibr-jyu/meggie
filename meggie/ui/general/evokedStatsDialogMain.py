@@ -22,7 +22,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         
         Keyword arguments:
         
-        evoked = a list of evoked-objects.
+        evoked = a dictionary containing evoked-objects.
         """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
@@ -55,7 +55,9 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.statUpdater = Statistic()
         self.item_selection = []
         
-        #Multiselection: Do some cool average thing for the channels.
+        self.ui.comboBoxEvoked.currentIndexChanged.connect(self.
+                                                           update_channel_list)
+        
         #Save CSV: Create a CSV file of the key values displayed on the right side
         
     def checkBox_state_changed(self):
@@ -99,8 +101,8 @@ class EvokedStatsDialog(QtGui.QDialog):
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
         """
-        for evoked in self.evoked:
-            self.ui.comboBoxEvoked.addItem(evoked[1])
+        for key in self.evoked.keys():
+            self.ui.comboBoxEvoked.addItem(key)
         
     def reset_data_values(self):
         """Reset all the spinboxes and labels displaying data.
@@ -130,6 +132,10 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMaxTime.setValue(0)
         self.ui.doubleSpinBoxMinAmplitude.setValue(0)
         self.ui.doubleSpinBoxMinTime.setValue(0)
+        
+    def update_channel_list(self):
+        #TODO: Toteuta
+        pass
         
     def update_info(self, name):
         """Update the info widgets with data based on item.

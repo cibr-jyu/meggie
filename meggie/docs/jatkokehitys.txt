@@ -393,3 +393,7 @@ EI LÖYTYNYT RATKAISUA    \ Älä piirrä matplotlibin ikkunoita uudestaan koko 
     \ enemmän outputtia käyttäjälle kun tehdään pitkään kestävää laskentaa
     \ power spectral density magnitude spectrumin tilalle
     
+*** Lisää bugeja ja korjattavaa***
+    \ Visualize evoked -napissa kestää aivan töykeän kauan, mutta käyttäjälle ei kerrota mitään.
+    \ Tämä koko jatkokehitys.txt pitäisi käydä läpi ja koota uudeksi listaksi, jossa bugit ja toiminnot on jaoteltu jotenkin "fiksusti".
+    
