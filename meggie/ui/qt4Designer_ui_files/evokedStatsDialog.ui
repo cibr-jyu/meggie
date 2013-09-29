@@ -55,7 +55,11 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QComboBox" name="comboBoxEvoked"/>
+             <widget class="QComboBox" name="comboBoxEvoked">
+              <property name="toolTip">
+               <string>Selected set of evokeds</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="labelChannels">
@@ -78,13 +82,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelTempNote">
-            <property name="text">
-             <string>!One day there will visualized channel data here!</string>
-            </property>
-           </widget>
           </item>
           <item>
            <layout class="QFormLayout" name="formLayout">
