@@ -684,14 +684,8 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         item = self.evokedList.currentItem()
         evokeds = item.data(32).toPyObject()
-        for i in range(len(evokeds)):
-            print len(evokeds)
-            print evokeds[i]
-        """
-        item_text = str(item.text())
-        item_text_splitted = item_text.split(':')
-        evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
-        """
+        
+        
         evoked_collection_name = str(item.text())
         saveFolder = self.experiment.epochs_directory + 'average/'
         if os.path.exists(saveFolder) is False:
@@ -713,7 +707,7 @@ class MainWindow(QtGui.QMainWindow):
         Load evoked data
         """
         
-        """
+        
         if checked is None: return
         
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
@@ -723,11 +717,10 @@ class MainWindow(QtGui.QMainWindow):
         if fname == '': return
         if not os.path.isfile(fname): return
         
-        item = self.fileManager.load_evokeds(fname)
+        item = self.fileManager.load_evokeds(fname + '.fif')
         if item is None: return
-        
         self.evokedList.addItem(item)
-        """
+        
         
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
@@ -756,8 +749,16 @@ class MainWindow(QtGui.QMainWindow):
                 # (constructor: self.experiment_value_changed.connect\
                 # (self.load_evoked_collections)).
                 item = self.fileManager.load_evoked_item(path, file)
-                self.evokedList.addItem(item)
-                self.evokedList.setCurrentItem(item)
+                
+                if item is None:
+                    print 'One or more evoked.fif data files has more than' + \
+                    ' 8 datasets and the loading of this/these data file/s' + \
+                    ' was terminated.'
+                else:
+                    self.evokedList.addItem(item)
+                    self.evokedList.setCurrentItem(item)
+                #self.evokedList.addItem(item)
+                #self.evokedList.setCurrentItem(item)
     
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):

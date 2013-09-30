@@ -267,55 +267,73 @@ class FileManager(QObject):
         evokeds = []
         i = 0
         item = QtGui.QListWidgetItem(file)
+        
+        # Couldn't find a way to check how many evoked datasets are in the
+        # .fif file. So, after the setno gets list index out of range we get
+        # an exception. This makes it hard to check if the data type is right,
+        # since both 'index out of bound' and 'no evoked data found' raise
+        # ValueError.
+        
+        
         try:
-            # Do this in case only one evoked dataset in .fif file.
-            evoked = mne.fiff.Evoked(folder + file)
-            item.setData(32, evoked)
-            # For some reason when reading datasets mne.fiff.Evoked adds
-            # string 'epoch_' in front of the event name.
-            event_name = evoked.comment.split('_', 1)
-            category[event_name[1]] = 1
-            item.setData(33, category)
-            return item
-        except Exception:
-            try:
+            
                 while mne.fiff.Evoked(folder + file, setno=i) is not None:
                     evoked = mne.fiff.Evoked(folder + file, setno=i)
-                    event_name = evoked.comment.split('_', 1)
+                    event_name = evoked.comment   #.split('_', 1)
                     if i < 5:
-                        category[event_name[1]] = i + 1
+                        category[event_name] = i + 1
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 5:
-                        category[event_name[1]] = 8
+                        category[event_name] = 8
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 6:
-                        category[event_name[1]] = 16
+                        category[event_name] = 16
                         i += 1
                         evokeds.append(evoked)
                         continue
                     if i == 7:    
-                        category[event_name[1]] = 32
+                        category[event_name] = 32
                         i += 1
                         evokeds.append(evoked)
                         continue
                     
-                    
-            
-            except Exception as e:
+                    # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
+                    # This makes sure that Meggie won't stop working if more
+                    # than 8 evoked sets exist.
+                    if i >= 8:
+                        warning = 'WARNING: There are more than 8 evoked' + \
+                        ' sets in the evoked.fif file. This does not' + \
+                        ' necessarily support all the functionality in' + \
+                        ' Meggie. The evoked.fif files with more than 8' + \
+                        ' datasets could not be loaded.'
+                        self.messageBox = messageBox.AppForm()
+                        self.messageBox.labelException.setText(warning)
+                        self.messageBox.show()
+                        return
+                        """
+                        # When visualizing evoked datasets the color set
+                        # should be fixed for more than 8 datasets.
+                        category[event_name] = i + 100
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                        """
+        except ValueError:
+            try:
                 if mne.fiff.Evoked(folder + file, setno=0) is not None:
+            #if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
                     item.setData(32, evokeds)
                     item.setData(33, category)
-                    return item  
+                    return item
+            except ValueError:
                 self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText('Not evoked data type.')
+                self.messageBox.labelException.setText('File is not an evoked.fif file.')
                 self.messageBox.show()
                 return
-                #return
-        
         
         item.setData(32, evokeds)
         item.setData(33, category)
