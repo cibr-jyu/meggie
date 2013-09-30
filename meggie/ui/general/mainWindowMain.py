@@ -679,14 +679,8 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         item = self.ui.listWidgetEvokeds.currentItem()
         evokeds = item.data(32).toPyObject()
-        for i in range(len(evokeds)):
-            print len(evokeds)
-            print evokeds[i]
-        """
-        item_text = str(item.text())
-        item_text_splitted = item_text.split(':')
-        evoked_collection_name = item_text_splitted[0] + '_evoked.fif'
-        """
+        
+        
         evoked_collection_name = str(item.text())
         saveFolder = self.experiment.epochs_directory + 'average/'
         if os.path.exists(saveFolder) is False:
@@ -708,7 +702,6 @@ class MainWindow(QtGui.QMainWindow):
         Load evoked data
         """
         
-        """
         if checked is None: return
         
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
@@ -718,12 +711,11 @@ class MainWindow(QtGui.QMainWindow):
         if fname == '': return
         if not os.path.isfile(fname): return
         
-        item = self.fileManager.load_evokeds(fname)
+        item = self.fileManager.load_evokeds(fname + '.fif')
         if item is None: return
         
         self.ui.listWidgetEvokeds.addItem(item)
-        """
-        
+                
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
         
