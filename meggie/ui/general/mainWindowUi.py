@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Mon Sep 23 11:32:57 2013
+# Created: Thu Sep 26 15:10:44 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1128, 755))
-        self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(937, 638))
+        self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
         self.gridLayout_7.setObjectName(_fromUtf8("gridLayout_7"))
@@ -722,10 +722,9 @@ class Ui_MainWindow(object):
         self.groupBoxEvokeds = QtGui.QGroupBox(self.tabAveraging)
         self.groupBoxEvokeds.setGeometry(QtCore.QRect(700, 20, 391, 161))
         self.groupBoxEvokeds.setObjectName(_fromUtf8("groupBoxEvokeds"))
-        self.listWidgetEvokeds = QtGui.QListWidget(self.groupBoxEvokeds)
-        self.listWidgetEvokeds.setGeometry(QtCore.QRect(10, 30, 371, 121))
-        self.listWidgetEvokeds.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self.listWidgetEvokeds.setObjectName(_fromUtf8("listWidgetEvokeds"))
+        self.widgetEvokeds = QtGui.QWidget(self.groupBoxEvokeds)
+        self.widgetEvokeds.setGeometry(QtCore.QRect(10, 30, 351, 121))
+        self.widgetEvokeds.setObjectName(_fromUtf8("widgetEvokeds"))
         self.pushButtonCreateEvoked = QtGui.QPushButton(self.tabAveraging)
         self.pushButtonCreateEvoked.setGeometry(QtCore.QRect(450, 50, 251, 31))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Wed Sep 18 12:46:11 2013
+# Created: Sun Sep 29 14:45:37 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -286,10 +286,15 @@ class Ui_EventSelectionDialog(object):
         self.doubleSpinBoxTmin.setSuffix(_translate("EventSelectionDialog", " s", None))
         self.labelTmax.setText(_translate("EventSelectionDialog", "End time:", None))
         self.doubleSpinBoxTmax.setSuffix(_translate("EventSelectionDialog", " s", None))
+        self.checkBoxMag.setToolTip(_translate("EventSelectionDialog", "Include or exclude mag channels", None))
         self.checkBoxMag.setText(_translate("EventSelectionDialog", "mag", None))
+        self.checkBoxGrad.setToolTip(_translate("EventSelectionDialog", "Include or exclude grad channels", None))
         self.checkBoxGrad.setText(_translate("EventSelectionDialog", "grad", None))
+        self.checkBoxEeg.setToolTip(_translate("EventSelectionDialog", "Include or exclude eeg channels", None))
         self.checkBoxEeg.setText(_translate("EventSelectionDialog", "eeg", None))
+        self.checkBoxStim.setToolTip(_translate("EventSelectionDialog", "Include or exclude stim channels", None))
         self.checkBoxStim.setText(_translate("EventSelectionDialog", "stim", None))
+        self.checkBoxEog.setToolTip(_translate("EventSelectionDialog", "Include or exclude eog channels", None))
         self.checkBoxEog.setText(_translate("EventSelectionDialog", "eog", None))
         self.labelRejections.setText(_translate("EventSelectionDialog", "Rejection parameters", None))
         self.labelGradReject_3.setText(_translate("EventSelectionDialog", "Grad:", None))

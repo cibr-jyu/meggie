@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'evokedStatsDialog.ui'
 #
-# Created: Wed Sep 18 12:49:00 2013
+# Created: Sun Sep 29 15:30:59 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,9 +59,6 @@ class Ui_EvokedStatsDialog(object):
         self.listWidgetChannels.setObjectName(_fromUtf8("listWidgetChannels"))
         self.verticalLayout.addWidget(self.listWidgetChannels)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.labelTempNote = QtGui.QLabel(self.layoutWidget)
-        self.labelTempNote.setObjectName(_fromUtf8("labelTempNote"))
-        self.horizontalLayout.addWidget(self.labelTempNote)
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
@@ -450,8 +447,8 @@ class Ui_EvokedStatsDialog(object):
 
     def retranslateUi(self, EvokedStatsDialog):
         EvokedStatsDialog.setWindowTitle(_translate("EvokedStatsDialog", "Evoked data statistics", None))
+        self.comboBoxEvoked.setToolTip(_translate("EvokedStatsDialog", "Selected set of evokeds", None))
         self.labelChannels.setText(_translate("EvokedStatsDialog", "Channels:", None))
-        self.labelTempNote.setText(_translate("EvokedStatsDialog", "!One day there will visualized channel data here!", None))
         self.labelSelectedChannel.setText(_translate("EvokedStatsDialog", "No channel selected", None))
         self.labelStart.setText(_translate("EvokedStatsDialog", "Start:", None))
         self.doubleSpinBoxStart.setSuffix(_translate("EvokedStatsDialog", "s", None))

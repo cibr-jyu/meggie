@@ -43,8 +43,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>937</width>
-         <height>638</height>
+         <width>1100</width>
+         <height>750</height>
         </size>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
@@ -1857,17 +1857,14 @@
               <property name="title">
                <string>Evoked datasets (averaged epoch collections):</string>
               </property>
-              <widget class="QListWidget" name="listWidgetEvokeds">
+              <widget class="QWidget" name="widgetEvokeds" native="true">
                <property name="geometry">
                 <rect>
                  <x>10</x>
                  <y>30</y>
-                 <width>371</width>
+                 <width>351</width>
                  <height>121</height>
                 </rect>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::SingleSelection</enum>
                </property>
               </widget>
              </widget>

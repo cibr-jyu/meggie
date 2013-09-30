@@ -245,6 +245,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
                  <widget class="QCheckBox" name="checkBoxMag">
+                  <property name="toolTip">
+                   <string>Include or exclude mag channels</string>
+                  </property>
                   <property name="text">
                    <string>mag</string>
                   </property>
@@ -255,6 +258,9 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="checkBoxGrad">
+                  <property name="toolTip">
+                   <string>Include or exclude grad channels</string>
+                  </property>
                   <property name="text">
                    <string>grad</string>
                   </property>
@@ -265,6 +271,9 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="checkBoxEeg">
+                  <property name="toolTip">
+                   <string>Include or exclude eeg channels</string>
+                  </property>
                   <property name="text">
                    <string>eeg</string>
                   </property>
@@ -275,6 +284,9 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="checkBoxStim">
+                  <property name="toolTip">
+                   <string>Include or exclude stim channels</string>
+                  </property>
                   <property name="text">
                    <string>stim</string>
                   </property>
@@ -285,6 +297,9 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="checkBoxEog">
+                  <property name="toolTip">
+                   <string>Include or exclude eog channels</string>
+                  </property>
                   <property name="text">
                    <string>eog</string>
                   </property>

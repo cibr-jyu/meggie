@@ -22,7 +22,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         
         Keyword arguments:
         
-        evoked = a list of evoked-objects.
+        evoked = a dictionary containing evoked-objects.
         """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
@@ -30,7 +30,12 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.evoked = evoked
         if evoked is None: return
             
-        self.selected_items = []
+        #Selected_items is a dictionary containing all the channels selected
+        #across the evoked sets in the comboBoxEvokeds. 
+        self.selected_channels = {}
+        for key in self.evoked.keys():
+            self.selected_channels[key] = []
+        
         self.populateComboBoxEvoked()
         
         self.ui.checkBoxLFrontal.stateChanged.connect(self.
@@ -53,9 +58,16 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                     checkBox_state_changed)
         
         self.statUpdater = Statistic()
-        self.item_selection = []
         
-        #Multiselection: Do some cool average thing for the channels.
+        self.ui.comboBoxEvoked.currentIndexChanged.connect(self.
+                                                           evoked_set_changed)
+        self.ui.pushButtonSetSelected.setEnabled(False)
+        
+        self.evoked_set_changed()
+        
+        self.ui.listWidgetChannels.itemSelectionChanged.\
+        connect(self.selection_changed)
+        
         #Save CSV: Create a CSV file of the key values displayed on the right side
         
     def checkBox_state_changed(self):
@@ -76,34 +88,71 @@ class EvokedStatsDialog(QtGui.QDialog):
                 if str(item.text()) == channel:
                     item.setSelected(self.sender().isChecked())
                     break
+                
+    def evoked_set_changed(self):
+        """Updates the channel list with current evoked's channels.
+        """
+        
+        channels = self.evoked[str(self.ui.comboBoxEvoked.
+                                   currentText())][0].info['ch_names']
+        
+        #First clear the channel list.
+        for i in range(self.ui.listWidgetChannels.count()):
+            self.ui.listWidgetChannels.takeItem(0)
+        
+        #Then add the new channels to the list.
+        #Note: This could actually be useless. The channel names seem to be
+        #the same across the data sets. Don't know if this is actually
+        #the case though.                           
+        for channel in channels:
+            item = QtGui.QListWidgetItem(channel)
+            self.ui.listWidgetChannels.addItem(item)
+            self.ui.listWidgetChannels.sortItems()
+            
+        #Finally check if there are any channels that need to be set as
+        #selected in the new channel list.
+        for channel in self.selected_channels[str(self.ui.comboBoxEvoked.
+                                                  currentText())]:
+            for i in range(self.ui.listWidgetChannels.count()):
+                item = self.ui.listWidgetChannels.item(i)
+                if str(item.text()) == channel:
+                    item.setSelected(True)
+                    break
+                
+        self.ui.pushButtonSetSelected.setEnabled(False)
         
     def on_pushButtonClearSelections_clicked(self):
         """Reset the values in the dialog's spinboxes.
         """
         self.reset_data_values()
+        self.ui.pushButtonSetSelected.setEnabled(False)
         
     def on_pushButtonSetSelected_clicked(self):
-        """Update the information widgets based on selected channels.
-        
-        If only one channel is selected, it's information is shown. If multiple
-        channels are selected, their averages are shown.
+        """Save selected channels to selected_channels dictionary.
         """
-        self.reset_data_values()
         if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
         for item in self.ui.listWidgetChannels.selectedItems():
-            self.item_selection.append(str(item.text()))
+            if item not in self.selected_channels[str(self.ui.comboBoxEvoked.
+                                                      currentText())]:
+                self.selected_channels[str(self.ui.comboBoxEvoked.
+                                       currentText())].append(str(item.text()))
+                                       
+        self.ui.pushButtonSetSelected.setEnabled(False)
         
-        #TODO: If item_selection has multiple channels, they should be averaged first.    
-        self.update_info(self.item_selection[0])
+        #TODO: Update the info widgets. If item_selection has multiple
+        #channels, they should be averaged and the result of that should be
+        #shown on the info widgets.   
         
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
         """
-        for evoked in self.evoked:
-            self.ui.comboBoxEvoked.addItem(evoked[1])
+        for key in self.evoked.keys():
+            self.ui.comboBoxEvoked.addItem(key)
         
     def reset_data_values(self):
         """Reset all the spinboxes and labels displaying data.
+        
+        Keyword arguments:
         """
         self.ui.checkBoxLFrontal.setChecked(False)
         self.ui.checkBoxLOcci.setChecked(False)
@@ -116,7 +165,9 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.checkBoxVertex.setChecked(False)
         self.ui.labelSelectedChannel.setText('No Channels selected.')
         self.resetSpinBoxes()
-        self.item_selection = []
+        
+        for key in self.selected_channels.keys():
+            self.selected_channels[key] = []
     
     def resetSpinBoxes(self):
         """Reset the values in the dialog's spinboxes.
@@ -130,6 +181,14 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMaxTime.setValue(0)
         self.ui.doubleSpinBoxMinAmplitude.setValue(0)
         self.ui.doubleSpinBoxMinTime.setValue(0)
+        
+    def selection_changed(self):
+        """Enable pushButtonSetSelected.
+        """
+        if len(self.ui.listWidgetChannels.selectedItems()) > 0:
+            self.ui.pushButtonSetSelected.setEnabled(True)
+            
+        else: self.ui.pushButtonSetSelected.setEnabled(False)
         
     def update_info(self, name):
         """Update the info widgets with data based on item.
