@@ -300,7 +300,28 @@ class FileManager(QObject):
                         i += 1
                         evokeds.append(evoked)
                         continue
-            
+                    
+                    # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
+                    # This makes sure that Meggie won't stop working if more
+                    # than 8 evoked sets exist.
+                    if i >= 8:
+                        warning = 'WARNING: There are more than 8 evoked' + \
+                        ' sets in the evoked.fif file. This does not' + \
+                        ' necessarily support all the functionality in' + \
+                        ' Meggie. The evoked.fif files with more than 8' + \
+                        ' datasets could not be loaded.'
+                        self.messageBox = messageBox.AppForm()
+                        self.messageBox.labelException.setText(warning)
+                        self.messageBox.show()
+                        return
+                        """
+                        # When visualizing evoked datasets the color set
+                        # should be fixed for more than 8 datasets.
+                        category[event_name] = i + 100
+                        i += 1
+                        evokeds.append(evoked)
+                        continue
+                        """
         except ValueError:
             try:
                 if mne.fiff.Evoked(folder + file, setno=0) is not None:
@@ -313,13 +334,6 @@ class FileManager(QObject):
                 self.messageBox.labelException.setText('File is not an evoked.fif file.')
                 self.messageBox.show()
                 return
-        """
-        except TypeError:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('File is not an evoked.fif file.')
-            self.messageBox.show()
-            return
-        """
         
         item.setData(32, evokeds)
         item.setData(33, category)
