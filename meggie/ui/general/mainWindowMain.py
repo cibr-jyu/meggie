@@ -707,7 +707,7 @@ class MainWindow(QtGui.QMainWindow):
         Load evoked data
         """
         
-        """
+        
         if checked is None: return
         
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
@@ -721,7 +721,7 @@ class MainWindow(QtGui.QMainWindow):
         if item is None: return
         
         self.evokedList.addItem(item)
-        """
+        
         
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
