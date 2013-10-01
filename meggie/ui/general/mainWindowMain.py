@@ -1101,7 +1101,7 @@ def main():
     
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.
-    #sys.stdout=sys.stderr=window
+    sys.stdout=sys.stderr=window
     
     window.show()
     
