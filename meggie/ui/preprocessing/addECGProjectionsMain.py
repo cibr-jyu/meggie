@@ -58,7 +58,7 @@ class AddECGProjections(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         directory = self.parent.experiment._subject_directory
-        self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
+        self.proj_file = glob.glob(directory + '*_ecg_*proj.fif')[0]
         self.projs = mne.read_proj(self.proj_file)
         
         self.listWidget = QtGui.QListWidget()
