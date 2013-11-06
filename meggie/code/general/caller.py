@@ -313,7 +313,7 @@ class Caller(object):
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '*_ecg_proj.fif'))
+                           glob.glob(directory + '*_ecg_*proj.fif'))
         #Checks if there is exactly one projection file
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
