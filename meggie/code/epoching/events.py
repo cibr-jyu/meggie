@@ -40,7 +40,7 @@ class Events(object):
     Class for getting events from the raw file, by type if need be.
     """
 
-    def __init__(self, raw, stim_ch = None):
+    def __init__(self, raw, stim_ch):
         """
         Constructor    
         Keyword arguments:

@@ -177,7 +177,7 @@ class EventSelectionDialog(QtGui.QDialog):
         Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.raw)
+        e = Events(self.raw, self.parent.experiment.stim_channel)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
