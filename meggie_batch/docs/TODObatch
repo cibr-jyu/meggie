@@ -1,0 +1,6 @@
+9.12.2013:
+
+- experimentiltä pitää pystyä kysymään experiment.current_subject.<tähän property>
+- pelkkä subject-path:in picklaus ei riitä?
+- experimentin picklauksessa pitää jättää pois subjectien raakadatat: del.odict['<tähän poistettavat propertyt>'] (esim. _raw_data, _working_file)
+	- kuinka tehdä tämä listalle subject-olioita?
