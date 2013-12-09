@@ -69,6 +69,8 @@ import pylab as pl
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+import re
+
 
 import messageBox
 
@@ -527,12 +529,6 @@ class Caller(object):
         # pyPlot doesn't seem to like QStrings, need to convert to string
         averageTitleString = str(averageTitle)
         
-        # Remove whitespaces from channel names (channel names in Evoked
-        # objects are without whitespaces)
-        # Update: channel names in Evoked objects are now with whitespaces or
-        # some data files have different formatting.
-        #channelsToAve = _clean_names(channelsToAve)
-        
         if epochs is None:
             raise Exception('No epochs found.')
         category = epochs.event_id
@@ -541,8 +537,18 @@ class Caller(object):
         # refers to different categories).
         evokeds = [epochs[name].average() for name in category.keys()]
         
+        # Channel names in Evoked objects may or may not have whitespaces
+        # depending on the measurements settings,
+        # need to check and adjust channelsToAve accordingly.
+        channelNameString = evokeds[0].info['ch_names'][0]
+        if re.match("^MEG[0-9]+", channelNameString):
+            channelsToAve = _clean_names(channelsToAve)
+        
         gradDataList = []
         for i in range(0, len(evokeds)):
+            print "Calculating channel averages for " + averageTitleString + \
+                 "\n" + \
+                "Channels in evoked set " + str(i) + ":"
             print evokeds[i].info['ch_names']
             # Picks only the desired channels from the evokeds.
             evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
