@@ -1,0 +1,399 @@
+﻿HUOM! 
+
+- Käytä muokatessa tekstieditoria, jossa päällä asetus "insert tabs as spaces" ja "tab width = 4"!
+
+- Jos saat jonkin bugin korjattua, laitan sen eteen iso TEHTY tyyliin:
+    "\ TEHTY Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen"
+    
+- Jos jokin bugi on työn alla, laita sen eteen iso A samaan tyyliin
+
+
+*** IHAN UUTTA TOIMINNALLISUUTTA ***
+
+** Tiedostojen ja kuvaajien talletus julkaisujen kannalta fiksuihin muotoihin P1 **
+    - Olisiko visualisointi-ikkunoihin hyvä voida määritellä omia otsikoita yms. ulkonäköön liittyvää tarvittaessa ihan ao. dialogi-ikkunoiden kautta?
+
+    - Keskiarvo tietojen talletus takaisin Fiff-tiedostoihin, eli nykyisen average-topologian lähdetiedot pitäisi saada talteen, kanavatiedot yms.
+        \ Valmiina MNE-Pythonissa löyty kalikka tähän 
+        \ Sisältää myös metatietoa esim. pään paikoista
+        \ MNE-Pythonin objekteissa pitäisi kulkea mukana nämä tiedot koko ajan
+
+    - Yleisestikin pitäisi saada kaikki fiff:inä aina ulos.
+    - Joissakin visualisoinneissa csv-muodossa saatavat aikasarjat oisi kiva saada.
+    - Olennainen juttu myös, jos aikoo tehdä ulkopuolisella ohjelmalla ne lähdetason analyysit
+
+** Visualisointiparannukset P1 **
+    - Ikkunalle voisi olla fiksua saada ainakin koehenkilön nimi
+    - Useampi keskiarvoistuskäppyrä päällekkäin, kts. http://martinos.org/mne/auto_examples/plot_topo_compare_conditions.html
+    - Käyrät olisi kiva saada vektorikuvina, MatPlotLib pystyy kyllä
+        \ TRF:ssä akselit mieluiten objekteina, joita voi myöhemmin muokata
+
+** Jatkuvan datan analysointi P2 **
+    - Spektrin laskeminen (on jo)
+        \ Taajuusvälin säätäminen nykyisessä toteutuksessa olis poikaa, niin tulee selkeämpää
+        \ Mutta MatPlotLib:in tarkkuus pienessä päässä on luokkaa 10^31 --> käytä double floatteja, niin toimii
+            + Tai sitten skaalaa ylös ennen piirtoa
+        \ Taajuusakselin resoluutio parametriksi (1024 hyvä default)
+        \ Kts. myös spectral densityn laskeminen 
+    
+    - Epoching pitäisi voida tehdä ilman valmiita triggereitä datassa, jakamalla vain koko mittausdata (tai osat siitä) pätkiin käyttäjän halun mukaan, pätkät voi mennä päällekkäinkin (kts. ikkunointifunktiot, esim. Hanning)
+        \ Ja tästä sitten spektrin laskenta periaatteessa samoin kuin nykyään (TFR-laskenta ilman triggereitä on vähän eri juttu, aika-akselissa ei ole mitään mieltä → kysy) 
+            + TFR-laskemisessa pitäisi esim. voida valita tavallinen fft (***minkä sijaan?***)
+        \ Käyttöliittymässä kannattaa luoda siinä Epoching-tabissa nämä jatkuvatkin epookkikokoelmat, ja voisi tulla samaan listaan näkyviin
+            + Eli käyttöliittymään mahdollisuus luoda jatkuvaa dataa myös, mistään eventeistä välittämättä
+        \ Ehkä hyödyllistä myös luokitella jatkuvastakin datasta luodut epookit esim. sen mukaan, onko joku triggeri tullut niiden aikana (jos esim. meditaatiotyypit painelee nappuloita)
+
+    - Tarkista ainakin TFR- ja average- välilehden napukat jatkuvalla datalla
+        
+    - Tilastohommat EI liity tähän tähän mitenkään
+    
+** A Kanavakeskiarvot P2 **     
+    - Valmiista keskiarvoistustopologiasta pitäisi voida valita kanavaryhmiä anatomisesti (meidän brainregions.py toimii ihan hyvin)
+        \ Manuaalinen kanavasyöttö myös jees
+        \ Otetaan vektorisummat: kunkin sensorin vektorisummat (gradiometreistä) ja niiden laskeminen:  
+            + Magnetometreistä ei lasketa
+        \ Kanavakeskiarvotkin saa fiff-tiedostoiksi, mutta tätä ei tarvi, jos Meggiestä saa päällekkäin useammasta koehenkilöistä näkyviin ne aluekeskiarvot 
+
+** Filteröinti (high- ja low-pass ainakin) P2 **
+    - Harvoin tarpeen
+    - Preprocessing-kohtaan MaxFilteristä erillinen filteröinti
+        \ MNE:stä löytyy näitä varten valmiita
+    - Periaatteessa yleensä fiksua tehdä vasta keskiarvoistuksen jälkeen ja katsoa sitten keskiarvoistettua tietoa eri filtereiden läpi
+        \ Ongelma: vaikea tehdä high-pass pienelle pätkälle dataa ilman että tulee häiriöitä
+            + On kikkoja tähän, aiheellista vähän toteuttaa (kts. joku Xplotterin toteutus)
+            + MNE-Python tyypeillä tämä ehkä työn alla (Gramfort)  
+
+** Useamman subjectin näyttäminen yhtä aikaa käyttöliittymässä P3 **
+    - Ei tarvi olla kaikkien auki muistissa yhtä aikaa, voisi olla fiksua aktivoida yksi kerrallaan
+    - Sen sijaan esim. keskiarvoistusvaiheessa pitää voida ottaa huomioon useampi koehenkilö, sitten vasta voidaan tehdä yhtä aikaa
+        \ Eli osaa lukea sitten myös experimentin muiden subjectien datoista 
+
+    - Pohdintoja:
+        \ Siis nykyinen experiment olisi yksi subject, ja yksi experiment sisältäisi useamman
+        subjectin; käyttöliittymässä voisi olla vaikkapa lista, josta voisi valita kulloinkin näkyvän subjectin
+        \ Onko tämmöiselle oikeasti tarvetta? Yksinkertaista batch-toiminnallisuutta varten tällaista ominaisuutta ei periaatteessa tarvittaisi
+        \ Vaatii varmaan jo muistinkäytön miettimistä, yhdelläkin subjectilla hotkaisee nykyisin n. 1,5 GB muistia
+
+** Batch-toiminnallisuus ja siihen liittyvä lista P3 **
+    - Lista oisi jees, tyyliin yhden koehenkilön tiettyyn vaiheeseen asti lista, ja sitten batch-ajoa ennen voisi valita kohdetiedostot, joille ajaa, ja muokata sen listan komentoja ja parametrejä
+        \ Kätevä sikäli, että voisi sitten myöhemmin ajaa myös ehkä ilman graafista käyttöliittymää
+            + Ei välttämättä vaadi useampaa subjectia (nyk. experimenttiä) näkyviin käyttöliittymään, vaan voisi vain kehitellä erillisen käyttöliittymän, jolla nykyisestä experimentistä otetaan toimenpiteet ja parametrit ylös, ja käytetään niitä sitten haluttuun raw-tiedostoon.
+                / Mahdollisuus editoida näitä toimenpiteitä ja parametrejä ennen käyttöä
+            + Toteutus yksinkertaisimmillaan niin, että experiment tietää, mitä toimintoja on tehty, ja arvot otetaan dialogien arvoja varten tehdyistä param-tiedostoista
+            + Joskus oli puhetta lokista, jossa oli tehdyt toiminnot per experiment (tai per subject, jos joskus on useampia subjecteja) – voisi liittää tähän 
+
+** Useamman eri syöttötiedostotyypin luku P3 **
+    - Esim. EEG-muotoista dataa voisi lukea
+    - Nykyinen toiminnallisuus aika samalla tavalla myös EEG-pohjaiselle datalle, kunhan data ei ole jatkuvaa
+
+** MNE 0.6:n uudet ominaisuudet P3 **
+    - Averaging topologiaan (topographic maps of evoked data)
+    - Visualize channel over epochs olis kiva myös (ennen epochingia)
+    - MNE Browse raw:n korvaaminen MNE-Python- toteutuksella, kts. http://martinos.org/mne/auto_examples/plot_read_and_write_raw_data.html
+
+** Lähdetasolle siirtyminen P4 **
+    - Tätä mietitään myöhemmin
+    - Kts. vaatimusmäärittelyn kohdat 1.8 - 1.11
+
+
+*** PARANNUKSIA OLEMASSAOLEVIIN OMINAISUUKSIIN ***
+
+** Refaktorointia **
+    - Jos pitää saada näkyviin useampi subject yhtä aikaa käyttöliittymässä, on pakko samalla miettiä uusiksi experimentin/subjectin/workspacen luominen
+    - Tiedostojen talletukseen yms. talletustoimintoihin liittyvät toiminnot erilliseen luokkaan
+    - Threading kuntoon
+        \ Tähän liittyen progressbarit ja käyttäjälle ilmoitukset, että nyt lasketaan, eikä ohjelma hyytynytkään
+        \ Mahdollisuus keskeyttää pitkät toimenpiteet, jos esim. käyttäjä huomaa klikanneensa vahingossa väärin
+        \ Ja oishan se kiva, että pääikkunakin piirtyisi laskemisen aikana
+
+** Keskivaikeita säätöjä **
+    - Epookkien luomiseen ja käsittelyyn liittyvät parannukset
+        \ Epoch collection - listan tallentuminen HUOM!!! Aika olennainen juttu!! P1
+        \ Mahdollisuus poistaa epoch collectioneja listasta ja editoida niitä (ei tarvitsisi aina luoda alusta alkaen uutta)
+        \ Event selection: mahdollisuus poistaa useampia eventtejä kerralla
+        \ Event selection: Useamman eventtityypin lisääminen listaan kerralla
+        \ Event selection: "save events to file..." voisi antaa valita talletuspaikan
+        \ Event selection: Eventtien xls-tiedostotalletus ja luku --> muuta toimimaan csv:llä
+        \ Event selection: Epookkien luominen tarkempien ehtojen perusteella
+            + Nämä olivat niitä bit mask -pohjaisia ratkaisuja, joista Lauri näytti keväällä Espoossa, jonkin Elektan softan avulla
+        \ Event selection: otsikot listoille ja "Remove"-nappulan selvennys
+        \ Epoch creation: pitäisi toimia niin, ettei ota eventtejä mag- ja grad-kanavilta, jos EOG-kanavan amplitudi ylittää "rejection-parameters"-kohdassa määritellyn arvon (EOG-checkbox voisi olla ennemmin "discard epoch by EOG channel values" tms.)
+            + EEG-rejectioon liittyi myös jotakin vastaavaa
+            + Checkboxit voisi selittää paremmin, ja mitä on syytä olla checkattuna oletuksena?
+            + End timeen ja start timeen yksiköksi sekuntia, ja tarkkuus kolmella desimaalilla (jos käyttäjä ajattelee millisekunteja)
+        \ Epoch creation: include- ja exclude-listat eivät ole oikeasti missään käytössä
+        \ V Sitä paitsi epoching-luokat tekee itse esim. averagen, vaikka pitäisi olla Callerin hommia sen 
+        \ Epoch widgetin lista
+            \ Näkyviin kustakin epoch collectionista, kukin omassa sarakkeessaan: eventti- tai ikkunatyypin nimi, montako ko. tyypin esiintymää sisältyy, onko kyseessä eventteihin vai itse määriteltyihin ikkuinoihin pohjautuva collection
+   
+    - MaxFilterin kalibraatiotiedostot -säätö
+        \ MaxFilterin asennus tekee oletuksena hakemiston /neuro/databases, mutta ei sen alle hakemistoja /sss ja /ctc
+            + sss-hakemistossa on labrakohtaisia kalibraatiotiedostoja, mutta mitä ovat ctc-hakemistossa olevat tiedostot?  Liittyykö yksi ctc-hakemiston tiedosto useampaan sss-hakemiston tiedostoon?
+            + Esimerkiksi Tiinalla oli käytössä sss-hakemistossa oleva sss_cal_oxford-tiedosto, ja ctc-hakemistossa oleva ct_sparse_orion-tiedosto
+                / Kuitenkin MaxFilterin manuaalin mukaan MaxFilterin komentorivin “-site“-optio olettaa, että molempien tiedostojen pitäisi sisältää sama nimi (esim.  sss_cal_oxford ja  ct_sparse_oxford)
+        \ Eventtien xls-tiedostotalletus ja luku --> muuta toimimaan csv:llä
+        \ Tarkista, että kaikissa dialogeissa on joku kohta, joka nappaa poikkeukset esim. mne:ltä ja näyttää ne käyttäjälle.
+            + TFR-topologiadialogissa ehkä vaikeampi, kts. matPlotlib
+            + Tarkista myös, että kaikki virheilmoitukset tulevat oikeasti näkyviin, eivätkä esim. jää muiden dialogien taakse 
+        \ Maxfilterin testaus ja parametrinkirjoitus
+        \ Pickle-kirjaston käyttäminen kuvaajaolioiden yms. talletukseen levylle ---> voi helpommin muokata kuvaajia julkaisukuntoon?
+            + Tarvitseeko, vai riittääkö että avaa experimentin ja visualisoi siitä haluamakseen?
+            + Tai että voi manuaalisesti asettaa visualisoidessa otsikon ja akselit?
+        \ MainWindowin initialize_ui ajetaan joka kerta, kun jossakin dialogissa klikataan UI:ta --> esim. tabien piirto on siinä, ehkä tarpeettomasti 
+        \ ECG/EOG-projektioiden laskeminen muuttaa lähtötiedostoa - ei varmaan pitäisi, vasta applyn pitäisi    
+        \ ECG/EOG-parametridialogeissa mne ei ota huomioon syötettyä "bad channel" - listaa ---> mne:n vika?
+        \ kts. verkkolevyn koodikatselmus2.txt (pöytäkirjat-kansio)
+        \ Averaging-dialogin virittely
+            + Oisi kiva, jos voisi valita useamman epoch collectionin ja näyttää niiden keskiarvot topologianäkymässä päällekkäin eri väreillä
+        \ Experimentin sulkeminen manuaalisesti tai automaattisesti uutta experimenttiä avattaessa
+        ---> UI-nollaus yms.
+
+    - Matplotlib-ikkunoiden sekakäyttöongelmien ratkaiseminen
+        \ Kun käppyröitä piirrellessä saattaa jäädä puskuriin grafiikkaa, joka sitten toista käppyrää piirrettäessä tulee sieltä saman tien esiin
+     
+** Muita isompia projekteja **
+    - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
+        \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia
+    - Epoch-listan käyttöliittymään liittyvä säätö: eri tabien epoch listat oikeasti eri widgeteiksi MVC-mallin mukaan
+    - Experimentin luonnin pitäisi varmaan tehdä vain experiment-kansio, subjectien lisäys sitten myöhemmin erillisellä ikkunalla
+        \ Nykyinen CreateExperiment-dialogi olisi käytännössä tuo add subject
+        \ Ja esim. ylimääräinen tabirivi tai lista, josta valita kulloinkin näkyvä 
+        \ Erillinen batch-alue käyttöliittymään?
+    
+** Helposti korjattavia pikkubugeja yms. **
+TEHTY    \ Averagea klikatessa ei tee mitään (ei edes näytä virheilmoitusta), jos epookkikokoelmaan ei ole valittu mag- tai grad-kanavia
+    \ Tooltipit
+TEHTY    \ UI-elementeille järkevät nimet, eikä pelkkiä button_2:ia
+TEHTY    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
+TEHTY    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+TEHTY    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
+    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
+        + Ja workspacen vaihto preferences-dialogiin, jahka siihen tulee myös muuta
+    \ Ecg-eog -projektiodialogin filterin cut-off - muuttaa dataa, ei ole selvää käyttäjälle
+    \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
+        + Liity MNE-listalle ja kysy asiasta
+    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
+        + About-dialogi myös
+    \ Yhtä aikaa useamman kanavan spektri näkyviin, esim. valitse listasta ne kanavat
+    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
+TEHTY    \ Ikkunan otsikossa voisi näkyä experimentin nimi
+    \ TFR-topologiadialogin oudot exception-message-ikkunat (laita esim. cyclejä liikaa)
+        + Ei toimi samoin kuin normi TFR-dialogissa
+        + Poimii joblibin poikkeuksia, jotka kumman pitkiä (Kts. se virhe)
+    \ addECGparameters ei pääse kirjoittamaan (levy täynnä) ---> tee tilaa levylle ---> yritä samaa nappia, seurauksena self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
+    IndexError: list index out of range
+    \ Tarkista, ettei triggereistä, eventeistä, epocheista puhuta missään ristiin     
+    \ Create ja open experiment - avaako raw filen tarpeettomasti tuplana?
+    \ ECG/EOGComputeDialogeissa Cancel/Compute-dialogeissa manuaalisesti laitettu nappien järjestys ---> työpöytäsysteemistä riippuen väärin päin
+    \ TFR-, TFR visualization- ja average-napit harmaiksi, jos ei ole epookkikokoelmia
+    \ About-dialogin avaava kohta erilliseen Help-menuun
+    \ Ikonit (koko sovellus + menut ja toolbar-valinnat)
+    \ Dialogeissa on kohtia, jotka vievät liikaa tilaa
+        + Ja liian myöhään ilmaantuvia scrollbareja yms.
+    \ Number of jobs -defaultti voisi olla ydinten määrä -1
+        + Kts. TFR viz.- ja Average-dialogit
+    \ Dialogien (esim. epoch creation) sisältö selkeämmin jaotelluksi
+        + Ja scrollbareja yms. tarvittaessa
+TEHTY    \ Menuissa joka sana isolla, on käytäntö englanniksi
+TEHTY    \ Tarkista MatPlotLib-ikkunoiden ja graafien otsikot (esim. magnitude spectrum)
+    \ Kuuluisiko TFR-dialogissa olla myös baseline rescaling, kuten TRF-topology -dialogissa?
+    \ Punaiset X:ät preprocessing- välilehdelle
+    \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämmentävän virheilmoituksen (“No rights to save to chosen path”)
+    \ UI:n raw tabin trigger-lista --> events, ja poista mahdollisuus valita siinä alkioita (+ tausta ei-valkoiseksi)
+    \ Pääikkuna ja browse_raw ikkuna yhtä aikaa auki --> pitäisi voida selata pääikkunaa
+        + Kts. se threading
+    \ Tällä hetkellä ei tunnista, jos alun perin avatulle filulle on jo tehty MaxFilter (esim. mc) --> ei näy vihreänä merkkinä Preprocessing-lehdellä
+    \ CurrentTabin voisi tallettaa suljettaessa myös
+    \ Harmaannutettuja esimerkkisyötteitä tekstikenttiin (“Eg. MEG0121”)
+    \ Messagebox yhdellä rivillä käytettäväksi
+    \ Sovellukselle oma kuvake, ja toolbarin napukoille kuvakkeet
+    \ Koetta avattaessa voisi sovellus oletuksena tarjota hakemistoa,
+    joka on edellisellä kerralla ollut avattuna.
+    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
+    \ Jos MaxFilter ei käytössä, vastaava nappi harmaaksi
+    \ browse_raw-mahdollisuus myös Preprocessing-välilehdelle
+    \ Listojen ja painikkeiden järjestys esim. epoching-välilehdellä ja sen jälkeen --> toisinpäin
+TEHTY    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
+    \ Jos ecg-dialogissa käyttäjä antaa väärän kanavan, virheilmoitus ei ole fiksu
+    \ Useamman kerran samalla dialogilla magnitude spectrum piirtäessä piirtää samaan ikkunaan
+    \ Luokat yleisesti periytymään QObjecteista, ei Objecteista, niin signaalit luokkien välillä toimii
+    
+*** ASENNUKSEEN YMS. LIITTYVIÄ TEHTÄVIÄ *** 
+    - Testaa Canopy ja päivitä asennusohjeita
+
+    
+*** KEHITYSINFRAAN LIITTYVIÄ ASIOITA ***
+    - Lopulta Ticket-systeemi bugeille ja vaatimuksille
+    
+    
+--------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+*** TORSTAI 25.7 TAPAAMINEN ***
+    
+    
+** Käyttöliittymätoiminnallisuutta **
+TEHTY    \ working filen päivittyminen mainwindowin alareunaan, jos ei suorita mitään prosessia
+TEHTY    \ muutetaan steppien suoritus selkeämmiksi preprocessing tabissa (Tiina piirsi meille taululle esimerkin, joka voitaisiin toteuttaa)
+TEHTY    \ raw-tabin triggerit samalla tavalla esitettynä kuin muukin raw data/experiment info, eli textlabeleina
+TEHTY    \ raw-tabin nimeksi esim. info
+TEHTY    \ experiment info ja file info erikseen raw-tabille tai jopa oma tabi molemmille
+    \ preprocessing-tabille painike filtteröintiä varten
+    \ datan visualisointipalikat voisi luokitella omaan osioon välilehdillä
+TEHTY    \ preprocessing välilehdellä pitäisi olla mne_browse_raw painike
+TEHTY    \ parametrilista epocheille
+TEHTY(modifiointi luo uudet epochit ja jättää vanhat)    \ parametrilistassa olisi hyvä pystyä muokkaamaan parametrejä ja luomaan sen perusteella epochit
+TEHTY    \ defaulttina mag ja grad epoch parametreissa valittuna
+TEHTY    \ event selection dialogiin lisätään siitä aukeavan epoch creation dialogin sisältö
+    \ epochien lisääminen ohjelmaan esim. import-buttonilla muualla tehtyjen epochien prosessointia varten (epochien tallennus csv-muotoon käyttäjän valinnan mukaan)
+    \ channel averagessa mahdollisuus tallentaa kaikki kategoriat kerralla tai yksitellen
+TEHTY    \ epocheja pitää pystyä poistamaan listasta
+
+** Batch toiminnallisuutta **
+    \ experimentille ei anneta raw:ta, vaan ainoastaan esim. experiment name, author ja description
+    \ experimentille lisätään subjectit erillisessä dialogissa
+
+** ECG/EOG-projektiot **
+    \ ecg/eog-projektioiden laskemisen pystyi tekemään jo projisoidulle datalle, tämän toiminnallisuutta syytä miettiä
+    \ tarkistetaan mikä working file on käytössä projektioiden laskemisessa
+
+** Visualisointia **
+TEHTY    \ TFR-visualization skaalaa pitää muuttaa ja käyrä ei piirry oikein (kuvan piirtokohdassa on komento ylim, otetaan se pois niin kuva skaalautuu automaattisesti oikein)
+TEHTY    \ TFR piirtää vanhan ikkunan päälle uuden, mutta pitää avata uusi ikkuna ja säilyttää aiemmin piirretty
+    \ eri eventtien piirtäminen päällekkäin samaan kuvaajaan channel averagessa
+    \ channel averageen set scale ja mihin se asettuu
+TEHTY(avg, värejä pitää vielä muokata oikeiksi)    \ visualisoinneissa käyrien väreissä saisi olla ylhäällä mikä eventti kyseessä
+    \ mahdollista valita epochien parametrilistasta mitkä eventit piirretään päällekkäin/keskiarvoistetaan
+    \ käyttäjälle valittavaksi tehdäänkö visualisointia aika- vai taajuustasossa
+    \ mne power spectral densityn toteuttaminen, niin että piirretään samaan ikkunaan esim. ennen ja jälkeen filtteröintiä muodostuneet kuvaajat:
+        - käyttäjä saa ruksia mitkä käyrät piirretään
+        - http://www.martinos.org/mne/auto_examples/time_frequency/plot_compute_raw_data_spectrum.html#example-time-frequency-plot-compute-raw-data-spectrum-py
+    \ (keskiarvoistettavan kanavan lisäksi valinta mitä tiedostoa käsitellään?)
+
+** Muuta **
+    \ mne_browse_raw:lle oikeat säädöt ohjeisiin
+    \ jos prosessien aikana tallennettuja tiedostoja poistetaan manuaalisesti työkansiosta, niiden tiedot jää edelleen ohjelmaan muistiin, mikä sekoittaa
+    prosessien uudelleen suorittamista
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+*** KESKIVIIKKO 28.8 TAPAAMINEN ***
+
+
+** Epoching **
+TEHTY    \ create epoch dialogissa add to list -painike eventtinimen jälkeen/vierelle loogisempi sijoittaa
+    \ eventtinimen jälkeen tulee juokseva numero vaikka vaihtaa nimen, poistetaan
+TEHTY    \ epochien start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
+TEHTY    \ ECG/EOG dialogeissa start ja end timessa saisi olla kolmas desimaali, koska millisekunneista kyse
+TEHTY    \ (rejection parametreihin olisi hyvä laittaa esim. -1 jotta sitä ei otettaisi huomioon)
+    \ epoch dialogissa checkboxien merkitys tarkistetaan
+TEHTY    \ epoch -dialogissa ok-painikkeen tekstiksi create epochs
+TEHTY    \ kokeillaan muuttaa harmaaksi texteditien taustat jotta ne ei näyttäisi siltä että niiden tekstiä pystytään editoimaan
+TEHTY    \ epoch collectioneihin lisäksi "collection"-sana epoch widgetiin
+    \ importetuilla epocheilla ei ole tällä hetkellä parametrejä epoch parameters osiossa (ainakin eventit pitäisi nähdä)
+    \ save averaged epochs nappi, average epochsien alle kanavakeskiarvot
+TEHTY(ei vielä lisätty meggieen nappia)    \ keskiarvoistetuille epocheille statistiikka (tunnuslukutaulukko?)
+(tällä hetkellä epoching tabilla)    \ statistiikka epocheista tarvitaan vasta avg tabilla
+    \ valikko käyttäjälle mitä statistiikkaa epocheista halutaan tallentaa
+    \ statistiikan tallennus eri paikkaan kuin save epochs
+TEHTY    \ create epochs nappi ei erotu selkeästi muiden joukosta
+TEHTY    \ create, modify, delete samalle tasolle
+TEHTY    \ rejectioniin grad default 3000 eikä 4000
+TEHTY    \ epoch dialogissa oma lista eventtikategorioista (helpottaisi yksittäisen eventtikategorian poistamisen epocheista, tätä ei välttämättä tarvita jos toteutetaan, että eventtejä
+    voidaan valita epoching-välilehden epochs parameters osiossa ja tämän perusteella suorittaa toimenpiteitä, kuten keskiarvoistusta ja visualisointia)
+    \ epochien modify ei tuo mukana rejection arvoja
+EI TOTEUTETA    \ ehkä multiselection epoch widgetiin, jotta voisi poistaa useamman epoch collectionin kerralla
+TEHTY    \ avg tabiin lista keskiarvoistetuille epocheille
+TEHTY    \ keskiarvoistuksen yhteydessä valinta mitä eventtejä kyseisestä epoch collectionista otetaan huomioon
+TEHTY(dialogia ei ole meggiessä vielä)    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+OSITTAIN TEHTY    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+
+** Kanavakeskiarvot **
+    \ kanavakeskiarvojen tallentaminen
+    \ kanavakeskiarvot ulos sekä fiffeinä että excel(csv?) tiedostoina
+    \ csv ilman kanavakeskiarvoja ja -keskiarvojen kanssa
+    \ kanavakeskiarvoista ulos tunnuslukutaulukko, fif ja raaka csv
+    \ checkboxeina aivoalueet mitkä halutaan keskiarvoistaa, yksi checkbox voisi olla select all
+    \ show ja save erikseen myös channel averageen
+    \ kanavakeskiarvoistukseen valittavaksi mille eventeille keskiarvostus tehdään
+    \ kanavakeskiarvoon aikasarja/lobe/triggeri/koehenkilö (siis jokaiselle näistä oma aikasarja)
+    \ kanavien aikasarjoista maksimin, maksimilatenssin, puolimaksimien välinen aika ja integraali, minimiä ei tarvitse (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+    \ tunnuslukutaulukosta csv ja raaka csv erikseen (kanavakeskiarvoista/keskiarvoistetuista epocheista?)
+
+** Visualisointia **
+TEHTY    \ MNE esimerkeistä 'visualize channel over epochs as image' toteuttaminen (tehdään keskiarvoistetuille epocheille)
+(hankala muuttaa koska mne käyttää omia layouteja, kokeile stylsheetejä)    \ average epochissa värejä voisi muuttaa
+    \ kanavakeskiarvoikkunat samaan skaalaan?
+TEHTY    \ avg epochien visualisoinnissa valinnaksi mitä eventtejä visualisoidaan päällekkäin kyseisestä avg collectionista
+(pystyy tekemään meggiellä)    \ eri rejektioiden arvoilla tehtyjä samoja eventtikategorioita (esim. left ear) voisi visualisoida, jotta näkee mitä eri rejektioiden arvot tekee datalle
+
+** Filteröintiä **
+    \ filteröinti (low,high,band) laitetaan osaksi available actioneja (huom. ei visualisointipalikka)
+    \ filteröinnissä mahdollisuus tehdä samaan aikaan low, high ja bandpass
+    \ filteröinti-ikkunassa preview näyttäisi taajuusasteet
+
+** TFR **
+    \ TFR:ssä voidaan valita eventit joille tehdään (ikkunassa näytetään joku tunniste, esim. eventtinimellä right ear, left ear)
+    \ jotain TFR-juttuja oli: epoch/channel tfr:ään, plot talteen; aikasarjoihin aika ja arvo sillä hetkellä
+    
+** Yleistä **
+OSITTAIN(epoching ja preprocessing tabilla eroteltu kokonaisuuksia)    \ luominen, visualisointi ja tallentaminen lajitellaan tabeille omiin osioihin
+    \ visualize signal trial epoching välilehdelle alas
+    \ experimentiin save info/update info -painike
+    \ subjectien lisäys -painike experimentiin
+    \ experiment infossa lista lisätyistä subjecteista
+    \ MNE_browse_raw oikeat säädöt kohdalleen
+TEHTY    \ MNE_browse_raw preprocessing tabiin samaan kohtaan kuin infossa
+    \ bugi: ECG/EOG ensin exclude SSP projectors kohdassa defaulttina ruksi, computen jälkeen ruksi siirtyy kohtaan compute ssp after averaging
+
+** Bugeja **
+    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+TEHTY    \ Jos yhtään rejektionia ei ole valittunaEpoch collectionia tehtäessä käyttäjälle ei näytetä virhettä
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+*** Bugien korjausta ***
+
+TARKISTETAAN    - ecg_calculate kahteen kertaan ---> seurauksena tiedostonimiä, joissa useampi "computed"-lopuke
+        \ On muuallakin, on perustavanlaatuinen toimintaan liittyvä asia ---> refaktorointihommia
+    \ Tooltipit
+TEHTY    \ Experimentin kuvauskenttään skandien laittaminen kaataa koko roskan
+TEHTY    \ Browse-buttonien viereiset kentät - toimiiko polun käsinsyöttö?
+TARKISTETAAN    \ Tarkista ilmoitukset, jos jokin backend-kalikka puuttuu nappia painaessa
+    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa
+TEHTY    \ Ikkunan otsikossa voisi näkyä experimentin nimi
+TEHTY    \ Create ja open experiment - avaako raw filen tarpeettomasti tuplana?
+TEHTY    \ About-dialogin avaava kohta erilliseen Help-menuun
+TEHTY    \ Menuissa joka sana isolla, on käytäntö englanniksi
+TEHTY    \ Jos yrittää luoda experimentin olemassaolevalla nimellä, saa hämmentävän virheilmoituksen (“No rights to save to chosen path”)
+TEHTY    \ Enemmän tietoa ikkunoiden otsikoihin, esim. experimentin nimi, mistä kanavasta ollaan laskeskelemassa magnitude spectrumia yms.
+TEHTY    \ Virhetilanne painettaessa painiketta "Ok", kun käsiteltävää raakadatatiedostoa ei ole valittu, mutta pakollinen tekstikenttä "experiment name" on täytetty.
+    - Lopulta Ticket-systeemi bugeille ja vaatimuksille
+TEHTY    \ ECG/EOG QRS detection tresholdia muutettaessa pienemmäksi (ainakin) voi tulla nonetype error
+    
+TEHTY    \ poista createexperimentdialogista progress bar
+
+    \ power spectral density magnitude spectrumin tilalle
+
+*** Bugien korjausta 2 ***
+
+TEHTY    \ rejection parametrien checkboxien kanssa ongelmia epoch creation dialogissa
+TEHTY    \ Workspacen säätämisen jälkeen voitaisiin mennä suoraan createprojectdialogiin
+    \ raakadata luetaan kahteen kertaan experimentiä ladattaessa
+    \ "No rights to chosen path"-virheilmoitus create experiment dialogissa, jos ei onnistu ekalla yrittämällä esim. täyden levyn takia ja sitten yrittää uusiksi
+        - jos ei ole tilaa levyllä tekee silti experiment kansion <- tämän voisi poistaa
+TEHTY    \ Close-nappi olis poikaa pääikkunassa, ehkä "Confirm"-lisäyksellä
+TEHTY        + About-dialogi myös
+EI LÖYTYNYT RATKAISUA    \ Älä piirrä matplotlibin ikkunoita uudestaan koko ajan niitä liikutellessa tai kokoa muuttaessa 
+    \ addECGparameters ei pääse kirjoittamaan (levy täynnä) ---> tee tilaa levylle ---> yritä samaa nappia, seurauksena self.proj_file = glob.glob(directory + '*_ecg_proj.fif')[0]
+    \ jos experiment on valmiiksi avattuna ja evoked listassa on datasettejä ja tämän jälkeen tekee uuden experimentin, niin evoked setit jää edelleen listaan näkyviin ja niitä voi visualisoida
+
+*** Tärkeätä uutta ***
+
+    \ enemmän outputtia käyttäjälle kun tehdään pitkään kestävää laskentaa
+    \ power spectral density magnitude spectrumin tilalle
+    
+*** Lisää bugeja ja korjattavaa***
+    \ Visualize evoked -napissa kestää aivan töykeän kauan, mutta käyttäjälle ei kerrota mitään.
+    \ Tämä koko jatkokehitys.txt pitäisi käydä läpi ja koota uudeksi listaksi, jossa bugit ja toiminnot on jaoteltu jotenkin "fiksusti".
+    
