@@ -509,10 +509,16 @@ class MainWindow(QtGui.QMainWindow):
         if len(self.experiment._subject_paths) == 0:
             return
         
-        
+        """
         if not os.path.exists(self.experiment.epochs_directory): #TODO: self.experiment.current_subject.path?
             self.experiment.create_epochs_directory
             return        
+        """
+        if not os.path.exists(self.experiment._active_subject_path + '/epochs/'):
+            self.experiment.create_epochs_directory
+            return
+        
+        
         
         self.epochList.clearItems()
         path = self.experiment.epochs_directory

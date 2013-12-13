@@ -197,17 +197,25 @@ class Experiment(QObject):
         """
         self._active_subject_path = subject_path
 
-
-    def add_subject_path(self, subject_path):
+    def add_subject(self, subject):
         """
-        Adds subjects to the current experiment.
+        Adds subject to the current experiment.
         
         Keyword arguments:
         subject    -- the subject object created by subject class
         """
-        #self._subjects[subject.subject_name] = subject
+        #dictionary example:
+        #self._subjects[subject.subject_name] = subject 
+        self._subjects.append(subject)
+
+    def add_subject_path(self, subject_path):
+        """
+        Adds subject path to the current experiment.
         
-        #self._subjects.append(subject) tarvitaanko?
+        Keyword arguments:
+        subject_path    -- the subject path of the subject object
+                           created by subject class
+        """
         self._subject_paths.append(subject_path)
 
     def save_experiment_settings(self):
@@ -258,13 +266,17 @@ class Experiment(QObject):
         # epochien, evokedien jne. lis‰‰misten yhteydess‰ tarvitsee
         # p‰ivitt‰‰ settingsej‰
         odict = self.__dict__.copy()
-        del odict['_subjects']
+        #del odict['_subjects']
         #del odict['_active_subject']
         
         """
         del odict['_raw_data']
         del odict['_working_file']
         """
+        #turha?
+        for subject in self._subjects:
+            del odict['subject._raw_data']
+        
         
         return odict
 

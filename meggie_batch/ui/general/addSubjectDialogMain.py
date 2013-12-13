@@ -76,7 +76,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.subject.save_raw(raw_data, self.subject.subject_path)
         
         self.parent.experiment.add_subject_path(self.subject.subject_path)
-        
+        self.parent.experiment.add_subject(self.subject)
         # TODO: tama siirretaan mainWindowin pushButtonActiveSubjectiin
         self.parent.experiment.active_subject_path = self.subject.subject_path
         
