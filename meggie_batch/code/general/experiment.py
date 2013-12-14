@@ -266,18 +266,14 @@ class Experiment(QObject):
         # epochien, evokedien jne. lis‰‰misten yhteydess‰ tarvitsee
         # p‰ivitt‰‰ settingsej‰
         odict = self.__dict__.copy()
-        #del odict['_subjects']
+        del odict['_subjects']
         #del odict['_active_subject']
         
         """
+        #TODO: n‰m‰ subjectiin ja subjectille oma picklaus?
         del odict['_raw_data']
         del odict['_working_file']
         """
-        #turha?
-        for subject in self._subjects:
-            del odict['subject._raw_data']
-        
-        
         return odict
 
     def __setstate__(self, odict):

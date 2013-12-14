@@ -1,6 +1,19 @@
-9.12.2013:
+TODO:
 
 - experimentiltä pitää pystyä kysymään experiment.current_subject.<tähän property>
-- pelkkä subject-path:in picklaus ei riitä?
-- experimentin picklauksessa pitää jättää pois subjectien raakadatat: del.odict['<tähän poistettavat propertyt>'] (esim. _raw_data, _working_file)
-	- kuinka tehdä tämä listalle subject-olioita?
+
+- experimentin picklauksessa pitää jättää pois subjectit, koska ne sisältävät raakadatan: del.odict['<tähän poistettavat propertyt>'] (esim. _subjects, _active_subject)
+	- näin ei tule tallenneltua raakadatoja kahteen kertaan
+
+
+Ideoita:
+
+Tapa 1:
+- raw filet voisi etsiä experimentissä olevien subject-polkujen (experimentillä on _subject_paths -lista) perusteella ja ladata ne käyttöyliittymään vasta Activate subject -buttonia klikatessa
+  tai avata viimeksi auki ollut subject experimentin picklauksen yhteydessä tallentuneeseen _active_subject(_path?) -propertyyn
+- tällöin esim. subjectin aktivoinnin yhteydessä voisi luoda kyseisen subjectin ja lisätä sen experimentin subjects-listaan, jolloin experimentiltä voisi kysyä current_subject:in propertyjä
+
+Tapa 2:
+- picklataan jokainen subject-olio erikseen ja lisätään tulokset experimentin subject-listaan
+	- näin saataisiin poistettua _raw_data ja _working_file -propertyt ettei niitä tallenneta useaan kertaan
+
