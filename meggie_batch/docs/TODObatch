@@ -6,6 +6,13 @@ TODO:
 	- näin ei tule tallenneltua raakadatoja kahteen kertaan
 
 
+
+- mainwindowmain:in on_action_open_experiment_triggered metodissa tulee kutsua load_epoch_collections ja load_evoked_collections metodeja aktiiviselle subject_path:ille
+	- latausmetodeja pitää muokata tämän mukaisesti
+
+
+
+
 Ideoita:
 
 Tapa 1:

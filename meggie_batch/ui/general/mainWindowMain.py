@@ -521,7 +521,7 @@ class MainWindow(QtGui.QMainWindow):
         
         
         self.epochList.clearItems()
-        path = self.experiment.epochs_directory
+        path = self.experiment._active_subject_path
         files = os.listdir(path)
         for file in files:
             
@@ -763,7 +763,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         
-        if not os.path.exists(self.experiment.epochs_directory + 'average/'):
+        if not os.path.exists(self.experiment._active_subject_path + 'average/'):
             self.evokedList.clear()
             return  
         

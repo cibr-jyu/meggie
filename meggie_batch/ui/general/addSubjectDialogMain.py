@@ -73,6 +73,8 @@ class AddSubjectDialog(QtGui.QDialog):
         f = FileManager()
         raw = f.open_raw(raw_data)
         self.subject.raw_data = raw
+        
+        # save_raw method calls create_epochs_directory
         self.subject.save_raw(raw_data, self.subject.subject_path)
         
         self.parent.experiment.add_subject_path(self.subject.subject_path)

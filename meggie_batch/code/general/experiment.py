@@ -77,6 +77,8 @@ class Experiment(QObject):
         self._subjects = [] #dict()
         self._subject_paths = []
         self._active_subject_path = ''
+        self._working_file_names = []
+        self._active_subject = None
         self.mainWindow = None
         
 
@@ -208,6 +210,36 @@ class Experiment(QObject):
         #self._subjects[subject.subject_name] = subject 
         self._subjects.append(subject)
 
+    def activate_subject(self, subject_path, experiment):
+        """
+        Method for activating a subject to be processed.
+        Should open the newest working file.
+        
+        Keyword arguments:
+        subject_path    -- path of the subject to be activated 
+                           (used for opening the newest
+                           working file)
+        experiment      -- currently active experiment for creating
+                           a new subject
+        """
+        
+        # TODO: t‰ss‰ joutuu varmaan pyyt‰m‰‰n experimentin mainWindowMain:ilta?? (ei tarvitse jos metodille syˆtet‰‰n experiment)
+        subject = Subject(experiment, subject_name)
+        #self.subject.subject_name = subject_name
+        
+        # TODO: match given subject_path with the strings in working_file_names list
+        #regex=re.compile(".*(cat).*")
+        regex=re.compile(subject_name + ".*")
+        working_file_name = [m.group(0) for l in \
+                             self._working_file_names for m in \
+                             [regex.search(l)] if m]
+        working_file = subject_path + working_file_name
+        f = FileManager()
+        raw = f.open_raw(working_file)
+        self.subject.raw_data = raw
+        self._subjects.append(subject)
+        self._active_subject = subject
+
     def add_subject_path(self, subject_path):
         """
         Adds subject path to the current experiment.
@@ -217,6 +249,13 @@ class Experiment(QObject):
                            created by subject class
         """
         self._subject_paths.append(subject_path)
+
+    def update_working_file(self, working_file):
+        """
+        Method for tracking the current working files of the subjects.
+        """
+        self._working_file_names.append(working_file)
+        #self._working_file_names.append(self._active_subject._working_file)
 
     def save_experiment_settings(self):
         """
@@ -267,13 +306,10 @@ class Experiment(QObject):
         # p‰ivitt‰‰ settingsej‰
         odict = self.__dict__.copy()
         del odict['_subjects']
+        del odict['_active_subject']
         #del odict['_active_subject']
         
-        """
-        #TODO: n‰m‰ subjectiin ja subjectille oma picklaus?
-        del odict['_raw_data']
-        del odict['_working_file']
-        """
+        
         return odict
 
     def __setstate__(self, odict):
@@ -287,7 +323,6 @@ class Experiment(QObject):
         # p‰ivitt‰‰ settingsej‰
         QObject.__init__(self)
         workingPath = odict['_workspace']
-        #self.subjects = odict['_subjects']
         self.subject_paths = odict['_subject_paths']
         self.active_subject_path = odict['_active_subject_path']
         self.__dict__.update(odict)    
