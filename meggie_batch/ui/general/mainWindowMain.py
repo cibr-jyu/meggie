@@ -232,13 +232,21 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
-
-            # Reads the raw data info and sets it to the labels of the Raw tab
-            #InfoDialog(self.experiment.raw_data, self.ui, False)
             
-            
+            raw_path = self.experiment.active_subject_raw_path
+            subject_name = self.experiment.active_subject_name
+                        
+            # TODO: aktivointi tallentaa raw:n joka on jo
+            # tallennettuna, tee tarkistus kyseisen tiedoston
+            # olemassaololle experimentin activate_subject
+            # metodissa
+            self.experiment.activate_subject(raw_path, subject_name,
+                                             self.experiment)
             if (len(self.experiment.subject_paths) > 0):
-                InfoDialog(self.experiment.current_subject.raw_data, self.ui, False)
+                # Reads the raw data info and sets it to the labels
+                # of the Raw tab
+                InfoDialog(self.experiment.active_subject.raw_data,
+                           self.ui, False)
             
             """
             # Sets info about trigger channels and their events to
@@ -250,8 +258,8 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.labelExperimentName.setText(self.experiment.\
                                                 experiment_name)
             self.ui.labelAuthorName.setText(self.experiment.author)
-            self.ui.textBrowserExperimentDescription.setText(self.experiment\
-                                                             .description)
+            self.ui.textBrowserExperimentDescription.\
+            setText(self.experiment.description)
             self.add_tabs()
             self._initialize_ui()
             
@@ -463,7 +471,6 @@ class MainWindow(QtGui.QMainWindow):
         """A slot for creating new epochs with the given parameter values.
         
         Keyword arguments:
-        
         epoch_params = A dictionary containing the parameter values for
                        creating the epochs minus the raw data.
         """
@@ -521,7 +528,7 @@ class MainWindow(QtGui.QMainWindow):
         
         
         self.epochList.clearItems()
-        path = self.experiment._active_subject_path
+        path = self.experiment._active_subject_path + '/epochs/'
         files = os.listdir(path)
         for file in files:
             

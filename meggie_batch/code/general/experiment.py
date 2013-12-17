@@ -37,6 +37,8 @@ import os
 import re
 
 from workspace import Workspace
+from fileManager import FileManager
+from subject import Subject
 
 from PyQt4.QtCore import QObject, pyqtSignal
 
@@ -76,7 +78,8 @@ class Experiment(QObject):
         
         self._subjects = [] #dict()
         self._subject_paths = []
-        self._active_subject_path = ''
+        self._active_subject_raw_path = ''
+        self._active_subject_name = ''
         self._working_file_names = []
         self._active_subject = None
         self.mainWindow = None
@@ -186,18 +189,47 @@ class Experiment(QObject):
             raise Exception("Too long _description")
 
     @property
-    def active_subject_path(self):
+    def active_subject_name(self):
         """
-        Method for activating subject to enable its processing in Meggie.
+        Method for getting active subject name.
         """
-        return self._active_subject_path
+        return self._active_subject_name
     
-    @active_subject_path.setter
-    def active_subject_path(self, subject_path):
+    @active_subject_name.setter
+    def active_subject_name(self, subject_name):
         """
-        Method for setting an active subject to enable its processing in Meggie.
+        Method for setting active subject name.
         """
-        self._active_subject_path = subject_path
+        self._active_subject_name = subject_name
+
+    @property
+    def active_subject_raw_path(self):
+        """
+        Method for getting active subject raw path.
+        """
+        return self._active_subject_raw_path
+    
+    @active_subject_raw_path.setter
+    def active_subject_raw_path(self, raw_path):
+        """
+        Method for setting active subject raw path.
+        """
+        self._active_subject_raw_path = raw_path
+
+    @property
+    def active_subject(self):
+        """
+        Method for getting activated subject.
+        """
+        return self._active_subject
+    
+    @active_subject.setter
+    def active_subject(self, subject):
+        """
+        Method for setting active subject.
+        """
+        self._active_subject = subject
+
 
     def add_subject(self, subject):
         """
@@ -210,36 +242,6 @@ class Experiment(QObject):
         #self._subjects[subject.subject_name] = subject 
         self._subjects.append(subject)
 
-    def activate_subject(self, subject_path, experiment):
-        """
-        Method for activating a subject to be processed.
-        Should open the newest working file.
-        
-        Keyword arguments:
-        subject_path    -- path of the subject to be activated 
-                           (used for opening the newest
-                           working file)
-        experiment      -- currently active experiment for creating
-                           a new subject
-        """
-        
-        # TODO: t‰ss‰ joutuu varmaan pyyt‰m‰‰n experimentin mainWindowMain:ilta?? (ei tarvitse jos metodille syˆtet‰‰n experiment)
-        subject = Subject(experiment, subject_name)
-        #self.subject.subject_name = subject_name
-        
-        # TODO: match given subject_path with the strings in working_file_names list
-        #regex=re.compile(".*(cat).*")
-        regex=re.compile(subject_name + ".*")
-        working_file_name = [m.group(0) for l in \
-                             self._working_file_names for m in \
-                             [regex.search(l)] if m]
-        working_file = subject_path + working_file_name
-        f = FileManager()
-        raw = f.open_raw(working_file)
-        self.subject.raw_data = raw
-        self._subjects.append(subject)
-        self._active_subject = subject
-
     def add_subject_path(self, subject_path):
         """
         Adds subject path to the current experiment.
@@ -250,6 +252,41 @@ class Experiment(QObject):
         """
         self._subject_paths.append(subject_path)
 
+    def activate_subject(self, raw_path, subject_name, experiment):
+        """
+        Method for activating a subject. Creates a new subject object
+        to be processed. Subject.raw_data should be the previously
+        created raw file.
+        
+        Keyword arguments:
+        raw_path     -- path of the raw file
+        subject_name -- name of the subject 
+        experiment   -- currently active experiment                        
+        """
+        subject = Subject(experiment, subject_name)
+        
+        
+        # TODO: match given subject_path with the strings in working_file_names list
+        #regex=re.compile(".*(cat).*")
+        regex=re.compile(".*(" + subject_name + ").*")
+        working_file_name = [m.group(0) for l in \
+                             self._working_file_names for m in \
+                             [regex.search(l)] if m]
+        #working_file = subject_path + working_file_name
+        f = FileManager()
+        raw = f.open_raw(raw_path)
+        subject.raw_data = raw
+        # save_raw method calls create_epochs_directory in experiment
+        subject.save_raw(raw_path, subject.subject_path)
+       
+        self.add_subject_path(subject.subject_path)
+        self.active_subject_name = subject_name
+        
+        raw_file_name = raw_path.split('/')[-1]
+        self.active_subject_raw_path = subject.subject_path + "/" + raw_file_name
+        self._active_subject = subject
+        self.add_subject(subject)
+        
     def update_working_file(self, working_file):
         """
         Method for tracking the current working files of the subjects.
@@ -323,8 +360,10 @@ class Experiment(QObject):
         # p‰ivitt‰‰ settingsej‰
         QObject.__init__(self)
         workingPath = odict['_workspace']
-        self.subject_paths = odict['_subject_paths']
-        self.active_subject_path = odict['_active_subject_path']
+        self._subject_paths = odict['_subject_paths']
+        self._active_subject_raw_path = odict['_active_subject_raw_path']
+        self._active_subject_name = odict['_active_subject_name']
+        
         self.__dict__.update(odict)    
         """
         rawFullPath = odict['_raw_data_path']
