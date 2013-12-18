@@ -78,6 +78,7 @@ class Experiment(QObject):
         
         self._subjects = [] #dict()
         self._subject_paths = []
+        self._active_subject_path = ''
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
         self._working_file_names = []
@@ -203,6 +204,21 @@ class Experiment(QObject):
         self._active_subject_name = subject_name
 
     @property
+    def active_subject_path(self):
+        """
+        Method for getting active subject path.
+        """
+        return self._active_subject_path
+    
+    @active_subject_path.setter
+    def active_subject_path(self, subject_path):
+        """
+        Method for setting active subject path.
+        """
+        self._active_subject_path = subject_path
+
+
+    @property
     def active_subject_raw_path(self):
         """
         Method for getting active subject raw path.
@@ -229,8 +245,7 @@ class Experiment(QObject):
         Method for setting active subject.
         """
         self._active_subject = subject
-
-
+    
     def add_subject(self, subject):
         """
         Adds subject to the current experiment.
@@ -250,7 +265,9 @@ class Experiment(QObject):
         subject_path    -- the subject path of the subject object
                            created by subject class
         """
-        self._subject_paths.append(subject_path)
+        # Prevents adding same subject path several times.
+        if not subject_path in self._subject_paths:
+            self._subject_paths.append(subject_path)
 
     def activate_subject(self, raw_path, subject_name, experiment):
         """
@@ -265,25 +282,22 @@ class Experiment(QObject):
         """
         subject = Subject(experiment, subject_name)
         
+        # TODO: mm. eventtisetit ja stim channelit pit‰‰ asettaa subjectille
         
-        # TODO: match given subject_path with the strings in working_file_names list
-        #regex=re.compile(".*(cat).*")
-        regex=re.compile(".*(" + subject_name + ").*")
-        working_file_name = [m.group(0) for l in \
-                             self._working_file_names for m in \
-                             [regex.search(l)] if m]
-        #working_file = subject_path + working_file_name
+        
         f = FileManager()
         raw = f.open_raw(raw_path)
         subject.raw_data = raw
-        # save_raw method calls create_epochs_directory in experiment
-        subject.save_raw(raw_path, subject.subject_path)
-       
-        self.add_subject_path(subject.subject_path)
-        self.active_subject_name = subject_name
-        
         raw_file_name = raw_path.split('/')[-1]
-        self.active_subject_raw_path = subject.subject_path + "/" + raw_file_name
+        destination_raw_path = subject.subject_path + "/" + raw_file_name
+        # Check if file already exists.
+        if not os.path.isfile(destination_raw_path):
+            # save_raw method calls create_epochs_directory in experiment
+            subject.save_raw(raw_path, subject.subject_path)
+        self.add_subject_path(subject.subject_path)
+        self._active_subject_name = subject_name
+        self._active_subject_path = subject.subject_path
+        self._active_subject_raw_path = destination_raw_path
         self._active_subject = subject
         self.add_subject(subject)
         
@@ -312,10 +326,8 @@ class Experiment(QObject):
         # TODO the file should end with .exp
         settingsFileName = str(self._experiment_name + '.pro')
         
-        settingsFile = open(experiment_directory + '/' + settingsFileName, 'wb')
-        
         # Actually a file object
-        #settingsFile = open(self._workspace + '/' + settingsFileName, 'wb')
+        settingsFile = open(experiment_directory + '/' + settingsFileName, 'wb')
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
@@ -359,10 +371,18 @@ class Experiment(QObject):
         # epochien, evokedien jne. lis‰‰misten yhteydess‰ tarvitsee
         # p‰ivitt‰‰ settingsej‰
         QObject.__init__(self)
-        workingPath = odict['_workspace']
+        
+        # Pickle don't save subjects and active_subject so the properties need
+        # to be set here.
+        self._subjects = []
+        self._active_subject = None
+        
+        self._workspace = odict['_workspace']
         self._subject_paths = odict['_subject_paths']
+        self._active_subject_path = odict['_active_subject_path']
         self._active_subject_raw_path = odict['_active_subject_raw_path']
         self._active_subject_name = odict['_active_subject_name']
+        
         
         self.__dict__.update(odict)    
         """

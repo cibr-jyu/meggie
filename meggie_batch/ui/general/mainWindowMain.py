@@ -235,14 +235,9 @@ class MainWindow(QtGui.QMainWindow):
             
             raw_path = self.experiment.active_subject_raw_path
             subject_name = self.experiment.active_subject_name
-                        
-            # TODO: aktivointi tallentaa raw:n joka on jo
-            # tallennettuna, tee tarkistus kyseisen tiedoston
-            # olemassaololle experimentin activate_subject
-            # metodissa
             self.experiment.activate_subject(raw_path, subject_name,
                                              self.experiment)
-            if (len(self.experiment.subject_paths) > 0):
+            if (len(self.experiment._subject_paths) > 0):
                 # Reads the raw data info and sets it to the labels
                 # of the Raw tab
                 InfoDialog(self.experiment.active_subject.raw_data,

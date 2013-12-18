@@ -1,6 +1,3 @@
 SEURAAVAKSI:
 
-- experimentin activate_subject metodissa pitää tarkistaa save_raw yhteydessä onko kyseistä tiedostoa jo olemassa
-	- on_action_open_experiment_triggered metodin ei siis tule tallentaa uudelleen raakadataa kun ladataan experiment jossa aktiivinen subject
-	- samoin tilanne kun painetaan activate subject -painiketta
-
+- experimentin activate_subject metodissa pitää luoda subjectille vielä ainakin event_set ja stim_channel
