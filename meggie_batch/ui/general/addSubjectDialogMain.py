@@ -68,35 +68,12 @@ class AddSubjectDialog(QtGui.QDialog):
         #self._initialize_experiment()
         raw_path = str(self.ui.lineEditFileName.text())
         subject_name = os.path.basename(raw_path)
-        
-        """
-        self.subject = Subject(self.experiment, subject_name)
-        #self.subject.subject_name = subject_name
-        f = FileManager()
-        raw = f.open_raw(raw_data)
-        self.subject.raw_data = raw
-        
-        # save_raw method calls create_epochs_directory in experiment
-        self.subject.save_raw(raw_data, self.subject.subject_path)
-        """
-        # TODO: ainoastaan yksi kutsu tänne .activate_subject, missä
-        # hoidetaan polkujen ja subjectien lisäykset experimentiin.
         self.parent.experiment.activate_subject(raw_path, \
                                                 subject_name, \
                                                 self.experiment)
-        
-        """
-        self.parent.experiment.add_subject_path(self.subject.\
-                                                subject_path)
-        self.parent.experiment.add_subject(self.subject)
-        # TODO: tama siirretaan mainWindowin pushButtonActiveSubjectiin
-        self.parent.experiment.active_subject_path = self.subject.\
-        subject_path
-        """
         self.parent.experiment.update_experiment_settings()
         self.parent.enable_tabs()
-        
-        
+        self.parent._initialize_ui()
         self.close()
         
     def on_pushButtonBrowse_clicked(self, checked=None):

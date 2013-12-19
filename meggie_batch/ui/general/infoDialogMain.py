@@ -85,4 +85,3 @@ class InfoDialog(QtGui.QDialog):
         self.ui.labelMagMEGValue.setText(str(self.mi.mag_channels))
         self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq) + ' Hz')
         self.ui.labelSubjectValue.setText(self.mi.subject_name)
-    

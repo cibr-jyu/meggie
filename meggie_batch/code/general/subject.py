@@ -38,6 +38,7 @@ from PyQt4.QtCore import QObject
 
 import os, sys
 
+import numpy as np
 import mne
 
 class Subject(QObject):
@@ -66,7 +67,7 @@ class Subject(QObject):
         # experiment_name is saved as QString and it has to be converted to
         # string to be able to do basic string operations for subject_path.
         self._subject_path = self._experiment.workspace + '/' + \
-        str(self._experiment.experiment_name) + '/' + self._subject_name
+        str(self._experiment.experiment_name) + '/' + self._subject_name + '/'
         self._epochs_directory = self._subject_path + '/epochs/'
         #self.save_raw(raw_data, self.subject_path)
         
@@ -135,6 +136,20 @@ class Subject(QObject):
         self._working_file = mne.fiff.Raw(fname, preload=True)
         self.working_file_path = fname
 
+    @property
+    def stim_channel(self):
+        """
+        Property for stimulus channel.
+        """
+        return self._stim_channel
+    
+    @stim_channel.setter
+    def stim_channel(self, stim_ch):
+        """
+        Setter for stimulus channel.
+        """
+        self._stim_channel = stim_ch
+    
     def save_raw(self, file_name, path):
         """
         Saves the raw data file into the subject directory.
@@ -168,6 +183,16 @@ class Subject(QObject):
         except OSError:
             raise OSError('no rights to save to the chosen path')                
     
+    def find_stim_channel(self):
+        """
+        Finds the correct stimulus channel for the data.
+        """
+        channels = self._raw_data.info.get('ch_names')
+        if any('STI101' in channels for x in channels):
+            self._stim_channel = 'STI101'
+        elif any('STI 014' in channels for x in channels):
+            self._stim_channel = 'STI 014'
+
     def create_event_set(self):
         """
         Creates an event set where the first element is the id

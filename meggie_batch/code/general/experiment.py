@@ -71,17 +71,15 @@ class Experiment(QObject):
         """
         QObject.__init__(self)
         self._experiment_name = 'experiment'
-        #TODO: setter and getter for workspace?
         self._workspace = ''
         self._author = 'unknown author'
         self._description = 'no description'
-        
         self._subjects = [] #dict()
         self._subject_paths = []
         self._active_subject_path = ''
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
-        self._working_file_names = []
+        #self._working_file_names = []
         self._active_subject = None
         self.mainWindow = None
         
@@ -286,14 +284,26 @@ class Experiment(QObject):
         
         
         f = FileManager()
+        
+        # TODO: When opening experiment the right path is saved into the
+        # raw_data, but when activating subject the raw_data path is the
+        # one where the original raw was found.
         raw = f.open_raw(raw_path)
         subject.raw_data = raw
         raw_file_name = raw_path.split('/')[-1]
-        destination_raw_path = subject.subject_path + "/" + raw_file_name
+        destination_raw_path = subject.subject_path + raw_file_name
         # Check if file already exists.
         if not os.path.isfile(destination_raw_path):
             # save_raw method calls create_epochs_directory in experiment
             subject.save_raw(raw_path, subject.subject_path)
+            
+            # When activating subject the raw_data filename is the one where
+            # the raw file was originally found. This is used to change it to
+            # the location of the subject path.
+            subject.raw_data.info['filename'] = destination_raw_path
+        
+        subject.find_stim_channel()
+        subject.create_event_set()
         self.add_subject_path(subject.subject_path)
         self._active_subject_name = subject_name
         self._active_subject_path = subject.subject_path
@@ -372,8 +382,8 @@ class Experiment(QObject):
         # p‰ivitt‰‰ settingsej‰
         QObject.__init__(self)
         
-        # Pickle don't save subjects and active_subject so the properties need
-        # to be set here.
+        # Pickle doesn't save subjects and active_subject so the properties
+        # need to be set here.
         self._subjects = []
         self._active_subject = None
         

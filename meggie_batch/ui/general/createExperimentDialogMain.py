@@ -146,66 +146,33 @@ class CreateExperimentDialog(QtGui.QDialog):
    
         try:
             self.workspace = Workspace()
-            self.experiment = Experiment() 
+            self.experiment = Experiment()
             self.experiment.author = self.ui.lineEditAuthor.text()
             self.experiment.experiment_name = self.ui.\
             lineEditExperimentName.text()
             self.experiment.description = (self.ui.textEditDescription.
                                            toPlainText())
-            
+            self.experiment.subject_paths = []
 
         except AttributeError:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Cannot assign attribute' + 
                                                    ' to experiment.')
             self.messageBox.show()
-       
-        """
-        try:
-            
-            f = FileManager()
-            raw = f.open_raw(self.fname)
-            self.ui.showFileInfoButton.setEnabled(True)
-            
-        except Exception as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
-            self.messageBox.show()
-            return         
-        """
-        
-              
         try:
             self.experiment.workspace = self.workspace.working_directory
             print self.experiment.workspace
-            """
-            self.experiment.raw_data = raw
-            self.experiment.find_stim_channel()
-            if self.experiment.stim_channel != None: 
-                self.experiment.create_event_set()
-            
-            self.experiment.save_raw(os.path.basename(str(self.ui.
-                                                          FilePathLineEdit.
-                                                          text())),
-                                     self.workspace.working_directory)
-            self.experiment.working_file = (self.experiment.raw_data.
-                                            info.get('filename'))
-            """
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
         
-        
         QtGui.QApplication.processEvents()
                 
         # Give control of the experiment to the main window of the application
         self.parent.experiment = self.experiment
-        """
-        self.parent.raw = self.experiment.raw_data
-        InfoDialog(self.parent.experiment.raw_data, self.parent.ui, False)
-        """
+        
         self.parent.ui.labelExperimentName.setText(self.experiment.
                                                    experiment_name)
         
@@ -213,10 +180,6 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.parent.ui.textBrowserExperimentDescription.setText(self.
                                                                 experiment.
                                                                 description)
-        """
-        if self.experiment.event_set != None:
-            self.parent.populate_raw_tab_event_list()
-        """ 
         try:
             self.experiment.save_experiment_settings()
         except Exception, err:

@@ -1,3 +1,9 @@
 SEURAAVAKSI:
 
-- experimentin activate_subject metodissa pitää luoda subjectille vielä ainakin event_set ja stim_channel
+- lisätyt subjectit näkyviin listoihin
+- aktivointipainike toimimaan
+
+BUGEJA:
+
+- Uuden experimentin luominen ei tyhjentänyt edellisen experimentin aktiivisena olleen subjectin infoja. Korjattu.
+- Experimentiä, jossa ei ole yhtäkään subjectia ei pysty lataamaan tällä hetkellä. Korjattu.

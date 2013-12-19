@@ -233,31 +233,41 @@ class MainWindow(QtGui.QMainWindow):
             output = open(fname, 'rb')
             self.experiment = pickle.load(output)
             
-            raw_path = self.experiment.active_subject_raw_path
-            subject_name = self.experiment.active_subject_name
-            self.experiment.activate_subject(raw_path, subject_name,
-                                             self.experiment)
+            if len(self.experiment._subject_paths) > 0:
+                raw_path = self.experiment.active_subject_raw_path
+                subject_name = self.experiment.active_subject_name
+                self.experiment.activate_subject(raw_path, subject_name,
+                                                 self.experiment)
+            
+            
+            """
             if (len(self.experiment._subject_paths) > 0):
                 # Reads the raw data info and sets it to the labels
                 # of the Raw tab
                 InfoDialog(self.experiment.active_subject.raw_data,
                            self.ui, False)
-            
-            """
+            # TODO: Move this to _initialize_ui() method to populate
+            # event_list when activating subjects also?            
             # Sets info about trigger channels and their events to
             # Triggers box in the Raw tab
-            if self.experiment.event_set != None:
+            if self.experiment.active_subject._event_set != None:
                 self.populate_raw_tab_event_list()
-                
-            """
+            
             self.ui.labelExperimentName.setText(self.experiment.\
                                                 experiment_name)
             self.ui.labelAuthorName.setText(self.experiment.author)
             self.ui.textBrowserExperimentDescription.\
             setText(self.experiment.description)
             self.add_tabs()
+            """
+            
+            
+            
             self._initialize_ui()
             
+            # TODO: needs to be added to _initialize_ui so that after
+            # activating subject the updated experiment will be given
+            # to the caller? 
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
             
@@ -281,7 +291,6 @@ class MainWindow(QtGui.QMainWindow):
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.show()
     
-    
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
         Show / Hide console window.
@@ -299,7 +308,7 @@ class MainWindow(QtGui.QMainWindow):
         amount of events with those IDs.
         """
         #TODO: trigger ---> event, also in the UI
-        events = self.experiment.event_set
+        events = self.experiment.active_subject._event_set
         
         
         events_string = ''
@@ -1059,7 +1068,21 @@ class MainWindow(QtGui.QMainWindow):
     def _initialize_ui(self):
         """
         Method for setting up the GUI.
-        """        
+        """  
+        
+        # Clears the events data.
+        self.ui.textBrowserEvents.clear()
+        
+        # Clears the data info of the labels.
+        self.ui.labelDateValue.setText('')
+        self.ui.labelEEGValue.setText('')
+        self.ui.labelGradMEGValue.setText('')
+        self.ui.labelHighValue.setText('')
+        self.ui.labelLowValue.setText('')
+        self.ui.labelMagMEGValue.setText('')
+        self.ui.labelSamplesValue.setText('')
+        self.ui.labelSubjectValue.setText('')
+              
         self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
         self.ui.checkBoxECGComputed.setChecked(False)
@@ -1069,7 +1092,8 @@ class MainWindow(QtGui.QMainWindow):
         #Check whether ECG projections are calculated
         #fname = self.experiment.raw_data.info.get('filename') ???
         #path = self.experiment._subject_directory
-        path = self.experiment.workspace
+        #path = self.experiment.workspace
+        path = self.experiment.active_subject_path
         files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj.fif'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
@@ -1104,11 +1128,39 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString("Add subjects before " + 
                                                     "continue."))
         else:
+            """
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.working_file.\
                                                     info.get('filename')))
+            """
+            self.statusLabel.setText(QtCore.QString("Current working file: " +
+                                                    self.experiment.\
+                                                    active_subject.raw_data.\
+                                                    info.get('filename')))
+            
+            
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
         
+        self.ui.labelExperimentName.setText(self.experiment.\
+                                            experiment_name)
+        self.ui.labelAuthorName.setText(self.experiment.author)
+        self.ui.textBrowserExperimentDescription.\
+        setText(self.experiment.description)
+        
+        # If experiment has subjects added the active_subject info will be added
+        # and tabs enabled for processing.
+        # NOTE: There always has to be an active_subject if experiment has at
+        # least one subject added.
+        self.add_tabs()
+        if (len(self.experiment._subject_paths) > 0):
+                # Reads the raw data info and sets it to the labels
+                # of the Raw tab
+            InfoDialog(self.experiment.active_subject.raw_data,
+                        self.ui, False)
+            if self.experiment.active_subject._event_set != None:
+                self.populate_raw_tab_event_list()
+            self.enable_tabs()
+
     def add_tabs(self):
         """
         Method for initializing the tabs.

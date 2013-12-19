@@ -246,7 +246,7 @@
              <attribute name="title">
               <string>Subjects</string>
              </attribute>
-             <widget class="QGroupBox" name="groupBoxSubject_2">
+             <widget class="QGroupBox" name="groupBoxSubject">
               <property name="geometry">
                <rect>
                 <x>10</x>
@@ -271,14 +271,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_23">
                   <item>
-                   <widget class="QLabel" name="labelSubject_2">
+                   <widget class="QLabel" name="labelSubject">
                     <property name="text">
                      <string>Subject:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelSubjectValue_2">
+                   <widget class="QLabel" name="labelSubjectValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -295,14 +295,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_24">
                   <item>
-                   <widget class="QLabel" name="labelDate_2">
+                   <widget class="QLabel" name="labelDate">
                     <property name="text">
                      <string>Date:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelDateValue_2">
+                   <widget class="QLabel" name="labelDateValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -331,14 +331,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_25">
                   <item>
-                   <widget class="QLabel" name="labelEEG_2">
+                   <widget class="QLabel" name="labelEEG">
                     <property name="text">
                      <string>EEG channels:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelEEGValue_2">
+                   <widget class="QLabel" name="labelEEGValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -355,14 +355,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_27">
                   <item>
-                   <widget class="QLabel" name="labelGradMEG_2">
+                   <widget class="QLabel" name="labelGradMEG">
                     <property name="text">
                      <string>Gradiometers:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelGradMEGValue_2">
+                   <widget class="QLabel" name="labelGradMEGValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -379,14 +379,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_28">
                   <item>
-                   <widget class="QLabel" name="labelMagMEG_2">
+                   <widget class="QLabel" name="labelMagMEG">
                     <property name="text">
                      <string>Magnetometers:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelMagMEGValue_2">
+                   <widget class="QLabel" name="labelMagMEGValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -403,14 +403,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_29">
                   <item>
-                   <widget class="QLabel" name="labelSamples_2">
+                   <widget class="QLabel" name="labelSamples">
                     <property name="text">
                      <string>Sampling frequency:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelSamplesValue_2">
+                   <widget class="QLabel" name="labelSamplesValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -439,7 +439,7 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_30">
                   <item>
-                   <widget class="QLabel" name="labelLow_2">
+                   <widget class="QLabel" name="labelLow">
                     <property name="lineWidth">
                      <number>1</number>
                     </property>
@@ -452,7 +452,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelLowValue_2">
+                   <widget class="QLabel" name="labelLowValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -469,14 +469,14 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_31">
                   <item>
-                   <widget class="QLabel" name="labelHigh_2">
+                   <widget class="QLabel" name="labelHigh">
                     <property name="text">
                      <string>High-pass:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="labelHighValue_2">
+                   <widget class="QLabel" name="labelHighValue">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -492,7 +492,7 @@
                 </item>
                </layout>
               </widget>
-              <widget class="QLabel" name="labelChannels_2">
+              <widget class="QLabel" name="labelChannels">
                <property name="geometry">
                 <rect>
                  <x>430</x>
@@ -511,7 +511,7 @@
                 <string>Channels:</string>
                </property>
               </widget>
-              <widget class="QLabel" name="labelFilters_2">
+              <widget class="QLabel" name="labelFilters">
                <property name="geometry">
                 <rect>
                  <x>450</x>
@@ -530,7 +530,7 @@
                 <string>Filters:</string>
                </property>
               </widget>
-              <widget class="QTextBrowser" name="textBrowserEvents_2">
+              <widget class="QTextBrowser" name="textBrowserEvents">
                <property name="geometry">
                 <rect>
                  <x>20</x>
@@ -580,7 +580,7 @@
                 <enum>QFrame::NoFrame</enum>
                </property>
               </widget>
-              <widget class="QLabel" name="labelEvents_2">
+              <widget class="QLabel" name="labelEvents">
                <property name="geometry">
                 <rect>
                  <x>20</x>
@@ -666,7 +666,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Activating subjects will load the files inside the folders of the chosen subjects to be displayed on corresponding lists in all tabs. This takes time depending on how many subjects and how many files the folders include.</string>
+               <string>Activating a subject will load the files inside the folder of the chosen subject to be displayed on corresponding lists in all tabs.</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
