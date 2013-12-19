@@ -1074,14 +1074,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEvents.clear()
         
         # Clears the data info of the labels.
-        self.ui.labelDateValue.setText('')
-        self.ui.labelEEGValue.setText('')
-        self.ui.labelGradMEGValue.setText('')
-        self.ui.labelHighValue.setText('')
-        self.ui.labelLowValue.setText('')
-        self.ui.labelMagMEGValue.setText('')
-        self.ui.labelSamplesValue.setText('')
-        self.ui.labelSubjectValue.setText('')
+        self.ui.labelDateValue.clear()
+        self.ui.labelEEGValue.clear()
+        self.ui.labelGradMEGValue.clear()
+        self.ui.labelHighValue.clear()
+        self.ui.labelLowValue.clear()
+        self.ui.labelMagMEGValue.clear()
+        self.ui.labelSamplesValue.clear()
+        self.ui.labelSubjectValue.clear()
               
         self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
