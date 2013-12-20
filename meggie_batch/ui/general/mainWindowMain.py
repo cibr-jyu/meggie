@@ -239,30 +239,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.experiment.activate_subject(raw_path, subject_name,
                                                  self.experiment)
             
-            
-            """
-            if (len(self.experiment._subject_paths) > 0):
-                # Reads the raw data info and sets it to the labels
-                # of the Raw tab
-                InfoDialog(self.experiment.active_subject.raw_data,
-                           self.ui, False)
-            # TODO: Move this to _initialize_ui() method to populate
-            # event_list when activating subjects also?            
-            # Sets info about trigger channels and their events to
-            # Triggers box in the Raw tab
-            if self.experiment.active_subject._event_set != None:
-                self.populate_raw_tab_event_list()
-            
-            self.ui.labelExperimentName.setText(self.experiment.\
-                                                experiment_name)
-            self.ui.labelAuthorName.setText(self.experiment.author)
-            self.ui.textBrowserExperimentDescription.\
-            setText(self.experiment.description)
-            self.add_tabs()
-            """
-            
-            
-            
             self._initialize_ui()
             
             # TODO: needs to be added to _initialize_ui so that after
@@ -270,12 +246,6 @@ class MainWindow(QtGui.QMainWindow):
             # to the caller? 
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
-            
-            """
-            self.statusLabel.setText("Current working file: " +
-                                          self.experiment.working_file.\
-                                          info.get('filename'))
-            """
             
         else:
             self.messageBox = messageBox.AppForm()
@@ -1047,6 +1017,34 @@ class MainWindow(QtGui.QMainWindow):
         self.filterDialog = FilterDialog(self)
         self.filterDialog.show()
     
+    def on_pushButtonActivateSubject_clicked(self, checked=None):
+        """
+        Activates a subject.
+        """
+        if checked is None: return
+        
+        working_file_name = ''
+        subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().text()) 
+        # Searches for working file of the chosen subject.
+        for i,working_file in enumerate(self.experiment._working_file_names):
+            if working_file.find(subject_to_be_activated.split('.')[-2]) >= 0:
+                working_file_name = working_file
+        
+        if len(working_file_name) == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('There is no working file in the chosen subject folder.')
+            self.messageBox.show()  
+            return
+        raw_path = self.experiment._workspace + \
+        '/' + self.experiment._experiment_name + '/' + \
+        self.ui.listWidgetSubjects.currentItem().text() + '/'
+        raw_path = str(raw_path) + working_file_name
+        subject_name = self.ui.listWidgetSubjects.currentItem().text()
+        self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
+        self.experiment.update_experiment_settings()
+        self._initialize_ui()
+    
     def populate_comboBoxLobes(self):
         """
         Populate the combo box listing available lobes for to use for
@@ -1128,11 +1126,6 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString("Add subjects before " + 
                                                     "continue."))
         else:
-            """
-            self.statusLabel.setText(QtCore.QString("Current working file: " +
-                                                    self.experiment.working_file.\
-                                                    info.get('filename')))
-            """
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.\
                                                     active_subject.raw_data.\
@@ -1153,12 +1146,22 @@ class MainWindow(QtGui.QMainWindow):
         # least one subject added.
         self.add_tabs()
         if (len(self.experiment._subject_paths) > 0):
-                # Reads the raw data info and sets it to the labels
-                # of the Raw tab
+            # Reads the raw data info and sets it to the labels
+            # of the Raw tab
             InfoDialog(self.experiment.active_subject.raw_data,
                         self.ui, False)
             if self.experiment.active_subject._event_set != None:
                 self.populate_raw_tab_event_list()
+            
+            # Clear the list and add all subjects to it.
+            self.ui.listWidgetSubjects.clear()
+            for path in self.experiment._subject_paths:
+                item = QtGui.QListWidgetItem()
+                # -2 is needed since the path ends with '/'
+                item.setText(path.split('/')[-2])
+                self.ui.listWidgetSubjects.addItem(item)
+                #item.setData(32, evoked)
+                #item.setData(33, category)
             self.enable_tabs()
 
     def add_tabs(self):
@@ -1172,9 +1175,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(3, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(4, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(5, self.ui.tabTFR, "TFR")
-        
-        #TODO: create getter and setter for subjects in experiment to be able to
-        # call subjects without using _, not sure if works like that.
         
         # If no subjects added to the experiment, there is no reason to enable
         # more tabs to confuse the user.

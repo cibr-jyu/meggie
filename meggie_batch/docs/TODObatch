@@ -1,7 +1,8 @@
 SEURAAVAKSI:
 
-- lisätyt subjectit näkyviin listoihin
-- aktivointipainike toimimaan
+- Lisätyt subjectit näkyviin listoihin. Näkyy subject-tabilla mutta ei vielä experimentin subject listassa.
+- Aktivointipainike toimimaan. Tehty.
+- Korjaa: Jos tekee subjectit esim. tiedostoille testi_sss.fif ja testi.fif niin tulee sekaannusta, koska working filen tarkistus tehdään nimen perusteella.
 
 BUGEJA:
 

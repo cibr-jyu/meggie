@@ -79,7 +79,7 @@ class Experiment(QObject):
         self._active_subject_path = ''
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
-        #self._working_file_names = []
+        self._working_file_names = []
         self._active_subject = None
         self.mainWindow = None
         
@@ -267,6 +267,26 @@ class Experiment(QObject):
         if not subject_path in self._subject_paths:
             self._subject_paths.append(subject_path)
 
+    def update_working_file(self, working_file_name):
+        """
+        Adds working file name to the working_file list.
+        Updates to the previously processed file.
+        """
+        
+        # Search for similar existing working file name.
+        # i is the working file name
+        # n is the index of the working file name
+        for n,i in enumerate(self._working_file_names):
+            
+            # TODO: Fix this? At least feedback for the user should be given.
+            # This check prevents creating different subjects for the same
+            # original raw file.
+            # find returns -1 if the string is not found.
+            if working_file_name.find(i.split('.')[-2]) >= 0:
+                self._working_file_names[n] = working_file_name
+                return
+        self._working_file_names.append(working_file_name)
+        
     def activate_subject(self, raw_path, subject_name, experiment):
         """
         Method for activating a subject. Creates a new subject object
@@ -275,7 +295,7 @@ class Experiment(QObject):
         
         Keyword arguments:
         raw_path     -- path of the raw file
-        subject_name -- name of the subject 
+        subject_name -- name of the subject
         experiment   -- currently active experiment                        
         """
         subject = Subject(experiment, subject_name)
@@ -304,6 +324,7 @@ class Experiment(QObject):
         
         subject.find_stim_channel()
         subject.create_event_set()
+        self.update_working_file(raw_file_name)
         self.add_subject_path(subject.subject_path)
         self._active_subject_name = subject_name
         self._active_subject_path = subject.subject_path
@@ -311,13 +332,6 @@ class Experiment(QObject):
         self._active_subject = subject
         self.add_subject(subject)
         
-    def update_working_file(self, working_file):
-        """
-        Method for tracking the current working files of the subjects.
-        """
-        self._working_file_names.append(working_file)
-        #self._working_file_names.append(self._active_subject._working_file)
-
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
