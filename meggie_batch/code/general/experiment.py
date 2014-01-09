@@ -271,6 +271,9 @@ class Experiment(QObject):
         """
         Adds working file name to the working_file list.
         Updates to the previously processed file.
+        
+        Keyword arguments:
+        working_file_name    -- name of the working file to be updated
         """
         
         # Search for similar existing working file name.
