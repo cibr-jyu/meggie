@@ -872,7 +872,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return 
         try:
             self.maxFilterDialog = MaxFilterDialog(self, 
-                                                   self.experiment.raw_data)
+                                                   self.experiment.active_subject.raw_data)
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
