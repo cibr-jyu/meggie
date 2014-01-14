@@ -1092,16 +1092,16 @@ class MainWindow(QtGui.QMainWindow):
         #path = self.experiment._subject_directory
         #path = self.experiment.workspace
         path = self.experiment.active_subject_path
-        files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve.fif'))
+        files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve*'))
         if len(files) > 1:
             self.ui.pushButtonApplyECG.setEnabled(True)
             self.ui.checkBoxECGComputed.setChecked(True)
         #Check whether EOG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(path+'*_eog_proj.fif'))
-        files += filter(os.path.isfile, glob.glob(path+'*_eog-eve.fif'))
+        files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path+'*_eog_proj*'))
+        files += filter(os.path.isfile, glob.glob(path+'*_eog-eve*'))
         if len(files) > 1:
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.checkBoxEOGComputed.setChecked(True)

@@ -366,6 +366,8 @@ class Experiment(QObject):
         """
         Updates experiment settings after adding a subject.
         """
+        # TODO: turha metodi, tee tarkistus save_experiment_settings metodissa,
+        # sille onko kyseistä kansiota jo olemassa
         experiment_directory = self._workspace + '/' + self._experiment_name
         settingsFileName = str(self._experiment_name + '.pro')
         settingsFile = open(experiment_directory + '/' + settingsFileName, 'wb')

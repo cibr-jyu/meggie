@@ -310,12 +310,12 @@ class Caller(object):
         # If there already is a file with eog projections applied on it, apply
         # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
-                      glob.glob(directory + '*-eog_applied.fif'))) > 0:
-            fname = glob.glob(directory + '*-eog_applied.fif')[0]
+                      glob.glob(directory + '*-eog_applied*'))) > 0:
+            fname = glob.glob(directory + '*-eog_applied*')[0]
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '*_ecg_*proj.fif'))
+                           glob.glob(directory + '*_ecg_*proj*'))
         #Checks if there is exactly one projection file
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
@@ -326,7 +326,7 @@ class Caller(object):
             
         self.update_experiment_working_file(appliedfilename)
         
-        self.parent.experiment.save_experiment_settings()
+        self.parent.experiment.update_experiment_settings()
         
     def apply_eog(self, raw, directory):
         """
@@ -351,7 +351,7 @@ class Caller(object):
             raw = mne.fiff.Raw(appliedfilename, preload=True)
         self.update_experiment_working_file(appliedfilename)
         
-        self.parent.experiment.save_experiment_settings()
+        self.parent.experiment.update_experiment_settings()
     
     def average(self, epochs, category):
         """Average epochs.
@@ -774,7 +774,15 @@ class Caller(object):
         to.
         fname    -- name of the new working file 
         """
-        self.parent.experiment.working_file = fname        
+        self.parent.experiment.update_working_file(fname)
+        self.parent.experiment.active_subject_raw_path = fname
+        """
+        TODO: tänne vai jonnekin muualle?
+        self.parent.statusLabel.setText(QtCore.QString("Current working file: " +
+                                                       self.experiment.\
+                                                       active_subject.working_file.\
+                                                       info.get('filename')))
+        """
 
     def write_events(self, events):
         """

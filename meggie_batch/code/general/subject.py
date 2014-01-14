@@ -51,6 +51,7 @@ class Subject(QObject):
         raw_data        -- the raw data file of the subject
         subject_name    -- the name of the subject
         """
+        QObject.__init__(self)
         self._raw_data = None
         
         # Either user defined or the name of the data file.
@@ -61,7 +62,6 @@ class Subject(QObject):
         self._working_file = ''
         self._working_file_path = 'no path defined'
         
-        #TODO: save raw here or somewhere else
         self._experiment = experiment
         
         # experiment_name is saved as QString and it has to be converted to

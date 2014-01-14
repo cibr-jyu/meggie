@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -57,8 +57,8 @@ class AddECGProjections(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment._subject_directory
-        self.proj_file = glob.glob(directory + '*_ecg_*proj.fif')[0]
+        directory = self.parent.experiment.active_subject.subject_path
+        self.proj_file = glob.glob(directory + '*_ecg_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
         self.listWidget = QtGui.QListWidget()
@@ -83,8 +83,10 @@ class AddECGProjections(QtGui.QDialog):
         #try:
         # Overwrites the projection file with desired vectors.
         mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_ecg(self.parent.experiment.working_file,
-                                self.parent.experiment._subject_directory)
+        
+        #TODO: working_file instead of raw_file
+        self.parent.caller.apply_ecg(self.parent.experiment.active_subject.raw_data,
+                                self.parent.experiment.active_subject.subject_path)
         """
         except Exception, err:
             self.messageBox = messageBox.AppForm()
