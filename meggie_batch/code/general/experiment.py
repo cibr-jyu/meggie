@@ -32,7 +32,7 @@ Created on Oct 22, 2013
 
 @author: jaolpeso
 """
-import os
+import os, glob
 import re
 import csv
 
@@ -275,17 +275,21 @@ class Experiment(QObject):
         Keyword arguments:
         working_file_name    -- name of the working file to be updated
         """
+        working_file_name = working_file_name.split('/')[-1]
+        working_file_prefix = working_file_name.split('.')[-2]
         
         # Search for similar existing working file name.
         # i is the working file name
         # n is the index of the working file name
         for n,i in enumerate(self._working_file_names):
+            #correct_folder = str(self.workspace + '/' + self.experiment_name + '/' + i.split('.')[-2] + '/')
+            correct_folder = str(self.workspace + '/' + self.experiment_name + '/' + self.active_subject_name + '/')
             
             # TODO: Fix this? At least feedback for the user should be given.
             # This check prevents creating different subjects for the same
             # original raw file.
             # find returns -1 if the string is not found.
-            if working_file_name.find(i.split('.')[-2]) >= 0:
+            if working_file_name.find(i.split('.')[-2]) >= 0 and len(glob.glob(correct_folder + self.active_subject_name + '.*')) > 0:
                 self._working_file_names[n] = working_file_name
                 return
         self._working_file_names.append(working_file_name)
@@ -293,7 +297,7 @@ class Experiment(QObject):
     def activate_subject(self, raw_path, subject_name, experiment):
         """
         Method for activating a subject. Creates a new subject object
-        to be processed. Subject.raw_data should be the previously
+        to be processed. Subject.working_file should be the previously
         created raw file.
         
         Keyword arguments:
@@ -309,30 +313,31 @@ class Experiment(QObject):
         f = FileManager()
         
         # TODO: When opening experiment the right path is saved into the
-        # raw_data, but when activating subject the raw_data path is the
+        # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
         raw = f.open_raw(raw_path)
-        subject.raw_data = raw
-        #subject.working_file = raw
+        #subject.raw_data = raw
+        subject.working_file = raw
         raw_file_name = raw_path.split('/')[-1]
-        destination_raw_path = subject.subject_path + raw_file_name
+        full_raw_path = subject.subject_path + raw_file_name
         # Check if file already exists.
-        if not os.path.isfile(destination_raw_path):
+        if not os.path.isfile(full_raw_path):
             # save_raw method calls create_epochs_directory in experiment
             subject.save_raw(raw_path, subject.subject_path)
             
-            # When activating subject the raw_data filename is the one where
-            # the raw file was originally found. This is used to change it to
+            # When activating subject the working_file filename is the one where
+            # the file was originally found. This is used to change it to
             # the location of the subject path.
-            subject.raw_data.info['filename'] = destination_raw_path
+            subject.working_file.info['filename'] = full_raw_path
         
         subject.find_stim_channel()
         subject.create_event_set()
-        self.update_working_file(raw_file_name)
-        self.add_subject_path(subject.subject_path)
+        #self.update_working_file(raw_file_name)
         self._active_subject_name = subject_name
+        self.update_working_file(raw_path)
+        self.add_subject_path(subject.subject_path)
         self._active_subject_path = subject.subject_path
-        self._active_subject_raw_path = destination_raw_path
+        self._active_subject_raw_path = full_raw_path
         self._active_subject = subject
         self.add_subject(subject)
         

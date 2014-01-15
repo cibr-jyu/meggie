@@ -62,7 +62,7 @@ class EogParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and passes 
         them to the caller class.
         """
-        dictionary = {'i': self.parent.experiment.working_file}
+        dictionary = {'i': self.parent.experiment.active_subject.working_file}
         
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin

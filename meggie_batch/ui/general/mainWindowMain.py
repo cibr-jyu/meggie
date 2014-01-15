@@ -424,7 +424,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.raw_data)
+                                                         experiment.working_file)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
@@ -564,7 +564,7 @@ class MainWindow(QtGui.QMainWindow):
 
         params = self.epochList.currentItem().data(33).toPyObject()
         self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.raw_data,
+                                                         experiment.working_file,
                                                          params)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.modifyEpochs)
@@ -872,7 +872,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return 
         try:
             self.maxFilterDialog = MaxFilterDialog(self, 
-                                                   self.experiment.active_subject.raw_data)
+                                                   self.experiment.active_subject.working_file)
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
@@ -1024,10 +1024,15 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         
         working_file_name = ''
-        subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().text()) 
+        subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().
+                                      text()) 
         # Searches for working file of the chosen subject.
         for i,working_file in enumerate(self.experiment._working_file_names):
-            if working_file.find(subject_to_be_activated.split('.')[-2]) >= 0:
+            correct_file = str(self.experiment.workspace + '/' + \
+            self.experiment.experiment_name + '/' + subject_to_be_activated + \
+            '/' + working_file)
+            if working_file.find(subject_to_be_activated) >= 0 and \
+            len(glob.glob(correct_file)) > 0:
                 working_file_name = working_file
         
         if len(working_file_name) == 0:
@@ -1128,7 +1133,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.\
-                                                    active_subject.raw_data.\
+                                                    active_subject.working_file.\
                                                     info.get('filename')))
             
             
@@ -1148,7 +1153,7 @@ class MainWindow(QtGui.QMainWindow):
         if (len(self.experiment._subject_paths) > 0):
             # Reads the raw data info and sets it to the labels
             # of the Raw tab
-            InfoDialog(self.experiment.active_subject.raw_data,
+            InfoDialog(self.experiment.active_subject.working_file,
                         self.ui, False)
             if self.experiment.active_subject._event_set != None:
                 self.populate_raw_tab_event_list()
@@ -1163,6 +1168,8 @@ class MainWindow(QtGui.QMainWindow):
                 #item.setData(32, evoked)
                 #item.setData(33, category)
             self.enable_tabs()
+        else:
+            self.ui.listWidgetSubjects.clear()
 
     def add_tabs(self):
         """

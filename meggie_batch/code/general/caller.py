@@ -42,6 +42,8 @@ import glob
 from copy import deepcopy
 from sets import Set
 
+from PyQt4 import QtCore,QtGui
+
 import mne
 from mne import fiff
 from mne.fiff import evoked
@@ -187,12 +189,12 @@ class Caller(object):
         else:
             prefix, suffix = os.path.splitext(raw_in.info.get('filename')) 
         
-        ecg_event_fname = prefix + '_ecg-eve' + suffix
+        ecg_event_fname = prefix + '_ecg-eve.fif'
         
         if comp_ssp:
-            ecg_proj_fname = prefix + '_ecg_avg_proj' + suffix
+            ecg_proj_fname = prefix + '_ecg_avg_proj.fif'
         else:
-            ecg_proj_fname = prefix + '_ecg_proj' + suffix
+            ecg_proj_fname = prefix + '_ecg_proj.fif'
         
         try:
             projs, events = mne.preprocessing.compute_proj_ecg(raw_in, None,
@@ -310,22 +312,25 @@ class Caller(object):
         # If there already is a file with eog projections applied on it, apply
         # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
-                      glob.glob(directory + '*-eog_applied*'))) > 0:
-            fname = glob.glob(directory + '*-eog_applied*')[0]
+                      glob.glob(directory + '*-eog_applied.fif'))) > 0:
+            fname = glob.glob(directory + '*-eog_applied.fif')[0]
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '*_ecg_*proj*'))
+                           glob.glob(directory + '*_ecg_proj.fif'))
         #Checks if there is exactly one projection file
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
-            appliedfilename = fname[:-4] + '-ecg_applied.fif'
+            # If the suffix is shorter or longer than 4, this might
+            # create some problems later on when doing checks
+            # using the generated filename.
+            # appliedfilename = fname[:-4] + '-ecg_applied.fif'
+            
+            appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
-            
-        self.update_experiment_working_file(appliedfilename)
-        
+        self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
         
     def apply_eog(self, raw, directory):
@@ -346,11 +351,15 @@ class Caller(object):
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
-            appliedfilename = fname[:-4] + '-eog_applied.fif'
+            # If the suffix is shorter or longer than 4, this might
+            # create some problems later on when doing checks
+            # using the generated filename.
+            #appliedfilename = fname[:-4] + '-eog_applied.fif'
+            
+            appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
-        self.update_experiment_working_file(appliedfilename)
-        
+        self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
     
     def average(self, epochs, category):
@@ -768,7 +777,7 @@ class Caller(object):
         
         return dataToFilter
                           
-    def update_experiment_working_file(self, fname):
+    def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working file for the experiment the caller relates
         to.
@@ -776,13 +785,11 @@ class Caller(object):
         """
         self.parent.experiment.update_working_file(fname)
         self.parent.experiment.active_subject_raw_path = fname
-        """
-        TODO: tänne vai jonnekin muualle?
+        self.parent.experiment.active_subject.working_file = raw
         self.parent.statusLabel.setText(QtCore.QString("Current working file: " +
-                                                       self.experiment.\
+                                                       self.parent.experiment.\
                                                        active_subject.working_file.\
                                                        info.get('filename')))
-        """
 
     def write_events(self, events):
         """

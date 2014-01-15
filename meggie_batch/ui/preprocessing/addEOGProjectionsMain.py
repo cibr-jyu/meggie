@@ -57,7 +57,7 @@ class AddEOGProjections(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment._subject_directory
+        directory = self.parent.experiment.active_subject_path
         self.proj_file = glob.glob(directory + '*_eog_proj.fif')[0]
         self.projs = mne.read_proj(self.proj_file)
         
@@ -83,8 +83,8 @@ class AddEOGProjections(QtGui.QDialog):
         try:
             # Overwrites the projection file with desired vectors.
             mne.write_proj(self.proj_file, applied)
-            self.parent.caller.apply_eog(self.parent.experiment.working_file,
-                                     self.parent.experiment._subject_directory)
+            self.parent.caller.apply_eog(self.parent.experiment.active_subject.working_file,
+                                         self.parent.experiment.active_subject_path)
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))

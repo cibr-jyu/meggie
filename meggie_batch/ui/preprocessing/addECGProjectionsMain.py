@@ -85,7 +85,7 @@ class AddECGProjections(QtGui.QDialog):
         mne.write_proj(self.proj_file, applied)
         
         #TODO: working_file instead of raw_file
-        self.parent.caller.apply_ecg(self.parent.experiment.active_subject.raw_data,
+        self.parent.caller.apply_ecg(self.parent.experiment.active_subject.working_file,
                                 self.parent.experiment.active_subject.subject_path)
         """
         except Exception, err:

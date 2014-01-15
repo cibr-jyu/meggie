@@ -48,18 +48,18 @@ class Subject(QObject):
         Constructor for the subject class.
         
         Keyword arguments:
-        raw_data        -- the raw data file of the subject
+        working_file        -- the raw data file of the subject
         subject_name    -- the name of the subject
         """
         QObject.__init__(self)
-        self._raw_data = None
+        #self._raw_data = None
         
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
         
         self._event_set = None
         self._stim_channel = None
-        self._working_file = ''
+        self._working_file = None
         self._working_file_path = 'no path defined'
         
         self._experiment = experiment
@@ -69,7 +69,7 @@ class Subject(QObject):
         self._subject_path = self._experiment.workspace + '/' + \
         str(self._experiment.experiment_name) + '/' + self._subject_name + '/'
         self._epochs_directory = self._subject_path + '/epochs/'
-        #self.save_raw(raw_data, self.subject_path)
+        
         
     @property
     def raw_data(self):
@@ -133,8 +133,14 @@ class Subject(QObject):
         Keyword arguments:
         fname         -- Name of the new working file.
         """
-        self._working_file = mne.fiff.Raw(fname, preload=True)
-        self.working_file_path = fname
+        if (isinstance(fname, mne.fiff.Raw)):
+            self._working_file = fname
+        else:
+            raise Exception('Wrong data type')
+
+        
+        #self._working_file = mne.fiff.Raw(fname, preload=True)
+        #self.working_file_path = fname
 
     @property
     def stim_channel(self):
@@ -165,9 +171,11 @@ class Subject(QObject):
                             ' subject/experiment name already exists')
             return
         
-        
         if os.path.exists(path):
-            mne.fiff.Raw.save(self._raw_data, path + '/' + \
+            
+            # TODO: Check if the file is saved with .fif suffix,
+            # if not, save the file with .fif suffix.
+            mne.fiff.Raw.save(self._working_file, path + '/' + \
                               str(os.path.basename(file_name)))
             self.create_epochs_directory()
         else:
@@ -187,7 +195,7 @@ class Subject(QObject):
         """
         Finds the correct stimulus channel for the data.
         """
-        channels = self._raw_data.info.get('ch_names')
+        channels = self._working_file.info.get('ch_names')
         if any('STI101' in channels for x in channels):
             self._stim_channel = 'STI101'
         elif any('STI 014' in channels for x in channels):
@@ -197,14 +205,14 @@ class Subject(QObject):
         """
         Creates an event set where the first element is the id
         and the second element is the number of the events.
-        Raises type error if the raw_data attribute is not set or
+        Raises type error if the working_file attribute is not set or
         if the data is not of type mne.fiff.Raw.
         """
-        if not isinstance(self._raw_data, mne.fiff.Raw):
+        if not isinstance(self._working_file, mne.fiff.Raw):
             raise TypeError('Nt a raw object')
         if self.stim_channel == None:
             return
-        events = mne.find_events(self._raw_data,
+        events = mne.find_events(self._working_file,
                                  stim_channel=self._stim_channel)
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()

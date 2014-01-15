@@ -58,8 +58,7 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
-        #TODO: change raw_data to working_file
-        stim_channels = MeasurementInfo(parent.experiment.active_subject.raw_data). \
+        stim_channels = MeasurementInfo(parent.experiment.active_subject.working_file). \
         MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(stim_channels)
         
@@ -125,8 +124,7 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
-        #TODO: change raw_data to working_file
-        raw = self.parent.experiment.active_subject.raw_data
+        raw = self.parent.experiment.active_subject.working_file
         dictionary = {'i': raw}
         
         tmin = self.ui.doubleSpinBoxTmin.value()
