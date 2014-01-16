@@ -273,7 +273,7 @@ class Experiment(QObject):
         Updates to the previously processed file.
         
         Keyword arguments:
-        working_file_name    -- name of the working file to be updated
+        working_file_name    -- name of the working file
         """
         working_file_name = working_file_name.split('/')[-1]
         working_file_prefix = working_file_name.split('.')[-2]
@@ -282,14 +282,10 @@ class Experiment(QObject):
         # i is the working file name
         # n is the index of the working file name
         for n,i in enumerate(self._working_file_names):
-            #correct_folder = str(self.workspace + '/' + self.experiment_name + '/' + i.split('.')[-2] + '/')
-            correct_folder = str(self.workspace + '/' + self.experiment_name + '/' + self.active_subject_name + '/')
-            
-            # TODO: Fix this? At least feedback for the user should be given.
-            # This check prevents creating different subjects for the same
-            # original raw file.
+            correct_folder = str(self.workspace + '/' + self.experiment_name + '/' + self.active_subject_name + \
+                                 '/' + self.active_subject_name + '.*')
             # find returns -1 if the string is not found.
-            if working_file_name.find(i.split('.')[-2]) >= 0 and len(glob.glob(correct_folder + self.active_subject_name + '.*')) > 0:
+            if working_file_name.find(i.split('.')[-2]) >= 0 and len(glob.glob(correct_folder)) > 0:
                 self._working_file_names[n] = working_file_name
                 return
         self._working_file_names.append(working_file_name)
@@ -306,12 +302,7 @@ class Experiment(QObject):
         experiment   -- currently active experiment                        
         """
         subject = Subject(experiment, subject_name)
-        
-        # TODO: mm. eventtisetit ja stim channelit pit‰‰ asettaa subjectille
-        
-        
         f = FileManager()
-        
         # TODO: When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
@@ -329,10 +320,8 @@ class Experiment(QObject):
             # the file was originally found. This is used to change it to
             # the location of the subject path.
             subject.working_file.info['filename'] = full_raw_path
-        
         subject.find_stim_channel()
         subject.create_event_set()
-        #self.update_working_file(raw_file_name)
         self._active_subject_name = subject_name
         self.update_working_file(raw_path)
         self.add_subject_path(subject.subject_path)

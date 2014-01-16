@@ -63,12 +63,23 @@ class AddSubjectDialog(QtGui.QDialog):
     def accept(self):
         """Add the new subject.
         """
-        #self.parent.listWidgetSubjects.addItem?
-        #self.parent._initialize_ui
-        #self._initialize_experiment()
         raw_path = str(self.ui.lineEditFileName.text())
         raw_path_prefix = raw_path.split('.')[-2]
         subject_name = os.path.basename(raw_path_prefix)
+        subject_name_QString = QtCore.QString(subject_name)
+        
+        # Check if the subject is already added to the experiment.
+        if len(self.parent.ui.listWidgetSubjects.
+               findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.\
+            setText('Subject is already added to the experiment.' + \
+                    ' Change the filename of the raw every time you want' + \
+                    ' to create a new subject with the same raw file.')
+            self.messageBox.show()
+            #self.close()
+            return
+            
         self.parent.experiment.activate_subject(raw_path, \
                                                 subject_name, \
                                                 self.experiment)

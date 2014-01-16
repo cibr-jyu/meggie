@@ -1129,7 +1129,7 @@ class MainWindow(QtGui.QMainWindow):
         # QLabel created on __init__ can't take normal string objects.
         if len(self.experiment._subjects) == 0:
             self.statusLabel.setText(QtCore.QString("Add subjects before " + 
-                                                    "continue."))
+                                                    "continuing."))
         else:
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.\
@@ -1149,7 +1149,10 @@ class MainWindow(QtGui.QMainWindow):
         # and tabs enabled for processing.
         # NOTE: There always has to be an active_subject if experiment has at
         # least one subject added.
-        self.add_tabs()
+        """
+        if self.ui.tabWidget.count() < 1:
+            self.add_tabs() # maybe a useless method
+        """
         if (len(self.experiment._subject_paths) > 0):
             # Reads the raw data info and sets it to the labels
             # of the Raw tab
@@ -1167,8 +1170,11 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.listWidgetSubjects.addItem(item)
                 #item.setData(32, evoked)
                 #item.setData(33, category)
+            if self.ui.tabWidget.count() == 0:
+                self.add_tabs()
             self.enable_tabs()
         else:
+            self.add_tabs()
             self.ui.listWidgetSubjects.clear()
 
     def add_tabs(self):
@@ -1185,7 +1191,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # If no subjects added to the experiment, there is no reason to enable
         # more tabs to confuse the user.
-        if len(self.experiment._subjects) == 0:
+        if len(self.experiment._subject_paths) == 0:
             self.ui.tabWidget.setTabEnabled(2,False)
             self.ui.tabWidget.setTabEnabled(3,False)
             self.ui.tabWidget.setTabEnabled(4,False)
