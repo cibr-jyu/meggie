@@ -781,7 +781,8 @@ class Caller(object):
         """
         Changes the current working file for the experiment the caller relates
         to.
-        fname    -- name of the new working file 
+        fname    -- name of the new working file
+        raw      -- working file data
         """
         self.parent.experiment.update_working_file(fname)
         self.parent.experiment.active_subject_raw_path = fname
