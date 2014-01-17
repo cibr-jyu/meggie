@@ -1,0 +1,17 @@
+*** Artikkeleita ***
+
+- Hevner: DESIGN SCIENCE IN INFORMATION SYSTEMS RESEARCH
+	\ Arvostettu artikkeli, lue tarkkaan
+
+- Fowler: refactoring (ja jotain)
+	\ Uraauurtava teos refaktoroinnista, ilmeisesti määritteli koko käsitteen.
+
+- nierstrasche (tjsp): object-oriented re-engineering 
+	\ http://scg.unibe.ch/download/oorp/
+
+- Keim, Kohlhammer etc (ed.): Solving problems with visual analytics
+	\ Wartiaiselta saatu ehdotus, jos haluaa keskittyä gradussa tähän aiheeseen (lähinnä Kari)
+
+*** Hyödyllisiä hakusanoja ***
+
+software architecture for data analysis
