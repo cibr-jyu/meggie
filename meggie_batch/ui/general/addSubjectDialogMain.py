@@ -59,6 +59,9 @@ class AddSubjectDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.experiment = self.parent.experiment
+        self.ui.pushButtonShowFileInfo.setEnabled(False)
+        self.ui.lineEditFileName.textChanged.connect(self.file_path_changed)
+        
     
     def accept(self):
         """Add the new subject.
@@ -131,4 +134,12 @@ class AddSubjectDialog(QtGui.QDialog):
         self.infoDialog = InfoDialog(self.raw, info, True)
         self.infoDialog.show()
 
-        QtGui.QApplication.processEvents() 
+        QtGui.QApplication.processEvents()
+        
+    def file_path_changed(self):
+        """A slot for enabling or disabling show file info button.
+        """
+        if self.ui.lineEditFileName.text() == '':
+            self.ui.pushButtonShowFileInfo.setEnabled(False)
+            
+        else: self.ui.pushButtonShowFileInfo.setEnabled(True)

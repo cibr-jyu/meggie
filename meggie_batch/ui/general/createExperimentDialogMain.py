@@ -68,71 +68,12 @@ class CreateExperimentDialog(QtGui.QDialog):
         # Refers to class in file CreateProjecDialog
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
-        #self.ui.showFileInfoButton.setEnabled(False)
-        
-        #self.ui.FilePathLineEdit.textChanged.connect(self.file_path_changed)
                 
     def accept(self):
         """Create the new experiment.
         """
         self.parent.hide_workspace_option()
         self._initialize_experiment()
-        
-    def file_path_changed(self):
-        """A slot for enabling or disabling show file info button.
-        """
-        if self.ui.FilePathLineEdit.text() == '':
-            self.ui.showFileInfoButton.setEnabled(False)
-            
-        else: self.ui.showFileInfoButton.setEnabled(True)
-        
-                
-    def on_browseButton_clicked(self, checked=None):
-        """
-        Opens a browse dialog to select the raw data.
-        """
-        # Standard workaround for file dialog opening twice
-        if checked is None: return
-        
-        self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                                           '/home/'))
-      
-        
-        if self.fname != '':        
-            self.ui.FilePathLineEdit.setText(self.fname)        
-        
-    def on_showFileInfoButton_clicked(self, checked = None):
-        """
-        Opens the infoDialog for the raw file selected.
-        """
-        try:
-            f = FileManager()
-            self.raw = f.open_raw(self.fname, pre_load = False)
-            self.ui.showFileInfoButton.setEnabled(True)
-            
-        except IOError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
-            self.messageBox.show()
-            return
-        
-        except OSError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
-            self.messageBox.show()
-            return
-        
-        except ValueError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
-            self.messageBox.show()
-            return
-            
-        info = Ui_infoDialog()
-        self.infoDialog = InfoDialog(self.raw, info, True)
-        self.infoDialog.show()
-
-        QtGui.QApplication.processEvents() 
         
     def _initialize_experiment(self):
         """
@@ -143,7 +84,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText('Give experiment a name.')
             self.messageBox.show()
             return          
-   
         try:
             self.workspace = Workspace()
             self.experiment = Experiment()
@@ -153,7 +93,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.experiment.description = (self.ui.textEditDescription.
                                            toPlainText())
             self.experiment.subject_paths = []
-
         except AttributeError:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText('Cannot assign attribute' + 
@@ -167,15 +106,11 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
-        
         QtGui.QApplication.processEvents()
-                
         # Give control of the experiment to the main window of the application
         self.parent.experiment = self.experiment
-        
         self.parent.ui.labelExperimentName.setText(self.experiment.
                                                    experiment_name)
-        
         self.parent.ui.labelAuthorName.setText(self.experiment.author)
         self.parent.ui.textBrowserExperimentDescription.setText(self.
                                                                 experiment.
@@ -187,7 +122,6 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
-            
         self.close()
         self.parent.add_tabs()
         self.parent._initialize_ui() 

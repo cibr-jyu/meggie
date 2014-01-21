@@ -489,25 +489,14 @@ class MainWindow(QtGui.QMainWindow):
         """
         if len(self.experiment._subject_paths) == 0:
             return
-        
-        """
-        if not os.path.exists(self.experiment.epochs_directory): #TODO: self.experiment.current_subject.path?
-            self.experiment.create_epochs_directory
-            return        
-        """
         if not os.path.exists(self.experiment._active_subject_path + '/epochs/'):
             self.experiment.create_epochs_directory
             return
-        
-        
-        
         self.epochList.clearItems()
         path = self.experiment._active_subject_path + '/epochs/'
         files = os.listdir(path)
         for file in files:
-            
             if file.endswith('.fif'):
-                
                 name = file[:-4]            
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
@@ -737,25 +726,18 @@ class MainWindow(QtGui.QMainWindow):
         
         Load the evoked collections from workspace/experiment/epochs/average/
         and show them on the evoked collection list.
-         
         """
-        
         if len(self.experiment._subject_paths) == 0:
             return
-        
-        
         if not os.path.exists(self.experiment._active_subject_path + 'average/'):
             self.evokedList.clear()
             return  
-        
         self.evokedList.clear()
         #self.epochList.clearItems()
         path = self.experiment.epochs_directory + 'average/'
         files = os.listdir(path)
         for file in files:
-            
             if file.endswith('.fif'):
-                
                 #name = file[:-4]            
                 # TODO: Add load_evoked_item method on fileManager to read
                 # evoked datasets and create QListWidgetItem object in the
@@ -764,7 +746,6 @@ class MainWindow(QtGui.QMainWindow):
                 # (constructor: self.experiment_value_changed.connect\
                 # (self.load_evoked_collections)).
                 item = self.fileManager.load_evoked_item(path, file)
-                
                 if item is None:
                     print 'One or more evoked.fif data files has more than' + \
                     ' 8 datasets and the loading of this/these data file/s' + \
@@ -774,7 +755,6 @@ class MainWindow(QtGui.QMainWindow):
                     self.evokedList.setCurrentItem(item)
                 #self.evokedList.addItem(item)
                 #self.evokedList.setCurrentItem(item)
-    
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
@@ -1092,11 +1072,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
-        #Check whether ECG projections are calculated
-        #fname = self.experiment.raw_data.info.get('filename') ???
-        #path = self.experiment._subject_directory
-        #path = self.experiment.workspace
         path = self.experiment.active_subject_path
+        #Check whether ECG projections are calculated
         files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj*'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj*'))
         files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve*'))
