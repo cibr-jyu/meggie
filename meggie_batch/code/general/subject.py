@@ -56,7 +56,8 @@ class Subject(QObject):
         
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
-        
+        #TODO: ID-juttuja.
+        #self._subject_ID = ''
         self._event_set = None
         self._stim_channel = None
         self._working_file = None

@@ -80,6 +80,8 @@ class Experiment(QObject):
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
         self._working_file_names = []
+        #TODO: ID-juttuja
+        #self._working_file_names_dict = dict()
         self._active_subject = None
         self.mainWindow = None
         
@@ -301,6 +303,35 @@ class Experiment(QObject):
         subject_name -- name of the subject
         experiment   -- currently active experiment                        
         """
+        
+        
+        """
+        # Checks if the subject to be activated already exists in subjects list.
+        # Prevents creating multiple subjects when activating the same subject
+        # more than once.
+        for subject in self._subjects:
+            if subject_name == subject_object.subject_name:
+                # TODO: tee metodi get_subject, miss‰ asetetaan subjectilta
+                # active_subject, active_subject_name, active_subject_path,
+                # active_subject_raw_path.
+                # get_subject metodissa ei v‰ltt‰m‰tt‰ tarvitse lukea en‰‰
+                # raakadataa, jos se on jo aikaisemmin luettu. Eik‰ ko.
+                # metodissa tarvitse en‰‰ p‰ivitt‰‰ working_file‰.
+                # T‰st‰ metodista voidaan sen j‰lkeen poistaa turhat.
+                self.get_subject(subject)
+                break
+            else:
+                # TODO: tee metodi create_subject, miss‰ asetetaan 
+                # active_subject, active_subject_name, active_subject_path,
+                # active_subject_raw_path.
+                # T‰st‰ metodista voidaan sen j‰lkeen poistaa turhat.
+                self.create_subject()
+                subject = Subject(experiment, subject_name)
+        """
+        
+        
+        
+        
         subject = Subject(experiment, subject_name)
         f = FileManager()
         # TODO: When opening experiment the right path is saved into the
