@@ -310,7 +310,7 @@ class Experiment(QObject):
         # Prevents creating multiple subjects when activating the same subject
         # more than once.
         for subject in self._subjects:
-            if subject_name == subject_object.subject_name:
+            if subject_name == subject.subject_name:
                 # TODO: tee metodi get_subject, missä asetetaan subjectilta
                 # active_subject, active_subject_name, active_subject_path,
                 # active_subject_raw_path.
