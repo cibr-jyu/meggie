@@ -309,6 +309,16 @@ class Experiment(QObject):
         # Checks if the subject to be activated already exists in subjects list.
         # Prevents creating multiple subjects when activating the same subject
         # more than once.
+        
+        JOKO NÄIN (logiikaltaan oikea):
+        
+        if not subject_name in (for subject.name in self._subjects):
+            self.create_subject(subject_name, raw_path)
+        else:
+            self.get_subject(subject_name)
+        
+        TAI NÄIN (muuta logiikkaa, ei toimi oikein):
+        
         for subject in self._subjects:
             if subject_name == subject.subject_name:
                 # TODO: tee metodi get_subject, missä asetetaan subjectilta
