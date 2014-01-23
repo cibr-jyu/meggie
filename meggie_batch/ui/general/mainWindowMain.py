@@ -1005,7 +1005,11 @@ class MainWindow(QtGui.QMainWindow):
         
         working_file_name = ''
         subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().
-                                      text()) 
+                                      text())
+        
+        
+        """
+        # Vanha toimiva koodi:
         # Searches for working file of the chosen subject.
         for i,working_file in enumerate(self.experiment._working_file_names):
             correct_file = str(self.experiment.workspace + '/' + \
@@ -1014,6 +1018,7 @@ class MainWindow(QtGui.QMainWindow):
             if working_file.find(subject_to_be_activated) >= 0 and \
             len(glob.glob(correct_file)) > 0:
                 working_file_name = working_file
+        """
         
         if len(working_file_name) == 0:
             self.messageBox = messageBox.AppForm()

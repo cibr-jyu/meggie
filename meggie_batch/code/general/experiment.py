@@ -79,9 +79,9 @@ class Experiment(QObject):
         self._active_subject_path = ''
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
-        self._working_file_names = []
+        #self._working_file_names = []
         #TODO: ID-juttuja
-        #self._working_file_names_dict = dict()
+        self._working_file_names = dict()
         self._active_subject = None
         self.mainWindow = None
         
@@ -277,6 +277,12 @@ class Experiment(QObject):
         Keyword arguments:
         working_file_name    -- name of the working file
         """
+        # Uusi koodi:
+        self._working_file_names[self.active_subject_path] = working_file_name
+        
+        """
+        # Vanha toimiva koodi:
+        
         working_file_name = working_file_name.split('/')[-1]
         working_file_prefix = working_file_name.split('.')[-2]
         
@@ -291,6 +297,7 @@ class Experiment(QObject):
                 self._working_file_names[n] = working_file_name
                 return
         self._working_file_names.append(working_file_name)
+        """
         
     def activate_subject(self, raw_path, subject_name, experiment):
         """
@@ -361,6 +368,8 @@ class Experiment(QObject):
             # the file was originally found. This is used to change it to
             # the location of the subject path.
             subject.working_file.info['filename'] = full_raw_path
+        """
+        # Vanha toimiva koodi:
         subject.find_stim_channel()
         subject.create_event_set()
         self._active_subject_name = subject_name
@@ -370,6 +379,19 @@ class Experiment(QObject):
         self._active_subject_raw_path = full_raw_path
         self._active_subject = subject
         self.add_subject(subject)
+        """
+        
+        # Uusi koodi:
+        subject.find_stim_channel()
+        subject.create_event_set()
+        self._active_subject_name = subject_name
+        self._active_subject_path = subject.subject_path
+        self.update_working_file(raw_path)
+        self.add_subject_path(subject.subject_path)
+        self._active_subject_raw_path = full_raw_path
+        self._active_subject = subject
+        self.add_subject(subject)
+        
         
     def save_experiment_settings(self):
         """
