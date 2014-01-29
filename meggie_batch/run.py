@@ -34,6 +34,7 @@ Boilerplate script to run the application.
 
 import sys
 import os
+os.environ['QT_API'] = 'pyqt'
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/externalmodules/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/tests/")

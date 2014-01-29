@@ -62,6 +62,13 @@ class WorkSpaceDialog(QtGui.QDialog):
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return 
+        """
+        fileDialog = QtGui.QFileDialog()
+        fileDialog.setOption(DontUseNativeDialog)
+        self.path = str(fileDialog.getExistingDirectory(
+               self, "Select a working space"))
+        """
+        
         self.path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select a working space"))
         self.ui.FilePathLineEdit.setText(self.path)

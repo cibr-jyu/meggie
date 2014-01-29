@@ -47,9 +47,10 @@ from mne import fiff
 from mne.datasets import sample
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 
-import pylab as pl
 from matplotlib.figure import Figure
 import matplotlib
+matplotlib.use('Qt4Agg')
+import pylab as pl
  
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
@@ -1002,34 +1003,18 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
-        
         working_file_name = ''
         subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().
                                       text())
-        
-        
-        """
-        # Vanha toimiva koodi:
-        # Searches for working file of the chosen subject.
-        for i,working_file in enumerate(self.experiment._working_file_names):
-            correct_file = str(self.experiment.workspace + '/' + \
-            self.experiment.experiment_name + '/' + subject_to_be_activated + \
-            '/' + working_file)
-            if working_file.find(subject_to_be_activated) >= 0 and \
-            len(glob.glob(correct_file)) > 0:
-                working_file_name = working_file
-        """
-        
+        working_file_name = self.experiment.\
+        _working_file_names[subject_to_be_activated]
         if len(working_file_name) == 0:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('There is no working file in the chosen subject folder.')
             self.messageBox.show()  
             return
-        raw_path = self.experiment._workspace + \
-        '/' + self.experiment._experiment_name + '/' + \
-        self.ui.listWidgetSubjects.currentItem().text() + '/'
-        raw_path = str(raw_path) + working_file_name
+        raw_path = working_file_name
         subject_name = self.ui.listWidgetSubjects.currentItem().text()
         self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
         self.experiment.update_experiment_settings()
