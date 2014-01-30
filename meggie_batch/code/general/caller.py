@@ -382,11 +382,13 @@ class Caller(object):
         """
         evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
-        saveFolder = self.parent.experiment.epochs_directory + 'average/'
+        saveFolder = self.parent.experiment.active_subject._epochs_directory + 'average/'
         
         #Get the name of the raw-data file from the current experiment.
+        #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
+        #                                             raw_data_path)[1])[0]                      
         rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
-                                                     raw_data_path)[1])[0]                      
+                                                     active_subject_raw_path)[1])[0]
         
         return evokeds
         """
@@ -472,7 +474,7 @@ class Caller(object):
                 colors_events.append('#CD7F32')
                 #i += 1
         
-        self.mi = MeasurementInfo(self.parent.experiment.raw_data)
+        self.mi = MeasurementInfo(self.parent.experiment.active_subject.working_file)
         
         #title = str(self.category.keys())
         title = ''
@@ -503,8 +505,8 @@ class Caller(object):
         # TODO: draggable doesn't work with l.set_frame_on(False)
         # l.draggable(True)
         
-        prefix, suffix = os.path.splitext(self.parent.experiment.\
-                                          raw_data.info.get('filename'))
+        prefix, suffix = os.path.splitext(self.parent.experiment.active_subject.\
+                                          _working_file.info.get('filename'))
         
         def onclick(event):
             pl.show(block=False)
@@ -579,7 +581,7 @@ class Caller(object):
                 
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.parent.experiment.raw_data)
+        mi = MeasurementInfo(self.parent.experiment.active_subject._working_file)
         fig.canvas.set_window_title(mi.subject_name + 
              '-- channel average for ' + averageTitleString)
         fig.suptitle('Channel average for ' + averageTitleString)

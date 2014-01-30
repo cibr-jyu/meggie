@@ -308,6 +308,7 @@ class Experiment(QObject):
                 full_raw_path = subject.subject_path + raw_file_name
                 self._active_subject_raw_path = full_raw_path
                 main_window.load_epoch_collections()
+                main_window.load_evoked_collections()
                 return
         subject = Subject(experiment, subject_name)
         f = FileManager()
@@ -340,6 +341,7 @@ class Experiment(QObject):
         self._active_subject = subject
         self.add_subject(subject)
         main_window.load_epoch_collections()
+        main_window.load_evoked_collections()
         
     def save_experiment_settings(self):
         """

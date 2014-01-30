@@ -238,21 +238,10 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             
-            # This emits a signal to load evoked/epoch collections which calls
-            # methods from active_subject. Causes problems because the subject
-            # is not yet set.
-            # TODO: Fix this
-            # Connect signal to load_active_subject method also to set active_subject
-            # property in experiment.
+            # This emits experiment_value_changed signal and invokes methods
+            # load_active_subject, load_epoch_collections and
+            # load_evoked_collections.
             self.experiment = pickle.load(output)
-            
-            """
-            if len(self.experiment._subject_paths) > 0:
-                raw_path = self.experiment.active_subject_raw_path
-                subject_name = self.experiment.active_subject_name
-                self.experiment.activate_subject(self, raw_path, subject_name,
-                                                 self.experiment)
-            """
             self._initialize_ui()
             
             # TODO: needs to be added to _initialize_ui so that after
@@ -561,8 +550,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load epochs',
-                                                      self.experiment.
-                                                      epochs_directory))
+                                                      self.experiment.\
+                                                      active_subject.\
+                                                      _epochs_directory))
         if fname == '': return
         if not os.path.isfile(fname): return
         item = self.fileManager.load_epochs(fname)
@@ -588,14 +578,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         fname = str(QtGui.QFileDialog.getSaveFileName(self, 'Save epochs',
-                                                      self.experiment.
-                                                      epochs_directory))
+                                                      self.experiment.\
+                                                      active_subject.\
+                                                      _epochs_directory))
         if fname == '': return
         else: 
             epochs = self.epochList.currentItem().data(32).toPyObject()
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
-        self.fileManager.copy(self.experiment.epochs_directory +
+        self.fileManager.copy(self.experiment.active_subject._epochs_directory +
                               str(self.epochList.currentItem().text()) +
                               '.csv', fname + '.csv')
 
@@ -708,7 +699,7 @@ class MainWindow(QtGui.QMainWindow):
         
         
         evoked_collection_name = str(item.text())
-        saveFolder = self.experiment.epochs_directory + 'average/'
+        saveFolder = self.experiment.active_subject._epochs_directory + 'average/'
         if os.path.exists(saveFolder) is False:
             try:
                 os.mkdir(saveFolder)
@@ -732,8 +723,9 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
-                                                      self.experiment.                                                      
-                                                      epochs_directory + \
+                                                      self.experiment.\
+                                                      active_subject.\
+                                                      _epochs_directory + \
                                                       'average/'))
         if fname == '': return
         if not os.path.isfile(fname): return
@@ -751,12 +743,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         if len(self.experiment._subject_paths) == 0:
             return
-        if not os.path.exists(self.experiment._active_subject_path + 'average/'):
+        if not os.path.exists(self.experiment.active_subject._epochs_directory + 'average/'):
             self.evokedList.clear()
             return  
         self.evokedList.clear()
         #self.epochList.clearItems()
-        path = self.experiment.epochs_directory + 'average/'
+        path = self.experiment.active_subject._epochs_directory + 'average/'
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
@@ -824,7 +816,7 @@ class MainWindow(QtGui.QMainWindow):
             
         item_str = self.evokedList.currentItem().text()
             
-        root = self.experiment.epochs_directory + 'average/'
+        root = self.experiment.active_subject._epochs_directory + 'average/'
         message = 'Permanently remove evokeds and the related files?'
             
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
@@ -968,7 +960,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
-        self.tfr_dialog = TFRDialog(self, self.experiment.working_file, epoch)
+        self.tfr_dialog = TFRDialog(self, self.experiment.active_subject._working_file, epoch)
         self.tfr_dialog.show()
     
     def on_pushButtonTFRTopology_clicked(self,checked=None):
@@ -984,7 +976,7 @@ class MainWindow(QtGui.QMainWindow):
         epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
         data(32).toPyObject()
         self.tfrTop_dialog = TFRTopologyDialog(self, 
-                                               self.experiment.working_file, 
+                                               self.experiment.active_subject._working_file, 
                                                epoch)
         self.tfrTop_dialog.show()
         
