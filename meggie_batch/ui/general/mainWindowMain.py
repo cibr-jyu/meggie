@@ -138,6 +138,8 @@ class MainWindow(QtGui.QMainWindow):
         #Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.experiment_value_changed.connect\
+        (self.open_active_subject)
+        self.experiment_value_changed.connect\
         (self.load_epoch_collections)
         self.experiment_value_changed.connect\
         (self.load_evoked_collections)
@@ -169,17 +171,20 @@ class MainWindow(QtGui.QMainWindow):
 
                 
         if self.fileManager.delete_file_at\
-        (self.experiment.epochs_directory, str(item.text()) + '.fif'):
+        (self.experiment.active_subject._epochs_directory,
+          str(item.text()) + '.fif'):
         
-            if os.path.exists(self.experiment.epochs_directory +
+            if os.path.exists(self.experiment.active_subject._epochs_directory +
                               str(item.text()) + '.param'):
                 self.fileManager.delete_file_at\
-                (self.experiment.epochs_directory, str(item.text()) + '.param')
+                (self.experiment.active_subject._epochs_directory,
+                  str(item.text()) + '.param')
                 
-            if os.path.exists(self.experiment.epochs_directory +
+            if os.path.exists(self.experiment.active_subject._epochs_directory +
                               str(item.text()) + '.csv'):
                 self.fileManager.delete_file_at\
-                (self.experiment.epochs_directory, str(item.text()) + '.csv')
+                (self.experiment.active_subject._epochs_directory,
+                  str(item.text()) + '.csv')
                     
             self.epochList.remove_item(item)
             return True
@@ -232,14 +237,22 @@ class MainWindow(QtGui.QMainWindow):
         # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
+            
+            # This emits a signal to load evoked/epoch collections which calls
+            # methods from active_subject. Causes problems because the subject
+            # is not yet set.
+            # TODO: Fix this
+            # Connect signal to load_active_subject method also to set active_subject
+            # property in experiment.
             self.experiment = pickle.load(output)
             
+            """
             if len(self.experiment._subject_paths) > 0:
                 raw_path = self.experiment.active_subject_raw_path
                 subject_name = self.experiment.active_subject_name
-                self.experiment.activate_subject(raw_path, subject_name,
+                self.experiment.activate_subject(self, raw_path, subject_name,
                                                  self.experiment)
-            
+            """
             self._initialize_ui()
             
             # TODO: needs to be added to _initialize_ui so that after
@@ -425,7 +438,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.working_file)
+                                                         experiment.\
+                                                         active_subject.\
+                                                         working_file)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
@@ -434,11 +449,15 @@ class MainWindow(QtGui.QMainWindow):
     def epochs_added(self, item):
         """A slot for saving epochs from the added QListWidgetItem to a file
         """
-        if os.path.exists(self.experiment.epochs_directory) is False:
-            self.experiment.create_epochs_directory
-            
+        #if os.path.exists(self.experiment.active_subject_path + '/epochs') is False:
+
+        # TODO: mielummin näin:
+        if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
+            # TODO: Fix activating subject when opening experiment
+            self.experiment.active_subject.create_epochs_directory
         fname = str(item.text())
-        fpath = self.experiment.epochs_directory + fname
+        fpath = self.experiment.active_subject._epochs_directory + fname
+        #fpath = self.experiment.active_subject_path + '/epochs/' + fname
         self.fileManager.save_epoch_item(fpath, item)
         
     @QtCore.pyqtSlot(dict)
@@ -451,22 +470,18 @@ class MainWindow(QtGui.QMainWindow):
         """
         #Raw data is not present in the dictionary so get it from the
         #current experiment.
-        
         epochs = self.epocher.create_epochs_from_dict(epoch_params,
                                                       self.experiment.\
-                                                      working_file)
-        
-        epoch_params['raw'] = self.experiment.working_file_path
-        
+                                                      active_subject.\
+                                                      _working_file)
+        #epoch_params['raw'] = self.experiment.working_file_path
+        epoch_params['raw'] = self.experiment.active_subject_raw_path
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])
         item.setData(32, epochs)
-        
         item.setData(33, epoch_params)
-        
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
-    
         
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
@@ -481,20 +496,34 @@ class MainWindow(QtGui.QMainWindow):
             self.evokedList.clear()
             self.load_evoked_collections()
         
+    def open_active_subject(self):
+        """
+        Opens the active subject of the experiment.
+        """
+        if len(self.experiment._subject_paths) > 0:
+                raw_path = self.experiment.active_subject_raw_path
+                subject_name = self.experiment.active_subject_name
+                self.experiment.activate_subject(self, raw_path, subject_name,
+                                                 self.experiment)
+        
     def load_epoch_collections(self):
         """Load epoch collections from a folder.
         
         Load the epoch collections from workspace/experiment/epochs/ 
         and show them on the epoch collection list.
-         
         """
         if len(self.experiment._subject_paths) == 0:
             return
-        if not os.path.exists(self.experiment._active_subject_path + '/epochs/'):
-            self.experiment.create_epochs_directory
+        #if not os.path.exists(self.experiment._active_subject_path + '/epochs/'):
+
+        # TODO: mielummin näin:
+        if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
+            # TODO: Fix activating subject when opening experiment
+            self.experiment.active_subject.create_epochs_directory
             return
         self.epochList.clearItems()
         path = self.experiment._active_subject_path + '/epochs/'
+        path = self.experiment.active_subject._epochs_directory
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
@@ -513,18 +542,14 @@ class MainWindow(QtGui.QMainWindow):
         
         epochs = self.epocher.create_epochs_from_dict(epoch_params,
                                                       self.experiment.\
+                                                      active_subject.\
                                                       working_file)
-        
-        epoch_params['raw'] = self.experiment.working_file_path
-        
+        epoch_params['raw'] = self.experiment.active_subject_raw_path #working_file_path
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])
         item.setData(32, epochs)
-        
         item.setData(33, epoch_params)
-        
         if self.delete_epochs(self.epochList.currentItem()):
-        
             self.epochList.addItem(item)
             self.epochList.setCurrentItem(item)
             
@@ -540,10 +565,8 @@ class MainWindow(QtGui.QMainWindow):
                                                       epochs_directory))
         if fname == '': return
         if not os.path.isfile(fname): return
-        
         item = self.fileManager.load_epochs(fname)
         if item is None: return
-        
         self.epochList.addItem(item)
                 
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
@@ -551,10 +574,10 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         if self.epochList.currentItem() is None: return
-
         params = self.epochList.currentItem().data(33).toPyObject()
         self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.working_file,
+                                                         experiment.\
+                                                         active_subject.working_file,
                                                          params)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.modifyEpochs)
@@ -567,12 +590,10 @@ class MainWindow(QtGui.QMainWindow):
         fname = str(QtGui.QFileDialog.getSaveFileName(self, 'Save epochs',
                                                       self.experiment.
                                                       epochs_directory))
-        
         if fname == '': return
         else: 
             epochs = self.epochList.currentItem().data(32).toPyObject()
             epochs.save(fname)
-            
         #Also copy the related csv-file to the chosen folder
         self.fileManager.copy(self.experiment.epochs_directory +
                               str(self.epochList.currentItem().text()) +
@@ -774,7 +795,7 @@ class MainWindow(QtGui.QMainWindow):
             
         item_str = self.epochList.currentItem().text()
             
-        root = self.experiment.epochs_directory
+        root = self.experiment.active_subject._epochs_directory
         message = 'Permanently remove epochs and the related files?'
             
         reply = QtGui.QMessageBox.question(self, 'delete epochs',
@@ -1016,7 +1037,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         raw_path = working_file_name
         subject_name = self.ui.listWidgetSubjects.currentItem().text()
-        self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
+        self.experiment.activate_subject(self, str(raw_path), str(subject_name), self.experiment)
         self.experiment.update_experiment_settings()
         self._initialize_ui()
     
@@ -1098,10 +1119,15 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString("Add subjects before " + 
                                                     "continuing."))
         else:
+            """
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.\
                                                     active_subject.working_file.\
                                                     info.get('filename')))
+            """
+            self.statusLabel.setText(QtCore.QString("Current working file: " +
+                                                    self.experiment.\
+                                                    active_subject_raw_path))
             
             
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)

@@ -52,8 +52,6 @@ class Subject(QObject):
         subject_name    -- the name of the subject
         """
         QObject.__init__(self)
-        #self._raw_data = None
-        
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
         #TODO: ID-juttuja.
@@ -62,15 +60,12 @@ class Subject(QObject):
         self._stim_channel = None
         self._working_file = None
         self._working_file_path = 'no path defined'
-        
         self._experiment = experiment
-        
         # experiment_name is saved as QString and it has to be converted to
         # string to be able to do basic string operations for subject_path.
         self._subject_path = self._experiment.workspace + '/' + \
         str(self._experiment.experiment_name) + '/' + self._subject_name + '/'
-        self._epochs_directory = self._subject_path + '/epochs/'
-        
+        self._epochs_directory = self._subject_path + 'epochs/'
         
     @property
     def raw_data(self):

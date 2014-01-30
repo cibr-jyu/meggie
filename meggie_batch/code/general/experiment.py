@@ -81,7 +81,7 @@ class Experiment(QObject):
         self._active_subject_name = ''
         self._working_file_names = dict()
         self._active_subject = None
-        self.mainWindow = None
+        self.main_window = None
         
 
     @property
@@ -278,7 +278,7 @@ class Experiment(QObject):
         # Uusi koodi:
         self._working_file_names[self.active_subject_name] = working_file_name
         
-    def activate_subject(self, raw_path, subject_name, experiment):
+    def activate_subject(self, main_window, raw_path, subject_name, experiment):
         """
         Method for activating a subject. Creates a new subject object
         to be processed if it doesn't exist in the subjects list property.
@@ -289,7 +289,9 @@ class Experiment(QObject):
         subject_name -- name of the subject
         experiment   -- currently active experiment                        
         """
+        # TODO: Lataa epochit/evokedit aktivoitaessa subjectia.
         
+        raw_file_name = raw_path.split('/')[-1]
         # Checks if the subject to be activated already exists in subjects
         # list.
         # Prevents creating multiple subjects when activating the same subject
@@ -303,7 +305,9 @@ class Experiment(QObject):
                 self._active_subject = subject
                 self._active_subject_name = subject.subject_name
                 self._active_subject_path = subject.subject_path
-                self._active_subject_raw_path = raw_path
+                full_raw_path = subject.subject_path + raw_file_name
+                self._active_subject_raw_path = full_raw_path
+                main_window.load_epoch_collections()
                 return
         subject = Subject(experiment, subject_name)
         f = FileManager()
@@ -313,7 +317,7 @@ class Experiment(QObject):
         raw = f.open_raw(raw_path)
         #subject.raw_data = raw
         subject.working_file = raw
-        raw_file_name = raw_path.split('/')[-1]
+        #raw_file_name = raw_path.split('/')[-1]
         full_raw_path = subject.subject_path + raw_file_name
         # Check if file already exists.
         if not os.path.isfile(full_raw_path):
@@ -335,6 +339,7 @@ class Experiment(QObject):
         self._active_subject_raw_path = full_raw_path
         self._active_subject = subject
         self.add_subject(subject)
+        main_window.load_epoch_collections()
         
     def save_experiment_settings(self):
         """

@@ -78,7 +78,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.raw = raw
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
-        keys = map(str, parent.experiment.event_set.keys())
+        keys = map(str, parent.experiment.active_subject._event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event')
         self.used_names = []
@@ -119,7 +119,7 @@ class EventSelectionDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        stim_channel = self.parent.experiment.stim_channel
+        stim_channel = self.parent.experiment.active_subject._stim_channel
         
         collectionName = self.ui.lineEditCollectionName.text()
         collectionName.replace(0, 1, collectionName[0].toUpper())
@@ -177,7 +177,7 @@ class EventSelectionDialog(QtGui.QDialog):
         Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.raw, self.parent.experiment.stim_channel)
+        e = Events(self.raw, self.parent.experiment.active_subject._stim_channel)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
