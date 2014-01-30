@@ -74,13 +74,11 @@ class Experiment(QObject):
         self._workspace = ''
         self._author = 'unknown author'
         self._description = 'no description'
-        self._subjects = [] #dict()
+        self._subjects = []
         self._subject_paths = []
         self._active_subject_path = ''
         self._active_subject_raw_path = ''
         self._active_subject_name = ''
-        #self._working_file_names = []
-        #TODO: ID-juttuja
         self._working_file_names = dict()
         self._active_subject = None
         self.mainWindow = None
@@ -283,8 +281,8 @@ class Experiment(QObject):
     def activate_subject(self, raw_path, subject_name, experiment):
         """
         Method for activating a subject. Creates a new subject object
-        to be processed. Subject.working_file should be the previously
-        created raw file.
+        to be processed if it doesn't exist in the subjects list property.
+        Subject.working_file is the previously created raw file.
         
         Keyword arguments:
         raw_path     -- path of the raw file
@@ -292,37 +290,21 @@ class Experiment(QObject):
         experiment   -- currently active experiment                        
         """
         
-        """
-        # Checks if the subject to be activated already exists in subjects list.
+        # Checks if the subject to be activated already exists in subjects
+        # list.
         # Prevents creating multiple subjects when activating the same subject
         # more than once.
-        
-        JOKO NÄIN (logiikaltaan oikea):
-        
-        if not subject_name in (for subject.name in self._subjects):
-            self.create_subject(subject_name, raw_path)
-        else:
-            self.get_subject(subject_name)
-        """
-        #TAI NÄIN (muuta logiikkaa, ei toimi oikein):
-        
         for subject in self._subjects:
             if subject_name == subject.subject_name:
-                # TODO: tee metodi open_subject, missä asetetaan subjectilta
-                # active_subject, active_subject_name, active_subject_path,
-                # active_subject_raw_path.
-                # open_subject metodissa ei välttämättä tarvitse lukea enää
-                # raakadataa, jos se on jo aikaisemmin luettu. Eikä ko.
-                # metodissa tarvitse enää päivittää working_fileä.
-                # Tästä metodista voidaan sen jälkeen poistaa turhat.
-                self.open_subject(subject)
+                # Raw file is still in memory while processing other
+                # subjects and the file does not need to be opened here.
+                # NOTE! These 4 properties must be set to be able to handle the
+                # activated subject.
+                self._active_subject = subject
+                self._active_subject_name = subject.subject_name
+                self._active_subject_path = subject.subject_path
+                self._active_subject_raw_path = raw_path
                 return
-        # TODO: tee metodi create_subject, missä asetetaan 
-        # active_subject, active_subject_name, active_subject_path,
-        # active_subject_raw_path.
-        # Tästä metodista voidaan sen jälkeen poistaa turhat.
-        self.create_subject()
-        
         subject = Subject(experiment, subject_name)
         f = FileManager()
         # TODO: When opening experiment the right path is saved into the
@@ -337,12 +319,13 @@ class Experiment(QObject):
         if not os.path.isfile(full_raw_path):
             # save_raw method calls create_epochs_directory in experiment
             subject.save_raw(raw_path, subject.subject_path)
-            
             # When activating subject the working_file filename is the one where
             # the file was originally found. This is used to change it to
             # the location of the subject path.
             subject.working_file.info['filename'] = full_raw_path
-        # Uusi koodi:
+        # TODO: working_file_path saattaa olla hyötyä setata subjectille.
+        # Setteri ja getteri puuttuu subject-luokasta.
+        # subject.working_file_path
         subject.find_stim_channel()
         subject.create_event_set()
         self._active_subject_name = subject_name
@@ -352,18 +335,6 @@ class Experiment(QObject):
         self._active_subject_raw_path = full_raw_path
         self._active_subject = subject
         self.add_subject(subject)
-        
-    def open_subject(self, subject):
-        # TODO: tee metodi get_subject, missä asetetaan subjectilta
-        # active_subject, active_subject_name, active_subject_path,
-        # active_subject_raw_path.
-        # get_subject metodissa ei välttämättä tarvitse lukea enää
-        # raakadataa, jos se on jo aikaisemmin luettu. Eikä ko.
-        # metodissa tarvitse enää päivittää working_fileä.
-        # Tästä metodista voidaan sen jälkeen poistaa turhat.
-        
-    def create_subject(self, experiment, subject_name):        
-        
         
     def save_experiment_settings(self):
         """
