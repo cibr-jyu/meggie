@@ -285,6 +285,7 @@ class Experiment(QObject):
         Subject.working_file is the previously created raw file.
         
         Keyword arguments:
+        main_window  -- main window of the application
         raw_path     -- path of the raw file
         subject_name -- name of the subject
         experiment   -- currently active experiment                        
@@ -316,9 +317,7 @@ class Experiment(QObject):
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
         raw = f.open_raw(raw_path)
-        #subject.raw_data = raw
         subject.working_file = raw
-        #raw_file_name = raw_path.split('/')[-1]
         full_raw_path = subject.subject_path + raw_file_name
         # Check if file already exists.
         if not os.path.isfile(full_raw_path):

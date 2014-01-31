@@ -438,15 +438,10 @@ class MainWindow(QtGui.QMainWindow):
     def epochs_added(self, item):
         """A slot for saving epochs from the added QListWidgetItem to a file
         """
-        #if os.path.exists(self.experiment.active_subject_path + '/epochs') is False:
-
-        # TODO: mielummin näin:
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
-            # TODO: Fix activating subject when opening experiment
             self.experiment.active_subject.create_epochs_directory
         fname = str(item.text())
         fpath = self.experiment.active_subject._epochs_directory + fname
-        #fpath = self.experiment.active_subject_path + '/epochs/' + fname
         self.fileManager.save_epoch_item(fpath, item)
         
     @QtCore.pyqtSlot(dict)
@@ -458,12 +453,11 @@ class MainWindow(QtGui.QMainWindow):
                        creating the epochs minus the raw data.
         """
         #Raw data is not present in the dictionary so get it from the
-        #current experiment.
+        #current experiment.active_subject.
         epochs = self.epocher.create_epochs_from_dict(epoch_params,
                                                       self.experiment.\
                                                       active_subject.\
                                                       _working_file)
-        #epoch_params['raw'] = self.experiment.working_file_path
         epoch_params['raw'] = self.experiment.active_subject_raw_path
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])

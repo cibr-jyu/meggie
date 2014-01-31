@@ -77,8 +77,10 @@ class FileManager(QObject):
         try:
             shutil.copyfile(original, target)
         
-        except Error as e:
-            return e
+        # What type of error is expected here? This raises 'NameError:
+        # Global name Error is not defined'.
+        #except Error as e:
+        #    return e
         
         except IOError as e:
             return e
