@@ -1246,36 +1246,6 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.add_tabs()
 
-        """
-        if self.experiment.active_subject_path != '':
-        
-        # If experiment has subjects added the active_subject info will be added
-        # and tabs enabled for processing.
-        # NOTE: There always has to be an active_subject if experiment has at
-        # least one subject added.
-            if (len(self.experiment._subject_paths) > 0):
-                # Reads the raw data info and sets it to the labels
-                # of the Raw tab
-                InfoDialog(self.experiment.active_subject.working_file,
-                            self.ui, False)
-                if self.experiment.active_subject._event_set != None:
-                    self.populate_raw_tab_event_list()
-                
-                # Clear the list and add all subjects to it.
-                self.ui.listWidgetSubjects.clear()
-                for path in self.experiment._subject_paths:
-                    item = QtGui.QListWidgetItem()
-                    # -2 is needed since the path ends with '/'
-                    item.setText(path.split('/')[-2])
-                    self.ui.listWidgetSubjects.addItem(item)
-                if self.ui.tabWidget.count() == 0:
-                    self.add_tabs()
-                self.enable_tabs()
-        else:
-            self.add_tabs()
-            self.ui.listWidgetSubjects.clear()
-        """
-
     def add_tabs(self):
         """
         Method for initializing the tabs.
