@@ -70,6 +70,9 @@ class Experiment(QObject):
         Constructor sets default values for attributes.
         """
         QObject.__init__(self)
+        # TODO: name of the experiment is QString.
+        # Preferably change it to string in createExperimentDialogMain or
+        # in experiment_name.setter.
         self._experiment_name = 'experiment'
         self._workspace = ''
         self._author = 'unknown author'
@@ -96,7 +99,7 @@ class Experiment(QObject):
         """
         Sets the name for the experiment. 
         Keyword arguments:
-        experiment_name    -- the name of the experiment 
+        experiment_name    -- the name of the experiment
         """
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):

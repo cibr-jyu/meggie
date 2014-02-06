@@ -194,8 +194,8 @@ class FilterDialog(QtGui.QDialog):
                 self.messageBox.show()
                 return    
         
-        self.dataToFilter = self.parent.experiment.working_file._data
-        samplerate = self.parent.experiment.working_file.info['sfreq']
+        self.dataToFilter = self.parent.experiment.active_subject._working_file._data
+        samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
         
          # Check if the filter frequency values are sane or not.
         # TODO preferably catch a custom exception from caller.filter
@@ -206,15 +206,15 @@ class FilterDialog(QtGui.QDialog):
                                                  samplerate, paramDict)
         
         # Replace the data in the working file with the filtered data
-        self.parent.experiment.working_file._data = filteredData
+        self.parent.experiment.active_subject._working_file._data = filteredData
         
         # Update the working file info fields with the new values
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-            self.parent.experiment.working_file.info['lowpass'] = \
+            self.parent.experiment.active_subject._working_file.info['lowpass'] = \
                 paramDict['low_cutoff_freq']
         
         if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-            self.parent.experiment.working_file.info['highpass'] = \
+            self.parent.experiment.active_subject._working_file.info['highpass'] = \
                 paramDict['high_cutoff_freq']
                 
         self.close()

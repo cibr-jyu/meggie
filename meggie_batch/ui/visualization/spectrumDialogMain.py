@@ -53,7 +53,7 @@ class SpectrumDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogSpectrum()
         self.ui.setupUi(self)
-        ch_names = self.parent.experiment.working_file.ch_names
+        ch_names = self.parent.experiment.active_subject._working_file.ch_names
         self.ui.comboBoxChannel.addItems(ch_names)
         
     def accept(self):
@@ -61,8 +61,11 @@ class SpectrumDialog(QtGui.QDialog):
         Reads values from the dialog, saves them in a dictionary and initiates
         a caller to actually call the backend.
         """
+        # TODO: muuta
         ch_index = self.ui.comboBoxChannel.currentIndex()
-        raw = self.parent.experiment.working_file
+        raw = self.parent.experiment.active_subject._working_file
         print ch_index
-        self.parent.caller.magnitude_spectrum(raw, ch_index)
+        #self.parent.caller.magnitude_spectrum(raw, ch_index)
+        # TODO: fmin ja fmax valinnat
+        self.parent.experiment.active_subject._working_file.plot_psds()
         self.close()

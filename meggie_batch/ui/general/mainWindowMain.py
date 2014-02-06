@@ -39,6 +39,8 @@ import pickle
 import subprocess
 import glob
 from sets import Set
+
+import shutil
  
 from PyQt4 import QtCore,QtGui
 
@@ -264,6 +266,85 @@ class MainWindow(QtGui.QMainWindow):
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.show()
     
+    def on_pushButtonRemoveSubject_clicked(self, checked=None):
+        """Delete the selected subject item and the files related to it.
+        """
+        if checked is None:
+            return
+        
+        if self.ui.listWidgetSubjects.count() == 0:
+            return
+        
+        elif self.ui.listWidgetSubjects.currentItem() is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No subject selected.')
+            self.messageBox.show()
+            return
+            
+        item_str = self.ui.listWidgetSubjects.currentItem().text()
+            
+        root = self.experiment.active_subject_path
+        message = 'Permanently remove subject and the related files?'
+            
+        reply = QtGui.QMessageBox.question(self, 'delete subject',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.remove_subject(self.ui.listWidgetSubjects.currentItem())
+
+    def remove_subject(self, item):
+        """
+        Removes the subject folder and its contents under experiment tree.
+        Removes the subject information from experiment properties and updates
+        the experiment settings file.
+        Removes the item from the listWidgetSubjects.
+        
+        Keyword arguments:
+        item    -- currently active item on self.ui.listWidgetSubjects
+        """
+        # TODO: Some functionalities could be added in experiment. For
+        # example deactivate_subject -method where default values are give
+        # for active -properties.
+        
+        subject_name = str(item.text())
+        subject_path = str(self.experiment.workspace + '/' + \
+         self.experiment.experiment_name + '/' + subject_name + '/')
+        if (subject_path in path for path in self.experiment.subject_paths):
+            # Need to call _subject_paths to be able to remove.
+            # Doesn't work if call subject_path without _.
+            self.experiment._subject_paths.remove(subject_path)
+            del self.experiment._working_file_names[subject_name]
+        
+        # If subject is not created with the chosen subject list item,
+        # hence activated using activate -button after opening an existing
+        # experiment, only subject_paths list and working_file_names dictionary
+        # needs to be updated.
+        for subject in self.experiment._subjects:
+            if subject.subject_name == subject_name:
+                self.experiment._subjects.remove(subject)
+        
+        # If active subject is removed, the active properties have to be
+        # reseted to default values.    
+        if subject_path == self.experiment.active_subject_path:
+            self.experiment._active_subject_path = ''
+            self.experiment._active_subject_raw_path = ''
+            self.experiment._active_subject_name = ''
+            self.experiment._active_subject = None
+        shutil.rmtree(subject_path)
+        row = self.ui.listWidgetSubjects.row(item)
+        self.ui.listWidgetSubjects.takeItem(row)
+        self.experiment.update_experiment_settings()
+        self._initialize_ui()
+        
+        # TODO: Kun experiment ladataan jossa on subject patheja mutta ei
+        # aktiivista subjectia pitää tehdä jotain. Esim. resetoidaan tilanne
+        # samanlaiseksi kuin experimentissä, johon ei ole lisätty vielä yhtään
+        # subjectia, ja vasta aktivoinnin jälkeen voidaan edetä muille tabeille.
+        
+
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
         Show / Hide console window.
@@ -483,11 +564,13 @@ class MainWindow(QtGui.QMainWindow):
         """
         Opens the active subject of the experiment.
         """
-        if len(self.experiment._subject_paths) > 0:
-                raw_path = self.experiment.active_subject_raw_path
-                subject_name = self.experiment.active_subject_name
-                self.experiment.activate_subject(self, raw_path, subject_name,
-                                                 self.experiment)
+        
+        if self.experiment.active_subject_path != '':
+            if len(self.experiment._subject_paths) > 0:
+                    raw_path = self.experiment.active_subject_raw_path
+                    subject_name = self.experiment.active_subject_name
+                    self.experiment.activate_subject(self, raw_path, subject_name,
+                                                     self.experiment)
         
     def load_epoch_collections(self):
         """Load epoch collections from a folder.
@@ -497,7 +580,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if len(self.experiment._subject_paths) == 0:
             return
-        #if not os.path.exists(self.experiment._active_subject_path + '/epochs/'):
+        
+        if self.experiment.active_subject_path == '':
+            return
 
         # TODO: mielummin näin:
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
@@ -737,6 +822,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if len(self.experiment._subject_paths) == 0:
             return
+        if self.experiment.active_subject_path == '':
+            return
         if not os.path.exists(self.experiment.active_subject._epochs_directory + 'average/'):
             self.evokedList.clear()
             return  
@@ -844,15 +931,20 @@ class MainWindow(QtGui.QMainWindow):
         Call mne_browse_raw.
         """
         if checked is None: return
+        # TODO: change scales ja muita optioita
+        self.experiment.active_subject._working_file.plot()
+        pl.show()
+        """
         try:
-            self.caller.call_mne_browse_raw(self.experiment.working_file.\
+            self.caller.call_mne_browse_raw(self.experiment.active_subject._working_file.\
                                             info.get('filename'))
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return        
-    
+        """
+        
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
         Call Elekta's MaxFilter.
@@ -1101,8 +1193,9 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
         
         # QLabel created on __init__ can't take normal string objects.
-        if len(self.experiment._subjects) == 0:
-            self.statusLabel.setText(QtCore.QString("Add subjects before " + 
+        if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
+            self.statusLabel.setText(QtCore.QString("Add or activate" + \
+                                                    " subjects before " + \
                                                     "continuing."))
         else:
             """
@@ -1124,37 +1217,64 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserExperimentDescription.\
         setText(self.experiment.description)
         
+        
+        # Clear the list and add all subjects to it.
+        self.ui.listWidgetSubjects.clear()
+        
         # If experiment has subjects added the active_subject info will be added
         # and tabs enabled for processing.
-        # NOTE: There always has to be an active_subject if experiment has at
-        # least one subject added.
-        """
-        if self.ui.tabWidget.count() < 1:
-            self.add_tabs() # maybe a useless method
-        """
         if (len(self.experiment._subject_paths) > 0):
-            # Reads the raw data info and sets it to the labels
-            # of the Raw tab
-            InfoDialog(self.experiment.active_subject.working_file,
-                        self.ui, False)
-            if self.experiment.active_subject._event_set != None:
-                self.populate_raw_tab_event_list()
-            
-            # Clear the list and add all subjects to it.
-            self.ui.listWidgetSubjects.clear()
             for path in self.experiment._subject_paths:
                 item = QtGui.QListWidgetItem()
                 # -2 is needed since the path ends with '/'
                 item.setText(path.split('/')[-2])
                 self.ui.listWidgetSubjects.addItem(item)
-                #item.setData(32, evoked)
-                #item.setData(33, category)
-            if self.ui.tabWidget.count() == 0:
+            
+            # In case trying to open experiment that includes subjects but
+            # there is no activated subject. Happens if you delete currently
+            # active subject and try to open that experiment again.
+            if self.experiment.active_subject_path != '':
+                InfoDialog(self.experiment.active_subject.working_file,
+                            self.ui, False)
+                if self.experiment.active_subject._event_set != None:
+                    self.populate_raw_tab_event_list()
+                if self.ui.tabWidget.count() == 0:
+                    self.add_tabs()
+                self.enable_tabs()
+            else:
                 self.add_tabs()
-            self.enable_tabs()
+        else:
+            self.add_tabs()
+
+        """
+        if self.experiment.active_subject_path != '':
+        
+        # If experiment has subjects added the active_subject info will be added
+        # and tabs enabled for processing.
+        # NOTE: There always has to be an active_subject if experiment has at
+        # least one subject added.
+            if (len(self.experiment._subject_paths) > 0):
+                # Reads the raw data info and sets it to the labels
+                # of the Raw tab
+                InfoDialog(self.experiment.active_subject.working_file,
+                            self.ui, False)
+                if self.experiment.active_subject._event_set != None:
+                    self.populate_raw_tab_event_list()
+                
+                # Clear the list and add all subjects to it.
+                self.ui.listWidgetSubjects.clear()
+                for path in self.experiment._subject_paths:
+                    item = QtGui.QListWidgetItem()
+                    # -2 is needed since the path ends with '/'
+                    item.setText(path.split('/')[-2])
+                    self.ui.listWidgetSubjects.addItem(item)
+                if self.ui.tabWidget.count() == 0:
+                    self.add_tabs()
+                self.enable_tabs()
         else:
             self.add_tabs()
             self.ui.listWidgetSubjects.clear()
+        """
 
     def add_tabs(self):
         """
@@ -1170,7 +1290,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # If no subjects added to the experiment, there is no reason to enable
         # more tabs to confuse the user.
-        if len(self.experiment._subject_paths) == 0:
+        if len(self.experiment._subject_paths) == 0 or \
+        self.experiment.active_subject_path == '':
             self.ui.tabWidget.setTabEnabled(2,False)
             self.ui.tabWidget.setTabEnabled(3,False)
             self.ui.tabWidget.setTabEnabled(4,False)

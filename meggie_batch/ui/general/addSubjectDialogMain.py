@@ -87,7 +87,7 @@ class AddSubjectDialog(QtGui.QDialog):
                                                 subject_name, \
                                                 self.experiment)
         self.parent.experiment.update_experiment_settings()
-        self.parent.enable_tabs()
+        #self.parent.enable_tabs()
         self.parent._initialize_ui()
         self.close()
         
