@@ -1161,37 +1161,57 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
+        
+        
+        # TODO: if self.experiment.active_subject_path = '' the enablers and
+        # checkers are not working correctly.
         path = self.experiment.active_subject_path
-        #Check whether ECG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve*'))
-        if len(files) > 1:
-            self.ui.pushButtonApplyECG.setEnabled(True)
-            self.ui.checkBoxECGComputed.setChecked(True)
-        #Check whether EOG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path+'*_eog_proj*'))
-        files += filter(os.path.isfile, glob.glob(path+'*_eog-eve*'))
-        if len(files) > 1:
-            self.ui.pushButtonApplyEOG.setEnabled(True)
-            self.ui.checkBoxEOGComputed.setChecked(True)
         
-        #Check whether ECG projections are applied
-        files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
-        if len(files) > 0:
-            self.ui.checkBoxECGApplied.setChecked(True)
-        
-        #Check whether EOG projections are applied
-        files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
-        if len(files) > 0:
-            self.ui.checkBoxEOGApplied.setChecked(True)
-        
-        files = filter(os.path.isfile, glob.glob(path + '*sss*'))
-        if len(files) > 0:
-            self.ui.checkBoxMaxFilterComputed.setChecked(True)
-            self.ui.checkBoxMaxFilterApplied.setChecked(True)
-        
+        # To make sure that glob is not using path = '' as a root folder.
+        if path == '' and len(self.experiment._subject_paths) > 0:
+            a = 0 # just a useless code to prevent error for doing nothing..
+        else:
+            #Check whether ECG projections are calculated
+            files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve*'))
+            if len(files) > 1:
+                self.ui.pushButtonApplyECG.setEnabled(True)
+                self.ui.checkBoxECGComputed.setChecked(True)
+            else:    
+                self.ui.pushButtonApplyECG.setEnabled(False)
+                self.ui.checkBoxECGComputed.setChecked(False)
+            
+            #Check whether EOG projections are calculated
+            files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'*_eog_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'*_eog-eve*'))
+            if len(files) > 1:
+                self.ui.pushButtonApplyEOG.setEnabled(True)
+                self.ui.checkBoxEOGComputed.setChecked(True)
+            else:
+                self.ui.pushButtonApplyEOG.setEnabled(False)
+                self.ui.checkBoxEOGComputed.setChecked(False)
+            #Check whether ECG projections are applied
+            files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
+            if len(files) > 0:
+                self.ui.checkBoxECGApplied.setChecked(True)
+            
+            #Check whether EOG projections are applied
+            files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
+            if len(files) > 0:
+                self.ui.checkBoxEOGApplied.setChecked(True)
+            else:
+                self.ui.checkBoxEOGApplied.setChecked(False)
+            
+            files = filter(os.path.isfile, glob.glob(path + '*sss*'))
+            if len(files) > 0:
+                self.ui.checkBoxMaxFilterComputed.setChecked(True)
+                self.ui.checkBoxMaxFilterApplied.setChecked(True)
+            else:
+                self.ui.checkBoxMaxFilterComputed.setChecked(False)
+                self.ui.checkBoxMaxFilterApplied.setChecked(False)
+            
         # QLabel created on __init__ can't take normal string objects.
         if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
             self.statusLabel.setText(QtCore.QString("Add or activate" + \
