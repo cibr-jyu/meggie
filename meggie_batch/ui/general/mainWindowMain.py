@@ -339,12 +339,6 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment.update_experiment_settings()
         self._initialize_ui()
         
-        # TODO: Kun experiment ladataan jossa on subject patheja mutta ei
-        # aktiivista subjectia pitää tehdä jotain. Esim. resetoidaan tilanne
-        # samanlaiseksi kuin experimentissä, johon ei ole lisätty vielä yhtään
-        # subjectia, ja vasta aktivoinnin jälkeen voidaan edetä muille tabeille.
-        
-
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
         Show / Hide console window.
@@ -564,7 +558,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Opens the active subject of the experiment.
         """
-        
         if self.experiment.active_subject_path != '':
             if len(self.experiment._subject_paths) > 0:
                     raw_path = self.experiment.active_subject_raw_path
@@ -580,13 +573,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if len(self.experiment._subject_paths) == 0:
             return
-        
         if self.experiment.active_subject_path == '':
             return
-
-        # TODO: mielummin näin:
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
-            # TODO: Fix activating subject when opening experiment
             self.experiment.active_subject.create_epochs_directory
             return
         self.epochList.clearItems()
