@@ -104,7 +104,7 @@ class Experiment(QObject):
         """
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):
-                self._experiment_name = experiment_name
+                self._experiment_name = str(experiment_name)
             else:
                 self.messageBox = messageBox.AppForm()
                 self.messageBox.labelException.setText \
@@ -271,8 +271,9 @@ class Experiment(QObject):
         main_window -- MainWindow object
         """
         subject_name = str(item.text())
-        subject_path = str(self.workspace + '/' + \
-         self.experiment_name + '/' + subject_name + '/')
+        #subject_path = str(self.workspace + '/' + \
+        # self.experiment_name + '/' + subject_name + '/')
+        subject_path = os.path.join(self.workspace, self.experiment_name, subject_name)
         if (subject_path in path for path in self.subject_paths):
             # Need to call _subject_paths to be able to remove.
             # Doesn't work if call subject_path without _.
@@ -294,7 +295,12 @@ class Experiment(QObject):
             self._active_subject_raw_path = ''
             self._active_subject_name = ''
             self._active_subject = None
-        shutil.rmtree(subject_path)
+        
+        try:
+            shutil.rmtree(subject_path)
+        except OSError:
+            raise Exception('Could not remove the contents of the subject' + \
+                            ' folder.')
         row = main_window.ui.listWidgetSubjects.row(item)
         self.update_experiment_settings()
         main_window.ui.listWidgetSubjects.takeItem(row)
@@ -351,8 +357,9 @@ class Experiment(QObject):
                 self._active_subject = subject
                 self._active_subject_name = subject.subject_name
                 self._active_subject_path = subject.subject_path
-                full_raw_path = subject.subject_path + raw_file_name
-                self._active_subject_raw_path = full_raw_path
+                complete_raw_path = os.path.join(subject.subject_path, \
+                                             raw_file_name)
+                self._active_subject_raw_path = complete_raw_path
                 main_window.load_epoch_collections()
                 main_window.load_evoked_collections()
                 return
@@ -363,15 +370,15 @@ class Experiment(QObject):
         # one where the original raw was found.
         raw = f.open_raw(raw_path)
         subject.working_file = raw
-        full_raw_path = subject.subject_path + raw_file_name
+        complete_raw_path = os.path.join(subject.subject_path, raw_file_name)
         # Check if file already exists.
-        if not os.path.isfile(full_raw_path):
+        if not os.path.isfile(complete_raw_path):
             # save_raw method calls create_epochs_directory in experiment
             subject.save_raw(raw_path, subject.subject_path)
             # When activating subject the working_file filename is the one where
             # the file was originally found. This is used to change it to
             # the location of the subject path.
-            subject.working_file.info['filename'] = full_raw_path
+            subject.working_file.info['filename'] = complete_raw_path
         # TODO: working_file_path saattaa olla hyötyä setata subjectille.
         # Setteri ja getteri puuttuu subject-luokasta.
         # subject.working_file_path
@@ -381,7 +388,7 @@ class Experiment(QObject):
         self._active_subject_path = subject.subject_path
         self.update_working_file(raw_path)
         self.add_subject_path(subject.subject_path)
-        self._active_subject_raw_path = full_raw_path
+        self._active_subject_raw_path = complete_raw_path
         self._active_subject = subject
         self.add_subject(subject)
         main_window.load_epoch_collections()
@@ -393,7 +400,8 @@ class Experiment(QObject):
         the experiment directory structure. Please note that loading is done
         in the mainWindow class. 
         """
-        experiment_directory = self._workspace + '/' + self._experiment_name
+        experiment_directory = os.path.join(self._workspace, \
+                                            self._experiment_name)
         try:
             os.mkdir(experiment_directory)
             print 'Creating experiment settings ...'
@@ -406,7 +414,7 @@ class Experiment(QObject):
         settingsFileName = str(self._experiment_name + '.pro')
         
         # Actually a file object
-        settingsFile = open(experiment_directory + '/' + settingsFileName, 'wb')
+        settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
@@ -419,9 +427,10 @@ class Experiment(QObject):
         """
         # TODO: turha metodi, tee tarkistus save_experiment_settings metodissa,
         # sille onko kyseistä kansiota jo olemassa
-        experiment_directory = self._workspace + '/' + self._experiment_name
+        experiment_directory = os.path.join(self._workspace, \
+                                            self._experiment_name)
         settingsFileName = str(self._experiment_name + '.pro')
-        settingsFile = open(experiment_directory + '/' + settingsFileName, 'wb')
+        settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
         pickle.dump(self, settingsFile, 2)
         settingsFile.close()
 
@@ -451,7 +460,7 @@ class Experiment(QObject):
                             determining the parameter file name.
         dic              -- dictionary including commands.
         """
-        paramfilename = self.active_subject_path + operation + '.param'
+        paramfilename = os.path.join(self.active_subject_path, operation + '.param')
         
         with open(paramfilename, 'wb') as paramfullname:
             print 'writing param file'
@@ -476,7 +485,7 @@ class Experiment(QObject):
         
         # Reading parameter file.
         paramdirectory = self.active_subject_path 
-        paramfilefullpath = paramdirectory + operation + '.param'
+        paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
         
         try:
             with open(paramfilefullpath, 'rb') as paramfile:

@@ -63,9 +63,11 @@ class Subject(QObject):
         self._experiment = experiment
         # experiment_name is saved as QString and it has to be converted to
         # string to be able to do basic string operations for subject_path.
-        self._subject_path = self._experiment.workspace + '/' + \
-        str(self._experiment.experiment_name) + '/' + self._subject_name + '/'
-        self._epochs_directory = self._subject_path + 'epochs/'
+        
+        self._subject_path = os.path.join(self._experiment.workspace,
+                                          self._experiment.experiment_name,
+                                          self._subject_name)
+        self._epochs_directory = os.path.join(self._subject_path, 'epochs')
         
     @property
     def raw_data(self):
@@ -166,13 +168,11 @@ class Subject(QObject):
             raise Exception('No rights to save to the chosen path or' + 
                             ' subject/experiment name already exists')
             return
-        
         if os.path.exists(path):
-            
             # TODO: Check if the file is saved with .fif suffix,
             # if not, save the file with .fif suffix.
-            mne.fiff.Raw.save(self._working_file, path + '/' + \
-                              str(os.path.basename(file_name)))
+            mne.fiff.Raw.save(self._working_file, os.path.join(path, \
+                              str(os.path.basename(file_name))))
             self.create_epochs_directory()
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
@@ -182,7 +182,6 @@ class Subject(QObject):
         """Create a directory for saving epochs under the subject directory.
         """
         try:
-            #self.epochs_directory = self.subject_path + 'epochs/'
             os.mkdir(self._epochs_directory)
         except OSError:
             raise OSError('no rights to save to the chosen path')                

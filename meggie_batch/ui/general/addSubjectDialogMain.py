@@ -72,6 +72,8 @@ class AddSubjectDialog(QtGui.QDialog):
         subject_name_QString = QtCore.QString(subject_name)
         
         # Check if the subject is already added to the experiment.
+        # TODO: If the subject is already added, add a running index after
+        # the name. See: eventSelectionDialogMain set_event_name method.
         if len(self.parent.ui.listWidgetSubjects.
                findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
             self.messageBox = messageBox.AppForm()

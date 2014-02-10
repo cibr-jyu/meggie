@@ -170,30 +170,27 @@ class MainWindow(QtGui.QMainWindow):
         
         Return True if operation was successful, else return False.
         """
-
-                
-        if self.fileManager.delete_file_at\
-        (self.experiment.active_subject._epochs_directory,
-          str(item.text()) + '.fif'):
+        epochs_path_no_suffix = os.path.join(self.experiment.active_subject.\
+                                   _epochs_directory, str(item.text()))
+        epochs_path_fif = epochs_path_no_suffix + '.fif'
+        epochs_path_param = epochs_path_no_suffix + '.param'
+        epochs_path_csv = epochs_path_no_suffix + '.csv'
         
-            if os.path.exists(self.experiment.active_subject._epochs_directory +
-                              str(item.text()) + '.param'):
-                self.fileManager.delete_file_at\
-                (self.experiment.active_subject._epochs_directory,
-                  str(item.text()) + '.param')
-                
-            if os.path.exists(self.experiment.active_subject._epochs_directory +
-                              str(item.text()) + '.csv'):
-                self.fileManager.delete_file_at\
-                (self.experiment.active_subject._epochs_directory,
-                  str(item.text()) + '.csv')
-                    
+        if self.fileManager.delete_file_at(self.experiment.active_subject.\
+                                           _epochs_directory, \
+                                           str(item.text()) + '.fif'):
+            if os.path.exists(epochs_path_param):
+                self.fileManager.delete_file_at(self.experiment.active_subject.\
+                                                _epochs_directory, \
+                                                str(item.text()) + '.param')
+            if os.path.exists(epochs_path_csv):
+                self.fileManager.delete_file_at(self.experiment.active_subject.\
+                                                _epochs_directory, \
+                                                str(item.text()) + '.csv')
             self.epochList.remove_item(item)
             return True
-            
         else:
             return False
-         
 
     def on_actionQuit_triggered(self, checked=None):
         """
@@ -234,7 +231,8 @@ class MainWindow(QtGui.QMainWindow):
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select _experiment directory"))
         if path == '': return
-        fname = path + '/' + path.split('/')[-1] + '.pro'
+        
+        fname = os.path.join(path, path.split('/')[-1] + '.pro')
         # TODO needs exception checking for corrupt/wrong type of file
         # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
@@ -322,16 +320,6 @@ class MainWindow(QtGui.QMainWindow):
             ' events\n'
         self.ui.textBrowserEvents.setText(events_string)
         
-        
-        
-        """
-        for key, value in events.iteritems():
-            item = QtGui.QListWidgetItem()
-            item.setText('Trigger ' + str(key) + ', ' + str(value) +
-                        ' events')
-            self.ui.listWidget.addItem(item)
-        """
-        
     def show_epoch_collection_parameters(self, item):
         """
         Sets parameters from the currently chosen epochs.
@@ -371,15 +359,7 @@ class MainWindow(QtGui.QMainWindow):
             str(event_counts[str(value)]) + ' events')
             
             self.epochList.ui.listWidgetEvents.addItem(item)
-            """
-            categories += key + ': ID ' + str(value) + ', ' + \
-            str(event_counts[str(value)]) + ' events\n'
-            """
-        
-        
-        
-        
-        
+            
         # TODO: create category items to add on the listWidgetEvents widget. 
         #self.epochList.ui.listWidgetEvents.setText(categories)
         
@@ -473,7 +453,7 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
         fname = str(item.text())
-        fpath = self.experiment.active_subject._epochs_directory + fname
+        fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         self.fileManager.save_epoch_item(fpath, item)
         
     @QtCore.pyqtSlot(dict)
@@ -536,7 +516,6 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.active_subject.create_epochs_directory
             return
         self.epochList.clearItems()
-        path = self.experiment._active_subject_path + '/epochs/'
         path = self.experiment.active_subject._epochs_directory
         files = os.listdir(path)
         for file in files:
@@ -611,9 +590,10 @@ class MainWindow(QtGui.QMainWindow):
             epochs = self.epochList.currentItem().data(32).toPyObject()
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
-        self.fileManager.copy(self.experiment.active_subject._epochs_directory +
+        self.fileManager.copy(os.path.join(self.experiment.active_subject.\
+                                           _epochs_directory,
                               str(self.epochList.currentItem().text()) +
-                              '.csv', fname + '.csv')
+                              '.csv'), fname + '.csv')
 
     def on_actionAbout_triggered(self, checked=None):
         """
@@ -724,7 +704,7 @@ class MainWindow(QtGui.QMainWindow):
         
         
         evoked_collection_name = str(item.text())
-        saveFolder = self.experiment.active_subject._epochs_directory + 'average/'
+        saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         if os.path.exists(saveFolder) is False:
             try:
                 os.mkdir(saveFolder)
@@ -734,7 +714,7 @@ class MainWindow(QtGui.QMainWindow):
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_collection_name + ' ...'
-            fiff.write_evoked(saveFolder + evoked_collection_name, evokeds)
+            fiff.write_evoked(os.path.join(saveFolder, evoked_collection_name), evokeds)
             print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
@@ -747,11 +727,12 @@ class MainWindow(QtGui.QMainWindow):
         
         if checked is None: return
         
-        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Load evokeds',
+        fname = str(QtGui.QFileDialog.\
+                    getOpenFileName(self, 'Load evokeds', os.path.join(\
                                                       self.experiment.\
                                                       active_subject.\
-                                                      _epochs_directory + \
-                                                      'average/'))
+                                                      _epochs_directory, \
+                                                      'average')))
         if fname == '': return
         if not os.path.isfile(fname): return
         
@@ -770,12 +751,13 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.experiment.active_subject_path == '':
             return
-        if not os.path.exists(self.experiment.active_subject._epochs_directory + 'average/'):
+        if not os.path.exists(os.path.join(self.experiment.active_subject.\
+                                           _epochs_directory, 'average')):
             self.evokedList.clear()
             return  
         self.evokedList.clear()
         #self.epochList.clearItems()
-        path = self.experiment.active_subject._epochs_directory + 'average/'
+        path = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
@@ -843,7 +825,7 @@ class MainWindow(QtGui.QMainWindow):
             
         item_str = self.evokedList.currentItem().text()
             
-        root = self.experiment.active_subject._epochs_directory + 'average/'
+        root = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         message = 'Permanently remove evokeds and the related files?'
             
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
@@ -1118,9 +1100,9 @@ class MainWindow(QtGui.QMainWindow):
             a = 0 # just a useless code to prevent error for doing nothing..
         else:
             #Check whether ECG projections are calculated
-            files =  filter(os.path.isfile, glob.glob(path+'*_ecg_avg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'*_ecg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'*_ecg-eve*'))
+            files =  filter(os.path.isfile, glob.glob(path+'/*_ecg_avg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'/*_ecg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'/*_ecg-eve*'))
             if len(files) > 1:
                 self.ui.pushButtonApplyECG.setEnabled(True)
                 self.ui.checkBoxECGComputed.setChecked(True)
@@ -1129,9 +1111,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.checkBoxECGComputed.setChecked(False)
             
             #Check whether EOG projections are calculated
-            files =  filter(os.path.isfile, glob.glob(path+'*_eog_avg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'*_eog_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'*_eog-eve*'))
+            files =  filter(os.path.isfile, glob.glob(path+'/*_eog_avg_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'/*_eog_proj*'))
+            files += filter(os.path.isfile, glob.glob(path+'/*_eog-eve*'))
             if len(files) > 1:
                 self.ui.pushButtonApplyEOG.setEnabled(True)
                 self.ui.checkBoxEOGComputed.setChecked(True)
@@ -1139,18 +1121,18 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.pushButtonApplyEOG.setEnabled(False)
                 self.ui.checkBoxEOGComputed.setChecked(False)
             #Check whether ECG projections are applied
-            files = filter(os.path.isfile, glob.glob(path + '*ecg_applied*'))
+            files = filter(os.path.isfile, glob.glob(path + '/*ecg_applied*'))
             if len(files) > 0:
                 self.ui.checkBoxECGApplied.setChecked(True)
             
             #Check whether EOG projections are applied
-            files = filter(os.path.isfile, glob.glob(path + '*eog_applied*'))
+            files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
             if len(files) > 0:
                 self.ui.checkBoxEOGApplied.setChecked(True)
             else:
                 self.ui.checkBoxEOGApplied.setChecked(False)
             
-            files = filter(os.path.isfile, glob.glob(path + '*sss*'))
+            files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
             if len(files) > 0:
                 self.ui.checkBoxMaxFilterComputed.setChecked(True)
                 self.ui.checkBoxMaxFilterApplied.setChecked(True)
@@ -1192,8 +1174,8 @@ class MainWindow(QtGui.QMainWindow):
         if (len(self.experiment._subject_paths) > 0):
             for path in self.experiment._subject_paths:
                 item = QtGui.QListWidgetItem()
-                # -2 is needed since the path ends with '/'
-                item.setText(path.split('/')[-2])
+                # -1 is the index for the subject name
+                item.setText(path.split('/')[-1])
                 self.ui.listWidgetSubjects.addItem(item)
             
             # In case trying to open experiment that includes subjects but

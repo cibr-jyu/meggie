@@ -97,6 +97,8 @@ class Caller(object):
         """
         if os.environ.get('MNE_ROOT') is None:
             raise Exception('Environment variable MNE_ROOT not set.')
+        
+        # TODO: os.path.join
         proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
                                     filename.rsplit('/', 1)[0] + ' --raw ' +
                                     filename,
@@ -312,13 +314,15 @@ class Caller(object):
         # If there already is a file with eog projections applied on it, apply
         # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
-                      glob.glob(directory + '*-eog_applied.fif'))) > 0:
-            fname = glob.glob(directory + '*-eog_applied.fif')[0]
+                      glob.glob(directory + '/*-eog_applied.fif'))) > 0:
+            fname = glob.glob(directory + '/*-eog_applied.fif')[0]
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '*_ecg_proj.fif'))
-        #Checks if there is exactly one projection file
+                           glob.glob(directory + '/*_ecg_proj.fif'))
+        #Checks if there is exactly one projection file.
+        # TODO: If there is more than one projection file, which one should
+        # be added? The newest perhaps.
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
@@ -330,6 +334,21 @@ class Caller(object):
             appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
+        else:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('There is more than one' + \
+                                                   ' ECG projection file' + \
+                                                   ' to apply. Remove all' + \
+                                                   ' others but the one' + \
+                                                   ' you want to apply.\n' + \
+                                                   'Projection files are' + \
+                                                   ' found under subject' + \
+                                                   ' folder: ' + \
+                                                   self.parent.experiment.\
+                                                   active_subject.\
+                                                   _subject_path)
+            self.messageBox.show()
+            return
         self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
         
@@ -341,13 +360,15 @@ class Caller(object):
         directory     -- Directory of the projection file
         """
         if len(filter(os.path.isfile, 
-                      glob.glob(directory + '*-ecg_applied.fif'))) > 0:
-            fname = glob.glob(directory + '*-ecg_applied.fif')[0]
+                      glob.glob(directory + '/*-ecg_applied.fif'))) > 0:
+            fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '*_eog_proj.fif'))
-        # Checks if there is exactly one projection file
+                           glob.glob(directory + '/*_eog_proj.fif'))
+        #Checks if there is exactly one projection file.
+        # TODO: If there is more than one projection file, which one should
+        # be added? The newest perhaps.
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
@@ -359,6 +380,21 @@ class Caller(object):
             appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
+        else:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('There is more than one' + \
+                                                   ' EOG projection file' + \
+                                                   ' to apply. Remove all' + \
+                                                   ' others but the one' + \
+                                                   ' you want to apply.\n' + \
+                                                   'Projection files are' + \
+                                                   ' found under subject' + \
+                                                   ' folder: ' + \
+                                                   self.parent.experiment.\
+                                                   active_subject.\
+                                                   _subject_path)
+            self.messageBox.show()
+            return
         self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
     
@@ -382,7 +418,7 @@ class Caller(object):
         """
         evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
-        saveFolder = self.parent.experiment.active_subject._epochs_directory + 'average/'
+        saveFolder = os.path.join(self.parent.experiment.active_subject._epochs_directory, 'average')
         
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
@@ -805,10 +841,11 @@ class Caller(object):
         sizex = events.shape[0]
         sizey = events.shape[1]
                 
-        path_to_save = self.parent.experiment.subject_directory
+        #path_to_save = self.parent.experiment.subject_directory
+        path_to_save = self.parent.experiment.active_subject._subject_path
         
         # Saves events to csv file for easier modification with text editors.
-        csv_file = open(path_to_save + '/events.csv', 'w')
+        csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
         csv_file_writer = csv.writer(csv_file)
         csv_file_writer.writerows(events)
         csv_file.close()
@@ -816,7 +853,7 @@ class Caller(object):
         for i in range(sizex):
             for j in range(sizey):
                 ws.write(i, j, events[i][j], styleNumber)
-        wbs.save(path_to_save + '/events.xls')
+        wbs.save(os.path.join(path_to_save, 'events.xls'))
         #TODO: muuta filename kayttajan maarittelyn mukaiseksi
 
     def read_events(self, filename):

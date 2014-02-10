@@ -163,12 +163,19 @@ class FileManager(QObject):
         """
         
         try:
-            os.remove(folder + files)
+            # TODO: using os.path.join assumes strings being used
+            # when files consist QStrings
+            # os.remove(os.path.join(folder, files))
+            
+            os.remove(folder + '/' + files)
             
         except OSError as e:
             for file in files:
                 try:
-                    os.remove(folder + file)
+                    # TODO: using os.path.join assumes strings being used
+                    # when files consist QStrings
+                    # os.remove(os.path.join(folder, file))
+                    os.remove(folder + '/' + file)
         
                 except OSError as e:
                     return False
@@ -192,20 +199,23 @@ class FileManager(QObject):
         """
         item = QtGui.QListWidgetItem(name)
         try:
-            epochs = mne.read_epochs(folder + name)
+            epochs = mne.read_epochs(os.path.join(folder, name))
             item.setData(32, epochs)
             
         except Exception:
             try:
-                epochs = mne.read_epochs(folder + name + '.fif')
+                epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
                 item.setData(32, epochs)
             
-            except Exception as e:
-                print str(e)
+            except IOError:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.\
+                setText('Reading from selected folder is not allowed.')
+                self.messageBox.show()
                 return
         
         try:
-            parameters = self.unpickle(folder + name + '.param')
+            parameters = self.unpickle(os.path.join(folder, name + '.param'))
             
         except IOError:
             return item
@@ -279,8 +289,8 @@ class FileManager(QObject):
         
         try:
             
-                while mne.fiff.Evoked(folder + file, setno=i) is not None:
-                    evoked = mne.fiff.Evoked(folder + file, setno=i)
+                while mne.fiff.Evoked(os.path.join(folder, file), setno=i) is not None:
+                    evoked = mne.fiff.Evoked(os.path.join(folder, file), setno=i)
                     event_name = evoked.comment   #.split('_', 1)
                     if i < 5:
                         category[event_name] = i + 1
@@ -326,7 +336,7 @@ class FileManager(QObject):
                         """
         except ValueError:
             try:
-                if mne.fiff.Evoked(folder + file, setno=0) is not None:
+                if mne.fiff.Evoked(os.path.join(folder, file), setno=0) is not None:
             #if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
                     item.setData(32, evokeds)
                     item.setData(33, category)
