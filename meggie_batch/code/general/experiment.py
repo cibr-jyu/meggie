@@ -35,6 +35,7 @@ Created on Oct 22, 2013
 import os, glob
 import re
 import csv
+import shutil
 
 from workspace import Workspace
 from fileManager import FileManager
@@ -257,6 +258,51 @@ class Experiment(QObject):
         #dictionary example:
         #self._subjects[subject.subject_name] = subject 
         self._subjects.append(subject)
+
+    def remove_subject(self, item, main_window):
+        """
+        Removes the subject folder and its contents under experiment tree.
+        Removes the subject information from experiment properties and updates
+        the experiment settings file.
+        Removes the item from the listWidgetSubjects.
+        
+        Keyword arguments:
+        item        -- currently active item on self.ui.listWidgetSubjects
+        main_window -- MainWindow object
+        """
+        # TODO: Some functionalities could be added in experiment. For
+        # example deactivate_subject -method where default values are give
+        # for active -properties.
+        
+        subject_name = str(item.text())
+        subject_path = str(self.workspace + '/' + \
+         self.experiment_name + '/' + subject_name + '/')
+        if (subject_path in path for path in self.subject_paths):
+            # Need to call _subject_paths to be able to remove.
+            # Doesn't work if call subject_path without _.
+            self._subject_paths.remove(subject_path)
+            del self._working_file_names[subject_name]
+        
+        # If subject is not created with the chosen subject list item,
+        # hence activated using activate -button after opening an existing
+        # experiment, only subject_paths list and working_file_names dictionary
+        # needs to be updated.
+        for subject in self._subjects:
+            if subject.subject_name == subject_name:
+                self._subjects.remove(subject)
+        
+        # If active subject is removed, the active properties have to be
+        # reseted to default values.    
+        if subject_path == self.active_subject_path:
+            self._active_subject_path = ''
+            self._active_subject_raw_path = ''
+            self._active_subject_name = ''
+            self._active_subject = None
+        shutil.rmtree(subject_path)
+        row = main_window.ui.listWidgetSubjects.row(item)
+        self.update_experiment_settings()
+        main_window.ui.listWidgetSubjects.takeItem(row)
+        main_window._initialize_ui()
 
     def add_subject_path(self, subject_path):
         """

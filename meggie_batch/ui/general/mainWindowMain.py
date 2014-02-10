@@ -293,10 +293,12 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            self.remove_subject(self.ui.listWidgetSubjects.currentItem())
-
+            #self.remove_subject(self.ui.listWidgetSubjects.currentItem())
+            self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
+    
+    """
     def remove_subject(self, item):
-        """
+        
         Removes the subject folder and its contents under experiment tree.
         Removes the subject information from experiment properties and updates
         the experiment settings file.
@@ -304,6 +306,7 @@ class MainWindow(QtGui.QMainWindow):
         
         Keyword arguments:
         item    -- currently active item on self.ui.listWidgetSubjects
+        """
         """
         # TODO: Some functionalities could be added in experiment. For
         # example deactivate_subject -method where default values are give
@@ -338,6 +341,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetSubjects.takeItem(row)
         self.experiment.update_experiment_settings()
         self._initialize_ui()
+    """
         
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
