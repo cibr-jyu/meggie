@@ -296,53 +296,6 @@ class MainWindow(QtGui.QMainWindow):
             #self.remove_subject(self.ui.listWidgetSubjects.currentItem())
             self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
     
-    """
-    def remove_subject(self, item):
-        
-        Removes the subject folder and its contents under experiment tree.
-        Removes the subject information from experiment properties and updates
-        the experiment settings file.
-        Removes the item from the listWidgetSubjects.
-        
-        Keyword arguments:
-        item    -- currently active item on self.ui.listWidgetSubjects
-        """
-        """
-        # TODO: Some functionalities could be added in experiment. For
-        # example deactivate_subject -method where default values are give
-        # for active -properties.
-        
-        subject_name = str(item.text())
-        subject_path = str(self.experiment.workspace + '/' + \
-         self.experiment.experiment_name + '/' + subject_name + '/')
-        if (subject_path in path for path in self.experiment.subject_paths):
-            # Need to call _subject_paths to be able to remove.
-            # Doesn't work if call subject_path without _.
-            self.experiment._subject_paths.remove(subject_path)
-            del self.experiment._working_file_names[subject_name]
-        
-        # If subject is not created with the chosen subject list item,
-        # hence activated using activate -button after opening an existing
-        # experiment, only subject_paths list and working_file_names dictionary
-        # needs to be updated.
-        for subject in self.experiment._subjects:
-            if subject.subject_name == subject_name:
-                self.experiment._subjects.remove(subject)
-        
-        # If active subject is removed, the active properties have to be
-        # reseted to default values.    
-        if subject_path == self.experiment.active_subject_path:
-            self.experiment._active_subject_path = ''
-            self.experiment._active_subject_raw_path = ''
-            self.experiment._active_subject_name = ''
-            self.experiment._active_subject = None
-        shutil.rmtree(subject_path)
-        row = self.ui.listWidgetSubjects.row(item)
-        self.ui.listWidgetSubjects.takeItem(row)
-        self.experiment.update_experiment_settings()
-        self._initialize_ui()
-    """
-        
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
         Show / Hide console window.

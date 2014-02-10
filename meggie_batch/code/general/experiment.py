@@ -270,10 +270,6 @@ class Experiment(QObject):
         item        -- currently active item on self.ui.listWidgetSubjects
         main_window -- MainWindow object
         """
-        # TODO: Some functionalities could be added in experiment. For
-        # example deactivate_subject -method where default values are give
-        # for active -properties.
-        
         subject_name = str(item.text())
         subject_path = str(self.workspace + '/' + \
          self.experiment_name + '/' + subject_name + '/')
