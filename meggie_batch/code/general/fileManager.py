@@ -45,6 +45,7 @@ import shutil
 
 import messageBox
 
+from epochs import Epochs
 from statistic import Statistic
 
 class FileManager(QObject):
@@ -65,7 +66,12 @@ class FileManager(QObject):
     """ 
     
     def __init__(self):
-        """Constructor"""
+        """
+        Constructor
+        
+        Keyword arguments:
+        ...
+        """
         QObject.__init__(self)
         
     def copy(self, original, target):
@@ -436,8 +442,22 @@ class FileManager(QObject):
         
         parameterFileName = str(fpath + '.param')
         
-        self.pickle(parameters_str, parameterFileName)  
+        self.pickle(parameters_str, parameterFileName)
         
+        """
+        # TODO: Somewhere else this because epochs need to be created
+        # also when opening experiment that has subjects with epochs.
+        # After creating epochs remember to add it the to subject.
+              
+        # Create epochs object and add it to epochs list of subject.        
+        epochs_object = Epochs()
+        name = fpath.split('/')[-1]
+        epochs_object._collection_name = name
+        epochs_object._raw = epochs
+        epochs_object._params = parameters_str
+        self.parent.experiment.active_subject.add_epochs(epochs_object, name)
+        """
+     
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.
         

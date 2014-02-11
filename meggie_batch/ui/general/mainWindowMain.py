@@ -511,6 +511,21 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.experiment.active_subject_path == '':
             return
+        
+        """
+        # Get epochs from subject object.
+        if len(self.experiment.active_subject._epochs) > 0:
+            # key is the name of the collection and value
+            # is the epochs object.
+            for key, value in self.experiment.active_subject._epochs: # ValueError: too many values to unpack
+                item = QtGui.QListWidgetItem(value._collection_name)
+                item.setData(32, value._raw)
+                item.setData(33, value._params)
+                self.epochList.addItem(item)
+                self.epochList.setCurrentItem(item)
+            return
+        """
+         
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
             return
@@ -519,7 +534,9 @@ class MainWindow(QtGui.QMainWindow):
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
-                name = file[:-4]            
+                name = file[:-4]
+                # TODO: Create epochs object and add it to the subject.
+                # Think of some generally good way to create epochs and adding.            
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
@@ -1091,33 +1108,37 @@ class MainWindow(QtGui.QMainWindow):
         if path == '' and len(self.experiment._subject_paths) > 0:
             a = 0 # just a useless code to prevent error for doing nothing..
         else:
-            #Check whether ECG projections are calculated
-            if self.experiment.active_subject.check_ecg_projs():
-                self.ui.pushButtonApplyECG.setEnabled(True)
-                self.ui.checkBoxECGComputed.setChecked(True)
-            else:    
-                self.ui.pushButtonApplyECG.setEnabled(False)
-                self.ui.checkBoxECGComputed.setChecked(False)
-            #Check whether EOG projections are calculated
-            if self.experiment.active_subject.check_eog_projs():
-                self.ui.pushButtonApplyEOG.setEnabled(True)
-                self.ui.checkBoxEOGComputed.setChecked(True)
-            else:    
-                self.ui.pushButtonApplyEOG.setEnabled(False)
-                self.ui.checkBoxEOGComputed.setChecked(False)
-            #Check whether ECG projections are applied    
-            if self.experiment.active_subject.check_ecg_applied():
-                self.ui.checkBoxECGApplied.setChecked(True)
-            #Check whether EOG projections are applied
-            if self.experiment.active_subject.check_eog_applied():
-                self.ui.checkBoxEOGApplied.setChecked(True)
-            #Check whether sss/tsss method is applied.
-            if self.experiment.active_subject.check_sss_applied():
-                self.ui.checkBoxMaxFilterComputed.setChecked(True)
-                self.ui.checkBoxMaxFilterApplied.setChecked(True)
-            else:
-                self.ui.checkBoxMaxFilterComputed.setChecked(False)
-                self.ui.checkBoxMaxFilterApplied.setChecked(False)
+            try:
+                #Check whether ECG projections are calculated
+                if self.experiment.active_subject.check_ecg_projs():
+                    self.ui.pushButtonApplyECG.setEnabled(True)
+                    self.ui.checkBoxECGComputed.setChecked(True)
+                else:    
+                    self.ui.pushButtonApplyECG.setEnabled(False)
+                    self.ui.checkBoxECGComputed.setChecked(False)
+                #Check whether EOG projections are calculated
+                if self.experiment.active_subject.check_eog_projs():
+                    self.ui.pushButtonApplyEOG.setEnabled(True)
+                    self.ui.checkBoxEOGComputed.setChecked(True)
+                else:    
+                    self.ui.pushButtonApplyEOG.setEnabled(False)
+                    self.ui.checkBoxEOGComputed.setChecked(False)
+                #Check whether ECG projections are applied    
+                if self.experiment.active_subject.check_ecg_applied():
+                    self.ui.checkBoxECGApplied.setChecked(True)
+                #Check whether EOG projections are applied
+                if self.experiment.active_subject.check_eog_applied():
+                    self.ui.checkBoxEOGApplied.setChecked(True)
+                #Check whether sss/tsss method is applied.
+                if self.experiment.active_subject.check_sss_applied():
+                    self.ui.checkBoxMaxFilterComputed.setChecked(True)
+                    self.ui.checkBoxMaxFilterApplied.setChecked(True)
+                else:
+                    self.ui.checkBoxMaxFilterComputed.setChecked(False)
+                    self.ui.checkBoxMaxFilterApplied.setChecked(False)
+            except AttributeError:
+                print 'No active subject in experiment.'    
+                
         # QLabel created on __init__ can't take normal string objects.
         if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
             self.statusLabel.setText(QtCore.QString("Add or activate" + \

@@ -62,9 +62,9 @@ class Subject(QObject):
         self._working_file = None
         self._working_file_path = 'no path defined'
         self._experiment = experiment
-        # experiment_name is saved as QString and it has to be converted to
-        # string to be able to do basic string operations for subject_path.
-        
+        # Dictionary for epochs where key is the name of the collection
+        # and value is the epochs object.
+        self._epochs = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
                                           self._subject_name)
@@ -215,6 +215,20 @@ class Subject(QObject):
         for i in set(events[:,2]):
             d[i] = bins[i]
         self._event_set = d
+        
+    def add_epochs(self, epochs, name):
+        """
+        Creates epochs object and adds it to the epochs list.
+        
+        Keyword arguments:
+        epochs    -- raw epochs file
+        name      -- name of the collection
+        """
+        
+        # TODO: Create epochs object here before adding?
+        # In that case you should give this method params, raw and
+        # collection_name to create epochs object.
+        self._epochs[name] = epochs
         
     def check_ecg_projs(self):
         """

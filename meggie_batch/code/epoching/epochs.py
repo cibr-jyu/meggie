@@ -58,9 +58,66 @@ class Epochs(QObject):
     def __init__(self):
         """
         Constructor
+        
+        Keyword arguments:
+        ...
         """
         QObject.__init__(self)
+        self._collection_name = ''
+        self._raw = None
+        self._params = dict()
+
+    @property
+    def raw(self):
+        """
+        Returns the raw .fif of the epoch collection.
+        """
+        return self._raw
+
+    @raw.setter
+    def raw(self, raw):
+        """
+        Sets the raw data for the epoch collection. 
+        Keyword arguments:
+        raw    -- the raw .fif of the collection
+        """
+        self._raw = raw        
         
+    @property
+    def collection_name(self):
+        """
+        Returns the name of the epoch collection.
+        """
+        return self._collection_name
+
+    @collection_name.setter
+    def collection_name(self, collection_name):
+        """
+        Sets the name for the epoch collection. 
+        Keyword arguments:
+        collection_name    -- the name of the collection
+        """
+        # TODO: Add name checks, see experiment_name setter. At
+        # this moment UI probably handles the name check.
+        self._collection_name = collection_name
+        
+    @property
+    def params(self):
+        """
+        Returns the params dictionary of the epoch collection parameters.
+        """
+        return self._params
+
+    @params.setter
+    def params(self, params):
+        """
+        Sets the parameters for the epoch collection. 
+        Keyword arguments:
+        params    -- dictionary of the parameters of the collection
+        """
+        self._params = params
+
+    
     def create_epochs(self, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.
@@ -150,4 +207,4 @@ class Epochs(QObject):
         csv_file.close()
         """
         
-        return epochs        
+        return epochs

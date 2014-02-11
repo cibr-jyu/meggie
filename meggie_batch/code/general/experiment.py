@@ -360,6 +360,11 @@ class Experiment(QObject):
                 complete_raw_path = os.path.join(subject.subject_path, \
                                              raw_file_name)
                 self._active_subject_raw_path = complete_raw_path
+                
+                # TODO: Load epochs and evokeds from epochs and evokeds lists
+                # in subject object. Prevents reading files that are already
+                # read. Preferably add functionality to load_epoch/evoked_
+                # collections methods, some check if the objects already exist.
                 main_window.load_epoch_collections()
                 main_window.load_evoked_collections()
                 return
