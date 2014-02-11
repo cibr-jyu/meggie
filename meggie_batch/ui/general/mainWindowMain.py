@@ -37,7 +37,6 @@ Contains the MainWindow-class that holds the main window of the application.
 import os,sys
 import pickle
 import subprocess
-import glob
 from sets import Set
 
 import shutil
@@ -1069,10 +1068,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI.
         """  
-        
         # Clears the events data.
         self.ui.textBrowserEvents.clear()
-        
         # Clears the data info of the labels.
         self.ui.labelDateValue.clear()
         self.ui.labelEEGValue.clear()
@@ -1082,64 +1079,45 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelMagMEGValue.clear()
         self.ui.labelSamplesValue.clear()
         self.ui.labelSubjectValue.clear()
-              
         self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
         self.ui.checkBoxECGComputed.setChecked(False)
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
-        
-        
-        # TODO: if self.experiment.active_subject_path = '' the enablers and
-        # checkers are not working correctly.
+
         path = self.experiment.active_subject_path
-        
         # To make sure that glob is not using path = '' as a root folder.
         if path == '' and len(self.experiment._subject_paths) > 0:
             a = 0 # just a useless code to prevent error for doing nothing..
         else:
             #Check whether ECG projections are calculated
-            files =  filter(os.path.isfile, glob.glob(path+'/*_ecg_avg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'/*_ecg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'/*_ecg-eve*'))
-            if len(files) > 1:
+            if self.experiment.active_subject.check_ecg_projs():
                 self.ui.pushButtonApplyECG.setEnabled(True)
                 self.ui.checkBoxECGComputed.setChecked(True)
             else:    
                 self.ui.pushButtonApplyECG.setEnabled(False)
                 self.ui.checkBoxECGComputed.setChecked(False)
-            
             #Check whether EOG projections are calculated
-            files =  filter(os.path.isfile, glob.glob(path+'/*_eog_avg_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'/*_eog_proj*'))
-            files += filter(os.path.isfile, glob.glob(path+'/*_eog-eve*'))
-            if len(files) > 1:
+            if self.experiment.active_subject.check_eog_projs():
                 self.ui.pushButtonApplyEOG.setEnabled(True)
                 self.ui.checkBoxEOGComputed.setChecked(True)
-            else:
+            else:    
                 self.ui.pushButtonApplyEOG.setEnabled(False)
                 self.ui.checkBoxEOGComputed.setChecked(False)
-            #Check whether ECG projections are applied
-            files = filter(os.path.isfile, glob.glob(path + '/*ecg_applied*'))
-            if len(files) > 0:
+            #Check whether ECG projections are applied    
+            if self.experiment.active_subject.check_ecg_applied():
                 self.ui.checkBoxECGApplied.setChecked(True)
-            
             #Check whether EOG projections are applied
-            files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
-            if len(files) > 0:
+            if self.experiment.active_subject.check_eog_applied():
                 self.ui.checkBoxEOGApplied.setChecked(True)
-            else:
-                self.ui.checkBoxEOGApplied.setChecked(False)
-            
-            files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
-            if len(files) > 0:
+            #Check whether sss/tsss method is applied.
+            if self.experiment.active_subject.check_sss_applied():
                 self.ui.checkBoxMaxFilterComputed.setChecked(True)
                 self.ui.checkBoxMaxFilterApplied.setChecked(True)
             else:
                 self.ui.checkBoxMaxFilterComputed.setChecked(False)
                 self.ui.checkBoxMaxFilterApplied.setChecked(False)
-            
         # QLabel created on __init__ can't take normal string objects.
         if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
             self.statusLabel.setText(QtCore.QString("Add or activate" + \
@@ -1155,20 +1133,14 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString("Current working file: " +
                                                     self.experiment.\
                                                     active_subject_raw_path))
-            
-            
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
-        
         self.ui.labelExperimentName.setText(self.experiment.\
                                             experiment_name)
         self.ui.labelAuthorName.setText(self.experiment.author)
         self.ui.textBrowserExperimentDescription.\
         setText(self.experiment.description)
-        
-        
         # Clear the list and add all subjects to it.
         self.ui.listWidgetSubjects.clear()
-        
         # If experiment has subjects added the active_subject info will be added
         # and tabs enabled for processing.
         if (len(self.experiment._subject_paths) > 0):
@@ -1177,7 +1149,6 @@ class MainWindow(QtGui.QMainWindow):
                 # -1 is the index for the subject name
                 item.setText(path.split('/')[-1])
                 self.ui.listWidgetSubjects.addItem(item)
-            
             # In case trying to open experiment that includes subjects but
             # there is no activated subject. Happens if you delete currently
             # active subject and try to open that experiment again.

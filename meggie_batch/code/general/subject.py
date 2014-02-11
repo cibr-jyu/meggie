@@ -37,6 +37,7 @@ Created on Oct 22, 2013
 from PyQt4.QtCore import QObject
 
 import os, sys
+import glob
 
 import numpy as np
 import mne
@@ -214,3 +215,67 @@ class Subject(QObject):
         for i in set(events[:,2]):
             d[i] = bins[i]
         self._event_set = d
+        
+    def check_ecg_projs(self):
+        """
+        Checks the subject folder for ECG projection files.
+        Returns True if projections found.
+        """
+        path = self._subject_path
+        #Check whether ECG projections are calculated
+        files =  filter(os.path.isfile, glob.glob(path + '/*_ecg_avg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_ecg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_ecg-eve*'))
+        if len(files) > 1:
+            return True
+        return False           
+        
+    def check_eog_projs(self):
+        """
+        Checks the subject folder for EOG projection files.
+        Returns True if projections found.
+        """
+        path = self._subject_path
+        #Check whether EOG projections are calculated
+        files =  filter(os.path.isfile, glob.glob(path + '/*_eog_avg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_eog_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_eog-eve*'))
+        if len(files) > 1:
+            return True
+        return False
+        
+    def check_ecg_applied(self):
+        """
+        Checks the subject folder for ECG applied file.
+        Returns True if ecg_applied found.
+        """
+        path = self._subject_path
+        #Check whether ECG projections are applied
+        files = filter(os.path.isfile, glob.glob(path + '/*ecg_applied*'))
+        if len(files) > 0:
+            return True
+        return False
+        
+    def check_eog_applied(self):
+        """
+        Checks the subject folder for EOG applied file.
+        Returns True if eog_applied found.
+        """
+        path = self._subject_path
+        #Check whether EOG projections are applied
+        files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
+        if len(files) > 0:
+            return True
+        return False
+                
+    def check_sss_applied(self):
+        """
+        Checks the subject folder for sss/tsss applied file.
+        Returns True if sss/tsss found.
+        """
+        path = self._subject_path
+        #Check whether sss/tsss method is applied.
+        files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
+        if len(files) > 0:
+            return True
+        return False
