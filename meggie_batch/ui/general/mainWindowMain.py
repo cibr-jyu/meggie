@@ -290,8 +290,8 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            #self.remove_subject(self.ui.listWidgetSubjects.currentItem())
             self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
+            # TODO: listWidgetSubects.currentItem() should be removed here
     
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
@@ -455,6 +455,9 @@ class MainWindow(QtGui.QMainWindow):
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         self.fileManager.save_epoch_item(fpath, item)
         
+        # Creates Epochs object and adds it to Subject epochs list.
+        self.experiment.active_subject.handle_new_epochs(fname, item)
+        
     @QtCore.pyqtSlot(dict)
     def create_new_epochs(self, epoch_params):
         """A slot for creating new epochs with the given parameter values.
@@ -511,22 +514,20 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.experiment.active_subject_path == '':
             return
-        
-        """
-        # Get epochs from subject object.
+        # Get epochs as QListWidgetItems from subject object.
+        # This is used when epochs are already created from earlier
+        # activation of the subject.
         if len(self.experiment.active_subject._epochs) > 0:
-            # key is the name of the collection and value
-            # is the epochs object.
-            for key, value in self.experiment.active_subject._epochs: # ValueError: too many values to unpack
-                item = QtGui.QListWidgetItem(value._collection_name)
-                item.setData(32, value._raw)
-                item.setData(33, value._params)
+            epoch_items = self.experiment.active_subject.\
+            convert_epoch_collections_as_items()
+            self.epochList.clearItems()
+            for item in epoch_items:
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
             return
-        """
-         
-        if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
+        
+        if os.path.exists(self.experiment.\
+                          active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
             return
         self.epochList.clearItems()
@@ -535,11 +536,14 @@ class MainWindow(QtGui.QMainWindow):
         for file in files:
             if file.endswith('.fif'):
                 name = file[:-4]
-                # TODO: Create epochs object and add it to the subject.
-                # Think of some generally good way to create epochs and adding.            
+                # New Epochs objects are created and added to subject epochs
+                # list.
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
+
+                # Creates epochs object and adds it to the subject.
+                self.experiment.active_subject.handle_new_epochs(name, item)
         
     @QtCore.pyqtSlot(dict)
     def modifyEpochs(self, epoch_params):

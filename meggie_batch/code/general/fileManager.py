@@ -415,11 +415,9 @@ class FileManager(QObject):
         """
         if os.path.exists(fpath + '.fif') and overwrite is False:
             return
-        
         #First save the epochs
         epochs = item.data(32).toPyObject()
         epochs.save(fpath + '.fif')
-        
         #Then save the parameters using pickle.
         parameters = item.data(33).toPyObject()
         if parameters is None: return
@@ -435,29 +433,11 @@ class FileManager(QObject):
             #Create an empty list for the new key
             if key not in event_dict:
                 event_dict[key] = []
-            
             event_dict[key].append(event)
-        
         parameters_str['events'] = event_dict
-        
         parameterFileName = str(fpath + '.param')
-        
         self.pickle(parameters_str, parameterFileName)
         
-        """
-        # TODO: Somewhere else this because epochs need to be created
-        # also when opening experiment that has subjects with epochs.
-        # After creating epochs remember to add it the to subject.
-              
-        # Create epochs object and add it to epochs list of subject.        
-        epochs_object = Epochs()
-        name = fpath.split('/')[-1]
-        epochs_object._collection_name = name
-        epochs_object._raw = epochs
-        epochs_object._params = parameters_str
-        self.parent.experiment.active_subject.add_epochs(epochs_object, name)
-        """
-     
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.
         

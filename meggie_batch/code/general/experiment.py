@@ -271,9 +271,8 @@ class Experiment(QObject):
         main_window -- MainWindow object
         """
         subject_name = str(item.text())
-        #subject_path = str(self.workspace + '/' + \
-        # self.experiment_name + '/' + subject_name + '/')
         subject_path = os.path.join(self.workspace, self.experiment_name, subject_name)
+        
         if (subject_path in path for path in self.subject_paths):
             # Need to call _subject_paths to be able to remove.
             # Doesn't work if call subject_path without _.
@@ -370,7 +369,7 @@ class Experiment(QObject):
                 return
         subject = Subject(experiment, subject_name)
         f = FileManager()
-        # TODO: When opening experiment the right path is saved into the
+        # When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
         raw = f.open_raw(raw_path)

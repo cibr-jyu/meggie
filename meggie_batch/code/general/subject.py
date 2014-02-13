@@ -35,12 +35,17 @@ Created on Oct 22, 2013
 """
 
 from PyQt4.QtCore import QObject
+from PyQt4 import QtGui
 
 import os, sys
 import glob
 
 import numpy as np
 import mne
+
+from fileManager import FileManager
+from epochs import Epochs
+import messageBox
 
 class Subject(QObject):
     
@@ -215,20 +220,116 @@ class Subject(QObject):
         for i in set(events[:,2]):
             d[i] = bins[i]
         self._event_set = d
-        
-    def add_epochs(self, epochs, name):
+
+    def create_epochs_object(self, name):
         """
-        Creates epochs object and adds it to the epochs list.
+        Creates new Epochs object using name only.
+        This is called when loading epochs under subject directory.
+        Searches for epoch collection files under epochs folder with
+        given name.
         
         Keyword arguments:
-        epochs    -- raw epochs file
-        name      -- name of the collection
+        name    -- name of the epoch collection
         """
+        # Checks if epochs with given name exists.
+        if self._epochs.has_key(name):
+            return
+        f = FileManager()
+        # Load epochs and the parameters used to create them from a file.
+        # Returns the .fif and .param in a GListWidgetItem.
+        item = f.load_epoch_item(self._epochs_directory, name)
+        epochs = self.create_epochs_object_from_item(name, item)
         
-        # TODO: Create epochs object here before adding?
-        # In that case you should give this method params, raw and
-        # collection_name to create epochs object.
-        self._epochs[name] = epochs
+    def create_epochs_object_from_item(self, name, item):
+        """
+        Creates new Epochs object using QListWidgetItem.
+        
+        Keyword arguments:
+        name    -- name of the epoch collection
+        item    -- QListWidgetItem containing epochs raw in data(32)
+                   and epochs parameters in data(33)
+        """
+        # Checks if epochs with given name exists.
+        if self._epochs.has_key(name):
+            return
+        parameters = item.data(33).toPyObject()
+        if parameters is None: return
+        #toPyObject turns the dict keys into QStrings so convert them back to
+        #strings.
+        parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
+        # Create new Epochs when opening experiment with active_subject
+        # that has epoch collections created.
+        epochs = Epochs()
+        epochs._collection_name = name
+        epochs._raw = item.data(32).toPyObject()
+        epochs._params = parameters_str
+        return epochs
+  
+    def convert_epoch_collections_as_items(self):
+        """
+        Converts self._epochs as QListWidgetItems and returns them in items
+        list.
+        """
+        items = []
+        # key = collection_name, value = Epochs object
+        for key in self._epochs:
+            item = QtGui.QListWidgetItem(key)
+            epochs = self._epochs[key]
+            item.setData(32, epochs._raw)
+            item.setData(33, epochs._params)
+            items.append(item)
+        return items
+  
+    def add_epochs(self, epochs):
+        """
+        Creates epochs object and adds it to the epochs dictionary.
+        
+        Keyword arguments:
+        epochs      -- Epochs object including raw.fif, param.fif and
+                       collection_name
+        """
+        # TODO: split here or before calling this method
+        # collection_name = name.split('/')[-1]
+
+       # Checks if epochs with given name exists.
+        if self._epochs.has_key(epochs._collection_name):
+            return
+        self._epochs[epochs._collection_name] = epochs
+        
+    def handle_new_epochs(self, name, item):
+        """
+        Asks methods create_epochs_object and add_epochs to create Epochs
+        object and add it to the self._epochs dictionary.
+        
+        Keyword arguments
+        name    -- name of the epoch collection
+        item    -- QListWidgetItem containing epochs raw in data(32)
+                   and epochs parameters in data(33)
+        """
+        epochs = self.create_epochs_object_from_item(name, item)
+        if epochs is None:
+            return
+        self.add_epochs(epochs)
+        
+    def remove_epochs(self, collection_name):
+        """
+        Removes epochs from epochs dictionary.
+        Removes the files with collection_name.
+        
+        Keyword arguments:
+        collection_name    -- name of the epochs collection
+        """
+        del self._epochs[collection_name]
+        f = FileManager()
+        files_to_delete = []
+        files_to_delete.append(collection_name + '.fif')
+        files_to_delete.append(collection_name + '.param')
+        if f.delete_file_at(self._epochs_directory, files_to_delete) == False:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Epochs could not be deleted from epochs folder.')
+            self.messageBox.show()
+
         
     def check_ecg_projs(self):
         """
