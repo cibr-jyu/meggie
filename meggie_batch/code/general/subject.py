@@ -223,6 +223,8 @@ class Subject(QObject):
 
     def create_epochs_object(self, name):
         """
+        Currently this seems to be an unused method.
+        
         Creates new Epochs object using name only.
         This is called when loading epochs under subject directory.
         Searches for epoch collection files under epochs folder with
@@ -231,34 +233,30 @@ class Subject(QObject):
         Keyword arguments:
         name    -- name of the epoch collection
         """
-        # Checks if epochs with given name exists.
-        if self._epochs.has_key(name):
-            return
         f = FileManager()
-        # Load epochs and the parameters used to create them from a file.
-        # Returns the .fif and .param in a GListWidgetItem.
+        # Loads epochs and the parameters from a file.
+        # Returns the files in a GListWidgetItem.
         item = f.load_epoch_item(self._epochs_directory, name)
         epochs = self.create_epochs_object_from_item(name, item)
         
     def create_epochs_object_from_item(self, name, item):
         """
         Creates new Epochs object using QListWidgetItem.
+        Returns Epochs object. Returns None if Epochs
+        object already created with given name. See
+        keyword arguments for correct data slots.
         
         Keyword arguments:
         name    -- name of the epoch collection
         item    -- QListWidgetItem containing epochs raw in data(32)
                    and epochs parameters in data(33)
         """
-        # Checks if epochs with given name exists.
-        if self._epochs.has_key(name):
-            return
         parameters = item.data(33).toPyObject()
         if parameters is None: return
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
         parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
-        # Create new Epochs when opening experiment with active_subject
-        # that has epoch collections created.
+        
         epochs = Epochs()
         epochs._collection_name = name
         epochs._raw = item.data(32).toPyObject()
@@ -282,33 +280,29 @@ class Subject(QObject):
   
     def add_epochs(self, epochs):
         """
-        Creates epochs object and adds it to the epochs dictionary.
+        Adds Epochs object to the epochs dictionary.
         
         Keyword arguments:
         epochs      -- Epochs object including raw.fif, param.fif and
                        collection_name
         """
-        # TODO: split here or before calling this method
-        # collection_name = name.split('/')[-1]
-
-       # Checks if epochs with given name exists.
-        if self._epochs.has_key(epochs._collection_name):
-            return
         self._epochs[epochs._collection_name] = epochs
         
     def handle_new_epochs(self, name, item):
         """
-        Asks methods create_epochs_object and add_epochs to create Epochs
+        Calls methods create_epochs_object and add_epochs to create Epochs
         object and add it to the self._epochs dictionary.
+        Does nothing if given collection name that exists in epochs dictionary.
         
         Keyword arguments
         name    -- name of the epoch collection
         item    -- QListWidgetItem containing epochs raw in data(32)
                    and epochs parameters in data(33)
         """
-        epochs = self.create_epochs_object_from_item(name, item)
-        if epochs is None:
+        # Checks if epochs with given name exists.
+        if self._epochs.has_key(name):
             return
+        epochs = self.create_epochs_object_from_item(name, item)
         self.add_epochs(epochs)
         
     def remove_epochs(self, collection_name):

@@ -364,6 +364,8 @@ class Experiment(QObject):
                 # in subject object. Prevents reading files that are already
                 # read. Preferably add functionality to load_epoch/evoked_
                 # collections methods, some check if the objects already exist.
+                # TODO: experiment_value_changed signal in MainWindow calls load
+                # methods, this should be removed at some point
                 main_window.load_epoch_collections()
                 main_window.load_evoked_collections()
                 return
@@ -395,6 +397,13 @@ class Experiment(QObject):
         self._active_subject_raw_path = complete_raw_path
         self._active_subject = subject
         self.add_subject(subject)
+        
+        # TODO: Load epochs and evokeds from epochs and evokeds lists
+        # in subject object. Prevents reading files that are already
+        # read. Preferably add functionality to load_epoch/evoked_
+        # collections methods, some check if the objects already exist.
+        # TODO: experiment_value_changed signal in MainWindow calls load
+        # methods, this should be removed at some point
         main_window.load_epoch_collections()
         main_window.load_evoked_collections()
         

@@ -187,6 +187,8 @@ class MainWindow(QtGui.QMainWindow):
                                                 _epochs_directory, \
                                                 str(item.text()) + '.csv')
             self.epochList.remove_item(item)
+            # TODO: remove Epochs object from Subjects epochs dictionary
+            # self.experiment.active_subject.remove_epochs(item/epochs/collection_name)
             return True
         else:
             return False
@@ -447,7 +449,9 @@ class MainWindow(QtGui.QMainWindow):
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
     def epochs_added(self, item):
-        """A slot for saving epochs from the added QListWidgetItem to a file
+        """
+        A slot for saving epochs from the added QListWidgetItem to a file.
+        Calls Subject to handle with new epochs.
         """
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
@@ -521,11 +525,14 @@ class MainWindow(QtGui.QMainWindow):
             epoch_items = self.experiment.active_subject.\
             convert_epoch_collections_as_items()
             self.epochList.clearItems()
+            
+            # TODO: Every time when adding item calls load_evoked_collections
+            # method. Fix by creating Evoked class for handling those objects.
+            # Check if Evoked objects are already created.
             for item in epoch_items:
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
             return
-        
         if os.path.exists(self.experiment.\
                           active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
@@ -533,18 +540,17 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.clearItems()
         path = self.experiment.active_subject._epochs_directory
         files = os.listdir(path)
+        
+        # TODO: Every time when adding item calls load_evoked_collections
+        # method. Fix by creating Evoked class for handling those objects.
+        # Check if Evoked objects are already created.
         for file in files:
             if file.endswith('.fif'):
                 name = file[:-4]
-                # New Epochs objects are created and added to subject epochs
-                # list.
                 item = self.fileManager.load_epoch_item(path, name)
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
-
-                # Creates epochs object and adds it to the subject.
-                self.experiment.active_subject.handle_new_epochs(name, item)
-        
+       
     @QtCore.pyqtSlot(dict)
     def modifyEpochs(self, epoch_params):
         """Overwrite the existing epoch_item with new epochs.
