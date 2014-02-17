@@ -313,11 +313,22 @@ class Subject(QObject):
         Keyword arguments:
         collection_name    -- name of the epochs collection
         """
+        collection_name = str(collection_name)
         del self._epochs[collection_name]
+        
+        files_to_delete = filter(os.path.isfile, glob.\
+                                 glob(os.path.join(self._epochs_directory, \
+                                                   collection_name + '.fif')))
+        files_to_delete += filter(os.path.isfile, glob.\
+                                  glob(os.path.join(self._epochs_directory, \
+                                                    collection_name + '.param')))
+        files_to_delete += filter(os.path.isfile, glob.\
+                                  glob(os.path.join(self._epochs_directory, \
+                                                    collection_name + '.csv')))
+        for i in range(len(files_to_delete)):
+            files_to_delete[i] = os.path.basename(files_to_delete[i])
+        
         f = FileManager()
-        files_to_delete = []
-        files_to_delete.append(collection_name + '.fif')
-        files_to_delete.append(collection_name + '.param')
         if f.delete_file_at(self._epochs_directory, files_to_delete) == False:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \

@@ -161,38 +161,6 @@ class MainWindow(QtGui.QMainWindow):
         self._experiment = experiment
         self.experiment_value_changed.emit()
         
-    def delete_epochs(self, item):
-        """Delete the QListWidgetItem containing epochs.
-        
-        Keyword arguments:
-        item -- A QListWidgetItem containing epochs to remove.
-        
-        Return True if operation was successful, else return False.
-        """
-        epochs_path_no_suffix = os.path.join(self.experiment.active_subject.\
-                                   _epochs_directory, str(item.text()))
-        epochs_path_fif = epochs_path_no_suffix + '.fif'
-        epochs_path_param = epochs_path_no_suffix + '.param'
-        epochs_path_csv = epochs_path_no_suffix + '.csv'
-        
-        if self.fileManager.delete_file_at(self.experiment.active_subject.\
-                                           _epochs_directory, \
-                                           str(item.text()) + '.fif'):
-            if os.path.exists(epochs_path_param):
-                self.fileManager.delete_file_at(self.experiment.active_subject.\
-                                                _epochs_directory, \
-                                                str(item.text()) + '.param')
-            if os.path.exists(epochs_path_csv):
-                self.fileManager.delete_file_at(self.experiment.active_subject.\
-                                                _epochs_directory, \
-                                                str(item.text()) + '.csv')
-            self.epochList.remove_item(item)
-            # TODO: remove Epochs object from Subjects epochs dictionary
-            # self.experiment.active_subject.remove_epochs(item/epochs/collection_name)
-            return True
-        else:
-            return False
-
     def on_actionQuit_triggered(self, checked=None):
         """
         Closes the program.
@@ -831,7 +799,9 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            self.delete_epochs(self.epochList.currentItem())
+            #self.delete_epochs(self.epochList.currentItem())
+            self.experiment.active_subject.remove_epochs(item_str)
+            self.epochList.remove_item(self.epochList.currentItem())
             
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked item and the files related to it.

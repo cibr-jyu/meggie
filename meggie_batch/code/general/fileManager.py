@@ -167,25 +167,26 @@ class FileManager(QObject):
                   
         Return True if operation was succesful, otherwise return False.
         """
-        
         try:
             # TODO: using os.path.join assumes strings being used
             # when files consist QStrings
             # os.remove(os.path.join(folder, files))
-            
             os.remove(folder + '/' + files)
-            
-        except OSError as e:
+        except OSError:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.\
+            setText('Could not delete selected files.')
+            self.messageBox.show()
+        except TypeError:
+            # If files is a list object instead of string.
             for file in files:
                 try:
                     # TODO: using os.path.join assumes strings being used
                     # when files consist QStrings
                     # os.remove(os.path.join(folder, file))
                     os.remove(folder + '/' + file)
-        
                 except OSError as e:
                     return False
-        
         return True
         
     def load_epoch_item(self, folder, name):

@@ -366,6 +366,7 @@ class Experiment(QObject):
                 # collections methods, some check if the objects already exist.
                 # TODO: experiment_value_changed signal in MainWindow calls load
                 # methods, this should be removed at some point
+                # Suggestion: connect activation to experiment_value_changed signal.
                 main_window.load_epoch_collections()
                 main_window.load_evoked_collections()
                 return
@@ -404,6 +405,7 @@ class Experiment(QObject):
         # collections methods, some check if the objects already exist.
         # TODO: experiment_value_changed signal in MainWindow calls load
         # methods, this should be removed at some point
+        # Suggestion: connect activation to experiment_value_changed signal.
         main_window.load_epoch_collections()
         main_window.load_evoked_collections()
         
