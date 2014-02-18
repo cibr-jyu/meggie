@@ -535,6 +535,9 @@ class MainWindow(QtGui.QMainWindow):
         item = self.fileManager.load_epochs(fname)
         if item is None: return
         self.epochList.addItem(item)
+        fname_base = os.path.basename(fname)
+        fname_prefix = fname_base.split('.')[0]
+        self.experiment.active_subject.handle_new_epochs(fname_prefix, item)
         
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.

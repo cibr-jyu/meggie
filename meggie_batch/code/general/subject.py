@@ -252,15 +252,26 @@ class Subject(QObject):
                    and epochs parameters in data(33)
         """
         parameters = item.data(33).toPyObject()
-        if parameters is None: return
+        if parameters is None:
+            # TODO: shows only the first epoch collection param file missing
+            # even if there are more than one without param file 
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Parameter file for epochs collection ' + name.upper() + \
+             ' could not be loaded.')
+            self.messageBox.show()
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
-        parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
-        
         epochs = Epochs()
-        epochs._collection_name = name
-        epochs._raw = item.data(32).toPyObject()
-        epochs._params = parameters_str
+        if parameters is None:
+            epochs._collection_name = name
+            epochs._raw = item.data(32).toPyObject()
+            epochs._params = None
+        else:
+            parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
+            epochs._collection_name = name
+            epochs._raw = item.data(32).toPyObject()
+            epochs._params = parameters_str
         return epochs
   
     def convert_epoch_collections_as_items(self):
