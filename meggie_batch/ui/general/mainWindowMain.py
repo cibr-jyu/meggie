@@ -519,27 +519,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
        
-    @QtCore.pyqtSlot(dict)
-    def modifyEpochs(self, epoch_params):
-        """Overwrite the existing epoch_item with new epochs.
-        
-        Keyword arguments:
-        epoch_params -- A dict containing the parametervalues for the epochs.
-        """
-        
-        epochs = self.epocher.create_epochs_from_dict(epoch_params,
-                                                      self.experiment.\
-                                                      active_subject.\
-                                                      working_file)
-        epoch_params['raw'] = self.experiment.active_subject_raw_path #working_file_path
-        #Create a QListWidgetItem and add the actual epochs to slot 32.
-        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
-        item.setData(32, epochs)
-        item.setData(33, epoch_params)
-        if self.delete_epochs(self.epochList.currentItem()):
-            self.epochList.addItem(item)
-            self.epochList.setCurrentItem(item)
-            
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
         
@@ -556,7 +535,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.fileManager.load_epochs(fname)
         if item is None: return
         self.epochList.addItem(item)
-                
+        
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
         """
@@ -567,10 +546,14 @@ class MainWindow(QtGui.QMainWindow):
                                                          experiment.\
                                                          active_subject.working_file,
                                                          params)
+
+        # modify_epochs removes the previous Epochs object and raw files
+        # created from it and creates new Epochs object and raw files.
+        # Also removes the epochWidget item and replaces it with the new one.
         self.epochParameterDialog.epoch_params_ready.\
-        connect(self.modifyEpochs)
+        connect(self.experiment.active_subject.modify_epochs)
         self.epochParameterDialog.show()
-        
+                
     def on_pushButtonSaveEpochs_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
         """
@@ -799,7 +782,6 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            #self.delete_epochs(self.epochList.currentItem())
             self.experiment.active_subject.remove_epochs(item_str)
             self.epochList.remove_item(self.epochList.currentItem())
             

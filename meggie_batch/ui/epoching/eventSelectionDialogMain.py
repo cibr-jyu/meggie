@@ -61,7 +61,7 @@ class EventSelectionDialog(QtGui.QDialog):
     """
     
     #custom signals:
-    epoch_params_ready = QtCore.pyqtSignal(dict)
+    epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
 
     def __init__(self, parent, raw, params = None):
         """Initialize the event selection dialog.
@@ -303,7 +303,7 @@ class EventSelectionDialog(QtGui.QDialog):
             
             return
         
-        self.epoch_params_ready.emit(param_dict)
+        self.epoch_params_ready.emit(param_dict, self.parent.epochList)
         self.close()
         
     def check_channels(self):

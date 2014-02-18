@@ -35,7 +35,7 @@ Created on Oct 22, 2013
 """
 
 from PyQt4.QtCore import QObject
-from PyQt4 import QtGui
+from PyQt4 import QtGui,QtCore
 
 import os, sys
 import glob
@@ -304,6 +304,37 @@ class Subject(QObject):
             return
         epochs = self.create_epochs_object_from_item(name, item)
         self.add_epochs(epochs)
+    
+    @QtCore.pyqtSlot(dict, QtGui.QListWidget)  
+    def modify_epochs(self, epoch_params, epoch_widget):
+        """Overwrite the existing epoch_item with new epochs.
+        The signal is emitted by epoch_params_ready on eventSelectionDialogMain
+        accept method. The signal is connected to this method only on 
+        on_pushButtonModifyEpochs_clicked method. 
+        
+        Returns item including epoch params and raw.
+        
+        Keyword arguments:
+        epoch_params     -- A dict containing the parameter values for the
+                            epochs.
+        epoch_widget     -- QListWidget object containing epoch items
+        """
+        current_collection = str(epoch_widget.currentItem().text())
+        # Removes Epochs object and item.
+        self.remove_epochs(current_collection)
+        epoch_widget.remove_item(epoch_widget.currentItem())
+        e = Epochs()
+        epochs = e.create_epochs_from_dict(epoch_params, self._experiment.\
+                                           active_subject.\
+                                           working_file)
+        epoch_params['raw'] = self._experiment.active_subject_raw_path #working_file_path
+        #Create a QListWidgetItem and add the actual epochs to slot 32.
+        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
+        item.setData(32, epochs)
+        item.setData(33, epoch_params)
+        self.create_epochs_object_from_item(epoch_params['collectionName'], item)
+        epoch_widget.addItem(item)
+        epoch_widget.setCurrentItem(item)
         
     def remove_epochs(self, collection_name):
         """
@@ -311,7 +342,7 @@ class Subject(QObject):
         Removes the files with collection_name.
         
         Keyword arguments:
-        collection_name    -- name of the epochs collection
+        collection_name    -- name of the epochs collection (QString)
         """
         collection_name = str(collection_name)
         del self._epochs[collection_name]
@@ -334,7 +365,6 @@ class Subject(QObject):
             self.messageBox.labelException.setText \
             ('Epochs could not be deleted from epochs folder.')
             self.messageBox.show()
-
         
     def check_ecg_projs(self):
         """
