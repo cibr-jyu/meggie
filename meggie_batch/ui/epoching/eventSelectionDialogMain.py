@@ -139,6 +139,7 @@ class EventSelectionDialog(QtGui.QDialog):
             doubleSpinBoxEOGReject_3.value()
             
         events = []
+        # TODO: what type of data is in slots 32 and 33?
         for i in xrange(self.ui.listWidgetEvents.count()):
             event = self.ui.listWidgetEvents.item(i).data(32).toPyObject()
             event_name = self.ui.listWidgetEvents.item(i).data(33).toPyObject()

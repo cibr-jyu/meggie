@@ -252,14 +252,20 @@ class Subject(QObject):
                    and epochs parameters in data(33)
         """
         parameters = item.data(33).toPyObject()
+        
+        """
         if parameters is None:
             # TODO: shows only the first epoch collection param file missing
-            # even if there are more than one without param file 
+            # even if there are more than one without param file
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
-            ('Parameter file for epochs collection ' + name.upper() + \
-             ' could not be loaded.')
+            ('Exported epochs have no parameter files and cannot be modified.')
+            #('One or more epochs collection parameter files could not be found.')
+            #('Parameter file for epochs collection ' + name.upper() + \
+            # ' could not be loaded.')
             self.messageBox.show()
+        """
+            
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
         epochs = Epochs()

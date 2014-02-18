@@ -498,6 +498,14 @@ class MainWindow(QtGui.QMainWindow):
             # method. Fix by creating Evoked class for handling those objects.
             # Check if Evoked objects are already created.
             for item in epoch_items:
+                
+                # TODO: create QColor and QBrush only once
+                if item.data(33).toPyObject() is None:
+                    color = QtGui.QColor(255, 0, 0, 255)
+                    brush = QtGui.QBrush()
+                    brush.setColor(color)
+                    item.setForeground(brush)
+                
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
             return
@@ -516,6 +524,14 @@ class MainWindow(QtGui.QMainWindow):
             if file.endswith('.fif'):
                 name = file[:-4]
                 item = self.fileManager.load_epoch_item(path, name)
+                
+                # TODO: create QColor and QBrush only once
+                if item.data(33).toPyObject() is None:
+                    color = QtGui.QColor(255, 0, 0, 255)
+                    brush = QtGui.QBrush()
+                    brush.setColor(color)
+                    item.setForeground(brush)
+                
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
        
