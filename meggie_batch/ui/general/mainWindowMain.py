@@ -499,7 +499,7 @@ class MainWindow(QtGui.QMainWindow):
             # Check if Evoked objects are already created.
             for item in epoch_items:
                 
-                # TODO: create QColor and QBrush only once
+                # Change color of the item to red if no param file available.
                 if item.data(33).toPyObject() is None:
                     color = QtGui.QColor(255, 0, 0, 255)
                     brush = QtGui.QBrush()
@@ -525,7 +525,7 @@ class MainWindow(QtGui.QMainWindow):
                 name = file[:-4]
                 item = self.fileManager.load_epoch_item(path, name)
                 
-                # TODO: create QColor and QBrush only once
+                # Change color of the item to red if no param file available.
                 if item.data(33).toPyObject() is None:
                     color = QtGui.QColor(255, 0, 0, 255)
                     brush = QtGui.QBrush()
@@ -550,6 +550,12 @@ class MainWindow(QtGui.QMainWindow):
         if not os.path.isfile(fname): return
         item = self.fileManager.load_epochs(fname)
         if item is None: return
+        # Change color of the item to red if no param file available.
+        if item.data(33).toPyObject() is None:
+            color = QtGui.QColor(255, 0, 0, 255)
+            brush = QtGui.QBrush()
+            brush.setColor(color)
+            item.setForeground(brush)
         self.epochList.addItem(item)
         fname_base = os.path.basename(fname)
         fname_prefix = fname_base.split('.')[0]
