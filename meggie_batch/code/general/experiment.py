@@ -328,14 +328,13 @@ class Experiment(QObject):
         # Uusi koodi:
         self._working_file_names[self.active_subject_name] = working_file_name
         
-    def activate_subject(self, main_window, raw_path, subject_name, experiment):
+    def activate_subject(self, raw_path, subject_name, experiment):
         """
         Method for activating a subject. Creates a new subject object
         to be processed if it doesn't exist in the subjects list property.
         Subject.working_file is the previously created raw file.
         
         Keyword arguments:
-        main_window  -- main window of the application
         raw_path     -- path of the raw file
         subject_name -- name of the subject
         experiment   -- currently active experiment                        
@@ -359,16 +358,6 @@ class Experiment(QObject):
                 complete_raw_path = os.path.join(subject.subject_path, \
                                              raw_file_name)
                 self._active_subject_raw_path = complete_raw_path
-                
-                # TODO: Load epochs and evokeds from epochs and evokeds lists
-                # in subject object. Prevents reading files that are already
-                # read. Preferably add functionality to load_epoch/evoked_
-                # collections methods, some check if the objects already exist.
-                # TODO: experiment_value_changed signal in MainWindow calls load
-                # methods, this should be removed at some point
-                # Suggestion: connect activation to experiment_value_changed signal.
-                main_window.load_epoch_collections()
-                main_window.load_evoked_collections()
                 return
         subject = Subject(experiment, subject_name)
         f = FileManager()
@@ -398,16 +387,6 @@ class Experiment(QObject):
         self._active_subject_raw_path = complete_raw_path
         self._active_subject = subject
         self.add_subject(subject)
-        
-        # TODO: Load epochs and evokeds from epochs and evokeds lists
-        # in subject object. Prevents reading files that are already
-        # read. Preferably add functionality to load_epoch/evoked_
-        # collections methods, some check if the objects already exist.
-        # TODO: experiment_value_changed signal in MainWindow calls load
-        # methods, this should be removed at some point
-        # Suggestion: connect activation to experiment_value_changed signal.
-        main_window.load_epoch_collections()
-        main_window.load_evoked_collections()
         
     def save_experiment_settings(self):
         """

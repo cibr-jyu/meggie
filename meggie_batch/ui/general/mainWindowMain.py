@@ -473,7 +473,7 @@ class MainWindow(QtGui.QMainWindow):
             if len(self.experiment._subject_paths) > 0:
                     raw_path = self.experiment.active_subject_raw_path
                     subject_name = self.experiment.active_subject_name
-                    self.experiment.activate_subject(self, raw_path, subject_name,
+                    self.experiment.activate_subject(raw_path, subject_name,
                                                      self.experiment)
         
     def load_epoch_collections(self):
@@ -1046,7 +1046,9 @@ class MainWindow(QtGui.QMainWindow):
             return
         raw_path = working_file_name
         subject_name = self.ui.listWidgetSubjects.currentItem().text()
-        self.experiment.activate_subject(self, str(raw_path), str(subject_name), self.experiment)
+        self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
+        self.load_epoch_collections()
+        self.load_evoked_collections()
         self.experiment.update_experiment_settings()
         self._initialize_ui()
     
