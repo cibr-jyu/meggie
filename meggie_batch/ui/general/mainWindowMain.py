@@ -76,6 +76,7 @@ from widgets.epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
 from consoleMain import Console
+from measurementInfo import MeasurementInfo
 import messageBox
 
 from experiment import Experiment
@@ -301,24 +302,31 @@ class MainWindow(QtGui.QMainWindow):
         # Set default/empty values for epoch parameters.
         self.clear_epoch_collection_parameters()
         
-        params = item.data(33).toPyObject()
-        if params is None: return
-       
         epochs = item.data(32).toPyObject()
-        
+        params = item.data(33).toPyObject()
+        if params is None:
+            # TODO: Fill source file field if no parameters for epochs
+            # collection. 'filename' is the current location of the collection,
+            # so add some other information here?
+            self.ui.textBrowserWorkingFile.\
+            setText(epochs.info.get('description'))
+            
+            # TODO: this is too slow. If remove this line remove
+            # measurementInfo from imports also.
+            #self.mi = MeasurementInfo(self._experiment.active_subject._working_file)
+            #self.ui.textBrowserWorkingFile.\
+            #setText(self.mi.subject_name)
+            return
         # Dictionary stores numbers of different events.
         event_counts = dict()
-        
         # Adds items to dictionary for corresponding events.
         for value in epochs.event_id.values():
             event_counts[str(value)] = 0
-        
         # Adds number of events to corresponding event.
         for event in epochs.events:
             for key in event_counts.keys():
                 if event[2] == int(key):
                     event_counts[key] += 1
-        
         categories = ''
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
@@ -326,15 +334,11 @@ class MainWindow(QtGui.QMainWindow):
             item = QtGui.QListWidgetItem()
             item.setText(key + ': ID ' + str(value) + ', ' + \
             str(event_counts[str(value)]) + ' events')
-            
             self.epochList.ui.listWidgetEvents.addItem(item)
-            
         # TODO: create category items to add on the listWidgetEvents widget. 
         #self.epochList.ui.listWidgetEvents.setText(categories)
-        
         self.ui.textBrowserTmin.setText(str(params[QtCore.QString('tmin')]) + ' s')
         self.ui.textBrowserTmax.setText(str(params[QtCore.QString('tmax')]) + ' s')
-
         # Creates dictionary of strings instead of qstrings for rejections.
         params_rejections_str = dict((str(key), value) for
                           key, value in params[QtCore.QString(u'reject')].\
@@ -364,13 +368,11 @@ class MainWindow(QtGui.QMainWindow):
                                                 / 1e-6) + 'uV')
         else:
             self.ui.textBrowserEOG.setText('-1')
-        
         filename_full_path = str(params[QtCore.QString(u'raw')])
         filename_list = filename_full_path.split('/')
         filename = filename_list[len(filename_list) - 1]
         self.ui.textBrowserWorkingFile.setText(filename)
         #self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
-        
         
     def clear_epoch_collection_parameters(self):
         """
@@ -426,7 +428,6 @@ class MainWindow(QtGui.QMainWindow):
         fname = str(item.text())
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         self.fileManager.save_epoch_item(fpath, item)
-        
         # Creates Epochs object and adds it to Subject epochs list.
         self.experiment.active_subject.handle_new_epochs(fname, item)
         
@@ -458,7 +459,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         if self.experiment is None:
             return
-        
         else:
             self.epochList.clearItems()
             self.load_epoch_collections()

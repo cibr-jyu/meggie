@@ -85,7 +85,7 @@ class AddSubjectDialog(QtGui.QDialog):
             #self.close()
             return
             
-        self.parent.experiment.activate_subject(self.parent, raw_path, \
+        self.parent.experiment.activate_subject(raw_path, \
                                                 subject_name, \
                                                 self.experiment)
         self.parent.experiment.update_experiment_settings()
