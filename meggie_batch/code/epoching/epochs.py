@@ -58,9 +58,6 @@ class Epochs(QObject):
     def __init__(self):
         """
         Constructor
-        
-        Keyword arguments:
-        ...
         """
         QObject.__init__(self)
         self._collection_name = ''

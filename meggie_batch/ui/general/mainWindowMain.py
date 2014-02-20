@@ -1095,7 +1095,7 @@ class MainWindow(QtGui.QMainWindow):
         path = self.experiment.active_subject_path
         # To make sure that glob is not using path = '' as a root folder.
         if path == '' and len(self.experiment._subject_paths) > 0:
-            a = 0 # just a useless code to prevent error for doing nothing..
+            pass
         else:
             try:
                 #Check whether ECG projections are calculated
