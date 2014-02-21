@@ -319,7 +319,7 @@ class Caller(object):
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '/*_ecg_proj.fif'))
+                           glob.glob(directory + '/*_ecg_*proj.fif'))
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
         # be added? The newest perhaps.
@@ -365,7 +365,7 @@ class Caller(object):
         else:
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '/*_eog_proj.fif'))
+                           glob.glob(directory + '/*_eog_*proj.fif'))
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
         # be added? The newest perhaps.
@@ -595,6 +595,10 @@ class Caller(object):
                  "\n" + \
                 "Channels in evoked set " + str(i) + ":"
             print evokeds[i].info['ch_names']
+            
+            # TODO: check that channels to ave has whitespace between string
+            # and numbers.
+            
             # Picks only the desired channels from the evokeds.
             evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
                                                         channelsToAve)

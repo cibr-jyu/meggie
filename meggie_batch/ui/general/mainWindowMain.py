@@ -309,7 +309,7 @@ class MainWindow(QtGui.QMainWindow):
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
             self.ui.textBrowserWorkingFile.\
-            setText(epochs.info.get('description'))
+            setText('Unknown source file. ' + epochs.info.get('description'))
             
             # TODO: this is too slow. If remove this line remove
             # measurementInfo from imports also.
@@ -1174,6 +1174,10 @@ class MainWindow(QtGui.QMainWindow):
                 self.add_tabs()
         else:
             self.add_tabs()
+        
+        # TODO: Subject tab should stay active after removing active subject.
+        if self.experiment.active_subject_path == '':
+            self.ui.tabWidget.setCurrentIndex(1)
 
     def add_tabs(self):
         """

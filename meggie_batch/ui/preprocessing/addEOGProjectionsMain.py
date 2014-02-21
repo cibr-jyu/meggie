@@ -58,7 +58,7 @@ class AddEOGProjections(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         directory = self.parent.experiment.active_subject_path
-        self.proj_file = glob.glob(directory + '/*_eog_proj.fif')[0]
+        self.proj_file = glob.glob(directory + '/*_eog_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
         self.listWidget = QtGui.QListWidget()
