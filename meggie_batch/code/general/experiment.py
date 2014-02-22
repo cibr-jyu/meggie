@@ -112,7 +112,6 @@ class Experiment(QObject):
                 self.messageBox.show()
                 raise Exception('Use only letters and numbers in experiment' +
                                 'name')
-                
         else:
             raise Exception('Too long experiment name')
 

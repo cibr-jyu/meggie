@@ -309,8 +309,6 @@ class Caller(object):
         raw           -- Data to apply to
         directory     -- Directory of the projection file
         """
-        
-        
         # If there already is a file with eog projections applied on it, apply
         # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
@@ -320,6 +318,10 @@ class Caller(object):
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_ecg_*proj.fif'))
+        if len(proj_file) == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('There is no proj file.')
+            self.messageBox.show()
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
         # be added? The newest perhaps.
@@ -331,22 +333,17 @@ class Caller(object):
             # using the generated filename.
             # appliedfilename = fname[:-4] + '-ecg_applied.fif'
             
+            # TODO: ecg_avg_applied.fif if ssp checked 
             appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
         else:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('There is more than one' + \
-                                                   ' ECG projection file' + \
-                                                   ' to apply. Remove all' + \
-                                                   ' others but the one' + \
-                                                   ' you want to apply.\n' + \
-                                                   'Projection files are' + \
-                                                   ' found under subject' + \
-                                                   ' folder: ' + \
-                                                   self.parent.experiment.\
-                                                   active_subject.\
-                                                   _subject_path)
+            self.messageBox.labelException.\
+            setText('There is more than one ECG projection file to apply. ' + \
+                    'Remove all others but the one you want to apply.\n' + \
+                    'Projection files are found under subject folder: ' + \
+                    self.parent.experiment.active_subject._subject_path)
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
@@ -366,9 +363,13 @@ class Caller(object):
             fname = raw.info.get('filename')
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_eog_*proj.fif'))
+        if len(proj_file) == 0:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('There is no proj file.')
+            self.messageBox.show()
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
-        # be added? The newest perhaps.
+        # be added? The newest?
         if len(proj_file) == 1:
             proj = mne.read_proj(proj_file[0])
             raw.add_proj(proj)
@@ -377,22 +378,17 @@ class Caller(object):
             # using the generated filename.
             #appliedfilename = fname[:-4] + '-eog_applied.fif'
             
+            # TODO: eog_avg_applied.fif if ssp checked
             appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
             raw.save(appliedfilename)
             raw = mne.fiff.Raw(appliedfilename, preload=True)
         else:
             self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('There is more than one' + \
-                                                   ' EOG projection file' + \
-                                                   ' to apply. Remove all' + \
-                                                   ' others but the one' + \
-                                                   ' you want to apply.\n' + \
-                                                   'Projection files are' + \
-                                                   ' found under subject' + \
-                                                   ' folder: ' + \
-                                                   self.parent.experiment.\
-                                                   active_subject.\
-                                                   _subject_path)
+            self.messageBox.labelException.\
+            setText('There is more than one EOG projection file to apply. ' + \
+                    'Remove all others but the one you want to apply.\n' + \
+                    'Projection files are found under subject folder: ' + \
+                    self.parent.experiment.active_subject._subject_path)
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)

@@ -38,7 +38,7 @@
          <x>0</x>
          <y>0</y>
          <width>1128</width>
-         <height>755</height>
+         <height>757</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -635,7 +635,7 @@
                <rect>
                 <x>30</x>
                 <y>290</y>
-                <width>371</width>
+                <width>372</width>
                 <height>41</height>
                </rect>
               </property>
@@ -1921,7 +1921,7 @@
                </rect>
               </property>
               <property name="text">
-               <string>Visualize selected epoch channels...</string>
+               <string>Visualize epochs in selected channels...</string>
               </property>
              </widget>
             </widget>
@@ -2268,7 +2268,7 @@
      <x>0</x>
      <y>0</y>
      <width>1148</width>
-     <height>29</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="defaultUp">

@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Thu Dec 19 10:50:26 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Sat Feb 22 09:58:28 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1128, 755))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1128, 757))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -294,7 +294,7 @@ class Ui_MainWindow(object):
         self.listWidgetSubjects.setGeometry(QtCore.QRect(30, 110, 371, 171))
         self.listWidgetSubjects.setObjectName(_fromUtf8("listWidgetSubjects"))
         self.horizontalLayoutWidget = QtGui.QWidget(self.tabSubjects)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(30, 290, 371, 41))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(30, 290, 372, 41))
         self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout_2.setMargin(0)
@@ -865,7 +865,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1148, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1148, 27))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -911,7 +911,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionShow_Hide_Console)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -988,7 +988,7 @@ class Ui_MainWindow(object):
         self.pushButtonDeleteEpochs.setText(_translate("MainWindow", "Delete selected epochs", None))
         self.pushButtonSaveEpochs.setText(_translate("MainWindow", "Save selected epochs", None))
         self.pushButtonLoadEpochs.setText(_translate("MainWindow", "Load epochs", None))
-        self.pushButtonVisualizeEpochChannels.setText(_translate("MainWindow", "Visualize selected epoch channels...", None))
+        self.pushButtonVisualizeEpochChannels.setText(_translate("MainWindow", "Visualize epochs in selected channels...", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEpoching), _translate("MainWindow", "Epoching", None))
         self.groupBoxAvailableTFR.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonTFRTopology.setText(_translate("MainWindow", "TFR topology vizualization", None))
