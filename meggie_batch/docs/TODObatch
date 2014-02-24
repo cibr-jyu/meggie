@@ -1,0 +1,10 @@
+SEURAAVAKSI:
+
+- Lisätyt subjectit näkyviin listoihin. Näkyy subject-tabilla mutta ei vielä experimentin subject listassa.
+- Aktivointipainike toimimaan. Tehty.
+- Korjaa: Jos tekee subjectit esim. tiedostoille testi_sss.fif ja testi.fif niin tulee sekaannusta, koska working filen tarkistus tehdään nimen perusteella.
+
+BUGEJA:
+
+- Uuden experimentin luominen ei tyhjentänyt edellisen experimentin aktiivisena olleen subjectin infoja. Korjattu.
+- Experimentiä, jossa ei ole yhtäkään subjectia ei pysty lataamaan tällä hetkellä. Korjattu.
