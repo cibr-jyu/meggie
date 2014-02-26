@@ -646,10 +646,36 @@ class MainWindow(QtGui.QMainWindow):
                 category_str += '-' + key
         item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        evoked_name = epoch_collection.text() + '[' + category_str + ']' + '_evoked.fif'
+        evoked_name = str(epoch_collection.\
+                          text() + '[' + category_str + ']' + '_evoked.fif')
         item.setText(evoked_name)
         item.setData(32, evoked)
         item.setData(33, category)
+        
+        # Save evoked into evoked (average) directory with name evoked_name
+        saveFolder = self.experiment.active_subject._evoked_directory
+        if os.path.exists(saveFolder) is False:
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText \
+                ('Writing to selected folder is not allowed. You can still' + \
+                 ' process the evoked file (visualize etc.).')
+                self.messageBox.show()  
+        try:                
+            # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
+            print 'Writing evoked data as ' + evoked_name + ' ...'
+            fiff.write_evoked(os.path.join(saveFolder, evoked_name), evoked)
+            print '[done]'
+        except IOError:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Writing to selected folder is not allowed. You can still' + \
+             ' process the evoked file (visualize etc.).')
+            self.messageBox.show()
+        
+        
         self.evokedList.addItem(item)
         self.experiment.active_subject.handle_new_evoked(evoked_name, evoked, category)
         #self.evokedList.setCurrentItem(item)
