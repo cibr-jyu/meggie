@@ -446,6 +446,7 @@ class MainWindow(QtGui.QMainWindow):
                                                       active_subject.\
                                                       _working_file)
         epoch_params['raw'] = self.experiment.active_subject_raw_path
+        
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])
         item.setData(32, epochs)
@@ -645,14 +646,13 @@ class MainWindow(QtGui.QMainWindow):
                 category_str += '-' + key
         item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        item.setText(epoch_collection.text() + '[' + category_str + ']' + '_evoked.fif')
+        evoked_name = epoch_collection.text() + '[' + category_str + ']' + '_evoked.fif'
+        item.setText(evoked_name)
         item.setData(32, evoked)
         item.setData(33, category)
-        
         self.evokedList.addItem(item)
+        self.experiment.active_subject.handle_new_evoked(evoked_name, evoked, category)
         #self.evokedList.setCurrentItem(item)
-        
-        #evoked = self.caller.average(epochs,category)
         
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
         """Open the evokedStatsDialog for viewing statistical data.
@@ -753,13 +753,25 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.experiment.active_subject_path == '':
             return
-        if not os.path.exists(os.path.join(self.experiment.active_subject.\
-                                           _epochs_directory, 'average')):
+        if not os.path.exists(self.experiment.active_subject._evoked_directory):
             self.evokedList.clear()
             return  
         self.evokedList.clear()
-        #self.epochList.clearItems()
-        path = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
+        
+        if len(self.experiment.active_subject._evokeds) > 0:
+            evoked_items = self.experiment.active_subject.\
+            convert_evoked_collections_as_items()
+            self.evokedList.clear()
+            
+            # TODO: Every time when adding item calls load_evoked_collections
+            # method. Fix by creating Evoked class for handling those objects.
+            # Check if Evoked objects are already created.
+            for item in evoked_items:
+                self.evokedList.addItem(item)
+                self.evokedList.setCurrentItem(item)
+            return
+        
+        path = self.experiment.active_subject._evoked_directory
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
@@ -778,6 +790,9 @@ class MainWindow(QtGui.QMainWindow):
                 else:
                     self.evokedList.addItem(item)
                     self.evokedList.setCurrentItem(item)
+                    evoked = item.data(32).toPyObject()
+                    categories = item.data(33).toPyObject()
+                    self.experiment.active_subject.handle_new_evoked(item.text(), evoked, categories)
                 #self.evokedList.addItem(item)
                 #self.evokedList.setCurrentItem(item)
         
@@ -841,19 +856,8 @@ class MainWindow(QtGui.QMainWindow):
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
-            self.fileManager.delete_file_at(root, item_str)
-            
-            # TODO: What to do if can't delete the .fif file.
-            """
-            if self.fileManager.delete_file_at(root, item_str):
-                return
-            else:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText('Unable to delete the'\
-                                                        + ' file.')
-                self.messageBox.show()
-                return
-            """
+            #self.fileManager.delete_file_at(root, item_str)
+            self.experiment.active_subject.remove_evoked(item_str)
         else:
             return
                     

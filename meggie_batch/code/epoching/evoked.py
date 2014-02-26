@@ -27,6 +27,7 @@ class Evoked(QObject):
         QObject.__init__(self)
         self._name = ''
         self._raw = None
+        self._categories = dict()
         
         # Useless?
         #self._events = []
@@ -66,28 +67,19 @@ class Evoked(QObject):
         self._name = name
         
     @property
-    def events(self):
+    def categories(self):
         """
-        Returns the list of events.
+        Returns the dictionary of categories (events in epochs which were
+        averaged).
         """
-        return self._events
+        return self._categories
         
-    @events.setter
-    def events(self, events):
+    @categories.setter
+    def categories(self, categories):
         """
-        Sets the events for evoked.
+        Sets the categories for evoked.
         
         Keyword arguments:
-        events    -- can be given list of setno names
+        categories    -- dict() of events in epochs.event_id
         """
-        # TODO: just a fast construction of probably useless code
-        if events is None:
-            pass
-        else:
-            for setno in events:
-                self._events.append(setno)
-            return
-                
-        for setno in self._raw.setno(names):
-            self._events.append(setno)
-        
+        self._categories = categories

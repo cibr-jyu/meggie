@@ -203,5 +203,5 @@ class Epochs(QObject):
         csv_file_writer.writerows(epochs)
         csv_file.close()
         """
-        
         return epochs
+    

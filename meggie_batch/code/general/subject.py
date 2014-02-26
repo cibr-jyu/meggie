@@ -45,6 +45,7 @@ import mne
 
 from fileManager import FileManager
 from epochs import Epochs
+from evoked import Evoked
 import messageBox
 
 class Subject(QObject):
@@ -70,10 +71,12 @@ class Subject(QObject):
         # Dictionary for epochs where key is the name of the collection
         # and value is the epochs object.
         self._epochs = dict()
+        self._evokeds = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
                                           self._subject_name)
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
+        self._evoked_directory = os.path.join(self._epochs_directory, 'average')
         
     @property
     def raw_data(self):
@@ -252,20 +255,6 @@ class Subject(QObject):
                    and epochs parameters in data(33)
         """
         parameters = item.data(33).toPyObject()
-        
-        """
-        if parameters is None:
-            # TODO: shows only the first epoch collection param file missing
-            # even if there are more than one without param file
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Exported epochs have no parameter files and cannot be modified.')
-            #('One or more epochs collection parameter files could not be found.')
-            #('Parameter file for epochs collection ' + name.upper() + \
-            # ' could not be loaded.')
-            self.messageBox.show()
-        """
-            
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
         epochs = Epochs()
@@ -309,7 +298,7 @@ class Subject(QObject):
         """
         Calls methods create_epochs_object and add_epochs to create Epochs
         object and add it to the self._epochs dictionary.
-        Does nothing if given collection name that exists in epochs dictionary.
+        Does nothing if given collection name exists in epochs dictionary.
         
         Keyword arguments
         name    -- name of the epoch collection
@@ -319,6 +308,9 @@ class Subject(QObject):
         # Checks if epochs with given name exists.
         if self._epochs.has_key(name):
             return
+        
+        #epochs = self.create_epochs_object(epochs, params)
+        
         epochs = self.create_epochs_object_from_item(name, item)
         self.add_epochs(epochs)
     
@@ -381,6 +373,89 @@ class Subject(QObject):
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Epochs could not be deleted from epochs folder.')
+            self.messageBox.show()
+        
+    def handle_new_evoked(self, name, evoked, categories):
+        """
+        Calls methods create_evoked_object and add_evoked to create Evoked
+        object and add it to the self._evokeds dictionary.
+        Does nothing if given collection name that exists in epochs dictionary.
+        
+        Keyword arguments
+        name       -- name of the evoked
+        evoked     -- raw evoked file
+        categories -- dict() of events in epochs.event_id
+        """
+        # Checks if evoked with given name exists.
+        if self._evokeds.has_key(name):
+            return
+        
+        #epochs = self.create_epochs_object(epochs, params)
+        
+        evoked_object = self.create_evoked_object(name, evoked, categories)
+        self.add_evoked(name, evoked_object)
+    
+    def create_evoked_object(self, name, evoked, categories):
+        """
+        Creates new Evoked object using QListWidgetItem.
+        
+        Returns Evoked object.
+        Returns None if Evoked object already created with given name.
+        
+        Keyword arguments:
+        name       -- name of the evoked
+        evoked     -- raw evoked file
+        categories -- dict() of events in epochs.event_id
+        """
+        #toPyObject turns the dict keys into QStrings so convert them back to
+        #strings.
+        evoked_object = Evoked()
+        if evoked is None:
+            return None
+        else:
+            evoked_object._raw = evoked
+            evoked_object._name = str(name)
+            evoked_object._categories = categories
+        return evoked_object
+
+    def convert_evoked_collections_as_items(self):
+        """
+        Converts self._evokeds as QListWidgetItems and returns them in items
+        list.
+        """
+        items = []
+        # key = collection_name, value = Epochs object
+        for key in self._evokeds.keys():
+            item = QtGui.QListWidgetItem(key)
+            evoked = self._evokeds[key]
+            item.setData(32, evoked._raw)
+            item.setData(33, evoked._categories)
+            items.append(item)
+        return items
+
+    def add_evoked(self, name, evoked_object):
+        """
+        Adds Evoked object to the evokeds dictionary.
+        
+        Keyword arguments:
+        evoked_object  -- Evoked object
+        """
+        self._evokeds[str(name)] = evoked_object
+        
+    def remove_evoked(self, name):
+        """
+        Removes evoked object from the evoked dictionary.
+        
+        Keyword arguments:
+        name    -- name of the evoked
+        """
+        del self._evokeds[str(name)]
+        
+        f = FileManager()
+        if f.delete_file_at(self._evoked_directory, name) == False:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Evoked could not be deleted from average folder.')
             self.messageBox.show()
         
     def check_ecg_projs(self):
