@@ -652,6 +652,7 @@ class MainWindow(QtGui.QMainWindow):
         item.setData(32, evoked)
         item.setData(33, category)
         
+        # TODO: create separate method in filemanager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = self.experiment.active_subject._evoked_directory
         if os.path.exists(saveFolder) is False:
