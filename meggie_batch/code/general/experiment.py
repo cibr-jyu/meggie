@@ -79,6 +79,7 @@ class Experiment(QObject):
         self._author = 'unknown author'
         self._description = 'no description'
         self._subjects = []
+        #self._subjects = dict()
         self._subject_paths = []
         self._active_subject_path = ''
         self._active_subject_raw_path = ''
@@ -254,8 +255,10 @@ class Experiment(QObject):
         Keyword arguments:
         subject    -- the subject object created by subject class
         """
-        #dictionary example:
-        #self._subjects[subject.subject_name] = subject 
+        # dictionary
+        #self._subjects[subject.subject_name] = subject
+        
+        # list 
         self._subjects.append(subject)
 
     def remove_subject(self, item, main_window):
@@ -345,6 +348,7 @@ class Experiment(QObject):
         # list.
         # Prevents creating multiple subjects when activating the same subject
         # more than once.
+        
         for subject in self._subjects:
             if subject_name == subject.subject_name:
                 # Raw file is still in memory while processing other
@@ -355,7 +359,7 @@ class Experiment(QObject):
                 self._active_subject_name = subject.subject_name
                 self._active_subject_path = subject.subject_path
                 complete_raw_path = os.path.join(subject.subject_path, \
-                                             raw_file_name)
+                                                 raw_file_name)
                 self._active_subject_raw_path = complete_raw_path
                 return
         subject = Subject(experiment, subject_name)

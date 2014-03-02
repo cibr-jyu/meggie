@@ -58,7 +58,7 @@ class FileManager(QObject):
     copy(self, original, target)
     create_csv_epochs(self, epochs)
     delete_file_at(self, folder, name)
-    load_epoch_item(self, folder, name)
+    load_epochs(self, fname)
     open_raw(self, fname)
     pickle(self, picklable, path)
     save_epoch_item(self, fpath, item, overwirte = False)
@@ -189,58 +189,6 @@ class FileManager(QObject):
                     return False
         return True
         
-    def load_epoch_item(self, folder, name):
-        """Load epochs and the parameters used to create them from a file.
-        
-        Search the specified folder for 'name.fif' and 'name.param' -files and
-        construct a QListWidget item from them. Epochs are stored in the item's
-        data slot 32, parameter values are stored in data slot 33.
-        
-        Keyword arguments:
-        
-        folder -- The folder containing the required files.
-        name   -- Both the base name of the files and the name of the created
-                  QListWidget item.
-                 
-        Return a QListWidgetItem containing the epochs and their parameters.
-        """
-        item = QtGui.QListWidgetItem(name)
-        try:
-            epochs = mne.read_epochs(os.path.join(folder, name))
-            item.setData(32, epochs)
-            
-        except Exception:
-            try:
-                epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
-                item.setData(32, epochs)
-            
-            except IOError:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.\
-                setText('Reading from selected folder is not allowed.')
-                self.messageBox.show()
-                return
-        
-        try:
-            parameters = self.unpickle(os.path.join(folder, name + '.param'))
-            
-        except IOError:
-            return item
-        #The events need to be converted back to QListWidgetItems.
-        event_list = []
-        event_dict = parameters['events']
-        for key in event_dict:
-            for event in event_dict[key]:
-                event_tuple = (event, key)
-                event_list.append(event_tuple)
-        
-        parameters['events'] = event_list
-        #Create and return the QListWidgetItem
-
-        item.setData(33, parameters)
-        
-        return item
-    
     def load_epochs(self, fname):
         """Load epochs from a folder.
         
@@ -253,49 +201,56 @@ class FileManager(QObject):
         folder = split[0] + '/'
         name = os.path.splitext(split[1])[0]
         if name == '': return
-        else:
-            item = self.load_epoch_item(folder, name)
-            return item        
-
-    def load_evokeds(self, fname):
-        """Load evokeds from a folder.
+        try:
+            epochs = mne.read_epochs(os.path.join(folder, name))
+        except Exception:
+            try:
+                epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
+            except IOError:
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.\
+                setText('Reading from selected folder is not allowed.')
+                self.messageBox.show()
+                return epochs
         
-        Keyword arguments:
-        fname -- the name of the fif-file containing evokeds.
+        try:
+            parameters = self.unpickle(os.path.join(folder, name + '.param'))
+            
+        except IOError:
+            parameters = None
+            return epochs, parameters
+        #The events need to be converted back to QListWidgetItems.
+        event_list = []
+        event_dict = parameters['events']
+        for key in event_dict:
+            for event in event_dict[key]:
+                event_tuple = (event, key)
+                event_list.append(event_tuple)
         
-        return evokeds in a QListWidgetItem 
-        """
-        split = os.path.split(fname)
-        folder = split[0] + '/'
-        name = os.path.splitext(split[1])[0]
-        if name == '': return
-        else:
-            item = self.load_evoked_item(folder, name)
-            return item        
-    
-    
-    def load_evoked_item(self, folder, file):
+        parameters['events'] = event_list
+        return epochs, parameters
+        
+    def load_evoked(self, folder, file):
         """Load evokeds to the list when mainWindow is initialized
         
         Keyword arguments:
-        folder -- the path to the evoked .fif folder
-        file -- the base filename of the evoked .fif file
+        folder  -- the folder for loading evoked
+        file -- the name of the fif-file containing evokeds.
         
         """
+        split = os.path.split(file)
+        #folder = split[0] + '/'
+        name = os.path.splitext(split[1])[0]
+        if name == '': return
         category = dict()
         evokeds = []
         i = 0
-        item = QtGui.QListWidgetItem(file)
-        
         # Couldn't find a way to check how many evoked datasets are in the
         # .fif file. So, after the setno gets list index out of range we get
         # an exception. This makes it hard to check if the data type is right,
         # since both 'index out of bound' and 'no evoked data found' raise
         # ValueError.
-        
-        
         try:
-            
                 while mne.fiff.Evoked(os.path.join(folder, file), setno=i) is not None:
                     evoked = mne.fiff.Evoked(os.path.join(folder, file), setno=i)
                     event_name = evoked.comment   #.split('_', 1)
@@ -345,18 +300,14 @@ class FileManager(QObject):
             try:
                 if mne.fiff.Evoked(os.path.join(folder, file), setno=0) is not None:
             #if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
-                    item.setData(32, evokeds)
-                    item.setData(33, category)
-                    return item
+                    return evokeds, category
             except ValueError:
                 self.messageBox = messageBox.AppForm()
                 self.messageBox.labelException.setText('File is not an evoked.fif file.')
                 self.messageBox.show()
-                return
+                return None, None
         
-        item.setData(32, evokeds)
-        item.setData(33, category)
-        return item
+        return evokeds, category
             
     def open_raw(self, fname, pre_load = True):
         """
@@ -438,6 +389,45 @@ class FileManager(QObject):
         parameters_str['events'] = event_dict
         parameterFileName = str(fpath + '.param')
         self.pickle(parameters_str, parameterFileName)
+
+    def save_epoch(self, fpath, epoch, overwrite = False):
+        """Save epochs and the parameter values used to create them.
+        
+        The epochs are saved to fpath.fif. the parameter values are saved
+        to fpath.param.
+        
+        Keyword arguments:
+        
+        fpath     -- The full path and base name of the files
+        epoch     -- Epochs object
+        overwrite -- A boolean telling whether existing files should be
+                    replaced. False by default. 
+        """
+        if os.path.exists(fpath + '.fif') and overwrite is False:
+            return
+        #First save the epochs
+        raw = epoch._raw
+        raw.save(fpath + '.fif')
+        #Then save the parameters using pickle.
+        parameters = epoch._params
+        if parameters is None: return
+        #toPyObject turns the dict keys into QStrings so convert them back to
+        #strings.
+        #parameters = dict((str(k), v) for k, v in parameters.iteritems())
+        
+        event_dict = {}
+        event_list = parameters['events']
+        for item in event_list:
+            key = str(item[1])
+            event = item[0]
+            #Create an empty list for the new key
+            if key not in event_dict:
+                event_dict[key] = []
+            event_dict[key].append(event)
+        parameters['events'] = event_dict
+        parameterFileName = str(fpath + '.param')
+        self.pickle(parameters, parameterFileName)
+
         
     def unpickle(self, fpath):
         """Unpickle an object from a file at fpath.

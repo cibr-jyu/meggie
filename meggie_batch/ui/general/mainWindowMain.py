@@ -146,6 +146,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment_value_changed.connect\
         (self.load_evoked_collections)
         self.epochList.item_added.connect(self.epochs_added)
+        #self.epochList.item_added.connect(self.epochs_added_handler)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
                         
         # For output logging.
@@ -290,26 +291,27 @@ class MainWindow(QtGui.QMainWindow):
             ' events\n'
         self.ui.textBrowserEvents.setText(events_string)
         
-    def show_epoch_collection_parameters(self, item):
+    def show_epoch_collection_parameters(self, epochs):
         """
         Sets parameters from the currently chosen epochs.
         
         Keyword arguments:
-        item = epochWidget item that is currently chosen,
-               includes .fif and .param files
+        epochs -- Epochs object
         """
-        
         # Set default/empty values for epoch parameters.
         self.clear_epoch_collection_parameters()
         
-        epochs = item.data(32).toPyObject()
-        params = item.data(33).toPyObject()
+        """
+        TODO: get epochs from active_subject._epochs dictionary
+        """
+        epochs_raw = epochs._raw
+        params = epochs._params
         if params is None:
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
             self.ui.textBrowserWorkingFile.\
-            setText('Unknown source file. ' + epochs.info.get('description'))
+            setText('Unknown source file. ' + epochs_raw.info.get('description'))
             
             # TODO: this is too slow. If remove this line remove
             # measurementInfo from imports also.
@@ -320,29 +322,28 @@ class MainWindow(QtGui.QMainWindow):
         # Dictionary stores numbers of different events.
         event_counts = dict()
         # Adds items to dictionary for corresponding events.
-        for value in epochs.event_id.values():
+        for value in epochs_raw.event_id.values():
             event_counts[str(value)] = 0
         # Adds number of events to corresponding event.
-        for event in epochs.events:
+        for event in epochs_raw.events:
             for key in event_counts.keys():
                 if event[2] == int(key):
                     event_counts[key] += 1
         categories = ''
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
-        for key,value in epochs.event_id.items():
+        for key,value in epochs_raw.event_id.items():
             item = QtGui.QListWidgetItem()
             item.setText(key + ': ID ' + str(value) + ', ' + \
             str(event_counts[str(value)]) + ' events')
             self.epochList.ui.listWidgetEvents.addItem(item)
         # TODO: create category items to add on the listWidgetEvents widget. 
         #self.epochList.ui.listWidgetEvents.setText(categories)
-        self.ui.textBrowserTmin.setText(str(params[QtCore.QString('tmin')]) + ' s')
-        self.ui.textBrowserTmax.setText(str(params[QtCore.QString('tmax')]) + ' s')
+        self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
+        self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
         # Creates dictionary of strings instead of qstrings for rejections.
         params_rejections_str = dict((str(key), value) for
-                          key, value in params[QtCore.QString(u'reject')].\
-                          iteritems())
+                          key, value in params['reject'].iteritems())
         if 'mag' in params_rejections_str:
             self.ui.textBrowserMag.setText(str(params_rejections_str['mag']\
                                                  / 1e-12) + ' fT')
@@ -368,11 +369,10 @@ class MainWindow(QtGui.QMainWindow):
                                                 / 1e-6) + 'uV')
         else:
             self.ui.textBrowserEOG.setText('-1')
-        filename_full_path = str(params[QtCore.QString(u'raw')])
+        filename_full_path = str(params['raw'])
         filename_list = filename_full_path.split('/')
         filename = filename_list[len(filename_list) - 1]
         self.ui.textBrowserWorkingFile.setText(filename)
-        #self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
         
     def clear_epoch_collection_parameters(self):
         """
@@ -421,15 +421,13 @@ class MainWindow(QtGui.QMainWindow):
     def epochs_added(self, item):
         """
         A slot for saving epochs from the added QListWidgetItem to a file.
-        Calls Subject to handle with new epochs.
         """
         if os.path.exists(self.experiment.active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
         fname = str(item.text())
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
-        self.fileManager.save_epoch_item(fpath, item)
-        # Creates Epochs object and adds it to Subject epochs list.
-        self.experiment.active_subject.handle_new_epochs(fname, item)
+        epochs_object = self.experiment.active_subject._epochs[fname]
+        self.fileManager.save_epoch(fpath, epochs_object)
         
     @QtCore.pyqtSlot(dict)
     def create_new_epochs(self, epoch_params):
@@ -447,12 +445,15 @@ class MainWindow(QtGui.QMainWindow):
                                                       _working_file)
         epoch_params['raw'] = self.experiment.active_subject_raw_path
         
-        #Create a QListWidgetItem and add the actual epochs to slot 32.
-        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
-        item.setData(32, epochs)
-        item.setData(33, epoch_params)
+        fname = epoch_params['collectionName']
+        item = QtGui.QListWidgetItem(fname)
+        self.experiment.active_subject.handle_new_epochs(fname, epochs, epoch_params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
+        # TODO: addItem changes the epoch collection name correctly if same
+        # name already exists. Epoch -> Epoch2 -> Epoch3. Fix the name change
+        # when creating params dictionary in eventSelectionDialogMain
+        # collect_parameter_values
         
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
@@ -491,22 +492,19 @@ class MainWindow(QtGui.QMainWindow):
         # This is used when epochs are already created from earlier
         # activation of the subject.
         if len(self.experiment.active_subject._epochs) > 0:
-            epoch_items = self.experiment.active_subject.\
-            convert_epoch_collections_as_items()
+            #epoch_items = self.experiment.active_subject.\
+            #convert_epoch_collections_as_items()
             self.epochList.clearItems()
             
-            # TODO: Every time when adding item calls load_evoked_collections
-            # method. Fix by creating Evoked class for handling those objects.
-            # Check if Evoked objects are already created.
-            for item in epoch_items:
-                
-                # Change color of the item to red if no param file available.
-                if item.data(33).toPyObject() is None:
+            # Check if Epochs objects are already created from earlier
+            # activation of the subject.
+            for epoch in self.experiment.active_subject._epochs.values():
+                item = QtGui.QListWidgetItem(epoch._collection_name)
+                if epoch._params is None:
                     color = QtGui.QColor(255, 0, 0, 255)
                     brush = QtGui.QBrush()
                     brush.setColor(color)
                     item.setForeground(brush)
-                
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
             return
@@ -517,25 +515,25 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.clearItems()
         path = self.experiment.active_subject._epochs_directory
         files = os.listdir(path)
-        
         # TODO: Every time when adding item calls load_evoked_collections
         # method. Fix by creating Evoked class for handling those objects.
         # Check if Evoked objects are already created.
         for file in files:
             if file.endswith('.fif'):
                 name = file[:-4]
-                item = self.fileManager.load_epoch_item(path, name)
-                
+                item = QtGui.QListWidgetItem(name)
+                fname = os.path.join(path, file) # or file is full path of file?
+                epochs, params = self.fileManager.load_epochs(fname)
                 # Change color of the item to red if no param file available.
-                if item.data(33).toPyObject() is None:
+                if params is None:
                     color = QtGui.QColor(255, 0, 0, 255)
                     brush = QtGui.QBrush()
                     brush.setColor(color)
-                    item.setForeground(brush)
-                
+                    item.setForeground(brush)               
+                self.experiment.active_subject.handle_new_epochs(name, epochs, params)
                 self.epochList.addItem(item)
                 self.epochList.setCurrentItem(item)
-       
+                
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
         
@@ -549,25 +547,46 @@ class MainWindow(QtGui.QMainWindow):
                                                       _epochs_directory))
         if fname == '': return
         if not os.path.isfile(fname): return
-        item = self.fileManager.load_epochs(fname)
-        if item is None: return
+        
+        epochs, params = self.fileManager.load_epochs(fname)
         # Change color of the item to red if no param file available.
-        if item.data(33).toPyObject() is None:
+        fname_base = os.path.basename(fname)
+        fname_prefix = fname_base.split('.')[0]
+        
+        fname_temp = fname_prefix
+
+        # If trying to  load same raw epoch fif the collection name stays the
+        # same and new Epochs object is not created. This changes the
+        # collection name.
+        suffix = 2
+        while len(self.epochList.ui.listWidgetEpochs.\
+               findItems(fname_prefix, QtCore.Qt.MatchExactly)) > 0:
+            fname_prefix = fname_temp + str(suffix)
+            if params is not None:
+                params['collectionName'] = fname_prefix
+            suffix += 1
+        
+        item = QtGui.QListWidgetItem(fname_prefix)
+        if params is None:
             color = QtGui.QColor(255, 0, 0, 255)
             brush = QtGui.QBrush()
             brush.setColor(color)
             item.setForeground(brush)
+        self.experiment.active_subject.handle_new_epochs(fname_prefix, epochs, params)
         self.epochList.addItem(item)
-        fname_base = os.path.basename(fname)
-        fname_prefix = fname_base.split('.')[0]
-        self.experiment.active_subject.handle_new_epochs(fname_prefix, item)
+        self.epochList.setCurrentItem(item)
         
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
         """
         if checked is None: return
         if self.epochList.currentItem() is None: return
-        params = self.epochList.currentItem().data(33).toPyObject()
+        
+        """
+        TODO: get ed params from active_subject._evokeds dictionary
+        """
+        collection_name = str(self.epochList.currentItem().text())
+        params = self.experiment.active_subject._epochs[collection_name]._params
         self.epochParameterDialog = EventSelectionDialog(self, self.\
                                                          experiment.\
                                                          active_subject.working_file,
@@ -590,7 +609,11 @@ class MainWindow(QtGui.QMainWindow):
                                                       _epochs_directory))
         if fname == '': return
         else: 
-            epochs = self.epochList.currentItem().data(32).toPyObject()
+            """
+            TODO: get epochs from active_subject._epochs dictionary
+            """
+            collection_name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+            epochs = self.experiment.active_subject._epochs[collection_name]._raw
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
         self.fileManager.copy(os.path.join(self.experiment.active_subject.\
@@ -619,9 +642,10 @@ class MainWindow(QtGui.QMainWindow):
             ('Please select an epoch collection to average.')
             self.messageBox.show()  
             return
-        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
-        toPyObject()
-        category = epochs.event_id
+        key = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        epochs = self.experiment.active_subject._epochs[key]
+        
+        category = epochs._raw.event_id
         
         # New dictionary for event categories must be created, if user
         # manually chooses different event categories to be averaged. 
@@ -629,12 +653,11 @@ class MainWindow(QtGui.QMainWindow):
             category_user_chosen = dict()
             for event in self.epochList.ui.listWidgetEvents.selectedItems():
                 event_name = (str(event.text())).split(':')
-                category_user_chosen[event_name[0]] = epochs.event_id.get(event_name[0])
-            evoked = self.caller.average(epochs,category_user_chosen)
+                category_user_chosen[event_name[0]] = epochs._raw.event_id.get(event_name[0])
+            evoked = self.caller.average(epochs._raw,category_user_chosen)
             category = category_user_chosen
         else:
-            #category = epochs.event_id
-            evoked = self.caller.average(epochs,category)
+            evoked = self.caller.average(epochs._raw,category)
         
         category_str = ''
         i = 0
@@ -644,13 +667,10 @@ class MainWindow(QtGui.QMainWindow):
                 i = 1
             else:
                 category_str += '-' + key
-        item = QtGui.QListWidgetItem()
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
         evoked_name = str(epoch_collection.\
                           text() + '[' + category_str + ']' + '_evoked.fif')
-        item.setText(evoked_name)
-        item.setData(32, evoked)
-        item.setData(33, category)
+        item = QtGui.QListWidgetItem(evoked_name)
         
         # TODO: create separate method in filemanager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
@@ -691,9 +711,11 @@ class MainWindow(QtGui.QMainWindow):
         
         evoked_dict = {}
         for i in range(self.evokedList.count()):
-            evoked_dict[str(self.evokedList.item(i).text())] = \
-            self.evokedList.item(i).data(32).toPyObject()
-            
+            evoked_name = str(self.evokedList.item(i).text())
+            evoked = self.experiment.active_subject._evokeds[evoked_name]._raw
+            evoked_dict[str(self.evokedList.item(i).text())] = evoked
+            #evoked_dict[str(self.evokedList.item(i).text())] = \
+            #self.evokedList.item(i).data(32).toPyObject()
         self.evokedStatsDialog = EvokedStatsDialog(evoked_dict)
         self.evokedStatsDialog.exec_()
         
@@ -703,15 +725,20 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             # TODO: show messagebox
-            print 'Create epochs before visualizing.'
-            return
-        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
-        toPyObject()
+            print 
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.\
+            setText('Create epochs before visualizing.')
+            self.messageBox.show()
         
+            
+            return
+        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
+                          currentItem().text())
+        epochs = self.experiment.active_subject._epochs[epochs_name]._raw
         self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
         self.visualizeEpochChannelsDialog.exec_()
         
-    
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """
         Plot the evoked data as a topology
@@ -719,20 +746,28 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         item = self.evokedList.currentItem()
         if item is None: return
-        evoked = item.data(32).toPyObject()
-        category = item.data(33).toPyObject()
-        self.caller.draw_evoked_potentials(evoked,category)
+        """
+        TODO: get evoked from active_subject._evokeds dictionary
+        """
+        evoked_name = str(self.evokedList.currentItem().text())
+        evoked = self.experiment.active_subject._evokeds[evoked_name]
+        evoked_raw = evoked._raw
+        category = evoked._categories
+        self.caller.draw_evoked_potentials(evoked_raw,category)
         
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
-        Save the evoked data
+        TODO: Save the evoked data (for exporting purposes if needed)
+        not working currently (overwrites the same existing raw file)
         """
         if checked is None: return
-        item = self.evokedList.currentItem()
-        evokeds = item.data(32).toPyObject()
+        evoked_collection_name = str(self.evokedList.currentItem().text())
+        evoked = self.experiment.active_subject._evokeds[evoked_name]
+        evoked_raw = evoked._raw
+        """
+        TODO: get evoked from active_subject._evokeds dictionary
+        """
         
-        
-        evoked_collection_name = str(item.text())
         saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         if os.path.exists(saveFolder) is False:
             try:
@@ -750,12 +785,10 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonLoadEvoked_clicked(self, checked=None):
         """
-        Load evoked data
+        TODO: Load evoked data (for importing purposes if needed)
+        not working currently
         """
-        
-        
         if checked is None: return
-        
         fname = str(QtGui.QFileDialog.\
                     getOpenFileName(self, 'Load evokeds', os.path.join(\
                                                       self.experiment.\
@@ -764,11 +797,16 @@ class MainWindow(QtGui.QMainWindow):
                                                       'average')))
         if fname == '': return
         if not os.path.isfile(fname): return
-        
-        item = self.fileManager.load_evokeds(fname + '.fif')
-        if item is None: return
+        split = os.path.split(fname)
+        #folder = split[0] + '/'
+        name = os.path.splitext(split[1])[0]
+        # TODO: add path and filename for load_evoked, split fname correctly to do this
+        evoked, category = self.fileManager.load_evoked(fname + '.fif')
+        if evoked is None: return
+        item = QtGui.QListWidgetItem(file)
         self.evokedList.addItem(item)
-        
+        self.evokedList.setCurrentItem(item)
+        self.experiment.active_subject.handle_new_evoked(item.text(), evoked, category)
         
     def load_evoked_collections(self):
         """Load evoked collections from a folder.
@@ -784,45 +822,35 @@ class MainWindow(QtGui.QMainWindow):
             self.evokedList.clear()
             return  
         self.evokedList.clear()
-        
         if len(self.experiment.active_subject._evokeds) > 0:
             evoked_items = self.experiment.active_subject.\
             convert_evoked_collections_as_items()
             self.evokedList.clear()
-            
-            # TODO: Every time when adding item calls load_evoked_collections
-            # method. Fix by creating Evoked class for handling those objects.
             # Check if Evoked objects are already created.
             for item in evoked_items:
                 self.evokedList.addItem(item)
                 self.evokedList.setCurrentItem(item)
             return
-        
         path = self.experiment.active_subject._evoked_directory
         files = os.listdir(path)
         for file in files:
             if file.endswith('.fif'):
                 #name = file[:-4]            
-                # TODO: Add load_evoked_item method on fileManager to read
-                # evoked datasets and create QListWidgetItem object in the
-                # same method. Connect loadk_evoked_item to
-                # experiment_value_changed signal on mainWindow __init__
-                # (constructor: self.experiment_value_changed.connect\
-                # (self.load_evoked_collections)).
-                item = self.fileManager.load_evoked_item(path, file)
-                if item is None:
-                    print 'One or more evoked.fif data files has more than' + \
-                    ' 8 datasets and the loading of this/these data file/s' + \
-                    ' was terminated.'
+                evoked, categories = self.fileManager.load_evoked(path, file)
+                if evoked is None:
+                    message = 'One or more evoked.fif data files has more' + \
+                    ' than 8 datasets and the loading of this/these data' + \
+                    ' file/s was terminated.'
+                    self.messageBox = messageBox.AppForm()
+                    self.messageBox.labelException.setText \
+                    (message)
+                    self.messageBox.show()  
                 else:
+                    item = QtGui.QListWidgetItem(file)
                     self.evokedList.addItem(item)
                     self.evokedList.setCurrentItem(item)
-                    evoked = item.data(32).toPyObject()
-                    categories = item.data(33).toPyObject()
                     self.experiment.active_subject.handle_new_evoked(item.text(), evoked, categories)
-                #self.evokedList.addItem(item)
-                #self.evokedList.setCurrentItem(item)
-        
+
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
         """
@@ -851,6 +879,8 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.experiment.active_subject.remove_epochs(item_str)
             self.epochList.remove_item(self.epochList.currentItem())
+        if self.epochList.ui.listWidgetEpochs.count() == 0:
+            self.clear_epoch_collection_parameters()
             
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked item and the files related to it.
@@ -1006,9 +1036,13 @@ class MainWindow(QtGui.QMainWindow):
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
-        data(32).toPyObject()
-        self.tfr_dialog = TFRDialog(self, self.experiment.active_subject._working_file, epoch)
+        
+        epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
+                                     currentItem().text())
+        epochs = self.experiment.active_subject._epochs[epochs_collection_name]
+        epochs_raw = epochs._raw
+        self.tfr_dialog = TFRDialog(self, self.experiment.active_subject.\
+                                    _working_file, epochs_raw)
         self.tfr_dialog.show()
     
     def on_pushButtonTFRTopology_clicked(self,checked=None):
@@ -1021,11 +1055,14 @@ class MainWindow(QtGui.QMainWindow):
                                                    'before TFR.')
             self.messageBox.show()
             return
-        epoch = self.epochList.ui.listWidgetEpochs.currentItem().\
-        data(32).toPyObject()
+        epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
+                                     currentItem().text())
+        epochs = self.experiment.active_subject._epochs[epochs_collection_name]
+        epochs_raw = epochs._raw
         self.tfrTop_dialog = TFRTopologyDialog(self, 
-                                               self.experiment.active_subject._working_file, 
-                                               epoch)
+                                               self.experiment.active_subject.\
+                                               _working_file, 
+                                               epochs._raw)
         self.tfrTop_dialog.show()
         
     def on_pushButtonChannelAverages_clicked(self, checked=None):
@@ -1039,9 +1076,13 @@ class MainWindow(QtGui.QMainWindow):
             ('Please select an epoch collection to channel average.')
             self.messageBox.show()  
             return
-        epochs = self.epochList.ui.listWidgetEpochs.currentItem().data(32).\
-        toPyObject()
         
+        """
+        TODO: get epochs from active_subject._epochs dictionary
+        """
+        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
+                          currentItem().text())
+        epochs = self.experiment.active_subject._epochs[epochs_name]._raw
         if self.ui.radioButtonLobe.isChecked() == True:
             self.caller.average_channels(epochs, self.ui.comboBoxLobes.\
                                          currentText(), None)
@@ -1064,6 +1105,15 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
+        
+        # This prevents taking the currentItem from the previously open
+        # subject when activating another subject.
+        if self.epochList.ui.listWidgetEpochs.currentItem() is not None:
+            item = self.epochList.ui.listWidgetEpochs.currentItem()
+            row = self.epochList.ui.listWidgetEpochs.row(item)
+            self.epochList.ui.listWidgetEpochs.takeItem(row)
+        self.clear_epoch_collection_parameters()
+        
         working_file_name = ''
         subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().
                                       text())
@@ -1104,7 +1154,7 @@ class MainWindow(QtGui.QMainWindow):
     def _initialize_ui(self):
         """
         Method for setting up the GUI.
-        """  
+        """
         # Clears the events data.
         self.ui.textBrowserEvents.clear()
         # Clears the data info of the labels.
@@ -1224,8 +1274,9 @@ class MainWindow(QtGui.QMainWindow):
         
         # If no subjects added to the experiment, there is no reason to enable
         # more tabs to confuse the user.
-        if len(self.experiment._subject_paths) == 0 or \
-        self.experiment.active_subject_path == '':
+        #if len(self.experiment._subject_paths) == 0 or \
+        #self.experiment.active_subject_path == '':
+        if self.experiment.active_subject_path == '':
             self.ui.tabWidget.setTabEnabled(2,False)
             self.ui.tabWidget.setTabEnabled(3,False)
             self.ui.tabWidget.setTabEnabled(4,False)

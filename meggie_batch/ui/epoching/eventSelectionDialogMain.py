@@ -123,6 +123,17 @@ class EventSelectionDialog(QtGui.QDialog):
         
         collectionName = self.ui.lineEditCollectionName.text()
         collectionName.replace(0, 1, collectionName[0].toUpper())
+        if len(self.parent.epochList.ui.listWidgetEpochs.\
+               findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
+             self.messageBox = messageBox.AppForm()
+             self.messageBox.labelException.setText \
+             ('Collection name ' + str(collectionName) + ' exists. ' + \
+              'Please change name of the epoch collection.')
+             self.messageBox.show()
+             return None
+        
+        # QString to string
+        collectionName = str(collectionName)
         
         reject = dict()
         if mag:

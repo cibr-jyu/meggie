@@ -153,10 +153,13 @@ class EpochWidget(QtGui.QWidget):
         
     def selection_changed(self):
         item = self.ui.listWidgetEpochs.currentItem()
+        if item is None: return
+        item_text = item.text()
+        epochs = self.parent.experiment.active_subject._epochs[str(item.text())]
         if self.ui.listWidgetEpochs.currentItem() is None:
             self.parent.clear_epoch_collection_parameters()
         else:
-            self.parent.show_epoch_collection_parameters(item)
+            self.parent.show_epoch_collection_parameters(epochs)
         """
         parameters = self.parent.epochParamsList.set_parameters(item)
         item.setData(33, parameters)

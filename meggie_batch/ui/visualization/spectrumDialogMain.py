@@ -67,5 +67,5 @@ class SpectrumDialog(QtGui.QDialog):
         print ch_index
         #self.parent.caller.magnitude_spectrum(raw, ch_index)
         # TODO: fmin ja fmax valinnat
-        self.parent.experiment.active_subject._working_file.plot_psds()
+        self.parent.experiment.active_subject._working_file.plot_psds(picks=ch_index)
         self.close()
