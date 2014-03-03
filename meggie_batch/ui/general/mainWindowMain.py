@@ -93,7 +93,9 @@ class MainWindow(QtGui.QMainWindow):
     """
     
     #custom signals
-    experiment_value_changed = QtCore.pyqtSignal()
+    #experiment_value_changed was made useless. All the stuff moved to
+    #_initialize_ui() method.
+    #experiment_value_changed = QtCore.pyqtSignal()
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -125,12 +127,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.setMinimumWidth(345)
         self.evokedList.setMaximumHeight(120)
         
-        # Creates a listwidget for parameters of chosen epochs on epochList.
-        """
-        self.epochParamsList = EpochParamsWidget(self)
-        self.epochParamsList.hide()
-        """
-        
         self.fileManager = FileManager()
         self.epocher = Epochs()
         
@@ -139,14 +135,7 @@ class MainWindow(QtGui.QMainWindow):
         
         #Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.experiment_value_changed.connect\
-        (self.open_active_subject)
-        self.experiment_value_changed.connect\
-        (self.load_epoch_collections)
-        self.experiment_value_changed.connect\
-        (self.load_evoked_collections)
         self.epochList.item_added.connect(self.epochs_added)
-        #self.epochList.item_added.connect(self.epochs_added_handler)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
                         
         # For output logging.
@@ -161,7 +150,7 @@ class MainWindow(QtGui.QMainWindow):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
-        self.experiment_value_changed.emit()
+        #self.experiment_value_changed.emit()
         
     def on_actionQuit_triggered(self, checked=None):
         """
@@ -208,16 +197,9 @@ class MainWindow(QtGui.QMainWindow):
         # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
-            
-            # This emits experiment_value_changed signal and invokes methods
-            # open_active_subject, load_epoch_collections and
-            # load_evoked_collections.
             self.experiment = pickle.load(output)
             self._initialize_ui()
-            
-            # TODO: needs to be added to _initialize_ui so that after
-            # activating subject the updated experiment will be given
-            # to the caller? 
+
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
             
@@ -1126,8 +1108,7 @@ class MainWindow(QtGui.QMainWindow):
         raw_path = working_file_name
         subject_name = self.ui.listWidgetSubjects.currentItem().text()
         self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
-        self.load_epoch_collections()
-        self.load_evoked_collections()
+        
         self.experiment.update_experiment_settings()
         self._initialize_ui()
     
@@ -1153,6 +1134,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI.
         """
+        self.clear_epoch_collection_parameters()
+        self.open_active_subject()
+        self.load_epoch_collections()
+        self.load_evoked_collections()
+        
         # Clears the events data.
         self.ui.textBrowserEvents.clear()
         # Clears the data info of the labels.

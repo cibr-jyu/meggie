@@ -89,14 +89,7 @@ class AddSubjectDialog(QtGui.QDialog):
                                                 subject_name, \
                                                 self.experiment)
         self.parent.experiment.update_experiment_settings()
-        #self.parent.enable_tabs()
         self.parent._initialize_ui()
-        
-        # These are only for updating UI. Clears widgets and parameters.
-        self.parent.clear_epoch_collection_parameters()
-        self.parent.load_epoch_collections()
-        self.parent.load_evoked_collections()
-        
         self.close()
         
     def on_pushButtonBrowse_clicked(self, checked=None):
