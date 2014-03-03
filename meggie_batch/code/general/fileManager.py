@@ -61,7 +61,7 @@ class FileManager(QObject):
     load_epochs(self, fname)
     open_raw(self, fname)
     pickle(self, picklable, path)
-    save_epoch_item(self, fpath, item, overwirte = False)
+    save_epoch(self, fpath, epoch, overwirte = False)
     unpickle(self, fpath)
     """ 
     
@@ -350,46 +350,6 @@ class FileManager(QObject):
         
         pickleFile.close()
         
-    def save_epoch_item(self, fpath, item, overwrite = False):
-        """Save epochs and the parameter values used to create them.
-        
-        The epochs are saved to fpath.fif. the parameter values are saved
-        to fpath.param. Epochs are read from the QListWidgetItem's data
-        slot 32, parameter values are in a dict at data slot 33.
-        
-        Keyword arguments:
-        
-        fpath     -- The full path and base name of the files
-        item      -- A QListWidgetItem containing epochs
-                    and their parameter values.
-        overwrite -- A boolean telling whether existing files should be
-                    replaced. False by default. 
-        """
-        if os.path.exists(fpath + '.fif') and overwrite is False:
-            return
-        #First save the epochs
-        epochs = item.data(32).toPyObject()
-        epochs.save(fpath + '.fif')
-        #Then save the parameters using pickle.
-        parameters = item.data(33).toPyObject()
-        if parameters is None: return
-        #toPyObject turns the dict keys into QStrings so convert them back to
-        #strings.
-        parameters_str = dict((str(k), v) for k, v in parameters.iteritems())
-        
-        event_dict = {}
-        event_list = parameters_str['events']
-        for item in event_list:
-            key = str(item[1])
-            event = item[0]
-            #Create an empty list for the new key
-            if key not in event_dict:
-                event_dict[key] = []
-            event_dict[key].append(event)
-        parameters_str['events'] = event_dict
-        parameterFileName = str(fpath + '.param')
-        self.pickle(parameters_str, parameterFileName)
-
     def save_epoch(self, fpath, epoch, overwrite = False):
         """Save epochs and the parameter values used to create them.
         

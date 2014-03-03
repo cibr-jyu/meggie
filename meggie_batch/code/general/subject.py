@@ -224,35 +224,6 @@ class Subject(QObject):
             d[i] = bins[i]
         self._event_set = d
 
-    def create_epochs_object(self, name, epochs, params):
-        """
-        Creates new Epochs object using QListWidgetItem.
-        Returns Epochs object. Returns None if Epochs
-        object already created with given name. See
-        keyword arguments for correct data slots.
-        
-        Keyword arguments:
-        name    -- name of the epoch collection
-        epochs  -- raw epochs file
-        params  -- epochs parameters
-        """
-        
-  
-    def convert_epoch_collections_as_items(self):
-        """
-        Converts self._epochs as QListWidgetItems and returns them in items
-        list.
-        """
-        items = []
-        # key = collection_name, value = Epochs object
-        for key in self._epochs:
-            item = QtGui.QListWidgetItem(key)
-            epochs = self._epochs[key]
-            item.setData(32, epochs._raw)
-            item.setData(33, epochs._params)
-            items.append(item)
-        return items
-  
     def add_epochs(self, epochs):
         """
         Adds Epochs object to the epochs dictionary.
@@ -265,8 +236,7 @@ class Subject(QObject):
         
     def handle_new_epochs(self, name, epochs_raw, params):
         """
-        Calls methods create_epochs_object and add_epochs to create Epochs
-        object and add it to the self._epochs dictionary.
+        Creates Epochs object and adds it to the self._epochs dictionary.
         Does nothing if given collection name exists in epochs dictionary.
         
         Keyword arguments
@@ -350,9 +320,8 @@ class Subject(QObject):
         
     def handle_new_evoked(self, name, evoked, categories):
         """
-        Calls methods create_evoked_object and add_evoked to create Evoked
-        object and add it to the self._evokeds dictionary.
-        Does nothing if given collection name that exists in epochs dictionary.
+        Creates new Evoked object and adds it to the self._evokeds dictionary.
+        Does nothing if given evoked name that is in self._evokeds.keys().
         
         Keyword arguments
         name       -- name of the evoked in QString
@@ -362,50 +331,20 @@ class Subject(QObject):
         # Checks if evoked with given name exists.
         if self._evokeds.has_key(str(name)):
             return
+        #evoked_object = self.create_evoked_object(name, evoked, categories)
         
-        #epochs = self.create_epochs_object(epochs, params)
-        
-        evoked_object = self.create_evoked_object(name, evoked, categories)
-        self.add_evoked(name, evoked_object)
-    
-    def create_evoked_object(self, name, evoked, categories):
-        """
-        Creates new Evoked object using QListWidgetItem.
-        
-        Returns Evoked object.
-        Returns None if Evoked object already created with given name.
-        
-        Keyword arguments:
-        name       -- name of the evoked
-        evoked     -- raw evoked file
-        categories -- dict() of events in epochs.event_id
-        """
-        #toPyObject turns the dict keys into QStrings so convert them back to
-        #strings.
         evoked_object = Evoked()
         if evoked is None:
-            return None
-        else:
-            evoked_object._raw = evoked
-            evoked_object._name = str(name)
-            evoked_object._categories = categories
-        return evoked_object
-
-    def convert_evoked_collections_as_items(self):
-        """
-        Converts self._evokeds as QListWidgetItems and returns them in items
-        list.
-        """
-        items = []
-        # key = collection_name, value = Epochs object
-        for key in self._evokeds.keys():
-            item = QtGui.QListWidgetItem(key)
-            evoked = self._evokeds[key]
-            item.setData(32, evoked._raw)
-            item.setData(33, evoked._categories)
-            items.append(item)
-        return items
-
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Evoked is None.')
+            self.messageBox.show()
+            return
+        evoked_object._raw = evoked
+        evoked_object._name = str(name)
+        evoked_object._categories = categories
+        self.add_evoked(name, evoked_object)
+    
     def add_evoked(self, name, evoked_object):
         """
         Adds Evoked object to the evokeds dictionary.

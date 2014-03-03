@@ -474,8 +474,9 @@ class MainWindow(QtGui.QMainWindow):
         # This is used when epochs are already created from earlier
         # activation of the subject.
         if len(self.experiment.active_subject._epochs) > 0:
+            """
             self.epochList.clearItems()
-            
+            """
             # Check if Epochs objects are already created from earlier
             # activation of the subject.
             for epoch in self.experiment.active_subject._epochs.values():
@@ -492,7 +493,9 @@ class MainWindow(QtGui.QMainWindow):
                           active_subject._epochs_directory) is False:
             self.experiment.active_subject.create_epochs_directory
             return
+        """
         self.epochList.clearItems()
+        """
         path = self.experiment.active_subject._epochs_directory
         files = os.listdir(path)
         # TODO: Every time when adding item calls load_evoked_collections
@@ -802,12 +805,13 @@ class MainWindow(QtGui.QMainWindow):
             self.evokedList.clear()
             return  
         self.evokedList.clear()
+        
+        # Check if Evoked objects are already created.
         if len(self.experiment.active_subject._evokeds) > 0:
-            evoked_items = self.experiment.active_subject.\
-            convert_evoked_collections_as_items()
             self.evokedList.clear()
-            # Check if Evoked objects are already created.
-            for item in evoked_items:
+            # Key represents evoked name.
+            for key in self.experiment.active_subject._evokeds.keys():
+                item = QtGui.QListWidgetItem(key)
                 self.evokedList.addItem(item)
                 self.evokedList.setCurrentItem(item)
             return
@@ -1088,10 +1092,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # This prevents taking the currentItem from the previously open
         # subject when activating another subject.
-        if self.epochList.ui.listWidgetEpochs.currentItem() is not None:
-            item = self.epochList.ui.listWidgetEpochs.currentItem()
-            row = self.epochList.ui.listWidgetEpochs.row(item)
-            self.epochList.ui.listWidgetEpochs.takeItem(row)
+        self.epochList.clearItems()
         self.clear_epoch_collection_parameters()
         
         working_file_name = ''
@@ -1134,6 +1135,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI.
         """
+        #self.epochList.clearItems()
         self.clear_epoch_collection_parameters()
         self.open_active_subject()
         self.load_epoch_collections()
