@@ -298,9 +298,10 @@ class Caller(object):
         mne.write_events(eog_event_fname, events)
         
         # Write parameter file
-        self.parent.experiment.save_parameter_file
-        ('mne.preprocessing.compute_proj_eog', raw_in.info.get('filename'),
-          eog_proj_fname, 'eogproj', dic)
+        self.parent.experiment.\
+        save_parameter_file('mne.preprocessing.compute_proj_eog',
+                            raw_in.info.get('filename'),
+                            eog_proj_fname, 'eogproj', dic)
         
     def apply_ecg(self, raw, directory):
         """

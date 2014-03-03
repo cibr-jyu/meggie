@@ -210,7 +210,7 @@ class MainWindow(QtGui.QMainWindow):
             output = open(fname, 'rb')
             
             # This emits experiment_value_changed signal and invokes methods
-            # load_active_subject, load_epoch_collections and
+            # open_active_subject, load_epoch_collections and
             # load_evoked_collections.
             self.experiment = pickle.load(output)
             self._initialize_ui()
@@ -492,8 +492,6 @@ class MainWindow(QtGui.QMainWindow):
         # This is used when epochs are already created from earlier
         # activation of the subject.
         if len(self.experiment.active_subject._epochs) > 0:
-            #epoch_items = self.experiment.active_subject.\
-            #convert_epoch_collections_as_items()
             self.epochList.clearItems()
             
             # Check if Epochs objects are already created from earlier
