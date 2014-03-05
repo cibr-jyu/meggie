@@ -53,6 +53,8 @@ import numpy as np
 
 from xlrd import XLRDError
 
+from functools import partial
+
 class EventSelectionDialog(QtGui.QDialog):
     
     """
