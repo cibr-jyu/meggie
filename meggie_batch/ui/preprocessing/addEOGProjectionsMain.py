@@ -90,6 +90,8 @@ class AddEOGProjections(QtGui.QDialog):
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return
-        self.parent._initialize_ui()
+        # No need to initialize whole mainwindow again.
+        #self.parent._initialize_ui()
+        self.parent.ui.checkBoxEOGApplied.setChecked(True)
         self.close()
         

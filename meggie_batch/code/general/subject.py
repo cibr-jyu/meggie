@@ -76,7 +76,7 @@ class Subject(QObject):
                                           self._experiment.experiment_name,
                                           self._subject_name)
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
-        self._evoked_directory = os.path.join(self._epochs_directory, 'average')
+        self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
         
     @property
     def raw_data(self):
@@ -134,14 +134,14 @@ class Subject(QObject):
         return self._working_file
     
     @working_file.setter
-    def working_file(self, fname):
+    def working_file(self, raw):
         """
         Sets the current working file and notifies the main window to show it.
         Keyword arguments:
-        fname         -- Name of the new working file.
+        raw         -- raw data file.
         """
-        if (isinstance(fname, mne.fiff.Raw)):
-            self._working_file = fname
+        if (isinstance(raw, mne.fiff.Raw)):
+            self._working_file = raw
         else:
             raise Exception('Wrong data type')
 
@@ -183,6 +183,7 @@ class Subject(QObject):
             mne.fiff.Raw.save(self._working_file, os.path.join(path, \
                               str(os.path.basename(file_name))))
             self.create_epochs_directory()
+            self.create_evokeds_directory()
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
@@ -193,7 +194,18 @@ class Subject(QObject):
         try:
             os.mkdir(self._epochs_directory)
         except OSError:
-            raise OSError('no rights to save to the chosen path')                
+            raise OSError('no rights to create epochs directory to' + \
+                          ' the chosen path')                
+
+    def create_evokeds_directory(self):
+        """Create a directory for saving evokeds under the epochs directory.
+        """
+        try:
+            os.mkdir(self._evokeds_directory)
+        except OSError:
+            raise OSError('no rights to create evokeds directory to' + \
+                          ' the chosen path')                
+
     
     def find_stim_channel(self):
         """
@@ -364,7 +376,7 @@ class Subject(QObject):
         del self._evokeds[str(name)]
         
         f = FileManager()
-        if f.delete_file_at(self._evoked_directory, name) == False:
+        if f.delete_file_at(self._evokeds_directory, name) == False:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Evoked could not be deleted from average folder.')

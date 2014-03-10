@@ -84,10 +84,25 @@ class AddSubjectDialog(QtGui.QDialog):
             self.messageBox.show()
             #self.close()
             return
-            
+        
+        """    
         self.parent.experiment.activate_subject(raw_path, \
                                                 subject_name, \
                                                 self.experiment)
+        """
+        # Set properties to be handled in open_active_subject method.
+        self.parent.experiment._active_subject_name = str(subject_name)
+        self.parent.experiment._active_subject_path = os.path.\
+        join(self.parent.experiment.workspace,
+             self.parent.experiment.experiment_name, subject_name)
+        
+        # Set source file path here temporarily. create_active_subject in
+        # experiment sets the real value for this attribute.
+        self.parent.experiment._active_subject_raw_path = raw_path
+        
+        #self.parent.experiment._active_subject_raw_path = os.path.\
+        #join(self.parent.experiment._active_subject_path, os.path.basename(raw_path)) 
+        
         self.parent.experiment.update_experiment_settings()
         self.parent._initialize_ui()
         self.close()

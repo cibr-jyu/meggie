@@ -197,7 +197,7 @@ class MainWindow(QtGui.QMainWindow):
         # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
-            self.experiment = pickle.load(output)
+            self._experiment = pickle.load(output)
             self._initialize_ui()
 
             # Sets the experiment for caller, so it can use its information.
@@ -454,69 +454,14 @@ class MainWindow(QtGui.QMainWindow):
         Opens the active subject of the experiment.
         """
         if self.experiment.active_subject_path != '':
-            if len(self.experiment._subject_paths) > 0:
-                    raw_path = self.experiment.active_subject_raw_path
-                    subject_name = self.experiment.active_subject_name
-                    self.experiment.activate_subject(raw_path, subject_name,
-                                                     self.experiment)
+            #if len(self.experiment._subject_paths) > 0:
+            raw_path = self.experiment.active_subject_raw_path
+            subject_name = self.experiment.active_subject_name
+            epochs_items, evokeds_items = self.experiment.\
+            activate_subject(raw_path, subject_name, self.experiment)
+            return epochs_items, evokeds_items
+        return None, None
         
-    def load_epoch_collections(self):
-        """Load epoch collections from a folder.
-        
-        Load the epoch collections from workspace/experiment/epochs/ 
-        and show them on the epoch collection list.
-        """
-        if len(self.experiment._subject_paths) == 0:
-            return
-        if self.experiment.active_subject_path == '':
-            return
-        # Get epochs as QListWidgetItems from subject object.
-        # This is used when epochs are already created from earlier
-        # activation of the subject.
-        if len(self.experiment.active_subject._epochs) > 0:
-            """
-            self.epochList.clearItems()
-            """
-            # Check if Epochs objects are already created from earlier
-            # activation of the subject.
-            for epoch in self.experiment.active_subject._epochs.values():
-                item = QtGui.QListWidgetItem(epoch._collection_name)
-                if epoch._params is None:
-                    color = QtGui.QColor(255, 0, 0, 255)
-                    brush = QtGui.QBrush()
-                    brush.setColor(color)
-                    item.setForeground(brush)
-                self.epochList.addItem(item)
-                self.epochList.setCurrentItem(item)
-            return
-        if os.path.exists(self.experiment.\
-                          active_subject._epochs_directory) is False:
-            self.experiment.active_subject.create_epochs_directory
-            return
-        """
-        self.epochList.clearItems()
-        """
-        path = self.experiment.active_subject._epochs_directory
-        files = os.listdir(path)
-        # TODO: Every time when adding item calls load_evoked_collections
-        # method. Fix by creating Evoked class for handling those objects.
-        # Check if Evoked objects are already created.
-        for file in files:
-            if file.endswith('.fif'):
-                name = file[:-4]
-                item = QtGui.QListWidgetItem(name)
-                fname = os.path.join(path, file) # or file is full path of file?
-                epochs, params = self.fileManager.load_epochs(fname)
-                # Change color of the item to red if no param file available.
-                if params is None:
-                    color = QtGui.QColor(255, 0, 0, 255)
-                    brush = QtGui.QBrush()
-                    brush.setColor(color)
-                    item.setForeground(brush)               
-                self.experiment.active_subject.handle_new_epochs(name, epochs, params)
-                self.epochList.addItem(item)
-                self.epochList.setCurrentItem(item)
-                
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
         
@@ -657,7 +602,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # TODO: create separate method in filemanager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = self.experiment.active_subject._evoked_directory
+        saveFolder = self.experiment.active_subject._evokeds_directory
         if os.path.exists(saveFolder) is False:
             try:
                 os.mkdir(saveFolder)
@@ -791,50 +736,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.setCurrentItem(item)
         self.experiment.active_subject.handle_new_evoked(item.text(), evoked, category)
         
-    def load_evoked_collections(self):
-        """Load evoked collections from a folder.
-        
-        Load the evoked collections from workspace/experiment/epochs/average/
-        and show them on the evoked collection list.
-        """
-        if len(self.experiment._subject_paths) == 0:
-            return
-        if self.experiment.active_subject_path == '':
-            return
-        if not os.path.exists(self.experiment.active_subject._evoked_directory):
-            self.evokedList.clear()
-            return  
-        self.evokedList.clear()
-        
-        # Check if Evoked objects are already created.
-        if len(self.experiment.active_subject._evokeds) > 0:
-            self.evokedList.clear()
-            # Key represents evoked name.
-            for key in self.experiment.active_subject._evokeds.keys():
-                item = QtGui.QListWidgetItem(key)
-                self.evokedList.addItem(item)
-                self.evokedList.setCurrentItem(item)
-            return
-        path = self.experiment.active_subject._evoked_directory
-        files = os.listdir(path)
-        for file in files:
-            if file.endswith('.fif'):
-                #name = file[:-4]            
-                evoked, categories = self.fileManager.load_evoked(path, file)
-                if evoked is None:
-                    message = 'One or more evoked.fif data files has more' + \
-                    ' than 8 datasets and the loading of this/these data' + \
-                    ' file/s was terminated.'
-                    self.messageBox = messageBox.AppForm()
-                    self.messageBox.labelException.setText \
-                    (message)
-                    self.messageBox.show()  
-                else:
-                    item = QtGui.QListWidgetItem(file)
-                    self.evokedList.addItem(item)
-                    self.evokedList.setCurrentItem(item)
-                    self.experiment.active_subject.handle_new_evoked(item.text(), evoked, categories)
-
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
         """
@@ -1092,25 +993,29 @@ class MainWindow(QtGui.QMainWindow):
         
         # This prevents taking the currentItem from the previously open
         # subject when activating another subject.
-        self.epochList.clearItems()
+        # self.epochList.clearItems()
         self.clear_epoch_collection_parameters()
         
         working_file_name = ''
-        subject_to_be_activated = str(self.ui.listWidgetSubjects.currentItem().
-                                      text())
-        working_file_name = self.experiment.\
-        _working_file_names[subject_to_be_activated]
+        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        
+        working_file_name = self.experiment._working_file_names[subject_name]
         if len(working_file_name) == 0:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('There is no working file in the chosen subject folder.')
             self.messageBox.show()  
             return
-        raw_path = working_file_name
-        subject_name = self.ui.listWidgetSubjects.currentItem().text()
-        self.experiment.activate_subject(str(raw_path), str(subject_name), self.experiment)
         
-        self.experiment.update_experiment_settings()
+        # Set properties to be handled in open_active_subject method.
+        self.experiment._active_subject_name = subject_name
+        self.experiment._active_subject_path = os.path.\
+        join(self.experiment.workspace, self.experiment.experiment_name,
+             subject_name)
+        self.experiment._active_subject_raw_path = working_file_name
+        #raw_path = str(working_file_name)
+        #self.experiment.activate_subject(working_file_name, subject_name, self.experiment)
+        #self.experiment.update_experiment_settings()
         self._initialize_ui()
     
     def populate_comboBoxLobes(self):
@@ -1135,11 +1040,21 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI.
         """
-        #self.epochList.clearItems()
         self.clear_epoch_collection_parameters()
-        self.open_active_subject()
-        self.load_epoch_collections()
-        self.load_evoked_collections()
+        self.epochList.clearItems()
+        self.evokedList.clear()
+        if self.experiment.active_subject_path is None:
+            pass
+        else:
+            epochs_items, evokeds_items = self.open_active_subject()
+            if epochs_items is not None:
+                for item in epochs_items:
+                    self.epochList.addItem(item)
+                    self.epochList.setCurrentItem(item)
+            if evokeds_items is not None:
+                for item in evokeds_items:
+                    self.evokedList.addItem(item)
+                    self.evokedList.setCurrentItem(item)
         
         # Clears the events data.
         self.ui.textBrowserEvents.clear()

@@ -124,6 +124,23 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
+        
+        
+        """
+        for subject in self.parent.experiment.subjects:
+            # ECG/EOG parameter dialogs:
+            # TODO: Add ecg_params dict for Subject class.
+            # TODO: Add apply button on ecg dialog to collect parameters for
+            # selected subject. 
+            # TODO: Add apply to all button to collect shown parameters for all
+            # subjects.
+            # TODO: Add combobox to choose which subject's params are shown.
+            # TODO: Add browser for saved param files.
+            # TODO: Add possibility to save param files with user chosen name.
+            event_checker = self.parent.caller.call_ecg_ssp(subject.ecg_params)
+        """
+        
+        
         raw = self.parent.experiment.active_subject.working_file
         dictionary = {'i': raw}
         
@@ -208,6 +225,9 @@ class EcgParametersDialog(QtGui.QDialog):
                     'projections: ' + str(err) + '\nCheck parameters.')
             self.messageBox.show()
             return
-        self.parent._initialize_ui()
+        #self.parent._initialize_ui()
+        # No need to initialize the whole mainwindow again.
+        self.parent.ui.pushButtonApplyECG.setEnabled(True)
+        self.parent.ui.checkBoxECGComputed.setChecked(True)
         self.close()
 

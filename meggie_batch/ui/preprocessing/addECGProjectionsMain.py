@@ -94,6 +94,8 @@ class AddECGProjections(QtGui.QDialog):
             self.messageBox.show()
             raise
         """
-        self.parent._initialize_ui()
+        #self.parent._initialize_ui()
+        # No need to initialize the whole mainwindow again.
+        self.parent.ui.checkBoxECGApplied.setChecked(True)
         self.close()
         

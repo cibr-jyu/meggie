@@ -42,6 +42,7 @@ from fileManager import FileManager
 from subject import Subject
 
 from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4 import QtGui
 
 # Better to use pickle rather than cpickle, as experiment paths may
 # include non-ascii characters
@@ -341,29 +342,56 @@ class Experiment(QObject):
         subject_name -- name of the subject
         experiment   -- currently active experiment                        
         """
-        # TODO: Lataa epochit/evokedit aktivoitaessa subjectia.
-        
+        # Remove raw files from memory before activating new subject.
+        self.release_memory()
         raw_file_name = raw_path.split('/')[-1]
-        # Checks if the subject to be activated already exists in subjects
-        # list.
-        # Prevents creating multiple subjects when activating the same subject
-        # more than once.
-        
+
+        # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
             if subject_name == subject.subject_name:
-                # Raw file is still in memory while processing other
-                # subjects and the file does not need to be opened here.
-                # NOTE! These 4 properties must be set to be able to handle the
-                # activated subject.
-                self._active_subject = subject
-                self._active_subject_name = subject.subject_name
-                self._active_subject_path = subject.subject_path
-                complete_raw_path = os.path.join(subject.subject_path, \
-                                                 raw_file_name)
-                self._active_subject_raw_path = complete_raw_path
-                return
+                self.set_active_subject(subject, raw_file_name)
+                epochs_items = self.load_epochs(subject)
+                evokeds_items = self.load_evokeds(subject)
+                self.update_experiment_settings()
+                return epochs_items, evokeds_items
+
+        # Creates new subject if activating subject that doesn't exist yet.
+        self.create_active_subject(experiment, subject_name, raw_path,
+                                   raw_file_name)
+        epochs_items = self.load_epochs(self.active_subject)
+        evokeds_items = self.load_evokeds(self.active_subject)
+        self.update_experiment_settings()
+        return epochs_items, evokeds_items
+        
+    def set_active_subject(self, subject, raw_file_name):
+        """Sets active subject from existing subjects.
+        """
+        # NOTE! These 4 properties must be set to be able to handle the
+        # activated subject.
+        self._active_subject = subject
+        self._active_subject_name = subject.subject_name
+        self._active_subject_path = subject.subject_path
+        self._active_subject_raw_path = os.path.join(subject.subject_path,
+                                                     raw_file_name)
+
+        # Loads and sets raw data for subject.
+        self.load_working_file(subject)
+
+    def create_active_subject(self, experiment, subject_name, raw_path, raw_file_name):
+        """Sets active subject by creating new one.
+        
+        Keyword arguments:
+        experiment    -- currently open experiment object
+        subject_name  -- name of the subject to be activated
+        raw_path      -- path of the raw file
+        raw_file_name -- basename of the raw file
+        """
+        
+        # TODO: load epochs and evokeds too here 
+        
         subject = Subject(experiment, subject_name)
         f = FileManager()
+        
         # When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
@@ -378,19 +406,101 @@ class Experiment(QObject):
             # the file was originally found. This is used to change it to
             # the location of the subject path.
             subject.working_file.info['filename'] = complete_raw_path
-        # TODO: working_file_path saattaa olla hyötyä setata subjectille.
-        # Setteri ja getteri puuttuu subject-luokasta.
-        # subject.working_file_path
         subject.find_stim_channel()
         subject.create_event_set()
+        
+        # For tracking active subject
         self._active_subject_name = subject_name
         self._active_subject_path = subject.subject_path
-        self.update_working_file(raw_path)
-        self.add_subject_path(subject.subject_path)
         self._active_subject_raw_path = complete_raw_path
         self._active_subject = subject
+
+        self.update_working_file(complete_raw_path)
+        self.add_subject_path(subject.subject_path)
         self.add_subject(subject)
+    
+    def release_memory(self):
+        """Releases memory from previously processed subject by removing
+        references from raw files.
+        """
+        if self.active_subject is not None:
+            self.active_subject._working_file = None
+            if len(self.active_subject._epochs) > 0:
+                for value in self.active_subject._epochs.values():
+                    value._raw = None
+            if len(self.active_subject._evokeds) > 0:
+                for value in self.active_subject._evokeds.values():
+                    value._raw = None
         
+    def load_working_file(self, subject):
+        """Loads raw file from subject folder and sets it on
+        subject._working_file property.
+        
+        Keyword arguments:
+        subject    -- subject under activation
+        """
+        files = os.listdir(self.active_subject_path)
+        for file in files:
+            file_path = os.path.join(self._active_subject_path, file)
+            if file_path in self._working_file_names.values():
+                f = FileManager()
+                raw = f.open_raw(os.path.join(self.active_subject_path, file_path))
+                subject._working_file = raw
+
+    def load_epochs(self, subject):
+        """Loads raw epoch files from subject folder and sets them on
+        subject._epochs objects.
+        """
+        if os.path.exists(self.active_subject._epochs_directory) is False:
+            self.active_subject.create_epochs_directory
+        epoch_items = []
+        files = os.listdir(subject._epochs_directory)
+        for file in files:
+            if file.endswith('.fif'):
+                f = FileManager()
+                fname = os.path.join(subject._epochs_directory,
+                                     file)
+                
+                name = file[:-4]
+                epochs, params = f.load_epochs(fname)
+                subject.handle_new_epochs(name, epochs, params)
+                #subject._epochs[name]._raw = epochs
+                item = QtGui.QListWidgetItem(name)
+                # Change color of the item to red if no param file available.
+                if params is None:
+                    color = QtGui.QColor(255, 0, 0, 255)
+                    brush = QtGui.QBrush()
+                    brush.setColor(color)
+                    item.setForeground(brush)
+                epoch_items.append(item)
+                
+                # Raw needs to be set when activating already created subject.
+                if subject._epochs[name]._raw is None:
+                    subject._epochs[name]._raw = epochs
+        return epoch_items
+
+    def load_evokeds(self, subject):
+        """Loads raw evoked files from subject folder and sets them on
+        subject._evokeds objects.
+        """
+        evokeds_items = []
+        files = os.listdir(subject._evokeds_directory)
+        for file in files:
+            if file.endswith('.fif'):
+                f = FileManager()
+                evoked, categories = f.load_evoked(subject._evokeds_directory,
+                                                   file)
+                subject.handle_new_evoked(file, evoked, categories)
+                #subject._evokeds[file]._raw = evoked
+                item = QtGui.QListWidgetItem(file)
+                evokeds_items.append(item)
+                
+                # Raw needs to be set when activating already created subject.
+                if subject._evokeds[file]._raw is None:
+                    subject._evokeds[file]._raw = evoked
+
+        return evokeds_items
+                
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of

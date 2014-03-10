@@ -136,6 +136,10 @@ class EogParametersDialog(QtGui.QDialog):
                                                    'projections: ' + str(err))
             self.messageBox.show()
             return
-        self.parent._initialize_ui()
+        
+        #self.parent._initialize_ui()
+        # No need to initialize the whole mainwindow again.
+        self.parent.ui.pushButtonApplyEOG.setEnabled(True)
+        self.parent.ui.checkBoxEOGComputed.setChecked(True)
         self.close()
         
