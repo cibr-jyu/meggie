@@ -160,10 +160,4 @@ class EpochWidget(QtGui.QWidget):
             self.parent.clear_epoch_collection_parameters()
         else:
             self.parent.show_epoch_collection_parameters(epochs)
-        """
-        parameters = self.parent.epochParamsList.set_parameters(item)
-        item.setData(33, parameters)
-        self.parent.epochParamsList.show_parameters(parameters)
-        #TODO: maybe give item obejct instead of parameters string to method: 
-        #self.parent.epochParamsList.show_parameters(item)
-        """
+ 

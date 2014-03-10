@@ -842,7 +842,6 @@ class Caller(object):
         sizex = events.shape[0]
         sizey = events.shape[1]
                 
-        #path_to_save = self.parent.experiment.subject_directory
         path_to_save = self.parent.experiment.active_subject._subject_path
         
         # Saves events to csv file for easier modification with text editors.

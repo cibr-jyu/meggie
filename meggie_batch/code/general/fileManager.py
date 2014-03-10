@@ -239,7 +239,6 @@ class FileManager(QObject):
         
         """
         split = os.path.split(file)
-        #folder = split[0] + '/'
         name = os.path.splitext(split[1])[0]
         if name == '': return
         category = dict()

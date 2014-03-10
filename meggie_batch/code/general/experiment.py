@@ -386,9 +386,6 @@ class Experiment(QObject):
         raw_path      -- path of the raw file
         raw_file_name -- basename of the raw file
         """
-        
-        # TODO: load epochs and evokeds too here 
-        
         subject = Subject(experiment, subject_name)
         f = FileManager()
         
@@ -464,7 +461,6 @@ class Experiment(QObject):
                 name = file[:-4]
                 epochs, params = f.load_epochs(fname)
                 subject.handle_new_epochs(name, epochs, params)
-                #subject._epochs[name]._raw = epochs
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
                 if params is None:
@@ -491,7 +487,6 @@ class Experiment(QObject):
                 evoked, categories = f.load_evoked(subject._evokeds_directory,
                                                    file)
                 subject.handle_new_evoked(file, evoked, categories)
-                #subject._evokeds[file]._raw = evoked
                 item = QtGui.QListWidgetItem(file)
                 evokeds_items.append(item)
                 

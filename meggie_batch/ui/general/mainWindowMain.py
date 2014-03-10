@@ -432,10 +432,6 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment.active_subject.handle_new_epochs(fname, epochs, epoch_params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
-        # TODO: addItem changes the epoch collection name correctly if same
-        # name already exists. Epoch -> Epoch2 -> Epoch3. Fix the name change
-        # when creating params dictionary in eventSelectionDialogMain
-        # collect_parameter_values
         
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
