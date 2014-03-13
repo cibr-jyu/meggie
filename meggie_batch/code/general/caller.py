@@ -824,10 +824,9 @@ class Caller(object):
         self.parent.experiment.update_working_file(fname)
         self.parent.experiment.active_subject_raw_path = fname
         self.parent.experiment.active_subject.working_file = raw
-        self.parent.statusLabel.setText(QtCore.QString("Current working file: " +
-                                                       self.parent.experiment.\
-                                                       active_subject.working_file.\
-                                                       info.get('filename')))
+        status = "Current working file: " + \
+        os.path.basename(self.experiment.active_subject_raw_path)
+        self.parent.statusLabel.setText(QtCore.QString(status))
 
     def write_events(self, events):
         """

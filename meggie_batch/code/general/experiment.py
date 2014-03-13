@@ -355,13 +355,25 @@ class Experiment(QObject):
                 self.update_experiment_settings()
                 return epochs_items, evokeds_items
 
-        # Creates new subject if activating subject that doesn't exist yet.
+        # Creates new subject when adding new subject to the experiment.
         self.create_active_subject(experiment, subject_name, raw_path,
                                    raw_file_name)
         epochs_items = self.load_epochs(self.active_subject)
         evokeds_items = self.load_evokeds(self.active_subject)
         self.update_experiment_settings()
         return epochs_items, evokeds_items
+        
+    def create_subjects(self, experiment, subject_names):
+        """Creates subjects using a list of given subject names.
+        Raw file is not set here.
+        
+        Keyword arguments:
+        experiment    -- experiment object from MainWindow
+        subject_names -- list of subject names
+        """
+        for subject_name in subject_names:
+            subject = Subject(experiment, subject_name)
+            self._subjects.append(subject)
         
     def set_active_subject(self, subject, raw_file_name):
         """Sets active subject from existing subjects.
@@ -434,7 +446,7 @@ class Experiment(QObject):
         subject._working_file property.
         
         Keyword arguments:
-        subject    -- subject under activation
+        subject    -- Subject object
         """
         files = os.listdir(self.active_subject_path)
         for file in files:
@@ -443,6 +455,8 @@ class Experiment(QObject):
                 f = FileManager()
                 raw = f.open_raw(os.path.join(self.active_subject_path, file_path))
                 subject._working_file = raw
+                subject.find_stim_channel()
+                subject.create_event_set()
 
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
@@ -469,7 +483,6 @@ class Experiment(QObject):
                     brush.setColor(color)
                     item.setForeground(brush)
                 epoch_items.append(item)
-                
                 # Raw needs to be set when activating already created subject.
                 if subject._epochs[name]._raw is None:
                     subject._epochs[name]._raw = epochs
@@ -489,7 +502,6 @@ class Experiment(QObject):
                 subject.handle_new_evoked(file, evoked, categories)
                 item = QtGui.QListWidgetItem(file)
                 evokeds_items.append(item)
-                
                 # Raw needs to be set when activating already created subject.
                 if subject._evokeds[file]._raw is None:
                     subject._evokeds[file]._raw = evoked

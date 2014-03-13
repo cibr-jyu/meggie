@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>772</height>
+    <width>682</width>
+    <height>857</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>578</width>
-            <height>523</height>
+            <width>627</width>
+            <height>518</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -291,6 +291,9 @@
                 <string>Filtering cut-off frequencies for data:</string>
                </property>
                <layout class="QFormLayout" name="formLayout_6">
+                <property name="fieldGrowthPolicy">
+                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                </property>
                 <item row="0" column="0">
                  <widget class="QFrame" name="frame_7">
                   <property name="frameShape">
@@ -351,6 +354,9 @@
                    </item>
                   </layout>
                  </widget>
+                </item>
+                <item row="0" column="1">
+                 <layout class="QVBoxLayout" name="verticalLayout_4"/>
                 </item>
                </layout>
               </widget>
@@ -789,82 +795,162 @@
    <item row="2" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_20">
      <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QGroupBox" name="groupBoxBatch">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
+       <property name="title">
+        <string>Batch processing</string>
        </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QCheckBox" name="checkBoxBatch">
-         <property name="text">
-          <string>Batch processing</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBoxSubjects">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Apply parameters to...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="1">
-          <widget class="QPushButton" name="pushButtonApplyAll">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>All subjects</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="pushButtonApply">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Selected subject</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QPushButton" name="pushButtonCancel">
-           <property name="text">
-            <string>Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="pushButtonCompute">
+       <widget class="QWidget" name="verticalLayoutWidget_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>271</width>
+          <height>239</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QCheckBox" name="checkBoxBatch">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Compute</string>
+            <string>Enable</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelSubjects">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Select subject to modify its parameters</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonRemove">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Remove subject from this process</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Apply parameters to...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_28">
+           <item>
+            <widget class="QPushButton" name="pushButtonApply">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Selected subject</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonApplyAll">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>All subjects</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_16">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_19">
+           <item>
+            <widget class="QPushButton" name="pushButtonCancel">
+             <property name="text">
+              <string>Cancel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonCompute">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Compute</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -910,8 +996,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>562</x>
-     <y>736</y>
+     <x>529</x>
+     <y>819</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -926,8 +1012,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>471</x>
-     <y>736</y>
+     <x>653</x>
+     <y>819</y>
     </hint>
     <hint type="destinationlabel">
      <x>277</x>
@@ -938,32 +1024,16 @@
   <connection>
    <sender>checkBoxBatch</sender>
    <signal>toggled(bool)</signal>
-   <receiver>comboBoxSubjects</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>410</x>
-     <y>610</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>419</x>
-     <y>640</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
    <receiver>pushButtonApply</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>495</x>
-     <y>606</y>
+     <x>159</x>
+     <y>631</y>
     </hint>
     <hint type="destinationlabel">
-     <x>457</x>
-     <y>697</y>
+     <x>104</x>
+     <y>817</y>
     </hint>
    </hints>
   </connection>
@@ -974,12 +1044,76 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>538</x>
-     <y>610</y>
+     <x>159</x>
+     <y>631</y>
     </hint>
     <hint type="destinationlabel">
-     <x>543</x>
-     <y>703</y>
+     <x>211</x>
+     <y>823</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSubjects</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>623</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>650</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>105</x>
+     <y>619</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>112</x>
+     <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>615</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>60</x>
+     <y>797</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonRemove</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>619</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>183</x>
+     <y>766</y>
     </hint>
    </hints>
   </connection>
