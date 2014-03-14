@@ -57,14 +57,14 @@ class Experiment(QObject):
     files and pickling and unpickling itself to and from disk.
     
     Properties:
-    experiment_name   -- The name of the experiment
-    workspace         -- The path to the experiment folder
-    author            -- The name of the experiment's author
-    description       -- A user defined description of the experiment
-    subjects          -- The list of the Subject objects in this experiment
-    subject_paths     -- The list of the paths of the added subjects
-    active_subject    -- The subject that is currently processed
-    
+    experiment_name    -- The name of the experiment
+    workspace          -- The path to the experiment folder
+    author             -- The name of the experiment's author
+    description        -- A user defined description of the experiment
+    subjects           -- The list of the Subject objects in this experiment
+    subject_paths      -- The list of the paths of the added subjects
+    active_subject     -- The subject that is currently processed
+    working_file_names -- The complete path of the working file
     """
     
     def __init__(self):
@@ -507,6 +507,16 @@ class Experiment(QObject):
                     subject._evokeds[file]._raw = evoked
 
         return evokeds_items
+                
+    def get_subject_working_file(self, subject_name):
+        """Returns working file of a given subject name.
+        
+        Keyword arguments:
+        subject_name    -- name of the subject
+        """
+        f = FileManager()
+        raw = f.open_raw(self._working_file_names[subject_name])
+        return raw
                 
     def save_experiment_settings(self):
         """

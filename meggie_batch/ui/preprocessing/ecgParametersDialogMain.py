@@ -61,7 +61,9 @@ class EcgParametersDialog(QtGui.QDialog):
         stim_channels = MeasurementInfo(parent.experiment.active_subject.working_file). \
         MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(stim_channels)
-        
+        for subject in self.parent.experiment._subjects:
+            item = QtGui.QListWidgetItem(subject._subject_name)
+            self.ui.listWidgetSubjects.addItem(item)
         """ 
         If the dialog has been opened previously, reads the previous
         parameters from a parameter file into a dictionary. The creation of the
@@ -127,22 +129,119 @@ class EcgParametersDialog(QtGui.QDialog):
         
         
         """
-        for subject in self.parent.experiment.subjects:
-            # ECG/EOG parameter dialogs:
-            # TODO: Add ecg_params dict for Subject class.
-            # TODO: Add apply button on ecg dialog to collect parameters for
-            # selected subject. 
-            # TODO: Add apply to all button to collect shown parameters for all
-            # subjects.
-            # TODO: Add combobox to choose which subject's params are shown.
-            # TODO: Add browser for saved param files.
-            # TODO: Add possibility to save param files with user chosen name.
-            event_checker = self.parent.caller.call_ecg_ssp(subject.ecg_params)
+                # ECG/EOG parameter dialogs:
+                # TODO: Add ecg_params dict for Subject class.
+                # TODO: Add apply button on ecg dialog to collect parameters for
+                # selected subject. 
+                # TODO: Add apply to all button to collect shown parameters for all
+                # subjects.
+                # TODO: Add combobox to choose which subject's params are shown.
+                # TODO: Add browser for saved param files.
+                # TODO: Add possibility to save param files with user chosen name.
         """
         
+        # If batch processing is not enabled, the raw is taken from the active
+        # subject.
+        if self.ui.checkBoxBatch.isChecked() == False:
+            dictionary = self.collect_parameter_values(False)
+            # Uses the caller related to main window
+            try:
+                # Returns -1 if no events found with current settings.
+                event_checker = self.parent.caller.call_ecg_ssp(dictionary)
+                if event_checker == -1:
+                    return
+            except Exception, err:
+                error_message = 'Cannot calculate projections: ' + str(err) + \
+                '\nCheck parameters.'
+                self.messageBox = messageBox.AppForm()
+                self.messageBox.labelException.setText(error_message)
+                self.messageBox.show()
+                return
+            # No need to initialize the whole main window again.
+            self.parent.ui.pushButtonApplyECG.setEnabled(True)
+            self.parent.ui.checkBoxECGComputed.setChecked(True)
         
-        raw = self.parent.experiment.active_subject.working_file
-        dictionary = {'i': raw}
+        else:
+            for i in range(self.ui.listWidgetSubjects.count()):
+                for subject in self.parent.experiment._subjects:
+                    if subject._subject_name == str(self.ui.listWidgetSubjects.\
+                                                    item(i).text()):
+                        # Reads and returns the raw file.
+                        raw = self.parent.experiment.\
+                        get_subject_working_file(subject._subject_name)
+                        subject._ecg_params['i'] = raw
+                        try:
+                            event_checker = self.parent.caller.\
+                            call_ecg_ssp(subject._ecg_params)
+                            if event_checker == -1:
+                                return
+                            if subject == self.parent.experiment._active_subject:
+                                # Update the main window if also the active
+                                # subject is processed.
+                                self.parent.ui.pushButtonApplyECG.setEnabled(True)
+                                self.parent.ui.checkBoxECGComputed.setChecked(True)
+                        except Exception, err:
+                            error_message = 'Cannot calculate projections: ' + \
+                            str(err) + '\nCheck parameters.'
+                            self.messageBox = messageBox.AppForm()
+                            self.messageBox.labelException.\
+                            setText(error_message)
+                            self.messageBox.show()
+        self.close()
+
+    def on_pushButtonRemove_clicked(self, checked=None):
+        """Removes subject from the list of subjects to be processed.
+        """
+        if checked is None: return
+        item = self.ui.listWidgetSubjects.currentItem()
+        if self.ui.listWidgetSubjects.currentItem() is not None:
+            row = self.ui.listWidgetSubjects.row(item)
+            self.ui.listWidgetSubjects.takeItem(row)
+        else:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('Select a subject to remove.')
+            self.messageBox.show()
+    
+    def on_pushButtonApply_clicked(self, checked=None):
+        """Saves parameters to selected subject's ecg parameters dictionary.
+        """
+        if checked is None: return
+        batch_checked = True
+        dictionary = self.collect_parameter_values(batch_checked)
+        for subject in self.parent.experiment._subjects:
+            if subject._subject_name == str(self.ui.listWidgetSubjects.\
+                                            currentItem().text()):
+                subject._ecg_params = dictionary
+        
+    def on_pushButtonApplyAll_clicked(self, checked=None):
+        """Saves parameters to selected subjects' ecg parameters dictionaries.
+        """
+        if checked is None: return
+        batch_checked = True
+        
+        for i in range(self.ui.listWidgetSubjects.count()):
+            for subject in self.parent.experiment._subjects:
+                if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
+                    subject._ecg_params = self.collect_parameter_values(batch_checked)
+        
+    def collect_parameter_values(self, batch_checked):
+        """Collects parameter values from dialog.
+        
+        Keyword arguments:
+        batch_checked    -- True if batch processing is enabled
+        """
+        
+        """
+        Can't set raw if batching is enabled:
+        1. would pickle a huge dictionary
+        2. would have to read raw every time when creating params dictionaries
+        """
+        dictionary = dict()
+        if batch_checked:
+            pass
+        else:
+            raw = self.parent.experiment.active_subject.working_file
+            dictionary = {'i': raw}
         
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
@@ -212,22 +311,6 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['average'] = comp_ssp
         
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
-            
-        # Uses the caller related to mainwindow
-        try:
-            # Returns -1 if no events found with current settings.
-            event_checker = self.parent.caller.call_ecg_ssp(dictionary)
-            if event_checker == -1:
-                return
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Cannot calculate ' +
-                    'projections: ' + str(err) + '\nCheck parameters.')
-            self.messageBox.show()
-            return
-        #self.parent._initialize_ui()
-        # No need to initialize the whole mainwindow again.
-        self.parent.ui.pushButtonApplyECG.setEnabled(True)
-        self.parent.ui.checkBoxECGComputed.setChecked(True)
-        self.close()
 
+        return dictionary
+        

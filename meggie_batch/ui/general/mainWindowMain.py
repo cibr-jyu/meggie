@@ -1082,7 +1082,12 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.listWidgetSubjects.addItem(item)
         
         # Checks if active subject exists and adds its contents on the lists.
-        if self.experiment.active_subject_path is not None:
+        if self.experiment.active_subject_path is not '':
+            # When adding a subject the subject path is added after the call to
+            # self.open_active_subject, so the item needs to be added here.
+            if self.experiment._active_subject_path not in self.experiment._subject_paths:
+                item = QtGui.QListWidgetItem(self.experiment._active_subject_name)
+                self.ui.listWidgetSubjects.addItem(item)
             epochs_items, evokeds_items = self.open_active_subject()
             if epochs_items is not None:
                 for item in epochs_items:
@@ -1157,129 +1162,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelAuthorName.setText(self.experiment.author)
         self.ui.textBrowserExperimentDescription.\
         setText(self.experiment.description)
-
-        
-        """
-        self.clear_epoch_collection_parameters()
-        self.epochList.clearItems()
-        self.evokedList.clear()
-
-        # Checks if active subject exists and adds its contents on the lists.
-        if self.experiment.active_subject_path is None:
-            pass
-        else:
-            epochs_items, evokeds_items = self.open_active_subject()
-            if epochs_items is not None:
-                for item in epochs_items:
-                    self.epochList.addItem(item)
-                    self.epochList.setCurrentItem(item)
-            if evokeds_items is not None:
-                for item in evokeds_items:
-                    self.evokedList.addItem(item)
-                    self.evokedList.setCurrentItem(item)
-        
-        # Clears the events data.
-        self.ui.textBrowserEvents.clear()
-        # Clears the data info of the labels.
-        self.ui.labelDateValue.clear()
-        self.ui.labelEEGValue.clear()
-        self.ui.labelGradMEGValue.clear()
-        self.ui.labelHighValue.clear()
-        self.ui.labelLowValue.clear()
-        self.ui.labelMagMEGValue.clear()
-        self.ui.labelSamplesValue.clear()
-        self.ui.labelSubjectValue.clear()
-        self.ui.checkBoxMaxFilterComputed.setChecked(False)
-        self.ui.checkBoxMaxFilterApplied.setChecked(False)
-        self.ui.checkBoxECGComputed.setChecked(False)
-        self.ui.checkBoxECGApplied.setChecked(False)
-        self.ui.checkBoxEOGComputed.setChecked(False)
-        self.ui.checkBoxEOGApplied.setChecked(False)
-
-        path = self.experiment.active_subject_path
-        # To make sure that glob is not using path = '' as a root folder.
-        if path == '' and len(self.experiment._subject_paths) > 0:
-            pass
-        else:
-            try:
-                #Check whether ECG projections are calculated
-                if self.experiment.active_subject.check_ecg_projs():
-                    self.ui.pushButtonApplyECG.setEnabled(True)
-                    self.ui.checkBoxECGComputed.setChecked(True)
-                else:    
-                    self.ui.pushButtonApplyECG.setEnabled(False)
-                    self.ui.checkBoxECGComputed.setChecked(False)
-                #Check whether EOG projections are calculated
-                if self.experiment.active_subject.check_eog_projs():
-                    self.ui.pushButtonApplyEOG.setEnabled(True)
-                    self.ui.checkBoxEOGComputed.setChecked(True)
-                else:    
-                    self.ui.pushButtonApplyEOG.setEnabled(False)
-                    self.ui.checkBoxEOGComputed.setChecked(False)
-                #Check whether ECG projections are applied    
-                if self.experiment.active_subject.check_ecg_applied():
-                    self.ui.checkBoxECGApplied.setChecked(True)
-                #Check whether EOG projections are applied
-                if self.experiment.active_subject.check_eog_applied():
-                    self.ui.checkBoxEOGApplied.setChecked(True)
-                #Check whether sss/tsss method is applied.
-                if self.experiment.active_subject.check_sss_applied():
-                    self.ui.checkBoxMaxFilterComputed.setChecked(True)
-                    self.ui.checkBoxMaxFilterApplied.setChecked(True)
-                else:
-                    self.ui.checkBoxMaxFilterComputed.setChecked(False)
-                    self.ui.checkBoxMaxFilterApplied.setChecked(False)
-            except AttributeError:
-                print 'No active subject in experiment.'    
-                
-        # QLabel created on __init__ can't take normal string objects.
-        if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
-            self.statusLabel.setText(QtCore.QString("Add or activate" + \
-                                                    " subjects before " + \
-                                                    "continuing."))
-        else:
-            status = "Current working file: " + \
-            os.path.basename(self.experiment.active_subject_raw_path)
-            self.statusLabel.setText(QtCore.QString(status))
- 
-        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
-        self.ui.labelExperimentName.setText(self.experiment.\
-                                            experiment_name)
-        self.ui.labelAuthorName.setText(self.experiment.author)
-        self.ui.textBrowserExperimentDescription.\
-        setText(self.experiment.description)
-
-        
-        
-        # Clear the list and add all subjects to it.
-        self.ui.listWidgetSubjects.clear()
-        # If experiment has subjects added the active_subject info will be added
-        # and tabs enabled for processing.
-        if (len(self.experiment._subject_paths) > 0):
-            for path in self.experiment._subject_paths:
-                item = QtGui.QListWidgetItem()
-                # -1 is the index for the subject name
-                item.setText(path.split('/')[-1])
-                self.ui.listWidgetSubjects.addItem(item)
-            # In case trying to open experiment that includes subjects but
-            # there is no activated subject. Happens if you delete currently
-            # active subject and try to open that experiment again.
-            if self.experiment.active_subject_path != '':
-                InfoDialog(self.experiment.active_subject.working_file,
-                            self.ui, False)
-                if self.experiment.active_subject._event_set != None:
-                    self.populate_raw_tab_event_list()
-                if self.ui.tabWidget.count() == 0:
-                    self.add_tabs()
-                self.enable_tabs()
-            else:
-                self.add_tabs()
-        else:
-            self.add_tabs()
-        
-        if self.experiment.active_subject_path == '':
-            self.ui.tabWidget.setCurrentIndex(1)
-        """
         
     def add_tabs(self):
         """

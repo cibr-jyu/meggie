@@ -72,6 +72,7 @@ class Subject(QObject):
         # and value is the epochs object.
         self._epochs = dict()
         self._evokeds = dict()
+        self._ecg_params = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
                                           self._subject_name)
@@ -145,9 +146,20 @@ class Subject(QObject):
         else:
             raise Exception('Wrong data type')
 
+    @property
+    def ecg_params(self):
+        """Returns ecg_params.
+        """
+        return self._ecg_params
+
+    @ecg_params.setter
+    def ecg_params(self, ecg_params):
+        """Sets ecg_params.
         
-        #self._working_file = mne.fiff.Raw(fname, preload=True)
-        #self.working_file_path = fname
+        Keyword arguments:
+        ecg_params    -- dictionary of ecg parameters
+        """
+        self._ecg_params = ecg_params
 
     @property
     def stim_channel(self):
