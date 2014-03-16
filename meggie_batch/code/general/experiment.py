@@ -405,7 +405,9 @@ class Experiment(QObject):
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
         raw = f.open_raw(raw_path)
-        subject.working_file = raw
+        subject._working_file = raw
+        # TODO: set channel names with whitespaces for the subject.working_file
+        
         complete_raw_path = os.path.join(subject.subject_path, raw_file_name)
         # Check if file already exists.
         if not os.path.isfile(complete_raw_path):
@@ -414,7 +416,7 @@ class Experiment(QObject):
             # When activating subject the working_file filename is the one where
             # the file was originally found. This is used to change it to
             # the location of the subject path.
-            subject.working_file.info['filename'] = complete_raw_path
+            subject._working_file.info['filename'] = complete_raw_path
         subject.find_stim_channel()
         subject.create_event_set()
         
@@ -454,6 +456,9 @@ class Experiment(QObject):
             if file_path in self._working_file_names.values():
                 f = FileManager()
                 raw = f.open_raw(os.path.join(self.active_subject_path, file_path))
+                # TODO: set channel names with whitespaces for the subject.working_file
+                # Not necessarily needed when loading from subject folder because
+                # whitespaces are already added when new subject is added.
                 subject._working_file = raw
                 subject.find_stim_channel()
                 subject.create_event_set()

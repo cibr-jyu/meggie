@@ -40,6 +40,7 @@ import ast
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
 
+from fileManager import FileManager
 from caller import Caller
 from measurementInfo import MeasurementInfo
 
@@ -58,9 +59,9 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
-        stim_channels = MeasurementInfo(parent.experiment.active_subject.working_file). \
+        MEG_channels = MeasurementInfo(parent.experiment.active_subject.working_file). \
         MEG_channel_names
-        self.ui.comboBoxECGChannel.addItems(stim_channels)
+        self.ui.comboBoxECGChannel.addItems(MEG_channels)
         for subject in self.parent.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
             self.ui.listWidgetSubjects.addItem(item)
@@ -127,18 +128,9 @@ class EcgParametersDialog(QtGui.QDialog):
         to the caller class.
         """
         
+        # TODO: Add browser for saved param files.
+        # TODO: Add possibility to save param files with user chosen name.
         
-        """
-                # ECG/EOG parameter dialogs:
-                # TODO: Add ecg_params dict for Subject class.
-                # TODO: Add apply button on ecg dialog to collect parameters for
-                # selected subject. 
-                # TODO: Add apply to all button to collect shown parameters for all
-                # subjects.
-                # TODO: Add combobox to choose which subject's params are shown.
-                # TODO: Add browser for saved param files.
-                # TODO: Add possibility to save param files with user chosen name.
-        """
         
         # If batch processing is not enabled, the raw is taken from the active
         # subject.
@@ -170,6 +162,29 @@ class EcgParametersDialog(QtGui.QDialog):
                         raw = self.parent.experiment.\
                         get_subject_working_file(subject._subject_name)
                         subject._ecg_params['i'] = raw
+                        
+                                                
+                        # Fixes the ecg_params ch_name to match with the raw
+                        # file ch_name. Assume that if the first channel name
+                        # has/doesn't have whitespace the same applies for the
+                        # rest of the channel names.
+                        ch_names = MeasurementInfo(raw).MEG_channel_names
+                        if ch_names[0][3] is not subject._ecg_params['ch_name'][3]:
+                            # subjec._ecg_params['ch_name'] is a QString object.
+                            ch_name = str(subject._ecg_params['ch_name'])
+                            ch_name = ch_name.replace(' ', '')
+                            if ch_names[0][3] is not ch_name[3]:
+                                # TODO: Add more options if problems occur,
+                                # for example ECG channel would mix up with
+                                # replace('C', 'C ').
+                                
+                                # Replaces MEG and EOG
+                                ch_name = ch_name.replace('G', 'G ')
+                                # Replaces STI
+                                ch_name = ch_name.replace('I', 'I ')
+                                # Replaces MISC
+                                ch_name = ch_name.replace('C', 'C ')
+                            subject._ecg_params['ch_name'] = ch_name
                         try:
                             event_checker = self.parent.caller.\
                             call_ecg_ssp(subject._ecg_params)
@@ -187,6 +202,11 @@ class EcgParametersDialog(QtGui.QDialog):
                             self.messageBox.labelException.\
                             setText(error_message)
                             self.messageBox.show()
+                            
+                        # Remove extra raw file from memory
+                        del subject._ecg_params['i']
+                        f = FileManager()
+                        f.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.params'))
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):

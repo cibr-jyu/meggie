@@ -43,6 +43,7 @@ import glob
 import numpy as np
 import mne
 
+from measurementInfo import MeasurementInfo
 from fileManager import FileManager
 from epochs import Epochs
 from evoked import Evoked
