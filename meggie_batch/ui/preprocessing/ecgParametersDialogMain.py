@@ -83,15 +83,32 @@ class EcgParametersDialog(QtGui.QDialog):
         on dialog.
         """
         subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        # TODO: if experiment had subjects dictionary instead of list,
+        # we could set:
+        # subject = self.parent.experiment._subjects[subject_name]
+        
         for subject in self.parent.experiment._subjects:
             if subject_name == subject._subject_name:
                 try:
                     f = FileManager()
+                    
+                    # TODO: clear comboBoxECGChannel and unpickle channel names
+                    # from subject folder
+                    self.ui.comboBoxECGChannel.clear()
+                    channel_list = f.unpickle(os.path.join(subject._subject_path, 'channels'))
+                    self.ui.comboBoxECGChannel.addItems(channel_list)
+                    
                     if len(subject._ecg_params) > 0:
                         dic = subject._ecg_params  
                     else:
                         dic = f.unpickle(os.path.join(subject._subject_path, 'ecg_proj.param'))
-
+                    
+                    channel_name = dic.get('ch_name')
+                    
+                    
+                    ECG_channel_index = self.ui.comboBoxECGChannel.\
+                    findText(dic.get('ch_name')[-4:], QtCore.Qt.MatchContains)
+                    self.ui.comboBoxECGChannel.setCurrentIndex(ECG_channel_index)
                     self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
                     self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
                     self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
@@ -229,10 +246,26 @@ class EcgParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxECGComputed.setChecked(True)
         
         else:
+            # TODO: Remove active_subject from memory to free more memory
+            # for batch process and process the active_subject as last
+            # or first to optimize the running time. If process as first
+            # read working file again after batch is done. If process as
+            # last, just set the raw as the active_subject's working_file.
+            
+            # TODO change subjects list to subjects dictionary in experiment
+            # str(self.ui.listWidgetSubjects.currentItem().text())
+            # subject = self.parent.experiment._subjects[subject_name]
+            
+            
             for i in range(self.ui.listWidgetSubjects.count()):
                 for subject in self.parent.experiment._subjects:
                     if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                                     item(i).text()):
+                        
+                        # TODO: currently active subject raw file is in memory:
+                        # if subject._working_file is not None:
+                        #     raw = subject._working_file
+
                         # Reads and returns the raw file.
                         raw = self.parent.experiment.\
                         get_subject_working_file(subject._subject_name)
