@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ecgParametersDialogBatch.ui'
 #
-# Created: Sun Mar 16 11:43:36 2014
+# Created: Mon Mar 17 09:36:06 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -317,10 +317,12 @@ class Ui_Dialog(object):
         self.checkBoxEEGProj.setObjectName(_fromUtf8("checkBoxEEGProj"))
         self.verticalLayout.addWidget(self.checkBoxEEGProj)
         self.checkBoxSSPProj = QtGui.QCheckBox(self.verticalLayoutWidget)
+        self.checkBoxSSPProj.setEnabled(True)
         self.checkBoxSSPProj.setChecked(True)
         self.checkBoxSSPProj.setObjectName(_fromUtf8("checkBoxSSPProj"))
         self.verticalLayout.addWidget(self.checkBoxSSPProj)
         self.checkBoxSSPCompute = QtGui.QCheckBox(self.verticalLayoutWidget)
+        self.checkBoxSSPCompute.setChecked(True)
         self.checkBoxSSPCompute.setObjectName(_fromUtf8("checkBoxSSPCompute"))
         self.verticalLayout.addWidget(self.checkBoxSSPCompute)
         self.layoutWidget_2 = QtGui.QWidget(self.tabECG2)
@@ -481,12 +483,15 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(self.pushButtonApply.sizePolicy().hasHeightForWidth())
         self.pushButtonApply.setSizePolicy(sizePolicy)
         self.pushButtonApply.setMinimumSize(QtCore.QSize(90, 0))
+        self.pushButtonApply.setMaximumSize(QtCore.QSize(90, 16777215))
         self.pushButtonApply.setObjectName(_fromUtf8("pushButtonApply"))
         self.horizontalLayout_20.addWidget(self.pushButtonApply)
         self.label_3 = QtGui.QLabel(self.verticalLayoutWidget_4)
         self.label_3.setEnabled(False)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout_20.addWidget(self.label_3)
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_20.addItem(spacerItem7)
         self.verticalLayout_6.addLayout(self.horizontalLayout_20)
         self.horizontalLayout_28 = QtGui.QHBoxLayout()
         self.horizontalLayout_28.setObjectName(_fromUtf8("horizontalLayout_28"))
@@ -498,14 +503,15 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(self.pushButtonApplyAll.sizePolicy().hasHeightForWidth())
         self.pushButtonApplyAll.setSizePolicy(sizePolicy)
         self.pushButtonApplyAll.setMinimumSize(QtCore.QSize(90, 0))
+        self.pushButtonApplyAll.setMaximumSize(QtCore.QSize(90, 16777215))
         self.pushButtonApplyAll.setObjectName(_fromUtf8("pushButtonApplyAll"))
         self.horizontalLayout_28.addWidget(self.pushButtonApplyAll)
         self.label_4 = QtGui.QLabel(self.verticalLayoutWidget_4)
         self.label_4.setEnabled(False)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.horizontalLayout_28.addWidget(self.label_4)
-        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_28.addItem(spacerItem7)
+        spacerItem8 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_28.addItem(spacerItem8)
         self.verticalLayout_6.addLayout(self.horizontalLayout_28)
         self.verticalLayout_7.addLayout(self.verticalLayout_6)
         self.horizontalLayout_16.addLayout(self.verticalLayout_7)
@@ -611,6 +617,6 @@ class Ui_Dialog(object):
         self.pushButtonApply.setText(_translate("Dialog", "Apply", None))
         self.label_3.setText(_translate("Dialog", "to selected subject", None))
         self.pushButtonApplyAll.setText(_translate("Dialog", "Apply to all", None))
-        self.label_4.setText(_translate("Dialog", "subjects", None))
+        self.label_4.setText(_translate("Dialog", "subjects on the list", None))
         self.pushButtonRemove.setText(_translate("Dialog", "Remove subject from this process", None))
 

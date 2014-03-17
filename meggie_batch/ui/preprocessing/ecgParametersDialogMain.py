@@ -65,14 +65,89 @@ class EcgParametersDialog(QtGui.QDialog):
         for subject in self.parent.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
             self.ui.listWidgetSubjects.addItem(item)
+            
+        # Connect signals and slots
+        self.ui.listWidgetSubjects.currentItemChanged.connect(self.selection_changed)
+        
+        
         """ 
         If the dialog has been opened previously, reads the previous
         parameters from a parameter file into a dictionary. The creation of the
         parameter file is handled by the caller.
         """
-        
         #paramdict = parent.experiment.parse_parameter_file('ecgproj')
         #self.set_previous_values(paramdict)     
+        
+    def selection_changed(self):
+        """Unpickles parameter file from subject path and updates the values
+        on dialog.
+        """
+        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        for subject in self.parent.experiment._subjects:
+            if subject_name == subject._subject_name:
+                try:
+                    f = FileManager()
+                    if len(subject._ecg_params) > 0:
+                        dic = subject._ecg_params  
+                    else:
+                        dic = f.unpickle(os.path.join(subject._subject_path, 'ecg_proj.param'))
+
+                    self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+                    self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+                    self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
+                    self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))
+                    self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))
+                    self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+                    self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+                    self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+                    self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+                    self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+                    self.ui.doubleSpinBoxGradReject.setProperty("value",
+                                                                 dic.get('rej-grad'))
+                    self.ui.doubleSpinBoxMagReject.setProperty("value",
+                                                                 dic.get('rej-mag'))
+                    self.ui.doubleSpinBoxEEGReject.setProperty("value", 
+                                                               dic.get('rej-eeg'))
+                    self.ui.doubleSpinBoxEOGReject.setProperty("value", 
+                                                               dic.get('rej-eog'))
+                    self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+                    self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+                    self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+                    self.ui.spinBoxJobs.setProperty("value", dic.get('njobs'))
+                    self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+                    self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+                    self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
+                except IOError:
+                    print '.param file not found.'
+                    
+                    # TODO:
+                    self.set_default_values()
+                 
+    def set_default_values(self):
+        """Sets default values for dialog.
+        """
+        #self.__init__(self.parent)
+        self.ui.doubleSpinBoxTmin.setProperty("value", -0.200)
+        self.ui.doubleSpinBoxTmax.setProperty("value", 0.400)
+        self.ui.spinBoxEventsID.setProperty("value", 998)
+        self.ui.spinBoxLowPass.setProperty("value", 1)
+        self.ui.spinBoxHighPass.setProperty("value", 40)
+        self.ui.spinBoxGrad.setProperty("value", 2)
+        self.ui.spinBoxMag.setProperty("value", 2)
+        self.ui.spinBoxEeg.setProperty("value", 2)
+        self.ui.spinBoxLow.setProperty("value", 1)
+        self.ui.spinBoxHigh.setProperty("value", 100)
+        self.ui.doubleSpinBoxGradReject.setProperty("value", 3000.00)
+        self.ui.doubleSpinBoxMagReject.setProperty("value", 4000.00)
+        self.ui.doubleSpinBoxEEGReject.setProperty("value", 100.00)
+        self.ui.doubleSpinBoxEOGReject.setProperty("value", 250.00)
+        self.ui.lineEditBad.setProperty("value", '')
+        self.ui.spinBoxStart.setProperty("value", 5)
+        self.ui.spinBoxTaps.setProperty("value", 2048)
+        self.ui.spinBoxJobs.setProperty("value", 1)
+        self.ui.checkBoxEEGProj.setChecked(False)
+        self.ui.checkBoxSSPProj.setChecked(True)
+        self.ui.checkBoxSSPCompute.setChecked(True)
         
     def set_previous_values(self, dic):
         """
@@ -116,9 +191,9 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.checkBoxEEGProj.setChecked(ast.literal_eval(
                                            dic.get('avg-ref')))
         self.ui.checkBoxSSPProj.setChecked(ast.literal_eval(
-                                           dic.get('avg-ref')))
-        self.ui.checkBoxSSPCompute.setChecked(ast.literal_eval(
                                            dic.get('no-proj')))
+        self.ui.checkBoxSSPCompute.setChecked(ast.literal_eval(
+                                           dic.get('average')))
         # TODO get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
                                            
@@ -206,7 +281,7 @@ class EcgParametersDialog(QtGui.QDialog):
                         # Remove extra raw file from memory
                         del subject._ecg_params['i']
                         f = FileManager()
-                        f.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.params'))
+                        f.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):
@@ -322,12 +397,15 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['n-jobs'] = njobs
         
         eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
+        eeg_proj = self.ui.checkBoxEEGProj.isChecked()
         dictionary['avg-ref'] = eeg_proj
         
         excl_ssp = self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked
+        excl_ssp = self.ui.checkBoxSSPProj.isChecked()
         dictionary['no-proj'] = excl_ssp
         
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
+        comp_ssp = self.ui.checkBoxSSPCompute.isChecked()
         dictionary['average'] = comp_ssp
         
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()

@@ -612,6 +612,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxSSPProj">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
            <string>Exclude the SSP projectors currently in the fiff file</string>
           </property>
@@ -624,6 +627,9 @@
          <widget class="QCheckBox" name="checkBoxSSPCompute">
           <property name="text">
            <string>Compute SSP after averaging</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

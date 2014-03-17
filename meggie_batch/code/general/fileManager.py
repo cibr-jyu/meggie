@@ -357,7 +357,7 @@ class FileManager(QObject):
         
         Keyword arguments:
         
-        fpath     -- The full path and base name of the files
+        fpath     -- The full path and base name of the files without suffix
         epoch     -- Epochs object
         overwrite -- A boolean telling whether existing files should be
                     replaced. False by default. 
