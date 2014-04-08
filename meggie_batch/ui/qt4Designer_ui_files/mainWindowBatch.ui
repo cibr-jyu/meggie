@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1923</width>
+    <width>1266</width>
     <height>863</height>
    </rect>
   </property>
@@ -37,8 +37,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1435</width>
-         <height>752</height>
+         <width>1100</width>
+         <height>750</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -58,155 +58,6 @@
             <property name="currentIndex">
              <number>1</number>
             </property>
-            <widget class="QWidget" name="tabRaw">
-             <attribute name="title">
-              <string>Experiment</string>
-             </attribute>
-             <widget class="QGroupBox" name="groupBoxVisualization">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>590</y>
-                <width>311</width>
-                <height>71</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Visualization:</string>
-              </property>
-              <widget class="QPushButton" name="pushButtonMNE_Browse_Raw">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>30</y>
-                 <width>214</width>
-                 <height>31</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>MNE_Browse_Raw</string>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QGroupBox" name="groupBoxExperiment">
-              <property name="geometry">
-               <rect>
-                <x>500</x>
-                <y>0</y>
-                <width>402</width>
-                <height>346</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Experiment info</string>
-              </property>
-              <widget class="QWidget" name="verticalLayoutWidget_3">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>40</y>
-                 <width>371</width>
-                 <height>71</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
-                <item>
-                 <layout class="QFormLayout" name="formLayout_4">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="labelExperiment">
-                    <property name="text">
-                     <string>Experiment:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="labelExperimentName">
-                    <property name="text">
-                     <string>TextLabel</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QFormLayout" name="formLayout_5">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="labelAuthor">
-                    <property name="text">
-                     <string>Author:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="labelAuthorName">
-                    <property name="text">
-                     <string>TextLabel</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QLabel" name="labelDescription">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>110</y>
-                 <width>79</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Description:</string>
-               </property>
-              </widget>
-              <widget class="QTextBrowser" name="textBrowserExperimentDescription">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>130</y>
-                 <width>371</width>
-                 <height>111</height>
-                </rect>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QGroupBox" name="groupBoxSubject">
-              <property name="geometry">
-               <rect>
-                <x>270</x>
-                <y>280</y>
-                <width>921</width>
-                <height>345</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Subject info</string>
-              </property>
-             </widget>
-            </widget>
-            <widget class="QWidget" name="tabSubjects">
-             <attribute name="title">
-              <string>Subjects</string>
-             </attribute>
-             <widget class="QLabel" name="label_3">
-              <property name="geometry">
-               <rect>
-                <x>410</x>
-                <y>110</y>
-                <width>401</width>
-                <height>171</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Activating a subject will load the files inside the folder of the chosen subject to be displayed on corresponding lists in all tabs.</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </widget>
             <widget class="QWidget" name="tabPreprocessing">
              <attribute name="title">
               <string>Preprocessing</string>
@@ -1801,8 +1652,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1923</width>
-     <height>28</height>
+     <width>1266</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -1816,7 +1667,7 @@
     <addaction name="actionOpen_experiment"/>
     <addaction name="actionSet_workspace"/>
     <addaction name="separator"/>
-    <addaction name="showExperimentInfo"/>
+    <addaction name="actionShowExperimentInfo"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1850,384 +1701,416 @@
    <addaction name="actionCreate_experiment"/>
    <addaction name="actionOpen_experiment"/>
    <addaction name="separator"/>
-   <addaction name="showExperimentInfo"/>
+   <addaction name="actionShowExperimentInfo"/>
    <addaction name="separator"/>
-   <addaction name="actionShow_Hide_Console"/>
+   <addaction name="actionHide_Show_subject_list_and_info"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dockWidgetSubjects">
+   <property name="minimumSize">
+    <size>
+     <width>20</width>
+     <height>690</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_9">
+     <item row="1" column="0">
+      <widget class="QGroupBox" name="groupBoxSubjectInfo">
+       <property name="title">
+        <string>Subject info</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelEvents">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Events:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QLabel" name="labelFilters">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Filters:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_30">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelLow">
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="text">
+               <string>Low-pass:</string>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelLowValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Low-pass value</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_31">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelHigh">
+              <property name="text">
+               <string>High-pass:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelHighValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>High-pass value</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QLabel" name="labelChannels">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Channels:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_25">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelEEG">
+              <property name="text">
+               <string>EEG channels:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelEEGValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>EEG value</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_27">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelGradMEG">
+              <property name="text">
+               <string>Gradiometers:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelGradMEGValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Grad. MEG value</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_28">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelMagMEG">
+              <property name="text">
+               <string>Magnetometers:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelMagMEGValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Mag. MEG value</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_29">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelSamples">
+              <property name="text">
+               <string>Sampling frequency:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelSamplesValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>SamplesValue</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QLabel" name="labelSubjectGeneral">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>General:</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::AutoText</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_23">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelSubject">
+              <property name="text">
+               <string>Name:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelSubjectValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_24">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelDate">
+              <property name="text">
+               <string>Date:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelDateValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>DateValue</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QTextBrowser" name="textBrowserEvents">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>242</red>
+                <green>241</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>242</red>
+                <green>241</green>
+                <blue>240</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Base">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>255</red>
+                <green>255</green>
+                <blue>255</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
      <item row="0" column="0">
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <widget class="QFrame" name="frame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_14">
+      <widget class="QGroupBox" name="groupBoxSubject_2">
+       <property name="title">
+        <string>Subjects</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_12">
+        <property name="margin">
+         <number>9</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QListWidget" name="listWidgetSubjects"/>
+        </item>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBoxSubject_2">
-            <property name="title">
-             <string>Subjects</string>
+           <widget class="QPushButton" name="pushButtonActivateSubject">
+            <property name="text">
+             <string>Activate selected</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_12">
-             <item row="0" column="0">
-              <widget class="QListWidget" name="listWidgetSubjects"/>
-             </item>
-             <item row="1" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <widget class="QPushButton" name="pushButtonActivateSubject">
-                 <property name="text">
-                  <string>Activate selected</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButtonAddSubjects">
-                 <property name="text">
-                  <string>Add new...</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButtonRemoveSubject">
-                 <property name="text">
-                  <string>Remove selected</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButtonAddSubjects">
+            <property name="text">
+             <string>Add new...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButtonRemoveSubject">
+            <property name="text">
+             <string>Remove selected</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButtonMNE_Browse_Raw">
+            <property name="text">
+             <string>MNE_Browse_Raw</string>
+            </property>
            </widget>
           </item>
          </layout>
-         <zorder>groupBoxSubject_2</zorder>
-         <zorder>frame_2</zorder>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame_2">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_13">
-          <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBoxSubjectInfo">
-            <property name="title">
-             <string>Subject info</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_10">
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelEvents">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Events:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_12">
-               <item>
-                <widget class="QLabel" name="labelFilters">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Filters:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_30">
-                 <item>
-                  <widget class="QLabel" name="labelLow">
-                   <property name="lineWidth">
-                    <number>1</number>
-                   </property>
-                   <property name="text">
-                    <string>Low-pass:</string>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelLowValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Low-pass value</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_31">
-                 <item>
-                  <widget class="QLabel" name="labelHigh">
-                   <property name="text">
-                    <string>High-pass:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelHighValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>High-pass value</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </item>
-             <item row="2" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_11">
-               <item>
-                <widget class="QLabel" name="labelChannels">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Channels:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_25">
-                 <item>
-                  <widget class="QLabel" name="labelEEG">
-                   <property name="text">
-                    <string>EEG channels:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelEEGValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>EEG value</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_27">
-                 <item>
-                  <widget class="QLabel" name="labelGradMEG">
-                   <property name="text">
-                    <string>Gradiometers:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelGradMEGValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Grad. MEG value</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_28">
-                 <item>
-                  <widget class="QLabel" name="labelMagMEG">
-                   <property name="text">
-                    <string>Magnetometers:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelMagMEGValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Mag. MEG value</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_29">
-                 <item>
-                  <widget class="QLabel" name="labelSamples">
-                   <property name="text">
-                    <string>Sampling frequency:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelSamplesValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>SamplesValue</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </item>
-             <item row="0" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_23">
-                 <item>
-                  <widget class="QLabel" name="labelSubject">
-                   <property name="text">
-                    <string>Name:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelSubjectValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_24">
-                 <item>
-                  <widget class="QLabel" name="labelDate">
-                   <property name="text">
-                    <string>Date:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelDateValue">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>DateValue</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </item>
-             <item row="4" column="0">
-              <widget class="QTextBrowser" name="textBrowserEvents">
-               <property name="palette">
-                <palette>
-                 <active>
-                  <colorrole role="Base">
-                   <brush brushstyle="SolidPattern">
-                    <color alpha="255">
-                     <red>242</red>
-                     <green>241</green>
-                     <blue>240</blue>
-                    </color>
-                   </brush>
-                  </colorrole>
-                 </active>
-                 <inactive>
-                  <colorrole role="Base">
-                   <brush brushstyle="SolidPattern">
-                    <color alpha="255">
-                     <red>242</red>
-                     <green>241</green>
-                     <blue>240</blue>
-                    </color>
-                   </brush>
-                  </colorrole>
-                 </inactive>
-                 <disabled>
-                  <colorrole role="Base">
-                   <brush brushstyle="SolidPattern">
-                    <color alpha="255">
-                     <red>255</red>
-                     <green>255</green>
-                     <blue>255</blue>
-                    </color>
-                   </brush>
-                  </colorrole>
-                 </disabled>
-                </palette>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -2265,17 +2148,12 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionShow_Hide_Console">
-   <property name="text">
-    <string>Show / Hide Console</string>
-   </property>
-  </action>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
    </property>
   </action>
-  <action name="showExperimentInfo">
+  <action name="actionShowExperimentInfo">
    <property name="icon">
     <iconset>
      <normaloff>../icons/showExperimentInfo.png</normaloff>../icons/showExperimentInfo.png</iconset>
@@ -2285,6 +2163,18 @@
    </property>
    <property name="toolTip">
     <string>Show more info about experiment</string>
+   </property>
+  </action>
+  <action name="actionHide_Show_subject_list_and_info">
+   <property name="icon">
+    <iconset>
+     <normaloff>../icons/subjectList.png</normaloff>../icons/subjectList.png</iconset>
+   </property>
+   <property name="text">
+    <string>Hide/show subject list and info</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide/show subject list and info</string>
    </property>
   </action>
  </widget>
@@ -2297,12 +2187,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>193</x>
-     <y>456</y>
+     <x>637</x>
+     <y>632</y>
     </hint>
     <hint type="destinationlabel">
-     <x>289</x>
-     <y>455</y>
+     <x>883</x>
+     <y>634</y>
     </hint>
    </hints>
   </connection>
@@ -2313,12 +2203,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>496</y>
+     <x>560</x>
+     <y>669</y>
     </hint>
     <hint type="destinationlabel">
-     <x>235</x>
-     <y>494</y>
+     <x>839</x>
+     <y>672</y>
     </hint>
    </hints>
   </connection>

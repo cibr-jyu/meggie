@@ -560,8 +560,23 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.dialogAbout = AboutDialog()
-        self.dialogAbout.show()    
+        self.dialogAbout.show()
         
+    def on_actionShowExperimentInfo_triggered(self, checked=None):    
+        """
+        Open the experiment info dialog 
+        """
+        if checked is None: return
+        self.expInfoDialog = ExperimentInfoDialog()
+        self.expInfoDialog.show()
+        
+    def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
+        if checked is None: return
+        if self.ui.dockWidgetSubjects.isVisible():
+            self.ui.dockWidgetSubjects.hide()
+        else:
+            self.ui.dockWidgetSubjects.show()
+    
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
@@ -858,21 +873,21 @@ class MainWindow(QtGui.QMainWindow):
         #self.tab = self.ui.tabWidget.currentWidget()
         
         
-        if index == 3:
+        if index == 1:
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
             #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
             self.epochList.show()
             #self.epochParamsList.show()
             return
         
-        if index == 4:
+        if index == 2:
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
             #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
             self.epochList.show()
             #self.epochParamsList.show()
             return
        
-        if index == 5:
+        if index == 3:
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
             #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
             self.epochList.show()
@@ -1105,7 +1120,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Subject tab should stays active after removing active subject.
         if self.experiment.active_subject_path == '':
-            self.ui.tabWidget.setCurrentIndex(1)
+            self.ui.tabWidget.setCurrentIndex(0)
 
         
         
@@ -1157,33 +1172,31 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString(status))
  
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
-        self.ui.labelExperimentName.setText(self.experiment.\
-                                            experiment_name)
-        self.ui.labelAuthorName.setText(self.experiment.author)
-        self.ui.textBrowserExperimentDescription.\
-        setText(self.experiment.description)
         
     def add_tabs(self):
         """
         Method for initializing the tabs.
         """
-        self.ui.tabWidget.insertTab(0, self.ui.tabRaw, "Experiment")
-        self.ui.tabWidget.insertTab(1, self.ui.tabSubjects, "Subjects")
-        self.ui.tabWidget.insertTab(2, self.ui.tabPreprocessing, 
+        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, 
                                     "Preprocessing")
-        self.ui.tabWidget.insertTab(3, self.ui.tabEpoching, "Epoching")
-        self.ui.tabWidget.insertTab(4, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(5, self.ui.tabTFR, "TFR")
+        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
+        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
         
+        # TODO remove this, not needed with separate subject list
         # If no subjects added to the experiment, there is no reason to enable
         # more tabs to confuse the user.
         #if len(self.experiment._subject_paths) == 0 or \
         #self.experiment.active_subject_path == '':
+        
+        """
         if self.experiment.active_subject_path == '':
             self.ui.tabWidget.setTabEnabled(2,False)
             self.ui.tabWidget.setTabEnabled(3,False)
             self.ui.tabWidget.setTabEnabled(4,False)
             self.ui.tabWidget.setTabEnabled(5,False)
+        """
+        
         
     def enable_tabs(self):
         """
