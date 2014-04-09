@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1302</width>
+    <width>1363</width>
     <height>850</height>
    </rect>
   </property>
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <attribute name="title">
@@ -106,8 +106,8 @@
                <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>371</width>
-                <height>143</height>
+                <width>367</width>
+                <height>144</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -125,57 +125,16 @@
               <property name="title">
                <string>Preprocessing steps completed:</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <item>
+              <layout class="QGridLayout" name="gridLayout_13">
+               <item row="0" column="0">
                 <layout class="QGridLayout" name="gridLayout_6">
                  <property name="sizeConstraint">
                   <enum>QLayout::SetDefaultConstraint</enum>
                  </property>
-                 <item row="0" column="2">
-                  <widget class="QLabel" name="labelEOGApplied_2">
-                   <property name="text">
-                    <string>Applied</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="labelECGComputed_2">
-                   <property name="text">
-                    <string>ECG projections</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="labelEOGComputed_2">
-                   <property name="text">
-                    <string>EOG projections</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="labelECGApplied_2">
-                   <property name="text">
-                    <string>Computed</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="labelMaxFilter_2">
-                   <property name="text">
-                    <string>MaxFilter</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_13">
+                 <item row="2" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
-                    <spacer name="horizontalSpacer_5">
+                    <spacer name="horizontalSpacer_11">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -188,12 +147,9 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="checkBoxMaxFilterComputed">
+                    <widget class="QCheckBox" name="checkBoxECGComputed">
                      <property name="enabled">
                       <bool>false</bool>
-                     </property>
-                     <property name="inputMethodHints">
-                      <set>Qt::ImhDigitsOnly</set>
                      </property>
                      <property name="text">
                       <string/>
@@ -201,7 +157,7 @@
                     </widget>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_8">
+                    <spacer name="horizontalSpacer_12">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -214,6 +170,63 @@
                     </spacer>
                    </item>
                   </layout>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="labelEOGComputed_2">
+                   <property name="text">
+                    <string>EOG projections</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <item>
+                    <spacer name="horizontalSpacer_13">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxEOGApplied">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_14">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="labelECGApplied_2">
+                   <property name="text">
+                    <string>Computed</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
                  </item>
                  <item row="2" column="2">
                   <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -242,46 +255,6 @@
                    </item>
                    <item>
                     <spacer name="horizontalSpacer_10">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="2" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_17">
-                   <item>
-                    <spacer name="horizontalSpacer_11">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxECGComputed">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_12">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -335,46 +308,6 @@
                    </item>
                   </layout>
                  </item>
-                 <item row="3" column="2">
-                  <layout class="QHBoxLayout" name="horizontalLayout_20">
-                   <item>
-                    <spacer name="horizontalSpacer_13">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="checkBoxEOGApplied">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_14">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
                  <item row="1" column="2">
                   <layout class="QHBoxLayout" name="horizontalLayout_21">
                    <item>
@@ -414,6 +347,76 @@
                     </spacer>
                    </item>
                   </layout>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="labelECGComputed_2">
+                   <property name="text">
+                    <string>ECG projections</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_13">
+                   <property name="spacing">
+                    <number>6</number>
+                   </property>
+                   <item>
+                    <spacer name="horizontalSpacer_5">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="checkBoxMaxFilterComputed">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="inputMethodHints">
+                      <set>Qt::ImhDigitsOnly</set>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_8">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="labelEOGApplied_2">
+                   <property name="text">
+                    <string>Applied</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="labelMaxFilter_2">
+                   <property name="text">
+                    <string>MaxFilter</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -549,6 +552,9 @@
              <zorder>layoutWidget</zorder>
              <zorder>layoutWidget</zorder>
              <zorder>groupBoxAvailablePreprocessing</zorder>
+             <zorder>checkBoxMaxFilterApplied</zorder>
+             <zorder>labelMaxFilter_2</zorder>
+             <zorder>labelECGComputed_2</zorder>
             </widget>
             <widget class="QWidget" name="tabEpoching">
              <attribute name="title">
@@ -1301,13 +1307,278 @@
                <rect>
                 <x>20</x>
                 <y>610</y>
-                <width>261</width>
+                <width>341</width>
                 <height>31</height>
                </rect>
               </property>
               <property name="text">
                <string>Visualize epochs in selected channels...</string>
               </property>
+             </widget>
+            </widget>
+            <widget class="QWidget" name="tabAveraging">
+             <attribute name="title">
+              <string>Averaging</string>
+             </attribute>
+             <widget class="QWidget" name="gridLayoutWidget">
+              <property name="geometry">
+               <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>464</width>
+                <height>668</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="1" column="0">
+                <widget class="QGroupBox" name="groupBoxAvailableAveraging">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>260</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>240</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Available actions:</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_15">
+                  <item row="0" column="0">
+                   <widget class="QGroupBox" name="groupBoxChannelAverages">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="title">
+                     <string>Channel Averages</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_11">
+                     <item row="4" column="1">
+                      <widget class="QPushButton" name="pushButtonChannelAverages">
+                       <property name="text">
+                        <string>Show channel averages</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <item>
+                        <widget class="QRadioButton" name="radioButtonLobe">
+                         <property name="text">
+                          <string>Lobe:</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                         <attribute name="buttonGroup">
+                          <string notr="true">buttonGroupChannelAverage</string>
+                         </attribute>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QComboBox" name="comboBoxLobes"/>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLabel" name="labelChannelAverages">
+                       <property name="text">
+                        <string>Show channel averages for:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_15">
+                       <item>
+                        <widget class="QRadioButton" name="radioButtonCustomChannels">
+                         <property name="text">
+                          <string>Custom channels:</string>
+                         </property>
+                         <attribute name="buttonGroup">
+                          <string notr="true">buttonGroupChannelAverage</string>
+                         </attribute>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>400</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string/>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_17"/>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>801</x>
+                <y>11</y>
+                <width>389</width>
+                <height>439</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_14">
+               <item row="0" column="0">
+                <widget class="QGroupBox" name="groupBoxEvokeds">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>300</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Evoked datasets (averaged epoch collections):</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QWidget" name="widgetEvokeds" native="true"/>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout_6">
+                 <item>
+                  <layout class="QGridLayout" name="gridLayout">
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="pushButtonSaveEvoked">
+                     <property name="text">
+                      <string>Save evoked</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="pushButtonDeleteEvoked">
+                     <property name="text">
+                      <string>Delete evoked</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QPushButton" name="pushButtonLoadEvoked">
+                     <property name="text">
+                      <string>Load evoked</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <item>
+                    <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
+                     <property name="text">
+                      <string>Visualize evoked dataset</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
+                     <property name="text">
+                      <string>Show evoked stats</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>482</x>
+                <y>12</y>
+                <width>314</width>
+                <height>123</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QPushButton" name="pushButtonCreateEvoked">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>10000</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Create evoked dataset</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </widget>
             <widget class="QWidget" name="tabTFR">
@@ -1380,263 +1651,6 @@
               </layout>
              </widget>
             </widget>
-            <widget class="QWidget" name="tabAveraging">
-             <attribute name="title">
-              <string>Averaging</string>
-             </attribute>
-             <widget class="QWidget" name="gridLayoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>451</width>
-                <height>611</height>
-               </rect>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_4">
-               <item row="0" column="0">
-                <widget class="QGroupBox" name="groupBoxEpochsAveraging">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="title">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QGroupBox" name="groupBoxAvailableAveraging">
-                 <property name="maximumSize">
-                  <size>
-                   <width>500</width>
-                   <height>240</height>
-                  </size>
-                 </property>
-                 <property name="title">
-                  <string>Available actions:</string>
-                 </property>
-                 <widget class="QGroupBox" name="groupBoxChannelAverages">
-                  <property name="geometry">
-                   <rect>
-                    <x>17</x>
-                    <y>62</y>
-                    <width>433</width>
-                    <height>167</height>
-                   </rect>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>50</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Channel Averages</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_11">
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="pushButtonChannelAverages">
-                     <property name="text">
-                      <string>Show channel averages</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_14">
-                     <item>
-                      <widget class="QRadioButton" name="radioButtonLobe">
-                       <property name="text">
-                        <string>Lobe:</string>
-                       </property>
-                       <property name="checked">
-                        <bool>true</bool>
-                       </property>
-                       <attribute name="buttonGroup">
-                        <string notr="true">buttonGroupChannelAverage</string>
-                       </attribute>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="comboBoxLobes"/>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="labelChannelAverages">
-                     <property name="text">
-                      <string>Show channel averages for:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_15">
-                     <item>
-                      <widget class="QRadioButton" name="radioButtonCustomChannels">
-                       <property name="text">
-                        <string>Custom channels:</string>
-                       </property>
-                       <attribute name="buttonGroup">
-                        <string notr="true">buttonGroupChannelAverage</string>
-                       </attribute>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QGroupBox" name="groupBoxEvokeds">
-              <property name="geometry">
-               <rect>
-                <x>700</x>
-                <y>20</y>
-                <width>391</width>
-                <height>161</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Evoked datasets (averaged epoch collections):</string>
-              </property>
-              <widget class="QWidget" name="widgetEvokeds" native="true">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>30</y>
-                 <width>351</width>
-                 <height>121</height>
-                </rect>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QPushButton" name="pushButtonCreateEvoked">
-              <property name="geometry">
-               <rect>
-                <x>450</x>
-                <y>50</y>
-                <width>251</width>
-                <height>31</height>
-               </rect>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>10000</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Create evoked dataset</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label">
-              <property name="geometry">
-               <rect>
-                <x>450</x>
-                <y>80</y>
-                <width>251</width>
-                <height>141</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
-              </property>
-              <property name="scaledContents">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QWidget" name="verticalLayoutWidget_4">
-              <property name="geometry">
-               <rect>
-                <x>710</x>
-                <y>180</y>
-                <width>371</width>
-                <height>161</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <item>
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="0" column="0">
-                  <widget class="QPushButton" name="pushButtonSaveEvoked">
-                   <property name="text">
-                    <string>Save evoked</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QPushButton" name="pushButtonDeleteEvoked">
-                   <property name="text">
-                    <string>Delete evoked</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QPushButton" name="pushButtonLoadEvoked">
-                   <property name="text">
-                    <string>Load evoked</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_10">
-                 <item>
-                  <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
-                   <property name="text">
-                    <string>Visualize evoked dataset</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
-                   <property name="text">
-                    <string>Show evoked stats</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </widget>
            </widget>
           </item>
          </layout>
@@ -1652,7 +1666,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1302</width>
+     <width>1363</width>
      <height>26</height>
     </rect>
    </property>
@@ -1770,6 +1784,9 @@
               <property name="scaledContents">
                <bool>true</bool>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1782,6 +1799,9 @@
               </property>
               <property name="text">
                <string>Low-pass value</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1797,6 +1817,9 @@
               <property name="text">
                <string>High-pass:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1809,6 +1832,9 @@
               </property>
               <property name="text">
                <string>High-pass value</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1841,6 +1867,9 @@
               <property name="text">
                <string>EEG channels:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1853,6 +1882,9 @@
               </property>
               <property name="text">
                <string>EEG value</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1868,6 +1900,9 @@
               <property name="text">
                <string>Gradiometers:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1880,6 +1915,9 @@
               </property>
               <property name="text">
                <string>Grad. MEG value</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1895,6 +1933,9 @@
               <property name="text">
                <string>Magnetometers:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1907,6 +1948,9 @@
               </property>
               <property name="text">
                <string>Mag. MEG value</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1922,6 +1966,9 @@
               <property name="text">
                <string>Sampling frequency:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1934,6 +1981,9 @@
               </property>
               <property name="text">
                <string>SamplesValue</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1969,6 +2019,9 @@
               <property name="text">
                <string>Name:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -1981,6 +2034,9 @@
               </property>
               <property name="text">
                <string>TextLabel</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1996,6 +2052,9 @@
               <property name="text">
                <string>Date:</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
@@ -2008,6 +2067,9 @@
               </property>
               <property name="text">
                <string>DateValue</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -2103,7 +2165,7 @@
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButtonMNE_Browse_Raw">
             <property name="text">
-             <string>MNE_Browse_Raw</string>
+             <string>View raw file</string>
             </property>
            </widget>
           </item>
@@ -2189,11 +2251,11 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>637</x>
+     <x>600</x>
      <y>632</y>
     </hint>
     <hint type="destinationlabel">
-     <x>883</x>
+     <x>807</x>
      <y>634</y>
     </hint>
    </hints>
@@ -2205,11 +2267,11 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>560</x>
+     <x>552</x>
      <y>669</y>
     </hint>
     <hint type="destinationlabel">
-     <x>839</x>
+     <x>807</x>
      <y>672</y>
     </hint>
    </hints>

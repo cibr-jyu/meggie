@@ -568,7 +568,13 @@ class MainWindow(QtGui.QMainWindow):
         Open the experiment info dialog 
         """
         if checked is None: return
-        self.expInfoDialog = experimentInfoDialog()
+        if self._experiment is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('You do not currently have an experiment activated.')
+            self.messageBox.show()  
+            return
+        self.expInfoDialog = experimentInfoDialog(self)
         self.expInfoDialog.show()
         
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
