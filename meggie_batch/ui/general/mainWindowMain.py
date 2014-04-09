@@ -77,6 +77,7 @@ from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
 from consoleMain import Console
 from measurementInfo import MeasurementInfo
+from experimentInfoDialogMain import experimentInfoDialog
 import messageBox
 
 from experiment import Experiment
@@ -567,7 +568,7 @@ class MainWindow(QtGui.QMainWindow):
         Open the experiment info dialog 
         """
         if checked is None: return
-        self.expInfoDialog = ExperimentInfoDialog()
+        self.expInfoDialog = experimentInfoDialog()
         self.expInfoDialog.show()
         
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):

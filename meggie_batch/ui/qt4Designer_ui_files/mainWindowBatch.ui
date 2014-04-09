@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>863</height>
+    <width>1302</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <attribute name="title">
@@ -1652,7 +1652,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1266</width>
+     <width>1302</width>
      <height>26</height>
     </rect>
    </property>
@@ -1708,7 +1708,7 @@
   <widget class="QDockWidget" name="dockWidgetSubjects">
    <property name="minimumSize">
     <size>
-     <width>20</width>
+     <width>330</width>
      <height>690</height>
     </size>
    </property>
@@ -2117,8 +2117,8 @@
   </widget>
   <action name="actionCreate_experiment">
    <property name="icon">
-    <iconset>
-     <normaloff>../icons/createExperiment.png</normaloff>../icons/createExperiment.png</iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
+     <normaloff>:/toolBarIcons/images/createExperiment.png</normaloff>:/toolBarIcons/images/createExperiment.png</iconset>
    </property>
    <property name="text">
     <string>Create New Experiment...</string>
@@ -2126,8 +2126,8 @@
   </action>
   <action name="actionOpen_experiment">
    <property name="icon">
-    <iconset>
-     <normaloff>../icons/openExperiment.png</normaloff>../icons/openExperiment.png</iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
+     <normaloff>:/toolBarIcons/images/openExperiment.png</normaloff>:/toolBarIcons/images/openExperiment.png</iconset>
    </property>
    <property name="text">
     <string>Open Experiment...</string>
@@ -2155,8 +2155,8 @@
   </action>
   <action name="actionShowExperimentInfo">
    <property name="icon">
-    <iconset>
-     <normaloff>../icons/showExperimentInfo.png</normaloff>../icons/showExperimentInfo.png</iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
+     <normaloff>:/toolBarIcons/images/showExperimentInfo.png</normaloff>:/toolBarIcons/images/showExperimentInfo.png</iconset>
    </property>
    <property name="text">
     <string>Show experiment info</string>
@@ -2167,8 +2167,8 @@
   </action>
   <action name="actionHide_Show_subject_list_and_info">
    <property name="icon">
-    <iconset>
-     <normaloff>../icons/subjectList.png</normaloff>../icons/subjectList.png</iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
+     <normaloff>:/toolBarIcons/images/subjectList.png</normaloff>:/toolBarIcons/images/subjectList.png</iconset>
    </property>
    <property name="text">
     <string>Hide/show subject list and info</string>
@@ -2178,7 +2178,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons/mainWindowIcons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>radioButtonLobe</sender>

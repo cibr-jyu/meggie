@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainWindowBatch.ui'
+# Form implementation generated from reading ui file '/home/kpaliran/Hoksotin/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/mainWindowBatch.ui'
 #
-# Created: Tue Apr  8 21:17:41 2014
+# Created: Wed Apr  9 19:33:08 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -623,7 +623,7 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.dockWidgetSubjects = QtGui.QDockWidget(MainWindow)
-        self.dockWidgetSubjects.setMinimumSize(QtCore.QSize(406, 690))
+        self.dockWidgetSubjects.setMinimumSize(QtCore.QSize(330, 690))
         self.dockWidgetSubjects.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
         self.dockWidgetSubjects.setObjectName(_fromUtf8("dockWidgetSubjects"))
         self.dockWidgetContents = QtGui.QWidget()
@@ -839,12 +839,12 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidgetSubjects)
         self.actionCreate_experiment = QtGui.QAction(MainWindow)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/createExperiment.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/toolBarIcons/images/createExperiment.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionCreate_experiment.setIcon(icon)
         self.actionCreate_experiment.setObjectName(_fromUtf8("actionCreate_experiment"))
         self.actionOpen_experiment = QtGui.QAction(MainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/openExperiment.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/toolBarIcons/images/openExperiment.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionOpen_experiment.setIcon(icon1)
         self.actionOpen_experiment.setObjectName(_fromUtf8("actionOpen_experiment"))
         self.actionPreferences = QtGui.QAction(MainWindow)
@@ -853,18 +853,16 @@ class Ui_MainWindow(object):
         self.actionSet_workspace.setObjectName(_fromUtf8("actionSet_workspace"))
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
-        self.actionShow_Hide_Console = QtGui.QAction(MainWindow)
-        self.actionShow_Hide_Console.setObjectName(_fromUtf8("actionShow_Hide_Console"))
         self.actionQuit = QtGui.QAction(MainWindow)
         self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.actionShowExperimentInfo = QtGui.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/showExperimentInfo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/toolBarIcons/images/showExperimentInfo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionShowExperimentInfo.setIcon(icon2)
         self.actionShowExperimentInfo.setObjectName(_fromUtf8("actionShowExperimentInfo"))
         self.actionHide_Show_subject_list_and_info = QtGui.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(_fromUtf8("../icons/subjectList.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/toolBarIcons/images/subjectList.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionHide_Show_subject_list_and_info.setIcon(icon3)
         self.actionHide_Show_subject_list_and_info.setObjectName(_fromUtf8("actionHide_Show_subject_list_and_info"))
         self.menuFile.addAction(self.actionCreate_experiment)
@@ -885,10 +883,9 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionShowExperimentInfo)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionHide_Show_subject_list_and_info)
-        self.toolBar.addAction(self.actionShow_Hide_Console)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -979,16 +976,16 @@ class Ui_MainWindow(object):
         self.pushButtonActivateSubject.setText(_translate("MainWindow", "Activate selected", None))
         self.pushButtonAddSubjects.setText(_translate("MainWindow", "Add new...", None))
         self.pushButtonRemoveSubject.setText(_translate("MainWindow", "Remove selected", None))
-        self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "View with MNE_Browse_Raw", None))
+        self.pushButtonMNE_Browse_Raw.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
         self.actionCreate_experiment.setText(_translate("MainWindow", "Create New Experiment...", None))
         self.actionOpen_experiment.setText(_translate("MainWindow", "Open Experiment...", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
         self.actionSet_workspace.setText(_translate("MainWindow", "Set Workspace...", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
-        self.actionShow_Hide_Console.setText(_translate("MainWindow", "Show / Hide Console", None))
         self.actionQuit.setText(_translate("MainWindow", "Quit", None))
         self.actionShowExperimentInfo.setText(_translate("MainWindow", "Show experiment info", None))
         self.actionShowExperimentInfo.setToolTip(_translate("MainWindow", "Show more info about experiment", None))
         self.actionHide_Show_subject_list_and_info.setText(_translate("MainWindow", "Hide/show subject list and info", None))
         self.actionHide_Show_subject_list_and_info.setToolTip(_translate("MainWindow", "Hide/show subject list and info", None))
 
+import mainWindowIcons_rc
