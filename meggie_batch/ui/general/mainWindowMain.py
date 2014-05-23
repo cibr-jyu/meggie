@@ -42,6 +42,7 @@ from sets import Set
 import shutil
  
 from PyQt4 import QtCore,QtGui
+from PyQt4.QtGui import QWhatsThis
 
 import mne
 from mne import fiff
@@ -583,6 +584,12 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.dockWidgetSubjects.hide()
         else:
             self.ui.dockWidgetSubjects.show()
+            
+    def on_actionToggle_whatsthis_mode_triggered(self, checked=None):
+        if checked is None: return
+        if QWhatsThis.inWhatsThisMode() is True: 
+            QWhatsThis.leaveWhatsThisMode()
+        else: QWhatsThis.enterWhatsThisMode()   
     
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
@@ -1189,6 +1196,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
+        self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation, "Source modelling preparation")
         
         # TODO remove this, not needed with separate subject list
         # If no subjects added to the experiment, there is no reason to enable

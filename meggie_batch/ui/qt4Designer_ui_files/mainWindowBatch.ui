@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1484</width>
-    <height>898</height>
+    <width>1114</width>
+    <height>954</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,8 +46,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1126</width>
-         <height>789</height>
+         <width>1100</width>
+         <height>830</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -65,7 +65,7 @@
              <bool>true</bool>
             </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -83,7 +83,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -531,8 +531,6 @@
              <zorder>groupBoxVisualization_2</zorder>
              <zorder>listWidgetSubjects_2</zorder>
              <zorder>label_2</zorder>
-             <zorder>layoutWidget</zorder>
-             <zorder>layoutWidget</zorder>
              <zorder>groupBoxAvailablePreprocessing</zorder>
             </widget>
             <widget class="QWidget" name="tabEpoching">
@@ -618,7 +616,6 @@
                     <property name="title">
                      <string/>
                     </property>
-                    <zorder>groupBox</zorder>
                    </widget>
                   </item>
                  </layout>
@@ -1247,33 +1244,13 @@
                   </widget>
                  </item>
                 </layout>
-                <zorder>labelTmin</zorder>
-                <zorder>textBrowserTmin</zorder>
-                <zorder>labelTmax</zorder>
-                <zorder>textBrowserTmax</zorder>
-                <zorder>textBrowserMag</zorder>
-                <zorder>textBrowserGrad</zorder>
-                <zorder>labelGradReject</zorder>
-                <zorder>labelEegReject</zorder>
-                <zorder>textBrowserEEG</zorder>
-                <zorder>textBrowserEOG</zorder>
-                <zorder>labelEogReject</zorder>
-                <zorder>textBrowserStim</zorder>
-                <zorder>labelStimReject</zorder>
-                <zorder>labelWorkingFile</zorder>
-                <zorder>textBrowserWorkingFile</zorder>
                 <zorder>groupBoxRejections</zorder>
-                <zorder>textBrowserTmax</zorder>
                 <zorder>groupBoxEpochTimes</zorder>
                 <zorder>verticalSpacer</zorder>
                 <zorder>label_3</zorder>
                </widget>
               </item>
              </layout>
-             <zorder>horizontalLayoutWidget_6</zorder>
-             <zorder>groupBoxAvailableEpoching</zorder>
-             <zorder>frameEpochCollectionParameters</zorder>
-             <zorder>groupBox</zorder>
             </widget>
             <widget class="QWidget" name="tabTFR">
              <attribute name="title">
@@ -1577,18 +1554,12 @@
               <string>Source modelling preparation</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_23">
-              <item row="0" column="0">
-               <widget class="QGroupBox" name="groupBoxReconstruction">
-                <property name="title">
-                 <string>1. MRI image reconstruction</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QGroupBox" name="groupBoxConvertMRI">
                 <property name="title">
                  <string>2. Convert MRI image data to an MNE-friendly format</string>
                 </property>
+                <zorder>groupBoxReconstruction</zorder>
                </widget>
               </item>
               <item row="2" column="0">
@@ -1596,6 +1567,143 @@
                 <property name="title">
                  <string>3. Create BEM model meshes</string>
                 </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QGroupBox" name="groupBoxReconstruction">
+                <property name="title">
+                 <string>1. MRI image reconstruction</string>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <widget class="QWidget" name="">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>20</y>
+                   <width>398</width>
+                   <height>57</height>
+                  </rect>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_3">
+                  <item>
+                   <widget class="QLabel" name="label_4">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string/>
+                    </property>
+                    <property name="whatsThis">
+                     <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                    </property>
+                    <property name="text">
+                     <string>1. Select directory of the reconstructed MRI file:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_3">
+                    <item>
+                     <widget class="QLineEdit" name="lineEditRecon">
+                      <property name="whatsThis">
+                       <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonBrowseRecon">
+                      <property name="whatsThis">
+                       <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                      </property>
+                      <property name="text">
+                       <string>Browse...</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>80</y>
+                   <width>630</width>
+                   <height>57</height>
+                  </rect>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="label_6">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>2. Examine the reconstructed image:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                    <item>
+                     <widget class="QPushButton" name="pushButtonCheckTalairach">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Check Talairach transform</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonSkullStrip">
+                      <property name="text">
+                       <string>Check skull strip</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonCheckSurfaces">
+                      <property name="text">
+                       <string>Check surfaces</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonCheckSegmentations">
+                      <property name="text">
+                       <string>Check segmentation</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+                <zorder>pushButtonBrowseRecon</zorder>
+                <zorder>lineEditRecon</zorder>
+                <zorder>label_4</zorder>
+                <zorder>label_6</zorder>
+                <zorder>pushButtonCheckTalairach</zorder>
+                <zorder>pushButtonSkullStrip</zorder>
+                <zorder>pushButtonCheckSurfaces</zorder>
+                <zorder>pushButtonCheckSegmentations</zorder>
+                <zorder>label_6</zorder>
                </widget>
               </item>
              </layout>
@@ -1615,7 +1723,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1484</width>
+     <width>1114</width>
      <height>26</height>
     </rect>
    </property>
@@ -1665,6 +1773,7 @@
    <addaction name="actionOpen_experiment"/>
    <addaction name="separator"/>
    <addaction name="actionShowExperimentInfo"/>
+   <addaction name="actionToggle_whatsthis_mode"/>
    <addaction name="separator"/>
    <addaction name="actionHide_Show_subject_list_and_info"/>
   </widget>
@@ -2189,6 +2298,19 @@
    </property>
    <property name="toolTip">
     <string>Hide/show subject list and info</string>
+   </property>
+  </action>
+  <action name="actionToggle_whatsthis_mode">
+   <property name="icon">
+    <iconset>
+     <normalon>:/toolBarIcons/images/whatsThisMode.png</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Toggle whatsthis mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle mouseover help mode on/off</string>
    </property>
   </action>
  </widget>
