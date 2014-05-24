@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1114</width>
-    <height>954</height>
+    <width>1233</width>
+    <height>857</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,10 +44,10 @@
       <widget class="QWidget" name="scrollAreaWidgetContents_3">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>-3</x>
          <y>0</y>
          <width>1100</width>
-         <height>830</height>
+         <height>750</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -1555,18 +1555,144 @@
              </attribute>
              <layout class="QGridLayout" name="gridLayout_23">
               <item row="1" column="0">
-               <widget class="QGroupBox" name="groupBoxConvertMRI">
+               <widget class="QGroupBox" name="groupBoxRestOfSourcePreparation">
                 <property name="title">
-                 <string>2. Convert MRI image data to an MNE-friendly format</string>
+                 <string>2. Rest of the preparation steps</string>
                 </property>
-                <zorder>groupBoxReconstruction</zorder>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QGroupBox" name="groupBoxCreateBEMMeshes">
-                <property name="title">
-                 <string>3. Create BEM model meshes</string>
-                </property>
+                <layout class="QFormLayout" name="formLayout_4">
+                 <item row="0" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_15">
+                   <item>
+                    <widget class="QPushButton" name="pushButtonExecuteRestOfPreparationSteps">
+                     <property name="text">
+                      <string>Execute</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_3">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_30">
+                      <item row="0" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_7">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_10">
+                          <item>
+                           <widget class="QLabel" name="label_5">
+                            <property name="text">
+                             <string>1. Convert MRI image data to an MNE-friendly format</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_7">
+                            <property name="text">
+                             <string>2. Set up source space</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_8">
+                            <property name="text">
+                             <string>3. Create BEM model meshes</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="labelSetUpBEM">
+                            <property name="text">
+                             <string>4. Set up BEM</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_8">
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxConvertedToMNE">
+                            <property name="text">
+                             <string> </string>
+                            </property>
+                            <property name="checkable">
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxSourceSpaceSet">
+                            <property name="text">
+                             <string> </string>
+                            </property>
+                            <property name="checkable">
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxCreateBEMMeshes">
+                            <property name="text">
+                             <string> </string>
+                            </property>
+                            <property name="checkable">
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QCheckBox" name="checkBoxSetUpBEM">
+                            <property name="text">
+                             <string> </string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="0" column="1">
+                       <layout class="QVBoxLayout" name="verticalLayout_14">
+                        <item>
+                         <widget class="QLabel" name="labelConvertToMNEProgress">
+                          <property name="text">
+                           <string/>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelSetUpSourceSpaceProgress">
+                          <property name="text">
+                           <string/>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelCreateBemModelProgress">
+                          <property name="text">
+                           <string/>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelSetUpBEMProgress">
+                          <property name="text">
+                           <string/>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item row="0" column="0">
@@ -1580,130 +1706,162 @@
                 <property name="checkable">
                  <bool>false</bool>
                 </property>
-                <widget class="QWidget" name="">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>20</y>
-                   <width>398</width>
-                   <height>57</height>
-                  </rect>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_3">
-                  <item>
-                   <widget class="QLabel" name="label_4">
-                    <property name="font">
-                     <font>
-                      <weight>75</weight>
-                      <bold>true</bold>
-                     </font>
-                    </property>
-                    <property name="toolTip">
-                     <string/>
-                    </property>
-                    <property name="whatsThis">
-                     <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                    </property>
-                    <property name="text">
-                     <string>1. Select directory of the reconstructed MRI file:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_3">
-                    <item>
-                     <widget class="QLineEdit" name="lineEditRecon">
-                      <property name="whatsThis">
-                       <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonBrowseRecon">
-                      <property name="whatsThis">
-                       <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                      </property>
-                      <property name="text">
-                       <string>Browse...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-                <widget class="QWidget" name="">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>80</y>
-                   <width>630</width>
-                   <height>57</height>
-                  </rect>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_5">
-                  <item>
-                   <widget class="QLabel" name="label_6">
-                    <property name="font">
-                     <font>
-                      <weight>75</weight>
-                      <bold>true</bold>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>2. Examine the reconstructed image:</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
-                    <item>
-                     <widget class="QPushButton" name="pushButtonCheckTalairach">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>Check Talairach transform</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonSkullStrip">
-                      <property name="text">
-                       <string>Check skull strip</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonCheckSurfaces">
-                      <property name="text">
-                       <string>Check surfaces</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="pushButtonCheckSegmentations">
-                      <property name="text">
-                       <string>Check segmentation</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-                <zorder>pushButtonBrowseRecon</zorder>
-                <zorder>lineEditRecon</zorder>
-                <zorder>label_4</zorder>
-                <zorder>label_6</zorder>
-                <zorder>pushButtonCheckTalairach</zorder>
-                <zorder>pushButtonSkullStrip</zorder>
-                <zorder>pushButtonCheckSurfaces</zorder>
-                <zorder>pushButtonCheckSegmentations</zorder>
-                <zorder>label_6</zorder>
+                <layout class="QFormLayout" name="formLayout_3">
+                 <item row="0" column="0">
+                  <layout class="QVBoxLayout" name="verticalLayout_7">
+                   <item>
+                    <widget class="QFrame" name="frame_2">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_29">
+                      <item row="0" column="0">
+                       <layout class="QVBoxLayout" name="verticalLayout_3">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_6">
+                          <item>
+                           <widget class="QLabel" name="label_4">
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="toolTip">
+                             <string/>
+                            </property>
+                            <property name="whatsThis">
+                             <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                            </property>
+                            <property name="text">
+                             <string>1. Select directory of the reconstructed MRI image:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_3">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_3">
+                          <item>
+                           <widget class="QLineEdit" name="lineEditRecon">
+                            <property name="whatsThis">
+                             <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonBrowseRecon">
+                            <property name="whatsThis">
+                             <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                            </property>
+                            <property name="text">
+                             <string>Browse...</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_28">
+                      <item row="0" column="0">
+                       <layout class="QVBoxLayout" name="verticalLayout_5">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_5">
+                          <item>
+                           <widget class="QLabel" name="label_6">
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>2. Examine the reconstructed MRI image:</string>
+                            </property>
+                            <property name="margin">
+                             <number>0</number>
+                            </property>
+                            <property name="indent">
+                             <number>-1</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_4">
+                          <item>
+                           <widget class="QPushButton" name="pushButtonCheckTalairach">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="text">
+                             <string>Check Talairach transform</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonSkullStrip">
+                            <property name="text">
+                             <string>Check skull strip</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonCheckSurfaces">
+                            <property name="text">
+                             <string>Check surfaces</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonCheckSegmentations">
+                            <property name="text">
+                             <string>Check segmentation</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -1723,7 +1881,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1114</width>
+     <width>1233</width>
      <height>26</height>
     </rect>
    </property>
@@ -1753,6 +1911,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionToggle_whatsthis_mode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
