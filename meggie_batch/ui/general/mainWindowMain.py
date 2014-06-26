@@ -132,16 +132,20 @@ class MainWindow(QtGui.QMainWindow):
         self.fileManager = FileManager()
         self.epocher = Epochs()
         
-        #Populate the combobox for selecting lobes for channel averages.
+        # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
         
-        #Connect signals and slots
+        # Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
                         
         # For output logging.
         self.console = Console()
+        
+        # Models for several views in tab, e.g. forward model setup tab. Also linking corresponding views to models.
+        #self.forwardModelModel = self.populateForwardModelModel()
+        #self.ui.tableViewForwardModels.setModel = self.forwardModelModel 
         
         
     #Property definitions below
@@ -153,7 +157,10 @@ class MainWindow(QtGui.QMainWindow):
     def experiment(self, experiment):
         self._experiment = experiment
         #self.experiment_value_changed.emit()
-        
+
+
+### Code for catching signals and reacting to them ###
+
     def on_actionQuit_triggered(self, checked=None):
         """
         Closes the program.
@@ -258,22 +265,7 @@ class MainWindow(QtGui.QMainWindow):
             self.console.hide()
         else:
             self.console.show()
-        
-    
-    def populate_raw_tab_event_list(self):
-        """
-        Fill the raw tab event list with info about event IDs and
-        amount of events with those IDs.
-        """
-        #TODO: trigger ---> event, also in the UI
-        events = self.experiment.active_subject._event_set
-        
-        
-        events_string = ''
-        for key, value in events.iteritems():
-            events_string += 'Event ' + str(key) + ', ' + str(value) +\
-            ' events\n'
-        self.ui.textBrowserEvents.setText(events_string)
+ 
         
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -878,39 +870,6 @@ class MainWindow(QtGui.QMainWindow):
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
     
-    def on_currentChanged(self):
-        """
-        Keep track of the active tab.
-        Show the epoch collection list epochList when in appropriate tabs.
-        """
-        index = self.ui.tabWidget.currentIndex()
-        #self.tab = self.ui.tabWidget.currentWidget()
-        
-        
-        if index == 1:
-            self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
-            self.epochList.show()
-            #self.epochParamsList.show()
-            return
-        
-        if index == 2:
-            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
-            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
-            self.epochList.show()
-            #self.epochParamsList.show()
-            return
-       
-        if index == 3:
-            self.epochList.setParent(self.ui.groupBoxEpochsTFR)
-            #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
-            self.epochList.show()
-            #self.epochParamsList.show()
-            return 
-            
-        else:
-            self.epochList.hide()
-            #self.epochParamsList.hide()
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
@@ -1051,7 +1010,26 @@ class MainWindow(QtGui.QMainWindow):
         #self.experiment.activate_subject(working_file_name, subject_name, self.experiment)
         #self.experiment.update_experiment_settings()
         self._initialize_ui()
+
+
+### Code for populating various lists and tables in the MainWindow ###       
     
+    def populate_raw_tab_event_list(self):
+        """
+        Fill the raw tab event list with info about event IDs and
+        amount of events with those IDs.
+        """
+        #TODO: trigger ---> event, also in the UI
+        events = self.experiment.active_subject._event_set
+        
+        
+        events_string = ''
+        for key, value in events.iteritems():
+            events_string += 'Event ' + str(key) + ', ' + str(value) +\
+            ' events\n'
+        self.ui.textBrowserEvents.setText(events_string)
+ 
+ 
     def populate_comboBoxLobes(self):
         """
         Populate the combo box listing available lobes for to use for
@@ -1068,7 +1046,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Right-occipital')
         self.ui.comboBoxLobes.addItem('Left-frontal')
         self.ui.comboBoxLobes.addItem('Right-frontal')
-    
+
+
+### Code UI initialization (when starting the program) and updating when something changes ### 
     
     def _initialize_ui(self):
         """
@@ -1098,10 +1078,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
-
         
-        
-        # If experiment has subjects added the active_subject info will be added
+        # If experiment has subjects added, the active_subject info will be added
         # and tabs enabled for processing.
         if (len(self.experiment._subject_paths) > 0):
             for path in self.experiment._subject_paths:
@@ -1135,10 +1113,6 @@ class MainWindow(QtGui.QMainWindow):
         # Subject tab should stays active after removing active subject.
         if self.experiment.active_subject_path == '':
             self.ui.tabWidget.setCurrentIndex(0)
-
-        
-        
-        
         
         path = self.experiment.active_subject_path
         # To make sure that glob is not using path = '' as a root folder.
@@ -1223,6 +1197,45 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.setTabEnabled(3,True)
         self.ui.tabWidget.setTabEnabled(4,True)
         self.ui.tabWidget.setTabEnabled(5,True)
+
+
+    def on_currentChanged(self):
+            """
+            Keep track of the active tab.
+            Show the epoch collection list epochList when in appropriate tabs.
+            """
+            index = self.ui.tabWidget.currentIndex()
+            #self.tab = self.ui.tabWidget.currentWidget()
+            
+            
+            if index == 1:
+                self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
+                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
+                self.epochList.show()
+                #self.epochParamsList.show()
+                return
+            
+            if index == 2:
+                self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
+                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
+                self.epochList.show()
+                #self.epochParamsList.show()
+                return
+           
+            if index == 3:
+                self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
+                self.epochList.show()
+                #self.epochParamsList.show()
+                return 
+                
+            else:
+                self.epochList.hide()
+                #self.epochParamsList.hide()
+
+
+
+### Miscellaneous code ###
         
     def check_workspace(self):
         """

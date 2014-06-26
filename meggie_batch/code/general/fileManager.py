@@ -30,7 +30,7 @@
 """
 Created on Mar 13, 2013
 
-@author: Jaakko Leppakangas, Atte Rautio
+@author: Jaakko Leppakangas, Atte Rautio, Kari Aliranta
 Contains the File-class for file operations.
 """
 import mne
@@ -51,7 +51,7 @@ from statistic import Statistic
 class FileManager(QObject):
     
     """
-    A class for file operations.
+    A class for various file operations needed by Meggie.
     
     public functions:
     
@@ -349,6 +349,20 @@ class FileManager(QObject):
         
         pickleFile.close()
         
+        
+    def unpickle(self, fpath):
+        """Unpickle an object from a file at fpath.
+        
+        Keyword arguments:
+        
+        fpath -- the path to the pickled file.
+        
+        Return the unpickled object or None if unpickling failed.
+        Raise an IOError if unpickling fails.
+        """
+        return pickle.load( open(fpath, 'rb') )
+        
+        
     def save_epoch(self, fpath, epoch, overwrite = False):
         """Save epochs and the parameter values used to create them.
         
@@ -387,15 +401,15 @@ class FileManager(QObject):
         parameterFileName = str(fpath + '.param')
         self.pickle(parameters, parameterFileName)
 
+    
+    def readFileToStringList(self, fpath):
+        """
+        Reads a 
         
-    def unpickle(self, fpath):
-        """Unpickle an object from a file at fpath.
         
         Keyword arguments:
         
-        fpath -- the path to the pickled file.
-        
-        Return the unpickled object or None if unpickling failed.
-        Raise an IOError if unpickling fails.
         """
-        return pickle.load( open(fpath, 'rb') )
+    
+    
+        return list

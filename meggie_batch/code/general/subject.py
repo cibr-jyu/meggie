@@ -70,9 +70,11 @@ class Subject(QObject):
         self._working_file_path = 'no path defined'
         self._experiment = experiment
         # Dictionary for epochs where key is the name of the collection
-        # and value is the epochs object.
+        # and value is the epochs object. Similar approach with evoked and
+        # forward model objects.
         self._epochs = dict()
         self._evokeds = dict()
+        self._forwardModels = dict()
         self._ecg_params = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
