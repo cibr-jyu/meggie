@@ -402,14 +402,32 @@ class FileManager(QObject):
         self.pickle(parameters, parameterFileName)
 
     
-    def readFileToStringList(self, fpath):
+    def readCSVFileToList(self, keynames, fpath):
         """
-        Reads a 
-        
+        TODO not in use
+        Read a CVS file to a list of dictionaries, one line at a time.
+        Each line will be a separate dictionary in the returned list, 
+        with keys taken from the keynames list. 
         
         Keyword arguments:
         
+        keynames -- list of key names meant to correspond with the CVS values.
+                    If and empty list, keys will simply be assigned names of
+                    integers, starting from 1.  
+        
+                    Please note:   
+        
+                    if the keynames list is not empty, the method requires that 
+                    the CVS file have exactly the len(keynames) number of values
+                    on each line, resulting in all dictionaries having explitly 
+                    names keys.
+                    
+        fpath -- full path to CVS file.
+        
+        Return list of dictionaries.
+        Raise exception if all CVS lines don't conform to length of keynames.
+        Raise IOError if the CVS file can't be read.
         """
+        
     
-    
-        return list
+        # return list

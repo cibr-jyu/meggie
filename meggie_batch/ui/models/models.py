@@ -3,7 +3,10 @@ Created on 26.6.2014
 
 @author: kpaliran
 
-Contains modules for views in various UI components, mainly MainWindow.
+Contains models for views in various UI components, mainly MainWindow.
+Also contains methods for writing the models to disk (using fileManager module).
+
+
 
 '''
 
@@ -11,7 +14,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sys
 
-class ForwardModelModel(QAbstractTableModel):
+class ForwardModelModel(QAbstractListModel):
     '''
     Model class for forward model relates views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
@@ -50,7 +53,11 @@ class ForwardModelModel(QAbstractTableModel):
         elif role != Qt.DisplayRole:
             return QVariant()
         return QVariant(self.names(index.row()))
+
+    def initializeModel(self):
+        """
         
+        """
         
 class CoregistrationModel(QAbstractTableModel):
     
