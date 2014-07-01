@@ -47,6 +47,7 @@ from measurementInfo import MeasurementInfo
 from fileManager import FileManager
 from epochs import Epochs
 from evoked import Evoked
+from forwardModels import ForwardModels
 import messageBox
 
 class Subject(QObject):
@@ -81,6 +82,8 @@ class Subject(QObject):
                                           self._subject_name)
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
         self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
+        self._forwardModels_directory = os.path.join(self._subject_path, \
+                                                     'forwardModels')
         
     @property
     def raw_data(self):
@@ -206,25 +209,42 @@ class Subject(QObject):
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
+
         
     def create_epochs_directory(self):
-        """Create a directory for saving epochs under the subject directory.
+        """
+        Create a directory for saving epochs under the subject directory.
+        TODO possibly move this and following methods to fileManager.
         """
         try:
             os.mkdir(self._epochs_directory)
         except OSError:
-            raise OSError('no rights to create epochs directory to' + \
+            raise OSError('can\'t create epochs directory to' + \
                           ' the chosen path')                
 
+
     def create_evokeds_directory(self):
-        """Create a directory for saving evokeds under the epochs directory.
+        """
+        Create a directory for saving evokeds under the epochs directory.
         """
         try:
             os.mkdir(self._evokeds_directory)
         except OSError:
-            raise OSError('no rights to create evokeds directory to' + \
+            raise OSError('can\'t create evokeds directory to' + \
                           ' the chosen path')                
 
+    def create_forwardModels_directory(self):
+        """
+        Create a directory for saving forward models under the appropriate
+        directory.
+        """
+        try:
+            os.mkdir(self._forwardModels_directory)
+        except OSError:
+            raise OSError('can\'t create forward models directory to' + \
+                          ' the chosen path')
+        
+    
     
     def find_stim_channel(self):
         """
@@ -389,9 +409,11 @@ class Subject(QObject):
         """
         Removes evoked object from the evoked dictionary.
         
+        
         Keyword arguments:
         name    -- name of the evoked in QString
         """
+        # TODO should not do this if f.delete_file_at fails
         del self._evokeds[str(name)]
         
         f = FileManager()
@@ -400,6 +422,50 @@ class Subject(QObject):
             self.messageBox.labelException.setText \
             ('Evoked could not be deleted from average folder.')
             self.messageBox.show()
+        
+        
+    def add_forwardModel(self, name, fmodel):
+        """
+        Adds a ForwardModels object to the forwardModels dictionary.
+        """
+        self._evokeds[str(name)] = fmodel
+        
+        
+    def remove_forwardModel(self, name):
+        """
+        Removes a ForwardModels object from the forwardModels dictionary.
+        """
+        f = FileManager()
+        if f.delete_file_at(self._forwardModels_directory, name) == False:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Forward model could not be deleted from forwardModels folder')
+            self.messageBox.show()
+            return
+        del self._forwardModels[str(name)]
+    
+    
+    def handle_new_forwardModels(self, name, params):
+        """
+        Creates a forward model object and adds it to the 
+        self._forwardModels dictionary.
+        Does nothing if given collection name exists already in the dictionary.
+        
+        Keyword arguments
+        name        -- name of the forward model
+        params      -- forward model parameters
+        """
+        # Checks if forward model with given name exists.
+        if self._forwardModels.has_key(name):
+            return
+        #toPyObject turns the dict keys into QStrings so convert them back to
+        #strings.
+        #params_str = dict((str(k), v) for k, v in parameters.iteritems())
+        fmodel = ForwardModels()
+        fmodels._fmodel_name = name
+        fmodel._params = params
+        self.add_forwardModel(name, fmodel)
+    
         
     def check_ecg_projs(self):
         """

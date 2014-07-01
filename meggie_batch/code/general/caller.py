@@ -78,7 +78,11 @@ import messageBox
 
 class Caller(object):
     """
-    Class for calling third party software.
+    Class for simple of calling third party software. Includes methods that
+    require input from single source (usually a dialog) and produce simple
+    output (usually a single matplotlib window). 
+    More complicated functionality like epoching can be found in separate
+    classes.
     """
     def __init__(self, parent):
         """
@@ -87,6 +91,7 @@ class Caller(object):
         parent        -- Parent of this object.
         """
         self.parent = parent
+ 
     
     def call_mne_browse_raw(self, filename):
         """
@@ -108,6 +113,7 @@ class Caller(object):
             print line
         retval = proc.wait()
         print "the program return code was %d" % retval
+     
         
     def call_maxfilter(self, dic, custom):
         """
@@ -141,6 +147,7 @@ class Caller(object):
         self.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
         self.parent.experiment.save_experiment_settings()
+   
         
     def call_ecg_ssp(self, dic):
         """
@@ -231,6 +238,7 @@ class Caller(object):
                             raw_in.info.get('filename'), 
                             ecg_proj_fname, 'ecgproj', dic)
         """
+     
         
     def call_eog_ssp(self, dic):
         """
@@ -306,6 +314,7 @@ class Caller(object):
                             raw_in.info.get('filename'),
                             eog_proj_fname, 'eogproj', dic)
         """
+   
         
     def apply_ecg(self, raw, directory):
         """
@@ -353,6 +362,7 @@ class Caller(object):
             return
         self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
+ 
         
     def apply_eog(self, raw, directory):
         """
@@ -398,6 +408,7 @@ class Caller(object):
             return
         self.update_experiment_working_file(appliedfilename, raw)
         self.parent.experiment.update_experiment_settings()
+ 
     
     def average(self, epochs, category):
         """Average epochs.
@@ -458,6 +469,7 @@ class Caller(object):
         Saving an evoked dataset. Can save only one dataset at a time.
         """
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
+ 
                 
     def draw_evoked_potentials(self, evokeds, category):
         """
@@ -547,6 +559,7 @@ class Caller(object):
             pl.show(block=False)
             
         fig.canvas.mpl_connect('button_press_event', onclick)
+      
         
     def average_channels(self, epochs, lobeName, channelSet=None):
         """
@@ -637,6 +650,7 @@ class Caller(object):
             # TODO Mikä yksikkö tässä, ja pitääkö skaalata?
             ca.set_ylabel('Magnitude / dB')                    
         fig.show()
+   
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
@@ -768,6 +782,7 @@ class Caller(object):
             pl.show(block=False)
         
         fig.canvas.mpl_connect('button_press_event', onclick)
+ 
         
     def magnitude_spectrum(self, raw, ch_index):
         """
@@ -789,6 +804,7 @@ class Caller(object):
         pl.ylabel('Magnitude / dB')
         pl.xlabel('Hz')
         pl.show()
+       
                             
     def filter(self, dataToFilter, samplerate, dic):
         """
@@ -817,7 +833,8 @@ class Caller(object):
                         True)
         
         return dataToFilter
-                          
+    
+    
     def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working file for the experiment the caller relates
@@ -831,6 +848,7 @@ class Caller(object):
         status = "Current working file: " + \
         os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(QtCore.QString(status))
+
 
     def write_events(self, events):
         """
@@ -858,6 +876,7 @@ class Caller(object):
                 ws.write(i, j, events[i][j], styleNumber)
         wbs.save(os.path.join(path_to_save, 'events.xls'))
         #TODO: muuta filename kayttajan maarittelyn mukaiseksi
+
 
     def read_events(self, filename):
         """

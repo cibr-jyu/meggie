@@ -4,10 +4,7 @@ Created on 26.6.2014
 @author: kpaliran
 
 Contains models for views in various UI components, mainly MainWindow.
-Also contains methods for writing the models to disk (using fileManager module).
-
-
-
+TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
 from PyQt4.QtCore import *
@@ -16,7 +13,7 @@ import sys
 
 class ForwardModelModel(QAbstractListModel):
     '''
-    Model class for forward model relates views in MainWindow. Please don't get
+    Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
     the former is model as in model-view-controller, the latter is an MNE term. 
     '''

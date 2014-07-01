@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1737</width>
-    <height>904</height>
+    <width>1587</width>
+    <height>929</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,8 +46,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1379</width>
-         <height>795</height>
+         <width>1229</width>
+         <height>820</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -83,7 +83,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1332,304 +1332,310 @@
              <attribute name="title">
               <string>Averaging</string>
              </attribute>
-             <layout class="QFormLayout" name="formLayout_11">
-              <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_34">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_23">
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxEpochsAveraging">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>380</height>
-                     </size>
-                    </property>
-                    <property name="title">
-                     <string/>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_17"/>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxAvailableAveraging">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>500</width>
-                      <height>240</height>
-                     </size>
-                    </property>
-                    <property name="title">
-                     <string>Available actions for epoch collections:</string>
-                    </property>
-                    <layout class="QFormLayout" name="formLayout_10">
-                     <item row="0" column="0">
-                      <widget class="QGroupBox" name="groupBoxChannelAverages">
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>50</height>
-                        </size>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>9</x>
+                <y>9</y>
+                <width>1191</width>
+                <height>630</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_15">
+               <item row="0" column="0">
+                <layout class="QVBoxLayout" name="verticalLayout_23">
+                 <item>
+                  <widget class="QGroupBox" name="groupBoxEpochsAveraging">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>380</height>
+                    </size>
+                   </property>
+                   <property name="title">
+                    <string/>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_17"/>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBoxAvailableAveraging">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>500</width>
+                     <height>240</height>
+                    </size>
+                   </property>
+                   <property name="title">
+                    <string>Available actions for epoch collections:</string>
+                   </property>
+                   <layout class="QFormLayout" name="formLayout_10">
+                    <item row="0" column="0">
+                     <widget class="QGroupBox" name="groupBoxChannelAverages">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="title">
+                       <string>Channel Averages</string>
+                      </property>
+                      <layout class="QFormLayout" name="formLayout_9">
+                       <property name="fieldGrowthPolicy">
+                        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                        </property>
-                       <property name="title">
-                        <string>Channel Averages</string>
-                       </property>
-                       <layout class="QFormLayout" name="formLayout_9">
-                        <property name="fieldGrowthPolicy">
-                         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                        </property>
-                        <item row="0" column="0">
-                         <layout class="QVBoxLayout" name="verticalLayout_22">
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_14">
-                            <item>
-                             <widget class="QRadioButton" name="radioButtonLobe">
-                              <property name="text">
-                               <string>Lobe:</string>
-                              </property>
-                              <property name="checked">
-                               <bool>true</bool>
-                              </property>
-                              <attribute name="buttonGroup">
-                               <string notr="true">buttonGroupChannelAverage</string>
-                              </attribute>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="comboBoxLobes"/>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_15">
-                            <item>
-                             <widget class="QRadioButton" name="radioButtonCustomChannels">
-                              <property name="text">
-                               <string>Custom channels:</string>
-                              </property>
-                              <attribute name="buttonGroup">
-                               <string notr="true">buttonGroupChannelAverage</string>
-                              </attribute>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="accessibleDescription">
-                               <string/>
-                              </property>
-                              <property name="documentTitle">
-                               <string/>
-                              </property>
-                              <property name="plainText">
-                               <string>This should be a comma separated list without MEG prefix and spaces, e.g. 1122,1123.</string>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButtonChannelAverages">
-                            <property name="text">
-                             <string>Show channel averages</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_4">
-                  <item>
-                   <spacer name="verticalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Preferred</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButtonCreateEvoked">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>10000</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string>------ Create evoked dataset -----&gt;</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label">
-                    <property name="text">
-                     <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>false</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_6">
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxEvokeds">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>300</height>
-                     </size>
-                    </property>
-                    <property name="title">
-                     <string>Evoked datasets (averaged epoch collections):</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_16">
-                     <item row="0" column="0">
-                      <widget class="QWidget" name="widgetEvokeds" native="true"/>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QGroupBox" name="groupBox">
-                    <property name="title">
-                     <string>Available actions for evoked datasets:</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_4">
-                     <item row="2" column="0">
-                      <layout class="QHBoxLayout" name="horizontalLayout_10">
-                       <item>
-                        <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
-                         <property name="text">
-                          <string>Visualize selected dataset...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
-                         <property name="text">
-                          <string>Show evoked stats</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="0" column="0">
-                      <layout class="QGridLayout" name="gridLayout">
                        <item row="0" column="0">
-                        <widget class="QPushButton" name="pushButtonSaveEvoked">
-                         <property name="text">
-                          <string>Export selected dataset...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButtonDeleteEvoked">
-                         <property name="text">
-                          <string>Delete selected dataset</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="1">
-                        <widget class="QPushButton" name="pushButtonLoadEvoked">
-                         <property name="text">
-                          <string>Import dataset...</string>
-                         </property>
-                        </widget>
+                        <layout class="QVBoxLayout" name="verticalLayout_22">
+                         <item>
+                          <layout class="QHBoxLayout" name="horizontalLayout_14">
+                           <item>
+                            <widget class="QRadioButton" name="radioButtonLobe">
+                             <property name="text">
+                              <string>Lobe:</string>
+                             </property>
+                             <property name="checked">
+                              <bool>true</bool>
+                             </property>
+                             <attribute name="buttonGroup">
+                              <string notr="true">buttonGroupChannelAverage</string>
+                             </attribute>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QComboBox" name="comboBoxLobes"/>
+                           </item>
+                          </layout>
+                         </item>
+                         <item>
+                          <layout class="QHBoxLayout" name="horizontalLayout_15">
+                           <item>
+                            <widget class="QRadioButton" name="radioButtonCustomChannels">
+                             <property name="text">
+                              <string>Custom channels:</string>
+                             </property>
+                             <attribute name="buttonGroup">
+                              <string notr="true">buttonGroupChannelAverage</string>
+                             </attribute>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
+                             <property name="accessibleDescription">
+                              <string/>
+                             </property>
+                             <property name="documentTitle">
+                              <string/>
+                             </property>
+                             <property name="plainText">
+                              <string>This should be a comma separated list without MEG prefix and spaces, e.g. 1122,1123.</string>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="pushButtonChannelAverages">
+                           <property name="text">
+                            <string>Show channel averages</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </item>
                       </layout>
-                     </item>
-                     <item row="1" column="0">
-                      <spacer name="verticalSpacer_6">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QVBoxLayout" name="verticalLayout_4">
+                 <item>
+                  <spacer name="verticalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Preferred</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonCreateEvoked">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>10000</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>------ Create evoked dataset -----&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>false</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="2">
+                <layout class="QVBoxLayout" name="verticalLayout_6">
+                 <item>
+                  <widget class="QGroupBox" name="groupBoxEvokeds">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>300</height>
+                    </size>
+                   </property>
+                   <property name="title">
+                    <string>Evoked datasets (averaged epoch collections):</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_16">
+                    <item row="0" column="0">
+                     <widget class="QWidget" name="widgetEvokeds" native="true"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox">
+                   <property name="title">
+                    <string>Available actions for evoked datasets:</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_4">
+                    <item row="2" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_10">
+                      <item>
+                       <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
+                        <property name="text">
+                         <string>Visualize selected dataset...</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
+                        <property name="text">
+                         <string>Show evoked stats</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="0" column="0">
+                     <layout class="QGridLayout" name="gridLayout">
+                      <item row="0" column="0">
+                       <widget class="QPushButton" name="pushButtonSaveEvoked">
+                        <property name="text">
+                         <string>Export selected dataset...</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QPushButton" name="pushButtonDeleteEvoked">
+                        <property name="text">
+                         <string>Delete selected dataset</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pushButtonLoadEvoked">
+                        <property name="text">
+                         <string>Import dataset...</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="1" column="0">
+                     <spacer name="verticalSpacer_6">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
             </widget>
             <widget class="QWidget" name="tabSourcePreparation">
              <attribute name="title">
@@ -2245,7 +2251,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1737</width>
+     <width>1587</width>
      <height>26</height>
     </rect>
    </property>
