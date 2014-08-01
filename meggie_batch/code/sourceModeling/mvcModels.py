@@ -23,8 +23,14 @@ class ForwardModelModel(QAbstractListModel):
         # corresponding files.
         self.filename = filename
         self.dirty = False
-        # Names of the forward models, read from the file with self.filename.
-        self.names = []
+        # Info of the forward models, read from the file with self.filename.
+        # Includes information about generat
+        # TODO sisältääkö generoidut tiedostot jo infoa fmodeleista, jolloin
+        # tässä riittäisi pelkkä hakemiston polku?
+        self.fmodelInfo = [dict()]
+        
+        # One could put column headers here
+        # self.__headers = headers
         
     
     def rowCount(self, index=QModelIndex()):
@@ -34,12 +40,14 @@ class ForwardModelModel(QAbstractListModel):
         """
         return len(self.names)
     
+    
     def columnCount(self, index=QModelIndex()):
         """
         The associated view only has one column, the one to show the name 
-        of the forward model.
+        of the forward model. Increase value to get more colums.
         """
         return 1
+    
         
     def data(self, index, role):
         """
@@ -47,14 +55,29 @@ class ForwardModelModel(QAbstractListModel):
         """
         if not index.isValid():
             return QVariant()
-        elif role != Qt.DisplayRole:
-            return QVariant()
-        return QVariant(self.names(index.row()))
+        
+        # No need to use anything else but displayrole here. 
+        if role == Qt.DisplayRole:
+            row = index.row()
+            # column = index.column() needed if shown more info than just name
+            
+            fmodel = self.fmodelInfo[row]
+            fmname = fmodel["name"]
+            return fmname
+            
+        else: return QVariant()
+        
+    
+    def removeRows(self, position, rows=1, index=QModelIndex():
+        
+
+    def writeModelToDisk(self):
+        
 
     def initializeModel(self):
         """
         
         """
         
-class CoregistrationModel(QAbstractTableModel):
+# class CoregistrationModel(QAbstractTableModel):
     

@@ -83,7 +83,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -692,8 +692,17 @@
                         </property>
                         <item row="1" column="0">
                          <widget class="QLabel" name="labelTmin">
+                          <property name="minimumSize">
+                           <size>
+                            <width>80</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="text">
                            <string>Start time:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -776,8 +785,17 @@
                         </item>
                         <item row="2" column="0">
                          <widget class="QLabel" name="labelTmax">
+                          <property name="minimumSize">
+                           <size>
+                            <width>80</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="text">
                            <string>End time:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -863,6 +881,12 @@
                         </property>
                         <item row="0" column="0">
                          <widget class="QLabel" name="labelMagReject">
+                          <property name="minimumSize">
+                           <size>
+                            <width>80</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="maximumSize">
                            <size>
                             <width>16777215</width>
@@ -871,6 +895,9 @@
                           </property>
                           <property name="text">
                            <string>Mag:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -947,6 +974,12 @@
                         </item>
                         <item row="1" column="0">
                          <widget class="QLabel" name="labelGradReject">
+                          <property name="minimumSize">
+                           <size>
+                            <width>75</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="maximumSize">
                            <size>
                             <width>16777215</width>
@@ -955,6 +988,9 @@
                           </property>
                           <property name="text">
                            <string>Grad:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -1019,11 +1055,17 @@
                         </item>
                         <item row="2" column="0">
                          <widget class="QLabel" name="labelEegReject">
+                          <property name="minimumSize">
+                           <size>
+                            <width>75</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="text">
                            <string>EEG:</string>
                           </property>
                           <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -1076,11 +1118,17 @@
                         </item>
                         <item row="3" column="0">
                          <widget class="QLabel" name="labelEogReject">
+                          <property name="minimumSize">
+                           <size>
+                            <width>75</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="text">
                            <string>EOG:</string>
                           </property>
                           <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -1133,11 +1181,17 @@
                         </item>
                         <item row="4" column="0">
                          <widget class="QLabel" name="labelStimReject">
+                          <property name="minimumSize">
+                           <size>
+                            <width>75</width>
+                            <height>0</height>
+                           </size>
+                          </property>
                           <property name="text">
                            <string>Stim:</string>
                           </property>
                           <property name="alignment">
-                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                           </property>
                          </widget>
                         </item>
@@ -1198,6 +1252,12 @@
                        </property>
                        <item>
                         <widget class="QLabel" name="labelWorkingFile">
+                         <property name="minimumSize">
+                          <size>
+                           <width>90</width>
+                           <height>0</height>
+                          </size>
+                         </property>
                          <property name="maximumSize">
                           <size>
                            <width>16777215</width>
@@ -1332,7 +1392,7 @@
              <attribute name="title">
               <string>Averaging</string>
              </attribute>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <property name="geometry">
                <rect>
                 <x>9</x>
