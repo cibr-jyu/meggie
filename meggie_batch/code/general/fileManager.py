@@ -402,16 +402,17 @@ class FileManager(QObject):
         self.pickle(parameters, parameterFileName)
 
     
-    def readCSVFileToList(self, keynames, fpath):
+    def readCSVFileToDictList(self, keynames, fpath, ndoculines):
+        # TODO this is simple use of csv.DictReader, remove method
         """
-        TODO not in use
-        Read a CVS file to a list of dictionaries, one line at a time.
+        
+        Read a CSV file to a list of dictionaries, one line at a time.
         Each line will be a separate dictionary in the returned list, 
-        with keys taken from the keynames list. 
+        with keys taken from the keynames list, and values from the CSV file. 
         
         Keyword arguments:
         
-        keynames -- list of key names meant to correspond with the CVS values.
+        keynames -- list of key names meant to correspond with the CSV values.
                     If and empty list, keys will simply be assigned names of
                     integers, starting from 1.  
         
@@ -420,14 +421,44 @@ class FileManager(QObject):
                     if the keynames list is not empty, the method requires that 
                     the CVS file have exactly the len(keynames) number of values
                     on each line, resulting in all dictionaries having explitly 
-                    names keys.
+                    named keys.
                     
-        fpath -- full path to CVS file.
+        fpath -- full path to CSV file.
         
-        Return list of dictionaries.
+        doculines -- number of non-CSV documentation lines at the beginning
+                     of the file. Are skipped by default.
+        
+        Return list of dictionaries, None if was reading dictionaries was't
+        successful
+        
         Raise exception if all CVS lines don't conform to length of keynames.
         Raise IOError if the CVS file can't be read.
         """
         
+        try:
+            with open(fpath, 'rb') as file to readfile:
+                csvreaderFile=csv.DictReader(readfile)
+                
+                # Possibly skip the first lines, as they don't include actual
+                # CSVdata.
+                for i in range(ndoculines):
+                    next(csvreaderFile)
+                
+                # Read the rest of the file into a dictionary as
+                # key-value pairs.
+                
+                return CSVdict           
+                       
+        except IOError:
+            # In no dictionary is returned, the dialog just falls back to
+            # default initial values.
+            return None  
+        
+        
     
         # return list
+    
+    def writeCSVFileFromDictList(self, keynames, fpath):
+        
+        
+        

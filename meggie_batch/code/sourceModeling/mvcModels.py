@@ -10,6 +10,9 @@ TODO Also contains methods for writing the models to disk (using fileManager mod
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sys
+import csv
+import dialects
+from csv import Dialect
 
 class ForwardModelModel(QAbstractListModel):
     '''
@@ -20,14 +23,16 @@ class ForwardModelModel(QAbstractListModel):
 
     def __init__(self, filename=QString()):
         # File that includes forward model names, their parameters and 
-        # corresponding files.
+        # corresponding files. Use full path.
+        # TODO tämä pitäisi luultavasti saada subjectilta.
         self.filename = filename
         self.dirty = False
         # Info of the forward models, read from the file with self.filename.
         # Includes information about generat
         # TODO sisältääkö generoidut tiedostot jo infoa fmodeleista, jolloin
         # tässä riittäisi pelkkä hakemiston polku?
-        self.fmodelInfo = [dict()]
+        self.fmodelInfoList = [dict()]
+        self.fmodelInfoListKeys = ["name","fpath"]
         
         # One could put column headers here
         # self.__headers = headers
@@ -68,10 +73,41 @@ class ForwardModelModel(QAbstractListModel):
         else: return QVariant()
         
     
-    def removeRows(self, position, rows=1, index=QModelIndex():
+    def removeRows(self, position, rows=1, parent=QtCore.QModelIndex()):
+        """
+        Simple removal of a single row of fmodel.
+        """
+        self.beginRemoveRows(parent, position, position + rows - 1)
+        value = self.fmodelInfo[position]
+        self.fmodelInfo.remove(value)
+        self.endRemoveRows()
+        return True
         
 
     def writeModelToDisk(self):
+        """
+        Writes to disk the info related to the fmodel, currently name and
+        the path to the directory of the fmodel.
+        """
+        
+        dialect = Dialect()
+        dialect.delimiter = ";"
+        
+        writer = csv.DictWriter(self.filename, self.fmodelInfoListKeys)
+        writer = writer.writerows(self.fmodelInfoList)
+        
+        
+    def readModelFromDisk(self):
+        """
+        Reads from disk the info related to fmodel, currently name and
+        the path to the directory of the fmodel.
+        """
+        
+        dialect = Dialect()
+        dialect.delimiter = ";"
+        
+        fileReadDict = csv.DictReader(self.filename)
+        self.fmodelInfoList = fileReadDict
         
 
     def initializeModel(self):
