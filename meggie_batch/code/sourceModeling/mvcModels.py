@@ -1,3 +1,5 @@
+# coding: latin1
+
 '''
 Created on 26.6.2014
 
@@ -11,7 +13,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sys
 import csv
-import dialects
+import os
 from csv import Dialect
 
 class ForwardModelModel(QAbstractListModel):
@@ -19,23 +21,37 @@ class ForwardModelModel(QAbstractListModel):
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
     the former is model as in model-view-controller, the latter is an MNE term. 
+    
+    TODO pit‰is varmaan kysy‰ heti initialisoidessa subjectilta, onko hakemistoa
+    noille forward modeleille, ja sitten asettaa self.filename siihen
+    hakemistoon
     '''
 
-    def __init__(self, filename=QString()):
+    def __init__(self, experiment):
         # File that includes forward model names, their parameters and 
         # corresponding files. Use full path.
-        # TODO t√§m√§ pit√§isi luultavasti saada subjectilta.
-        self.filename = filename
+        # TODO t‰m‰ pit‰isi luultavasti saada subjectilta.
+        self.fmodelDirectory = experiment._active_subject.\
+                      _forwardModels_directory
+        self.fmodelFile = getCurrentFmodelModelFile(experiment)
         self.dirty = False
         # Info of the forward models, read from the file with self.filename.
-        # Includes information about generat
-        # TODO sis√§lt√§√§k√∂ generoidut tiedostot jo infoa fmodeleista, jolloin
-        # t√§ss√§ riitt√§isi pelkk√§ hakemiston polku?
+        # TODO sis‰lt‰‰kˆ generoidut tiedostot jo infoa fmodeleista, jolloin
+        # t‰ss‰ riitt‰isi pelkk‰ hakemiston polku?
         self.fmodelInfoList = [dict()]
         self.fmodelInfoListKeys = ["name","fpath"]
         
         # One could put column headers here
         # self.__headers = headers
+        
+        
+    def getCurrentFmodelModelFile(self):
+        filename = os.path.join(self.fmodelDirectory, "fmodelModel")
+            
+        if os.path.isfile(filename):
+            return filename
+        
+        return None
         
     
     def rowCount(self, index=QModelIndex()):
@@ -43,7 +59,7 @@ class ForwardModelModel(QAbstractListModel):
         The associated view should have as many rows as there are 
         forward model names.
         """
-        return len(self.names)
+        return len(self.fmodelInfoList)
     
     
     def columnCount(self, index=QModelIndex()):
@@ -73,7 +89,7 @@ class ForwardModelModel(QAbstractListModel):
         else: return QVariant()
         
     
-    def removeRows(self, position, rows=1, parent=QtCore.QModelIndex()):
+    def removeRows(self, position, rows=1, parent=QModelIndex()):
         """
         Simple removal of a single row of fmodel.
         """
@@ -93,8 +109,11 @@ class ForwardModelModel(QAbstractListModel):
         dialect = Dialect()
         dialect.delimiter = ";"
         
-        writer = csv.DictWriter(self.filename, self.fmodelInfoListKeys)
-        writer = writer.writerows(self.fmodelInfoList)
+        try:
+            writer = csv.DictWriter(self.filename, self.fmodelInfoListKeys)
+            writer = writer.writerows(self.fmodelInfoList)
+        except IOError:
+            raise Exception("Problem writing to desired directory")
         
         
     def readModelFromDisk(self):
@@ -106,8 +125,12 @@ class ForwardModelModel(QAbstractListModel):
         dialect = Dialect()
         dialect.delimiter = ";"
         
-        fileReadDict = csv.DictReader(self.filename)
-        self.fmodelInfoList = fileReadDict
+        try:
+            fileReadDict = csv.DictReader(self.filename)
+            self.fmodelInfoList = fileReadDict  
+        except IOError:
+            raise Exception("No forward model model file found")
+        
         
 
     def initializeModel(self):

@@ -433,8 +433,9 @@ class FileManager(QObject):
         
         Raise exception if all CVS lines don't conform to length of keynames.
         Raise IOError if the CVS file can't be read.
-        """
-        
+      
+       
+         
         try:
             with open(fpath, 'rb') as file to readfile:
                 csvreaderFile=csv.DictReader(readfile)
@@ -457,8 +458,9 @@ class FileManager(QObject):
         
     
         # return list
+          """
     
-    def writeCSVFileFromDictList(self, keynames, fpath):
+   # def writeCSVFileFromDictList(self, keynames, fpath):
         
         
         

@@ -87,7 +87,7 @@ from events import Events
 from caller import Caller
 from fileManager import FileManager
 from listWidget import ListWidget
-
+from mvcModels import ForwardModelModel
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -143,9 +143,10 @@ class MainWindow(QtGui.QMainWindow):
         # For output logging.
         self.console = Console()
         
-        # Models for several views in tab, e.g. forward model setup tab. Also linking corresponding views to models.
-        #self.forwardModelModel = self.populateForwardModelModel()
-        #self.ui.tableViewForwardModels.setModel = self.forwardModelModel 
+        # Models for several views in tab, e.g. forward model setup tab. 
+        # Also linking corresponding views to models.
+        # self.forwardModelModel = None
+        # self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
         
         
     #Property definitions below
@@ -1048,7 +1049,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Right-frontal')
 
 
-### Code UI initialization (when starting the program) and updating when something changes ### 
+### Code for UI initialization (when starting the program) and updating when something changes ### 
     
     def _initialize_ui(self):
         """
@@ -1171,6 +1172,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
         self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation, "Source modelling preparation")
+        self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel, "Forward model creation")
+        self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration, "Coregistration")
+        self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution, "Forward solution creation")
         
         # TODO remove this, not needed with separate subject list
         # If no subjects added to the experiment, there is no reason to enable
@@ -1197,6 +1201,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.setTabEnabled(3,True)
         self.ui.tabWidget.setTabEnabled(4,True)
         self.ui.tabWidget.setTabEnabled(5,True)
+        self.ui.tabWidget.setTabEnabled(6,True)
+        self.ui.tabWidget.setTabEnabled(7,True)
+        self.ui.tabWidget.setTabEnabled(8,True)
 
 
     def on_currentChanged(self):
