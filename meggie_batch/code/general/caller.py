@@ -45,8 +45,9 @@ from sets import Set
 from PyQt4 import QtCore,QtGui
 
 import mne
-from mne import fiff
-from mne.fiff import evoked
+# from mne import fiff -- mne.fiff is deprecated in MNE 0.8
+# TODO formerly in mne.fiff, usage may have changed
+from mne import evoked
 from mne.time_frequency import induced_power
 
 from mne import filter as MNEfilter
@@ -57,8 +58,9 @@ from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 
 from mne.viz import plot_topo
-from mne.viz import plot_topo_power, plot_topo_phase_lock
-from mne.viz import _clean_names
+# TODO find these or equivalent in mne 0.8
+# from mne.viz import plot_topo_power, plot_topo_phase_lock
+# from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
 
