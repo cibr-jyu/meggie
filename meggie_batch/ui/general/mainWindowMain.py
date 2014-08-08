@@ -1013,6 +1013,14 @@ class MainWindow(QtGui.QMainWindow):
         self._initialize_ui()
 
 
+    def on_pushButtonCreateNewForwardModel_click(self, checked=None):
+        """
+        Open up a dialog for creating a new forward model.
+        """
+        if checked is None: return
+        
+        self.
+
 ### Code for populating various lists and tables in the MainWindow ###       
     
     def populate_raw_tab_event_list(self):

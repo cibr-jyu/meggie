@@ -110,7 +110,8 @@ class ForwardModelModel(QAbstractListModel):
         dialect.delimiter = ";"
         
         try:
-            writer = csv.DictWriter(self.filename, self.fmodelInfoListKeys)
+            filename = os.path.join(self.fmodelDirectory, "fmodelModel")
+            writer = csv.DictWriter(filename, self.fmodelInfoListKeys)
             writer = writer.writerows(self.fmodelInfoList)
         except IOError:
             raise Exception("Problem writing to desired directory")
