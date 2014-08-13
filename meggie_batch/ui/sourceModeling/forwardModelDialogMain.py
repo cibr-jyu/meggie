@@ -36,4 +36,3 @@ class ForwardModelDialog(QtGui.QDialog):
         forward model.
         """
         
-        # tähän se parametrit dictiin ratkaisu

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>868</height>
+    <width>687</width>
+    <height>637</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,85 +16,91 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBoxBemModelMeshes">
-     <property name="title">
-      <string>BEM model meshes creation parameters:</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Use atlas:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_4">
-          <item>
-           <property name="text">
-            <string>no (default)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>yes</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-     <zorder>groupBoxSourceSpaceSetup</zorder>
-     <zorder>label_5</zorder>
-     <zorder>comboBox_4</zorder>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
+  <layout class="QFormLayout" name="formLayout_3">
    <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>Forward model name:</string>
+       </property>
+       <property name="buddy">
+        <cstring>plainTextEditFModelName</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="plainTextEditFModelName">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>40</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
     <widget class="QGroupBox" name="groupBoxSourceSpaceSetup">
      <property name="title">
       <string>Source space setup parameters:</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Spacing:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextEdit" name="textEdit"/>
-        </item>
-       </layout>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Spacing:</string>
+        </property>
+        <property name="buddy">
+         <cstring>spinBoxSpacing</cstring>
+        </property>
+       </widget>
       </item>
-      <item row="1" column="0">
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBoxSurfaceName"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spinBoxSpacing">
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="suffix">
+         <string> mm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Compute cortical patch statistics:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Surface name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBoxSurfaceName</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Cortical surface decimation method (ico):</string>
+        </property>
+        <property name="buddy">
+         <cstring></cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Cortical surface decimation method (ico):</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="comboBoxSurfaceDecimMethod">
           <item>
            <property name="text">
             <string>traditional (default)</string>
@@ -113,52 +119,40 @@
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="plainTextEdit">
+         <widget class="QSpinBox" name="spinBoxSurfaceDecimValue">
           <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="plainText">
-           <string>Number of subdivisions (positive for icosahedron, negative for octahedron) *** default here, and spinbox</string>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="5" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QRadioButton" name="radioButton_2">
           <property name="text">
-           <string>Surface name:</string>
+           <string>no (default)</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupCorticalPatchStats</string>
+          </attribute>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox_3"/>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QRadioButton" name="radioButton">
           <property name="text">
-           <string>Compute cortical patch statistics:</string>
+           <string>yes</string>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_2">
-          <item>
-           <property name="text">
-            <string>no (default)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>yes</string>
-           </property>
-          </item>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupCorticalPatchStats</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -167,155 +161,350 @@
     </widget>
    </item>
    <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBoxBemModelMeshes">
+     <property name="title">
+      <string>BEM model meshes creation parameters:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Use atlas:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QRadioButton" name="radioButton_5">
+          <property name="text">
+           <string>no (default)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupAtlas</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_6">
+          <property name="text">
+           <string>yes</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupAtlas</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QGroupBox" name="groupBoxSetupBem">
      <property name="title">
       <string>BEM model setup parameters:</string>
      </property>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>11</x>
-        <y>29</y>
-        <width>678</width>
-        <height>77</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
-        <widget class="QLabel" name="label_6">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Compartment model (homog) :</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBoxCompartmentModel</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBoxCompartmentModel">
+        <item>
          <property name="text">
-          <string>Triangulation files:</string>
+          <string>three layer (default)</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox_5">
-         <item>
-          <property name="text">
-           <string>standard ASCII (default)</string>
-          </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>single</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Shifts:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
          </item>
-         <item>
-          <property name="text">
-           <string>FreeSurfer triangulation files</string>
-          </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>inner:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxInnerShift</cstring>
+           </property>
+          </widget>
          </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_7">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>ico-number:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit_2">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>110</y>
-        <width>418</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Compartment model (homog) :</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox_6">
-         <item>
-          <property name="text">
-           <string>three layer (default)</string>
-          </property>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="spinBoxInnerShift">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> mm</string>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+          </widget>
          </item>
-         <item>
-          <property name="text">
-           <string>single</string>
-          </property>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>outer:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOuterShift</cstring>
+           </property>
+          </widget>
          </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>150</y>
-        <width>513</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Conductivity:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>brainc:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>skullc:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>scalpc:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
-       </item>
-      </layout>
-     </widget>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBoxOuterShift">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> mm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>skull:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxSkullShift</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBoxSkullShift">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> mm</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QComboBox" name="comboBoxTriangFiles">
+          <item>
+           <property name="text">
+            <string>standard ASCII (default)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FreeSurfer triangulation files</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>ico-number:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxTriangFilesIco">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="1">
+       <widget class="QFrame" name="frame_2">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Conductivity:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>brainc:</string>
+           </property>
+           <property name="buddy">
+            <cstring>doubleSpinBoxBrainConductivity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxBrainConductivity">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> S/m</string>
+           </property>
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="value">
+            <double>0.300000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>skullc:</string>
+           </property>
+           <property name="buddy">
+            <cstring>doubleSpinBoxSkullConductivity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxSkullConductivity">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="suffix">
+            <string> S/m</string>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="value">
+            <double>0.006000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>scalpc:</string>
+           </property>
+           <property name="buddy">
+            <cstring>doubleSpinBoxScalpConductivity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpConductivity">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="suffix">
+            <string> S/m</string>
+           </property>
+           <property name="value">
+            <double>0.030000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Triangulation files:</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBoxTriangFiles</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QRadioButton" name="radioButton_3">
+          <property name="text">
+           <string>no (default)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupNosol</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_4">
+          <property name="text">
+           <string>yes</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupNosol</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>Nosol:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -329,8 +518,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>606</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -345,8 +534,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>674</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -355,4 +544,9 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroupCorticalPatchStats"/>
+  <buttongroup name="buttonGroupNosol"/>
+  <buttongroup name="buttonGroupAtlas"/>
+ </buttongroups>
 </ui>
