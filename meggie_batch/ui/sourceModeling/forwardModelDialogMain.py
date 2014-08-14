@@ -36,3 +36,18 @@ class ForwardModelDialog(QtGui.QDialog):
         forward model.
         """
         
+        dictionary = {}
+        
+        dict['fname'] = self.ui.lineEditFModelName.text()
+        dict['spacing'] = self.ui.spinBoxSpacing.value()
+        dict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
+        dict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
+        dict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
+        dict['computeCorticalStats'] = str(self.ui.buttonGroupCorticalPatchStats \
+                                           .checkedButton().objectName())
+        dict['useAtlas'] = str(self.ui.buttonGroupAtlas \
+                                           .checkedButton().objectName())
+        dict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
+        dict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
+        dict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+         

@@ -17,30 +17,6 @@
    <bool>true</bool>
   </property>
   <layout class="QFormLayout" name="formLayout_3">
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <widget class="QLabel" name="label_17">
-       <property name="text">
-        <string>Forward model name:</string>
-       </property>
-       <property name="buddy">
-        <cstring>plainTextEditFModelName</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPlainTextEdit" name="plainTextEditFModelName">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>40</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBoxSourceSpaceSetup">
      <property name="title">
@@ -133,7 +109,7 @@
       <item row="5" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QRadioButton" name="radioButton_2">
+         <widget class="QRadioButton" name="radioButtonPatchStatNo">
           <property name="text">
            <string>no (default)</string>
           </property>
@@ -146,7 +122,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QRadioButton" name="radioButtonPatchStatYes">
           <property name="text">
            <string>yes</string>
           </property>
@@ -473,7 +449,7 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QRadioButton" name="radioButton_3">
+         <widget class="QRadioButton" name="radioButtonNosolNo">
           <property name="text">
            <string>no (default)</string>
           </property>
@@ -486,7 +462,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_4">
+         <widget class="QRadioButton" name="radioButtonNoSolYes">
           <property name="text">
            <string>yes</string>
           </property>
@@ -506,6 +482,20 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>Forward model name:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditFModelName"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -545,8 +535,8 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroupCorticalPatchStats"/>
-  <buttongroup name="buttonGroupNosol"/>
   <buttongroup name="buttonGroupAtlas"/>
+  <buttongroup name="buttonGroupNosol"/>
+  <buttongroup name="buttonGroupCorticalPatchStats"/>
  </buttongroups>
 </ui>
