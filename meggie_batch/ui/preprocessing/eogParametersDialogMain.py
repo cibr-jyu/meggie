@@ -142,4 +142,3 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent.ui.pushButtonApplyEOG.setEnabled(True)
         self.parent.ui.checkBoxEOGComputed.setChecked(True)
         self.close()
-        

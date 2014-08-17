@@ -1020,6 +1020,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         
         self.
+        
 
 ### Code for populating various lists and tables in the MainWindow ###       
     

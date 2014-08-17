@@ -50,4 +50,12 @@ class ForwardModelDialog(QtGui.QDialog):
         dict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
         dict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
         dict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
-         
+
+        try:
+            self.parent.caller_create_forward_model(dictionary)
+        except Exception, err:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(
+                'Problem creating forward model' + str(err))
+            self.messageBox.show()
+            return

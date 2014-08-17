@@ -316,7 +316,7 @@ class Caller(object):
                             raw_in.info.get('filename'),
                             eog_proj_fname, 'eogproj', dic)
         """
-   
+        
         
     def apply_ecg(self, raw, directory):
         """
@@ -835,6 +835,30 @@ class Caller(object):
                         True)
         
         return dataToFilter
+    
+    
+    def convert_mri_to_mne(self):
+        """
+        Pitäis etsiä se recontructed MRI image subjectin tietämästä paikasta,
+        ja sitten asettaa subject diriksi se paikka, ja ajaa skripti siinä
+        paikassa. 
+        """
+    
+    def create_forward_model(dict):
+        """
+        Creates a single forward model and saves it to an appropriate directory.
+        The steps taken are the following:
+        - 
+        - Create a temporary directory for I/O related to forward model creation
+        - Run mne_setup_source_space to handle various steps of source space
+        creation
+        - Use mne_watershed_bem to create bem model meshes
+        - Create BEM model with mne_setup_forward_model
+        - Copy the 
+        - 
+        """
+    
+        
     
     
     def update_experiment_working_file(self, fname, raw):
