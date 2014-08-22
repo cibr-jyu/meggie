@@ -93,7 +93,8 @@ class Caller(object):
         parent        -- Parent of this object.
         """
         self.parent = parent
- 
+        # TODO add a setter to set active subject directly as an attribute,
+        # instead of calling self.parent.experiment.active subject
     
     def call_mne_browse_raw(self, filename):
         """
@@ -843,6 +844,26 @@ class Caller(object):
         ja sitten asettaa subject diriksi se paikka, ja ajaa skripti siinä
         paikassa. 
         """
+        
+        sourceAnalDir = self.parent.experiment.active_subject.\
+                            _source_analysis_directory
+        
+       
+        
+        #
+        os.environ['SUBJECT_DIR'] = sourceAnalDir
+        
+        # vaatii ensin $SUBJECTS_DIR-envin asetuksen. Jos myös $SUBJECT asetettu,
+        # ei vaadi tuon subjektin antamista parametrina (etsii filuja
+        # mri-hakemistosta subjektin alta).
+        # 
+        # mne_setup_mri --subject duck_donald --mri T1
+        
+        # envien asetus: os.environ['DEBUSSY'] = '1'
+        
+        # Täällä on ne rekonstruoidut filut
+        self.parent.experiment.active_subject._source_analysis_directory
+        
     
     def create_forward_model(dict):
         """

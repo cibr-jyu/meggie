@@ -99,6 +99,7 @@ class MainWindow(QtGui.QMainWindow):
     #_initialize_ui() method.
     #experiment_value_changed = QtCore.pyqtSignal()
 
+
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
@@ -153,6 +154,7 @@ class MainWindow(QtGui.QMainWindow):
     @property
     def experiment(self):
         return self._experiment
+
     
     @experiment.setter
     def experiment(self, experiment):
@@ -160,7 +162,9 @@ class MainWindow(QtGui.QMainWindow):
         #self.experiment_value_changed.emit()
 
 
+
 ### Code for catching signals and reacting to them ###
+
 
     def on_actionQuit_triggered(self, checked=None):
         """
@@ -175,6 +179,7 @@ class MainWindow(QtGui.QMainWindow):
             
         if reply == QtGui.QMessageBox.Yes:
             self.close()
+
         
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
@@ -189,6 +194,7 @@ class MainWindow(QtGui.QMainWindow):
             if os.path.isfile('settings.cfg'):
                 self.dialog = CreateExperimentDialog(self)
                 self.dialog.show()   
+
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
@@ -218,6 +224,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.labelException.setText \
             ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
+
     
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """
@@ -226,6 +233,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.show()
+
     
     def on_pushButtonRemoveSubject_clicked(self, checked=None):
         """Delete the selected subject item and the files related to it.
@@ -256,6 +264,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
             # TODO: listWidgetSubects.currentItem() should be removed here
+
     
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
@@ -350,6 +359,7 @@ class MainWindow(QtGui.QMainWindow):
         filename_list = filename_full_path.split('/')
         filename = filename_list[len(filename_list) - 1]
         self.ui.textBrowserWorkingFile.setText(filename)
+
         
     def clear_epoch_collection_parameters(self):
         """
@@ -366,6 +376,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEOG.clear()
         #self.ui.textBrowserEvents.clear()   #setText('')
         self.ui.textBrowserWorkingFile.clear()
+
         
     def on_actionSet_workspace_triggered(self, checked=None):
         """
@@ -373,6 +384,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         self.check_workspace()
+
         
     def on_actionPreferences_triggered(self, checked=None):
         """Open the preferences-dialog.
@@ -380,6 +392,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.dialogPreferences = PreferencesDialog()
         self.dialogPreferences.show()
+
         
     def on_pushButtonCreateEpochs_clicked(self, checked=None):
         """
@@ -393,6 +406,7 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
+
         
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
     def epochs_added(self, item):
@@ -405,6 +419,7 @@ class MainWindow(QtGui.QMainWindow):
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.experiment.active_subject._epochs[fname]
         self.fileManager.save_epoch(fpath, epochs_object)
+
         
     @QtCore.pyqtSlot(dict)
     def create_new_epochs(self, epoch_params):
@@ -427,6 +442,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment.active_subject.handle_new_epochs(fname, epochs, epoch_params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
+
         
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
@@ -439,6 +455,7 @@ class MainWindow(QtGui.QMainWindow):
             self.load_epoch_collections()
             self.evokedList.clear()
             self.load_evoked_collections()
+
         
     def open_active_subject(self):
         """
@@ -461,6 +478,7 @@ class MainWindow(QtGui.QMainWindow):
             activate_subject(raw_path, subject_name, self.experiment)
             return epochs_items, evokeds_items
         return None, None
+
         
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
@@ -503,6 +521,7 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment.active_subject.handle_new_epochs(fname_prefix, epochs, params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
+
         
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
@@ -526,6 +545,7 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.experiment.active_subject.modify_epochs)
         self.epochParameterDialog.show()
+
                 
     def on_pushButtonSaveEpochs_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
@@ -549,6 +569,7 @@ class MainWindow(QtGui.QMainWindow):
                               str(self.epochList.currentItem().text()) +
                               '.csv'), fname + '.csv')
 
+
     def on_actionAbout_triggered(self, checked=None):
         """
         Open the About-dialog. 
@@ -556,6 +577,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.dialogAbout = AboutDialog()
         self.dialogAbout.show()
+
         
     def on_actionShowExperimentInfo_triggered(self, checked=None):    
         """
@@ -570,6 +592,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         self.expInfoDialog = experimentInfoDialog(self)
         self.expInfoDialog.show()
+
         
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
         if checked is None: return
@@ -577,12 +600,14 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.dockWidgetSubjects.hide()
         else:
             self.ui.dockWidgetSubjects.show()
+
             
     def on_actionToggle_whatsthis_mode_triggered(self, checked=None):
         if checked is None: return
         if QWhatsThis.inWhatsThisMode() is True: 
             QWhatsThis.leaveWhatsThisMode()
         else: QWhatsThis.enterWhatsThisMode()   
+
     
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
@@ -655,6 +680,7 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.addItem(item)
         self.experiment.active_subject.handle_new_evoked(evoked_name, evoked, category)
         #self.evokedList.setCurrentItem(item)
+
         
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
         """Open the evokedStatsDialog for viewing statistical data.
@@ -673,6 +699,7 @@ class MainWindow(QtGui.QMainWindow):
             #self.evokedList.item(i).data(32).toPyObject()
         self.evokedStatsDialog = EvokedStatsDialog(evoked_dict)
         self.evokedStatsDialog.exec_()
+
         
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked = None):
         """Plot image over epochs channel
@@ -693,6 +720,7 @@ class MainWindow(QtGui.QMainWindow):
         epochs = self.experiment.active_subject._epochs[epochs_name]._raw
         self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
         self.visualizeEpochChannelsDialog.exec_()
+
         
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """
@@ -709,6 +737,7 @@ class MainWindow(QtGui.QMainWindow):
         evoked_raw = evoked._raw
         category = evoked._categories
         self.caller.draw_evoked_potentials(evoked_raw,category)
+
         
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
@@ -737,6 +766,7 @@ class MainWindow(QtGui.QMainWindow):
             print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
+
         
     def on_pushButtonLoadEvoked_clicked(self, checked=None):
         """
@@ -762,6 +792,7 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
         self.experiment.active_subject.handle_new_evoked(item.text(), evoked, category)
+
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it.
@@ -793,6 +824,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.remove_item(self.epochList.currentItem())
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
+
             
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked item and the files related to it.
@@ -829,6 +861,7 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.active_subject.remove_evoked(item_str)
         else:
             return
+
                     
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
@@ -848,6 +881,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return        
         """
+
         
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
@@ -863,6 +897,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
         self.maxFilterDialog.show()
+
         
     def on_pushButtonSpectrum_clicked(self):
         """
@@ -879,6 +914,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return 
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.show()
+
         
     def on_pushButtonECG_clicked(self, checked=None):
         """
@@ -887,6 +923,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
+
         
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """
@@ -895,6 +932,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.addEogProjs = AddEOGProjections(self)
         self.addEogProjs.exec_()
+
         
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """
@@ -903,6 +941,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.addEcgProjs = AddECGProjections(self)
         self.addEcgProjs.exec_()
+
         
     def on_pushButtonTFR_clicked(self, checked=None):
         """
@@ -924,6 +963,7 @@ class MainWindow(QtGui.QMainWindow):
                                     _working_file, epochs_raw)
         self.tfr_dialog.show()
     
+    
     def on_pushButtonTFRTopology_clicked(self,checked=None):
         """
         Opens the dialog for plotting TFR topology.
@@ -943,6 +983,7 @@ class MainWindow(QtGui.QMainWindow):
                                                _working_file, 
                                                epochs._raw)
         self.tfrTop_dialog.show()
+    
         
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """
@@ -969,6 +1010,7 @@ class MainWindow(QtGui.QMainWindow):
             customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
             plainText
             self.caller.average_channels(epochs, None, customChannels)
+    
             
     def on_pushButtonFilter_clicked(self, checked=None):
         """
@@ -978,6 +1020,7 @@ class MainWindow(QtGui.QMainWindow):
     
         self.filterDialog = FilterDialog(self)
         self.filterDialog.show()
+    
     
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """
@@ -1013,14 +1056,50 @@ class MainWindow(QtGui.QMainWindow):
         self._initialize_ui()
 
 
+    def on_pushButtonBrowseRecon_click(self, checked=None):
+        if checked is None : return
+        
+        # TODO move this stuff to caller
+        
+        path = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select directory of the reconstructed MRI image"))
+        self.ui.lineEditRecon.setText(path)
+        # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
+        #
+        source = os.listdir(path)
+        sourceAnalDir = self.experiment._active_subject.\
+                            _source_analysis_directory
+        
+        # Create mri directory to source analysis directory root, because
+        # the mne_setup_mri script expects it.
+        # TODO kutsu subjectia t‰ss‰, vrt. create epochs directory
+        
+        try:
+            os.mkdir(self._reconMri_directory)
+        except OSError:
+            raise OSError('can\'t create reconstructed mri directory to' + \
+                          ' the chosen path')  
+        
+        os.path.join(sourceAnalDir, 'mri')
+        
+        dst = 
+        
+         
+        for files in source:
+            shutil.copy(source, dst)
+        
+    def on_pushButtonConvertToMNE_click(self, checked=None):
+        self.caller.convert_mri_to_mne()
+        
     def on_pushButtonCreateNewForwardModel_click(self, checked=None):
         """
         Open up a dialog for creating a new forward model.
         """
         if checked is None: return
         
-        self.
+        # self.
         
+
 
 ### Code for populating various lists and tables in the MainWindow ###       
     
@@ -1056,6 +1135,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Right-occipital')
         self.ui.comboBoxLobes.addItem('Left-frontal')
         self.ui.comboBoxLobes.addItem('Right-frontal')
+
 
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
@@ -1170,6 +1250,7 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText(QtCore.QString(status))
  
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
+
         
     def add_tabs(self):
         """
@@ -1259,9 +1340,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.workSpaceDialog = WorkSpaceDialog(self)
         self.workSpaceDialog.exec_()
+
         
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
+
         
     def write(self, output):
         self.console.show_log(output)

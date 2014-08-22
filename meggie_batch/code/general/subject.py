@@ -82,7 +82,9 @@ class Subject(QObject):
                                           self._subject_name)
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
         self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
-        self._forwardModels_directory = os.path.join(self._subject_path, \
+        self._source_analysis_directory = os.path.join(self._subject_path, \
+                                                     'sourceAnalysis')
+        self._forwardModels_directory = os.path.join(self._subject_phath, \
                                                      'forwardModels')
         
     @property
