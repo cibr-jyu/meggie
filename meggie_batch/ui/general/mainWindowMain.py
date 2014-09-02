@@ -36,10 +36,7 @@ Contains the MainWindow-class that holds the main window of the application.
 
 import os,sys
 import pickle
-import subprocess
 from sets import Set
-
-import shutil
  
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtGui import QWhatsThis
@@ -64,7 +61,7 @@ from visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
 from maxFilterDialogMain import MaxFilterDialog
 from eogParametersDialogMain import EogParametersDialog
 from ecgParametersDialogMain import EcgParametersDialog
-from workSpaceDialogMain import WorkSpaceDialog
+# from workSpaceDialogMain import WorkSpaceDialog
 from preferencesDialogMain import PreferencesDialog
 from evokedStatsDialogMain import EvokedStatsDialog
 from addECGProjectionsMain import AddECGProjections
@@ -159,8 +156,7 @@ class MainWindow(QtGui.QMainWindow):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
-        #self.experiment_value_changed.emit()
-
+        
 
 
 ### Code for catching signals and reacting to them ###
@@ -380,7 +376,8 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_actionSet_workspace_triggered(self, checked=None):
         """
-        Open the dialog to set the workspace.
+        Open the preferences dialog the for specific purpose of initial setting
+        of workspace.
         """
         if checked is None: return
         self.check_workspace()
@@ -390,7 +387,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the preferences-dialog.
         """
         if checked is None: return
-        self.dialogPreferences = PreferencesDialog()
+        self.dialogPreferences = PreferencesDialog(self)
         self.dialogPreferences.show()
 
         
@@ -1066,30 +1063,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.lineEditRecon.setText(path)
         # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
         #
-        source = os.listdir(path)
-        sourceAnalDir = self.experiment._active_subject.\
-                            _source_analysis_directory
-        
-        # Create mri directory to source analysis directory root, because
-        # the mne_setup_mri script expects it.
-        # TODO kutsu subjectia t‰ss‰, vrt. create epochs directory
-        
-        try:
-            os.mkdir(self._reconMri_directory)
-        except OSError:
-            raise OSError('can\'t create reconstructed mri directory to' + \
-                          ' the chosen path')  
-        
-        os.path.join(sourceAnalDir, 'mri')
-        
-        dst = 
-        
-         
-        for files in source:
-            shutil.copy(source, dst)
+        self.caller.copy_mri_files(path)
+      
         
     def on_pushButtonConvertToMNE_click(self, checked=None):
         self.caller.convert_mri_to_mne()
+    
         
     def on_pushButtonCreateNewForwardModel_click(self, checked=None):
         """
@@ -1338,8 +1317,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         Open the workspace chooser dialog.
         """
-        self.workSpaceDialog = WorkSpaceDialog(self)
-        self.workSpaceDialog.exec_()
+        self.preferencesDialog = PreferencesDialog(self)
+        self.preferencesDialog.exec_()
 
         
     def hide_workspace_option(self):

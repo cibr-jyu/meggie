@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/kpaliran/Hoksotin/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/mainWindowBatch.ui'
+# Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/mainWindowBatch.ui'
 #
-# Created: Tue Aug  5 19:36:45 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Wed Aug 27 14:31:48 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,13 +26,15 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1587, 929)
+        MainWindow.setWindowModality(QtCore.Qt.NonModal)
+        MainWindow.resize(1131, 756)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(400, 400))
+        MainWindow.setAcceptDrops(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_7 = QtGui.QGridLayout(self.centralwidget)
@@ -47,7 +49,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1229, 820))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1100, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -56,7 +58,7 @@ class Ui_MainWindow(object):
         self.gridLayout_22.setObjectName(_fromUtf8("gridLayout_22"))
         self.tabWidget = QtGui.QTabWidget(self.scrollAreaWidgetContents_3)
         self.tabWidget.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -737,6 +739,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.lineEditRecon = QtGui.QLineEdit(self.frame_2)
+        self.lineEditRecon.setEnabled(False)
         self.lineEditRecon.setObjectName(_fromUtf8("lineEditRecon"))
         self.horizontalLayout_3.addWidget(self.lineEditRecon)
         self.pushButtonBrowseRecon = QtGui.QPushButton(self.frame_2)
@@ -822,9 +825,10 @@ class Ui_MainWindow(object):
         self.checkBoxConvertedToMNE.setCheckable(False)
         self.checkBoxConvertedToMNE.setObjectName(_fromUtf8("checkBoxConvertedToMNE"))
         self.gridLayout_11.addWidget(self.checkBoxConvertedToMNE, 1, 1, 1, 1)
-        self.pushButton = QtGui.QPushButton(self.groupBox_2)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.gridLayout_11.addWidget(self.pushButton, 1, 0, 1, 1)
+        self.pushButtonConvertToMNE = QtGui.QPushButton(self.groupBox_2)
+        self.pushButtonConvertToMNE.setEnabled(False)
+        self.pushButtonConvertToMNE.setObjectName(_fromUtf8("pushButtonConvertToMNE"))
+        self.gridLayout_11.addWidget(self.pushButtonConvertToMNE, 1, 0, 1, 1)
         self.labelSetUpSourceSpaceProgress = QtGui.QLabel(self.groupBox_2)
         self.labelSetUpSourceSpaceProgress.setText(_fromUtf8(""))
         self.labelSetUpSourceSpaceProgress.setObjectName(_fromUtf8("labelSetUpSourceSpaceProgress"))
@@ -976,7 +980,7 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1587, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1131, 23))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -1267,7 +1271,6 @@ class Ui_MainWindow(object):
         self.actionToggle_whatsthis_mode.setObjectName(_fromUtf8("actionToggle_whatsthis_mode"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
-        self.menuFile.addAction(self.actionSet_workspace)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionShowExperimentInfo)
         self.menuFile.addSeparator()
@@ -1287,7 +1290,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionHide_Show_subject_list_and_info)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -1364,7 +1367,7 @@ class Ui_MainWindow(object):
         self.pushButtonCheckSegmentations.setText(_translate("MainWindow", "Check segmentation", None))
         self.groupBox_2.setTitle(_translate("MainWindow", "Converting MRI image to MNE-friendly format", None))
         self.label_14.setText(_translate("MainWindow", "Converted:", None))
-        self.pushButton.setText(_translate("MainWindow", "Use mne_setup_mri for conversion", None))
+        self.pushButtonConvertToMNE.setText(_translate("MainWindow", "Use mne_setup_mri for conversion", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourcePreparation), _translate("MainWindow", "MRI reconstruction", None))
         self.groupBoxRestOfSourcePreparation.setTitle(_translate("MainWindow", "Forward models:", None))
         self.pushButtonCreateNewForwardModel.setText(_translate("MainWindow", "Create new forward model... \n"

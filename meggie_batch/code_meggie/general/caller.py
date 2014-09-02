@@ -1,5 +1,6 @@
 # coding: latin1
 from matplotlib.pyplot import subplots_adjust
+from subprocess import CalledProcessError
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -41,6 +42,7 @@ import glob
 # TODO probably not needed
 from copy import deepcopy
 from sets import Set
+import shutil
 
 from PyQt4 import QtCore,QtGui
 
@@ -850,21 +852,25 @@ class Caller(object):
         
        
         
-        #
-        os.environ['SUBJECT_DIR'] = sourceAnalDir
+        # Hack the SUBJECT_DIR and SUBJECT variables to right location 
+        # (mne_setup_mri searches for reconstructed files from mri directory
+        # under the SUBJECT 
+        os.environ['SUBJECTS_DIR'] = self.parent.experiment.active_subject.\
+                                        _subject_path
+        os.environ['SUBJECT'] = 'sourceAnalysis'
         
         # vaatii ensin $SUBJECTS_DIR-envin asetuksen. Jos myös $SUBJECT asetettu,
         # ei vaadi tuon subjektin antamista parametrina (etsii filuja
         # mri-hakemistosta subjektin alta).
         # 
-        # mne_setup_mri --subject duck_donald --mri T1
+        # TODO requires setting MNE_ROOT 
+        try:
+            subprocess.check_output('mne_setup_mri')
+        except CalledProcessError as e:
+            raise CalledProcessError('Problem setting mri images.' +
+                                    'mne_setup_mri output: \n ' +
+                                    e.output)
         
-        # envien asetus: os.environ['DEBUSSY'] = '1'
-        
-        # Täällä on ne rekonstruoidut filut
-        self.parent.experiment.active_subject._source_analysis_directory
-        
-    
     def create_forward_model(dict):
         """
         Creates a single forward model and saves it to an appropriate directory.
@@ -879,8 +885,22 @@ class Caller(object):
         - 
         """
     
+    def copy_mri_files(self, sourceDirectory):
+        """
+        Copies mri files from the given directory under the active subject's
+        mri directory (after creating the said directory, if need be).
+        """
+        activeSubject = self.parent.experiment._active_subject
         
-    
+        if not (os.path.isdir(activeSubject._mri_directory)):
+            activeSubject.create_mri_directory()
+        
+        source = os.listdir(sourceDirectory)
+        dst = activeSubject._mri_directory
+        
+        for files in source:
+            shutil.copy(source, dst)
+            
     
     def update_experiment_working_file(self, fname, raw):
         """

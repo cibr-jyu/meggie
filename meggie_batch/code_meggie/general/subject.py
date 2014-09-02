@@ -86,6 +86,8 @@ class Subject(QObject):
                                                      'sourceAnalysis')
         self._forwardModels_directory = os.path.join(self._subject_phath, \
                                                      'forwardModels')
+        self._mri_directory = os.path.join(self._source_analysis_directory, 
+                                           'mri')
         
     @property
     def raw_data(self):
@@ -246,7 +248,20 @@ class Subject(QObject):
             raise OSError('can\'t create forward models directory to' + \
                           ' the chosen path')
         
-    
+    def create_sourceAnalysis_directory(self):
+        try:
+            os.mkdir(self._source_analysis_directory)
+        except OSError:
+            raise OSError('can\'t create source analysis directory to' + \
+                          ' the chosen path')
+        
+    def create_mri_directory(self):
+        
+        try:
+            os.mkdir(self._mri_directory)
+        except OSError:
+            raise OSError('can\'t create mri directory to' + \
+                          ' the chosen path')
     
     def find_stim_channel(self):
         """

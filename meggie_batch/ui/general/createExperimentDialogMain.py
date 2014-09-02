@@ -109,12 +109,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         QtGui.QApplication.processEvents()
         # Give control of the experiment to the main window of the application
         self.parent.experiment = self.experiment
-        self.parent.ui.labelExperimentName.setText(self.experiment.
-                                                   experiment_name)
-        self.parent.ui.labelAuthorName.setText(self.experiment.author)
-        self.parent.ui.textBrowserExperimentDescription.setText(self.
-                                                                experiment.
-                                                                description)
+        
         try:
             self.experiment.save_experiment_settings()
         except Exception, err:
@@ -125,8 +120,14 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.close()
         self.parent.add_tabs()
         self.parent._initialize_ui() 
+        
+        
           
 class OutLog:
+    """
+    Initial class for logging, not currently.
+    """
+    
     def __init__(self, edit, out=None, color=None):
         
         #(edit, out=None, color=None) -> can write stdout, stderr to a

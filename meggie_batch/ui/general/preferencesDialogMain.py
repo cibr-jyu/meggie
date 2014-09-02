@@ -37,19 +37,90 @@ the application.
 """
 
 from PyQt4 import QtCore, QtGui
-from preferencesDialogUi import Ui_Dialog
+from preferencesDialogUi import Ui_DialogPreferences
+import os
+import ConfigParser
+import messageBox
 
 
 class PreferencesDialog(QtGui.QDialog):
     """
-    Dialog to set the preferences for the application. Only allows choosing the
-    calibration file for the experiment.
+    Dialog to set the preferences for the application (workspace directory
+    and MNE root directory).
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         """
         Constructor
         """
         QtGui.QDialog.__init__(self)
-        self.ui = Ui_Dialog() 
+        self.ui = Ui_DialogPreferences() 
         self.ui.setupUi(self)
+        
+        self.parent = parent
+        
+        self._workFilepath = ''
+        self._MNERootPath= ''
+    
+        # Prefill previous values to UI and attributes from config file.
+        if os.path.isfile('settings.cfg'):
+            configp = ConfigParser.RawConfigParser()
+            configp.read('settings.cfg')
+            
+            if configp.has_option('Workspace', 'workspacedir'):
+                workFilePath = configp.get('Workspace', 'workspacedir')
+            else: 
+                workFilePath = ''
+            
+            if configp.has_option('MNERoot','MNERootDir'):
+                MNERootPath = configp.get('MNERoot','MNERootDir')
+            else:
+                MNERootPath = ''
+                
+            self._workFilepath = workFilePath
+            self._MNERootPath = MNERootPath
+            self.ui.LineEditFilePath.setText(self._workFilepath)
+            self.ui.lineEditMNERoot.setText(self._MNERootPath)
+     
+    
+    def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
+        """
+        Opens a filebrowser to select the workspace.
+        """
+        # Standard workaround for file dialog opening twice
+        if checked is None: return 
+        
+        self._workFilepath = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select a workspace directory"))
+        self.ui.LineEditFilePath.setText(self._workFilepath)
+    
+    
+    def on_pushButton_browseMNERoot_click(self, checked=None):
+        if checked is None: return  
+        
+        self.MNERootPath = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select the directory for MNE root"))
+        self.ui.LineEditFilePath.setText(self._MNERootPath)
+        
+        
+    def accept(self):
+        config = ConfigParser.RawConfigParser()
+        
+        if os.path.isdir(self._workFilepath):
+            config.add_section('Workspace')
+            config.set('Workspace', 'workspaceDir', self._workFilepath)           
+        else:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText('No file path found' +
+                                                   'for working file')
+            self.messageBox.show()
+            
+        # MNE Root path can be empty or wrong here, we can annoy user about
+        # it if he really tries to use something MNE-related.
+        if os.path.isdir(self._MNERootPath):
+            config.add_section('MNERoot')
+            config.set('MNERoot','MNERootDir', self._MNERootPath)
+                
+        with open('settings.cfg', 'wb') as configfile:
+                config.write(configfile)
+        self.close()

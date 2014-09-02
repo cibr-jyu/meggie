@@ -28,61 +28,43 @@
 #either expressed or implied, of the FreeBSD Project.
 
 """
-Created on Apr 23, 2013
+Created on Apr 4, 2013
 
-@author: Jaakko Leppakangas
-Contains the WorkSpaceDialog-class containing the logic for the
-WorkSpaceDialog-window.
+@author: Janne Pesonen
+Contains the Workspace-class used for managing the working directory.
 """
-from PyQt4 import QtCore,QtGui
-
-from WorkSpaceDialogUi import Ui_Dialog
-import messageBox
-
-import sys
-import ConfigParser
 import os
+import ConfigParser
 
-class WorkSpaceDialog(QtGui.QDialog):
+class Workspace(object):
     """
-    Class containing the logic for WorkSpaceDialog. Used for setting up the
-    root folder for saving and loading files.
+    Class for creating and managing the working directory.
     """
 
-    def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self)
-        self.parent = parent
-        self.path = ''
+
+    def __init__(self):
+        """
+        Constructor sets default working directory.
+        """
+        config = ConfigParser.RawConfigParser()
+        config.read('settings.cfg')
+        workspace = config.get('Workspace', 'workspaceDir')
+        self._working_directory = workspace
         
-    def on_browseButton_clicked(self, checked=None):
+    @property    
+    def working_directory(self):
         """
-        Opens a filebrowser to select the workspace.
+        Getter for working_directory
         """
-        # Standard workaround for file dialog opening twice
-        if checked is None: return 
+        return self._working_directory
+    
+    @working_directory.setter
+    def working_directory(self, working_directory):
         """
-        fileDialog = QtGui.QFileDialog()
-        fileDialog.setOption(DontUseNativeDialog)
-        self.path = str(fileDialog.getExistingDirectory(
-               self, "Select a working space"))
+        Setter for working directory
+        Keyword arguments:
+        self._working_directory    - - Default workspace is used for the
+                                      measurement if user doesn't define.
         """
-        
-        self.path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select a working space"))
-        self.ui.FilePathLineEdit.setText(self.path)
-        
-    def accept(self):
-        if os.path.isdir(self.path):
-            config = ConfigParser.RawConfigParser()
-            config.add_section('Workspace')
-            config.set('Workspace', 'workspace', self.path)
-            with open('settings.cfg', 'wb') as configfile:
-                config.write(configfile)
-            self.close()
-            
-        else:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('No file path found')
-            self.messageBox.show()
+
+        self._working_directory = working_directory

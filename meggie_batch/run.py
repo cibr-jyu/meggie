@@ -6,7 +6,7 @@
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met: 
 #
-#1. Redistributions of source code must retain the above copyright notice, this
+#1. Redistributions of source code_meggie must retain the above copyright notice, this
 #   list of conditions and the following disclaimer. 
 #2. Redistributions in binary form must reproduce the above copyright notice,
 #   this list of conditions and the following disclaimer in the documentation
@@ -35,13 +35,13 @@ Boilerplate script to run the application.
 import sys
 import os
 os.environ['QT_API'] = 'pyqt'
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/externalmodules/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/tests/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/epoching/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/preprocessing/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/general/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/sourceModeling/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/externalmodules/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/tests/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/epoching/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/preprocessing/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/general/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/sourceModeling/")
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/widgets/")
