@@ -44,7 +44,7 @@ import numpy as np
 import mne
 
 from measurementInfo import MeasurementInfo
-from fileManager import FileManager
+import fileManager
 from epochs import Epochs
 from evoked import Evoked
 from forwardModels import ForwardModels
@@ -208,8 +208,7 @@ class Subject(QObject):
             self.create_evokeds_directory()
             
             # Save channel names list under subject folder
-            f = FileManager()
-            f.pickle(self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
+            fileManager.pickle(self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
@@ -379,8 +378,7 @@ class Subject(QObject):
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
         
-        f = FileManager()
-        if f.delete_file_at(self._epochs_directory, files_to_delete) == False:
+        if fileManager.delete_file_at(self._epochs_directory, files_to_delete) == False:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Epochs could not be deleted from epochs folder.')
@@ -433,8 +431,7 @@ class Subject(QObject):
         # TODO should not do this if f.delete_file_at fails
         del self._evokeds[str(name)]
         
-        f = FileManager()
-        if f.delete_file_at(self._evokeds_directory, name) == False:
+        if fileManager.delete_file_at(self._evokeds_directory, name) == False:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Evoked could not be deleted from average folder.')
@@ -452,8 +449,7 @@ class Subject(QObject):
         """
         Removes a ForwardModels object from the forwardModels dictionary.
         """
-        f = FileManager()
-        if f.delete_file_at(self._forwardModels_directory, name) == False:
+        if fileManager.delete_file_at(self._forwardModels_directory, name) == False:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Forward model could not be deleted from forwardModels folder')

@@ -76,8 +76,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import re
-
-
 import messageBox
 
 class Caller(object):
@@ -97,6 +95,7 @@ class Caller(object):
         self.parent = parent
         # TODO add a setter to set active subject directly as an attribute,
         # instead of calling self.parent.experiment.active subject
+    
     
     def call_mne_browse_raw(self, filename):
         """

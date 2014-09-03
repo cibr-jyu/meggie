@@ -40,7 +40,7 @@ import ast
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
 
-from fileManager import FileManager
+import fileManager
 from caller import Caller
 from measurementInfo import MeasurementInfo
 
@@ -90,18 +90,16 @@ class EcgParametersDialog(QtGui.QDialog):
         for subject in self.parent.experiment._subjects:
             if subject_name == subject._subject_name:
                 try:
-                    f = FileManager()
-                    
                     # TODO: clear comboBoxECGChannel and unpickle channel names
                     # from subject folder
                     self.ui.comboBoxECGChannel.clear()
-                    channel_list = f.unpickle(os.path.join(subject._subject_path, 'channels'))
+                    channel_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
                     self.ui.comboBoxECGChannel.addItems(channel_list)
                     
                     if len(subject._ecg_params) > 0:
                         dic = subject._ecg_params  
                     else:
-                        dic = f.unpickle(os.path.join(subject._subject_path, 'ecg_proj.param'))
+                        dic = fileManager.unpickle(os.path.join(subject._subject_path, 'ecg_proj.param'))
                     
                     channel_name = dic.get('ch_name')
                     
@@ -313,8 +311,7 @@ class EcgParametersDialog(QtGui.QDialog):
                             
                         # Remove extra raw file from memory
                         del subject._ecg_params['i']
-                        f = FileManager()
-                        f.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+                        fileManager.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):

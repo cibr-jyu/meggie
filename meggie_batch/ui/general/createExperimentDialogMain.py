@@ -33,7 +33,7 @@ Contains the CreateExperimentDialog-class that holds the logic for
 CreateExperimentDialog-window.
 """
 
-from fileManager import FileManager
+import fileManager
 from infoDialogMain import InfoDialog
 import messageBox
 

@@ -1,4 +1,5 @@
 # coding: latin1
+import fileManager
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -36,7 +37,6 @@ Contains the MainWindow-class that holds the main window of the application.
 
 import os,sys
 import pickle
-from sets import Set
  
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtGui import QWhatsThis
@@ -69,8 +69,8 @@ from addEOGProjectionsMain import AddEOGProjections
 from TFRDialogMain import TFRDialog
 from TFRTopologyDialogMain import TFRTopologyDialog
 from spectrumDialogMain import SpectrumDialog
-from widgets.epochWidgetMain import EpochWidget
-from widgets.epochParamsWidgetMain import EpochParamsWidget
+from epochWidgetMain import EpochWidget
+from epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
 from consoleMain import Console
@@ -82,9 +82,11 @@ from experiment import Experiment
 from epochs import Epochs
 from events import Events
 from caller import Caller
-from fileManager import FileManager
+import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel
+
+
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -127,7 +129,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.setMinimumWidth(345)
         self.evokedList.setMaximumHeight(120)
         
-        self.fileManager = FileManager()
         self.epocher = Epochs()
         
         # Populate the combobox for selecting lobes for channel averages.
@@ -146,6 +147,7 @@ class MainWindow(QtGui.QMainWindow):
         # self.forwardModelModel = None
         # self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
         
+
         
     #Property definitions below
     @property
@@ -157,8 +159,6 @@ class MainWindow(QtGui.QMainWindow):
     def experiment(self, experiment):
         self._experiment = experiment
         
-
-
 ### Code for catching signals and reacting to them ###
 
 
@@ -415,7 +415,7 @@ class MainWindow(QtGui.QMainWindow):
         fname = str(item.text())
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.experiment.active_subject._epochs[fname]
-        self.fileManager.save_epoch(fpath, epochs_object)
+        fileManager.save_epoch(fpath, epochs_object)
 
         
     @QtCore.pyqtSlot(dict)
@@ -491,7 +491,7 @@ class MainWindow(QtGui.QMainWindow):
         if fname == '': return
         if not os.path.isfile(fname): return
         
-        epochs, params = self.fileManager.load_epochs(fname)
+        epochs, params = fileManager.load_epochs(fname)
         # Change color of the item to red if no param file available.
         fname_base = os.path.basename(fname)
         fname_prefix = fname_base.split('.')[0]
@@ -561,7 +561,7 @@ class MainWindow(QtGui.QMainWindow):
             epochs = self.experiment.active_subject._epochs[collection_name]._raw
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
-        self.fileManager.copy(os.path.join(self.experiment.active_subject.\
+        fileManager.copy(os.path.join(self.experiment.active_subject.\
                                            _epochs_directory,
                               str(self.epochList.currentItem().text()) +
                               '.csv'), fname + '.csv')
@@ -649,7 +649,7 @@ class MainWindow(QtGui.QMainWindow):
                           text() + '[' + category_str + ']' + '_evoked.fif')
         item = QtGui.QListWidgetItem(evoked_name)
         
-        # TODO: create separate method in filemanager to save evoked
+        # TODO: create separate method in fileManager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = self.experiment.active_subject._evokeds_directory
         if os.path.exists(saveFolder) is False:
@@ -783,7 +783,7 @@ class MainWindow(QtGui.QMainWindow):
         #folder = split[0] + '/'
         name = os.path.splitext(split[1])[0]
         # TODO: add path and filename for load_evoked, split fname correctly to do this
-        evoked, category = self.fileManager.load_evoked(fname + '.fif')
+        evoked, category = fileManager.load_evoked(fname + '.fif')
         if evoked is None: return
         item = QtGui.QListWidgetItem(file)
         self.evokedList.addItem(item)
@@ -854,7 +854,7 @@ class MainWindow(QtGui.QMainWindow):
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
-            #self.fileManager.delete_file_at(root, item_str)
+            #fileManager.delete_file_at(root, item_str)
             self.experiment.active_subject.remove_evoked(item_str)
         else:
             return
@@ -1329,10 +1329,13 @@ class MainWindow(QtGui.QMainWindow):
         self.console.show_log(output)
         
         
+    
+        
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
-    
+    fileManager.setEnvVariables()
+        
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.
     #sys.stdout=sys.stderr=window

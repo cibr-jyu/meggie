@@ -51,7 +51,7 @@ import mne
 
 import numpy as np
 
-from xlrd import XLRDError
+#from xlrd import XLRDError
 
 from functools import partial
 

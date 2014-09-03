@@ -36,7 +36,7 @@ Created on Oct 31, 2013
 from PyQt4 import QtCore,QtGui
 
 from addSubjectDialogUi import Ui_AddSubject
-from fileManager import FileManager
+import fileManager
 from subject import Subject
 from infoDialogMain import InfoDialog
 import messageBox
@@ -124,8 +124,7 @@ class AddSubjectDialog(QtGui.QDialog):
         Opens the infoDialog for the raw file selected.
         """
         try:
-            f = FileManager()
-            self.raw = f.open_raw(self.fname, pre_load = False)
+            self.raw = fileManager.open_raw(self, self.fname, pre_load = False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
             
         except IOError as e:

@@ -32,17 +32,20 @@ Created on Oct 22, 2013
 
 @author: jaolpeso
 """
-import os, glob
+import os
 import re
 import csv
 import shutil
 
 from workspace import Workspace
-from fileManager import FileManager
+import fileManager
 from subject import Subject
+import messageBox
 
 from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4 import QtGui
+
+
 
 # Better to use pickle rather than cpickle, as experiment paths may
 # include non-ascii characters
@@ -399,12 +402,12 @@ class Experiment(QObject):
         raw_file_name -- basename of the raw file
         """
         subject = Subject(experiment, subject_name)
-        f = FileManager()
+        
         
         # When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
-        raw = f.open_raw(raw_path)
+        raw = fileManager.open_raw(raw_path)
         subject._working_file = raw
         # TODO: set channel names with whitespaces for the subject.working_file
         
@@ -454,8 +457,7 @@ class Experiment(QObject):
         for file in files:
             file_path = os.path.join(self._active_subject_path, file)
             if file_path in self._working_file_names.values():
-                f = FileManager()
-                raw = f.open_raw(os.path.join(self.active_subject_path, file_path))
+                raw = fileManager.open_raw(os.path.join(self.active_subject_path, file_path))
                 # TODO: set channel names with whitespaces for the subject.working_file
                 # Not necessarily needed when loading from subject folder because
                 # whitespaces are already added when new subject is added.
@@ -473,12 +475,11 @@ class Experiment(QObject):
         files = os.listdir(subject._epochs_directory)
         for file in files:
             if file.endswith('.fif'):
-                f = FileManager()
                 fname = os.path.join(subject._epochs_directory,
                                      file)
                 
                 name = file[:-4]
-                epochs, params = f.load_epochs(fname)
+                epochs, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, epochs, params)
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
@@ -501,8 +502,7 @@ class Experiment(QObject):
         files = os.listdir(subject._evokeds_directory)
         for file in files:
             if file.endswith('.fif'):
-                f = FileManager()
-                evoked, categories = f.load_evoked(subject._evokeds_directory,
+                evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
                                                    file)
                 subject.handle_new_evoked(file, evoked, categories)
                 item = QtGui.QListWidgetItem(file)
@@ -519,8 +519,7 @@ class Experiment(QObject):
         Keyword arguments:
         subject_name    -- name of the subject
         """
-        f = FileManager()
-        raw = f.open_raw(self._working_file_names[subject_name])
+        raw = fileManager.open_raw(self._working_file_names[subject_name])
         return raw
                 
     def save_experiment_settings(self):
