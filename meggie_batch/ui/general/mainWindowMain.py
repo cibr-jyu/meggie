@@ -227,6 +227,17 @@ class MainWindow(QtGui.QMainWindow):
         Open subject dialog.
         """
         if checked is None: return
+        
+        # Check that we have an experiment that we can add a subject to 
+        if self._experiment is None:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('No active experiment to add a subject to. Load an experiment ' +
+            'or make a new one, then try again.')
+            self.messageBox.show()
+            return
+        
+                
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.show()
 

@@ -41,7 +41,6 @@ import glob
 
 # TODO probably not needed
 from copy import deepcopy
-from sets import Set
 import shutil
 
 from PyQt4 import QtCore,QtGui
@@ -354,7 +353,7 @@ class Caller(object):
             # TODO: ecg_avg_applied.fif if ssp checked 
             appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
             raw.save(appliedfilename)
-            raw = mne.fiff.Raw(appliedfilename, preload=True)
+            raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.\
@@ -400,7 +399,7 @@ class Caller(object):
             # TODO: eog_avg_applied.fif if ssp checked
             appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
             raw.save(appliedfilename)
-            raw = mne.fiff.Raw(appliedfilename, preload=True)
+            raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.\

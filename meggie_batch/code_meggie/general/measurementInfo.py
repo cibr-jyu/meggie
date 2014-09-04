@@ -50,9 +50,9 @@ class MeasurementInfo(object):
         
         Keyword arguments:
         raw           -- Raw object
-        Raises a TypeError if the raw object is not of type mne.fiff.Raw.
+        Raises a TypeError if the raw object is not of type mne.io.Raw.
         """
-        if isinstance(raw, mne.fiff.raw.Raw):
+        if isinstance(raw, mne.io.Raw):
             self._raw = raw
             self._info = dict(raw.info)
         else:
@@ -97,10 +97,10 @@ class MeasurementInfo(object):
         Returns the number of magnetometer channels.
         Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self._info, meg='mag', exclude=[]) is None:
+        if mne.pick_types(self._info, meg='mag', exclude=[]) is None:
             raise Exception('Could not find magnetometers.')
         else:
-            return len(mne.fiff.pick_types(self._info, meg='mag',
+            return len(mne.pick_types(self._info, meg='mag',
                                            exclude=[]))
     @property    
     def grad_channels(self):
@@ -108,10 +108,10 @@ class MeasurementInfo(object):
         Returns the number of gradiometer channels.
         Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self._info, meg='grad', exclude=[]) is None:
+        if mne.pick_types(self._info, meg='grad', exclude=[]) is None:
             raise Exception('Could not find gradiometers.')
         else:
-            return len(mne.fiff.pick_types(self._info, meg='grad',
+            return len(mne.pick_types(self._info, meg='grad',
                                            exclude=[]))
         
     @property    
@@ -120,11 +120,11 @@ class MeasurementInfo(object):
         Returns the number of EEG channels.
         Raises an exception if an error occurs while picking types.
         """
-        if mne.fiff.pick_types(self._info, meg=False,
+        if mne.pick_types(self._info, meg=False,
                                eeg=True, exclude=[]) is None:
             raise Exception('Could not find EEG channels.')
         else:
-            return len(mne.fiff.pick_types(self._info, meg=False,
+            return len(mne.pick_types(self._info, meg=False,
                                            eeg=True, exclude=[]))
     @property    
     def date(self):
@@ -186,7 +186,7 @@ class MeasurementInfo(object):
         Returns the subjects name. If some of the name fields are nonexistent
         or empty, substitutes information with emptry strings.
         """
-        subj_info = mne.fiff.open.show_fiff(self._info.get('filename'))
+        subj_info = mne.io.show_fiff(self._info.get('filename'))
         if not isinstance(subj_info, str) or subj_info == '':
             raise TypeError('Personal info not found.')
         last_name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)

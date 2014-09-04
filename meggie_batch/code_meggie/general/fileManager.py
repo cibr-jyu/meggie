@@ -42,7 +42,7 @@ create_csv_epochs(self, epochs)
 delete_file_at(self, folder, name)
 load_epochs(self, fname)
 open_raw(self, fname)
-pickle(self, picklable, path)
+pickleObjectToFile(self, picklable, path)
 save_epoch(self, fpath, epoch, overwirte = False)
 unpickle(self, fpath)
 setEnvVariables()
@@ -307,8 +307,8 @@ def open_raw(self, fname, pre_load=True):
     """
     # if os.path.isfile(fname):# and fname.endswith('fif'):
     try:
-        return mne.fiff.Raw(fname, preload=pre_load)
-        # self.raw = mne.fiff.Raw(str(fname))
+        return mne.io.Raw(fname, preload=pre_load)
+        # self.raw = mne.io.RawFIFF(str(fname))
     except IOError:
         raise IOError('File does not exist or is not a raw-file')
     
@@ -318,7 +318,7 @@ def open_raw(self, fname, pre_load=True):
     except ValueError:
         raise ValueError('File is not a raw-file')
     
-def pickle(self, picklable, fpath):
+def pickleObjectToFile(self, picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
     
     Keyword arguments:
@@ -391,6 +391,9 @@ def save_epoch(self, fpath, epoch, overwrite=False):
 
 
 def setEnvVariables():
+    """
+    Set various shell environment variables needed by MNE-C scripts.
+    """
     if os.path.isfile('settings.cfg'):
         configp = ConfigParser.RawConfigParser()
         configp.read('settings.cfg')

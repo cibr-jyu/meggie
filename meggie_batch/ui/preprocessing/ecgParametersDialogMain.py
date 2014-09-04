@@ -311,7 +311,7 @@ class EcgParametersDialog(QtGui.QDialog):
                             
                         # Remove extra raw file from memory
                         del subject._ecg_params['i']
-                        fileManager.pickle(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+                        fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):

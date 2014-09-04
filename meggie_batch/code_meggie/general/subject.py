@@ -84,7 +84,7 @@ class Subject(QObject):
         self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
         self._source_analysis_directory = os.path.join(self._subject_path, \
                                                      'sourceAnalysis')
-        self._forwardModels_directory = os.path.join(self._subject_phath, \
+        self._forwardModels_directory = os.path.join(self._subject_path, \
                                                      'forwardModels')
         self._mri_directory = os.path.join(self._source_analysis_directory, 
                                            'mri')
@@ -104,7 +104,7 @@ class Subject(QObject):
         Keyword arguments:
         raw_data        -- the raw data file of the measured data
         """
-        if (isinstance(raw_data, mne.fiff.Raw)):
+        if (isinstance(raw_data, mne.io.RawFIFF)):
             self._raw_data = raw_data
         else:
             raise Exception('Wrong data type')
@@ -151,7 +151,7 @@ class Subject(QObject):
         Keyword arguments:
         raw         -- raw data file.
         """
-        if (isinstance(raw, mne.fiff.Raw)):
+        if (isinstance(raw, mne.io.RawFIFF)):
             self._working_file = raw
         else:
             raise Exception('Wrong data type')
@@ -202,13 +202,13 @@ class Subject(QObject):
         if os.path.exists(path):
             # TODO: Check if the file is saved with .fif suffix,
             # if not, save the file with .fif suffix.
-            mne.fiff.Raw.save(self._working_file, os.path.join(path, \
+            mne.io.RawFIFF.save(self._working_file, os.path.join(path, \
                               str(os.path.basename(file_name))))
             self.create_epochs_directory()
             self.create_evokeds_directory()
             
             # Save channel names list under subject folder
-            fileManager.pickle(self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
+            fileManager.pickleObjectToFile(self, self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
@@ -277,9 +277,9 @@ class Subject(QObject):
         Creates an event set where the first element is the id
         and the second element is the number of the events.
         Raises type error if the working_file attribute is not set or
-        if the data is not of type mne.fiff.Raw.
+        if the data is not of type mne.io.RawFIFF.
         """
-        if not isinstance(self._working_file, mne.fiff.Raw):
+        if not isinstance(self._working_file, mne.io.RawFIFF):
             raise TypeError('Nt a raw object')
         if self.stim_channel == None:
             return

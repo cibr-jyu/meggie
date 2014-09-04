@@ -51,16 +51,16 @@ class FilterDialog(QtGui.QDialog):
             plt.close(self.previewFigure)
         
         """
-        Pitäisi:
-        (0. Previewin pitäisi laskea xfit-tyylinen käppyrä)
-        - Kiskoa datataulukko raw-filestä (vaatii sampleraten lukemista)
-        - Lukea parametrit UI:sta ja päättää, mitä kaikki metodeja kutsutaan
-        - Käyttää filterimetodeita dataan (järjestyksellä ei väliä)
-        - Kopioida data takaisin ja muuttaa ao. infokenttiä
+        Pitï¿½isi:
+        (0. Previewin pitï¿½isi laskea xfit-tyylinen kï¿½ppyrï¿½)
+        - Kiskoa datataulukko raw-filestï¿½ (vaatii sampleraten lukemista)
+        - Lukea parametrit UI:sta ja pï¿½ï¿½ttï¿½ï¿½, mitï¿½ kaikki metodeja kutsutaan
+        - Kï¿½yttï¿½ï¿½ filterimetodeita dataan (jï¿½rjestyksellï¿½ ei vï¿½liï¿½)
+        - Kopioida data takaisin ja muuttaa ao. infokenttiï¿½
         
         """
         
-        # Plot the filtered channels with mne.fiff.raw.plot (which is based
+        # Plot the filtered channels with mne.io.RawFIFF.plot (which is based
         # on pylab, therefore needing manual cleaning of pyplot state
         # environment.
         
