@@ -46,6 +46,9 @@ pickleObjectToFile(self, picklable, path)
 save_epoch(self, fpath, epoch, overwirte = False)
 unpickle(self, fpath)
 setEnvVariables()
+
+TODO remove self from function arguments. Used to be a class, is no more.
+
 """
  
 import mne
@@ -80,6 +83,7 @@ def copy(self, original, target):
         return e
     
     return True
+    
     
 def create_key_csv_evoked(self, evoked):
     """Create a list used for creating a csv file of key values in evoked.
@@ -144,6 +148,7 @@ def create_key_csv_evoked(self, evoked):
             
     return rows    
     
+    
 def delete_file_at(self, folder, files):
     """Delete files from a folder.
     
@@ -176,6 +181,7 @@ def delete_file_at(self, folder, files):
             except OSError as e:
                 return False
     return True
+    
     
 def load_epochs(self, fname):
     """Load epochs from a folder.
@@ -217,6 +223,7 @@ def load_epochs(self, fname):
     
     parameters['events'] = event_list
     return epochs, parameters
+    
     
 def load_evoked(self, folder, file):
     """Load evokeds to the list when mainWindow is initialized
@@ -295,8 +302,9 @@ def load_evoked(self, folder, file):
             return None, None
     
     return evokeds, category
+    
         
-def open_raw(self, fname, pre_load=True):
+def open_raw(fname, pre_load=True):
     """
     Opens a raw file.
     Keyword arguments:
@@ -317,6 +325,7 @@ def open_raw(self, fname, pre_load=True):
     
     except ValueError:
         raise ValueError('File is not a raw-file')
+    
     
 def pickleObjectToFile(self, picklable, fpath):
     """pickle a picklable object to a file indicated by fpath

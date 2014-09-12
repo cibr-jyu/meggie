@@ -146,7 +146,7 @@ class Epochs(QObject):
             meg = 'grad'
         else:
             meg = False
-        if isinstance(raw, mne.io.RawFIFF.Raw):
+        if isinstance(raw, mne.io.RawFIFF):
             picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
             if len(picks) == 0:

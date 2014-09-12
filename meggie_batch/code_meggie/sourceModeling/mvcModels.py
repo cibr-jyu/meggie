@@ -28,14 +28,16 @@ class ForwardModelModel(QAbstractListModel):
     '''
 
     def __init__(self, experiment):
-        # File that includes forward model names, their parameters and 
-        # corresponding files. Use full path.
-        # TODO tämä pitäisi luultavasti saada subjectilta.
         self.fmodelDirectory = experiment._active_subject.\
                       _forwardModels_directory
-        self.fmodelFile = getCurrentFmodelModelFile(experiment)
+                      
+        # File that includes forward model names, their parameters and 
+        # corresponding files. Full path needed, hence the directory.
+        self.fmodelFile = self.getCurrentFmodelModelFile()
+        
+        # Actually not needed, as the model is not editable via GUI.
         self.dirty = False
-        # Info of the forward models, read from the file with self.filename.
+        # Info of the forward models, read from the self.FmodelFile.
         # TODO sisältääkö generoidut tiedostot jo infoa fmodeleista, jolloin
         # tässä riittäisi pelkkä hakemiston polku?
         self.fmodelInfoList = [dict()]
@@ -82,7 +84,7 @@ class ForwardModelModel(QAbstractListModel):
             row = index.row()
             # column = index.column() needed if shown more info than just name
             
-            fmodel = self.fmodelInfo[row]
+            fmodel = self.fmodelInfoList[row]
             fmname = fmodel["name"]
             return fmname
             
@@ -123,15 +125,16 @@ class ForwardModelModel(QAbstractListModel):
         the path to the directory of the fmodel.
         """
         
-        dialect = Dialect()
-        dialect.delimiter = ";"
+        cdialect = Dialect()
+        cdialect.delimiter = ";"
         
         try:
-            fileReadDict = csv.DictReader(self.filename)
+            fileReadDict = csv.DictReader(self.fmodelFile, dialect=cdialect)
             self.fmodelInfoList = fileReadDict  
         except IOError:
+            self.fmodelInfoList = None
             raise Exception("No forward model model file found")
-        
+            
         
 
     def initializeModel(self):

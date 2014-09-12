@@ -508,8 +508,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>606</x>
-     <y>627</y>
+     <x>615</x>
+     <y>556</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -524,8 +524,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>674</x>
-     <y>627</y>
+     <x>677</x>
+     <y>556</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

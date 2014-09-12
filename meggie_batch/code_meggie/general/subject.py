@@ -89,6 +89,10 @@ class Subject(QObject):
         self._mri_directory = os.path.join(self._source_analysis_directory, 
                                            'mri')
         
+        # Models for various types of data stored in subject<
+        self._forwardModelModel = None
+        
+        
     @property
     def raw_data(self):
         """
@@ -442,7 +446,7 @@ class Subject(QObject):
         """
         Adds a ForwardModels object to the forwardModels dictionary.
         """
-        self._evokeds[str(name)] = fmodel
+        self._forwardModels[str(name)] = fmodel
         
         
     def remove_forwardModel(self, name):
@@ -475,10 +479,12 @@ class Subject(QObject):
         #strings.
         #params_str = dict((str(k), v) for k, v in parameters.iteritems())
         fmodel = ForwardModels()
-        fmodels._fmodel_name = name
+        fmodel._fmodel_name = name
         fmodel._params = params
         self.add_forwardModel(name, fmodel)
     
+    
+        
         
     def check_ecg_projs(self):
         """

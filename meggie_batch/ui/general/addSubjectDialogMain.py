@@ -124,7 +124,7 @@ class AddSubjectDialog(QtGui.QDialog):
         Opens the infoDialog for the raw file selected.
         """
         try:
-            self.raw = fileManager.open_raw(self, self.fname, pre_load = False)
+            self.raw = fileManager.open_raw(self.fname, pre_load = False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
             
         except IOError as e:

@@ -4,9 +4,13 @@ Created on 30.6.2014
 @author: Kari Aliranta
 '''
 
-from sourceModeling import forwardModels
-from forwardModelDialogUi import Ui_Dialog
 
+from PyQt4 import QtCore, QtGui
+
+from forwardModels import ForwardModels
+from forwardModelDialogUi import Ui_forwardModelDialog
+import messageBox
+import string
 
 class ForwardModelDialog(QtGui.QDialog):
     """
@@ -23,7 +27,7 @@ class ForwardModelDialog(QtGui.QDialog):
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.ui = Ui_Dialog()
+        self.ui = Ui_forwardModelDialog()
         self.ui.setupUi(self)
         
     
@@ -36,23 +40,40 @@ class ForwardModelDialog(QtGui.QDialog):
         forward model.
         """
         
-        dictionary = {}
+        fmdict = {}
         
-        dict['fname'] = self.ui.lineEditFModelName.text()
-        dict['spacing'] = self.ui.spinBoxSpacing.value()
-        dict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
-        dict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
-        dict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
-        dict['computeCorticalStats'] = str(self.ui.buttonGroupCorticalPatchStats \
+        fmdict['fname'] = self.ui.lineEditFModelName.text()
+        fmdict['spacing'] = self.ui.spinBoxSpacing.value()
+        fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
+        fmdict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
+        fmdict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
+        fmdict['computeCorticalStats'] = str(self.ui.buttonGroupCorticalPatchStats \
                                            .checkedButton().objectName())
-        dict['useAtlas'] = str(self.ui.buttonGroupAtlas \
+        fmdict['useAtlas'] = str(self.ui.buttonGroupAtlas \
                                            .checkedButton().objectName())
-        dict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
-        dict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
-        dict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+        fmdict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
+        fmdict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
+        fmdict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+        fmdict['nosol'] = str(self.ui.buttonGroupNosol \
+                        .checkedButton.objectName())
+        fmdict['innerShift'] = self.ui.spinBoxInnerShift.value()
+        fmdict['outerShift'] = self.ui.spinBoxOuterShift.value()
+        fmdict['skullShift'] = self.ui.spinBoxSkullShift.value()
+        fmdict['brainc'] = self.ui.doubleSpinBoxBrainConductivity.value()
+        fmdict['skullc'] = self.ui.doubleSpinBoxSkullConductivity.value()
+        fmdict['scalpc'] = self.ui.doubleSpinBoxScalpConductivity.value()
+        
+        # A bit of checking for stupidities in naming to avoid conflicts
+        # with directories created by MNE scripts.
+        if string.lower(fmdict['fname']) is 'mri' or 'bem':
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText(
+                "'mri' or 'bem' are not acceptable fmodel names")
+            self.messageBox.show()
+            return
 
         try:
-            self.parent.caller_create_forward_model(dictionary)
+            self.parent.caller.create_forward_model(fmdict)
         except Exception, err:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(

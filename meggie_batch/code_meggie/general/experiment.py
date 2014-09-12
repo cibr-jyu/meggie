@@ -407,7 +407,7 @@ class Experiment(QObject):
         # When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.
-        raw = fileManager.open_raw(self, raw_path)
+        raw = fileManager.open_raw(raw_path)
         subject._working_file = raw
         # TODO: set channel names with whitespaces for the subject.working_file
         

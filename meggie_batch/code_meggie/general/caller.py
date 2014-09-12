@@ -869,19 +869,47 @@ class Caller(object):
                                     'mne_setup_mri output: \n ' +
                                     e.output)
         
+        
     def create_forward_model(dict):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
-        - 
+         
         - Create a temporary directory for I/O related to forward model creation
+        - 
         - Run mne_setup_source_space to handle various steps of source space
         creation
         - Use mne_watershed_bem to create bem model meshes
         - Create BEM model with mne_setup_forward_model
         - Copy the 
-        - 
+        
+        - Tämän pitäis siis ajaa mne_setup_mri, mne_setup_source_space, 
+        mne_watershed_bem
+        
+        0. Tarkista, ettei käyttäjä ole tehnyt hölmöyksiä (fmodelin nimeksi
+        mri, bem tai luultavasti myös jotakin skandeja sisältävää. Scriptit
+        saa huolehtia outojen arvojen tarkistuksesta. Jos skriptien outputti
+        ei näy suoraan Meggien käynnistysikkunassa, kaappaa outputti ja näytä
+        se erillisessä ikkunassa.
+        
+        1. Aseta SUBJECT-enviksi senhetkinen subject-hakemiston fmodels-hakemisto
+        (ja jos tarvii SUBJECTS_DIR:iä, siksi sen ylähakemisto)
+        
+        2. Aja erikseen peräkkäin nuo kolme scriptiä
+        
+        3. Kopioi viimeisen tuloksista myöhemmin tarvittavat olennaiset tulokset,
+        eli bem-hakemiston bem.fif- ja bem-sol.fif-tiedostot ("bem forward model
+        files"), sekä saman hakemiston <subject>-<spacing>- src.fif-tiedosto ("source
+        space file"). Nämä siis fmodels-hakemiston alle käyttäjän antamalla
+        fmodelin nimellä. Sitten voinee hävittää kaikki mri-hakemiston
+        alihakemistot sekä subjectin alisen bem-hakemiston tiedostot.
+         
+        
         """
+        
+        
+        
+        
     
     def copy_mri_files(self, sourceDirectory):
         """
@@ -896,9 +924,15 @@ class Caller(object):
         source = os.listdir(sourceDirectory)
         dst = activeSubject._mri_directory
         
-        for files in source:
-            shutil.copy(source, dst)
-            
+        try:
+            for files in source:
+                    shutil.copy(source, dst)
+        except IOError:
+            self.messageBox = messageBox.AppForm()
+            self.messageBox.labelException.setText \
+            ('Could not copy files. Either the disk is full or something ' +
+             'weird happened.')
+            self.messageBox.show()
     
     def update_experiment_working_file(self, fname, raw):
         """
