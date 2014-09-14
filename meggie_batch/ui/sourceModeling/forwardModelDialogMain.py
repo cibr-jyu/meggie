@@ -31,6 +31,13 @@ class ForwardModelDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
     
+    def populateSurfaceNamesCombobox(self):
+        """
+        TODO use file manager to find all files under the surf-directory
+        and populate the self.ui.comboBoxSurfaceName with them.
+        """
+        
+        
     def accept(self):
         """
         Does the following:
@@ -46,11 +53,21 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict['spacing'] = self.ui.spinBoxSpacing.value()
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         fmdict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
-        fmdict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
-        fmdict['computeCorticalStats'] = str(self.ui.buttonGroupCorticalPatchStats \
-                                           .checkedButton().objectName())
-        fmdict['useAtlas'] = str(self.ui.buttonGroupAtlas \
-                                           .checkedButton().objectName())
+        
+        # TODO should be self.ui.comboBoxSurfaceName.currentText(), currently
+        # using default 'white' for testing
+        fmdict['surfaceName'] = 'white'
+        
+        if self.ui.buttonGroupCorticalPatchStats.checkedButton().objectName() is \
+        'radioButtonPatchStatYes':
+            fmdict['computeCorticalStats'] = True
+        else: fmdict['computeCorticalStats'] = False
+            
+        if self.ui.buttonGroupAtlas.checkedButton().objectName() is \
+        'radioButtonAtlasYes':
+            fmdict['useAtlas'] = True
+        else: fmdict['useAtlas'] = False                    
+        
         fmdict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
         fmdict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
         fmdict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
@@ -65,6 +82,8 @@ class ForwardModelDialog(QtGui.QDialog):
         
         # A bit of checking for stupidities in naming to avoid conflicts
         # with directories created by MNE scripts.
+        # TODO probably should be limited to alphanumeric ascii without spaces,
+        # too.
         if string.lower(fmdict['fname']) is 'mri' or 'bem':
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText(

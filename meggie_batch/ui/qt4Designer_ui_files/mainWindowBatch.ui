@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1755,7 +1755,7 @@
                                <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
                               </property>
                               <property name="text">
-                               <string>1. Select directory of the reconstructed MRI image:</string>
+                               <string>1. Select directory of the reconstructed MRI image files:</string>
                               </property>
                              </widget>
                             </item>
@@ -1825,7 +1825,7 @@
                                </font>
                               </property>
                               <property name="text">
-                               <string>2. Examine the reconstructed MRI image:</string>
+                               <string>2. Examine the reconstructed MRI image files:</string>
                               </property>
                               <property name="margin">
                                <number>0</number>
@@ -1897,7 +1897,7 @@
               <item row="2" column="0">
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="title">
-                 <string>Converting MRI image to MNE-friendly format</string>
+                 <string>Converting MRI image files to MNE-friendly format</string>
                 </property>
                 <layout class="QFormLayout" name="formLayout_4">
                  <property name="fieldGrowthPolicy">

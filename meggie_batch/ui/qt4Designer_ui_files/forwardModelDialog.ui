@@ -84,12 +84,7 @@
           </item>
           <item>
            <property name="text">
-            <string>icosahedron</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>octahedron</string>
+            <string>icosahedron or octahedron</string>
            </property>
           </item>
          </widget>
@@ -139,7 +134,7 @@
    <item row="2" column="0">
     <widget class="QGroupBox" name="groupBoxBemModelMeshes">
      <property name="title">
-      <string>BEM model meshes creation parameters:</string>
+      <string>BEM model meshes (watershed) creation parameters:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
@@ -152,7 +147,7 @@
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QRadioButton" name="radioButton_5">
+         <widget class="QRadioButton" name="radioButtonAtlasNo">
           <property name="text">
            <string>no (default)</string>
           </property>
@@ -165,7 +160,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_6">
+         <widget class="QRadioButton" name="radioButtonAtlasYes">
           <property name="text">
            <string>yes</string>
           </property>

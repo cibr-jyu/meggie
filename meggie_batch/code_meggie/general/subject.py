@@ -84,10 +84,11 @@ class Subject(QObject):
         self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
         self._source_analysis_directory = os.path.join(self._subject_path, \
                                                      'sourceAnalysis')
-        self._forwardModels_directory = os.path.join(self._subject_path, \
-                                                     'forwardModels')
-        self._mri_directory = os.path.join(self._source_analysis_directory, 
-                                           'mri')
+        self._reconFiles_directory = \
+            os.path.join(self._source_analysis_directory, 'reconFiles')
+        self._forwardModels_directory = \
+            os.path.join(self._source_analysis_directory, 'forwardModels')
+        
         
         # Models for various types of data stored in subject<
         self._forwardModelModel = None
@@ -258,10 +259,10 @@ class Subject(QObject):
             raise OSError('can\'t create source analysis directory to' + \
                           ' the chosen path')
         
-    def create_mri_directory(self):
+    def create_reconFiles_directory(self):
         
         try:
-            os.mkdir(self._mri_directory)
+            os.mkdir(self._reconFiles_directory)
         except OSError:
             raise OSError('can\'t create mri directory to' + \
                           ' the chosen path')

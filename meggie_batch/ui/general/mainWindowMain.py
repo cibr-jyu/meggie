@@ -1074,7 +1074,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.lineEditRecon.setText(path)
         # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
         #
-        self.caller.copy_mri_files(path)
+        self.caller.copy_recon_files(path)
       
         
     def on_pushButtonConvertToMNE_click(self, checked=None):

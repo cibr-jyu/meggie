@@ -870,7 +870,7 @@ class Caller(object):
                                     e.output)
         
         
-    def create_forward_model(dict):
+    def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
@@ -883,8 +883,8 @@ class Caller(object):
         - Create BEM model with mne_setup_forward_model
         - Copy the 
         
-        - Tämän pitäis siis ajaa mne_setup_mri, mne_setup_source_space, 
-        mne_watershed_bem
+        - Tämän pitäis siis ajaa mne_setup_source_space, 
+        mne_watershed_bem, mne_setup_forward_model
         
         0. Tarkista, ettei käyttäjä ole tehnyt hölmöyksiä (fmodelin nimeksi
         mri, bem tai luultavasti myös jotakin skandeja sisältävää. Scriptit
@@ -892,8 +892,9 @@ class Caller(object):
         ei näy suoraan Meggien käynnistysikkunassa, kaappaa outputti ja näytä
         se erillisessä ikkunassa.
         
-        1. Aseta SUBJECT-enviksi senhetkinen subject-hakemiston fmodels-hakemisto
-        (ja jos tarvii SUBJECTS_DIR:iä, siksi sen ylähakemisto)
+        1. Aseta SUBJECT-enviksi senhetkinen subject-hakemiston fmodels-hakemiston
+        alinen hakemisto
+        (ja jos tarvii SUBJECTS_DIR:iä, siksi fmodels-hakemisto)
         
         2. Aja erikseen peräkkäin nuo kolme scriptiä
         
@@ -903,30 +904,67 @@ class Caller(object):
         space file"). Nämä siis fmodels-hakemiston alle käyttäjän antamalla
         fmodelin nimellä. Sitten voinee hävittää kaikki mri-hakemiston
         alihakemistot sekä subjectin alisen bem-hakemiston tiedostot.
-         
-        
         """
         
+        # Set env variables to point to appropriate directories. 
+        os.environ['SUBJECTS_DIR'] = self.parent.experiment._active_subject.\
+                                     _source_analysis_directory
+        os.environ['SUBJECT'] = self.parent.experiment.\
+                                _active_subject._reconFiles_directory
+        
+        if fmdict['surfaceDecimMethod'] is 'traditional (default)':
+            sDecimIcoArg = ''
+        else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
+        
+        if fmdict['computeCorticalStats'] is True:
+            cpsArg = ['--cps']
+        else: cpsArg = ''
+        
+        setupSourceSpaceArgs = ['--spacing', fmdict['spacing'],'--surface', 
+                                fmdict['surfaceName']] + sDecimIcoArg + cpsArg
         
         
+        if fmdict['useAtlas'] is True:
+            waterShedArgs = ['--atlas']
+        else: waterShedArgs = ['']
         
+        if fmdict['triangFilesType'] is 'standard ASCII (default)':
+            surfArg = ''
+            bemIcoArg = ''
+        else: 
+            surfArg = '--surf'
+            bemIcoArg = ['--ico', fmdict['triangFilesIco']]
+        
+            
+            
+        setupFModelArgs = 
+        
+        
+        try:
+            subprocess.check_output(['',])
+        except CalledProcessError as e:
+            
     
-    def copy_mri_files(self, sourceDirectory):
+    
+    def copy_recon_files(self, sourceDirectory):
         """
         Copies mri files from the given directory under the active subject's
         mri directory (after creating the said directory, if need be).
+        
+        TODO kopsattavaa on kahden hakemistollisen verran (mri ja surf), kandee
+        laittaa molemmat vaikka reconFiles-hakemistoon.
         """
         activeSubject = self.parent.experiment._active_subject
         
-        if not (os.path.isdir(activeSubject._mri_directory)):
-            activeSubject.create_mri_directory()
+        if not (os.path.isdir(activeSubject._reconFiles_directory)):
+            activeSubject.create_reconFiles_directory()
         
         source = os.listdir(sourceDirectory)
-        dst = activeSubject._mri_directory
+        dst = activeSubject._reconFiles_directory
         
         try:
-            for files in source:
-                    shutil.copy(source, dst)
+            for sourceFile in source:
+                    shutil.copy(sourceFile, dst)
         except IOError:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
