@@ -33,7 +33,7 @@ Created on Apr 30, 2013
 @author: Jaakko Leppakangas
 Contains the EpochDialog class that holds the logic for epochDialog-window.
 """
-import messageBox
+import messageBoxes
 from epochDialogUi import Ui_Dialog
 
 from epochs import Epochs

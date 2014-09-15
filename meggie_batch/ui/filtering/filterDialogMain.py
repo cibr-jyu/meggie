@@ -15,7 +15,7 @@ from measurementInfo import MeasurementInfo
 from matplotlib import pyplot as plt
 import validator
 
-import messageBox
+import messageBoxes
 
 class FilterDialog(QtGui.QDialog):
     """

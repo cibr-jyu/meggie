@@ -40,7 +40,7 @@ from PyQt4 import QtCore, QtGui
 from preferencesDialogUi import Ui_DialogPreferences
 import os
 import ConfigParser
-import messageBox
+import messageBoxes
 
 
 class PreferencesDialog(QtGui.QDialog):

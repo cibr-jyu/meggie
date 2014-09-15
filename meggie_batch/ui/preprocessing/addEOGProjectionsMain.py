@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from addProjectionsUi import Ui_Dialog
-import messageBox
+import messageBoxes
 
 class AddEOGProjections(QtGui.QDialog):
     """

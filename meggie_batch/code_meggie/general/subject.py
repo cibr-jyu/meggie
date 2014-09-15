@@ -48,7 +48,7 @@ import fileManager
 from epochs import Epochs
 from evoked import Evoked
 from forwardModels import ForwardModels
-import messageBox
+import messageBoxes
 
 class Subject(QObject):
     

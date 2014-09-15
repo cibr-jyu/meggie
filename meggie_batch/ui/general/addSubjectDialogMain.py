@@ -39,7 +39,7 @@ from addSubjectDialogUi import Ui_AddSubject
 import fileManager
 from subject import Subject
 from infoDialogMain import InfoDialog
-import messageBox
+import messageBoxes
 
 import os, sys
 

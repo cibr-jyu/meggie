@@ -9,7 +9,7 @@ from PyQt4 import QtCore, QtGui
 
 from forwardModels import ForwardModels
 from forwardModelDialogUi import Ui_forwardModelDialog
-import messageBox
+import messageBoxes
 import string
 
 class ForwardModelDialog(QtGui.QDialog):
@@ -70,9 +70,13 @@ class ForwardModelDialog(QtGui.QDialog):
         
         fmdict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
         fmdict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
-        fmdict['CompartModel'] = self.ui.comboBoxCompartmentModel.currentText()
-        fmdict['nosol'] = str(self.ui.buttonGroupNosol \
-                        .checkedButton.objectName())
+        fmdict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+        
+        if self.ui.buttonGroupNosol.checkedButton.objectName() is \
+        'radioButtonNoSolYes':
+            fmdict['nosol'] = True
+        else: fmdict['nosol'] = False
+        
         fmdict['innerShift'] = self.ui.spinBoxInnerShift.value()
         fmdict['outerShift'] = self.ui.spinBoxOuterShift.value()
         fmdict['skullShift'] = self.ui.spinBoxSkullShift.value()
@@ -85,7 +89,7 @@ class ForwardModelDialog(QtGui.QDialog):
         # TODO probably should be limited to alphanumeric ascii without spaces,
         # too.
         if string.lower(fmdict['fname']) is 'mri' or 'bem':
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.setText(
                 "'mri' or 'bem' are not acceptable fmodel names")
             self.messageBox.show()
@@ -94,7 +98,7 @@ class ForwardModelDialog(QtGui.QDialog):
         try:
             self.parent.caller.create_forward_model(fmdict)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.setText(
                 'Problem creating forward model' + str(err))
             self.messageBox.show()

@@ -40,7 +40,7 @@ import shutil
 from workspace import Workspace
 import fileManager
 from subject import Subject
-import messageBox
+import messageBoxes
 
 from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4 import QtGui

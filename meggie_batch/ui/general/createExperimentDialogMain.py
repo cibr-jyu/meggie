@@ -35,7 +35,7 @@ CreateExperimentDialog-window.
 
 import fileManager
 from infoDialogMain import InfoDialog
-import messageBox
+import messageBoxes
 
 from experiment import Experiment
 from workspace import Workspace

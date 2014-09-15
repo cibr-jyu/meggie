@@ -29,32 +29,61 @@
 
 """
 @author: Kari Aliranta, Jaakko Leppakangas
-Contains the AppForm-class used for simple messageboxes.
+Contains the shortMessageBox class used for simple messageboxes,and the 
+longMessageBox for longer messages that need a scrolling content area.
 """
 
 from PyQt4 import QtCore,QtGui
+from longMessageBoxUi import Ui_LongMessageBoxDialog
 
 
-class AppForm(QtGui.QDialog):
+
+class shortMessageBox(QtGui.QDialog):
     """
     Class for creating simple messageboxes displaying error messages.
     """
-    def __init__(self, parent=None):
+    def __init__(self, message, parent=None):
         QtGui.QDialog.__init__(self, parent)
-        self.create_main_frame()       
+        self.message = message
+        self.create_main_frame()
+               
 
     def create_main_frame(self):        
         page = QtGui.QWidget()
         
+        self.resize(400, 150)
         self.setWindowTitle('Error') 
-        self.buttonOk = QtGui.QPushButton('Ok', page)
+        self.buttonClose = QtGui.QPushButton('Close', page)
         self.labelException = QtGui.QLabel()
-        self.buttonOk.move(150,0)
+        self.labelException.setWordWrap(True)
+        self.labelException.setText(self.message)
+        self.buttonClose.move(150,0)
         vbox1 = QtGui.QVBoxLayout(self)
         vbox1.addWidget(self.labelException)
-        vbox1.addWidget(self.buttonOk)
+        vbox1.addWidget(self.buttonClose)
 
-        self.connect(self.buttonOk, QtCore.SIGNAL("clicked()"), self.accept)
+        self.connect(self.buttonClose, QtCore.SIGNAL("clicked()"), self.accept)
+
 
     def accept(self):
         self.close()
+
+
+
+class longMessageBox(QtGui.QDialog):
+    """
+    Class for larger, scrollable messageboxes, needed for longer errors and
+    output.
+    """
+    
+    def __init__(self, title, message, parent=None):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_LongMessageBoxDialog()
+        self.ui.setupUi(self)
+    
+        self.setWindowTitle(title)
+        self.ui.textBrowser.setText(message)
+    
+    def accept(self):
+        self.close()
+

@@ -42,7 +42,7 @@ import numpy as np
 
 import csv
 
-import messageBox
+import messageBoxes
 
 class Epochs(QObject):
     

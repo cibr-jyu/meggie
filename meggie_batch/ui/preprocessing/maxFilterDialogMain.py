@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ import subprocess
 from threading import Thread
 from PyQt4 import QtCore,QtGui
 
-import messageBox
+import messageBoxes
 
 class MaxFilterDialog(QtGui.QDialog):
     """

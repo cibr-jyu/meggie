@@ -39,7 +39,7 @@ from eogParametersDialogUi import Ui_Dialog
 
 from caller import Caller
 
-import messageBox
+import messageBoxes
 
 class EogParametersDialog(QtGui.QDialog):
     """

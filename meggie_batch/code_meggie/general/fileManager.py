@@ -59,7 +59,7 @@ import csv
 import shutil
 import ConfigParser
 
-import messageBox
+import messageBoxes
 
 from epochs import Epochs
 from statistic import Statistic

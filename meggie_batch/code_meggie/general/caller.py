@@ -1,6 +1,7 @@
 # coding: latin1
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
+from scimath.units.energy import cal
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -75,7 +76,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import re
-import messageBox
+import messageBoxes
 
 class Caller(object):
     """
@@ -219,9 +220,8 @@ class Caller(object):
             raise Exception(err)
         
         if len(events) == 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('No ECG events found. ' + \
-                                                   'Change settings.')
+            message = 'No ECG events found. Change settings.'
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.show()
             return -1
         
@@ -336,7 +336,7 @@ class Caller(object):
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_ecg_*proj.fif'))
         if len(proj_file) == 0:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.setText('There is no proj file.')
             self.messageBox.show()
         #Checks if there is exactly one projection file.
@@ -355,7 +355,7 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.\
             setText('There is more than one ECG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
@@ -382,7 +382,7 @@ class Caller(object):
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_eog_*proj.fif'))
         if len(proj_file) == 0:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.setText('There is no proj file.')
             self.messageBox.show()
         #Checks if there is exactly one projection file.
@@ -401,7 +401,7 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.\
             setText('There is more than one EOG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
@@ -912,39 +912,77 @@ class Caller(object):
         os.environ['SUBJECT'] = self.parent.experiment.\
                                 _active_subject._reconFiles_directory
         
+        # Arguments for source space setup
         if fmdict['surfaceDecimMethod'] is 'traditional (default)':
-            sDecimIcoArg = ''
+            sDecimIcoArg = []
         else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
         
         if fmdict['computeCorticalStats'] is True:
             cpsArg = ['--cps']
-        else: cpsArg = ''
+        else: cpsArg = []
         
-        setupSourceSpaceArgs = ['--spacing', fmdict['spacing'],'--surface', 
-                                fmdict['surfaceName']] + sDecimIcoArg + cpsArg
+        spacingArg = ['--spacing', fmdict['spacing']]
+        surfaceArg = ['--surface', fmdict['surfaceName']]
         
+        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
         
+        # Arguments for BEM model meshes
         if fmdict['useAtlas'] is True:
             waterShedArgs = ['--atlas']
-        else: waterShedArgs = ['']
+        else: waterShedArgs = []
         
+        # Arguments for BEM model setup
         if fmdict['triangFilesType'] is 'standard ASCII (default)':
-            surfArg = ''
-            bemIcoArg = ''
+            surfArg = []
+            bemIcoArg = []
         else: 
             surfArg = '--surf'
             bemIcoArg = ['--ico', fmdict['triangFilesIco']]
         
-            
-            
-        setupFModelArgs = 
         
+        if fmdict['compartModel'] is 'standard ASCII (default)':
+            braincArg = [ fmdict['brainc']]
+            skullcArg = fmdict['skullc']
+            scalpcArg = fmdict['scalpc']
+        else:
+            braincArg = []
+            skullcArg = []
+            scalpcArg = []
+
+        if fmdict['nosol'] is True:
+            nosolArg = '--nosol'
+        else: nosolArg = []
         
+        innerShiftArg = ['--innerShift', fmdict['innerShift']] 
+        outerShiftArg = ['--outerShift', fmdict['outerShift']] 
+        skullShiftArg = ['--outerShift', fmdict['skullShift']] 
+        
+        setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
+                          scalpcArg + nosolArg + innerShiftArg + outerShiftArg + \
+                          + skullShiftArg
+                           
         try:
-            subprocess.check_output(['',])
+            subprocess.check_output(['mne_setup_source_space'] +
+                                     setupSourceSpaceArgs)
         except CalledProcessError as e:
+            'There was a problem with mne_setup_source_space. Script output: ' \
+            + e.output
             
-    
+            
+        try:
+            subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
+        except CalledProcessError as e:
+          'There was a problem with mne_setup_watershed_bem. Script output: ' \
+            + e.output
+          
+          
+        try:
+            subprocess.check_output(['mne_setup_forward_model'] + 
+                                    setupFModelArgs)
+        except CalledProcessError as e:    
+            'There was a problem with mne_setup_forward_model. Script output: ' \
+            + e.output
+                     
     
     def copy_recon_files(self, sourceDirectory):
         """
@@ -966,10 +1004,9 @@ class Caller(object):
             for sourceFile in source:
                     shutil.copy(sourceFile, dst)
         except IOError:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Could not copy files. Either the disk is full or something ' +
-             'weird happened.')
+            message = 'Could not copy files. Either the disk is full or something ' 
+            + 'weird happened.'
+            self.messageBox = messageBox.shortMessageBox(message)
             self.messageBox.show()
     
     def update_experiment_working_file(self, fname, raw):

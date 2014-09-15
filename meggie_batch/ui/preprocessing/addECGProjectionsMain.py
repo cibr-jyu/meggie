@@ -39,7 +39,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from addProjectionsUi import Ui_Dialog
-import messageBox
+import messageBoxes
 
 class AddECGProjections(QtGui.QDialog):
     """

@@ -34,7 +34,7 @@ Created on Mar 19, 2013
 Contains the EventSelectionDialog-class that holds the logic for
 EventSelectionDialog-window.
 """
-import messageBox
+import messageBoxes
 
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import QString

@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ Created on Apr 26, 2013
 @author: Jaakko Leppakangas
 Contains the TFRDialog-class used for creating TFRs.
 """
-import messageBox
+import messageBoxes
 
 import mne
 

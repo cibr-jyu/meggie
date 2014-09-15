@@ -44,7 +44,7 @@ import fileManager
 from caller import Caller
 from measurementInfo import MeasurementInfo
 
-import messageBox
+import messageBoxes
 
 class EcgParametersDialog(QtGui.QDialog):
     """

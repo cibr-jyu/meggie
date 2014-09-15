@@ -76,7 +76,7 @@ from filterDialogMain import FilterDialog
 from consoleMain import Console
 from measurementInfo import MeasurementInfo
 from experimentInfoDialogMain import experimentInfoDialog
-import messageBox
+import messageBoxes
 
 from experiment import Experiment
 from epochs import Epochs
@@ -216,9 +216,8 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.experiment = self.experiment
             
         else:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Experiment file not found. Please check your directory.')
+            message = 'Experiment file not found. Please check your directory.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
 
     
@@ -230,10 +229,9 @@ class MainWindow(QtGui.QMainWindow):
         
         # Check that we have an experiment that we can add a subject to 
         if self._experiment is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No active experiment to add a subject to. Load an experiment ' +
-            'or make a new one, then try again.')
+            message = 'No active experiment to add a subject to. ' \
+            + 'Load an experiment or make a new one, then try again.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         
@@ -252,9 +250,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         elif self.ui.listWidgetSubjects.currentItem() is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No subject selected.')
+            self.messageBox = messageBoxes.shortMessageBox('No subject selected.')
             self.messageBox.show()
             return
             
@@ -593,7 +589,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         if self._experiment is None:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.labelException.setText \
             ('You do not currently have an experiment activated.')
             self.messageBox.show()  
@@ -625,9 +621,8 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Please select an epoch collection to average.')
+            message = 'Please select an epoch collection to average.' 
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
         key = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
@@ -667,10 +662,9 @@ class MainWindow(QtGui.QMainWindow):
             try:
                 os.mkdir(saveFolder)
             except IOError:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText \
-                ('Writing to selected folder is not allowed. You can still' + \
-                 ' process the evoked file (visualize etc.).')
+                message = 'Writing to selected folder is not allowed. ' + \
+                'You can still process the evoked file (visualize etc.).'
+                self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()  
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
@@ -678,10 +672,11 @@ class MainWindow(QtGui.QMainWindow):
             fiff.write_evoked(os.path.join(saveFolder, evoked_name), evoked)
             print '[done]'
         except IOError:
-            self.messageBox = messageBox.AppForm()
+            message = 'Writing to selected folder is not allowed. You can still' \
+                      + ' process the evoked file (visualize etc.).'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.labelException.setText \
-            ('Writing to selected folder is not allowed. You can still' + \
-             ' process the evoked file (visualize etc.).')
+            ()
             self.messageBox.show()
         
         
@@ -714,11 +709,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.count() == 0:
-            # TODO: show messagebox
-            print 
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.\
-            setText('Create epochs before visualizing.')
+            message = 'Create epochs before visualizing.' 
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         
             
@@ -812,9 +804,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         elif self.epochList.currentItem() is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No epochs selected.')
+            self.messageBox = messageBoxes.shortMessageBox('No epochs selected.')
             self.messageBox.show()
             
         item_str = self.epochList.currentItem().text()
@@ -845,9 +835,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         elif self.evokedList.currentItem() is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No evokeds selected.')
+            self.messageBox = messageBoxes.shortMessageBox('No evokeds selected.')
             self.messageBox.show()
             
         item_str = self.evokedList.currentItem().text()
@@ -884,7 +872,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.call_mne_browse_raw(self.experiment.active_subject._working_file.\
                                             info.get('filename'))
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
+            self.messageBox = messageBox.shortMessageBox()
             self.messageBox.labelException.setText(str(err))
             self.messageBox.show()
             return        
@@ -900,8 +888,9 @@ class MainWindow(QtGui.QMainWindow):
             self.maxFilterDialog = MaxFilterDialog(self, 
                                                    self.experiment.active_subject.working_file)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            title = 'MaxFilter error:'
+            self.messageBox = messageBoxes.longMessageBox(title, str(err))
+            self.messageBox.labelException.setText()
             self.messageBox.show()
             return
         self.maxFilterDialog.show()
@@ -957,9 +946,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('You must create epochs ' +
-                                                   'before TFR.')
+            message = 'You must create epochs before TFR.'
+            self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.show()
             return
         
@@ -977,9 +965,9 @@ class MainWindow(QtGui.QMainWindow):
         Opens the dialog for plotting TFR topology.
         """
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('You must create epochs ' +
-                                                   'before TFR.')
+            message = 'You must create epochs before TFR.'
+            self.messageBox = messageBoxes.shortMessageBox()
+            self.messageBox.labelException.setText()
             self.messageBox.show()
             return
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
@@ -999,9 +987,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Please select an epoch collection to channel average.')
+            message = 'Please select an epoch collection to channel average.'
+            self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.show()  
             return
         
@@ -1046,9 +1033,8 @@ class MainWindow(QtGui.QMainWindow):
         
         working_file_name = self.experiment._working_file_names[subject_name]
         if len(working_file_name) == 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('There is no working file in the chosen subject folder.')
+            message = 'There is no working file in the chosen subject folder.'
+            self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.show()  
             return
         
