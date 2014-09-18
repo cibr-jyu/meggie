@@ -100,6 +100,7 @@ class Experiment(QObject):
         """
         return self._experiment_name
 
+
     @experiment_name.setter
     def experiment_name(self, experiment_name):
         """
@@ -120,12 +121,14 @@ class Experiment(QObject):
         else:
             raise Exception('Too long experiment name')
 
+
     @property
     def workspace(self):
         """
         Returns the path of the current experiment.
         """
         return self._workspace
+    
     
     @workspace.setter
     def workspace(self, workspace):
@@ -148,6 +151,7 @@ class Experiment(QObject):
         """
         return self._author
     
+    
     @author.setter
     def author(self, author):
         """
@@ -166,12 +170,14 @@ class Experiment(QObject):
         else:
             raise Exception('Too long _author name')
 
+
     @property
     def description(self):
         """
         Returns the _description of the experiment.
         """
         return self._description
+
 
     @description.setter
     def description(self, description):
@@ -195,12 +201,14 @@ class Experiment(QObject):
         else:
             raise Exception("Too long _description")
 
+
     @property
     def active_subject_name(self):
         """
         Method for getting active subject name.
         """
         return self._active_subject_name
+    
     
     @active_subject_name.setter
     def active_subject_name(self, subject_name):
@@ -209,12 +217,14 @@ class Experiment(QObject):
         """
         self._active_subject_name = subject_name
 
+
     @property
     def active_subject_path(self):
         """
         Method for getting active subject path.
         """
         return self._active_subject_path
+    
     
     @active_subject_path.setter
     def active_subject_path(self, subject_path):
@@ -231,12 +241,14 @@ class Experiment(QObject):
         """
         return self._active_subject_raw_path
     
+    
     @active_subject_raw_path.setter
     def active_subject_raw_path(self, raw_path):
         """
         Method for setting active subject raw path.
         """
         self._active_subject_raw_path = raw_path
+
 
     @property
     def active_subject(self):
@@ -245,12 +257,14 @@ class Experiment(QObject):
         """
         return self._active_subject
     
+    
     @active_subject.setter
     def active_subject(self, subject):
         """
         Method for setting active subject.
         """
         self._active_subject = subject
+    
     
     def add_subject(self, subject):
         """
@@ -264,6 +278,7 @@ class Experiment(QObject):
         
         # list 
         self._subjects.append(subject)
+
 
     def remove_subject(self, item, main_window):
         """
@@ -311,6 +326,7 @@ class Experiment(QObject):
         main_window.ui.listWidgetSubjects.takeItem(row)
         main_window._initialize_ui()
 
+
     def add_subject_path(self, subject_path):
         """
         Adds subject path to the current experiment.
@@ -323,6 +339,7 @@ class Experiment(QObject):
         if not subject_path in self._subject_paths:
             self._subject_paths.append(subject_path)
 
+
     def update_working_file(self, working_file_name):
         """
         Adds working file name to the working_file list.
@@ -333,6 +350,7 @@ class Experiment(QObject):
         """
         # Uusi koodi:
         self._working_file_names[self.active_subject_name] = working_file_name
+      
         
     def activate_subject(self, raw_path, subject_name, experiment):
         """
@@ -365,6 +383,7 @@ class Experiment(QObject):
         evokeds_items = self.load_evokeds(self.active_subject)
         self.update_experiment_settings()
         return epochs_items, evokeds_items
+      
         
     def create_subjects(self, experiment, subject_names):
         """Creates subjects using a list of given subject names.
@@ -377,6 +396,7 @@ class Experiment(QObject):
         for subject_name in subject_names:
             subject = Subject(experiment, subject_name)
             self._subjects.append(subject)
+        
         
     def set_active_subject(self, subject, raw_file_name):
         """Sets active subject from existing subjects.
@@ -391,6 +411,7 @@ class Experiment(QObject):
 
         # Loads and sets raw data for subject.
         self.load_working_file(subject)
+
 
     def create_active_subject(self, experiment, subject_name, raw_path, raw_file_name):
         """Sets active subject by creating new one.
@@ -422,6 +443,8 @@ class Experiment(QObject):
             subject._working_file.info['filename'] = complete_raw_path
         subject.find_stim_channel()
         subject.create_event_set()
+        # Could be created later, but safer to do it right away.
+        subject.create_sourceAnalysis_directory()
         
         # For tracking active subject
         self._active_subject_name = subject_name
@@ -432,6 +455,7 @@ class Experiment(QObject):
         self.update_working_file(complete_raw_path)
         self.add_subject_path(subject.subject_path)
         self.add_subject(subject)
+    
     
     def release_memory(self):
         """Releases memory from previously processed subject by removing
@@ -445,6 +469,7 @@ class Experiment(QObject):
             if len(self.active_subject._evokeds) > 0:
                 for value in self.active_subject._evokeds.values():
                     value._raw = None
+        
         
     def load_working_file(self, subject):
         """Loads raw file from subject folder and sets it on
@@ -464,6 +489,7 @@ class Experiment(QObject):
                 subject._working_file = raw
                 subject.find_stim_channel()
                 subject.create_event_set()
+
 
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
@@ -494,6 +520,7 @@ class Experiment(QObject):
                     subject._epochs[name]._raw = epochs
         return epoch_items
 
+
     def load_evokeds(self, subject):
         """Loads raw evoked files from subject folder and sets them on
         subject._evokeds objects.
@@ -512,6 +539,7 @@ class Experiment(QObject):
                     subject._evokeds[file]._raw = evoked
 
         return evokeds_items
+            
                 
     def get_subject_working_file(self, subject_name):
         """Returns working file of a given subject name.
@@ -521,6 +549,7 @@ class Experiment(QObject):
         """
         raw = fileManager.open_raw(self._working_file_names[subject_name])
         return raw
+        
                 
     def save_experiment_settings(self):
         """
@@ -549,6 +578,7 @@ class Experiment(QObject):
         print '[done]'
         settingsFile.close()        
 
+
     def update_experiment_settings(self):
         """
         Updates experiment settings after adding a subject.
@@ -561,6 +591,7 @@ class Experiment(QObject):
         settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
         pickle.dump(self, settingsFile, 2)
         settingsFile.close()
+
 
     def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):
@@ -600,6 +631,7 @@ class Experiment(QObject):
             
             for key, value in dic.items():
                 csvwriter.writerow([key, value])
+          
                     
     def parse_parameter_file(self, operation):
         """
@@ -649,6 +681,7 @@ class Experiment(QObject):
         
         
         return odict
+
 
     def __setstate__(self, odict):
         """

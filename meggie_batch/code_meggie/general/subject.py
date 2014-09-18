@@ -264,7 +264,7 @@ class Subject(QObject):
         try:
             os.mkdir(self._reconFiles_directory)
         except OSError:
-            raise OSError('can\'t create mri directory to' + \
+            raise OSError('can\'t create reconFiles directory to' + \
                           ' the chosen path')
     
     def find_stim_channel(self):

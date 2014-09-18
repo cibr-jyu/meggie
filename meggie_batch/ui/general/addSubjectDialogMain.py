@@ -76,13 +76,11 @@ class AddSubjectDialog(QtGui.QDialog):
         # the name. See: eventSelectionDialogMain set_event_name method.
         if len(self.parent.ui.listWidgetSubjects.
                findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.\
-            setText('Subject is already added to the experiment.' + \
+            message = 'Subject is already added to the experiment.' + \
                     ' Change the filename of the raw every time you want' + \
-                    ' to create a new subject with the same raw file.')
+                    ' to create a new subject with the same raw file.' 
+            self.messageBox = messageBoxes.shortMessageBox(message) 
             self.messageBox.show()
-            #self.close()
             return
         
         """    
@@ -107,6 +105,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent._initialize_ui()
         self.close()
         
+        
     def on_pushButtonBrowse_clicked(self, checked=None):
         """
         Open file browser for raw data files.
@@ -128,21 +127,19 @@ class AddSubjectDialog(QtGui.QDialog):
             self.ui.pushButtonShowFileInfo.setEnabled(True)
             
         except IOError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
+            self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
             return
         
         except OSError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
+            self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
             return
         
         except ValueError as e:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(e))
+            self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
+            return
             return
             
         info = Ui_infoDialog()
@@ -150,6 +147,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.infoDialog.show()
 
         QtGui.QApplication.processEvents()
+        
         
     def file_path_changed(self):
         """A slot for enabling or disabling show file info button.

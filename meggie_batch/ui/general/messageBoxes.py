@@ -76,15 +76,13 @@ class longMessageBox(QtGui.QDialog):
     output.
     """
     
-    def __init__(self, title, message, parent=None, output=False):
+    def __init__(self, title, message, parent=None):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_LongMessageBoxDialog()
         self.ui.setupUi(self)
     
         self.setWindowTitle(title)
         self.ui.textEdit.setText(message)
-    
-        if output is True:
             
             
     def updateOutputField(self):

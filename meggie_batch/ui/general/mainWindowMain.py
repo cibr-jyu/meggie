@@ -1050,24 +1050,22 @@ class MainWindow(QtGui.QMainWindow):
         self._initialize_ui()
 
 
-    def on_pushButtonBrowseRecon_click(self, checked=None):
+    def on_pushButtonBrowseRecon_clicked(self, checked=None):
         if checked is None : return
-        
-        # TODO move this stuff to caller
         
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select directory of the reconstructed MRI image"))
         self.ui.lineEditRecon.setText(path)
+        
         # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
-        #
         self.caller.copy_recon_files(path)
       
         
-    def on_pushButtonConvertToMNE_click(self, checked=None):
+    def on_pushButtonConvertToMNE_clicked(self, checked=None):
         self.caller.convert_mri_to_mne()
     
         
-    def on_pushButtonCreateNewForwardModel_click(self, checked=None):
+    def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
         """
         Open up a dialog for creating a new forward model.
         """

@@ -41,11 +41,12 @@ import subprocess
 import os
 import glob
 
-# TODO probably not needed
-from copy import deepcopy
-import shutil
+# For copy_tree. Because shutil.copytree for has restrictions regarding the
+# destination directory (ie. it must not exist beforehand).
+from distutils import dir_util
 
-from PyQt4 import QtCore,QtGui
+
+from PyQt4 import QtCore
 
 import mne
 # from mne import fiff -- mne.fiff is deprecated in MNE 0.8
@@ -73,7 +74,6 @@ import csv
 
 import numpy as np
 import pylab as pl
-import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import re
@@ -222,7 +222,7 @@ class Caller(object):
         
         if len(events) == 0:
             message = 'No ECG events found. Change settings.'
-            self.messageBox = messageBox.shortMessageBox()
+            self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.show()
             return -1
         
@@ -337,8 +337,8 @@ class Caller(object):
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_ecg_*proj.fif'))
         if len(proj_file) == 0:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.setText('There is no proj file.')
+            message = 'There is no proj file.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
@@ -356,12 +356,11 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.\
-            setText('There is more than one ECG projection file to apply. ' + \
+            message = 'There is more than one ECG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.parent.experiment.active_subject._subject_path)
+                    self.parent.experiment.active_subject._subject_path
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
@@ -383,8 +382,8 @@ class Caller(object):
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_eog_*proj.fif'))
         if len(proj_file) == 0:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.setText('There is no proj file.')
+            message = 'There is no proj file.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
@@ -402,12 +401,11 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.\
-            setText('There is more than one EOG projection file to apply. ' + \
+            message = 'There is more than one EOG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.parent.experiment.active_subject._subject_path)
+                    self.parent.experiment.active_subject._subject_path 
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
@@ -950,32 +948,30 @@ class Caller(object):
         except CalledProcessError as e:    
             'There was a problem with mne_setup_forward_model. Script output: ' \
             + e.output
-    
+            
     
     def copy_recon_files(self, sourceDirectory):
         """
         Copies mri files from the given directory to under the active subject's
         reconFiles directory (after creating the said directory, if need be).
         
-        TODO kopsattavaa on kahden hakemistollisen verran (mri ja surf).
         """
         activeSubject = self.parent.experiment._active_subject
         
         if not (os.path.isdir(activeSubject._reconFiles_directory)):
             activeSubject.create_reconFiles_directory()
         
-        source = os.listdir(sourceDirectory)
         dst = activeSubject._reconFiles_directory
         
         try:
-            for sourceFile in source:
-                    shutil.copy(sourceFile, dst)
+            dir_util.copy_tree(sourceDirectory, dst)
         except IOError:
-            message = 'Could not copy files. Either the disk is full or something ' 
-            + 'weird happened.'
+            message = 'Could not copy files. Either the disk is full or ' + \
+            'something weird happened.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-    
+
+
     def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working file for the experiment the caller relates
