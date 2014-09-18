@@ -112,9 +112,8 @@ class Experiment(QObject):
             if re.match("^[A-Za-z0-9 ]*$", experiment_name):
                 self._experiment_name = str(experiment_name)
             else:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText \
-                ('Use only letters and numbers in experiment name')
+                message = 'Use only letters and numbers in experiment name'
+                self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
                 raise Exception('Use only letters and numbers in experiment' +
                                 'name')

@@ -55,13 +55,16 @@ import mne
 
 import os
 import pickle
-import csv
 import shutil
 import ConfigParser
 
+# For copy_tree. Because shutil.copytree for has restrictions regarding the
+# destination directory (ie. it must not exist beforehand).
+from distutils import dir_util
+
+
 import messageBoxes
 
-from epochs import Epochs
 from statistic import Statistic
 
     
@@ -83,6 +86,35 @@ def copy(self, original, target):
         return e
     
     return True
+    
+    
+def copy_recon_files(aSubject, sourceDirectory):
+        """
+        Copies mri and surf files from the given directory to under the active
+        subject's reconFiles directory (after creating the said directory, 
+        if need be).
+        
+        Keyword arguments:
+        
+        aSubject            -- currently active subject
+        sourceDirectory     -- directory including the mri and surf file 
+        
+        """
+        activeSubject = aSubject
+        
+        if not (os.path.isdir(activeSubject._reconFiles_directory)):
+            activeSubject.create_reconFiles_directory()
+        
+        dst = activeSubject._reconFiles_directory
+        
+        try:
+            dir_util.copy_tree(sourceDirectory, dst)
+        except IOError:
+            message = 'Could not copy files. Either the disk is full ' + \
+            ' , you have no rights to read the directory or something weird' + \
+            ' happened.'
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.exec_()   
     
     
 def create_key_csv_evoked(self, evoked):
@@ -166,9 +198,8 @@ def delete_file_at(self, folder, files):
         # os.remove(os.path.join(folder, files))
         os.remove(folder + '/' + files)
     except OSError:
-        self.messageBox = messageBox.AppForm()
-        self.messageBox.labelException.\
-        setText('Could not delete selected files.')
+        message = 'Could not delete selected files.'
+        self.messageBox = messageBoxes.shortMessageBox(message)
         self.messageBox.show()
     except TypeError:
         # If files is a list object instead of string.
@@ -201,9 +232,8 @@ def load_epochs(self, fname):
         try:
             epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
         except IOError:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.\
-            setText('Reading from selected folder is not allowed.')
+            message = 'Reading from selected folder is not allowed.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return epochs
     
@@ -273,13 +303,12 @@ def load_evoked(self, folder, file):
                 # This makes sure that Meggie won't stop working if more
                 # than 8 evoked sets exist.
                 if i >= 8:
-                    warning = 'WARNING: There are more than 8 evoked' + \
+                    message = 'WARNING: There are more than 8 evoked' + \
                     ' sets in the evoked.fif file. This does not' + \
                     ' necessarily support all the functionality in' + \
                     ' Meggie. The evoked.fif files with more than 8' + \
                     ' datasets could not be loaded.'
-                    self.messageBox = messageBox.AppForm()
-                    self.messageBox.labelException.setText(warning)
+                    self.messageBox = messageBoxes.shortMessageBox(message)
                     self.messageBox.show()
                     return
                     """
@@ -296,8 +325,8 @@ def load_evoked(self, folder, file):
         # if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
                 return evokeds, category
         except ValueError:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('File is not an evoked.fif file.')
+            message = 'File is not an evoked.fif file.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return None, None
     

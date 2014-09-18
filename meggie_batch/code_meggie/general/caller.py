@@ -41,10 +41,6 @@ import subprocess
 import os
 import glob
 
-# For copy_tree. Because shutil.copytree for has restrictions regarding the
-# destination directory (ie. it must not exist beforehand).
-from distutils import dir_util
-
 
 from PyQt4 import QtCore
 
@@ -950,26 +946,7 @@ class Caller(object):
             + e.output
             
     
-    def copy_recon_files(self, sourceDirectory):
-        """
-        Copies mri files from the given directory to under the active subject's
-        reconFiles directory (after creating the said directory, if need be).
-        
-        """
-        activeSubject = self.parent.experiment._active_subject
-        
-        if not (os.path.isdir(activeSubject._reconFiles_directory)):
-            activeSubject.create_reconFiles_directory()
-        
-        dst = activeSubject._reconFiles_directory
-        
-        try:
-            dir_util.copy_tree(sourceDirectory, dst)
-        except IOError:
-            message = 'Could not copy files. Either the disk is full or ' + \
-            'something weird happened.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+    
 
 
     def update_experiment_working_file(self, fname, raw):

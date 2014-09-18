@@ -1058,7 +1058,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.lineEditRecon.setText(path)
         
         # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
-        self.caller.copy_recon_files(path)
+        
+        activeSubject = self.experiment._active_subject
+        fileManager.copy_recon_files(activeSubject, path)
       
         
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
