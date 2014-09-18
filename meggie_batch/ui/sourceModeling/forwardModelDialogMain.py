@@ -37,19 +37,25 @@ class ForwardModelDialog(QtGui.QDialog):
         and populate the self.ui.comboBoxSurfaceName with them.
         """
         
-        
-    def accept(self):
+    def collectParametersIntoDictionary(self):
         """
-        Does the following:
-
-        1. Collects the parameters from the dialog
-        2. Passes the parameters to forwardModeling for actual creation of
-        forward model.
+        Collects the parameters from the ui fields of the dialog and returns
+        them in a dictionary.
         """
-        
         fmdict = {}
         
         fmdict['fname'] = self.ui.lineEditFModelName.text()
+        
+        # A bit of checking for stupidities in naming to avoid conflicts
+        # with directories created by MNE scripts.
+        # TODO probably should be limited to alphanumeric ascii without spaces,
+        # too.
+        if string.lower(fmdict['fname']) is 'mri' or 'bem':
+            message = "'mri' or 'bem' are not acceptable fmodel names"
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
         fmdict['spacing'] = self.ui.spinBoxSpacing.value()
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         fmdict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
@@ -84,22 +90,91 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict['skullc'] = self.ui.doubleSpinBoxSkullConductivity.value()
         fmdict['scalpc'] = self.ui.doubleSpinBoxScalpConductivity.value()
         
-        # A bit of checking for stupidities in naming to avoid conflicts
-        # with directories created by MNE scripts.
-        # TODO probably should be limited to alphanumeric ascii without spaces,
-        # too.
-        if string.lower(fmdict['fname']) is 'mri' or 'bem':
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.setText(
-                "'mri' or 'bem' are not acceptable fmodel names")
-            self.messageBox.show()
-            return
+        return fmdict
+        
+        
+    def convertParameterDictionaryToCommandlineParameterDict(self, fmdict):
+        """
+        Converts the parameters input in the dialog into valid command line
+        argument strings for various MNE-C-scripts (mne_setup_source_space, 
+        mne_watershed_bem, mne_setup_forward_model) used in forward model
+        creation.
+        
+        Keyword arguments:
+        
+        pdict        -- dictionary
+        
+        Returns a tuple of lists with suitable arguments for commandline tools.
+        Looks like this:
+        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
+        mne_setup_forward_model_argumentList) 
+        """
+        
+        # Arguments for source space setup
+        if fmdict['surfaceDecimMethod'] is 'traditional (default)':
+            sDecimIcoArg = []
+        else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
+        
+        if fmdict['computeCorticalStats'] is True:
+            cpsArg = ['--cps']
+        else: cpsArg = []
+        
+        spacingArg = ['--spacing', fmdict['spacing']]
+        surfaceArg = ['--surface', fmdict['surfaceName']]
+        
+        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
+        
+        # Arguments for BEM model meshes
+        if fmdict['useAtlas'] is True:
+            waterShedArgs = ['--atlas']
+        else: waterShedArgs = []
+        
+        # Arguments for BEM model setup
+        if fmdict['triangFilesType'] is 'standard ASCII (default)':
+            surfArg = []
+            bemIcoArg = []
+        else: 
+            surfArg = '--surf'
+            bemIcoArg = ['--ico', fmdict['triangFilesIco']]
+        
+        if fmdict['compartModel'] is 'standard ASCII (default)':
+            braincArg = [ fmdict['brainc']]
+            skullcArg = fmdict['skullc']
+            scalpcArg = fmdict['scalpc']
+        else:
+            braincArg = []
+            skullcArg = []
+            scalpcArg = []
+
+        if fmdict['nosol'] is True:
+            nosolArg = '--nosol'
+        else: nosolArg = []
+        
+        innerShiftArg = ['--innerShift', fmdict['innerShift']] 
+        outerShiftArg = ['--outerShift', fmdict['outerShift']] 
+        skullShiftArg = ['--outerShift', fmdict['skullShift']] 
+        
+        setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
+                          scalpcArg + nosolArg + innerShiftArg + outerShiftArg + \
+                          + skullShiftArg
+        
+        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+        
+        
+    def accept(self):
+        """
+        Gets the arguments from the gui and passes them to caller for forward
+        model creation. 
+        """
+        
+        fmdict = self.collectParametersIntoDictionary(self)
+        
+        pdict = self.convertParameterDictionaryToCommandlineParameterTuple(fmdict)
 
         try:
-            self.parent.caller.create_forward_model(fmdict)
+            self.parent.caller.create_forward_model(pdict)
         except Exception, err:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.setText(
-                'Problem creating forward model' + str(err))
+            message = 'Problem creating forward model' + str(err)
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return

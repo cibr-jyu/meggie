@@ -76,14 +76,25 @@ class longMessageBox(QtGui.QDialog):
     output.
     """
     
-    def __init__(self, title, message, parent=None):
+    def __init__(self, title, message, parent=None, output=False):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_LongMessageBoxDialog()
         self.ui.setupUi(self)
     
         self.setWindowTitle(title)
-        self.ui.textBrowser.setText(message)
+        self.ui.textEdit.setText(message)
+    
+        if output is True:
+            
+            
+    def updateOutputField(self):
+        cursor = self.output.textCursor()
+        cursor.movePosition(cursor.End)
+        cursor.insertText(str(self.process.readAll()))
+        self.output.ensureCursorVisible()
+    
     
     def accept(self):
         self.close()
+
 

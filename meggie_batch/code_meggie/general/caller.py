@@ -2,6 +2,7 @@
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from scimath.units.energy import cal
+from multiprocessing import ProcessError
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -870,7 +871,8 @@ class Caller(object):
                                     e.output)
         
         
-    def create_forward_model(self, fmdict):
+    def create_forward_model(self, setupSourceSpaceArgs, waterShedArgs, 
+                             setupFModelArgs ):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
@@ -912,62 +914,29 @@ class Caller(object):
         os.environ['SUBJECT'] = self.parent.experiment.\
                                 _active_subject._reconFiles_directory
         
-        # Arguments for source space setup
-        if fmdict['surfaceDecimMethod'] is 'traditional (default)':
-            sDecimIcoArg = []
-        else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
+        # Jos subprocess ei toimi.
+        """
+        outputBoxTitle = 'Creating forward model'
+        self.outputBox = messageBoxes.longMessageBox(outputBoxTitle, '', output=True)
         
-        if fmdict['computeCorticalStats'] is True:
-            cpsArg = ['--cps']
-        else: cpsArg = []
+        process = QtCore.QProcess()
+        process.start('mne_setup_source_space', setupSourceSpaceArgs)
         
-        spacingArg = ['--spacing', fmdict['spacing']]
-        surfaceArg = ['--surface', fmdict['surfaceName']]
-        
-        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
-        
-        # Arguments for BEM model meshes
-        if fmdict['useAtlas'] is True:
-            waterShedArgs = ['--atlas']
-        else: waterShedArgs = []
-        
-        # Arguments for BEM model setup
-        if fmdict['triangFilesType'] is 'standard ASCII (default)':
-            surfArg = []
-            bemIcoArg = []
-        else: 
-            surfArg = '--surf'
-            bemIcoArg = ['--ico', fmdict['triangFilesIco']]
-        
-        
-        if fmdict['compartModel'] is 'standard ASCII (default)':
-            braincArg = [ fmdict['brainc']]
-            skullcArg = fmdict['skullc']
-            scalpcArg = fmdict['scalpc']
-        else:
-            braincArg = []
-            skullcArg = []
-            scalpcArg = []
-
-        if fmdict['nosol'] is True:
-            nosolArg = '--nosol'
-        else: nosolArg = []
-        
-        innerShiftArg = ['--innerShift', fmdict['innerShift']] 
-        outerShiftArg = ['--outerShift', fmdict['outerShift']] 
-        skullShiftArg = ['--outerShift', fmdict['skullShift']] 
-        
-        setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
-                          scalpcArg + nosolArg + innerShiftArg + outerShiftArg + \
-                          + skullShiftArg
-                           
-        try:
-            subprocess.check_output(['mne_setup_source_space'] +
-                                     setupSourceSpaceArgs)
-        except CalledProcessError as e:
-            'There was a problem with mne_setup_source_space. Script output: ' \
-            + e.output
+        # Is process updates its output, also update ui in the outputbox
+        process.readyRead.connect(self.outputBox.updateOutputField())     
+        process.finished.connect(self.externalProcessFinished())
             
+        # If waitforfinished returns false, there has been and error and we
+        # should return.
+        if not process.waitForFinished():
+            return
+        """
+        
+        try:
+            subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
+        except CalledProcessError as e:
+          'There was a problem with mne_setup_watershed_bem. Script output: ' \
+            + e.output    
             
         try:
             subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
@@ -975,22 +944,20 @@ class Caller(object):
           'There was a problem with mne_setup_watershed_bem. Script output: ' \
             + e.output
           
-          
         try:
             subprocess.check_output(['mne_setup_forward_model'] + 
                                     setupFModelArgs)
         except CalledProcessError as e:    
             'There was a problem with mne_setup_forward_model. Script output: ' \
             + e.output
-                     
+    
     
     def copy_recon_files(self, sourceDirectory):
         """
-        Copies mri files from the given directory under the active subject's
-        mri directory (after creating the said directory, if need be).
+        Copies mri files from the given directory to under the active subject's
+        reconFiles directory (after creating the said directory, if need be).
         
-        TODO kopsattavaa on kahden hakemistollisen verran (mri ja surf), kandee
-        laittaa molemmat vaikka reconFiles-hakemistoon.
+        TODO kopsattavaa on kahden hakemistollisen verran (mri ja surf).
         """
         activeSubject = self.parent.experiment._active_subject
         
@@ -1006,7 +973,7 @@ class Caller(object):
         except IOError:
             message = 'Could not copy files. Either the disk is full or something ' 
             + 'weird happened.'
-            self.messageBox = messageBox.shortMessageBox(message)
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
     
     def update_experiment_working_file(self, fname, raw):
