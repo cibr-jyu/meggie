@@ -31,21 +31,8 @@
 Created on Mar 13, 2013
 
 @author: Jaakko Leppakangas, Atte Rautio, Kari Aliranta
-Contains the File-class for file operations.
 
 A module for various file operations needed by Meggie.
-
-public functions:
-
-copy(self, original, target)
-create_csv_epochs(self, epochs)
-delete_file_at(self, folder, name)
-load_epochs(self, fname)
-open_raw(self, fname)
-pickleObjectToFile(self, picklable, path)
-save_epoch(self, fpath, epoch, overwirte = False)
-unpickle(self, fpath)
-setEnvVariables()
 
 TODO remove self from function arguments. Used to be a class, is no more.
 
@@ -62,9 +49,7 @@ import ConfigParser
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
 
-
 import messageBoxes
-
 from statistic import Statistic
 
     

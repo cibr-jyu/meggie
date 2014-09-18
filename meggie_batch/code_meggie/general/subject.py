@@ -384,9 +384,8 @@ class Subject(QObject):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
         
         if fileManager.delete_file_at(self._epochs_directory, files_to_delete) == False:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Epochs could not be deleted from epochs folder.')
+            message = 'Epochs could not be deleted from epochs folder.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         
     def handle_new_evoked(self, name, evoked, categories):
@@ -406,9 +405,7 @@ class Subject(QObject):
         
         evoked_object = Evoked()
         if evoked is None:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Evoked is None.')
+            self.messageBox = messageBoxes.shortMessageBox('Evoked is None.')
             self.messageBox.show()
             return
         evoked_object._raw = evoked
@@ -437,9 +434,8 @@ class Subject(QObject):
         del self._evokeds[str(name)]
         
         if fileManager.delete_file_at(self._evokeds_directory, name) == False:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Evoked could not be deleted from average folder.')
+            message = 'Evoked could not be deleted from average folder.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         
         
@@ -455,9 +451,9 @@ class Subject(QObject):
         Removes a ForwardModels object from the forwardModels dictionary.
         """
         if fileManager.delete_file_at(self._forwardModels_directory, name) == False:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('Forward model could not be deleted from forwardModels folder')
+            message = 'Forward model could not be deleted from forwardModels ' + \
+            'folder'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         del self._forwardModels[str(name)]

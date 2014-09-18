@@ -1,8 +1,4 @@
 # coding: latin1
-from matplotlib.pyplot import subplots_adjust
-from subprocess import CalledProcessError
-from scimath.units.energy import cal
-from multiprocessing import ProcessError
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -37,6 +33,7 @@ Created on Apr 11, 2013
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 This module contains caller class which calls third party software.
 """
+
 import subprocess
 import os
 import glob
@@ -74,6 +71,11 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import re
 import messageBoxes
+
+from matplotlib.pyplot import subplots_adjust
+from subprocess import CalledProcessError
+from scimath.units.energy import cal
+
 
 class Caller(object):
     """
