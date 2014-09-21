@@ -36,10 +36,13 @@ Contains the PreferencesDialog-class used in setting the preferences for
 the application.
 """
 
-from PyQt4 import QtCore, QtGui
-from preferencesDialogUi import Ui_DialogPreferences
 import os
 import ConfigParser
+from PyQt4 import QtCore, QtGui
+
+import prefecences
+
+from preferencesDialogUi import Ui_DialogPreferences
 import messageBoxes
 
 
@@ -72,15 +75,22 @@ class PreferencesDialog(QtGui.QDialog):
             else: 
                 workFilePath = ''
             
-            if configp.has_option('MNERoot','MNERootDir'):
-                MNERootPath = configp.get('MNERoot','MNERootDir')
+            if configp.has_option('EnvVariables','MNERootDir'):
+                MNERootPath = configp.get('EnvVariables','MNERootDir')
             else:
                 MNERootPath = ''
+            
+            if configp.has_option('MiscOptions, autoReloadPreviousExperiment'):
+                if configp.get('MiscOptions',  
+                    'autoReloadPreviousExperiment') is 'true':
+                    self.ui.checkBoxAutomaticOpenPreviousExperiment.\
+                    setChecked(True)
                 
             self._workFilepath = workFilePath
             self._MNERootPath = MNERootPath
             self.ui.LineEditFilePath.setText(self._workFilepath)
             self.ui.lineEditMNERoot.setText(self._MNERootPath)
+     
      
     
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
@@ -104,23 +114,25 @@ class PreferencesDialog(QtGui.QDialog):
         
         
     def accept(self):
-        config = ConfigParser.RawConfigParser()
         
         if os.path.isdir(self._workFilepath):
-            config.add_section('Workspace')
-            config.set('Workspace', 'workspaceDir', self._workFilepath)           
+            workFilePath = self._workFilepath
         else:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('No file path found' +
-                                                   'for working file')
-            self.messageBox.show()
-            
+            message = 'No file path found for working file'
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.show()
+        
+        if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() is True:
+            autoLoadLastOpenExp = True
+        else: autoLoadLastOpenExp = False
+        
         # MNE Root path can be empty or wrong here, we can annoy user about
         # it if he really tries to use something MNE-related.
-        if os.path.isdir(self._MNERootPath):
-            config.add_section('MNERoot')
-            config.set('MNERoot','MNERootDir', self._MNERootPath)
-                
-        with open('settings.cfg', 'wb') as configfile:
-                config.write(configfile)
-        self.close()
+        MNERootPath = self._MNERootPath
+        
+        
+        prefecences.writePreferencesToDisk(workFilePath,
+                                           MNERootPath, 
+                                           autoLoadLastOpenExp)
+        
+        

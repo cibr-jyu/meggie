@@ -82,6 +82,7 @@ from experiment import Experiment
 from epochs import Epochs
 from events import Events
 from caller import Caller
+from prefecences import *
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel
@@ -112,6 +113,9 @@ class MainWindow(QtGui.QMainWindow):
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
         self.caller = Caller(self)
+       
+        # For storing and handling program wide prefences
+        self.preferencesHandler = PreferencesHandler(self)
        
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
@@ -1034,7 +1038,7 @@ class MainWindow(QtGui.QMainWindow):
         working_file_name = self.experiment._working_file_names[subject_name]
         if len(working_file_name) == 0:
             message = 'There is no working file in the chosen subject folder.'
-            self.messageBox = messageBoxes.shortMessageBox()
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
         
