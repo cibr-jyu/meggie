@@ -29,8 +29,10 @@
 
 """
 Created on Oct 22, 2013
+@author: Janne Pesonen, Kari Aliranta
 
-@author: jaolpeso
+Classes needed for controlling Meggie experiments.
+
 """
 import os
 import re
@@ -140,7 +142,7 @@ class Experiment(QObject):
         if (os.path.isdir(workspace)): 
             self._workspace = workspace
         else:
-            raise Exception('No such path')
+            raise Exception('No such workspace path')
 
 
     @property
@@ -715,3 +717,63 @@ class Experiment(QObject):
         """
         
         
+        
+class ExperimentHandler(QObject):
+    """
+    Class for handling the creation of a new experiment.
+    
+    TODO: should also handle switching active experiment.
+    """
+    
+    def __init__(self, parent):
+        """
+        Constructor
+        Keyword arguments:
+        parent        -- Parent of this object.
+        """
+        self.parent = parent
+    
+    
+    def initialize_experiment(self, expDict):
+        """
+        Initializes the experiment object with the given data. Assumes that
+        Meggie is currently devoid of a current experiment.
+        
+        Keyword arguments:   
+        """
+               
+        try:
+            experiment = Experiment()
+            experiment.author = expDict['author']
+            experiment.experiment_name = expDict['name']
+            experiment.description = expDict['description']
+            experiment.subject_paths = []
+        except AttributeError:
+            message = 'Cannot assign attribute to experiment.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+        
+        try:
+            workspace = self.parent.preferencesHandler._working_directory
+            experiment.workspace = workspace
+        except Exception, err:
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
+            self.messageBox.show()
+            return
+        
+        # TODO: why this?
+        # QtGui.QApplication.processEvents()
+        # Give control of the experiment to the main window of the application
+        self.parent.experiment = experiment
+        
+        try:
+            self.parent.experiment.save_experiment_settings()
+        except Exception, err:
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
+            self.messageBox.show()
+            return
+        
+        # Update the main UI to be less empty and allow actions for a new
+        # experiment.
+        self.parent.add_tabs()
+        self.parent._initialize_ui() 

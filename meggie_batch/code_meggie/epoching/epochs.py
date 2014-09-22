@@ -147,13 +147,13 @@ class Epochs(QObject):
         else:
             meg = False
         if isinstance(raw, mne.io.RawFIFF):
-            picks = mne.fiff.pick_types(raw.info, meg=meg, eeg=eeg,
+            # Was mne.fiff.pick types with MNE 0.7
+            picks = mne.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)
             if len(picks) == 0:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText \
-                ('Picks cannot be empty. ' + 
-                                'Select picks by checking the checkboxes.')
+                message = 'Picks cannot be empty. Select picks by' + \
+                'checking the checkboxes.'
+                self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()  
                 
             else:

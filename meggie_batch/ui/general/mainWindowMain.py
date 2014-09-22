@@ -78,7 +78,7 @@ from measurementInfo import MeasurementInfo
 from experimentInfoDialogMain import experimentInfoDialog
 import messageBoxes
 
-from experiment import Experiment
+import experiment
 from epochs import Epochs
 from events import Events
 from caller import Caller
@@ -114,8 +114,13 @@ class MainWindow(QtGui.QMainWindow):
         # bidding. 
         self.caller = Caller(self)
        
-        # For storing and handling program wide prefences
-        self.preferencesHandler = PreferencesHandler(self)
+        # For storing and handling program wide prefences.
+        self.preferencesHandler = PreferencesHandler()
+        self.preferencesHandler.readPreferencesFromDisk()
+       
+        # For handling initialization and switching of experiments.
+        # TODO: currently only handles initialization.
+        self.experimentHandler = experiment.ExperimentHandler(self)
        
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
@@ -200,7 +205,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Open an existing _experiment.
         """
-        #TODO: should be moved to a separate I/O module
         # Standard workaround for file dialog opening twice
         if checked is None: return 
                 
@@ -1335,7 +1339,6 @@ class MainWindow(QtGui.QMainWindow):
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
-    fileManager.setEnvVariables()
         
     # sys.stdout redirects the output to any object that implements
     # a write(str) method, in this case the write method of MainWindow.

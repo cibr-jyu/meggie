@@ -29,28 +29,17 @@
 
 """
 @author: Kari Aliranta, Jaakko Leppakangas
+
 Contains the CreateExperimentDialog-class that holds the logic for
 CreateExperimentDialog-window.
 """
 
-import fileManager
-from infoDialogMain import InfoDialog
+from PyQt4 import QtGui
+
 import messageBoxes
-
-from experiment import Experiment
-from workspace import Workspace
-
-from infoDialogUi import Ui_infoDialog
 from createExperimentDialogUi import Ui_CreateExperimentDialog
 
-from PyQt4 import QtCore, QtGui 
-
-import os, sys
-import StringIO
-import pickle
-import time
-import ConfigParser
-
+ 
 class CreateExperimentDialog(QtGui.QDialog):
     """
     Class containing the logic for CreateExperimentDialog. It is used for 
@@ -69,88 +58,21 @@ class CreateExperimentDialog(QtGui.QDialog):
         self.ui = Ui_CreateExperimentDialog() 
         self.ui.setupUi(self)
                 
+                
     def accept(self):
-        """Create the new experiment.
-        """
-        self.parent.hide_workspace_option()
-        self._initialize_experiment()
+        """Send parameters to experimentHandler for the creation of a
+        new experiment."""
         
-    def _initialize_experiment(self):
-        """
-        Initializes the experiment object with the given data.
-        """
         if self.ui.lineEditExperimentName.text() == '':
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Give experiment a name.')
+            message = 'Give experiment a name.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-            return          
-        try:
-            self.workspace = Workspace()
-            self.experiment = Experiment()
-            self.experiment.author = self.ui.lineEditAuthor.text()
-            self.experiment.experiment_name = self.ui.\
-            lineEditExperimentName.text()
-            self.experiment.description = (self.ui.textEditDescription.
-                                           toPlainText())
-            self.experiment.subject_paths = []
-        except AttributeError:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Cannot assign attribute' + 
-                                                   ' to experiment.')
-            self.messageBox.show()
-        try:
-            self.experiment.workspace = self.workspace.working_directory
-            print self.experiment.workspace
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()
-            return
-        QtGui.QApplication.processEvents()
-        # Give control of the experiment to the main window of the application
-        self.parent.experiment = self.experiment
-        
-        try:
-            self.experiment.save_experiment_settings()
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()
-            return
-        self.close()
-        self.parent.add_tabs()
-        self.parent._initialize_ui() 
+            return  
         
         
-          
-class OutLog:
-    """
-    Initial class for logging, not currently.
-    """
-    
-    def __init__(self, edit, out=None, color=None):
+        expDict = {'name': self.ui.lineEditExperimentName.text(),
+                   'author': self.ui.lineEditAuthor.text(),
+                   'description': self.ui.textEditDescription.toPlainText()
+                  }
         
-        #(edit, out=None, color=None) -> can write stdout, stderr to a
-        #QTextEdit.
-        #edit = QTextEdit
-        #out = alternate stream ( can be the original sys.stdout )
-        #color = alternate color (i.e. color stderr a different color)
-        
-        self.edit = edit
-        self.out = None
-        self.color = color
-
-    def write(self, m):
-        if self.color:
-            tc = self.edit.textColor()
-            self.edit.setTextColor(self.color)
-
-        self.edit.moveCursor(QtGui.QTextCursor.End)
-        self.edit.insertPlainText(m)
-
-        if self.color:
-            self.edit.setTextColor(tc)
-
-        if self.out:
-            self.out.write(m)
-            
+        self.parent.experimentHandler.initialize_experiment(expDict)

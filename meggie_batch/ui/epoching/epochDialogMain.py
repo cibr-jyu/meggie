@@ -115,9 +115,8 @@ class EpochDialog(QtGui.QDialog):
                             events, mag, grad, eeg, stim, eog, reject,
                             category, float(self.tmin), float(self.tmax))
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Could not create epochs: '
-                                                   + str(err))
+            message = 'Could not create epochs: ' + str(err)
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
         self.epochs_created.emit(epochs, self.collectionName)

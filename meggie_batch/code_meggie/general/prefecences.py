@@ -10,8 +10,7 @@ Module for code related to handling program wide preferences.
 
 import os
 import ConfigParser
-from cloud.util.configmanager import NoOptionError
-
+from ConfigParser import NoOptionError
 
 
 class PreferencesHandler(object):
@@ -25,63 +24,14 @@ class PreferencesHandler(object):
         Constructor
         '''
     
-        self._workingDirectory = ''
+        self._working_directory = ''
         self._MNERoot = ''
-        self._autoLoadLastOpenExperiment = None
-        self._previousExperimentPath = ''
+        self._auto_load_last_open_experiment = None
+        self._previous_experiment_path = ''
 
         self.readPreferencesFromDisk()
-
-    def getWorkingDirectory(self):
-        return self.__workingDirectory
-
-
-    def getMNERoot(self):
-        return self.__MNERoot
-
-
-    def getAutoLoadLastOpenExperiment(self):
-        return self.__autoLoadLastOpenExperiment
-
-
-    def getPreviousExperimentPath(self):
-        return self.__previousExperimentPath
-
-
-    def setWorkingDirectory(self, value):
-        self.__workingDirectory = value
-
-
-    def setMNERoot(self, value):
-        self.__MNERoot = value
-
-
-    def setAutoLoadLastOpenExperiment(self, value):
-        self.__autoLoadLastOpenExperiment = value
-
-
-    def setPreviousExperimentPath(self, value):
-        self.__previousExperimentPath = value
-
-
-    workingDirectory = property(get_working_directory, set_working_directory, None, None)
-    MNERoot = property(get_mneroot, set_mneroot, None, None)
-    autoLoadLastOpenExperiment = property(get_auto_load_last_open_experiment, set_auto_load_last_open_experiment, None, None)
-    previousExperimentPath = property(get_previous_experiment_path, set_previous_experiment_path, None, None)
-    workingDirectory = property(getWorkingDirectory, setWorkingDirectory, None, None)
-    MNERoot = property(getMNERoot, setMNERoot, None, None)
-    autoLoadLastOpenExperiment = property(getAutoLoadLastOpenExperiment, setAutoLoadLastOpenExperiment, None, None)
-    previousExperimentPath = property(getPreviousExperimentPath, setPreviousExperimentPath, None, None)
-
-    """
-    Pile of getters and setters for attributes.
-    """
     
 
-
-    
-    
-    
     def writePreferencesToDisk(self):
         """
         Writes the preferences to disk, in an easily readable form.
@@ -93,12 +43,12 @@ class PreferencesHandler(object):
         
         # Sanity of these values is assumed to be checked by the caller (should
         # only be preferencesDialog).
-        config.set('MiscOptions', '_previousExperimentPath', 
-                   self._previousExperimentPath)
-        config.set('Workspace', 'workspaceDir', self._workingDirectory)           
+        config.set('MiscOptions', '_previous_experiment_path', 
+                   self._previous_experiment_path)
+        config.set('Workspace', 'workspaceDir', self._working_directory)           
         config.set('EnvVariables','MNERootDir', self._MNERoot)
         
-        if self._autoLoadLastOpenExperiment is True:
+        if self._auto_load_last_open_experiment is True:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
         else:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'False')
@@ -115,38 +65,38 @@ class PreferencesHandler(object):
             config = ConfigParser.RawConfigParser('preferences.cfg')
         else: return
         
-        try:
-            self._workingDirectory = config.get('Workspace', 'workspaceDir') 
-            self._MNERoot = config.get('EnvVariables','MNERootDir')
-            self._autoLoadLastOpenExperiment = config.set('MiscOptions', 
-                                                'autoReloadPreviousExperiment')
-            self._previousExperimentPath = config.get('MiscOptions', 
-                                                     '_previousExperimentPath')
-        except NoOptionError:
-            return
-        
+        # If some preference is not present, just skip it (no exception
+        # handling present).
+        self._working_directory = config.get('Workspace', 'workspaceDir') 
+        self._MNERoot = config.get('EnvVariables','MNERootDir')
+        self._auto_load_last_open_experiment = config.set('MiscOptions', 
+                                            'autoReloadPreviousExperiment')
+        self._previous_experiment_path = config.get('MiscOptions', 
+                                                 '_previous_experiment_path')
         
     
     def updatePreference(self, prefName, prefValue):
         """
-        Changes the desired preference 
+        Changes the desired preference into value given. 
         
         Keyword arguments:
         
         TODO: write desc.
         
-        Also probably should raise exception instead of returning boolean.     
+        TODO: Also probably should raise exception instead of returning boolean,
+        but currently foreseeable preferences don't cause anything critical
+        if not set.     
         """
         
         if prefName not in ['workDir', '_MNERoot', 'autoLoadPrevExp',
                             'prevExpPath']:
             return False
     
-        if prefName is 'workDir': self._workingDirectory = prefValue
+        if prefName is 'workDir': self._working_directory = prefValue
         if prefName is '_MNERoot': self._MNERoot = prefValue
         if prefName is 'autoLoadPrevExp': 
-            self._autoLoadLastOpenExperiment = prefValue                                   
-        if prefName is 'prevExpPath': self._previousExperimentPath = prefValue
+            self._auto_load_last_open_experiment = prefValue                                   
+        if prefName is 'prevExpPath': self._previous_experiment_path = prefValue
         return True
     
     

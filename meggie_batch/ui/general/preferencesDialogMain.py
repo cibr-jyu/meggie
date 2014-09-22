@@ -80,7 +80,7 @@ class PreferencesDialog(QtGui.QDialog):
             else:
                 MNERootPath = ''
             
-            if configp.has_option('MiscOptions, autoReloadPreviousExperiment'):
+            if configp.has_option('MiscOptions', 'autoReloadPreviousExperiment'):
                 if configp.get('MiscOptions',  
                     'autoReloadPreviousExperiment') is 'true':
                     self.ui.checkBoxAutomaticOpenPreviousExperiment.\
