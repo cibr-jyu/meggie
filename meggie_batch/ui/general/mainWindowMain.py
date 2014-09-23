@@ -67,7 +67,6 @@ from spectrumDialogMain import SpectrumDialog
 from epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
-from consoleMain import Console
 from experimentInfoDialogMain import experimentInfoDialog
 import messageBoxes
 
@@ -139,19 +138,20 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
-                        
-        # For output logging.
-        self.console = Console()
         
         # Models for several views in tab, e.g. forward model setup tab. 
         # Also linking corresponding views to models.
         # self.forwardModelModel = None
         # self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
         
+        # TODO should show empty mainWindow with "loading previous experiment
+        # named <name>"-notification to user before starting to load
+        # the experiment, currently doesn't.
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler._auto_load_last_open_experiment is True:
             name = self.preferencesHandler._previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
+        
         
     #Property definitions below
     @property
@@ -199,6 +199,8 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
         Open an existing _experiment.
+        
+        TODO actual experiment opening code should be in ExperimentHandler
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return        
@@ -207,9 +209,8 @@ class MainWindow(QtGui.QMainWindow):
                    self, "Select _experiment directory"))
         if path == '': return
   
-        fname = os.path.join(path, path.split('/')[-1] + '.pro')
+        fname = os.path.join(path, path.split('/')[-1] + '.exp')
         # TODO needs exception checking for corrupt/wrong type of file
-        # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self._experiment = pickle.load(output)
@@ -275,7 +276,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def show_epoch_collection_parameters(self, epochs):
         """
-        Sets parameters from the currently chosen epochs.
+        Shows parameters from the currently chosen epochs.
         
         Keyword arguments:
         epochs -- Epochs object
@@ -1323,3 +1324,5 @@ def main():
     window.show()
     
     sys.exit(app.exec_())
+
+    

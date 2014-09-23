@@ -39,12 +39,11 @@ import re
 import csv
 import shutil
 
-from workspace import Workspace
 import fileManager
 from subject import Subject
 import messageBoxes
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
 
@@ -569,7 +568,7 @@ class Experiment(QObject):
             return
         # String conversion, because shutil doesn't accept QStrings
         # TODO the file should end with .exp
-        settingsFileName = str(self._experiment_name + '.pro')
+        settingsFileName = str(self._experiment_name + '.exp')
         
         # Actually a file object
         settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
@@ -588,7 +587,7 @@ class Experiment(QObject):
         # sille onko kyseistä kansiota jo olemassa
         experiment_directory = os.path.join(self._workspace, \
                                             self._experiment_name)
-        settingsFileName = str(self._experiment_name + '.pro')
+        settingsFileName = str(self._experiment_name + '.exp')
         settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
         pickle.dump(self, settingsFile, 2)
         settingsFile.close()
@@ -790,6 +789,10 @@ class ExperimentHandler(QObject):
         """
         Opens an existing experiment, which is assumed to be in the working
         directory.
+        
+        Keyword arguments:
+        
+        name        -- name of the existing experiment to be opened
         """
         
         if name is not '':    
@@ -802,7 +805,7 @@ class ExperimentHandler(QObject):
         else:
             return
         
-        fname = os.path.join(path, path.split('/')[-1] + '.pro')
+        fname = os.path.join(path, path.split('/')[-1] + '.exp')
         # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
@@ -812,6 +815,5 @@ class ExperimentHandler(QObject):
             # Sets the experiment for caller, so it can use its information.
             self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler._previous_experiment_name = \
-            self.parent.experiment._experiment_name 
-        
+            self.parent.experiment._experiment_name
         
