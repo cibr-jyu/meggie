@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/preferencesDialog.ui'
 #
-# Created: Mon Aug 25 16:55:42 2014
+# Created: Tue Sep 23 13:50:00 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,6 +38,7 @@ class Ui_DialogPreferences(object):
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(394, 92))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.formLayout_2 = QtGui.QFormLayout(self.scrollAreaWidgetContents)
+        self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
         self.groupBoxWorkingDirectory = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxWorkingDirectory.setObjectName(_fromUtf8("groupBoxWorkingDirectory"))
@@ -82,6 +83,18 @@ class Ui_DialogPreferences(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.formLayout_3.setLayout(0, QtGui.QFormLayout.LabelRole, self.verticalLayout_4)
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.groupBoxEnv)
+        self.groupBox = QtGui.QGroupBox(self.scrollAreaWidgetContents)
+        self.groupBox.setObjectName(_fromUtf8("groupBox"))
+        self.formLayout_4 = QtGui.QFormLayout(self.groupBox)
+        self.formLayout_4.setObjectName(_fromUtf8("formLayout_4"))
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        self.label_2.setText(_fromUtf8(""))
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.formLayout_4.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_2)
+        self.checkBoxAutomaticOpenPreviousExperiment = QtGui.QCheckBox(self.groupBox)
+        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName(_fromUtf8("checkBoxAutomaticOpenPreviousExperiment"))
+        self.formLayout_4.setWidget(1, QtGui.QFormLayout.LabelRole, self.checkBoxAutomaticOpenPreviousExperiment)
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.groupBox)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_3.addWidget(self.scrollArea)
         self.buttonBox = QtGui.QDialogButtonBox(DialogPreferences)
@@ -106,4 +119,6 @@ class Ui_DialogPreferences(object):
         self.groupBoxEnv.setTitle(_translate("DialogPreferences", "Environment variables:", None))
         self.labelMNERoot.setText(_translate("DialogPreferences", "Select MNEROOT directory (needed for source analysis):", None))
         self.pushButtonBrowseMNERoot.setText(_translate("DialogPreferences", "Browse...", None))
+        self.groupBox.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:", None))
+        self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup", None))
 

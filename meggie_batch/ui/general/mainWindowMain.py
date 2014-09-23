@@ -1,5 +1,4 @@
 # coding: latin1
-import fileManager
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -41,12 +40,8 @@ import pickle
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtGui import QWhatsThis
 
-import mne
 from mne import fiff
-from mne.datasets import sample
-from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 
-from matplotlib.figure import Figure
 import matplotlib
 matplotlib.use('Qt4Agg')
 import pylab as pl
@@ -70,11 +65,9 @@ from TFRDialogMain import TFRDialog
 from TFRTopologyDialogMain import TFRTopologyDialog
 from spectrumDialogMain import SpectrumDialog
 from epochWidgetMain import EpochWidget
-from epochParamsWidgetMain import EpochParamsWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
 from consoleMain import Console
-from measurementInfo import MeasurementInfo
 from experimentInfoDialogMain import experimentInfoDialog
 import messageBoxes
 
@@ -82,7 +75,7 @@ import experiment
 from epochs import Epochs
 from events import Events
 from caller import Caller
-from prefecences import *
+from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel
@@ -116,7 +109,6 @@ class MainWindow(QtGui.QMainWindow):
        
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
-        self.preferencesHandler.readPreferencesFromDisk()
        
         # For handling initialization and switching of experiments.
         # TODO: currently only handles initialization.
@@ -156,7 +148,10 @@ class MainWindow(QtGui.QMainWindow):
         # self.forwardModelModel = None
         # self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
         
-
+        # If the user has chosen to open the previous experiment automatically.
+        if self.preferencesHandler._auto_load_last_open_experiment is True:
+            name = self.preferencesHandler._previous_experiment_name
+            self.experimentHandler.open_existing_experiment(name)
         
     #Property definitions below
     @property
@@ -206,12 +201,12 @@ class MainWindow(QtGui.QMainWindow):
         Open an existing _experiment.
         """
         # Standard workaround for file dialog opening twice
-        if checked is None: return 
-                
+        if checked is None: return        
+       
         path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select _experiment directory"))
+                   self, "Select _experiment directory"))
         if path == '': return
-        
+  
         fname = os.path.join(path, path.split('/')[-1] + '.pro')
         # TODO needs exception checking for corrupt/wrong type of file
         # TODO the file should end with .exp
@@ -222,7 +217,8 @@ class MainWindow(QtGui.QMainWindow):
 
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
-            
+            self.preferencesHandler._previous_experiment_name = \
+            self.experiment._experiment_name   
         else:
             message = 'Experiment file not found. Please check your directory.'
             self.messageBox = messageBoxes.shortMessageBox(message)
@@ -276,17 +272,6 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
             # TODO: listWidgetSubects.currentItem() should be removed here
 
-    
-    def on_actionShow_Hide_Console_triggered(self, checked=None):
-        """
-        Show / Hide console window.
-        """
-        if checked is None: return
-        if self.console.isVisible():
-            self.console.hide()
-        else:
-            self.console.show()
- 
         
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -1328,22 +1313,13 @@ class MainWindow(QtGui.QMainWindow):
         
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
-
-        
-    def write(self, output):
-        self.console.show_log(output)
         
         
-    
         
 def main(): 
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
-        
-    # sys.stdout redirects the output to any object that implements
-    # a write(str) method, in this case the write method of MainWindow.
-    #sys.stdout=sys.stderr=window
-    
+            
     window.show()
     
     sys.exit(app.exec_())

@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -37,16 +37,13 @@
         <height>92</height>
        </size>
       </property>
-      <layout class="QFormLayout" name="formLayout_2">
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
+      <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBoxWorkingDirectory">
          <property name="title">
           <string>Working directory:</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
+         <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
@@ -84,7 +81,7 @@
          <property name="title">
           <string>Environment variables:</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_3">
+         <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
@@ -118,18 +115,18 @@
          <property name="title">
           <string>Miscellaneous preferences:</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_4">
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_2">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxAutomaticOpenPreviousExperiment">
             <property name="text">
-             <string/>
+             <string>Automatically open previous experiment upon application startup</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="checkBoxAutomaticOpenPreviousExperiment">
+           <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Automatically open previous experiment upon application startup</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -140,7 +137,7 @@
      </widget>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

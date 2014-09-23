@@ -2840,7 +2840,7 @@
   </widget>
   <action name="actionCreate_experiment">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/createExperiment.png</normaloff>:/toolBarIcons/images/createExperiment.png</iconset>
    </property>
    <property name="text">
@@ -2849,7 +2849,7 @@
   </action>
   <action name="actionOpen_experiment">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/openExperiment.png</normaloff>:/toolBarIcons/images/openExperiment.png</iconset>
    </property>
    <property name="text">
@@ -2878,7 +2878,7 @@
   </action>
   <action name="actionShowExperimentInfo">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/showExperimentInfo.png</normaloff>:/toolBarIcons/images/showExperimentInfo.png</iconset>
    </property>
    <property name="text">
@@ -2890,7 +2890,7 @@
   </action>
   <action name="actionHide_Show_subject_list_and_info">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/subjectList.png</normaloff>:/toolBarIcons/images/subjectList.png</iconset>
    </property>
    <property name="text">

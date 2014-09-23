@@ -734,12 +734,13 @@ class ExperimentHandler(QObject):
         self.parent = parent
     
     
-    def initialize_experiment(self, expDict):
+    def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
         Meggie is currently devoid of a current experiment.
         
-        Keyword arguments:   
+        TODO: Keyword arguments:
+           
         """
                
         try:
@@ -773,7 +774,44 @@ class ExperimentHandler(QObject):
             self.messageBox.show()
             return
         
+        # Tell the preferencesHandler that this is the experiment we've had
+        # open last.
+        self.parent.preferencesHandler._previous_experiment_name = \
+            expDict['name']
+        self.parent.preferencesHandler.writePreferencesToDisk()
+        
         # Update the main UI to be less empty and allow actions for a new
         # experiment.
         self.parent.add_tabs()
         self.parent._initialize_ui() 
+        
+        
+    def open_existing_experiment(self, name):
+        """
+        Opens an existing experiment, which is assumed to be in the working
+        directory.
+        """
+        
+        if name is not '':    
+            try:
+                path = os.path.join(
+                            self.parent.preferencesHandler._working_directory, 
+                            name)
+            except IOError:
+                pass
+        else:
+            return
+        
+        fname = os.path.join(path, path.split('/')[-1] + '.pro')
+        # TODO the file should end with .exp
+        if os.path.exists(path) and os.path.isfile(fname):
+            output = open(fname, 'rb')
+            self.parent._experiment = pickle.load(output)
+            self.parent._initialize_ui()
+
+            # Sets the experiment for caller, so it can use its information.
+            self.parent.caller.experiment = self.parent._experiment
+            self.parent.preferencesHandler._previous_experiment_name = \
+            self.parent.experiment._experiment_name 
+        
+        

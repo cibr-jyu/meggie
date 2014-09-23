@@ -66,33 +66,18 @@ class PreferencesDialog(QtGui.QDialog):
         self._MNERootPath= ''
     
         # Prefill previous values to UI and attributes from config file.
-        if os.path.isfile('settings.cfg'):
-            configp = ConfigParser.RawConfigParser()
-            configp.read('settings.cfg')
+        workDirectory = self.parent.preferencesHandler._working_directory
+        MNERootPath = self.parent.preferencesHandler._MNERoot
             
-            if configp.has_option('Workspace', 'workspacedir'):
-                workFilePath = configp.get('Workspace', 'workspacedir')
-            else: 
-                workFilePath = ''
-            
-            if configp.has_option('EnvVariables','MNERootDir'):
-                MNERootPath = configp.get('EnvVariables','MNERootDir')
-            else:
-                MNERootPath = ''
-            
-            if configp.has_option('MiscOptions', 'autoReloadPreviousExperiment'):
-                if configp.get('MiscOptions',  
-                    'autoReloadPreviousExperiment') is 'true':
-                    self.ui.checkBoxAutomaticOpenPreviousExperiment.\
-                    setChecked(True)
+        if self.parent.preferencesHandler._auto_load_last_open_experiment is True:
+            self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
                 
-            self._workFilepath = workFilePath
-            self._MNERootPath = MNERootPath
-            self.ui.LineEditFilePath.setText(self._workFilepath)
-            self.ui.lineEditMNERoot.setText(self._MNERootPath)
+        self._workFilepath = workDirectory
+        self._MNERootPath = MNERootPath
+        self.ui.LineEditFilePath.setText(self._workFilepath)
+        self.ui.lineEditMNERoot.setText(self._MNERootPath)
      
-     
-    
+       
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
         """
         Opens a filebrowser to select the workspace.
@@ -121,6 +106,7 @@ class PreferencesDialog(QtGui.QDialog):
             message = 'No file path found for working file'
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox.show()
+            return
         
         if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() is True:
             autoLoadLastOpenExp = True
@@ -131,8 +117,9 @@ class PreferencesDialog(QtGui.QDialog):
         MNERootPath = self._MNERootPath
         
         
-        prefecences.writePreferencesToDisk(workFilePath,
-                                           MNERootPath, 
-                                           autoLoadLastOpenExp)
-        
-        
+        self.parent.preferencesHandler._working_directory = workFilePath
+        self.parent.preferencesHandler._MNERoot = MNERootPath
+        self.parent.preferencesHandler._auto_load_last_open_experiment = \
+            autoLoadLastOpenExp
+        self.parent.preferencesHandler.writePreferencesToDisk()
+        self.close()
