@@ -38,7 +38,7 @@ import os,sys
 import pickle
  
 from PyQt4 import QtCore,QtGui
-from PyQt4.QtGui import QWhatsThis
+from PyQt4.QtGui import QWhatsThis, QFont
 
 from mne import fiff
 
@@ -1018,14 +1018,17 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
-        # This prevents taking the currentItem from the previously open
-        # subject when activating another subject.
-        # self.epochList.clearItems()
+        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        
+        # Not much point trying to activate an already active subject.
+        if subject_name == self.experiment.active_subject_name:
+            return      
+        
+        # This prevents taking the epoch list currentItem from the previously
+        # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
         
         working_file_name = ''
-        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
-        
         working_file_name = self.experiment._working_file_names[subject_name]
         if len(working_file_name) == 0:
             message = 'There is no working file in the chosen subject folder.'
@@ -1146,7 +1149,13 @@ class MainWindow(QtGui.QMainWindow):
             for path in self.experiment._subject_paths:
                 item = QtGui.QListWidgetItem()
                 # -1 is the index for the subject name
-                item.setText(path.split('/')[-1])
+                itemSubjectName = path.split('/')[-1]
+                item.setText(itemSubjectName)
+                # Let's bold the name of the active subject in the subject list.
+                if itemSubjectName == self.experiment.active_subject_name:
+                    itemFont = QFont('defaultFamily')
+                    itemFont.setBold(True)
+                    item.setFont(itemFont)
                 self.ui.listWidgetSubjects.addItem(item)
         
         # Checks if active subject exists and adds its contents on the lists.
