@@ -186,12 +186,13 @@ class MainWindow(QtGui.QMainWindow):
         Create a new CreateExperimentDialog and show it
         """
         if checked is None: return # Standard workaround for file dialog opening twice
-        if os.path.isfile('settings.cfg'):
+        
+        if self.preferencesHandler._working_directory != '':
             self.dialog = CreateExperimentDialog(self)
             self.dialog.show()
         else:
             self.check_workspace()
-            if os.path.isfile('settings.cfg'):
+            if self.preferencesHandler._working_directory != '':
                 self.dialog = CreateExperimentDialog(self)
                 self.dialog.show()   
 
@@ -1176,7 +1177,7 @@ class MainWindow(QtGui.QMainWindow):
         
         path = self.experiment.active_subject_path
         # To make sure that glob is not using path = '' as a root folder.
-        if path == '' and len(self.experiment._subject_paths) > 0:
+        if path == '':
             pass
         else:
             try:

@@ -53,7 +53,7 @@ import messageBoxes
 from statistic import Statistic
 
     
-def copy(self, original, target):
+def copy(original, target):
     """Copy the file at original to target.
     
     return True if no exceptions were raised, otherwise return
@@ -102,7 +102,7 @@ def copy_recon_files(aSubject, sourceDirectory):
             messageBox.exec_()   
     
     
-def create_key_csv_evoked(self, evoked):
+def create_key_csv_evoked(evoked):
     """Create a list used for creating a csv file of key values in evoked.
     
     The file contains the
@@ -166,7 +166,7 @@ def create_key_csv_evoked(self, evoked):
     return rows    
     
     
-def delete_file_at(self, folder, files):
+def delete_file_at(folder, files):
     """Delete files from a folder.
     
     Keyword arguments:
@@ -184,8 +184,8 @@ def delete_file_at(self, folder, files):
         os.remove(folder + '/' + files)
     except OSError:
         message = 'Could not delete selected files.'
-        self.messageBox = messageBoxes.shortMessageBox(message)
-        self.messageBox.show()
+        messageBox = messageBoxes.shortMessageBox(message)
+        messageBox._exec()
     except TypeError:
         # If files is a list object instead of string.
         for file in files:
@@ -199,7 +199,7 @@ def delete_file_at(self, folder, files):
     return True
     
     
-def load_epochs(self, fname):
+def load_epochs(fname):
     """Load epochs from a folder.
     
     Keyword arguments:
@@ -218,12 +218,12 @@ def load_epochs(self, fname):
             epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
         except IOError:
             message = 'Reading from selected folder is not allowed.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox._exec()
             return epochs
     
     try:
-        parameters = self.unpickle(os.path.join(folder, name + '.param'))
+        parameters = unpickle(os.path.join(folder, name + '.param'))
         
     except IOError:
         parameters = None
@@ -240,7 +240,7 @@ def load_epochs(self, fname):
     return epochs, parameters
     
     
-def load_evoked(self, folder, file):
+def load_evoked(folder, file):
     """Load evokeds to the list when mainWindow is initialized
     
     Keyword arguments:
@@ -293,8 +293,8 @@ def load_evoked(self, folder, file):
                     ' necessarily support all the functionality in' + \
                     ' Meggie. The evoked.fif files with more than 8' + \
                     ' datasets could not be loaded.'
-                    self.messageBox = messageBoxes.shortMessageBox(message)
-                    self.messageBox.show()
+                    messageBox = messageBoxes.shortMessageBox(message)
+                    messageBox._exec()
                     return
                     """
                     # When visualizing evoked datasets the color set
@@ -311,8 +311,8 @@ def load_evoked(self, folder, file):
                 return evokeds, category
         except ValueError:
             message = 'File is not an evoked.fif file.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox._exec()
             return None, None
     
     return evokeds, category
@@ -341,7 +341,7 @@ def open_raw(fname, pre_load=True):
         raise ValueError('File is not a raw-file')
     
     
-def pickleObjectToFile(self, picklable, fpath):
+def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
     
     Keyword arguments:
@@ -361,7 +361,7 @@ def pickleObjectToFile(self, picklable, fpath):
     pickleFile.close()
     
     
-def unpickle(self, fpath):
+def unpickle(fpath):
     """Unpickle an object from a file at fpath.
     
     Keyword arguments:
@@ -374,7 +374,7 @@ def unpickle(self, fpath):
     return pickle.load(open(fpath, 'rb'))
     
     
-def save_epoch(self, fpath, epoch, overwrite=False):
+def save_epoch(fpath, epoch, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -410,7 +410,7 @@ def save_epoch(self, fpath, epoch, overwrite=False):
         event_dict[key].append(event)
     parameters['events'] = event_dict
     parameterFileName = str(fpath + '.param')
-    self.pickle(parameters, parameterFileName)
+    pickleObjectToFile(parameters, parameterFileName)
 
 
 def setEnvVariables():

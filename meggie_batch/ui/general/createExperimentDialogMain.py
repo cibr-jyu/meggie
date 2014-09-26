@@ -75,4 +75,6 @@ class CreateExperimentDialog(QtGui.QDialog):
                    'description': self.ui.textEditDescription.toPlainText()
                   }
         
-        self.parent.experimentHandler.initialize_experiment(expDict)
+        self.parent.experimentHandler.initialize_new_experiment(expDict)
+        
+        self.close()

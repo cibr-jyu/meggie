@@ -213,7 +213,7 @@ class Subject(QObject):
             self.create_evokeds_directory()
             
             # Save channel names list under subject folder
-            fileManager.pickleObjectToFile(self, self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
+            fileManager.pickleObjectToFile(self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
         else:
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
