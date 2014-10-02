@@ -44,14 +44,15 @@ class ForwardModelDialog(QtGui.QDialog):
         """
         fmdict = {}
         
-        fmdict['fname'] = self.ui.lineEditFModelName.text()
+        fmdict['fmname'] = self.ui.lineEditFModelName.text()
         
         # A bit of checking for stupidities in naming to avoid conflicts
         # with directories created by MNE scripts.
         # TODO probably should be limited to alphanumeric ascii without spaces,
         # too.
-        if string.lower(fmdict['fname']) is 'mri' or 'bem':
-            message = "'mri' or 'bem' are not acceptable fmodel names"
+        if string.lower(fmdict['fmname']) is 'mri' or 'bem':
+            message = "'mri' or 'bem' are not acceptable fmodel names (they " + \
+                      "get mixed up with MNE directory names)."
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
@@ -168,13 +169,15 @@ class ForwardModelDialog(QtGui.QDialog):
         """
         
         fmdict = self.collectParametersIntoDictionary(self)
+        fmname = fmdict['fmname']
         
-        pdict = self.convertParameterDictionaryToCommandlineParameterTuple(fmdict)
+        cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(fmdict)
 
         try:
-            self.parent.caller.create_forward_model(pdict)
+            self.parent.caller.create_forward_model(fmname, cmdTuple)
         except Exception, err:
             message = 'Problem creating forward model' + str(err)
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
+        self.close()

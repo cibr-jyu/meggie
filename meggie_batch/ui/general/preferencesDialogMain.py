@@ -90,12 +90,12 @@ class PreferencesDialog(QtGui.QDialog):
         self.ui.LineEditFilePath.setText(self._workFilepath)
     
     
-    def on_pushButton_browseMNERoot_click(self, checked=None):
+    def on_pushButtonBrowseMNERoot_clicked(self, checked=None):
         if checked is None: return  
         
-        self.MNERootPath = str(QtGui.QFileDialog.getExistingDirectory(
+        self._MNERootPath = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select the directory for MNE root"))
-        self.ui.LineEditFilePath.setText(self._MNERootPath)
+        self.ui.lineEditMNERoot.setText(self._MNERootPath)
         
         
     def accept(self):

@@ -1,4 +1,5 @@
 # coding: latin1
+import shutil
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -91,9 +92,9 @@ class Caller(object):
         Keyword arguments:
         parent        -- Parent of this object.
         """
+        # Easiest way to reach experiment, active subject, preferences etc. is
+        # via parent, so let's use it.
         self.parent = parent
-        # TODO add a setter to set active subject directly as an attribute,
-        # instead of calling self.parent.experiment.active subject
     
     
     def call_mne_browse_raw(self, filename):
@@ -867,7 +868,7 @@ class Caller(object):
                                     e.output)
         
         
-    def create_forward_model(self, setupSourceSpaceArgs, waterShedArgs, 
+    def create_forward_model(self, fmname, setupSourceSpaceArgs, waterShedArgs, 
                              setupFModelArgs ):
         """
         Creates a single forward model and saves it to an appropriate directory.
@@ -900,7 +901,7 @@ class Caller(object):
         eli bem-hakemiston bem.fif- ja bem-sol.fif-tiedostot ("bem forward model
         files"), sekä saman hakemiston <subject>-<spacing>- src.fif-tiedosto ("source
         space file"). Nämä siis fmodels-hakemiston alle käyttäjän antamalla
-        fmodelin nimellä. Sitten voinee hävittää kaikki mri-hakemiston
+        fmodelin nimellä nimettyyn hakemistoon. Sitten voinee hävittää kaikki mri-hakemiston
         alihakemistot sekä subjectin alisen bem-hakemiston tiedostot.
         """
         
@@ -928,16 +929,17 @@ class Caller(object):
             return
         """
         
+        # TODO clean up if one of these fails.
         try:
             subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
         except CalledProcessError as e:
-          'There was a problem with mne_setup_watershed_bem. Script output: ' \
+            'There was a problem with mne_setup_watershed_bem. Script output: ' \
             + e.output    
             
         try:
             subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
         except CalledProcessError as e:
-          'There was a problem with mne_setup_watershed_bem. Script output: ' \
+            'There was a problem with mne_setup_watershed_bem. Script output: ' \
             + e.output
           
         try:
@@ -946,10 +948,10 @@ class Caller(object):
         except CalledProcessError as e:    
             'There was a problem with mne_setup_forward_model. Script output: ' \
             + e.output
-            
-    
-    
 
+        
+        #shutil.copy(src, dst)
+            
 
     def update_experiment_working_file(self, fname, raw):
         """

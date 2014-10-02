@@ -1,5 +1,6 @@
 *.pyc
 *~
-settings.cfg
+preferences.cfg
 *.~lock.*
 *.orig
+
