@@ -908,8 +908,8 @@ class Caller(object):
         # Set env variables to point to appropriate directories. 
         os.environ['SUBJECTS_DIR'] = self.parent.experiment._active_subject.\
                                      _source_analysis_directory
-        os.environ['SUBJECT'] = self.parent.experiment.\
-                                _active_subject._reconFiles_directory
+        reconDir = self.parent.experiment._active_subject._reconFiles_directory
+        os.environ['SUBJECT'] = reconDir
         
         # Jos subprocess ei toimi.
         """
@@ -949,8 +949,9 @@ class Caller(object):
             'There was a problem with mne_setup_forward_model. Script output: ' \
             + e.output
 
-        
-        #shutil.copy(src, dst)
+                
+        # DirToCopy = os.path.join(reconDir, 'bem')
+        # shutil.copy(, dst)
             
 
     def update_experiment_working_file(self, fname, raw):

@@ -131,9 +131,8 @@ class EogParametersDialog(QtGui.QDialog):
         try:
             self.parent.caller.call_eog_ssp(dictionary)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Cannot calculate ' +
-                                                   'projections: ' + str(err))
+            message = 'Cannot calculate projections: ' + str(err)
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         

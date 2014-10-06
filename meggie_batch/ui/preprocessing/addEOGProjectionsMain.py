@@ -86,8 +86,7 @@ class AddEOGProjections(QtGui.QDialog):
             self.parent.caller.apply_eog(self.parent.experiment.active_subject.working_file,
                                          self.parent.experiment.active_subject_path)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
         # No need to initialize whole mainwindow again.

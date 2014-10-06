@@ -235,8 +235,7 @@ class EcgParametersDialog(QtGui.QDialog):
             except Exception, err:
                 error_message = 'Cannot calculate projections: ' + str(err) + \
                 '\nCheck parameters.'
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText(error_message)
+                self.messageBox = messageBoxes.shortMessageBox(error_message)
                 self.messageBox.show()
                 return
             # No need to initialize the whole main window again.
@@ -304,9 +303,8 @@ class EcgParametersDialog(QtGui.QDialog):
                         except Exception, err:
                             error_message = 'Cannot calculate projections: ' + \
                             str(err) + '\nCheck parameters.'
-                            self.messageBox = messageBox.AppForm()
-                            self.messageBox.labelException.\
-                            setText(error_message)
+                            self.messageBox = messageBoxes.shortMessageBox(
+                                              error_message)
                             self.messageBox.show()
                             
                         # Remove extra raw file from memory
@@ -323,8 +321,8 @@ class EcgParametersDialog(QtGui.QDialog):
             row = self.ui.listWidgetSubjects.row(item)
             self.ui.listWidgetSubjects.takeItem(row)
         else:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Select a subject to remove.')
+            message = 'Select a subject to remove.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
     
     def on_pushButtonApply_clicked(self, checked=None):
