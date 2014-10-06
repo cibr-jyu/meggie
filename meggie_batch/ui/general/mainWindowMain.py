@@ -67,6 +67,7 @@ from spectrumDialogMain import SpectrumDialog
 from epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
+from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
 import messageBoxes
 
@@ -961,8 +962,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must create epochs before TFR.'
-            self.messageBox = messageBoxes.shortMessageBox()
-            self.messageBox.labelException.setText()
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
@@ -1055,7 +1055,20 @@ class MainWindow(QtGui.QMainWindow):
                self, "Select directory of the reconstructed MRI image"))
         self.ui.lineEditRecon.setText(path)
         
-        # TODO Joku tarkistus, ett‰ on jotain j‰rkev‰‰ kopioitavaksi
+        # TODO: Jos jo kopioitu, pit‰is varmaan ilmoittaa, ett‰ uuden valitse-
+        # minen invalidoi sitten kaiken, mit‰ t‰m‰n j‰lkeen tulee, ja pyyt‰‰
+        # vahvistusta. Ja jos k‰ytt‰j‰ vahvistaa, pit‰is tyhjent‰‰ koko
+        # source_analysis_directory?
+        
+        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+            "Do you really want to change the reconstructed files? This will " +
+            " invalidate all later source analysis work and clear the results",
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+        
+        if reply == QtGui.QMessageBox.Yes:
+            continue
+        else:
+            return
         
         activeSubject = self.experiment._active_subject
         fileManager.copy_recon_files(activeSubject, path)
@@ -1071,7 +1084,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
-        # self.
+        self.fmodelDialog = ForwardModelDialog(self)
+        self.fmodelDialog.show()
         
 
 
@@ -1116,7 +1130,10 @@ class MainWindow(QtGui.QMainWindow):
     
     def _initialize_ui(self):
         """
-        Method for setting up the GUI.
+        Method for setting up the GUI. Called whenever a subject is activated,
+        either via creation of a new subject or change of an active subject.
+        Checks the existence of a ton of files and sets the GUI fields to
+        reflect the state of the experiment and subject according to them. 
         """
         self.add_tabs()
 
@@ -1180,7 +1197,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.populate_raw_tab_event_list()
             self.enable_tabs()
 
-        # Subject tab should stays active after removing active subject.
+        # Set to first tab after removing active subject.
         if self.experiment.active_subject_path == '':
             self.ui.tabWidget.setCurrentIndex(0)
         
@@ -1231,6 +1248,14 @@ class MainWindow(QtGui.QMainWindow):
  
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
+        # Check whether reconstructed mri files have been copied to the recon
+        # files directory under the subject and set up the UI accordingly.
+        reconDir = self._experiment._active_subject._reconFiles_directory
+        mriDir = os.path.join(reconDir, 'mri') 
+        if os.path.isdir(mriDir):
+            self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
+                                          'copied.')
+            
         
     def add_tabs(self):
         """

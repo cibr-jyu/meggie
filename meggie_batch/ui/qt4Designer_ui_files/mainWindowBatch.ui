@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1755,7 +1755,7 @@
                                <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
                               </property>
                               <property name="text">
-                               <string>1. Select directory of the reconstructed MRI image files:</string>
+                               <string>1. Select directory to copy the reconstructed MRI image files from:</string>
                               </property>
                              </widget>
                             </item>

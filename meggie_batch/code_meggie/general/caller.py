@@ -851,9 +851,8 @@ class Caller(object):
         # Hack the SUBJECT_DIR and SUBJECT variables to right location 
         # (mne_setup_mri searches for reconstructed files from mri directory
         # under the SUBJECT 
-        os.environ['SUBJECTS_DIR'] = self.parent.experiment.active_subject.\
-                                        _subject_path
-        os.environ['SUBJECT'] = 'sourceAnalysis'
+        os.environ['SUBJECTS_DIR'] = sourceAnalDir
+        os.environ['SUBJECT'] = 'reconFiles'
         
         # vaatii ensin $SUBJECTS_DIR-envin asetuksen. Jos myös $SUBJECT asetettu,
         # ei vaadi tuon subjektin antamista parametrina (etsii filuja
@@ -868,8 +867,8 @@ class Caller(object):
                                     e.output)
         
         
-    def create_forward_model(self, fmname, setupSourceSpaceArgs, waterShedArgs, 
-                             setupFModelArgs ):
+    def create_forward_model(self, fmname, (setupSourceSpaceArgs, waterShedArgs, 
+                             setupFModelArgs)):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
@@ -931,7 +930,8 @@ class Caller(object):
         
         # TODO clean up if one of these fails.
         try:
-            subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
+            subprocess.check_output(['mne_setup_source_space'] +
+                                    setupSourceSpaceArgs)
         except CalledProcessError as e:
             'There was a problem with mne_setup_watershed_bem. Script output: ' \
             + e.output    
