@@ -85,10 +85,27 @@ def copy_recon_files(aSubject, sourceDirectory):
         sourceDirectory     -- directory including the mri and surf file 
         
         """
+        
+        mriDir = os.path.join(sourceDirectory, 'mri')
+        surfDir = os.path.join(sourceDirectory, 'surf')
+        
+        if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
+            message = "Reconstructed image directory should have both 'surf' " + \
+             "and 'mri' directories in it"
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.exec_()   
+            return          
+        
         activeSubject = aSubject
         
-        if not (os.path.isdir(activeSubject._reconFiles_directory)):
-            activeSubject.create_reconFiles_directory()
+        reconDir = activeSubject._reconFiles_directory
+        
+        # Empty the destination directory first by removing it, then make it
+        # again.
+        if os.path.isdir(reconDir):
+            dir_util.remove_tree(reconDir)
+        
+        activeSubject.create_reconFiles_directory()
         
         dst = activeSubject._reconFiles_directory
         
@@ -100,6 +117,20 @@ def copy_recon_files(aSubject, sourceDirectory):
             ' happened.'
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox.exec_()   
+    
+    
+def remove_sourceAnalysis_files(aSubject):
+    """
+    Recursively removes contents of the source analysis directory.
+    Used when copying new recon files invalidates the rest of the source
+    analysis chain. 
+    
+    Keyword arguments:
+    
+    aSubject    -- currently active subject in the experiment 
+    """
+    
+    # shutil.rmtree(directory, ignore_errors, onerror)
     
     
 def create_key_csv_evoked(evoked):

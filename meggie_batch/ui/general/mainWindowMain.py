@@ -1051,9 +1051,6 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         if checked is None : return
         
-        path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select directory of the reconstructed MRI image"))
-        self.ui.lineEditRecon.setText(path)
         
         # TODO: Jos jo kopioitu, pit‰is varmaan ilmoittaa, ett‰ uuden valitse-
         # minen invalidoi sitten kaiken, mit‰ t‰m‰n j‰lkeen tulee, ja pyyt‰‰
@@ -1062,17 +1059,24 @@ class MainWindow(QtGui.QMainWindow):
         
         reply = QtGui.QMessageBox.question(self, 'Please confirm',
             "Do you really want to change the reconstructed files? This will " +
-            " invalidate all later source analysis work and clear the results",
+            " invalidate all later source analysis work and clear the results "+ 
+            "of the later phases",
             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
         
-        if reply == QtGui.QMessageBox.Yes:
-            continue
-        else:
+        if reply == QtGui.QMessageBox.No:
             return
         
+        path = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select directory of the reconstructed MRI image"))
+        
         activeSubject = self.experiment._active_subject
+         
+        # Scourging of the source analysis files here - actually, is this
+        # necessary?
+        # fileManager.remove_sourceAnalysis_files(activeSubject)
+        
         fileManager.copy_recon_files(activeSubject, path)
-      
+        self.ui.lineEditRecon.setText(path)
         
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         self.caller.convert_mri_to_mne()
@@ -1251,7 +1255,7 @@ class MainWindow(QtGui.QMainWindow):
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
         reconDir = self._experiment._active_subject._reconFiles_directory
-        mriDir = os.path.join(reconDir, 'mri') 
+        mriDir = os.path.join(reconDir, 'mri/') 
         if os.path.isdir(mriDir):
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
