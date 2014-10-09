@@ -850,7 +850,7 @@ class Caller(object):
         
         # Hack the SUBJECT_DIR and SUBJECT variables to right location 
         # (mne_setup_mri searches for reconstructed files from mri directory
-        # under the SUBJECT 
+        # under the SUBJECT)
         os.environ['SUBJECTS_DIR'] = sourceAnalDir
         os.environ['SUBJECT'] = 'reconFiles'
         

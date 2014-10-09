@@ -1071,12 +1071,17 @@ class MainWindow(QtGui.QMainWindow):
         
         activeSubject = self.experiment._active_subject
          
-        # Scourging of the source analysis files here - actually, is this
-        # necessary?
-        # fileManager.remove_sourceAnalysis_files(activeSubject)
         
-        fileManager.copy_recon_files(activeSubject, path)
-        self.ui.lineEditRecon.setText(path)
+        
+        if fileManager.copy_recon_files(activeSubject, path) == True:
+            self.ui.lineEditRecon.setText(path)
+            self.ui.pushButtonConvertToMNE.setEnabled(True)
+            # Scourging of the source analysis files here - actually, is this
+            # necessary?
+            # fileManager.remove_sourceAnalysis_files(activeSubject)
+        else:
+            self.ui.pushButtonConvertToMNE.setEnabled(False)
+        
         
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         self.caller.convert_mri_to_mne()

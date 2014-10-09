@@ -84,6 +84,8 @@ def copy_recon_files(aSubject, sourceDirectory):
         aSubject            -- currently active subject
         sourceDirectory     -- directory including the mri and surf file 
         
+        Returns True if copying was successful, else returns False.
+        
         """
         
         mriDir = os.path.join(sourceDirectory, 'mri')
@@ -91,10 +93,10 @@ def copy_recon_files(aSubject, sourceDirectory):
         
         if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
             message = "Reconstructed image directory should have both 'surf' " + \
-             "and 'mri' directories in it"
+             "and 'mri' directories in it."
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox.exec_()   
-            return          
+            return False          
         
         activeSubject = aSubject
         
@@ -110,14 +112,17 @@ def copy_recon_files(aSubject, sourceDirectory):
         dst = activeSubject._reconFiles_directory
         
         try:
+            print '\n Copying recon files... \n'
             dir_util.copy_tree(sourceDirectory, dst)
+            print '\n Recon files copying complete! \n'
+            return True
         except IOError:
             message = 'Could not copy files. Either the disk is full ' + \
             ' , you have no rights to read the directory or something weird' + \
             ' happened.'
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox.exec_()   
-    
+            return False
     
 def remove_sourceAnalysis_files(aSubject):
     """
