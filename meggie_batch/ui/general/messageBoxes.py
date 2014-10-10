@@ -51,7 +51,7 @@ class shortMessageBox(QtGui.QDialog):
     def create_main_frame(self):        
         page = QtGui.QWidget()
         
-        self.resize(400, 150)
+        self.resize(500, 150)
         self.setWindowTitle('Error') 
         self.buttonClose = QtGui.QPushButton('Close', page)
         self.labelException = QtGui.QLabel()

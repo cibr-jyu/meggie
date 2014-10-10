@@ -838,15 +838,15 @@ class Caller(object):
     
     def convert_mri_to_mne(self):
         """
-        Pitäis etsiä se recontructed MRI image subjectin tietämästä paikasta,
-        ja sitten asettaa subject diriksi se paikka, ja ajaa skripti siinä
-        paikassa. 
+        Uses mne_setup_mri to active subject recon directory to create Neuromag
+        slices and sets (to be input later to do_forward_solution).
+        
+        Return True if creation successful, False if there was an error. 
         """
         
         sourceAnalDir = self.parent.experiment.active_subject.\
                             _source_analysis_directory
         
-       
         
         # Hack the SUBJECT_DIR and SUBJECT variables to right location 
         # (mne_setup_mri searches for reconstructed files from mri directory
@@ -854,17 +854,20 @@ class Caller(object):
         os.environ['SUBJECTS_DIR'] = sourceAnalDir
         os.environ['SUBJECT'] = 'reconFiles'
         
+        
         # vaatii ensin $SUBJECTS_DIR-envin asetuksen. Jos myös $SUBJECT asetettu,
         # ei vaadi tuon subjektin antamista parametrina (etsii filuja
         # mri-hakemistosta subjektin alta).
-        # 
-        # TODO requires setting MNE_ROOT 
         try:
-            subprocess.check_output('mne_setup_mri')
+            subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
+            return True
         except CalledProcessError as e:
-            raise CalledProcessError('Problem setting mri images.' +
-                                    'mne_setup_mri output: \n ' +
-                                    e.output)
+            message = 'mne_setup_mri output: \n' \
+            + str(e.output)
+            title = 'Problem setting mri images'
+            self.messagebox = messageBoxes.longMessageBox(title, message)
+            self.messagebox.show()
+            return False
         
         
     def create_forward_model(self, fmname, (setupSourceSpaceArgs, waterShedArgs, 

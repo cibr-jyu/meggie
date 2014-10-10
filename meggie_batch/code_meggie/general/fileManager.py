@@ -124,6 +124,7 @@ def copy_recon_files(aSubject, sourceDirectory):
             messageBox.exec_()   
             return False
     
+    
 def remove_sourceAnalysis_files(aSubject):
     """
     Recursively removes contents of the source analysis directory.

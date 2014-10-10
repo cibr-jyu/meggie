@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/mainWindowBatch.ui'
 #
-# Created: Wed Aug 27 14:31:48 2014
+# Created: Fri Oct 10 19:04:46 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(1131, 756)
+        MainWindow.resize(1404, 756)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -68,6 +68,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabPreprocessing = QtGui.QWidget()
         self.tabPreprocessing.setMinimumSize(QtCore.QSize(500, 0))
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setWeight(50)
+        self.tabPreprocessing.setFont(font)
         self.tabPreprocessing.setObjectName(_fromUtf8("tabPreprocessing"))
         self.layoutWidget = QtGui.QWidget(self.tabPreprocessing)
         self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 425, 596))
@@ -821,8 +825,9 @@ class Ui_MainWindow(object):
         self.label_14.setObjectName(_fromUtf8("label_14"))
         self.gridLayout_11.addWidget(self.label_14, 0, 1, 1, 1)
         self.checkBoxConvertedToMNE = QtGui.QCheckBox(self.groupBox_2)
+        self.checkBoxConvertedToMNE.setEnabled(False)
         self.checkBoxConvertedToMNE.setText(_fromUtf8(""))
-        self.checkBoxConvertedToMNE.setCheckable(False)
+        self.checkBoxConvertedToMNE.setCheckable(True)
         self.checkBoxConvertedToMNE.setObjectName(_fromUtf8("checkBoxConvertedToMNE"))
         self.gridLayout_11.addWidget(self.checkBoxConvertedToMNE, 1, 1, 1, 1)
         self.pushButtonConvertToMNE = QtGui.QPushButton(self.groupBox_2)
@@ -980,7 +985,7 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1131, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1404, 23))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -1356,16 +1361,16 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAveraging), _translate("MainWindow", "Averaging", None))
         self.groupBoxReconstruction.setTitle(_translate("MainWindow", "MRI image reconstruction", None))
         self.label_4.setWhatsThis(_translate("MainWindow", "MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.", None))
-        self.label_4.setText(_translate("MainWindow", "1. Select directory of the reconstructed MRI image:", None))
+        self.label_4.setText(_translate("MainWindow", "1. Select directory to copy the reconstructed MRI image files from:", None))
         self.lineEditRecon.setWhatsThis(_translate("MainWindow", "MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.", None))
         self.pushButtonBrowseRecon.setWhatsThis(_translate("MainWindow", "MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.", None))
         self.pushButtonBrowseRecon.setText(_translate("MainWindow", "Browse...", None))
-        self.label_6.setText(_translate("MainWindow", "2. Examine the reconstructed MRI image:", None))
+        self.label_6.setText(_translate("MainWindow", "2. Examine the reconstructed MRI image files:", None))
         self.pushButtonCheckTalairach.setText(_translate("MainWindow", "Check Talairach transform", None))
         self.pushButtonSkullStrip.setText(_translate("MainWindow", "Check skull strip", None))
         self.pushButtonCheckSurfaces.setText(_translate("MainWindow", "Check surfaces", None))
         self.pushButtonCheckSegmentations.setText(_translate("MainWindow", "Check segmentation", None))
-        self.groupBox_2.setTitle(_translate("MainWindow", "Converting MRI image to MNE-friendly format", None))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Converting MRI image files to MNE-friendly format", None))
         self.label_14.setText(_translate("MainWindow", "Converted:", None))
         self.pushButtonConvertToMNE.setText(_translate("MainWindow", "Use mne_setup_mri for conversion", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourcePreparation), _translate("MainWindow", "MRI reconstruction", None))
@@ -1413,7 +1418,7 @@ class Ui_MainWindow(object):
         self.labelSubjectGeneral.setText(_translate("MainWindow", "General:", None))
         self.labelSubject.setText(_translate("MainWindow", "Name:", None))
         self.labelDate.setText(_translate("MainWindow", "Date:", None))
-        self.groupBoxSubject_2.setTitle(_translate("MainWindow", "Subjects", None))
+        self.groupBoxSubject_2.setTitle(_translate("MainWindow", "Subjects (active in bold):", None))
         self.pushButtonActivateSubject.setText(_translate("MainWindow", "Activate selected", None))
         self.pushButtonAddSubjects.setText(_translate("MainWindow", "Add new...", None))
         self.pushButtonRemoveSubject.setText(_translate("MainWindow", "Remove selected", None))

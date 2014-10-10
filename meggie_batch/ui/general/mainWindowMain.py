@@ -81,7 +81,6 @@ from listWidget import ListWidget
 from mvcModels import ForwardModelModel
 
 
-
 class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
@@ -109,6 +108,7 @@ class MainWindow(QtGui.QMainWindow):
        
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
+        self.preferencesHandler.setEnvVariables()
        
         # For handling initialization and switching of experiments.
         # TODO: currently only handles initialization.
@@ -163,6 +163,8 @@ class MainWindow(QtGui.QMainWindow):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
+        
+        
         
 ### Code for catching signals and reacting to them ###
 
@@ -1051,12 +1053,6 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         if checked is None : return
         
-        
-        # TODO: Jos jo kopioitu, pit‰is varmaan ilmoittaa, ett‰ uuden valitse-
-        # minen invalidoi sitten kaiken, mit‰ t‰m‰n j‰lkeen tulee, ja pyyt‰‰
-        # vahvistusta. Ja jos k‰ytt‰j‰ vahvistaa, pit‰is tyhjent‰‰ koko
-        # source_analysis_directory?
-        
         reply = QtGui.QMessageBox.question(self, 'Please confirm',
             "Do you really want to change the reconstructed files? This will " +
             " invalidate all later source analysis work and clear the results "+ 
@@ -1070,12 +1066,12 @@ class MainWindow(QtGui.QMainWindow):
                self, "Select directory of the reconstructed MRI image"))
         
         activeSubject = self.experiment._active_subject
-         
-        
+          
         
         if fileManager.copy_recon_files(activeSubject, path) == True:
             self.ui.lineEditRecon.setText(path)
             self.ui.pushButtonConvertToMNE.setEnabled(True)
+            self.ui.checkBoxConvertedToMNE.setChecked(False)
             # Scourging of the source analysis files here - actually, is this
             # necessary?
             # fileManager.remove_sourceAnalysis_files(activeSubject)
@@ -1084,8 +1080,13 @@ class MainWindow(QtGui.QMainWindow):
         
         
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
-        self.caller.convert_mri_to_mne()
-    
+        if checked is None : return
+        
+        if self.caller.convert_mri_to_mne():
+            self.ui.checkBoxConvertedToMNE.setEnabled(True)
+        else:
+            self.ui.checkBoxConvertedToMNE.setEnabled(False)
+            
         
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
         """
@@ -1264,7 +1265,16 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.isdir(mriDir):
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
-            
+            self.ui.pushButtonConvertToMNE.setEnabled(True)
+        
+        # Check if MRI image has been setup with mne_setup_forward solution
+        T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
+        brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')
+        if os.path.isdir(T1NeuroMagDir) and os.path.isdir(brainNeuroMagDir):
+            self.ui.checkBoxConvertedToMNE.setChecked(True)
+        else:
+            self.ui.checkBoxConvertedToMNE.setChecked(False)
+        
         
     def add_tabs(self):
         """
