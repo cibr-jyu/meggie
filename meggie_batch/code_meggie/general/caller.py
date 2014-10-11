@@ -933,6 +933,8 @@ class Caller(object):
         
         # TODO clean up if one of these fails.
         try:
+            # TODO: this actually has an MNE-Python counterpart, which doesn't
+            # help much, as the others don't (11.10.2014)
             subprocess.check_output(['mne_setup_source_space'] +
                                     setupSourceSpaceArgs)
         except CalledProcessError as e:

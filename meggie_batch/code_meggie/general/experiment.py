@@ -805,14 +805,14 @@ class ExperimentHandler(QObject):
             return
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
-        # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
+            self.parent.add_tabs()
             self.parent._initialize_ui()
 
             # Sets the experiment for caller, so it can use its information.
             self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler._previous_experiment_name = \
-            self.parent.experiment._experiment_name
+                self.parent.experiment._experiment_name
         

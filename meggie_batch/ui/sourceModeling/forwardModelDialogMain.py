@@ -12,6 +12,8 @@ from forwardModelDialogUi import Ui_forwardModelDialog
 import messageBoxes
 import string
 
+import fileManager
+
 class ForwardModelDialog(QtGui.QDialog):
     """
     Class containing the logic for forwardModelDialog. It collects parameter
@@ -29,13 +31,17 @@ class ForwardModelDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_forwardModelDialog()
         self.ui.setupUi(self)
-        
+        self.populateSurfaceNamesCombobox()
     
     def populateSurfaceNamesCombobox(self):
         """
         TODO use file manager to find all files under the surf-directory
         and populate the self.ui.comboBoxSurfaceName with them.
         """
+        activeSubject = self.parent.experiment._active_subject
+        fileManager.read_surface_names_into_list(activeSubject)
+        
+        
         
     def collectParametersIntoDictionary(self):
         """

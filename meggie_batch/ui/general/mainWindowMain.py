@@ -108,7 +108,7 @@ class MainWindow(QtGui.QMainWindow):
        
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
-        self.preferencesHandler.setEnvVariables()
+        self.preferencesHandler.set_env_variables()
        
         # For handling initialization and switching of experiments.
         # TODO: currently only handles initialization.
@@ -1053,14 +1053,15 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         if checked is None : return
         
-        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+        if self.experiment._active_subject.check_reconFiles_copied():
+            reply = QtGui.QMessageBox.question(self, 'Please confirm',
             "Do you really want to change the reconstructed files? This will " +
             " invalidate all later source analysis work and clear the results "+ 
             "of the later phases",
             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
         
-        if reply == QtGui.QMessageBox.No:
-            return
+            if reply == QtGui.QMessageBox.No:
+                return
         
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select directory of the reconstructed MRI image"))
@@ -1069,25 +1070,20 @@ class MainWindow(QtGui.QMainWindow):
         
         activeSubject = self.experiment._active_subject
           
-        
         if fileManager.copy_recon_files(activeSubject, path) == True:
             self.ui.lineEditRecon.setText(path)
-            self.ui.pushButtonConvertToMNE.setEnabled(True)
-            self.ui.checkBoxConvertedToMNE.setChecked(False)
+            
             # Scourging of the source analysis files here - actually, is this
             # necessary?
             # fileManager.remove_sourceAnalysis_files(activeSubject)
-        else:
-            self.ui.pushButtonConvertToMNE.setEnabled(False)
+        self._initialize_ui()
         
         
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         if checked is None : return
         
-        if self.caller.convert_mri_to_mne():
-            self.ui.checkBoxConvertedToMNE.setEnabled(True)
-        else:
-            self.ui.checkBoxConvertedToMNE.setEnabled(False)
+        self.caller.convert_mri_to_mne()
+        self._initialize_ui()
             
         
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
@@ -1099,7 +1095,14 @@ class MainWindow(QtGui.QMainWindow):
         self.fmodelDialog = ForwardModelDialog(self)
         self.fmodelDialog.show()
         
-
+    
+    def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
+        """
+        Removes selected forward model from the forward model list.
+        """
+        # TODO: do this after the mvc system works.
+        return
+    
 
 ### Code for populating various lists and tables in the MainWindow ###       
     
@@ -1144,10 +1147,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         Method for setting up the GUI. Called whenever a subject is activated,
         either via creation of a new subject or change of an active subject.
+        Also called when anything that can affect UI state has been run.
         Checks the existence of a ton of files and sets the GUI fields to
         reflect the state of the experiment and subject according to them. 
         """
-        self.add_tabs()
+        # Not needed, because tabs are added only on experiment creation.
+        #self.add_tabs()
 
         # Clear the lists.
         self.clear_epoch_collection_parameters()
@@ -1262,12 +1267,16 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.experiment.active_subject_path is '':
             return
+        
         # Check whether reconstructed mri files have been copied to the recon
-        # files directory under the subject and set up the UI accordingly.
+        # files directory under the subject.
         if self._experiment._active_subject.check_reconFiles_copied():
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
             self.ui.pushButtonConvertToMNE.setEnabled(True)
+        else: 
+            self.ui.lineEditRecon.setText('')
+            self.ui.pushButtonConvertToMNE.setEnabled(False)
         
         # Check if MRI image has been setup with mne_setup_forward solution
         if self._experiment._active_subject.check_mne_setup_mri_run():
@@ -1322,6 +1331,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_currentChanged(self):
             """
+            TODO: should use a proper mcv system to avoid this crap.
             Keep track of the active tab.
             Show the epoch collection list epochList when in appropriate tabs.
             """

@@ -108,7 +108,7 @@ class PreferencesHandler(object):
     
     
     
-    def setEnvVariables(self):
+    def set_env_variables(self):
         """
         Set various shell environment variables needed by MNE-C scripts and
         other command line programs.
