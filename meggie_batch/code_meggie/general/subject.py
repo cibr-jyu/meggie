@@ -189,6 +189,17 @@ class Subject(QObject):
         Setter for stimulus channel.
         """
         self._stim_channel = stim_ch
+        
+        
+    def find_stim_channel(self):
+        """
+        Finds the correct stimulus channel for the data.
+        """
+        channels = self._working_file.info.get('ch_names')
+        if any('STI101' in channels for x in channels):
+            self._stim_channel = 'STI101'
+        elif any('STI 014' in channels for x in channels):
+            self._stim_channel = 'STI 014'
     
     def save_raw(self, file_name, path):
         """
@@ -218,6 +229,9 @@ class Subject(QObject):
             raise Exception('No rights to save the raw file to the chosen ' + 
                             'path or bad raw file name.')
 
+
+        
+### Code for creating various directories under subject directory ###
         
     def create_epochs_directory(self):
         """
@@ -266,16 +280,10 @@ class Subject(QObject):
         except OSError:
             raise OSError('can\'t create reconFiles directory to' + \
                           ' the chosen path')
-    
-    def find_stim_channel(self):
-        """
-        Finds the correct stimulus channel for the data.
-        """
-        channels = self._working_file.info.get('ch_names')
-        if any('STI101' in channels for x in channels):
-            self._stim_channel = 'STI101'
-        elif any('STI 014' in channels for x in channels):
-            self._stim_channel = 'STI 014'
+
+
+
+### Code related to epochs, epoching and events ###
 
     def create_event_set(self):
         """
@@ -438,7 +446,9 @@ class Subject(QObject):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
         
-        
+      
+### Code related to source modeling ###
+  
     def add_forwardModel(self, name, fmodel):
         """
         Adds a ForwardModels object to the forwardModels dictionary.
@@ -480,8 +490,9 @@ class Subject(QObject):
         fmodel._params = params
         self.add_forwardModel(name, fmodel)
     
-    
-        
+   
+ 
+### Code for checking the state of the subject ###        
         
     def check_ecg_projs(self):
         """
@@ -546,3 +557,21 @@ class Subject(QObject):
         if len(files) > 0:
             return True
         return False
+
+    def check_reconFiles_copied(self):
+        reconDir = self._experiment._active_subject._reconFiles_directory
+        mriDir = os.path.join(reconDir, 'mri/') 
+        if os.path.isdir(mriDir):
+            return True
+        else: 
+            return False
+    
+    def check_mne_setup_mri_run(self):
+        reconDir = self._experiment._active_subject._reconFiles_directory
+        mriDir = os.path.join(reconDir, 'mri/') 
+        T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
+        brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')
+        if os.path.isdir(T1NeuroMagDir) and os.path.isdir(brainNeuroMagDir):
+            return True
+        else:
+            return False

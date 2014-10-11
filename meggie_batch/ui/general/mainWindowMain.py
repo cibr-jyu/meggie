@@ -1064,6 +1064,8 @@ class MainWindow(QtGui.QMainWindow):
         
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select directory of the reconstructed MRI image"))
+        if path == '':
+            return
         
         activeSubject = self.experiment._active_subject
           
@@ -1258,19 +1260,17 @@ class MainWindow(QtGui.QMainWindow):
  
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
+        if self.experiment.active_subject_path is '':
+            return
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
-        reconDir = self._experiment._active_subject._reconFiles_directory
-        mriDir = os.path.join(reconDir, 'mri/') 
-        if os.path.isdir(mriDir):
+        if self._experiment._active_subject.check_reconFiles_copied():
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
             self.ui.pushButtonConvertToMNE.setEnabled(True)
         
         # Check if MRI image has been setup with mne_setup_forward solution
-        T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
-        brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')
-        if os.path.isdir(T1NeuroMagDir) and os.path.isdir(brainNeuroMagDir):
+        if self._experiment._active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
         else:
             self.ui.checkBoxConvertedToMNE.setChecked(False)

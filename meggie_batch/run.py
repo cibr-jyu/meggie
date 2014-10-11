@@ -51,6 +51,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/preprocessing/
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/visualization/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/filtering/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/icons/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/sourceModeling/")
 
 import mainWindowMain  
 

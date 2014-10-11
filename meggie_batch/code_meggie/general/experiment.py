@@ -424,7 +424,6 @@ class Experiment(QObject):
         """
         subject = Subject(experiment, subject_name)
         
-        
         # When opening experiment the right path is saved into the
         # working_file, but when activating subject the working_file path is the
         # one where the original raw was found.

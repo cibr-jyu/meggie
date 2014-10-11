@@ -45,9 +45,15 @@ import os, sys
 
 from infoDialogUi import Ui_infoDialog
 
+
+
 class AddSubjectDialog(QtGui.QDialog):
     """
     Class for creating subjects from raw measurement data files.
+    FIXME: This is madness! (Adding new subject, activating a subject etc.,
+    experiment having attributes about active subject AND active subject as an
+    attribute AT THE SAME TIME. Also makes _initialize_ui in mainWindows an 
+    insane mess.)
     
     Properties:
     parent    -- mainWindowMain is the parent class
