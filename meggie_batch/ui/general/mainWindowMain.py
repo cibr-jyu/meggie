@@ -446,6 +446,7 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.setCurrentItem(item)
 
     """
+    FIXME: No longer needed, remove
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
         # Clear the epoch list and load new epochs for the new experiment.
@@ -1238,16 +1239,27 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
             self.ui.pushButtonConvertToMNE.setEnabled(True)
+            self.ui.pushButtonCheckTalairach.setEnabled(True)
+            self.ui.pushButtonSkullStrip.setEnabled(True)
+            self.ui.pushButtonCheckSurfaces.setEnabled(True)
+            self.ui.pushButtonCheckSegmentations.setEnabled(True)
         else: 
             self.ui.lineEditRecon.setText('')
             self.ui.pushButtonConvertToMNE.setEnabled(False)
+            self.ui.pushButtonCheckTalairach.setEnabled(False)
+            self.ui.pushButtonSkullStrip.setEnabled(False)
+            self.ui.pushButtonCheckSurfaces.setEnabled(False)
+            self.ui.pushButtonCheckSegmentations.setEnabled(False)
         
         # Check if MRI image has been setup with mne_setup_forward solution
         if self._experiment._active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
+            self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
         else:
             self.ui.checkBoxConvertedToMNE.setChecked(False)
+            self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
         
+    
      
     def populate_raw_tab_event_list(self):
         """

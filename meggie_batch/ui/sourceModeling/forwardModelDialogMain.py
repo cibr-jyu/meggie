@@ -33,14 +33,19 @@ class ForwardModelDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.populateSurfaceNamesCombobox()
     
+    
     def populateSurfaceNamesCombobox(self):
         """
-        TODO use file manager to find all files under the surf-directory
-        and populate the self.ui.comboBoxSurfaceName with them.
+        Use file manager to find all files under the surf-directory
+        and populate the self.ui.comboBoxSurfaceName with them. Set white as
+        default, like mne_setup_source_space suggests.
         """
         activeSubject = self.parent.experiment._active_subject
-        fileManager.read_surface_names_into_list(activeSubject)
+        surfaceNames = fileManager.read_surface_names_into_list(activeSubject)
+        self.ui.comboBoxSurfaceName.addItems(surfaceNames)
         
+        whiteIndex = self.ui.comboBoxSurfaceName.findText('white')
+        self.ui.comboBoxSurfaceName.setCurrentIndex(whiteIndex)
         
         
     def collectParametersIntoDictionary(self):

@@ -474,8 +474,8 @@ def read_surface_names_into_list(subject):
     
     Keyword arguments:
     subject     -- subjects whose surface files need listing (almost always the
-                   active subject a the current experiment, but doesn't have to
-                   be.
+                   active subject at the current experiment, but doesn't have to
+                   be).
 
     Returns a list of surface names.
     Raises an IOError if no surface files can be found.
@@ -484,12 +484,20 @@ def read_surface_names_into_list(subject):
     surfDir = os.path.join(subject._reconFiles_directory, 'surf/')
     surfNameList = []
     
-    for fname in surfDir:
-        surfNameList.append(fname)
-        
-    return surfNameList
+    # Filenames from surf directory to list
+    for (dirpath, dirnames, filenames) in os.walk(surfDir):
+        surfNameList.extend(filenames)
+        break
     
-
+    # Remove 'lh.' and 'rh.' prefixes from surf filenames, ignore reg files.
+    finalSurfNameList = []
+    for surfName in surfNameList:
+        if surfName[-4:] == '.reg':
+            continue
+        finalSurfNameList.append(surfName[3:])
+    
+    # To set and back to remove duplicates.
+    return list(set(finalSurfNameList))
 
 
 def readCSVFileToDictList(self, keynames, fpath, ndoculines):

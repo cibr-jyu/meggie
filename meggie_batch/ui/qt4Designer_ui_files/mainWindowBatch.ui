@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1734,7 +1734,10 @@
                    <item row="0" column="0">
                     <layout class="QVBoxLayout" name="verticalLayout_7">
                      <item>
-                      <widget class="QFrame" name="frame_2">
+                      <widget class="QFrame" name="frameCopyRecon">
+                       <property name="whatsThis">
+                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -1758,7 +1761,7 @@
                                <string/>
                               </property>
                               <property name="whatsThis">
-                               <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                               <string/>
                               </property>
                               <property name="text">
                                <string>1. Select directory to copy the reconstructed MRI image files from:</string>

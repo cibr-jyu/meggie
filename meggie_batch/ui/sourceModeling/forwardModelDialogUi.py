@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/forwardModelDialog.ui'
 #
-# Created: Thu Sep 11 17:19:01 2014
+# Created: Sun Oct 12 22:24:32 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_forwardModelDialog(object):
     def setupUi(self, forwardModelDialog):
         forwardModelDialog.setObjectName(_fromUtf8("forwardModelDialog"))
-        forwardModelDialog.resize(687, 637)
+        forwardModelDialog.resize(613, 566)
         forwardModelDialog.setModal(True)
         self.formLayout_3 = QtGui.QFormLayout(forwardModelDialog)
         self.formLayout_3.setObjectName(_fromUtf8("formLayout_3"))
@@ -57,7 +57,6 @@ class Ui_forwardModelDialog(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.comboBoxSurfaceDecimMethod = QtGui.QComboBox(self.groupBoxSourceSpaceSetup)
         self.comboBoxSurfaceDecimMethod.setObjectName(_fromUtf8("comboBoxSurfaceDecimMethod"))
-        self.comboBoxSurfaceDecimMethod.addItem(_fromUtf8(""))
         self.comboBoxSurfaceDecimMethod.addItem(_fromUtf8(""))
         self.comboBoxSurfaceDecimMethod.addItem(_fromUtf8(""))
         self.horizontalLayout_2.addWidget(self.comboBoxSurfaceDecimMethod)
@@ -91,17 +90,17 @@ class Ui_forwardModelDialog(object):
         self.gridLayout_2.addWidget(self.label_5, 0, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.radioButton_5 = QtGui.QRadioButton(self.groupBoxBemModelMeshes)
-        self.radioButton_5.setChecked(True)
-        self.radioButton_5.setObjectName(_fromUtf8("radioButton_5"))
+        self.radioButtonAtlasNo = QtGui.QRadioButton(self.groupBoxBemModelMeshes)
+        self.radioButtonAtlasNo.setChecked(True)
+        self.radioButtonAtlasNo.setObjectName(_fromUtf8("radioButtonAtlasNo"))
         self.buttonGroupAtlas = QtGui.QButtonGroup(forwardModelDialog)
         self.buttonGroupAtlas.setObjectName(_fromUtf8("buttonGroupAtlas"))
-        self.buttonGroupAtlas.addButton(self.radioButton_5)
-        self.horizontalLayout_5.addWidget(self.radioButton_5)
-        self.radioButton_6 = QtGui.QRadioButton(self.groupBoxBemModelMeshes)
-        self.radioButton_6.setObjectName(_fromUtf8("radioButton_6"))
-        self.buttonGroupAtlas.addButton(self.radioButton_6)
-        self.horizontalLayout_5.addWidget(self.radioButton_6)
+        self.buttonGroupAtlas.addButton(self.radioButtonAtlasNo)
+        self.horizontalLayout_5.addWidget(self.radioButtonAtlasNo)
+        self.radioButtonAtlasYes = QtGui.QRadioButton(self.groupBoxBemModelMeshes)
+        self.radioButtonAtlasYes.setObjectName(_fromUtf8("radioButtonAtlasYes"))
+        self.buttonGroupAtlas.addButton(self.radioButtonAtlasYes)
+        self.horizontalLayout_5.addWidget(self.radioButtonAtlasYes)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 0, 1, 1, 1)
         self.formLayout_3.setWidget(2, QtGui.QFormLayout.LabelRole, self.groupBoxBemModelMeshes)
         self.buttonBox = QtGui.QDialogButtonBox(forwardModelDialog)
@@ -259,17 +258,16 @@ class Ui_forwardModelDialog(object):
         self.label.setText(_translate("forwardModelDialog", "Spacing:", None))
         self.spinBoxSpacing.setSuffix(_translate("forwardModelDialog", " mm", None))
         self.label_4.setText(_translate("forwardModelDialog", "Compute cortical patch statistics:", None))
-        self.label_3.setText(_translate("forwardModelDialog", "Surface name:", None))
+        self.label_3.setText(_translate("forwardModelDialog", "Surface name (defaut is \"white\"):", None))
         self.label_2.setText(_translate("forwardModelDialog", "Cortical surface decimation method (ico):", None))
         self.comboBoxSurfaceDecimMethod.setItemText(0, _translate("forwardModelDialog", "traditional (default)", None))
-        self.comboBoxSurfaceDecimMethod.setItemText(1, _translate("forwardModelDialog", "icosahedron", None))
-        self.comboBoxSurfaceDecimMethod.setItemText(2, _translate("forwardModelDialog", "octahedron", None))
+        self.comboBoxSurfaceDecimMethod.setItemText(1, _translate("forwardModelDialog", "icosahedron or octahedron", None))
         self.radioButtonPatchStatNo.setText(_translate("forwardModelDialog", "no (default)", None))
         self.radioButtonPatchStatYes.setText(_translate("forwardModelDialog", "yes", None))
-        self.groupBoxBemModelMeshes.setTitle(_translate("forwardModelDialog", "BEM model meshes creation parameters:", None))
+        self.groupBoxBemModelMeshes.setTitle(_translate("forwardModelDialog", "BEM model meshes (watershed) creation parameters:", None))
         self.label_5.setText(_translate("forwardModelDialog", "Use atlas:", None))
-        self.radioButton_5.setText(_translate("forwardModelDialog", "no (default)", None))
-        self.radioButton_6.setText(_translate("forwardModelDialog", "yes", None))
+        self.radioButtonAtlasNo.setText(_translate("forwardModelDialog", "no (default)", None))
+        self.radioButtonAtlasYes.setText(_translate("forwardModelDialog", "yes", None))
         self.groupBoxSetupBem.setTitle(_translate("forwardModelDialog", "BEM model setup parameters:", None))
         self.label_8.setText(_translate("forwardModelDialog", "Compartment model (homog) :", None))
         self.comboBoxCompartmentModel.setItemText(0, _translate("forwardModelDialog", "three layer (default)", None))
