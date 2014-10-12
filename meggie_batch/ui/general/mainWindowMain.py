@@ -445,11 +445,11 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
-        
+    """
     @QtCore.pyqtSlot()
     def handle_new_experiment(self):
-        """Clear the epoch list and load new epochs for the new experiment.
-        """
+        # Clear the epoch list and load new epochs for the new experiment.
+        
         if self.experiment is None:
             return
         else:
@@ -457,7 +457,7 @@ class MainWindow(QtGui.QMainWindow):
             self.load_epoch_collections()
             self.evokedList.clear()
             self.load_evoked_collections()
-
+    """
         
     def open_active_subject(self):
         """
@@ -1104,42 +1104,6 @@ class MainWindow(QtGui.QMainWindow):
         return
     
 
-### Code for populating various lists and tables in the MainWindow ###       
-    
-    def populate_raw_tab_event_list(self):
-        """
-        Fill the raw tab event list with info about event IDs and
-        amount of events with those IDs.
-        """
-        #TODO: trigger ---> event, also in the UI
-        events = self.experiment.active_subject._event_set
-        
-        
-        events_string = ''
-        for key, value in events.iteritems():
-            events_string += 'Event ' + str(key) + ', ' + str(value) +\
-            ' events\n'
-        self.ui.textBrowserEvents.setText(events_string)
- 
- 
-    def populate_comboBoxLobes(self):
-        """
-        Populate the combo box listing available lobes for to use for
-        channel averaging.
-        """
-        self.ui.comboBoxLobes.clear()
-        
-        self.ui.comboBoxLobes.addItem('Vertex')
-        self.ui.comboBoxLobes.addItem('Left-temporal')
-        self.ui.comboBoxLobes.addItem('Right-temporal')
-        self.ui.comboBoxLobes.addItem('Left-parietal')
-        self.ui.comboBoxLobes.addItem('Right-parietal')
-        self.ui.comboBoxLobes.addItem('Left-occipital')
-        self.ui.comboBoxLobes.addItem('Right-occipital')
-        self.ui.comboBoxLobes.addItem('Left-frontal')
-        self.ui.comboBoxLobes.addItem('Right-frontal')
-
-
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
@@ -1284,6 +1248,40 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.checkBoxConvertedToMNE.setChecked(False)
         
+     
+    def populate_raw_tab_event_list(self):
+        """
+        Fill the raw tab event list with info about event IDs and
+        amount of events with those IDs.
+        """
+        #TODO: trigger ---> event, also in the UI
+        events = self.experiment.active_subject._event_set
+        
+        
+        events_string = ''
+        for key, value in events.iteritems():
+            events_string += 'Event ' + str(key) + ', ' + str(value) +\
+            ' events\n'
+        self.ui.textBrowserEvents.setText(events_string)
+ 
+ 
+    def populate_comboBoxLobes(self):
+        """
+        Populate the combo box listing available lobes for to use for
+        channel averaging.
+        """
+        self.ui.comboBoxLobes.clear()
+        
+        self.ui.comboBoxLobes.addItem('Vertex')
+        self.ui.comboBoxLobes.addItem('Left-temporal')
+        self.ui.comboBoxLobes.addItem('Right-temporal')
+        self.ui.comboBoxLobes.addItem('Left-parietal')
+        self.ui.comboBoxLobes.addItem('Right-parietal')
+        self.ui.comboBoxLobes.addItem('Left-occipital')
+        self.ui.comboBoxLobes.addItem('Right-occipital')
+        self.ui.comboBoxLobes.addItem('Left-frontal')
+        self.ui.comboBoxLobes.addItem('Right-frontal')
+     
         
     def add_tabs(self):
         """
