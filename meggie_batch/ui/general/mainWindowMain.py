@@ -889,7 +889,6 @@ class MainWindow(QtGui.QMainWindow):
         except Exception, err:
             title = 'MaxFilter error:'
             self.messageBox = messageBoxes.longMessageBox(title, str(err))
-            self.messageBox.labelException.setText()
             self.messageBox.show()
             return
         self.maxFilterDialog.show()

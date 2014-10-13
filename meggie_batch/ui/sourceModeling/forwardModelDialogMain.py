@@ -55,57 +55,57 @@ class ForwardModelDialog(QtGui.QDialog):
         """
         fmdict = {}
         
-        fmdict['fmname'] = self.ui.lineEditFModelName.text()
+        fmdict['fmname'] = str(self.ui.lineEditFModelName.text())
         
         # A bit of checking for stupidities in naming to avoid conflicts
         # with directories created by MNE scripts.
         # TODO probably should be limited to alphanumeric ascii without spaces,
         # too.
-        if string.lower(fmdict['fmname']) is 'mri' or 'bem':
+        if string.lower(fmdict['fmname']) == ('mri' or 'bem'):
             message = "'mri' or 'bem' are not acceptable fmodel names (they " + \
                       "get mixed up with MNE directory names)."
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         
-        fmdict['spacing'] = self.ui.spinBoxSpacing.value()
+        fmdict['spacing'] = str(self.ui.spinBoxSpacing.value())
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
-        fmdict['surfaceDecimValue'] = self.ui.spinBoxSurfaceDecimValue.value()
+        fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
         
         # TODO should be self.ui.comboBoxSurfaceName.currentText(), currently
         # using default 'white' for testing
         fmdict['surfaceName'] = 'white'
         
-        if self.ui.buttonGroupCorticalPatchStats.checkedButton().objectName() is \
-        'radioButtonPatchStatYes':
+        if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
+        self.ui.radioButtonPatchStatYes:
             fmdict['computeCorticalStats'] = True
         else: fmdict['computeCorticalStats'] = False
             
-        if self.ui.buttonGroupAtlas.checkedButton().objectName() is \
-        'radioButtonAtlasYes':
+        if self.ui.buttonGroupAtlas.checkedButton() == \
+        self.ui.radioButtonAtlasYes:
             fmdict['useAtlas'] = True
         else: fmdict['useAtlas'] = False                    
         
         fmdict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
-        fmdict['triangFilesIco'] = self.ui.spinBoxTriangFilesIco.value()
+        fmdict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
         fmdict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
         
-        if self.ui.buttonGroupNosol.checkedButton.objectName() is \
-        'radioButtonNoSolYes':
+        if self.ui.buttonGroupNosol.checkedButton == \
+        self.ui.radioButtonNoSolYes:
             fmdict['nosol'] = True
         else: fmdict['nosol'] = False
         
-        fmdict['innerShift'] = self.ui.spinBoxInnerShift.value()
-        fmdict['outerShift'] = self.ui.spinBoxOuterShift.value()
-        fmdict['skullShift'] = self.ui.spinBoxSkullShift.value()
-        fmdict['brainc'] = self.ui.doubleSpinBoxBrainConductivity.value()
-        fmdict['skullc'] = self.ui.doubleSpinBoxSkullConductivity.value()
-        fmdict['scalpc'] = self.ui.doubleSpinBoxScalpConductivity.value()
+        fmdict['innerShift'] = str(self.ui.spinBoxInnerShift.value())
+        fmdict['outerShift'] = str(self.ui.spinBoxOuterShift.value())
+        fmdict['skullShift'] = str(self.ui.spinBoxSkullShift.value())
+        fmdict['brainc'] = str(self.ui.doubleSpinBoxBrainConductivity.value())
+        fmdict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
+        fmdict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
         
         return fmdict
         
         
-    def convertParameterDictionaryToCommandlineParameterDict(self, fmdict):
+    def convertParameterDictionaryToCommandlineParameterTuple(self, fmdict):
         """
         Converts the parameters input in the dialog into valid command line
         argument strings for various MNE-C-scripts (mne_setup_source_space, 
@@ -123,11 +123,11 @@ class ForwardModelDialog(QtGui.QDialog):
         """
         
         # Arguments for source space setup
-        if fmdict['surfaceDecimMethod'] is 'traditional (default)':
+        if fmdict['surfaceDecimMethod'] == 'traditional (default)':
             sDecimIcoArg = []
         else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
         
-        if fmdict['computeCorticalStats'] is True:
+        if fmdict['computeCorticalStats'] == True:
             cpsArg = ['--cps']
         else: cpsArg = []
         
@@ -137,19 +137,19 @@ class ForwardModelDialog(QtGui.QDialog):
         setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
         
         # Arguments for BEM model meshes
-        if fmdict['useAtlas'] is True:
+        if fmdict['useAtlas'] == True:
             waterShedArgs = ['--atlas']
         else: waterShedArgs = []
         
         # Arguments for BEM model setup
-        if fmdict['triangFilesType'] is 'standard ASCII (default)':
+        if fmdict['triangFilesType'] == 'standard ASCII (default)':
             surfArg = []
             bemIcoArg = []
         else: 
             surfArg = '--surf'
             bemIcoArg = ['--ico', fmdict['triangFilesIco']]
         
-        if fmdict['compartModel'] is 'standard ASCII (default)':
+        if fmdict['compartModel'] == 'standard ASCII (default)':
             braincArg = [ fmdict['brainc']]
             skullcArg = fmdict['skullc']
             scalpcArg = fmdict['scalpc']
@@ -158,7 +158,7 @@ class ForwardModelDialog(QtGui.QDialog):
             skullcArg = []
             scalpcArg = []
 
-        if fmdict['nosol'] is True:
+        if fmdict['nosol'] == True:
             nosolArg = '--nosol'
         else: nosolArg = []
         
@@ -168,7 +168,7 @@ class ForwardModelDialog(QtGui.QDialog):
         
         setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
                           scalpcArg + nosolArg + innerShiftArg + outerShiftArg + \
-                          + skullShiftArg
+                          skullShiftArg
         
         return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
@@ -179,16 +179,12 @@ class ForwardModelDialog(QtGui.QDialog):
         model creation. 
         """
         
-        fmdict = self.collectParametersIntoDictionary(self)
+        fmdict = self.collectParametersIntoDictionary()
         fmname = fmdict['fmname']
         
         cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(fmdict)
 
-        try:
-            self.parent.caller.create_forward_model(fmname, cmdTuple)
-        except Exception, err:
-            message = 'Problem creating forward model' + str(err)
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
+        
+        self.parent.caller.create_forward_model(fmname, cmdTuple)
+        
         self.close()
