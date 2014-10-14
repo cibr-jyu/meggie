@@ -35,6 +35,7 @@ Contains the AddEOGProjections-class used for adding EOG projections.
 """
 import glob
 
+
 import mne
 
 from PyQt4 import QtCore,QtGui
@@ -57,7 +58,7 @@ class AddEOGProjections(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment.active_subject_path
+        directory = self.parent.experiment._active_subject._subject_path
         self.proj_file = glob.glob(directory + '/*_eog_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
@@ -84,7 +85,7 @@ class AddEOGProjections(QtGui.QDialog):
             # Overwrites the projection file with desired vectors.
             mne.write_proj(self.proj_file, applied)
             self.parent.caller.apply_eog(self.parent.experiment.active_subject.working_file,
-                                         self.parent.experiment.active_subject_path)
+                                         self.parent.experiment._active_subject._subject_path)
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()

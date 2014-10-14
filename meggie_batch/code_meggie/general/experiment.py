@@ -84,15 +84,16 @@ class Experiment(QObject):
         self._author = 'unknown author'
         self._description = 'no description'
         self._subjects = []
-        #self._subjects = dict()
-        self._subject_paths = []
-        self._active_subject_path = ''
-        self._active_subject_raw_path = ''
-        self._active_subject_name = ''
-        self._working_file_names = dict()
         self._active_subject = None
-        self.main_window = None
         
+        # For pickling purposes to make loading experiments and subjects
+        # more simple.
+        self._active_subject_name = ''
+        self._subject_paths = []
+        self._working_file_names = dict()
+        
+        self.main_window = None
+
 
     @property
     def experiment_name(self):
@@ -202,6 +203,7 @@ class Experiment(QObject):
             raise Exception("Too long _description")
 
 
+    
     @property
     def active_subject_name(self):
         """
@@ -216,38 +218,6 @@ class Experiment(QObject):
         Method for setting active subject name.
         """
         self._active_subject_name = subject_name
-
-
-    @property
-    def active_subject_path(self):
-        """
-        Method for getting active subject path.
-        """
-        return self._active_subject_path
-    
-    
-    @active_subject_path.setter
-    def active_subject_path(self, subject_path):
-        """
-        Method for setting active subject path.
-        """
-        self._active_subject_path = subject_path
-
-
-    @property
-    def active_subject_raw_path(self):
-        """
-        Method for getting active subject raw path.
-        """
-        return self._active_subject_raw_path
-    
-    
-    @active_subject_raw_path.setter
-    def active_subject_raw_path(self, raw_path):
-        """
-        Method for setting active subject raw path.
-        """
-        self._active_subject_raw_path = raw_path
 
 
     @property
@@ -310,9 +280,7 @@ class Experiment(QObject):
         
         # If active subject is removed, the active properties have to be
         # reseted to default values.    
-        if subject_path == self.active_subject_path:
-            self._active_subject_path = ''
-            self._active_subject_raw_path = ''
+        if subject_path == os.path.join(self._workspace, self._experiment_name, self.active_subject_name):
             self._active_subject_name = ''
             self._active_subject = None
         
@@ -348,113 +316,84 @@ class Experiment(QObject):
         Keyword arguments:
         working_file_name    -- name of the working file
         """
-        # Uusi koodi:
         self._working_file_names[self.active_subject_name] = working_file_name
       
         
-    def activate_subject(self, raw_path, subject_name, experiment):
-        """
-        Method for activating a subject. Creates a new subject object
-        to be processed if it doesn't exist in the subjects list property.
-        Subject.working_file is the previously created raw file.
+    def activate_subject(self, subject_name):
+        """Activates a subject from the existing Subjects. Reads the working
+        file under the directory of the given subject name and sets it
+        to the corresponding Subject.
         
         Keyword arguments:
-        raw_path     -- path of the raw file
         subject_name -- name of the subject
-        experiment   -- currently active experiment                        
         """
         # Remove raw files from memory before activating new subject.
         self.release_memory()
-        raw_file_name = raw_path.split('/')[-1]
-
+        self._active_subject_name = subject_name
+        if subject_name == '':
+            return
+        working_file_name = ''
+        working_file_name = self._working_file_names[subject_name]
+        if len(working_file_name) == 0:
+            message = 'There is no working file in the chosen subject folder.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()  
+            return
+        
         # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
             if subject_name == subject.subject_name:
-                self.set_active_subject(subject, raw_file_name)
-                epochs_items = self.load_epochs(subject)
-                evokeds_items = self.load_evokeds(subject)
+                #self.set_active_subject(subject, raw_file_name)
+                self._active_subject = subject
+                self._active_subject_name = subject.subject_name
+                # Check if the working file is actually loaded already (in the
+                # case of addSubjectDialogMain accept() method).
+                self.load_working_file(subject)
                 self.update_experiment_settings()
-                return epochs_items, evokeds_items
-
-        # Creates new subject when adding new subject to the experiment.
-        self.create_active_subject(experiment, subject_name, raw_path,
-                                   raw_file_name)
-        epochs_items = self.load_epochs(self.active_subject)
-        evokeds_items = self.load_evokeds(self.active_subject)
-        self.update_experiment_settings()
-        return epochs_items, evokeds_items
-      
         
-    def create_subjects(self, experiment, subject_names):
-        """Creates subjects using a list of given subject names.
+ 
+    def create_subject(self, subject_name, experiment, raw_path):
+        """Creates a Subject when adding a new one to the experiment.
+        
+        Keyword arguments:
+        subject_name    -- name of the subject
+        experiment      -- Experiment object
+        raw_path        -- original path of the raw file
+        """
+        subject = Subject(experiment, subject_name)
+        raw = fileManager.open_raw(raw_path)
+        subject._working_file = raw
+        complete_raw_path = os.path.join(subject.subject_path, os.path.basename(raw_path))
+        # Check if file already exists.
+        if not os.path.isfile(complete_raw_path):
+            # save_raw method calls create_epochs_directory in experiment
+            subject.save_raw(raw_path, subject.subject_path)
+            # When activating subject the working_file filename is the one where
+            # the file was originally found. This changes it to
+            # the location of the subject path.
+            subject._working_file.info['filename'] = complete_raw_path
+        else:
+            pass
+            # TODO: show error for already existing subject.
+        self._subjects.append(subject)
+        self._active_subject_name = subject_name
+        self.add_subject_path(subject.subject_path)
+        self.update_working_file(complete_raw_path)
+        
+        
+        
+    def create_subjects(self, experiment, subject_paths):
+        """Creates subjects when opening an experiment with subjects.
         Raw file is not set here.
         
         Keyword arguments:
         experiment    -- experiment object from MainWindow
         subject_names -- list of subject names
         """
-        for subject_name in subject_names:
-            subject = Subject(experiment, subject_name)
+        for subject_path in subject_paths:
+            subject = Subject(experiment, os.path.basename(subject_path))
             self._subjects.append(subject)
-        
-        
-    def set_active_subject(self, subject, raw_file_name):
-        """Sets active subject from existing subjects.
-        """
-        # NOTE! These 4 properties must be set to be able to handle the
-        # activated subject.
-        self._active_subject = subject
-        self._active_subject_name = subject.subject_name
-        self._active_subject_path = subject.subject_path
-        self._active_subject_raw_path = os.path.join(subject.subject_path,
-                                                     raw_file_name)
-
-        # Loads and sets raw data for subject.
-        self.load_working_file(subject)
-
-
-    def create_active_subject(self, experiment, subject_name, raw_path, raw_file_name):
-        """Sets active subject by creating new one.
-        
-        Keyword arguments:
-        experiment    -- currently open experiment object
-        subject_name  -- name of the subject to be activated
-        raw_path      -- path of the raw file
-        raw_file_name -- basename of the raw file
-        """
-        subject = Subject(experiment, subject_name)
-        
-        # When opening experiment the right path is saved into the
-        # working_file, but when activating subject the working_file path is the
-        # one where the original raw was found.
-        raw = fileManager.open_raw(raw_path)
-        subject._working_file = raw
-        # TODO: set channel names with whitespaces for the subject.working_file
-        
-        complete_raw_path = os.path.join(subject.subject_path, raw_file_name)
-        # Check if file already exists.
-        if not os.path.isfile(complete_raw_path):
-            # save_raw method calls create_epochs_directory in experiment
-            subject.save_raw(raw_path, subject.subject_path)
-            # When activating subject the working_file filename is the one where
-            # the file was originally found. This is used to change it to
-            # the location of the subject path.
-            subject._working_file.info['filename'] = complete_raw_path
-        subject.find_stim_channel()
-        subject.create_event_set()
-        # Could be created later, but safer to do it right away.
-        subject.create_sourceAnalysis_directory()
-        
-        # For tracking active subject
-        self._active_subject_name = subject_name
-        self._active_subject_path = subject.subject_path
-        self._active_subject_raw_path = complete_raw_path
-        self._active_subject = subject
-
-        self.update_working_file(complete_raw_path)
-        self.add_subject_path(subject.subject_path)
-        self.add_subject(subject)
-    
+            
     
     def release_memory(self):
         """Releases memory from previously processed subject by removing
@@ -477,18 +416,21 @@ class Experiment(QObject):
         Keyword arguments:
         subject    -- Subject object
         """
-        files = os.listdir(self.active_subject_path)
-        for file in files:
-            file_path = os.path.join(self._active_subject_path, file)
-            if file_path in self._working_file_names.values():
-                raw = fileManager.open_raw(os.path.join(self.active_subject_path, file_path))
-                # TODO: set channel names with whitespaces for the subject.working_file
-                # Not necessarily needed when loading from subject folder because
-                # whitespaces are already added when new subject is added.
-                subject._working_file = raw
-                subject.find_stim_channel()
-                subject.create_event_set()
-
+        #files = os.listdir(self.active_subject_path)
+        if subject._working_file is None:
+            path = os.path.join(self._workspace, self._experiment_name, subject._subject_name)
+            files = os.listdir(path)
+            for file in files:
+                file_path = os.path.join(path, file)
+                if file_path in self._working_file_names.values():
+                    raw = fileManager.open_raw(os.path.join(path, file_path))
+                    # TODO: set channel names with whitespaces for the subject.working_file
+                    # Not necessarily needed when loading from subject folder because
+                    # whitespaces are already added when new subject is added.
+                    subject._working_file = raw
+        subject.find_stim_channel()
+        subject.create_event_set()
+        
 
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
@@ -618,7 +560,7 @@ class Experiment(QObject):
                             determining the parameter file name.
         dic              -- dictionary including commands.
         """
-        paramfilename = os.path.join(self.active_subject_path, operation + '.param')
+        paramfilename = os.path.join(self._workspace, self._experiment_name, self._active_subject_name, operation + '.param')
         
         with open(paramfilename, 'wb') as paramfullname:
             print 'writing param file'
@@ -643,7 +585,7 @@ class Experiment(QObject):
         """
         
         # Reading parameter file.
-        paramdirectory = self.active_subject_path 
+        paramdirectory = os.path.join(self._workspace, self._experiment_name, self._active_subject_name) 
         paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
         
         try:
@@ -697,11 +639,8 @@ class Experiment(QObject):
         # need to be set here.
         self._subjects = []
         self._active_subject = None
-        
         self._workspace = odict['_workspace']
         self._subject_paths = odict['_subject_paths']
-        self._active_subject_path = odict['_active_subject_path']
-        self._active_subject_raw_path = odict['_active_subject_raw_path']
         self._active_subject_name = odict['_active_subject_name']
         
         
@@ -809,10 +748,14 @@ class ExperimentHandler(QObject):
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
+            self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
+            self.parent.experiment.activate_subject(self.parent._experiment._active_subject_name)
+
             self.parent._initialize_ui()
 
             # Sets the experiment for caller, so it can use its information.
             self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler._previous_experiment_name = \
             self.parent.experiment._experiment_name
+            self.parent.preferencesHandler.writePreferencesToDisk()
         
