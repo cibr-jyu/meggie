@@ -83,16 +83,34 @@ class PreferencesHandler(object):
     
     def set_env_variables(self):
         """
-        Set various shell environment variables (and a few other things)
+        Set various shell environment variables
         needed by MNE-C scripts and other command line programs.
         """
+        
+        print 'Meggie: setting environment variables needed by MNE and ' + \
+              'Freesurfer ... \n'
+        
+        # TODO: check that this actually is right (in pref. dialog?) 
+        # and alert user if not
         os.environ['MNE_ROOT'] = self._MNERoot
         
-        # TODO: set shell script and executable according to system user shell 
-        # (/bin/sh probably points to system shell not fit for running the
-        # setup script). See: "User environment" 
-        # in http://martinos.org/mne/stable/manual/list.html
-        subprocess.Popen('. $MNE_ROOT/bin/mne_setup_sh', shell=True, 
-                         executable="/bin/bash")
-   
-    
+        # Let's set stuff that mne_setup_sh and mne_setup usually handle, to
+        # avoid problems with different shells and passing env variables around
+        # to subprocesses.
+        mneBinPath = os.path.join(self._MNERoot, 'bin')
+        mneLibPath = os.path.join(self._MNERoot, 'lib')
+        mneUserFileSearchPath = os.path.join(self._MNERoot, 'share/app-defaults/%N')
+        os.environ['PATH'] += os.pathsep + mneBinPath
+        
+        if os.environ.get('LD_LIBRARY_PATH') == None:
+            os.environ['LD_LIBRARY_PATH'] = mneLibPath
+        else:
+            os.environ['LD_LIBRARY_PATH'] += os.pathsep + mneLibPath
+        
+        if os.environ.get('XUSERFILESEARCHPATH') == None:
+            os.environ['XUSERFILESEARCHPATH'] = mneUserFileSearchPath
+        else:
+            os.environ['XUSERFILESEARCHPATH'] += os.pathsep + \
+                                                 mneUserFileSearchPath
+        
+        print 'Meggie: environment variables set succesfully! \n'

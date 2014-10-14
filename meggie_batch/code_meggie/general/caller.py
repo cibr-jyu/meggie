@@ -925,12 +925,14 @@ class Caller(object):
         if not process.waitForFinished():
             return
         """
+        # The scripts call scripts themselves and need environ for path etc.
+        env = os.environ
         
         try:
             # TODO: this actually has an MNE-Python counterpart, which doesn't
             # help much, as the others don't (11.10.2014)
             subprocess.check_output(['$MNE_ROOT/bin/mne_setup_source_space'] + \
-                                    setupSourceSpaceArgs, shell=True)
+                                    setupSourceSpaceArgs, shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_source_space. ' + \
@@ -949,7 +951,7 @@ class Caller(object):
         
         try:
             subprocess.check_output(['$MNE_ROOT/bin/mne_watershed_bem'] + \
-                                    waterShedArgs)
+                                    waterShedArgs, shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_watershed_bem. ' + \
@@ -968,7 +970,7 @@ class Caller(object):
         
         try:
             subprocess.check_output(['$MNE_ROOT/bin/mne_setup_forward_model'] + 
-                                    setupFModelArgs)
+                                    setupFModelArgs, shell=True, env=env)
         except CalledProcessError as e:    
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_forward_model. ' + \
