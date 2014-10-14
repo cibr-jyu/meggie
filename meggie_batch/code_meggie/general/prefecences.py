@@ -11,6 +11,7 @@ Module for code related to handling program wide preferences.
 import os
 import ConfigParser
 from ConfigParser import NoOptionError
+import subprocess
 
 
 class PreferencesHandler(object):
@@ -78,62 +79,20 @@ class PreferencesHandler(object):
         
         self._previous_experiment_name = config.get('MiscOptions', 
                                                  'previous_experiment_name')
-        
     
-    def updatePreference(self, prefName, prefValue):
+    
+    def set_env_variables(self):
         """
-        Changes the desired preference into value given. 
-        
-        Keyword arguments:
-        
-        TODO: not in use, not really needed.
-        
-        TODO: Also probably should raise exception instead of returning boolean,
-        but currently foreseeable preferences don't cause anything critical
-        if not set. 
-        
-            
-        """
-        
-        if prefName not in ['workDir', '_MNERoot', 'autoLoadPrevExp',
-                            'prevExpPath']:
-            return False
-    
-        if prefName is 'workDir': self._working_directory = prefValue
-        if prefName is '_MNERoot': self._MNERoot = prefValue
-        if prefName is 'autoLoadPrevExp': 
-            self._auto_load_last_open_experiment = prefValue                                   
-        if prefName is 'prevExpPath': self._previous_experiment_name = prefValue
-        return True
-    
-    
-    
-    def setEnvVariables(self):
-        """
-        Set various shell environment variables needed by MNE-C scripts and
-        other command line programs.
+        Set various shell environment variables (and a few other things)
+        needed by MNE-C scripts and other command line programs.
         """
         os.environ['MNE_ROOT'] = self._MNERoot
-    
-   
-    """ 
-    Keyword arguments:
         
-        workingDirPath        -- path to Meggie working directory
-        MNERootPath           -- path to MNE root directory
-        autoLoadLastOpenExp   -- Should the previous experiment be loaded
-                                 automatically when starting Meggie, or not.
-                                 
-                                 
-     if os.path.isfile('settings.cfg'):
-        configp = ConfigParser.RawConfigParser()
-        configp.read('settings.cfg')
-        
-        if configp.has_option('_MNERoot', 'MNERootDir'):
-            MNERootPath = configp.get('_MNERoot', 'MNERootDir')
-            os.environ['MNE_ROOT'] = MNERootPath
-    
-                                 
-    """ 
+        # TODO: set shell script and executable according to system user shell 
+        # (/bin/sh probably points to system shell not fit for running the
+        # setup script). See: "User environment" 
+        # in http://martinos.org/mne/stable/manual/list.html
+        subprocess.Popen('. $MNE_ROOT/bin/mne_setup_sh', shell=True, 
+                         executable="/bin/bash")
    
     

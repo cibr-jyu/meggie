@@ -854,10 +854,6 @@ class Caller(object):
         os.environ['SUBJECTS_DIR'] = sourceAnalDir
         os.environ['SUBJECT'] = 'reconFiles'
         
-        
-        # vaatii ensin $SUBJECTS_DIR-envin asetuksen. Jos myös $SUBJECT asetettu,
-        # ei vaadi tuon subjektin antamista parametrina (etsii filuja
-        # mri-hakemistosta subjektin alta).
         try:
             subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
             return True
@@ -910,8 +906,7 @@ class Caller(object):
         # Set env variables to point to appropriate directories. 
         os.environ['SUBJECTS_DIR'] = self.parent.experiment._active_subject.\
                                      _source_analysis_directory
-        reconDir = self.parent.experiment._active_subject._reconFiles_directory
-        os.environ['SUBJECT'] = reconDir
+        os.environ['SUBJECT'] = 'reconFiles'
         
         # Jos subprocess ei toimi.
         """
@@ -931,28 +926,65 @@ class Caller(object):
             return
         """
         
-        # TODO clean up if one of these fails.
         try:
-            subprocess.check_output(['mne_setup_source_space'] +
-                                    setupSourceSpaceArgs)
+            # TODO: this actually has an MNE-Python counterpart, which doesn't
+            # help much, as the others don't (11.10.2014)
+            subprocess.check_output(['$MNE_ROOT/bin/mne_setup_source_space'] + \
+                                    setupSourceSpaceArgs, shell=True)
         except CalledProcessError as e:
-            'There was a problem with mne_setup_watershed_bem. Script output: ' \
-            + e.output    
-            
+            title = 'Problem with forward model creation'
+            message= 'There was a problem with mne_setup_source_space. ' + \
+                     'Script output: \n' + e.output
+            self.messageBox = messageBoxes.longMessageBox(title, message)
+            self.messageBox.exec_()
+            return
+        except Exception as e:
+            message = 'There was a problem with mne_setup_source_space: ' + \
+                      str(e) + \
+                      ' (Are you sure you have your MNE_ROOT set right ' + \
+                      'in Meggie preferences?)'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
         try:
-            subprocess.check_output(['mne_watershed_bem'] + waterShedArgs)
+            subprocess.check_output(['$MNE_ROOT/bin/mne_watershed_bem'] + \
+                                    waterShedArgs)
         except CalledProcessError as e:
-            'There was a problem with mne_setup_watershed_bem. Script output: ' \
-            + e.output
-          
+            title = 'Problem with forward model creation'
+            message= 'There was a problem with mne_watershed_bem. ' + \
+                     'Script output: \n' + e.output
+            self.messageBox = messageBoxes.longMessageBox(title, message)
+            self.messageBox.exec_()
+            return
+        except Exception as e:
+            message = 'There was a problem with mne_watershed_bem: ' + \
+                      str(e) + \
+                      ' (Are you sure you have your MNE_ROOT set right ' + \
+                      'in Meggie preferences?)'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
         try:
-            subprocess.check_output(['mne_setup_forward_model'] + 
+            subprocess.check_output(['$MNE_ROOT/bin/mne_setup_forward_model'] + 
                                     setupFModelArgs)
         except CalledProcessError as e:    
-            'There was a problem with mne_setup_forward_model. Script output: ' \
-            + e.output
-
-                
+            title = 'Problem with forward model creation'
+            message= 'There was a problem with mne_setup_forward_model. ' + \
+                     'Script output: \n' + e.output
+            self.messageBox = messageBoxes.longMessageBox(title, message)
+            self.messageBox.exec_()
+            return
+        except Exception as e:
+            message = 'There was a problem with mne_setup_forward_model: ' + \
+                      str(e) + \
+                      ' (Are you sure you have your MNE_ROOT set right ' + \
+                      'in Meggie preferences?)'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
         # DirToCopy = os.path.join(reconDir, 'bem')
         # shutil.copy(, dst)
             

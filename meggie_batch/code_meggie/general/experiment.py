@@ -93,7 +93,7 @@ class Experiment(QObject):
         self._working_file_names = dict()
         
         self.main_window = None
-
+        
 
     @property
     def experiment_name(self):
@@ -203,7 +203,6 @@ class Experiment(QObject):
             raise Exception("Too long _description")
 
 
-    
     @property
     def active_subject_name(self):
         """
@@ -221,7 +220,7 @@ class Experiment(QObject):
 
 
     @property
-    def active_subject(self):
+     def active_subject(self):
         """
         Method for getting activated subject.
         """
@@ -744,7 +743,6 @@ class ExperimentHandler(QObject):
             return
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
-        # TODO the file should end with .exp
         if os.path.exists(path) and os.path.isfile(fname):
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
@@ -757,5 +755,4 @@ class ExperimentHandler(QObject):
             self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler._previous_experiment_name = \
             self.parent.experiment._experiment_name
-            self.parent.preferencesHandler.writePreferencesToDisk()
         

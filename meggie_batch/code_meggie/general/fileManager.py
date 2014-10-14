@@ -450,7 +450,7 @@ def save_epoch(fpath, epoch, overwrite=False):
     pickleObjectToFile(parameters, parameterFileName)
 
 
-def setEnvVariables():
+def set_env_variables():
     """
     Set various shell environment variables needed by MNE-C scripts.
     """
@@ -461,6 +461,43 @@ def setEnvVariables():
         if configp.has_option('MNERoot', 'MNERootDir'):
             MNERootPath = configp.get('MNERoot', 'MNERootDir')
             os.environ['MNE_ROOT'] = MNERootPath
+
+
+def read_surface_names_into_list(subject):
+    """
+    Reads the surface files from under the subject's surf directory and
+    returns their names as list. Meant to be used by populating surface combo-
+    box in forwardModelDialog (which in turn allows the user to select the 
+    surface to be used by mne_setup_source_space).
+    
+    Obviously, to succeed, this method requires that the
+    
+    Keyword arguments:
+    subject     -- subjects whose surface files need listing (almost always the
+                   active subject at the current experiment, but doesn't have to
+                   be).
+
+    Returns a list of surface names.
+    Raises an IOError if no surface files can be found.
+    """
+    
+    surfDir = os.path.join(subject._reconFiles_directory, 'surf/')
+    surfNameList = []
+    
+    # Filenames from surf directory to list
+    for (dirpath, dirnames, filenames) in os.walk(surfDir):
+        surfNameList.extend(filenames)
+        break
+    
+    # Remove 'lh.' and 'rh.' prefixes from surf filenames, ignore reg files.
+    finalSurfNameList = []
+    for surfName in surfNameList:
+        if surfName[-4:] == '.reg':
+            continue
+        finalSurfNameList.append(surfName[3:])
+    
+    # To set and back to remove duplicates.
+    return list(set(finalSurfNameList))
 
 
 def readCSVFileToDictList(self, keynames, fpath, ndoculines):
