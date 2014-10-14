@@ -220,7 +220,7 @@ class Experiment(QObject):
 
 
     @property
-     def active_subject(self):
+    def active_subject(self):
         """
         Method for getting activated subject.
         """
@@ -748,7 +748,7 @@ class ExperimentHandler(QObject):
             self.parent._experiment = pickle.load(output)
             self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
             self.parent.experiment.activate_subject(self.parent._experiment._active_subject_name)
-
+            self.parent.add_tabs()
             self.parent._initialize_ui()
 
             # Sets the experiment for caller, so it can use its information.
