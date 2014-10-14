@@ -212,24 +212,10 @@ class MainWindow(QtGui.QMainWindow):
         path = str(QtGui.QFileDialog.getExistingDirectory(
                    self, "Select _experiment directory"))
         if path == '': return
-  
-        fname = os.path.join(path, path.split('/')[-1] + '.exp')
-        # TODO needs exception checking for corrupt/wrong type of file
-        if os.path.exists(path) and os.path.isfile(fname):
-            output = open(fname, 'rb')
-            self._experiment = pickle.load(output)
-            self._initialize_ui()
-
-            # Sets the experiment for caller, so it can use its information.
-            self.caller.experiment = self.experiment
-            self.preferencesHandler._previous_experiment_name = \
-            self.experiment._experiment_name   
-        else:
-            message = 'Experiment file not found. Please check your directory.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()  
-
-    
+        
+        self.experimentHandler.open_existing_experiment(os.path.basename(path))
+        
+            
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """
         Open subject dialog.
@@ -265,7 +251,6 @@ class MainWindow(QtGui.QMainWindow):
             
         item_str = self.ui.listWidgetSubjects.currentItem().text()
             
-        root = self.experiment.active_subject_path
         message = 'Permanently remove subject and the related files?'
             
         reply = QtGui.QMessageBox.question(self, 'delete subject',
@@ -445,21 +430,7 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
-    """
-    FIXME: No longer needed, remove
-    @QtCore.pyqtSlot()
-    def handle_new_experiment(self):
-        # Clear the epoch list and load new epochs for the new experiment.
-        
-        if self.experiment is None:
-            return
-        else:
-            self.epochList.clearItems()
-            self.load_epoch_collections()
-            self.evokedList.clear()
-            self.load_evoked_collections()
-    """
-        
+
     def open_active_subject(self):
         """
         Opens the active subject of the experiment.
@@ -1019,34 +990,14 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
-        
         subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
-        
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:
             return      
-        
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        
-        working_file_name = ''
-        working_file_name = self.experiment._working_file_names[subject_name]
-        if len(working_file_name) == 0:
-            message = 'There is no working file in the chosen subject folder.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()  
-            return
-        
-        # Set properties to be handled in open_active_subject method.
-        self.experiment._active_subject_name = subject_name
-        self.experiment._active_subject_path = os.path.\
-        join(self.experiment.workspace, self.experiment.experiment_name,
-             subject_name)
-        self.experiment._active_subject_raw_path = working_file_name
-        #raw_path = str(working_file_name)
-        #self.experiment.activate_subject(working_file_name, subject_name, self.experiment)
-        #self.experiment.update_experiment_settings()
+        self.experiment.activate_subject(subject_name)
         self._initialize_ui()
 
 
@@ -1095,6 +1046,9 @@ class MainWindow(QtGui.QMainWindow):
         self.fmodelDialog = ForwardModelDialog(self)
         self.fmodelDialog.show()
         
+
+
+### Code for populating various lists and tables in the MainWindow ###       
     
     def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
         """
@@ -1156,14 +1110,11 @@ class MainWindow(QtGui.QMainWindow):
                     item.setFont(itemFont)
                 self.ui.listWidgetSubjects.addItem(item)
         
-        # Checks if active subject exists and adds its contents on the lists.
-        if self.experiment.active_subject_path is not '':
-            # When adding a subject the subject path is added after the call to
-            # self.open_active_subject, so the item needs to be added here.
-            if self.experiment._active_subject_path not in self.experiment._subject_paths:
-                item = QtGui.QListWidgetItem(self.experiment._active_subject_name)
-                self.ui.listWidgetSubjects.addItem(item)
-            epochs_items, evokeds_items = self.open_active_subject()
+        if self.experiment.active_subject is not None:
+            #item = QtGui.QListWidgetItem(self.experiment._active_subject_name)
+            self.ui.listWidgetSubjects.addItem(item)
+            epochs_items = self.experiment.load_epochs(self.experiment.active_subject)
+            evokeds_items = self.experiment.load_evokeds(self.experiment.active_subject)
             if epochs_items is not None:
                 for item in epochs_items:
                     self.epochList.addItem(item)
@@ -1176,32 +1127,27 @@ class MainWindow(QtGui.QMainWindow):
                         self.ui, False)
             if self.experiment.active_subject._event_set is not None:
                 self.populate_raw_tab_event_list()
-            self.enable_tabs()
-
-        # Set to first tab after removing active subject.
-        if self.experiment.active_subject_path == '':
-            self.ui.tabWidget.setCurrentIndex(0)
-        
-        path = self.experiment.active_subject_path
-        # To make sure that glob is not using path = '' as a root folder.
-        if path == '':
-            pass
+            
+            
+        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
+        if self.experiment.active_subject is None:
+            self.statusLabel.setText(QtCore.QString("Add or activate" + \
+                                                    " subjects before " + \
+                                                    "continuing."))
+            return
         else:
+            status = "Current working file: " + \
+            os.path.basename(self._experiment._working_file_names[self.experiment._active_subject_name])
+            self.statusLabel.setText(QtCore.QString(status))
             try:
                 #Check whether ECG projections are calculated
                 if self.experiment.active_subject.check_ecg_projs():
                     self.ui.pushButtonApplyECG.setEnabled(True)
                     self.ui.checkBoxECGComputed.setChecked(True)
-                else:    
-                    self.ui.pushButtonApplyECG.setEnabled(False)
-                    self.ui.checkBoxECGComputed.setChecked(False)
                 #Check whether EOG projections are calculated
                 if self.experiment.active_subject.check_eog_projs():
                     self.ui.pushButtonApplyEOG.setEnabled(True)
                     self.ui.checkBoxEOGComputed.setChecked(True)
-                else:    
-                    self.ui.pushButtonApplyEOG.setEnabled(False)
-                    self.ui.checkBoxEOGComputed.setChecked(False)
                 #Check whether ECG projections are applied    
                 if self.experiment.active_subject.check_ecg_applied():
                     self.ui.checkBoxECGApplied.setChecked(True)
@@ -1212,28 +1158,27 @@ class MainWindow(QtGui.QMainWindow):
                 if self.experiment.active_subject.check_sss_applied():
                     self.ui.checkBoxMaxFilterComputed.setChecked(True)
                     self.ui.checkBoxMaxFilterApplied.setChecked(True)
-                else:
-                    self.ui.checkBoxMaxFilterComputed.setChecked(False)
-                    self.ui.checkBoxMaxFilterApplied.setChecked(False)
             except AttributeError:
-                print 'No active subject in experiment.'    
+                print 'No active subject in experiment.'
+                
+        """    
         # QLabel created on __init__ can't take normal string objects.
-        if len(self.experiment._subjects) == 0 or self.experiment.active_subject_path == '':
+        if len(self.experiment._subjects) == 0 or self.experiment.active_subject is None:
             self.statusLabel.setText(QtCore.QString("Add or activate" + \
                                                     " subjects before " + \
                                                     "continuing."))
         else:
             status = "Current working file: " + \
-            os.path.basename(self.experiment.active_subject_raw_path)
+            os.path.basename(self.experiment.working_file_names[self.experiment._active_subject_name])
             self.statusLabel.setText(QtCore.QString(status))
+        """
  
-        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
+        #self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
-        if self.experiment.active_subject_path is '':
-            return
-        
+        #if self.experiment.active_subject_path is '':
+        #    return
         # Check whether reconstructed mri files have been copied to the recon
-        # files directory under the subject.
+        # files directory under the subject and set up the UI accordingly.
         if self._experiment._active_subject.check_reconFiles_copied():
             self.ui.lineEditRecon.setText('Reconstructed mri image already ' + 
                                           'copied.')
