@@ -878,29 +878,7 @@ class Caller(object):
         creation
         - Use mne_watershed_bem to create bem model meshes
         - Create BEM model with mne_setup_forward_model
-        - Copy the 
-        
-        - Tämän pitäis siis ajaa mne_setup_source_space, 
-        mne_watershed_bem, mne_setup_forward_model
-        
-        0. Tarkista, ettei käyttäjä ole tehnyt hölmöyksiä (fmodelin nimeksi
-        mri, bem tai luultavasti myös jotakin skandeja sisältävää. Scriptit
-        saa huolehtia outojen arvojen tarkistuksesta. Jos skriptien outputti
-        ei näy suoraan Meggien käynnistysikkunassa, kaappaa outputti ja näytä
-        se erillisessä ikkunassa.
-        
-        1. Aseta SUBJECT-enviksi senhetkinen subject-hakemiston fmodels-hakemiston
-        alinen hakemisto
-        (ja jos tarvii SUBJECTS_DIR:iä, siksi fmodels-hakemisto)
-        
-        2. Aja erikseen peräkkäin nuo kolme scriptiä
-        
-        3. Kopioi viimeisen tuloksista myöhemmin tarvittavat olennaiset tulokset,
-        eli bem-hakemiston bem.fif- ja bem-sol.fif-tiedostot ("bem forward model
-        files"), sekä saman hakemiston <subject>-<spacing>- src.fif-tiedosto ("source
-        space file"). Nämä siis fmodels-hakemiston alle käyttäjän antamalla
-        fmodelin nimellä nimettyyn hakemistoon. Sitten voinee hävittää kaikki mri-hakemiston
-        alihakemistot sekä subjectin alisen bem-hakemiston tiedostot.
+        - Copy the bem files to the directory named according to fmname
         """
         
         # Set env variables to point to appropriate directories. 
@@ -908,31 +886,17 @@ class Caller(object):
                                      _source_analysis_directory
         os.environ['SUBJECT'] = 'reconFiles'
         
-        # Jos subprocess ei toimi.
-        """
-        outputBoxTitle = 'Creating forward model'
-        self.outputBox = messageBoxes.longMessageBox(outputBoxTitle, '', output=True)
-        
-        process = QtCore.QProcess()
-        process.start('mne_setup_source_space', setupSourceSpaceArgs)
-        
-        # Is process updates its output, also update ui in the outputbox
-        process.readyRead.connect(self.outputBox.updateOutputField())     
-        process.finished.connect(self.externalProcessFinished())
-            
-        # If waitforfinished returns false, there has been and error and we
-        # should return.
-        if not process.waitForFinished():
-            return
-        """
         # The scripts call scripts themselves and need environ for path etc.
         env = os.environ
         
         try:
             # TODO: this actually has an MNE-Python counterpart, which doesn't
-            # help much, as the others don't (11.10.2014)
-            subprocess.check_output(['$MNE_ROOT/bin/mne_setup_source_space'] + \
-                                    setupSourceSpaceArgs, shell=True, env=env)
+            # help much, as the others don't (11.10.2014).
+            # TODO: seems that the '--overwrite' is ignored
+            mne_setup_source_space_command = ['$MNE_ROOT/bin/mne_setup_source_space'] + \
+            setupSourceSpaceArgs + ['--overwrite']
+            subprocess.check_output(mne_setup_source_space_command,
+                                    shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_source_space. ' + \
@@ -950,8 +914,10 @@ class Caller(object):
             return
         
         try:
-            subprocess.check_output(['$MNE_ROOT/bin/mne_watershed_bem'] + \
-                                    waterShedArgs, shell=True, env=env)
+            mne_watershed_bem_command = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
+                                    waterShedArgs + ['--overwrite']
+            subprocess.check_output(mne_watershed_bem_command,
+                                    shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_watershed_bem. ' + \
@@ -987,9 +953,24 @@ class Caller(object):
             self.messageBox.exec_()
             return
         
-        # DirToCopy = os.path.join(reconDir, 'bem')
-        # shutil.copy(, dst)
-            
+        # Create a directory for the final forward model and
+        # copy the whole bem directory to it.
+        activeSubject = self.parent._experiment._active_subject
+        
+        fromCopyDir = os.path.join(activeSubject._reconFiles_directory, 'bem')
+        toCopyDir = os.path.join(activeSubject._forwardModels_directory, fmname)
+        
+        if not os.path.isdir(toCopyDir):
+            os.mkdir(toCopyDir)
+        
+        try:
+            shutil.copy(fromCopyDir, toCopyDir)
+        except IOError as e:
+            message = 'There was a problem with copying forward model files: ' + \
+                      str(e)
+            self.messageBox = messageBoxes.shortMessageBox()
+            self.messageBox.exec_()
+
 
     def update_experiment_working_file(self, fname, raw):
         """

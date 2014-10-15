@@ -63,19 +63,27 @@ class PreferencesDialog(QtGui.QDialog):
         self.parent = parent
         
         self._workFilepath = ''
-        self._MNERootPath= ''
+        self._MNERootPath = ''
+        self._FreeSurferHome = '' 
     
         # Prefill previous values to UI and attributes from config file.
-        workDirectory = self.parent.preferencesHandler._working_directory
-        MNERootPath = self.parent.preferencesHandler._MNERoot
+        workDirectory = self.parent.preferencesHandler.working_directory
+        MNERootPath = self.parent.preferencesHandler.MNERoot
+        FreeSurferHome = self.parent.preferencesHandler.FreeSurferHome
             
-        if self.parent.preferencesHandler._auto_load_last_open_experiment is True:
+        if self.parent.preferencesHandler.auto_load_last_open_experiment == True:
             self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
-                
+        
+        if self.parent.preferencesHandler.confirm_quit == True:
+            self.ui.checkBoxConfirmQuit.setChecked(True)       
+        
         self._workFilepath = workDirectory
         self._MNERootPath = MNERootPath
+        self._FreeSurferHome = FreeSurferHome
+        
         self.ui.LineEditFilePath.setText(self._workFilepath)
         self.ui.lineEditMNERoot.setText(self._MNERootPath)
+        self.ui.lineEditFreeSurferHome.setText(self._FreeSurferHome)
      
        
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
@@ -94,9 +102,17 @@ class PreferencesDialog(QtGui.QDialog):
         if checked is None: return  
         
         self._MNERootPath = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select the directory for MNE root"))
+               self, "Point Meggie to your MNE root directory"))
         self.ui.lineEditMNERoot.setText(self._MNERootPath)
+    
+    
+    def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
+        if checked is None: return
         
+        self._FreeSurferHome = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Point Meggie to your FreeSurfer home directory"))
+        self.ui.lineEditFreeSurferHome.setText(self._FreeSurferHome)
+    
         
     def accept(self):
         
@@ -108,18 +124,26 @@ class PreferencesDialog(QtGui.QDialog):
             messageBox.show()
             return
         
-        if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() is True:
+        if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() == True:
             autoLoadLastOpenExp = True
         else: autoLoadLastOpenExp = False
         
+        if self.ui.checkBoxConfirmQuit.isChecked() == True:
+            confirmQuit = True
+        else: confirmQuit = False
+        
         # MNE Root path can be empty or wrong here, we can annoy user about
-        # it if he really tries to use something MNE-related.
+        # it if he really tries to use something MNE-related. Same goes for
+        # FreeSurfer.
         MNERootPath = self._MNERootPath
+        FreeSurferPath = self._FreeSurferHome
         
-        
-        self.parent.preferencesHandler._working_directory = workFilePath
-        self.parent.preferencesHandler._MNERoot = MNERootPath
-        self.parent.preferencesHandler._auto_load_last_open_experiment = \
+        self.parent.preferencesHandler.working_directory = workFilePath
+        self.parent.preferencesHandler.MNERoot = MNERootPath
+        self.parent.preferencesHandler.FreeSurferHome = FreeSurferPath
+        self.parent.preferencesHandler.auto_load_last_open_experiment = \
             autoLoadLastOpenExp
-        self.parent.preferencesHandler.writePreferencesToDisk()
+        self.parent.preferencesHandler.confirm_quit = confirmQuit
+        self.parent.preferencesHandler.write_preferences_to_disk()
+        self.parent.preferencesHandler.set_env_variables()
         self.close()

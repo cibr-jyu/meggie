@@ -493,8 +493,7 @@ class Experiment(QObject):
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
-        the experiment directory structure. Please note that loading is done
-        in the mainWindow class. 
+        the experiment directory structure.
         """
         experiment_directory = os.path.join(self._workspace, \
                                             self._experiment_name)
@@ -521,7 +520,6 @@ class Experiment(QObject):
             pickle.dump(self, settingsFile, 2)
             print '[done]'
             settingsFile.close()        
-
     
 
     def __getstate__(self):
@@ -609,7 +607,7 @@ class ExperimentHandler(QObject):
             self.messageBox.show()
         
         try:
-            workspace = self.parent.preferencesHandler._working_directory
+            workspace = self.parent.preferencesHandler.working_directory
             experiment.workspace = workspace
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
@@ -630,9 +628,9 @@ class ExperimentHandler(QObject):
         
         # Tell the preferencesHandler that this is the experiment we've had
         # open last.
-        self.parent.preferencesHandler._previous_experiment_name = \
+        self.parent.preferencesHandler.previous_experiment_name = \
             expDict['name']
-        self.parent.preferencesHandler.writePreferencesToDisk()
+        self.parent.preferencesHandler.write_preferences_to_disk()
         
         # Update the main UI to be less empty and allow actions for a new
         # experiment.
@@ -653,7 +651,7 @@ class ExperimentHandler(QObject):
         if name is not '':    
             try:
                 path = os.path.join(
-                            self.parent.preferencesHandler._working_directory, 
+                            self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
                 pass
@@ -671,6 +669,6 @@ class ExperimentHandler(QObject):
 
             # Sets the experiment for caller, so it can use its information.
             self.parent.caller.experiment = self.parent._experiment
-            self.parent.preferencesHandler._previous_experiment_name = \
+            self.parent.preferencesHandler.previous_experiment_name = \
             self.parent.experiment._experiment_name
         

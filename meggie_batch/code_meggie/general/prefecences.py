@@ -11,7 +11,6 @@ Module for code related to handling program wide preferences.
 import os
 import ConfigParser
 from ConfigParser import NoOptionError
-import subprocess
 
 
 class PreferencesHandler(object):
@@ -25,15 +24,17 @@ class PreferencesHandler(object):
         Constructor
         '''
     
-        self._working_directory = ''
-        self._MNERoot = ''
-        self._auto_load_last_open_experiment = False
-        self._previous_experiment_name = ''
+        self.working_directory = ''
+        self.MNERoot = ''
+        self.FreeSurferHome = ''
+        self.auto_load_last_open_experiment = False
+        self.previous_experiment_name = ''
+        self.confirm_quit = False
 
-        self.readPreferencesFromDisk()
+        self.read_preferences_from_disk()
     
 
-    def writePreferencesToDisk(self):
+    def write_preferences_to_disk(self):
         """
         Writes the preferences to disk, in an easily readable form.
         """
@@ -42,23 +43,29 @@ class PreferencesHandler(object):
         config.add_section('Workspace')
         config.add_section('EnvVariables')
         
-        # Sanity of these values is assumed to be checked by the caller (should
-        # only be preferencesDialog).
+        # Sanity of these values is assumed to be checked by the calling method
+        # (should only be preferencesDialog).
         config.set('MiscOptions', 'previous_experiment_name', 
-                   self._previous_experiment_name)
-        config.set('Workspace', 'workspaceDir', self._working_directory)           
-        config.set('EnvVariables','MNERootDir', self._MNERoot)
+                   self.previous_experiment_name)
+        config.set('Workspace', 'workspaceDir', self.working_directory)           
+        config.set('EnvVariables','MNERootDir', self.MNERoot)
+        config.set('EnvVariables', 'FreeSurferHomeDir', self.FreeSurferHome)
         
-        if self._auto_load_last_open_experiment is True:
+        if self.auto_load_last_open_experiment == True:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'True')
         else:
             config.set('MiscOptions', 'autoReloadPreviousExperiment', 'False')
+    
+        if self.confirm_quit == True:
+            config.set('MiscOptions', 'confirmQuit', 'True')
+        else:
+            config.set('MiscOptions', 'confirmQuit', 'False')
     
         with open('preferences.cfg', 'wb') as configfile:
             config.write(configfile)
         
         
-    def readPreferencesFromDisk(self):
+    def read_preferences_from_disk(self):
         """
         Reads the preferences from disk into class attributes.
         """
@@ -67,24 +74,32 @@ class PreferencesHandler(object):
             config.read('preferences.cfg')
         else: return
         
-        # If some preference is not present, just skip it (no exception
-        # handling present).
-        self._working_directory = config.get('Workspace', 'workspaceDir') 
-        self._MNERoot = config.get('EnvVariables','MNERootDir')
-        
-        # No automatic typecasting to boolean here, so have to do this.
-        if config.get('MiscOptions', 'autoreloadpreviousexperiment') == 'True':
-            self._auto_load_last_open_experiment = True
-        else: self._auto_load_last_open_experiment = False
-        
-        self._previous_experiment_name = config.get('MiscOptions', 
-                                                 'previous_experiment_name')
-    
+        # If some preference is not present yet, just skip it (it will be set
+        # right next time). 
+        try:
+            self.working_directory = config.get('Workspace', 'workspaceDir') 
+            self.MNERoot = config.get('EnvVariables','MNERootDir')
+            self.FreeSurferHome = config.get('EnvVariables', 'FreeSurferHomeDir')
+            
+            # No automatic typecasting to boolean here, so have to do this.
+            if config.get('MiscOptions', 'autoreloadpreviousexperiment') == 'True':
+                self.auto_load_last_open_experiment = True
+            else: self.auto_load_last_open_experiment = False
+            
+            if config.get('MiscOptions', 'confirmQuit') == 'True':
+                self.confirm_quit = True
+            else: self.confirm_quit = False
+            
+            self.previous_experiment_name = config.get('MiscOptions', 
+                                                     'previous_experiment_name')
+        except NoOptionError:
+            pass
+            
     
     def set_env_variables(self):
         """
         Set various shell environment variables
-        needed by MNE-C scripts and other command line programs.
+        needed by MNE-C scripts and FreeSurfer.
         """
         
         print 'Meggie: setting environment variables needed by MNE and ' + \
@@ -92,14 +107,14 @@ class PreferencesHandler(object):
         
         # TODO: check that this actually is right (in pref. dialog?) 
         # and alert user if not
-        os.environ['MNE_ROOT'] = self._MNERoot
+        os.environ['MNE_ROOT'] = self.MNERoot
         
         # Let's set stuff that mne_setup_sh and mne_setup usually handle, to
         # avoid problems with different shells and passing env variables around
         # to subprocesses.
-        mneBinPath = os.path.join(self._MNERoot, 'bin')
-        mneLibPath = os.path.join(self._MNERoot, 'lib')
-        mneUserFileSearchPath = os.path.join(self._MNERoot, 'share/app-defaults/%N')
+        mneBinPath = os.path.join(self.MNERoot, 'bin')
+        mneLibPath = os.path.join(self.MNERoot, 'lib')
+        mneUserFileSearchPath = os.path.join(self.MNERoot, 'share/app-defaults/%N')
         os.environ['PATH'] += os.pathsep + mneBinPath
         
         if os.environ.get('LD_LIBRARY_PATH') == None:
@@ -112,5 +127,7 @@ class PreferencesHandler(object):
         else:
             os.environ['XUSERFILESEARCHPATH'] += os.pathsep + \
                                                  mneUserFileSearchPath
+        
+        os.environ['FREESURFER_HOME'] = self.FreeSurferHome
         
         print 'Meggie: environment variables set succesfully! \n'

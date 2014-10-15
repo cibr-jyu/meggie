@@ -149,8 +149,8 @@ class MainWindow(QtGui.QMainWindow):
         # named <name>"-notification to user before starting to load
         # the experiment, currently doesn't.
         # If the user has chosen to open the previous experiment automatically.
-        if self.preferencesHandler._auto_load_last_open_experiment is True:
-            name = self.preferencesHandler._previous_experiment_name
+        if self.preferencesHandler.auto_load_last_open_experiment is True:
+            name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
         
@@ -171,17 +171,19 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_actionQuit_triggered(self, checked=None):
         """
-        Closes the program.
+        Closes the program, possibly after a confirmation by the user.
         """
         if checked is None: return
-        reply = QtGui.QMessageBox.question(self, 'Close Meggie',
-                                           'Are you sure you want to quit' + \
-                                           ' Meggie?', QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
-            
-        if reply == QtGui.QMessageBox.Yes:
-            self.close()
+        
+        if self.preferencesHandler.confirm_quit == True:
+            reply = QtGui.QMessageBox.question(self, 'Close Meggie',
+                     'Are you sure you want to quit Meggie?', 
+                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                     QtGui.QMessageBox.No)
+                
+            if reply == QtGui.QMessageBox.Yes:
+                self.close()
+        else: self.close()
 
         
     def on_actionCreate_experiment_triggered(self, checked=None):
@@ -190,12 +192,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return # Standard workaround for file dialog opening twice
         
-        if self.preferencesHandler._working_directory != '':
+        if self.preferencesHandler.working_directory != '':
             self.dialog = CreateExperimentDialog(self)
             self.dialog.show()
         else:
             self.check_workspace()
-            if self.preferencesHandler._working_directory != '':
+            if self.preferencesHandler.working_directory != '':
                 self.dialog = CreateExperimentDialog(self)
                 self.dialog.show()   
 
@@ -406,6 +408,24 @@ class MainWindow(QtGui.QMainWindow):
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.experiment.active_subject._epochs[fname]
         fileManager.save_epoch(fpath, epochs_object)
+
+
+    def closeEvent(self, event):
+        """
+        Redefine window close event to allow confirming on quit.
+        """
+        
+        if self.preferencesHandler.confirm_quit == True:
+            reply = QtGui.QMessageBox.question(self, 'Close Meggie',
+                "Are you sure you want to quit?", QtGui.QMessageBox.Yes | 
+                QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+    
+            if reply == QtGui.QMessageBox.Yes:
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()  
 
         
     @QtCore.pyqtSlot(dict)
