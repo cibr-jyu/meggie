@@ -380,7 +380,6 @@ class Experiment(QObject):
         self.update_working_file(complete_raw_path)
         
         
-        
     def create_subjects(self, experiment, subject_paths):
         """Creates subjects when opening an experiment with subjects.
         Raw file is not set here.
@@ -499,112 +498,31 @@ class Experiment(QObject):
         """
         experiment_directory = os.path.join(self._workspace, \
                                             self._experiment_name)
-        try:
-            os.mkdir(experiment_directory)
-            print 'Creating experiment settings ...'
-        except OSError:
-            raise Exception('No rights to save to the chosen path or' + 
-                            ' experiment name already exists')
-            return
-        # String conversion, because shutil doesn't accept QStrings
-        # TODO the file should end with .exp
-        settingsFileName = str(self._experiment_name + '.exp')
         
-        # Actually a file object
-        settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
+        # Make the directory if it doesn't exist
+        if not os.path.isdir(experiment_directory):
+            try:
+                os.mkdir(experiment_directory)
+                print 'Meggie: Creating experiment settings ... \n'
+            except OSError:
+                raise Exception('No rights to save to the chosen path or' + 
+                                ' experiment name already exists. \n')
+                return
+        else:
         
-        # Protocol 2 used because of file object being pickled
-        pickle.dump(self, settingsFile, 2)
-        print '[done]'
-        settingsFile.close()        
-
-
-    def update_experiment_settings(self):
-        """
-        Updates experiment settings after adding a subject.
-        """
-        # TODO: turha metodi, tee tarkistus save_experiment_settings metodissa,
-        # sille onko kyseistä kansiota jo olemassa
-        experiment_directory = os.path.join(self._workspace, \
-                                            self._experiment_name)
-        settingsFileName = str(self._experiment_name + '.exp')
-        settingsFile = open(os.path.join(experiment_directory, settingsFileName), 'wb')
-        pickle.dump(self, settingsFile, 2)
-        settingsFile.close()
-
-
-    def save_parameter_file(self, command, inputfilename, outputfilename,
-                            operation, dic):
-        """
-        Saves the command and parameters related to creation of a certain
-        output file to a separate parameter file in csv-format.
-        
-        An example of the structure of the resulting parameter file:
-        
-        jn_multimodal01_raw_sss.fif
-        jn_multimodal01_raw_sss_ecg_proj.fif 
-        mne.preprocessing.compute_proj_eog
-        tmin,0.2
-        tmax,0.5
-        .
-        .
-        .  
-        
-        Keyword arguments:
-        command          -- command (as string) used.
-        inputfilename    -- name of the file the command with parameters
-                            was executed on
-        outputfilename   -- the resulting output file from the command.
-        operation        -- operation the command represents. Used for
-                            determining the parameter file name.
-        dic              -- dictionary including commands.
-        """
-        paramfilename = os.path.join(self._workspace, self._experiment_name, self._active_subject_name, operation + '.param')
-        
-        with open(paramfilename, 'wb') as paramfullname:
-            print 'writing param file'
-            csvwriter = csv.writer(paramfullname)
+            # String conversion, because shutil doesn't accept QStrings
+            settingsFileName = str(self._experiment_name + '.exp')
             
-            csvwriter.writerow([inputfilename])
-            csvwriter.writerow([outputfilename])
-            csvwriter.writerow([command])
+            # Actually a file object
+            settingsFile = open(os.path.join(experiment_directory, 
+                                settingsFileName), 'wb')
             
-            for key, value in dic.items():
-                csvwriter.writerow([key, value])
-          
-                    
-    def parse_parameter_file(self, operation):
-        """
-        Reads the parameters from a single file matching the operation
-        and returns the parameters as a dictionary.        
-        Keyword arguments:
-        operation    -- String that designates the operation. See Caller class
-                        for operation names.
-                        
-        """
-        
-        # Reading parameter file.
-        paramdirectory = os.path.join(self._workspace, self._experiment_name, self._active_subject_name) 
-        paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
-        
-        try:
-            with open(paramfilefullpath, 'rb') as paramfile:
-                csvreader=csv.reader(paramfile)
-                
-                # skip the first three lines, as they don't include actual
-                # info about parameters
-                for i in range(3):
-                    next(csvreader)
-                
-                # Read the rest of the parameter file into a dictionary as
-                # key-value pairs
-                paramdict = dict(x for x in csvreader)
-                return paramdict           
-        except IOError:
-            # In no dictionary is returned, the dialog just falls back to
-            # default initial values.
-            return None  
+            # Protocol 2 used because of file object being pickled
+            pickle.dump(self, settingsFile, 2)
+            print '[done]'
+            settingsFile.close()        
 
+    
 
     def __getstate__(self):
         """
