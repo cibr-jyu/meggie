@@ -442,7 +442,8 @@ class MainWindow(QtGui.QMainWindow):
                                                       self.experiment.\
                                                       active_subject.\
                                                       _working_file)
-        epoch_params['raw'] = self.experiment.active_subject_raw_path
+        epoch_params['raw'] = self.experiment.\
+        _working_file_names[self.experiment._active_subject_name]
         
         fname = epoch_params['collectionName']
         item = QtGui.QListWidgetItem(fname)

@@ -436,8 +436,7 @@ class Caller(object):
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
-        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
-                                                     active_subject_raw_path)[1])[0]
+        rawFileName = os.path.splitext(os.path.split(self.parent.experiment._working_file_names[self.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
