@@ -408,7 +408,7 @@ class Caller(object):
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
-        self.parent.experiment.update_experiment_settings()
+        self.parent.experiment.save_experiment_settings()
  
     
     def average(self, epochs, category):

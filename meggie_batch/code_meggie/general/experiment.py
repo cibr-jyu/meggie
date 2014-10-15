@@ -289,7 +289,7 @@ class Experiment(QObject):
             raise Exception('Could not remove the contents of the subject' + \
                             ' folder.')
         row = main_window.ui.listWidgetSubjects.row(item)
-        self.update_experiment_settings()
+        self.save_experiment_settings()
         main_window.ui.listWidgetSubjects.takeItem(row)
         main_window._initialize_ui()
 
@@ -348,7 +348,7 @@ class Experiment(QObject):
                 # Check if the working file is actually loaded already (in the
                 # case of addSubjectDialogMain accept() method).
                 self.load_working_file(subject)
-                self.update_experiment_settings()
+                self.save_experiment_settings()
         
  
     def create_subject(self, subject_name, experiment, raw_path):

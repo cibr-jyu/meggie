@@ -106,7 +106,7 @@ class AddSubjectDialog(QtGui.QDialog):
         #self.parent.experiment._active_subject_raw_path = os.path.\
         #join(self.parent.experiment._active_subject_path, os.path.basename(raw_path)) 
         
-        self.parent.experiment.update_experiment_settings()
+        self.parent.experiment.save_experiment_settings()
         self.parent._initialize_ui()
         self.close()
         
