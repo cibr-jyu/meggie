@@ -358,7 +358,9 @@ class Subject(QObject):
         epochs = e.create_epochs_from_dict(epoch_params, self._experiment.\
                                            active_subject.\
                                            working_file)
-        epoch_params['raw'] = self._experiment.active_subject_raw_path #working_file_path
+        epoch_params['raw'] = self._experiment._working_file_names[self._experiment._active_subject_name] #working_file_path
+        
+        
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])
         # TODO: remove setData
