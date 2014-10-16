@@ -450,29 +450,6 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
-
-    def open_active_subject(self):
-        """
-        Opens the active subject of the experiment.
-        """
-        # When opening experiment with existing subject paths, creates
-        # Subject objects using subject paths in experiment. Doesn't set
-        # raw, event_set and stim_channel.   
-        if len(self.experiment._subject_paths) > 0 and len(self.experiment._subjects) == 0:
-            subjects = []
-            for i in range(self.ui.listWidgetSubjects.count()):
-                subjects.append(str(self.ui.listWidgetSubjects.item(i).text()))
-            self.experiment.create_subjects(self.experiment, subjects)
-
-        if self.experiment.active_subject_path != '':
-            #if len(self.experiment._subject_paths) > 0:
-            raw_path = self.experiment.active_subject_raw_path
-            subject_name = self.experiment.active_subject_name
-            epochs_items, evokeds_items = self.experiment.\
-            activate_subject(raw_path, subject_name, self.experiment)
-            return epochs_items, evokeds_items
-        return None, None
-
         
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.

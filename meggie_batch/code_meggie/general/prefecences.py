@@ -128,6 +128,11 @@ class PreferencesHandler(object):
             os.environ['XUSERFILESEARCHPATH'] += os.pathsep + \
                                                  mneUserFileSearchPath
         
+        # Also set environment directly for FreeSurfer.
+        freeSurferBinPath = os.path.join(self.FreeSurferHome, 'bin')
+        freeSurferTktoolsPath = os.path.join(self.FreeSurferHome, 'tktools')
         os.environ['FREESURFER_HOME'] = self.FreeSurferHome
+        os.environ['PATH'] += os.pathsep + freeSurferBinPath
+        os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
         
         print 'Meggie: environment variables set succesfully! \n'

@@ -450,19 +450,6 @@ def save_epoch(fpath, epoch, overwrite=False):
     pickleObjectToFile(parameters, parameterFileName)
 
 
-def set_env_variables():
-    """
-    Set various shell environment variables needed by MNE-C scripts.
-    """
-    if os.path.isfile('settings.cfg'):
-        configp = ConfigParser.RawConfigParser()
-        configp.read('settings.cfg')
-        
-        if configp.has_option('MNERoot', 'MNERootDir'):
-            MNERootPath = configp.get('MNERoot', 'MNERootDir')
-            os.environ['MNE_ROOT'] = MNERootPath
-
-
 def read_surface_names_into_list(subject):
     """
     Reads the surface files from under the subject's surf directory and
