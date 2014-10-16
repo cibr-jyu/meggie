@@ -59,11 +59,10 @@ class ForwardModelDialog(QtGui.QDialog):
         
         # A bit of checking for stupidities in naming to avoid conflicts
         # with directories created by MNE scripts.
-        # TODO probably should be limited to alphanumeric ascii without spaces,
-        # too.
-        if string.lower(fmdict['fmname']) == ('mri' or 'bem'):
-            message = "'mri' or 'bem' are not acceptable fmodel names (they " + \
-                      "get mixed up with MNE directory names)."
+        # TODO: probably should be limited to alphanumeric ascii without spaces.
+        if string.lower(fmdict['fmname']) == ('mri' or 'bem' or 'surf'):
+            message = "'mri', 'bem' and 'surf' are not acceptable fmodel names" + \
+                      " (they get mixed up with MNE directory names)."
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
@@ -72,9 +71,7 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
         
-        # TODO should be self.ui.comboBoxSurfaceName.currentText(), currently
-        # using default 'white' for testing
-        fmdict['surfaceName'] = 'white'
+        fmdict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
         self.ui.radioButtonPatchStatYes:
@@ -86,7 +83,6 @@ class ForwardModelDialog(QtGui.QDialog):
             fmdict['useAtlas'] = True
         else: fmdict['useAtlas'] = False                    
         
-        fmdict['triangFilesType'] = self.ui.comboBoxTriangFiles.currentText()
         fmdict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
         fmdict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
         
@@ -142,12 +138,8 @@ class ForwardModelDialog(QtGui.QDialog):
         else: waterShedArgs = []
         
         # Arguments for BEM model setup
-        if fmdict['triangFilesType'] == 'standard ASCII (default)':
-            surfArg = []
-            bemIcoArg = []
-        else: 
-            surfArg = '--surf'
-            bemIcoArg = ['--ico', fmdict['triangFilesIco']]
+        surfArg = '--surf'
+        bemIcoArg = ['--ico', fmdict['triangFilesIco']]
         
         if fmdict['compartModel'] == 'standard ASCII (default)':
             braincArg = [ fmdict['brainc']]
@@ -181,10 +173,7 @@ class ForwardModelDialog(QtGui.QDialog):
         
         fmdict = self.collectParametersIntoDictionary()
         fmname = fmdict['fmname']
-        
-        cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(fmdict)
-
-        
+        cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(
+                                                                        fmdict)
         self.parent.caller.create_forward_model(fmname, cmdTuple)
-        
         self.close()

@@ -34,6 +34,7 @@ Created on Apr 24, 2013
 """
 """
 Helper module for all the different channel groups.
+TODO: MNE already has this, no need to use our own.
 """
 
 class BrainRegions(object):

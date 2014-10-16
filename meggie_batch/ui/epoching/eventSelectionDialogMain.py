@@ -43,17 +43,17 @@ from epochDialogMain import EpochDialog
 
 from epochs import Epochs
 from events import Events
+import fileManager
+
+from xlrd import XLRDError
 
 import mne
 
-# TODO this is for the currently unused check_channels method. 
+# TODO: for the currently unused check_channels method. MNE has similar list,
+# however, no need to use our own. 
 #import brainRegions
 
 import numpy as np
-
-#from xlrd import XLRDError
-
-from functools import partial
 
 class EventSelectionDialog(QtGui.QDialog):
     
@@ -64,6 +64,7 @@ class EventSelectionDialog(QtGui.QDialog):
     
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
+
 
     def __init__(self, parent, raw, params = None):
         """Initialize the event selection dialog.
@@ -86,6 +87,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.used_names = []
         if params is not None:
             self.fill_parameters(params)
+
         
     def add_events(self, events, event_name):
         """Add a list of events or a single event to the ui's eventlist.
@@ -107,6 +109,7 @@ class EventSelectionDialog(QtGui.QDialog):
             self.used_names.append(event_name)
         
         self.ui.pushButtonRemove.setEnabled(True)
+
         
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
@@ -171,9 +174,8 @@ class EventSelectionDialog(QtGui.QDialog):
         picks = mne.fiff.pick_types(self.raw.info, meg=meg, eeg=eeg,
                                     stim=stim, eog=eog)
         if len(picks) == 0:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText \
-            ('No picks found with current parameter values')
+            message = 'No picks found with current parameter values' 
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return  
 
@@ -184,6 +186,7 @@ class EventSelectionDialog(QtGui.QDialog):
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 'collectionName' : collectionName}
         return param_dict
+
         
     def create_eventlist(self):
         """
@@ -194,6 +197,7 @@ class EventSelectionDialog(QtGui.QDialog):
         e.pick(self.event_id)
         print str(e.events)
         return e.events
+
     
     def fill_parameters(self, params):
         """Fill the fields in the dialog with parameters values from a dict.
@@ -253,6 +257,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxTmin.setValue(params_str['tmin'])
         self.ui.doubleSpinBoxTmax.setValue(params_str['tmax'])
         self.ui.lineEditCollectionName.setText(params_str['collectionName'])
+
                     
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -265,6 +270,7 @@ class EventSelectionDialog(QtGui.QDialog):
 
 
         self.ui.lineEditName.setText('Event')
+
         
     def on_pushButtonRemove_clicked(self, checked=None):
         """
@@ -287,6 +293,7 @@ class EventSelectionDialog(QtGui.QDialog):
             
         if self.ui.listWidgetEvents.currentRow() < 0:
             self.ui.pushButtonRemove.setEnabled(False)
+
         
     def accept(self):
         """Save the parameters in a dictionary and send it forward.
@@ -298,9 +305,8 @@ class EventSelectionDialog(QtGui.QDialog):
         Emit an epoch_params_ready signal.
         """
         if self.ui.listWidgetEvents.count() == 0:
-            self.errorMessage = messageBox.AppForm()
-            self.errorMessage.labelException.setText('Cannot create epochs ' + 
-                                                   'from empty list.')
+            message = 'Cannot create epochs from empty list.'
+            self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
         
@@ -309,15 +315,15 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         
         if len(param_dict['reject']) == 0:
-            self.errorMessage = messageBox.AppForm()
-            self.errorMessage.labelException.setText('Picks cannot be empty. ' + 
-                                'Select picks by checking the checkboxes.')
+            message = 'Picks cannot be empty. Select picks by checking the ' + \
+                      ' checkboxes.'
+            self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
-            
             return
         
         self.epoch_params_ready.emit(param_dict, self.parent.epochList)
         self.close()
+
         
     def check_channels(self):
         """
@@ -343,6 +349,7 @@ class EventSelectionDialog(QtGui.QDialog):
         elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
             return ['MEG ' + str(x) for x in brainRegions.right_frontal]
 
+
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         """
         Called when save events button is clicked. Saves all the events in the
@@ -360,15 +367,16 @@ class EventSelectionDialog(QtGui.QDialog):
         if len(events) > 0:
             print 'Writing events...'
             try:
-                self.parent.caller.write_events(events)
+                activeSubject = self.parent._experiment._active_subject
+                fileManager.write_events(events, activeSubject)
             except UnicodeDecodeError, err:
-                self.messageBox = messageBox.AppForm()
-                self.messageBox.labelException.setText('Cannot save events: ' +
-                                                       str(err))
+                message = 'Cannot save events: ' + str(err)
+                self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
                 print 'Aborting...'
                 return
             print 'Done.'
+
     
     def on_pushButtonReadEvents_clicked(self, checked=None):
         """
@@ -382,10 +390,9 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         self.ui.listWidgetEvents.clear()
         try:
-            sheet = self.parent.caller.read_events(filename)
+            sheet = fileManager.read_events(filename)
         except XLRDError, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
 
@@ -405,6 +412,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.ui.listWidgetEvents.addItem(item)
             
         self.ui.listWidgetEvents.setCurrentItem(item)
+
         
     def set_event_name(self, name, suffix = 1):
         """Set the event name to name. If name exists, add suffix to it

@@ -131,49 +131,6 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBoxBemModelMeshes">
-     <property name="title">
-      <string>BEM model meshes (watershed) creation parameters:</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Use atlas:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QRadioButton" name="radioButtonAtlasNo">
-          <property name="text">
-           <string>no (default)</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">buttonGroupAtlas</string>
-          </attribute>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonAtlasYes">
-          <property name="text">
-           <string>yes</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">buttonGroupAtlas</string>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="4" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -296,44 +253,6 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QComboBox" name="comboBoxTriangFiles">
-          <item>
-           <property name="text">
-            <string>standard ASCII (default)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>FreeSurfer triangulation files</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>ico-number:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxTriangFilesIco">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
       <item row="3" column="1">
        <widget class="QFrame" name="frame_2">
         <property name="frameShape">
@@ -434,10 +353,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Triangulation files:</string>
-        </property>
-        <property name="buddy">
-         <cstring>comboBoxTriangFiles</cstring>
+         <string>Triangulation files ico-number:</string>
         </property>
        </widget>
       </item>
@@ -475,6 +391,19 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spinBoxTriangFilesIco">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="value">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -492,6 +421,49 @@
      </item>
     </layout>
    </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBoxBemModelMeshes">
+     <property name="title">
+      <string>BEM model meshes (watershed) creation parameters:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Use atlas:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QRadioButton" name="radioButtonAtlasNo">
+          <property name="text">
+           <string>no (default)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupAtlas</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButtonAtlasYes">
+          <property name="text">
+           <string>yes</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroupAtlas</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
@@ -503,8 +475,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>615</x>
-     <y>556</y>
+     <x>603</x>
+     <y>554</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -519,8 +491,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>677</x>
-     <y>556</y>
+     <x>603</x>
+     <y>554</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

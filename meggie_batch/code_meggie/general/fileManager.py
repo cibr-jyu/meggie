@@ -43,7 +43,10 @@ import mne
 import os
 import pickle
 import shutil
-import ConfigParser
+
+from xlrd import open_workbook
+from xlwt import Workbook, XFStyle
+import csv
 
 # For copy_tree. Because shutil.copytree for has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
@@ -138,6 +141,34 @@ def remove_sourceAnalysis_files(aSubject):
     
     # shutil.rmtree(directory, ignore_errors, onerror)
     
+
+def create_fModel_directory(fmname, subject):
+    """
+    Create a directory for the final forward model (under the directory of the
+    subject) and copy the whole bem directory to it.
+    
+    Keyword arguments:
+    
+    fmname        -- desired name for the forward model.
+    subject       -- The subject (as an object) whose model while are to be
+                     copied (probably always the active subject of the current
+                     experiment).
+    """
+    
+    fromCopyDir = os.path.join(subject._reconFiles_directory, 'bem')
+    toCopyDir = os.path.join(subject._forwardModels_directory, fmname)
+    
+    if not os.path.isdir(toCopyDir):
+        os.mkdir(toCopyDir)
+    
+    try:
+        shutil.copy(fromCopyDir, toCopyDir)
+    except IOError as e:
+        message = 'There was a problem with copying forward model files: ' + \
+                  str(e)
+        messageBox = messageBoxes.shortMessageBox(message)
+        messageBox.show()
+
     
 def create_key_csv_evoked(evoked):
     """Create a list used for creating a csv file of key values in evoked.
@@ -485,6 +516,47 @@ def read_surface_names_into_list(subject):
     
     # To set and back to remove duplicates.
     return list(set(finalSurfNameList))
+
+
+def write_events(events, subject):
+        """
+        Saves the events into an Excel file (.xls). 
+        Keyword arguments:
+        events           -- Events to be saved
+        subject          -- subject (as object) whose events are in question 
+                            (usually active subject)
+        """
+        wbs = Workbook()
+        ws = wbs.add_sheet('Events')
+        styleNumber = XFStyle()
+        styleNumber.num_format_str = 'general'
+        sizex = events.shape[0]
+        sizey = events.shape[1]
+                
+        path_to_save = subject._subject_path
+        
+        # Saves events to csv file for easier modification with text editors.
+        csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
+        csv_file_writer = csv.writer(csv_file)
+        csv_file_writer.writerows(events)
+        csv_file.close()
+
+        for i in range(sizex):
+            for j in range(sizey):
+                ws.write(i, j, events[i][j], styleNumber)
+        wbs.save(os.path.join(path_to_save, 'events.xls'))
+        #TODO: muuta filename kayttajan maarittelyn mukaiseksi
+
+
+def read_events(filename):
+    """
+    Reads the events from a chosen excel file.
+    Keyword arguments:
+    filename      -- File to read from.
+    """
+    wbr = open_workbook(filename)
+    sheet = wbr.sheet_by_index(0)
+    return sheet
 
 
 def readCSVFileToDictList(self, keynames, fpath, ndoculines):

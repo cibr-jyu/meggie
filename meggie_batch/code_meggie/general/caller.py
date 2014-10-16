@@ -61,9 +61,6 @@ from mne.viz import plot_topo
 # from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
-
-from xlrd import open_workbook
-from xlwt import Workbook, XFStyle
 import csv
 
 import numpy as np
@@ -72,6 +69,7 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import re
 import messageBoxes
+import fileManager
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
@@ -835,6 +833,9 @@ class Caller(object):
         return dataToFilter
     
     
+    
+### Methods needed for source modeling ###    
+
     def convert_mri_to_mne(self):
         """
         Uses mne_setup_mri to active subject recon directory to create Neuromag
@@ -879,19 +880,28 @@ class Caller(object):
         - Create BEM model with mne_setup_forward_model
         - Copy the bem files to the directory named according to fmname
         """
-        
+        activeSubject = self.parent.experiment._active_subject
+    
         # Set env variables to point to appropriate directories. 
-        os.environ['SUBJECTS_DIR'] = self.parent.experiment._active_subject.\
-                                     _source_analysis_directory
+        os.environ['SUBJECTS_DIR'] = activeSubject._source_analysis_directory
         os.environ['SUBJECT'] = 'reconFiles'
-        
+    
         # The scripts call scripts themselves and need environ for path etc.
         env = os.environ
         
+        self._call_mne_setup_source_space(self, setupSourceSpaceArgs, env)
+        
+        self._call_mne_watershed_bem(waterShedArgs, env)
+    
+        self._call_mne_setup_forward_model(setupFModelArgs, env)
+        
+        fileManager.create_fModel_directory(activeSubject, fmname)
+    
+    def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:
             # TODO: this actually has an MNE-Python counterpart, which doesn't
             # help much, as the others don't (11.10.2014).
-            # TODO: seems that the '--overwrite' is ignored
+            # TODO: seems that the '--overwrite' is ignored.
             mne_setup_source_space_command = ['$MNE_ROOT/bin/mne_setup_source_space'] + \
             setupSourceSpaceArgs + ['--overwrite']
             subprocess.check_output(mne_setup_source_space_command,
@@ -912,6 +922,8 @@ class Caller(object):
             self.messageBox.exec_()
             return
         
+        
+    def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
             mne_watershed_bem_command = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
                                     waterShedArgs + ['--overwrite']
@@ -933,6 +945,8 @@ class Caller(object):
             self.messageBox.exec_()
             return
         
+        
+    def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
             subprocess.check_output(['$MNE_ROOT/bin/mne_setup_forward_model'] + 
                                     setupFModelArgs, shell=True, env=env)
@@ -951,24 +965,6 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
-        
-        # Create a directory for the final forward model and
-        # copy the whole bem directory to it.
-        activeSubject = self.parent._experiment._active_subject
-        
-        fromCopyDir = os.path.join(activeSubject._reconFiles_directory, 'bem')
-        toCopyDir = os.path.join(activeSubject._forwardModels_directory, fmname)
-        
-        if not os.path.isdir(toCopyDir):
-            os.mkdir(toCopyDir)
-        
-        try:
-            shutil.copy(fromCopyDir, toCopyDir)
-        except IOError as e:
-            message = 'There was a problem with copying forward model files: ' + \
-                      str(e)
-            self.messageBox = messageBoxes.shortMessageBox()
-            self.messageBox.exec_()
 
 
     def update_experiment_working_file(self, fname, raw):
@@ -986,41 +982,5 @@ class Caller(object):
         self.parent.statusLabel.setText(QtCore.QString(status))
 
 
-    def write_events(self, events):
-        """
-        Saves the events into an Excel file (.xls). 
-        Keyword arguments:
-        events           -- Events to be saved
-        """
-        wbs = Workbook()
-        ws = wbs.add_sheet('Events')
-        styleNumber = XFStyle()
-        styleNumber.num_format_str = 'general'
-        sizex = events.shape[0]
-        sizey = events.shape[1]
-                
-        path_to_save = self.parent.experiment.active_subject._subject_path
-        
-        # Saves events to csv file for easier modification with text editors.
-        csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
-        csv_file_writer = csv.writer(csv_file)
-        csv_file_writer.writerows(events)
-        csv_file.close()
-
-        for i in range(sizex):
-            for j in range(sizey):
-                ws.write(i, j, events[i][j], styleNumber)
-        wbs.save(os.path.join(path_to_save, 'events.xls'))
-        #TODO: muuta filename kayttajan maarittelyn mukaiseksi
-
-
-    def read_events(self, filename):
-        """
-        Reads the events from a chosen excel file.
-        Keyword arguments:
-        filename      -- File to read from.
-        """
-        wbr = open_workbook(filename)
-        sheet = wbr.sheet_by_index(0)
-        return sheet
+    
     
