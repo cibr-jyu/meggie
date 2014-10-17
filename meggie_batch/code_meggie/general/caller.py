@@ -70,6 +70,7 @@ from matplotlib.font_manager import FontProperties
 import re
 import messageBoxes
 import fileManager
+import glob
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
@@ -872,23 +873,43 @@ class Caller(object):
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
          
-        - Create a temporary directory for I/O related to forward model creation
-        - 
         - Run mne_setup_source_space to handle various steps of source space
         creation
         - Use mne_watershed_bem to create bem model meshes
         - Create BEM model with mne_setup_forward_model
         - Copy the bem files to the directory named according to fmname
+        
+        TODO: Keyword arguments:
+        
+        
         """
         activeSubject = self.parent.experiment._active_subject
     
         # Set env variables to point to appropriate directories. 
         os.environ['SUBJECTS_DIR'] = activeSubject._source_analysis_directory
         os.environ['SUBJECT'] = 'reconFiles'
-    
+        
         # The scripts call scripts themselves and need environ for path etc.
         env = os.environ
         
+        # Some test files for whether setup_source_space has and watershed
+        # have already been run. MNE scripts delete these if something fails,
+        # so it should be save to base tests of these.
+        bemDir = os.path.join(activeSubject._reconFiles_directory, 'bem/')
+        
+        # Should have the source space description file.
+        sourceSpaceSetupTestList = glob.glob(bemDir + '*src.fif') 
+        
+        waterShedDir = os.path.join(bemDir, 'watershed/')
+        waterShedSurfaceTestFile = os.path.join(waterShedDir, 
+                                                'reconFiles_brain_surface')
+        wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
+        
+        # Check if source space is already setup and watershed calculated, and
+        # offer to skip them and only perform setup_forward_model.
+        # if len(sourceSpaceSetupTestList) > 0 and os.path.exists(waterShedSurfaceTestFile) and os.path.exists(wsCorTestFile):
+            
+            
         self._call_mne_setup_source_space(self, setupSourceSpaceArgs, env)
         
         self._call_mne_watershed_bem(waterShedArgs, env)
@@ -896,6 +917,7 @@ class Caller(object):
         self._call_mne_setup_forward_model(setupFModelArgs, env)
         
         fileManager.create_fModel_directory(activeSubject, fmname)
+    
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:

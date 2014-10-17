@@ -33,9 +33,6 @@ Created on Mar 13, 2013
 @author: Jaakko Leppakangas, Atte Rautio, Kari Aliranta
 
 A module for various file operations needed by Meggie.
-
-TODO remove self from function arguments. Used to be a class, is no more.
-
 """
  
 import mne
@@ -488,7 +485,8 @@ def read_surface_names_into_list(subject):
     box in forwardModelDialog (which in turn allows the user to select the 
     surface to be used by mne_setup_source_space).
     
-    Obviously, to succeed, this method requires that the
+    No exception checking, the existence of surface files is assumed to be
+    checked by the calling method.
     
     Keyword arguments:
     subject     -- subjects whose surface files need listing (almost always the
@@ -496,7 +494,6 @@ def read_surface_names_into_list(subject):
                    be).
 
     Returns a list of surface names.
-    Raises an IOError if no surface files can be found.
     """
     
     surfDir = os.path.join(subject._reconFiles_directory, 'surf/')
