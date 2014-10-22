@@ -40,7 +40,7 @@ import os
 import glob
 
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 
 import mne
 # from mne import fiff -- mne.fiff is deprecated in MNE 0.8
@@ -881,7 +881,6 @@ class Caller(object):
         
         TODO: Keyword arguments:
         
-        
         """
         activeSubject = self.parent.experiment._active_subject
     
@@ -907,16 +906,47 @@ class Caller(object):
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
-        # if len(sourceSpaceSetupTestList) > 0 and os.path.exists(waterShedSurfaceTestFile) and os.path.exists(wsCorTestFile):
-            
-            
-        self._call_mne_setup_source_space(self, setupSourceSpaceArgs, env)
+        reply = 0
+        if len(sourceSpaceSetupTestList) > 0 and \
+        os.path.exists(waterShedSurfaceTestFile) and \
+        os.path.exists(wsCorTestFile):
+            title = 'Reuse existing files?'
+            text = "It seems you already have a setup source space and BEM " + \
+            "model meshes created with watershed algorithm. If you don't " + \
+            "need to create them again, Meggie can reuse them and only " + \
+            "setup a new forward model. This will save a considerable amount " + \
+            " of time, especially in BEM model meshes creation. You can: \n \n" + \
+            "1) press Cancel to get back to previous dialog to adjust " + \
+            " parameters \n \n" + \
+            "2) Press \"BEM model setup only\" to reuse previously created " + \
+            "files for a new forward model (only forward model name and BEM"  + \
+            "model setup parameters will be used, others are ignored) \n \n" + \
+            "3) Compute all phases again"
+            bemButtonText = 'Bem model \n setup only'
+            computeButtonText = 'Compute all \n phases again' 
+            reply = QtGui.QMessageBox.information(self.parent, title, text, 'Cancel',
+                                                  bemButtonText, 
+                                                  computeButtonText)
         
-        self._call_mne_watershed_bem(waterShedArgs, env)
-    
-        self._call_mne_setup_forward_model(setupFModelArgs, env)
+        if reply == 0:
+            # To keep forward model dialog open
+            return False
         
-        fileManager.create_fModel_directory(activeSubject, fmname)
+        if reply == 1:
+            # Need to do this to get triangulation files to right place and
+            # naming for mne_setup_forward_model.
+            fileManager.rename_and_copy_triang_files(activeSubject)
+            self._call_mne_setup_forward_model(setupFModelArgs, env)
+        
+        if reply == 2:
+            self._call_mne_setup_source_space(self, setupSourceSpaceArgs, env)
+            self._call_mne_watershed_bem(waterShedArgs, env)
+            
+            # Right name and place for triang files, see above.
+            fileManager.rename_and_copy_triang_files(activeSubject)
+            self._call_mne_setup_forward_model(setupFModelArgs, env)    
+        
+        fileManager.create_fModel_directory(fmname, activeSubject)
     
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):

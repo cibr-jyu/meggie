@@ -35,7 +35,6 @@ Contains the MainWindow-class that holds the main window of the application.
 """
 
 import os,sys
-import pickle
  
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtGui import QWhatsThis, QFont
@@ -45,7 +44,8 @@ from mne import fiff
 import matplotlib
 matplotlib.use('Qt4Agg')
 import pylab as pl
- 
+from caller import Caller
+
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
 from addSubjectDialogMain import AddSubjectDialog
@@ -74,7 +74,6 @@ import messageBoxes
 import experiment
 from epochs import Epochs
 from events import Events
-from caller import Caller
 from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget

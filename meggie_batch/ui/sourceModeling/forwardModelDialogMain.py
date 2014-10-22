@@ -138,29 +138,31 @@ class ForwardModelDialog(QtGui.QDialog):
         else: waterShedArgs = []
         
         # Arguments for BEM model setup
-        surfArg = '--surf'
+        surfArg = ['--surf']
         bemIcoArg = ['--ico', fmdict['triangFilesIco']]
         
         if fmdict['compartModel'] == 'standard ASCII (default)':
-            braincArg = [ fmdict['brainc']]
+            braincArg = fmdict['brainc']
             skullcArg = fmdict['skullc']
             scalpcArg = fmdict['scalpc']
+            homogArg = ['']
         else:
-            braincArg = []
-            skullcArg = []
-            scalpcArg = []
+            braincArg = ['']
+            skullcArg = ['']
+            scalpcArg = ['']
+            homogArg = ['--homog']
 
         if fmdict['nosol'] == True:
-            nosolArg = '--nosol'
-        else: nosolArg = []
+            nosolArg = ['--nosol']
+        else: nosolArg = ['']
         
         innerShiftArg = ['--innerShift', fmdict['innerShift']] 
         outerShiftArg = ['--outerShift', fmdict['outerShift']] 
         skullShiftArg = ['--outerShift', fmdict['skullShift']] 
         
         setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
-                          scalpcArg + nosolArg + innerShiftArg + outerShiftArg + \
-                          skullShiftArg
+                          scalpcArg + nosolArg + homogArg + innerShiftArg + \
+                          outerShiftArg + skullShiftArg
         
         return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
@@ -173,7 +175,17 @@ class ForwardModelDialog(QtGui.QDialog):
         
         fmdict = self.collectParametersIntoDictionary()
         fmname = fmdict['fmname']
+        
+        activeSubject = self.parent._experiment._active_subject
+        if fileManager.check_fModel_name(fmname, activeSubject):
+            message = 'That forward model name is already in use. Please ' + \
+            'select another.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
         cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(
                                                                         fmdict)
-        self.parent.caller.create_forward_model(fmname, cmdTuple)
+        if self.parent.caller.create_forward_model(fmname, cmdTuple) == False:
+            return
         self.close()

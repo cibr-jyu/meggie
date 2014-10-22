@@ -90,7 +90,7 @@ class Subject(QObject):
             os.path.join(self._source_analysis_directory, 'forwardModels')
         
         
-        # Models for various types of data stored in subject<
+        # Models for various types of data stored in subject
         self._forwardModelModel = None
         
         

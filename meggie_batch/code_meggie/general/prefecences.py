@@ -135,4 +135,4 @@ class PreferencesHandler(object):
         os.environ['PATH'] += os.pathsep + freeSurferBinPath
         os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
         
-        print 'Meggie: environment variables set succesfully! \n'
+        print 'Meggie: environment variables set successfully! \n'

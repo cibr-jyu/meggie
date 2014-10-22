@@ -40,6 +40,7 @@ import mne
 import os
 import pickle
 import shutil
+import glob
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
@@ -153,20 +154,58 @@ def create_fModel_directory(fmname, subject):
     """
     
     fromCopyDir = os.path.join(subject._reconFiles_directory, 'bem')
-    toCopyDir = os.path.join(subject._forwardModels_directory, fmname)
     
+    # If this is the first forward model, the forwardModels directory doesn't
+    # exist yet.
+    if not os.path.isdir(subject._forwardModels_directory):
+        subject.create_forwardModels_directory()
+    
+    # Existence actually checked already by check_fModel_name via
+    # forwardModelDialog.
+    toCopyDir = os.path.join(subject._forwardModels_directory, fmname)
     if not os.path.isdir(toCopyDir):
-        os.mkdir(toCopyDir)
+        os.mkdir(toCopyDir)  
     
     try:
         shutil.copy(fromCopyDir, toCopyDir)
     except IOError as e:
+        os.rmdir(toCopyDir)
         message = 'There was a problem with copying forward model files: ' + \
                   str(e)
         messageBox = messageBoxes.shortMessageBox(message)
-        messageBox.show()
+        messageBox.exec_()
+        
 
+def check_fModel_name(fmname, subject):
+    """
+    Checks whether a forward model name is already in use. If yes, return True,
+    else return False.
     
+    Keyword arguments:
+    fmname         -- proposed forward model name
+    subject        -- (the usually active) subject
+    
+    """
+    proposedDir = os.path.join(subject._forwardModels_directory, fmname)
+    if os.path.isdir(proposedDir):
+        return True
+    
+    return False
+
+def rename_and_copy_triang_files(subject):
+    bemDir = os.path.join(subject._reconFiles_directory, 'bem/')
+    watershedDir = os.path.join(bemDir, 'watershed/')
+    
+    # Rename files, e.g. reconFiles_inner_skull_surface to inner_skull.surf
+    [os.rename(f, f.replace('reconFiles_','')) for f in os.listdir(watershedDir)]
+    [os.rename(f, f.replace('_surface','.surf')) for f in os.listdir(watershedDir)]
+    
+    # Copy renamed files to bem directory 
+    pattern = os.path.join(watershedDir,'*.surf') 
+    for f in glob.glob(pattern):
+        shutil.copy(f, bemDir)
+
+
 def create_key_csv_evoked(evoked):
     """Create a list used for creating a csv file of key values in evoked.
     
