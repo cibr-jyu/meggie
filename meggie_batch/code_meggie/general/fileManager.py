@@ -167,7 +167,7 @@ def create_fModel_directory(fmname, subject):
         os.mkdir(toCopyDir)  
     
     try:
-        shutil.copy(fromCopyDir, toCopyDir)
+        dir_util.copy_tree(fromCopyDir, toCopyDir)
     except IOError as e:
         os.rmdir(toCopyDir)
         message = 'There was a problem with copying forward model files: ' + \
@@ -192,13 +192,18 @@ def check_fModel_name(fmname, subject):
     
     return False
 
+
 def rename_and_copy_triang_files(subject):
     bemDir = os.path.join(subject._reconFiles_directory, 'bem/')
     watershedDir = os.path.join(bemDir, 'watershed/')
     
     # Rename files, e.g. reconFiles_inner_skull_surface to inner_skull.surf
-    [os.rename(f, f.replace('reconFiles_','')) for f in os.listdir(watershedDir)]
-    [os.rename(f, f.replace('_surface','.surf')) for f in os.listdir(watershedDir)]
+    # os.listdir gives only relative paths, have to change to absolute for
+    # os.rename to understand.
+    list1 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)] 
+    [os.rename(f, f.replace('reconFiles_','')) for f in list1]
+    list2 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)]
+    [os.rename(f, f.replace('_surface','.surf')) for f in list2]
     
     # Copy renamed files to bem directory 
     pattern = os.path.join(watershedDir,'*.surf') 

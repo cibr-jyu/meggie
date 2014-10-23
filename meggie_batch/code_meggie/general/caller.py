@@ -879,7 +879,13 @@ class Caller(object):
         - Create BEM model with mne_setup_forward_model
         - Copy the bem files to the directory named according to fmname
         
-        TODO: Keyword arguments:
+        Keyword arguments:
+        
+        fmname        -- name for the forwardModel to-be
+        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs) -- tuple with
+            arguments for each of the scripts to be called. Please note that
+            each argument is assumed to be a list of strings, like 
+            ['$MNE_ROOT/bin/mne_setup_forward_model', '--surf', '--homog']
         
         """
         activeSubject = self.parent.experiment._active_subject
@@ -901,12 +907,12 @@ class Caller(object):
         
         waterShedDir = os.path.join(bemDir, 'watershed/')
         waterShedSurfaceTestFile = os.path.join(waterShedDir, 
-                                                'reconFiles_brain_surface')
+                                                'brain.surf')
         wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
-        reply = 0
+        reply = 2
         if len(sourceSpaceSetupTestList) > 0 and \
         os.path.exists(waterShedSurfaceTestFile) and \
         os.path.exists(wsCorTestFile):
@@ -939,7 +945,10 @@ class Caller(object):
             self._call_mne_setup_forward_model(setupFModelArgs, env)
         
         if reply == 2:
-            self._call_mne_setup_source_space(self, setupSourceSpaceArgs, env)
+            # To make overwriting unnecessary
+            if os.path.isdir(bemDir):
+                shutil.rmtree(bemDir)
+            self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
             self._call_mne_watershed_bem(waterShedArgs, env)
             
             # Right name and place for triang files, see above.
@@ -953,10 +962,12 @@ class Caller(object):
         try:
             # TODO: this actually has an MNE-Python counterpart, which doesn't
             # help much, as the others don't (11.10.2014).
-            # TODO: seems that the '--overwrite' is ignored.
-            mne_setup_source_space_command = ['$MNE_ROOT/bin/mne_setup_source_space'] + \
-            setupSourceSpaceArgs + ['--overwrite']
-            subprocess.check_output(mne_setup_source_space_command,
+            mne_setup_source_space_commandList = \
+            ['$MNE_ROOT/bin/mne_setup_source_space'] + \
+            setupSourceSpaceArgs
+            mne_setup_source_spaceCommand = ' '.join(
+                                            mne_setup_source_space_commandList)
+            subprocess.check_output(mne_setup_source_spaceCommand,
                                     shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
@@ -977,9 +988,10 @@ class Caller(object):
         
     def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
-            mne_watershed_bem_command = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
-                                    waterShedArgs + ['--overwrite']
-            subprocess.check_output(mne_watershed_bem_command,
+            mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
+                                    waterShedArgs
+            mne_watershed_bemCommand = ' '.join(mne_watershed_bem_commandList)
+            subprocess.check_output(mne_watershed_bemCommand,
                                     shell=True, env=env)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
@@ -1000,8 +1012,12 @@ class Caller(object):
         
     def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
-            subprocess.check_output(['$MNE_ROOT/bin/mne_setup_forward_model'] + 
-                                    setupFModelArgs, shell=True, env=env)
+            mne_setup_forward_modelCommandList = \
+                ['$MNE_ROOT/bin/mne_setup_forward_model'] + setupFModelArgs
+            mne_setup_forward_modelCommand = ' '.join(
+                                        mne_setup_forward_modelCommandList)
+            subprocess.check_output(mne_setup_forward_modelCommand, shell=True,
+                                    env=env)
         except CalledProcessError as e:    
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_forward_model. ' + \

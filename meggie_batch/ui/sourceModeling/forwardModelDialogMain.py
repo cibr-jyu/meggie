@@ -71,7 +71,7 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
         
-        fmdict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
+        fmdict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
         self.ui.radioButtonPatchStatYes:
@@ -141,7 +141,7 @@ class ForwardModelDialog(QtGui.QDialog):
         surfArg = ['--surf']
         bemIcoArg = ['--ico', fmdict['triangFilesIco']]
         
-        if fmdict['compartModel'] == 'standard ASCII (default)':
+        if fmdict['compartModel'] == 'three layer':
             braincArg = fmdict['brainc']
             skullcArg = fmdict['skullc']
             scalpcArg = fmdict['scalpc']
@@ -160,8 +160,8 @@ class ForwardModelDialog(QtGui.QDialog):
         outerShiftArg = ['--outerShift', fmdict['outerShift']] 
         skullShiftArg = ['--outerShift', fmdict['skullShift']] 
         
-        setupFModelArgs = surfArg + bemIcoArg + braincArg + skullcArg + \
-                          scalpcArg + nosolArg + homogArg + innerShiftArg + \
+        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
+                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
                           outerShiftArg + skullShiftArg
         
         return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
