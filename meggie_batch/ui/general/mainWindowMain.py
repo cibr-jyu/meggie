@@ -40,12 +40,18 @@ import os,sys
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtGui import QWhatsThis, QFont
 
+
 from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
 import pylab as pl
 from caller import Caller
+
+# For using MNE-Python drawing methods in separate processes
+# (can't use threads, as MNE-Python usually uses pyplot, which is not thread-
+# safe)
+import multiprocessing
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
@@ -79,7 +85,6 @@ from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel
-from threading_meggie import GenericThread
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -96,8 +101,6 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
-        self.threadPool = []
         
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
@@ -706,27 +709,28 @@ class MainWindow(QtGui.QMainWindow):
         # Cue for the user that we are preparing visualization.
         # TODO: should use threads and events.
         print 'Meggie: Visualizing evoked collection \n'
-        self.ui.pushButtonVisualizeEvokedDataset.setText('Visualizing...')
+        self.ui.pushButtonVisualizeEvokedDataset.setText(
+                                    '      Visualizing...      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
+        QtCore.QCoreApplication.processEvents()
         
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
         category = evoked._categories
         
-        self.evokedDrawCommand = threading_meggie.GenericThread(self.caller.
-                           draw_evoked_potentials, evoked_raw, category)
-        self.threadPool.append(self.evokedDrawCommand)
-        self.threadPool[len(self.threadPool)-1].start()
         
-        self.connect(self.evokedDrawCommand, QtCore.SIGNAL("finished()"),
-                     self.on_evoked_visualization_finished)
+        #self.caller.draw_evoked_potentials(evoked_raw, category)
         
-    
-    def on_evoked_visualization_finished(self):
+        args = (evoked_raw, category)
+        job = multiprocessing.Process(target=self.
+                                          caller.draw_evoked_potentials, args=args)
+        job.start()
+        
         oldText = 'Visualize selected dataset'
         self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
+              
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """

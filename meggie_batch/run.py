@@ -39,6 +39,10 @@ import sip
 # For interoperability with Canony and remove need for QString --> str casting.
 sip.setapi('QString', 2)
 
+from PyQt4 import QtCore
+QtCore.QCoreApplication.setAttribute(10, True)
+
+
 os.environ['QT_API'] = 'pyqt'
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/externalmodules/")
