@@ -1035,6 +1035,29 @@ class Caller(object):
             return
 
 
+    def coregister_with_mne_gui_coregistration(self):
+        """
+        Uses mne.gui.coregistration for head coordinate coregistration.
+        """
+        
+        activeSubject = self.parent._experiment._active_subject
+        
+        subjects_dir = activeSubject._source_analysis_directory
+        subject = 'reconFiles'
+        
+        rawPath = os.path.join(activeSubject.subject_path, 
+                  self.parent.experiment._working_file_names[self.experiment.
+                  _active_subject_name])
+        
+        message = 'An MNE gui for coregistration will now be opened ***'
+        self.messageBox = messageBoxes.shortMessageBox(message)
+        self.messageBox.exec_()
+        
+        mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
+                               raw=rawPath, subject=subject, 
+                               subjects_dir=subjects_dir)
+         
+
     def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working file for the experiment the caller relates
@@ -1048,7 +1071,3 @@ class Caller(object):
         status = "Current working file: " + \
         os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(QtCore.QString(status))
-
-
-    
-    

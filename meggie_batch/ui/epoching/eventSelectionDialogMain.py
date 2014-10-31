@@ -37,13 +37,14 @@ EventSelectionDialog-window.
 import messageBoxes
 
 from PyQt4 import QtCore,QtGui
-from PyQt4.QtCore import QString
+#from PyQt4.QtCore import QString
 from eventSelectionDialogUi import Ui_EventSelectionDialog
 from epochDialogMain import EpochDialog
 
 from epochs import Epochs
 from events import Events
 import fileManager
+import string
 
 from xlrd import XLRDError
 
@@ -127,7 +128,6 @@ class EventSelectionDialog(QtGui.QDialog):
         stim_channel = self.parent.experiment.active_subject._stim_channel
         
         collectionName = self.ui.lineEditCollectionName.text()
-        collectionName.replace(0, 1, collectionName[0].toUpper())
         if len(self.parent.epochList.ui.listWidgetEpochs.\
             findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
             message = 'Collection name ' + str(collectionName) + ' exists. ' + \

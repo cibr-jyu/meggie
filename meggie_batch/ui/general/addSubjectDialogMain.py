@@ -75,7 +75,7 @@ class AddSubjectDialog(QtGui.QDialog):
         raw_path = str(self.ui.lineEditFileName.text())
         raw_path_prefix = raw_path.split('.')[-2]
         subject_name = os.path.basename(raw_path_prefix)
-        subject_name_QString = QtCore.QString(subject_name)
+        subject_name_QString = subject_name
         
         # Check if the subject is already added to the experiment.
         # TODO: If the subject is already added, add a running index after

@@ -53,35 +53,35 @@ def save_parameter_file(self, command, inputfilename, outputfilename,
                 csvwriter.writerow([key, value])
           
                     
-    def parse_parameter_file(self, operation):
-        """
-        Reads the parameters from a single file matching the operation
-        and returns the parameters as a dictionary.        
-        Keyword arguments:
-        operation    -- String that designates the operation. See Caller class
-                        for operation names.
-                        
-        """
-        
-        # Reading parameter file.
-        paramdirectory = os.path.join(self._workspace, self._experiment_name, 
-                                      self._active_subject_name) 
-        paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
-        
-        try:
-            with open(paramfilefullpath, 'rb') as paramfile:
-                csvreader=csv.reader(paramfile)
-                
-                # skip the first three lines, as they don't include actual
-                # info about parameters
-                for i in range(3):
-                    next(csvreader)
-                
-                # Read the rest of the parameter file into a dictionary as
-                # key-value pairs
-                paramdict = dict(x for x in csvreader)
-                return paramdict           
-        except IOError:
-            # In no dictionary is returned, the dialog just falls back to
-            # default initial values.
-            return None  
+def parse_parameter_file(self, operation):
+    """
+    Reads the parameters from a single file matching the operation
+    and returns the parameters as a dictionary.        
+    Keyword arguments:
+    operation    -- String that designates the operation. See Caller class
+                    for operation names.
+                    
+    """
+    
+    # Reading parameter file.
+    paramdirectory = os.path.join(self._workspace, self._experiment_name, 
+                                  self._active_subject_name) 
+    paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
+    
+    try:
+        with open(paramfilefullpath, 'rb') as paramfile:
+            csvreader=csv.reader(paramfile)
+            
+            # skip the first three lines, as they don't include actual
+            # info about parameters
+            for i in range(3):
+                next(csvreader)
+            
+            # Read the rest of the parameter file into a dictionary as
+            # key-value pairs
+            paramdict = dict(x for x in csvreader)
+            return paramdict           
+    except IOError:
+        # In no dictionary is returned, the dialog just falls back to
+        # default initial values.
+        return None  

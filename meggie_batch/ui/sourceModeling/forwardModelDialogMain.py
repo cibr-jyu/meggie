@@ -13,6 +13,7 @@ import messageBoxes
 import string
 
 import fileManager
+import re
 
 class ForwardModelDialog(QtGui.QDialog):
     """
@@ -56,21 +57,9 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict = {}
         
         fmdict['fmname'] = str(self.ui.lineEditFModelName.text())
-        
-        # A bit of checking for stupidities in naming to avoid conflicts
-        # with directories created by MNE scripts.
-        # TODO: probably should be limited to alphanumeric ascii without spaces.
-        if string.lower(fmdict['fmname']) == ('mri' or 'bem' or 'surf'):
-            message = "'mri', 'bem' and 'surf' are not acceptable fmodel names" + \
-                      " (they get mixed up with MNE directory names)."
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
-        
         fmdict['spacing'] = str(self.ui.spinBoxSpacing.value())
         fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
-        
         fmdict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
@@ -183,6 +172,31 @@ class ForwardModelDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
+        
+        # A bit of checking for stupidities in naming to avoid conflicts
+        # with directories created by MNE scripts.
+        if string.lower(fmdict['fmname']) == ('mri' or 'bem' or 'surf'):
+            message = "'mri', 'bem' and 'surf' are not acceptable fmodel names" + \
+                      " (they get mixed up with directory names created by MNE)."
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        # Forward model should have a name.
+        if (fmdict['fmname']) == '':
+            message = "Please give a name to your forward model."
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        # Name should only use alphanumeric and underscores.
+        if not re.match('^[\w+$]' ,fmdict['fmname']): 
+            message = 'Please only use alphabets, numbers and underscores in ' + \
+            'forward model name'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
         
         cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(
                                                                         fmdict)

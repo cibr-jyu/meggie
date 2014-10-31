@@ -50,7 +50,7 @@
       <widget class="QWidget" name="scrollAreaWidgetContents_3">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>-73</x>
          <y>0</y>
          <width>1100</width>
          <height>750</height>
@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1637,7 +1637,7 @@
                       <item>
                        <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
                         <property name="text">
-                         <string>Visualize selected dataset...</string>
+                         <string>Visualize selected dataset</string>
                         </property>
                        </widget>
                       </item>

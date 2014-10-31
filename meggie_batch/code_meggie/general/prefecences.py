@@ -135,4 +135,7 @@ class PreferencesHandler(object):
         os.environ['PATH'] += os.pathsep + freeSurferBinPath
         os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
         
+        # To make graphical MNE-Python utilities use QT4 backend instead of wx.
+        os.environ['ETS_TOOLKIT'] = "qt4"
+        
         print 'Meggie: environment variables set successfully! \n'

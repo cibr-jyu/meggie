@@ -106,6 +106,8 @@ class ForwardModelModel(QAbstractListModel):
         """
         Writes to disk the info related to the fmodel, currently name and
         the path to the directory of the fmodel.
+        
+        TODO: probably not needed, see readModelFromDisk.
         """
         
         dialect = Dialect()
@@ -123,6 +125,11 @@ class ForwardModelModel(QAbstractListModel):
         """
         Reads from disk the info related to fmodel, currently name and
         the path to the directory of the fmodel.
+        
+        TODO: should probably read the fmodel directories directly from disk and
+        populate model from it, instead of trying to keep the model file in
+        sync. If possible, just read fmodel directory names, and if parameters
+        need showing, try to read them from files, too.
         """
         
         cdialect = Dialect()

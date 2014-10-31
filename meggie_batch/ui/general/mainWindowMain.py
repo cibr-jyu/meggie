@@ -699,12 +699,22 @@ class MainWindow(QtGui.QMainWindow):
         """
         TODO: get evoked from active_subject._evokeds dictionary
         """
+        
+        # Cue for the user that we are preparing visualization.
+        # TODO: should use threads and events.
+        print "Meggie: Visualizing evoked collection"
+        #self.ui.pushButtonVisualizeEvokedDataset.setText('Visualizing...')
+        #self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
+        
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
         category = evoked._categories
         self.caller.draw_evoked_potentials(evoked_raw,category)
-
+        
+        oldText = 'Visualize selected dataset'
+        #self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
+        #self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
         
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
@@ -1001,7 +1011,14 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         if checked is None : return
         
-        if self.experiment._active_subject.check_reconFiles_copied():
+        activeSubject = self._experiment._active_subject
+        
+        # Probably not created yet, because this is the first step of source
+        # analysis.
+        if not os.path.isdir(activeSubject._source_analysis_directory):
+            activeSubject.create_sourceAnalysis_directory()
+        
+        if activeSubject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',
             "Do you really want to change the reconstructed files? This will " +
             " invalidate all later source analysis work and clear the results "+ 
@@ -1044,17 +1061,35 @@ class MainWindow(QtGui.QMainWindow):
         self.fmodelDialog.show()
         
 
+    def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
+            """
+            Removes selected forward model from the forward model list.
+            """
+            # TODO: do this after the mvc system works.
+            return
+
+
+    def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
+        if checked is None: return
+        
+        path = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select directory of the reconstructed MRI image"))
+        if path == '':
+            return
+        
+    
+    def on_pushButtonMNECoregistration_clicked(self, checked=None):
+        if checked is None: return
+        self.caller.coregister_with_mne_gui_coregistration()
+        
+        
+        
+    def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
+        if checked is None: return
+        
 
 ### Code for populating various lists and tables in the MainWindow ###       
     
-    def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
-        """
-        Removes selected forward model from the forward model list.
-        """
-        # TODO: do this after the mvc system works.
-        return
-    
-
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
@@ -1128,14 +1163,14 @@ class MainWindow(QtGui.QMainWindow):
             
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
         if self.experiment.active_subject is None:
-            self.statusLabel.setText(QtCore.QString("Add or activate" + \
-                                                    " subjects before " + \
-                                                    "continuing."))
+            self.statusLabel.setText("Add or activate" + \
+                                     " subjects before " + \
+                                     "continuing.")
             return
         else:
             status = "Current working file: " + \
             os.path.basename(self._experiment._working_file_names[self.experiment._active_subject_name])
-            self.statusLabel.setText(QtCore.QString(status))
+            self.statusLabel.setText(status)
             try:
                 #Check whether ECG projections are calculated
                 if self.experiment.active_subject.check_ecg_projs():
