@@ -34,8 +34,9 @@ Boilerplate script to run the application.
 
 import sys
 import os
-
 import sip
+
+# For interoperability with Canony and remove need for QString --> str casting.
 sip.setapi('QString', 2)
 
 os.environ['QT_API'] = 'pyqt'

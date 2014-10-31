@@ -1,4 +1,5 @@
 # coding: latin1
+import threading_meggie
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -78,7 +79,7 @@ from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel
-
+from threading_meggie import GenericThread
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -95,6 +96,8 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        self.threadPool = []
         
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
@@ -702,20 +705,29 @@ class MainWindow(QtGui.QMainWindow):
         
         # Cue for the user that we are preparing visualization.
         # TODO: should use threads and events.
-        print "Meggie: Visualizing evoked collection"
-        #self.ui.pushButtonVisualizeEvokedDataset.setText('Visualizing...')
-        #self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
+        print 'Meggie: Visualizing evoked collection \n'
+        self.ui.pushButtonVisualizeEvokedDataset.setText('Visualizing...')
+        self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
         
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
         category = evoked._categories
-        self.caller.draw_evoked_potentials(evoked_raw,category)
         
+        self.evokedDrawCommand = threading_meggie.GenericThread(self.caller.
+                           draw_evoked_potentials, evoked_raw, category)
+        self.threadPool.append(self.evokedDrawCommand)
+        self.threadPool[len(self.threadPool)-1].start()
+        
+        self.connect(self.evokedDrawCommand, QtCore.SIGNAL("finished()"),
+                     self.on_evoked_visualization_finished)
+        
+    
+    def on_evoked_visualization_finished(self):
         oldText = 'Visualize selected dataset'
-        #self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
-        #self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
-        
+        self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
+        self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
+    
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
         TODO: Save the evoked data (for exporting purposes if needed)
