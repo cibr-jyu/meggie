@@ -708,7 +708,6 @@ class MainWindow(QtGui.QMainWindow):
         
         # Cue for the user that we are preparing visualization.
         # TODO: should use threads and events.
-        print 'Meggie: Visualizing evoked collection \n'
         self.ui.pushButtonVisualizeEvokedDataset.setText(
                                     '      Visualizing...      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
@@ -719,13 +718,9 @@ class MainWindow(QtGui.QMainWindow):
         evoked_raw = evoked._raw
         category = evoked._categories
         
-        
-        #self.caller.draw_evoked_potentials(evoked_raw, category)
-        
-        args = (evoked_raw, category)
-        job = multiprocessing.Process(target=self.
-                                          caller.draw_evoked_potentials, args=args)
-        job.start()
+        print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
+        self.caller.draw_evoked_potentials(evoked_raw, category)
+        print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
         
         oldText = 'Visualize selected dataset'
         self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
