@@ -36,7 +36,7 @@ import sys
 import os
 import sip
 
-# For interoperability with Canony and remove need for QString --> str casting.
+# For interoperability with Canopy and to remove need to mess with QStrings.
 sip.setapi('QVariant', 2)
 sip.setapi('QString', 2)
 

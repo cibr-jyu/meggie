@@ -40,19 +40,18 @@ import mne
 import os
 import pickle
 import shutil
-import glob
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-# For copy_tree. Because shutil.copytree for has restrictions regarding the
+# For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
 
 import messageBoxes
 from statistic import Statistic
-
+    
     
 def copy(original, target):
     """Copy the file at original to target.
@@ -63,17 +62,12 @@ def copy(original, target):
     try:
         shutil.copyfile(original, target)
     
-    # What type of error is expected here? This raises 'NameError:
-    # Global name Error is not defined'.
-    # except Error as e:
-    #    return e
-    
     except IOError as e:
         return e
     
     return True
-    
-    
+
+
 def copy_recon_files(aSubject, sourceDirectory):
         """
         Copies mri and surf files from the given directory to under the active
@@ -113,9 +107,9 @@ def copy_recon_files(aSubject, sourceDirectory):
         dst = activeSubject._reconFiles_directory
         
         try:
-            print '\n Copying recon files... \n'
+            print '\n Meggie: Copying recon files... \n'
             dir_util.copy_tree(sourceDirectory, dst)
-            print '\n Recon files copying complete! \n'
+            print '\n Meggie: Recon files copying complete! \n'
             return True
         except IOError:
             message = 'Could not copy files. Either the disk is full ' + \
@@ -215,28 +209,19 @@ def link_triang_files(subject):
     bemDir = os.path.join(subject._reconFiles_directory, 'bem/')
     
     watershedDir = os.path.join(bemDir, 'watershed/')
-
-    os.symlink(os.path.join(watershedDir, 'reconFiles_brain_surface'), 
+    
+    # Symlinks may already exist, no problem.
+    try:
+        os.symlink(os.path.join(watershedDir, 'reconFiles_brain_surface'), 
                os.path.join(bemDir, 'brain.surf'))
-    os.symlink(os.path.join(watershedDir, 'reconFiles_inner_skull_surface'), 
+        os.symlink(os.path.join(watershedDir, 'reconFiles_inner_skull_surface'), 
                os.path.join(bemDir, 'inner_skull.surf'))
-    os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skull_surface'), 
+        os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skull_surface'), 
                os.path.join(bemDir, 'outer_skull.surf'))
-    os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skin_surface'), 
+        os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skin_surface'), 
                os.path.join(bemDir, 'outer_skin.surf'))
-    
-    # Rename files, e.g. reconFiles_inner_skull_surface to inner_skull.surf
-    # os.listdir gives only relative paths, have to change to absolute for
-    # os.rename to understand.
-    # list1 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)] 
-    # [os.rename(f, f.replace('reconFiles_','')) for f in list1]
-    # list2 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)]
-    # [os.rename(f, f.replace('_surface','.surf')) for f in list2]
-    
-    # Copy renamed files to bem directory 
-    # pattern = os.path.join(watershedDir,'*.surf') 
-    # for f in glob.glob(pattern):
-    #    shutil.copy(f, bemDir)
+    except:
+        pass
     
 
 def create_key_csv_evoked(evoked):
@@ -626,67 +611,6 @@ def read_events(filename):
     wbr = open_workbook(filename)
     sheet = wbr.sheet_by_index(0)
     return sheet
-
-
-def readCSVFileToDictList(self, keynames, fpath, ndoculines):
-    # TODO this is simple use of csv.DictReader, remove method
-    """
-    
-    Read a CSV file to a list of dictionaries, one line at a time.
-    Each line will be a separate dictionary in the returned list, 
-    with keys taken from the keynames list, and values from the CSV file. 
-    
-    Keyword arguments:
-    
-    keynames -- list of key names meant to correspond with the CSV values.
-                If and empty list, keys will simply be assigned names of
-                integers, starting from 1.  
-    
-                Please note:   
-    
-                if the keynames list is not empty, the method requires that 
-                the CVS file have exactly the len(keynames) number of values
-                on each line, resulting in all dictionaries having explitly 
-                named keys.
-                
-    fpath -- full path to CSV file.
-    
-    doculines -- number of non-CSV documentation lines at the beginning
-                 of the file. Are skipped by default.
-    
-    Return list of dictionaries, None if was reading dictionaries was't
-    successful
-    
-    Raise exception if all CVS lines don't conform to length of keynames.
-    Raise IOError if the CVS file can't be read.
-  
-   
-     
-    try:
-        with open(fpath, 'rb') as file to readfile:
-            csvreaderFile=csv.DictReader(readfile)
-            
-            # Possibly skip the first lines, as they don't include actual
-            # CSVdata.
-            for i in range(ndoculines):
-                next(csvreaderFile)
-            
-            # Read the rest of the file into a dictionary as
-            # key-value pairs.
-            
-            return CSVdict           
-                   
-    except IOError:
-        # In no dictionary is returned, the dialog just falls back to
-        # default initial values.
-        return None  
-    
-    
-
-    # return list
-      """
-
-# def writeCSVFileFromDictList(self, keynames, fpath):
     
     
     

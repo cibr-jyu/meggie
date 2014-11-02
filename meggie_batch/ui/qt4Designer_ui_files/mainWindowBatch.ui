@@ -50,7 +50,7 @@
       <widget class="QWidget" name="scrollAreaWidgetContents_3">
        <property name="geometry">
         <rect>
-         <x>-73</x>
+         <x>0</x>
          <y>0</y>
          <width>1100</width>
          <height>750</height>
@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -1834,7 +1834,7 @@
                                </font>
                               </property>
                               <property name="text">
-                               <string>2. Examine the reconstructed MRI image files:</string>
+                               <string>2. Examine the reconstructed MRI image files: (Optional)</string>
                               </property>
                               <property name="margin">
                                <number>0</number>
@@ -1962,7 +1962,7 @@
                       <bool>false</bool>
                      </property>
                      <property name="text">
-                      <string>Use mne_setup_mri for conversion</string>
+                      <string>3. Use mne_setup_mri for conversion</string>
                      </property>
                     </widget>
                    </item>
@@ -2200,8 +2200,11 @@
                      </item>
                      <item>
                       <widget class="QPushButton" name="PushButtonMNE_AnalyzeCoregistration">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
                        <property name="text">
-                        <string>Use mne_analyze to coregister</string>
+                        <string>Use mne_analyze to coregister (unimplemented)</string>
                        </property>
                       </widget>
                      </item>

@@ -1049,14 +1049,18 @@ class Caller(object):
                   self.parent.experiment._working_file_names[self.experiment.
                   _active_subject_name])
         
-        message = 'An MNE gui for coregistration will now be opened ***'
+        message = 'An MNE gui for coregistration will now be opened. Please ' + \
+        'note the following to ensure that everything works smoothly: \n \n' + \
+        '1) "MRI Subject" and "Head Shape Source" files are automatically set ' + \
+        'to right files by Meggie. \n \n' + \
+        '2) ***'
         self.messageBox = messageBoxes.shortMessageBox(message)
         self.messageBox.exec_()
         
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
                                raw=rawPath, subject=subject, 
                                subjects_dir=subjects_dir)
-         
+        
 
     def update_experiment_working_file(self, fname, raw):
         """

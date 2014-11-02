@@ -1083,11 +1083,22 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
         if checked is None: return
         
-        path = str(QtGui.QFileDialog.getExistingDirectory(
-               self, "Select directory of the reconstructed MRI image"))
+        subjectPath = self._experiment._active_subject._subject_path
+        targetName = os.path.join(subjectPath, 'reconFiles-trans.fif')
+        
+        path = QtGui.QFileDialog.getOpenFileName(
+               self, 'Select directory of the existing coordinate file ' +
+               '(should end with "-trans.fif")' )
         if path == '':
             return
-        
+        else: 
+            try:
+                fileManager.copy(path, targetName)
+            except IOError:
+                message = 'There was a problem while copying the coordinate file.'
+                messageBox = messageBoxes.shortMessageBox(message)
+                messageBox.exec_()
+                
     
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
         if checked is None: return
@@ -1097,7 +1108,8 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
         if checked is None: return
-        
+        # TODO: Implement this last if needed.
+        return
 
 ### Code for populating various lists and tables in the MainWindow ###       
     
