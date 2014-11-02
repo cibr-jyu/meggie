@@ -143,7 +143,8 @@ def remove_sourceAnalysis_files(aSubject):
 def create_fModel_directory(fmname, subject):
     """
     Create a directory for the final forward model (under the directory of the
-    subject) and copy the whole bem directory to it.
+    subject) and copy the whole bem directory to it. Also make symbolic links
+    to subjects mri- and surf-directories to avoid copying them around.
     
     Keyword arguments:
     
@@ -162,9 +163,15 @@ def create_fModel_directory(fmname, subject):
     
     # Existence actually checked already by check_fModel_name via
     # forwardModelDialog.
-    toCopyDir = os.path.join(subject._forwardModels_directory, fmname)
+    fmDir = os.path.join(subject._forwardModels_directory, fmname)
+    if not os.path.isdir(fmDir):
+        os.mkdir(fmDir)  
+    
+    # Need to have and actual directory named bem for mne.gui.coregistration.
+    # Symlinks below for same reason.
+    toCopyDir = os.path.join(fmDir, 'bem')
     if not os.path.isdir(toCopyDir):
-        os.mkdir(toCopyDir)  
+        os.mkdir(toCopyDir)
     
     try:
         dir_util.copy_tree(fromCopyDir, toCopyDir)
@@ -174,7 +181,12 @@ def create_fModel_directory(fmname, subject):
                   str(e)
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox.exec_()
-        
+    
+    mriDir = os.path.join(subject._reconFiles_directory, 'mri')
+    surfDir = os.path.join(subject._reconFiles_directory, 'surf')
+    os.symlink(mriDir, os.path.join(fmDir, 'mri'))
+    os.symlink(surfDir, os.path.join(fmDir, 'surf'))
+    
 
 def check_fModel_name(fmname, subject):
     """
@@ -193,23 +205,39 @@ def check_fModel_name(fmname, subject):
     return False
 
 
-def rename_and_copy_triang_files(subject):
+def link_triang_files(subject):
+    """
+    Create symlinks to bem directory, linking them to surface triangulation
+    files in watershed directory, as needed mne_setup_forward_model and
+    mne.gui.coregistration.
+    """
+    
     bemDir = os.path.join(subject._reconFiles_directory, 'bem/')
+    
     watershedDir = os.path.join(bemDir, 'watershed/')
+
+    os.symlink(os.path.join(watershedDir, 'reconFiles_brain_surface'), 
+               os.path.join(bemDir, 'brain.surf'))
+    os.symlink(os.path.join(watershedDir, 'reconFiles_inner_skull_surface'), 
+               os.path.join(bemDir, 'inner_skull.surf'))
+    os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skull_surface'), 
+               os.path.join(bemDir, 'outer_skull.surf'))
+    os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skin_surface'), 
+               os.path.join(bemDir, 'outer_skin.surf'))
     
     # Rename files, e.g. reconFiles_inner_skull_surface to inner_skull.surf
     # os.listdir gives only relative paths, have to change to absolute for
     # os.rename to understand.
-    list1 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)] 
-    [os.rename(f, f.replace('reconFiles_','')) for f in list1]
-    list2 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)]
-    [os.rename(f, f.replace('_surface','.surf')) for f in list2]
+    # list1 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)] 
+    # [os.rename(f, f.replace('reconFiles_','')) for f in list1]
+    # list2 = [os.path.join(watershedDir, f) for f in os.listdir(watershedDir)]
+    # [os.rename(f, f.replace('_surface','.surf')) for f in list2]
     
     # Copy renamed files to bem directory 
-    pattern = os.path.join(watershedDir,'*.surf') 
-    for f in glob.glob(pattern):
-        shutil.copy(f, bemDir)
-
+    # pattern = os.path.join(watershedDir,'*.surf') 
+    # for f in glob.glob(pattern):
+    #    shutil.copy(f, bemDir)
+    
 
 def create_key_csv_evoked(evoked):
     """Create a list used for creating a csv file of key values in evoked.

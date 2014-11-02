@@ -37,6 +37,7 @@ import os
 import sip
 
 # For interoperability with Canony and remove need for QString --> str casting.
+sip.setapi('QVariant', 2)
 sip.setapi('QString', 2)
 
 os.environ['QT_API'] = 'pyqt'

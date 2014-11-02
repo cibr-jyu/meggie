@@ -907,7 +907,7 @@ class Caller(object):
         
         waterShedDir = os.path.join(bemDir, 'watershed/')
         waterShedSurfaceTestFile = os.path.join(waterShedDir, 
-                                                'brain.surf')
+                                                'reconFiles_brain_surface')
         wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
         
         # Check if source space is already setup and watershed calculated, and
@@ -941,7 +941,7 @@ class Caller(object):
         if reply == 1:
             # Need to do this to get triangulation files to right place and
             # naming for mne_setup_forward_model.
-            fileManager.rename_and_copy_triang_files(activeSubject)
+            fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
         
         if reply == 2:
@@ -952,7 +952,7 @@ class Caller(object):
             self._call_mne_watershed_bem(waterShedArgs, env)
             
             # Right name and place for triang files, see above.
-            fileManager.rename_and_copy_triang_files(activeSubject)
+            fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
         fileManager.create_fModel_directory(fmname, activeSubject)

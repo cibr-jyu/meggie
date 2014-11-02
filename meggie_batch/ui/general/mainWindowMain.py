@@ -1112,8 +1112,6 @@ class MainWindow(QtGui.QMainWindow):
         Checks the existence of a ton of files and sets the GUI fields to
         reflect the state of the experiment and subject according to them. 
         """
-        # Not needed, because tabs are added only on experiment creation.
-        #self.add_tabs()
 
         # Clear the lists.
         self.clear_epoch_collection_parameters()
@@ -1137,6 +1135,17 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
+        self.ui.checkBoxConvertedToMNE.setChecked(False)
+        self.ui.lineEditRecon.setText('')
+        
+        # Deactivate various buttons. They will be
+        # activated later if prerequisites are met.
+        self.ui.pushButtonConvertToMNE.setEnabled(False)
+        self.ui.pushButtonCheckTalairach.setEnabled(False)
+        self.ui.pushButtonSkullStrip.setEnabled(False)
+        self.ui.pushButtonCheckSurfaces.setEnabled(False)
+        self.ui.pushButtonCheckSegmentations.setEnabled(False)
+        self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
         
         # If experiment has subjects added, the active_subject info will be added
         # and tabs enabled for processing.
@@ -1204,22 +1213,6 @@ class MainWindow(QtGui.QMainWindow):
             except AttributeError:
                 print 'No active subject in experiment.'
                 
-        """    
-        # QLabel created on __init__ can't take normal string objects.
-        if len(self.experiment._subjects) == 0 or self.experiment.active_subject is None:
-            self.statusLabel.setText(QtCore.QString("Add or activate" + \
-                                                    " subjects before " + \
-                                                    "continuing."))
-        else:
-            status = "Current working file: " + \
-            os.path.basename(self.experiment.working_file_names[self.experiment._active_subject_name])
-            self.statusLabel.setText(QtCore.QString(status))
-        """
- 
-        #self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
-
-        #if self.experiment.active_subject_path is '':
-        #    return
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
         if self._experiment._active_subject.check_reconFiles_copied():
@@ -1230,24 +1223,13 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonSkullStrip.setEnabled(True)
             self.ui.pushButtonCheckSurfaces.setEnabled(True)
             self.ui.pushButtonCheckSegmentations.setEnabled(True)
-        else: 
-            self.ui.lineEditRecon.setText('')
-            self.ui.pushButtonConvertToMNE.setEnabled(False)
-            self.ui.pushButtonCheckTalairach.setEnabled(False)
-            self.ui.pushButtonSkullStrip.setEnabled(False)
-            self.ui.pushButtonCheckSurfaces.setEnabled(False)
-            self.ui.pushButtonCheckSegmentations.setEnabled(False)
         
         # Check if MRI image has been setup with mne_setup_forward solution
         if self._experiment._active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
-        else:
-            self.ui.checkBoxConvertedToMNE.setChecked(False)
-            self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
+            
         
-    
-     
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
