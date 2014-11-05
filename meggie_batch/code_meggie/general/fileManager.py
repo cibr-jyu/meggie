@@ -168,7 +168,7 @@ def create_fModel_directory(fmname, subject):
         os.mkdir(toCopyDir)
     
     try:
-        dir_util.copy_tree(fromCopyDir, toCopyDir)
+        dir_util.copy_tree(fromCopyDir, toCopyDir, preserve_symlinks=1)
     except IOError as e:
         os.rmdir(toCopyDir)
         message = 'There was a problem with copying forward model files: ' + \
@@ -176,11 +176,13 @@ def create_fModel_directory(fmname, subject):
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox.exec_()
     
+    """
+    TODO: Currently not needed, may be in the future.
     mriDir = os.path.join(subject._reconFiles_directory, 'mri')
     surfDir = os.path.join(subject._reconFiles_directory, 'surf')
     os.symlink(mriDir, os.path.join(fmDir, 'mri'))
     os.symlink(surfDir, os.path.join(fmDir, 'surf'))
-    
+    """
 
 def check_fModel_name(fmname, subject):
     """

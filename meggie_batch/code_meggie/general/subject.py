@@ -350,7 +350,7 @@ class Subject(QObject):
                             epochs.
         epoch_widget     -- QListWidget object containing epoch items
         """
-        current_collection = str(epoch_widget.currentItem().text())
+        current_collection = epoch_widget.currentItem().text()
         # Removes Epochs object and item.
         self.remove_epochs(current_collection)
         epoch_widget.remove_item(epoch_widget.currentItem())

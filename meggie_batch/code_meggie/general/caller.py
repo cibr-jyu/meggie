@@ -1042,8 +1042,11 @@ class Caller(object):
         
         activeSubject = self.parent._experiment._active_subject
         
-        subjects_dir = activeSubject._source_analysis_directory
-        subject = 'reconFiles'
+        #
+        subjects_dir = activeSubject._forwardModels_directory
+        
+        # TODO: Should probably whatever forwardModel user selects from the list 
+        subject = ''
         
         rawPath = os.path.join(activeSubject.subject_path, 
                   self.parent.experiment._working_file_names[self.experiment.
@@ -1058,7 +1061,7 @@ class Caller(object):
         self.messageBox.exec_()
         
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
-                               raw=rawPath, subject=subject, 
+                               raw=rawPath,
                                subjects_dir=subjects_dir)
         
 
