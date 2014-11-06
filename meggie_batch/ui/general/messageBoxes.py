@@ -1,4 +1,5 @@
 # coding: latin1
+from shortMessageBoxUi import Ui_shortMessageBox
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -42,33 +43,15 @@ class shortMessageBox(QtGui.QDialog):
     """
     Class for creating simple messageboxes displaying error messages.
     """
-    def __init__(self, message, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.message = message
-        self.create_main_frame()
-               
-
-    def create_main_frame(self):        
-        page = QtGui.QWidget()
-        
-        self.resize(500, 150)
-        self.setWindowTitle('Error') 
-        self.buttonClose = QtGui.QPushButton('Close', page)
-        self.labelException = QtGui.QLabel()
-        self.labelException.setWordWrap(True)
-        self.labelException.setText(self.message)
-        self.buttonClose.move(150,0)
-        vbox1 = QtGui.QVBoxLayout(self)
-        vbox1.addWidget(self.labelException)
-        vbox1.addWidget(self.buttonClose)
-
-        self.connect(self.buttonClose, QtCore.SIGNAL("clicked()"), self.accept)
-
-
-    def accept(self):
-        self.close()
-
-
+    
+    def __init__(self, message, parent=None, title='Error'):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_shortMessageBox()
+        self.ui.setupUi(self)
+    
+        self.setWindowTitle(title)
+        self.ui.labelMessage.setText(message)
+    
 
 class longMessageBox(QtGui.QDialog):
     """

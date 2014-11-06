@@ -1,5 +1,4 @@
 # coding: latin1
-import threading_meggie
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
