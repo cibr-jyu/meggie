@@ -1,5 +1,6 @@
 # coding: latin1
 import shutil
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -1042,27 +1043,27 @@ class Caller(object):
         
         activeSubject = self.parent._experiment._active_subject
         
-        #
-        subjects_dir = activeSubject._forwardModels_directory
-        
-        # TODO: Should probably whatever forwardModel user selects from the list 
-        subject = ''
-        
+        # TODO: Should be whatever forwardModel user selects from 
+        # the list. Now 9 for testing purposes.
+        selectedFmodelName = '9'
+        subjects_dir = os.path.join(activeSubject._forwardModels_directory,
+                               selectedFmodelName)
+        subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path, 
                   self.parent.experiment._working_file_names[self.experiment.
                   _active_subject_name])
         
-        message = 'An MNE gui for coregistration will now be opened. Please ' + \
-        'note the following to ensure that everything works smoothly: \n \n' + \
-        '1) "MRI Subject" and "Head Shape Source" files are automatically set ' + \
-        'to right files by Meggie. \n \n' + \
-        '2) ***'
-        self.messageBox = messageBoxes.shortMessageBox(message)
-        self.messageBox.exec_()
-        
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
-                               raw=rawPath,
+                               raw=rawPath, subject=subject,
                                subjects_dir=subjects_dir)
+        QtCore.QCoreApplication.processEvents()
+        
+        # Needed for copying the resulting trans file to the right location.
+        self.coregHowtoDialog = holdCoregistrationDialog(self, activeSubject,
+                                                         selectedFmodelName) 
+        self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
+        self.coregHowtoDialog.show()
+        
         
 
     def update_experiment_working_file(self, fname, raw):

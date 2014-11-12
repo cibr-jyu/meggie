@@ -120,6 +120,23 @@ def copy_recon_files(aSubject, sourceDirectory):
             return False
     
     
+def move_trans_file(aSubject, fModel):
+    """
+    TODO: description.
+    """
+    original = os.path.join(aSubject._subject_path, 'reconFiles-trans.fif')
+    targetDirectory = os.path.join(aSubject._forwardModels_directory,
+                               fModel, 'reconFiles')
+    
+    try:
+        shutil.copy(original, targetDirectory)
+        os.remove(original)
+    except IOError as e:
+        return e
+    
+    return True
+    
+    
 def remove_sourceAnalysis_files(aSubject):
     """
     Recursively removes contents of the source analysis directory.
@@ -156,14 +173,17 @@ def create_fModel_directory(fmname, subject):
         subject.create_forwardModels_directory()
     
     # Existence actually checked already by check_fModel_name via
-    # forwardModelDialog.
+    # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
+    # requires the directory name to be the same as the subject name.
     fmDir = os.path.join(subject._forwardModels_directory, fmname)
+    fmDirFinal = os.path.join(fmDir, 'reconFiles')
     if not os.path.isdir(fmDir):
-        os.mkdir(fmDir)  
+        os.mkdir(fmDir)
+        os.mkdir(fmDirFinal)
     
     # Need to have and actual directory named bem for mne.gui.coregistration.
     # Symlinks below for same reason.
-    toCopyDir = os.path.join(fmDir, 'bem')
+    toCopyDir = os.path.join(fmDirFinal, 'bem')
     if not os.path.isdir(toCopyDir):
         os.mkdir(toCopyDir)
     
