@@ -202,4 +202,5 @@ class ForwardModelDialog(QtGui.QDialog):
                                                                         fmdict)
         if self.parent.caller.create_forward_model(fmname, cmdTuple) == False:
             return
+        
         self.close()

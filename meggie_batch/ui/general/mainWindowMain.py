@@ -1086,8 +1086,8 @@ class MainWindow(QtGui.QMainWindow):
         targetName = os.path.join(subjectPath, 'reconFiles-trans.fif')
         
         path = QtGui.QFileDialog.getOpenFileName(
-               self, 'Select directory of the existing coordinate file ' +
-               '(should end with "-trans.fif")' )
+               self, 'Select the existing coordinate file ' +
+               '(the file should end with "-trans.fif")' )
         if path == '':
             return
         else: 

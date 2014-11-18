@@ -944,6 +944,12 @@ class Caller(object):
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
+            fileManager.write_forward_model_parameters(fmname,
+            activeSubject, None, None, setupFModelArgs)
+            
+            # TODO: copy source space setup and wshed 
+            # parameter files to fmodel directory, make parameter file for
+            # setup fmodel. 
         
         if reply == 2:
             # To make overwriting unnecessary
@@ -955,8 +961,13 @@ class Caller(object):
             # Right name and place for triang files, see above.
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
+            fileManager.write_forward_model_parameters(fmname, activeSubject,
+            setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+        
         
         fileManager.create_fModel_directory(fmname, activeSubject)
+            
+                
     
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):

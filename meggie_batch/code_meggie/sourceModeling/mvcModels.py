@@ -33,20 +33,21 @@ class ForwardModelModel(QAbstractListModel):
                       
         # File that includes forward model names, their parameters and 
         # corresponding files. Full path needed, hence the directory.
-        self.fmodelFile = self.getCurrentFmodelModelFile()
         
         # Actually not needed, as the model is not editable via GUI.
         self.dirty = False
-        # Info of the forward models, read from the self.FmodelFile.
-        # TODO sisältääkö generoidut tiedostot jo infoa fmodeleista, jolloin
-        # tässä riittäisi pelkkä hakemiston polku?
+        
+        # Each dictionary in the list includes parameters
         self.fmodelInfoList = [dict()]
-        self.fmodelInfoListKeys = ["name","fpath"]
+        self.fmodelInfoListKeys = ["name",]
         
-        # One could put column headers here
-        # self.__headers = headers
+        # Column headers i.e. names of parameters.
+        self.__headers = ['name', 'spacing', 'ico', 'surfname', 'cps', 'atlas',
+                          'triang. ico', 'homog', 'innershift', 'outershift'
+                          'skullshift', 'brainc', 'skullc', 'scalpc']
         
-        
+    
+    
     def getCurrentFmodelModelFile(self):
         filename = os.path.join(self.fmodelDirectory, "fmodelModel")
             
@@ -82,10 +83,12 @@ class ForwardModelModel(QAbstractListModel):
         # No need to use anything else but displayrole here. 
         if role == Qt.DisplayRole:
             row = index.row()
-            # column = index.column() needed if shown more info than just name
+            column = index.column()
             
             fmodel = self.fmodelInfoList[row]
             fmname = fmodel["name"]
+            
+            # TODO tähän palauttamaan ne parametrit
             return fmname
             
         else: return QVariant()
@@ -98,8 +101,23 @@ class ForwardModelModel(QAbstractListModel):
         self.beginRemoveRows(parent, position, position + rows - 1)
         value = self.fmodelInfo[position]
         self.fmodelInfo.remove(value)
+        # TODO also remember to delete actual directory on the disk
         self.endRemoveRows()
         return True
+        
+
+    def createModel(self):
+        """
+        Reads the active subject's forwardModel directory and populates the
+        data accor
+        """
+        
+        # Parametrit ehkä suoraan filuista, kts. mne_setup_forward model ja mitä
+        # se 5120 tarkoittaa filuissa. mne.surface-modulissa on metodi:
+        # a =  mne.read_bem_surfaces("reconFiles-5120-bem-sol.fif")
+        # ja sitten voi kysellä tyyliin:
+        # a[0]['ntri'], joka palauttaa sen 5120:n.
+        # shift-argumentit varmaan saa luettua filusta, että conductivityt?
         
 
     def writeModelToDisk(self):
@@ -143,11 +161,11 @@ class ForwardModelModel(QAbstractListModel):
             raise Exception("No forward model model file found")
             
         
-
     def initializeModel(self):
         """
-        
+        Parse the fModelDirectory for 
         """
+        
         
 # class CoregistrationModel(QAbstractTableModel):
     

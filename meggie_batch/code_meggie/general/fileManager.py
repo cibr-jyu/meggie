@@ -40,14 +40,16 @@ import mne
 import os
 import pickle
 import shutil
+import glob
+
+# For copy_tree. Because shutil.copytree has restrictions regarding the
+# destination directory (ie. it must not exist beforehand).
+from distutils import dir_util
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-# For copy_tree. Because shutil.copytree has restrictions regarding the
-# destination directory (ie. it must not exist beforehand).
-from distutils import dir_util
 
 import messageBoxes
 from statistic import Statistic
@@ -120,13 +122,23 @@ def copy_recon_files(aSubject, sourceDirectory):
             return False
     
     
-def move_trans_file(aSubject, fModel):
+def move_trans_file(subject, fModelName):
     """
-    TODO: description.
+    Copy the translated coordinated file from the subject root directory
+    to the desired forward model directory. Should only be needed after creating
+    a new forward model for the subject, and requires the directory to exist
+    beforehand.
+    
+    Keyword arguments:
+    
+    subject       -- the subject whose coordinate file and forward model
+                     are in question.
+    fModelName    -- name of the forward model.
+    
     """
-    original = os.path.join(aSubject._subject_path, 'reconFiles-trans.fif')
-    targetDirectory = os.path.join(aSubject._forwardModels_directory,
-                               fModel, 'reconFiles')
+    original = os.path.join(subject._subject_path, 'reconFiles-trans.fif')
+    targetDirectory = os.path.join(subject._forwardModels_directory,
+                               fModelName, 'reconFiles')
     
     try:
         shutil.copy(original, targetDirectory)
@@ -154,8 +166,12 @@ def remove_sourceAnalysis_files(aSubject):
 def create_fModel_directory(fmname, subject):
     """
     Create a directory for the final forward model (under the directory of the
-    subject) and copy the whole bem directory to it. Also make symbolic links
-    to subjects mri- and surf-directories to avoid copying them around.
+    subject) and:
+    
+    - copy the whole bem directory to it. 
+    - make symbolic links to subjects mri- and surf-directories to avoid 
+    copying them around.
+    - copy parameter files used to create the forward model to the directory.
     
     Keyword arguments:
     
@@ -165,7 +181,9 @@ def create_fModel_directory(fmname, subject):
                      experiment).
     """
     
-    fromCopyDir = os.path.join(subject._reconFiles_directory, 'bem')
+    fromCopyDirData = os.path.join(subject._reconFiles_directory, 'bem')
+    fromCopyDirParams = subject._reconFiles_directory
+    
     
     # If this is the first forward model, the forwardModels directory doesn't
     # exist yet.
@@ -183,26 +201,28 @@ def create_fModel_directory(fmname, subject):
     
     # Need to have and actual directory named bem for mne.gui.coregistration.
     # Symlinks below for same reason.
-    toCopyDir = os.path.join(fmDirFinal, 'bem')
-    if not os.path.isdir(toCopyDir):
-        os.mkdir(toCopyDir)
+    toCopyDirData = os.path.join(fmDirFinal, 'bem')
+    if not os.path.isdir(toCopyDirData):
+        os.mkdir(toCopyDirData)
     
     try:
-        dir_util.copy_tree(fromCopyDir, toCopyDir, preserve_symlinks=1)
+        dir_util.copy_tree(fromCopyDirData, toCopyDirData, preserve_symlinks=1)
+        return True
     except IOError as e:
-        os.rmdir(toCopyDir)
+        os.rmdir(toCopyDirData)
         message = 'There was a problem with copying forward model files: ' + \
                   str(e)
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox.exec_()
+        return False
     
-    """
-    TODO: Currently not needed, may be in the future.
-    mriDir = os.path.join(subject._reconFiles_directory, 'mri')
-    surfDir = os.path.join(subject._reconFiles_directory, 'surf')
-    os.symlink(mriDir, os.path.join(fmDir, 'mri'))
-    os.symlink(surfDir, os.path.join(fmDir, 'surf'))
-    """
+    # Copy parameter files.
+    pattern = os.path.join(fromCopyDirParams,'*.param')
+    for f in glob.glob(pattern):
+        shutil.copy(f, fmDirFinal)
+    
+    
+    
 
 def check_fModel_name(fmname, subject):
     """
@@ -220,6 +240,39 @@ def check_fModel_name(fmname, subject):
     
     return False
 
+
+def write_forward_model_parameters(fmname, subject, sspaceArgs=None, 
+                                   wshedArgs = None, setupFModelArgs= None):
+    """
+    Writes the parameters used to create the forward model to the directory
+    corresponding to.
+    """
+    
+    targetDir = subject._reconFiles_directory
+    
+    sspaceArgsFile = os.path.join(targetDir, fmname, 
+                                      'setupSourceSpace.param')
+    wshedArgsFile = os.path.join(targetDir, fmname, 
+                                     'wshed.param')
+    setupFModelArgsFile = os.path.join(targetDir, fmname,
+                                           'setupFModel.param')
+       
+    try:
+        if sspaceArgs != None:
+            pickleObjectToFile(sspaceArgs, sspaceArgsFile)
+        
+        if wshedArgs != None:
+            pickleObjectToFile(wshedArgs, wshedArgsFile)
+        
+        if setupFModelArgs != None:
+            pickleObjectToFile(setupFModelArgs, setupFModelArgsFile)
+    except IOError:
+        message = 'There was a problem with saving forward model parameters. ' + \
+                  'You should not continue using the program before the ' + \
+                  'problem is fixed.'
+        messageBox = messageBoxes.shortMessageBox(message)
+        messageBox.exec_()
+           
 
 def link_triang_files(subject):
     """

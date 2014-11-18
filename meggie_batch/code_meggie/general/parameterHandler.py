@@ -1,15 +1,21 @@
 '''
 Created on 15.10.2014
 
-@author: kari
+@author: Kari Aliranta
 '''
 
 """
-Some methods removed from the experiment, used earlier for reading and writing
-various caller command parameters, input via dialogs, from and to disk.
-No longer in use.
+Methods for writing and reading various command parameters to disk and from
+disk. Needed in cased where deriving the parameters from files created with
+those parameters is impossible, needlessly compilicated or resource-hungry.
 """
 
+import csv
+import os
+import fileManager
+
+    
+    
 
 def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):
