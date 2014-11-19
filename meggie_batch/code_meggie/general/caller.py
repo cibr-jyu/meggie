@@ -964,11 +964,8 @@ class Caller(object):
             fileManager.write_forward_model_parameters(fmname, activeSubject,
             setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
-        
         fileManager.create_fModel_directory(fmname, activeSubject)
             
-                
-    
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:

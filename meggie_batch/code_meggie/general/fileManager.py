@@ -1,4 +1,5 @@
 # coding: latin1
+from pickle import UnpicklingError
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 # All rights reserved.
@@ -207,19 +208,21 @@ def create_fModel_directory(fmname, subject):
     
     try:
         dir_util.copy_tree(fromCopyDirData, toCopyDirData, preserve_symlinks=1)
+        # Copy parameter files.
+        pattern = os.path.join(fromCopyDirParams,'*.param')
+    
+        for f in glob.glob(pattern):
+            shutil.copy(f, fmDirFinal)
         return True
-    except IOError as e:
-        os.rmdir(toCopyDirData)
-        message = 'There was a problem with copying forward model files: ' + \
-                  str(e)
+    except Exception as e:
+        os.rmdir(fmDir)
+        message = 'There was a problem with copying forward model files. ' + \
+                  'Please copy the following to your bug report: ' + str(e)
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox.exec_()
         return False
     
-    # Copy parameter files.
-    pattern = os.path.join(fromCopyDirParams,'*.param')
-    for f in glob.glob(pattern):
-        shutil.copy(f, fmDirFinal)
+    
     
     
     
@@ -565,10 +568,15 @@ def unpickle(fpath):
     
     fpath -- the path to the pickled file.
     
-    Return the unpickled object or None if unpickling failed.
-    Raise an IOError if unpickling fails.
+    Return the unpickled object. If there is an exception, raise it to
+    allow the calling method to decide a what to do.
     """
-    return pickle.load(open(fpath, 'rb'))
+    try:
+        unpickledObject = pickle.load(open(fpath, 'rb'))
+    except Exception:
+        raise
+    
+    return unpickledObject
     
     
 def save_epoch(fpath, epoch, overwrite=False):

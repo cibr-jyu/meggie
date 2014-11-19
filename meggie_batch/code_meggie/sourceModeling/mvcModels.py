@@ -15,8 +15,9 @@ import sys
 import csv
 import os
 from csv import Dialect
+import fileManager
 
-class ForwardModelModel(QAbstractListModel):
+class ForwardModelModel(QAbstractTableModel):
     '''
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
@@ -28,7 +29,7 @@ class ForwardModelModel(QAbstractListModel):
     '''
 
     def __init__(self, experiment):
-        self.fmodelDirectory = experiment._active_subject.\
+        self.fmodelsDirectory = experiment._active_subject.\
                       _forwardModels_directory
                       
         # File that includes forward model names, their parameters and 
@@ -49,7 +50,7 @@ class ForwardModelModel(QAbstractListModel):
     
     
     def getCurrentFmodelModelFile(self):
-        filename = os.path.join(self.fmodelDirectory, "fmodelModel")
+        filename = os.path.join(self.fmodelsDirectory, "fmodelModel")
             
         if os.path.isfile(filename):
             return filename
@@ -105,67 +106,44 @@ class ForwardModelModel(QAbstractListModel):
         self.endRemoveRows()
         return True
         
-
-    def createModel(self):
-        """
-        Reads the active subject's forwardModel directory and populates the
-        data accor
-        """
-        
-        # Parametrit ehkä suoraan filuista, kts. mne_setup_forward model ja mitä
-        # se 5120 tarkoittaa filuissa. mne.surface-modulissa on metodi:
-        # a =  mne.read_bem_surfaces("reconFiles-5120-bem-sol.fif")
-        # ja sitten voi kysellä tyyliin:
-        # a[0]['ntri'], joka palauttaa sen 5120:n.
-        # shift-argumentit varmaan saa luettua filusta, että conductivityt?
-        
-
-    def writeModelToDisk(self):
-        """
-        Writes to disk the info related to the fmodel, currently name and
-        the path to the directory of the fmodel.
-        
-        TODO: probably not needed, see readModelFromDisk.
-        """
-        
-        dialect = Dialect()
-        dialect.delimiter = ";"
-        
-        try:
-            filename = os.path.join(self.fmodelDirectory, "fmodelModel")
-            writer = csv.DictWriter(filename, self.fmodelInfoListKeys)
-            writer = writer.writerows(self.fmodelInfoList)
-        except IOError:
-            raise Exception("Problem writing to desired directory")
-        
-        
-    def readModelFromDisk(self):
-        """
-        Reads from disk the info related to fmodel, currently name and
-        the path to the directory of the fmodel.
-        
-        TODO: should probably read the fmodel directories directly from disk and
-        populate model from it, instead of trying to keep the model file in
-        sync. If possible, just read fmodel directory names, and if parameters
-        need showing, try to read them from files, too.
-        """
-        
-        cdialect = Dialect()
-        cdialect.delimiter = ";"
-        
-        try:
-            fileReadDict = csv.DictReader(self.fmodelFile, dialect=cdialect)
-            self.fmodelInfoList = fileReadDict  
-        except IOError:
-            self.fmodelInfoList = None
-            raise Exception("No forward model model file found")
             
         
     def initializeModel(self):
         """
-        Parse the fModelDirectory for 
+        Reads the active subject's forwardModels directory and populates the
+        data accordingly.
+        
+        Eli:
+        
+        1. Lue forwardModels-hakemistot ja ota kustakin param-filu
+        2. Parsi kustakin param-filusta parametrit ja laita ne fModelInfoList,
+        listaan dicteinä.
         """
         
-        
+        if os.path.isdir(self.fmodelsDirectory):
+            for d in self.fmodelsDirectory:
+                try: 
+                    sSpaceDict = fileManager.unpickle(os.path.join(d, 
+                                                  'setupSourceSpace.param'))
+                except:
+                    sSpaceDict = dict()
+                    
+                try:
+                    wshedDict = fileManager.unpickle(os.path.join(d,
+                                                 'wshed.param'))
+                except:
+                    wshedDict = dict()
+                    
+                try:
+                    setupFModelDict = fileManager.unpickle(os.path.join(d, 
+                                                       'setupFModel.param'))
+                except:
+                    setupFModelDict = dict()
+                
+                mergedDict = dict(sSpaceDict.items() + wshedDict.items() + 
+                                  setupFModelDict.items())
+                self.fmodelInfoList.append(mergedDict)
+
+
 # class CoregistrationModel(QAbstractTableModel):
     

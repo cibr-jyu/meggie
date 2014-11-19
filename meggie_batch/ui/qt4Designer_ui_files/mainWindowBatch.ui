@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1743</width>
-    <height>756</height>
+    <width>1588</width>
+    <height>732</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1366</width>
+         <width>1211</width>
          <height>750</height>
         </rect>
        </property>
@@ -2000,243 +2000,197 @@
              <attribute name="title">
               <string>Forward model setup</string>
              </attribute>
-             <widget class="QGroupBox" name="groupBoxRestOfSourcePreparation">
-              <property name="geometry">
-               <rect>
-                <x>9</x>
-                <y>9</y>
-                <width>416</width>
-                <height>336</height>
-               </rect>
-              </property>
-              <property name="title">
-               <string>Forward models:</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_14">
-               <item row="0" column="0">
-                <widget class="QTableView" name="tableViewForwardModels">
-                 <property name="alternatingRowColors">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonCreateNewForwardModel">
-                 <property name="text">
-                  <string>Create new forward model... 
+             <layout class="QFormLayout" name="formLayout_14">
+              <item row="0" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBoxRestOfSourcePreparation">
+                <property name="title">
+                 <string>Forward models:</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_14">
+                 <item row="0" column="0">
+                  <widget class="QTableView" name="tableViewForwardModels">
+                   <property name="alternatingRowColors">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QPushButton" name="pushButtonCreateNewForwardModel">
+                   <property name="text">
+                    <string>Create new forward model... 
  (mne_setup_source_space + mne_watershed_bem 
  + mne_setup_forward_model)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="pushButtonRemoveSelectedForwardModel">
-                 <property name="text">
-                  <string>Remove selected forward model</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QFrame" name="frame_3">
-              <property name="geometry">
-               <rect>
-                <x>431</x>
-                <y>9</y>
-                <width>541</width>
-                <height>341</height>
-               </rect>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <widget class="QGroupBox" name="groupBox_3">
-               <property name="geometry">
-                <rect>
-                 <x>11</x>
-                 <y>35</y>
-                 <width>391</width>
-                 <height>221</height>
-                </rect>
-               </property>
-               <property name="title">
-                <string>GroupBox</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_7">
-               <property name="geometry">
-                <rect>
-                 <x>11</x>
-                 <y>11</y>
-                 <width>316</width>
-                 <height>18</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Parameters of the selected forward model:</string>
-               </property>
-              </widget>
-             </widget>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QPushButton" name="pushButtonRemoveSelectedForwardModel">
+                   <property name="text">
+                    <string>Remove selected forward model</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="tabCoregistration">
              <attribute name="title">
               <string>Coregistration</string>
              </attribute>
              <layout class="QFormLayout" name="formLayout_5">
-              <item row="0" column="0">
+              <item row="0" column="0" colspan="2">
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>Forward models:</string>
+                   <string>Forward models available for coregistration:</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
                    <item row="0" column="0">
                     <widget class="QTableView" name="tableViewFModelsForCoregistration"/>
                    </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBoxCoregister">
-                  <property name="title">
-                   <string>Coregister the selected forward model:</string>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_13">
-                   <item row="0" column="0">
-                    <layout class="QVBoxLayout" name="verticalLayout_18">
-                     <item>
-                      <widget class="QFrame" name="frame_4">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QGridLayout" name="gridLayout_31">
-                        <item row="0" column="0">
-                         <layout class="QVBoxLayout" name="verticalLayout_17">
-                          <item>
-                           <layout class="QVBoxLayout" name="verticalLayout_16">
-                            <item>
-                             <layout class="QHBoxLayout" name="horizontalLayout_22">
-                              <item>
-                               <widget class="QLabel" name="label_9">
-                                <property name="font">
-                                 <font>
-                                  <weight>75</weight>
-                                  <bold>true</bold>
-                                 </font>
-                                </property>
-                                <property name="toolTip">
-                                 <string/>
-                                </property>
-                                <property name="whatsThis">
-                                 <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                                </property>
-                                <property name="text">
-                                 <string>Load pre-existing coordinate file:</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <spacer name="horizontalSpacer_4">
-                                <property name="orientation">
-                                 <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>40</width>
-                                  <height>20</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </item>
-                            <item>
-                             <layout class="QHBoxLayout" name="horizontalLayout_9">
-                              <item>
-                               <widget class="QLineEdit" name="lineEditCoregistration">
-                                <property name="whatsThis">
-                                 <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="pushButtonBrowseCoregistration">
-                                <property name="whatsThis">
-                                 <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                                </property>
-                                <property name="text">
-                                 <string>Browse...</string>
-                                </property>
-                               </widget>
-                              </item>
-                             </layout>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="label_10">
-                            <property name="font">
-                             <font>
-                              <pointsize>13</pointsize>
-                              <weight>75</weight>
-                              <bold>true</bold>
-                             </font>
-                            </property>
-                            <property name="text">
-                             <string>OR</string>
-                            </property>
-                            <property name="alignment">
-                             <set>Qt::AlignCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButtonMNECoregistration">
-                            <property name="text">
-                             <string>Use MNE-Python coregistration</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="label_11">
-                            <property name="font">
-                             <font>
-                              <pointsize>13</pointsize>
-                              <weight>75</weight>
-                              <bold>true</bold>
-                             </font>
-                            </property>
-                            <property name="text">
-                             <string>OR</string>
-                            </property>
-                            <property name="alignment">
-                             <set>Qt::AlignCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="PushButtonMNE_AnalyzeCoregistration">
-                            <property name="enabled">
-                             <bool>false</bool>
-                            </property>
-                            <property name="text">
-                             <string>Use mne_analyze to coregister (unimplemented)</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
+                   <item row="1" column="0">
+                    <widget class="QGroupBox" name="groupBoxCoregister">
+                     <property name="title">
+                      <string>Coregister the selected forward model:</string>
+                     </property>
+                     <layout class="QFormLayout" name="formLayout_13">
+                      <item row="0" column="0">
+                       <layout class="QVBoxLayout" name="verticalLayout_18">
+                        <item>
+                         <widget class="QFrame" name="frame_4">
+                          <property name="frameShape">
+                           <enum>QFrame::StyledPanel</enum>
+                          </property>
+                          <property name="frameShadow">
+                           <enum>QFrame::Raised</enum>
+                          </property>
+                          <layout class="QGridLayout" name="gridLayout_31">
+                           <item row="0" column="0">
+                            <layout class="QVBoxLayout" name="verticalLayout_17">
+                             <item>
+                              <layout class="QVBoxLayout" name="verticalLayout_16">
+                               <item>
+                                <layout class="QHBoxLayout" name="horizontalLayout_22">
+                                 <item>
+                                  <widget class="QLabel" name="label_9">
+                                   <property name="font">
+                                    <font>
+                                     <weight>75</weight>
+                                     <bold>true</bold>
+                                    </font>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string/>
+                                   </property>
+                                   <property name="whatsThis">
+                                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Load pre-existing coordinate file:</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <spacer name="horizontalSpacer_4">
+                                   <property name="orientation">
+                                    <enum>Qt::Horizontal</enum>
+                                   </property>
+                                   <property name="sizeHint" stdset="0">
+                                    <size>
+                                     <width>40</width>
+                                     <height>20</height>
+                                    </size>
+                                   </property>
+                                  </spacer>
+                                 </item>
+                                </layout>
+                               </item>
+                               <item>
+                                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                                 <item>
+                                  <widget class="QLineEdit" name="lineEditCoregistration">
+                                   <property name="whatsThis">
+                                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QPushButton" name="pushButtonBrowseCoregistration">
+                                   <property name="whatsThis">
+                                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>Browse...</string>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                </layout>
+                               </item>
+                              </layout>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="label_10">
+                               <property name="font">
+                                <font>
+                                 <pointsize>13</pointsize>
+                                 <weight>75</weight>
+                                 <bold>true</bold>
+                                </font>
+                               </property>
+                               <property name="text">
+                                <string>OR</string>
+                               </property>
+                               <property name="alignment">
+                                <set>Qt::AlignCenter</set>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="pushButtonMNECoregistration">
+                               <property name="text">
+                                <string>Use MNE-Python coregistration</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="label_11">
+                               <property name="font">
+                                <font>
+                                 <pointsize>13</pointsize>
+                                 <weight>75</weight>
+                                 <bold>true</bold>
+                                </font>
+                               </property>
+                               <property name="text">
+                                <string>OR</string>
+                               </property>
+                               <property name="alignment">
+                                <set>Qt::AlignCenter</set>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="PushButtonMNE_AnalyzeCoregistration">
+                               <property name="enabled">
+                                <bool>false</bool>
+                               </property>
+                               <property name="text">
+                                <string>Use mne_analyze to coregister (unimplemented)</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </item>
+                          </layout>
+                         </widget>
                         </item>
                        </layout>
-                      </widget>
-                     </item>
-                    </layout>
+                      </item>
+                     </layout>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -2355,7 +2309,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1743</width>
+     <width>1588</width>
      <height>23</height>
     </rect>
    </property>
