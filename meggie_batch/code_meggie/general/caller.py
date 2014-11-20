@@ -945,11 +945,7 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
             fileManager.write_forward_model_parameters(fmname,
-            activeSubject, None, None, setupFModelArgs)
-            
-            # TODO: copy source space setup and wshed 
-            # parameter files to fmodel directory, make parameter file for
-            # setup fmodel. 
+            activeSubject, None, None, setupFModelArgs) 
         
         if reply == 2:
             # To make overwriting unnecessary
@@ -964,7 +960,16 @@ class Caller(object):
             fileManager.write_forward_model_parameters(fmname, activeSubject,
             setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
-        fileManager.create_fModel_directory(fmname, activeSubject)
+        try:
+            fileManager.create_fModel_directory(fmname, activeSubject)
+            self.parent.add_new_fModel_to_MVCModel(fmname,setupSourceSpaceArgs,
+                            waterShedArgs, setupFModelArgs)
+        except Exception as e:
+            message = 'There was a problem creating forward model files. ' + \
+                  'Please copy the following to your bug report: ' + str(e)
+            # TODO: get traceback here
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
             
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):

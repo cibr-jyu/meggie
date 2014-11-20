@@ -213,18 +213,9 @@ def create_fModel_directory(fmname, subject):
     
         for f in glob.glob(pattern):
             shutil.copy(f, fmDirFinal)
-        return True
-    except Exception as e:
+    except Exception:
         os.rmdir(fmDir)
-        message = 'There was a problem with copying forward model files. ' + \
-                  'Please copy the following to your bug report: ' + str(e)
-        messageBox = messageBoxes.shortMessageBox(message)
-        messageBox.exec_()
-        return False
-    
-    
-    
-    
+        raise
     
 
 def check_fModel_name(fmname, subject):

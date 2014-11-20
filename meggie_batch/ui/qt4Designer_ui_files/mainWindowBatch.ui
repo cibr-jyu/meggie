@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2012,6 +2012,15 @@
                    <property name="alternatingRowColors">
                     <bool>true</bool>
                    </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <attribute name="horizontalHeaderMinimumSectionSize">
+                    <number>4</number>
+                   </attribute>
                   </widget>
                  </item>
                  <item row="1" column="0">
@@ -2049,14 +2058,24 @@
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
                    <item row="0" column="0">
-                    <widget class="QTableView" name="tableViewFModelsForCoregistration"/>
+                    <widget class="QTableView" name="tableViewFModelsForCoregistration">
+                     <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
+                     </property>
+                     <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                     </property>
+                     <attribute name="horizontalHeaderMinimumSectionSize">
+                      <number>4</number>
+                     </attribute>
+                    </widget>
                    </item>
                    <item row="1" column="0">
                     <widget class="QGroupBox" name="groupBoxCoregister">
                      <property name="title">
                       <string>Coregister the selected forward model:</string>
                      </property>
-                     <layout class="QFormLayout" name="formLayout_13">
+                     <layout class="QGridLayout" name="gridLayout_24">
                       <item row="0" column="0">
                        <layout class="QVBoxLayout" name="verticalLayout_18">
                         <item>

@@ -9,15 +9,12 @@ Contains models for views in various UI components, mainly MainWindow.
 TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import sys
-import csv
+from PyQt4 import QtCore, QtGui
 import os
-from csv import Dialect
+
 import fileManager
 
-class ForwardModelModel(QAbstractTableModel):
+class ForwardModelModel(QtCore.QAbstractTableModel):
     '''
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
@@ -28,7 +25,8 @@ class ForwardModelModel(QAbstractTableModel):
     hakemistoon
     '''
 
-    def __init__(self, experiment):
+    def __init__(self, experiment, parent=None):
+        QtCore.QAbstractTableModel.__init__(self)
         self.fmodelsDirectory = experiment._active_subject.\
                       _forwardModels_directory
                       
@@ -39,26 +37,17 @@ class ForwardModelModel(QAbstractTableModel):
         self.dirty = False
         
         # Each dictionary in the list includes parameters
-        self.fmodelInfoList = [dict()]
-        self.fmodelInfoListKeys = ["name",]
+        self.fmodelInfoList = []
         
         # Column headers i.e. names of parameters.
         self.__headers = ['name', 'spacing', 'ico', 'surfname', 'cps', 'atlas',
-                          'triang. ico', 'homog', 'innershift', 'outershift'
+                          'triang. ico', 'homog', 'innershift', 'outershift',
                           'skullshift', 'brainc', 'skullc', 'scalpc']
         
-    
-    
-    def getCurrentFmodelModelFile(self):
-        filename = os.path.join(self.fmodelsDirectory, "fmodelModel")
-            
-        if os.path.isfile(filename):
-            return filename
-        
-        return None
+        self.initializeModel()
         
     
-    def rowCount(self, index=QModelIndex()):
+    def rowCount(self, parent):
         """
         The associated view should have as many rows as there are 
         forward model names.
@@ -66,12 +55,12 @@ class ForwardModelModel(QAbstractTableModel):
         return len(self.fmodelInfoList)
     
     
-    def columnCount(self, index=QModelIndex()):
+    def columnCount(self, parent):
         """
         The associated view only has one column, the one to show the name 
         of the forward model. Increase value to get more colums.
         """
-        return 1
+        return len(self.__headers)
     
         
     def data(self, index, role):
@@ -79,23 +68,31 @@ class ForwardModelModel(QAbstractTableModel):
         Standard data method for the QAbstractTableModel.
         """
         if not index.isValid():
-            return QVariant()
+            return QtCore.QVariant()
         
         # No need to use anything else but displayrole here. 
-        if role == Qt.DisplayRole:
+        if role == QtCore.Qt.DisplayRole:
             row = index.row()
             column = index.column()
+            value = self.fmodelInfoList[row][column]
+            return value
             
-            fmodel = self.fmodelInfoList[row]
-            fmname = fmodel["name"]
-            
-            # TODO tähän palauttamaan ne parametrit
-            return fmname
-            
-        else: return QVariant()
+        else: return QtCore.QVariant()
+      
+      
+    def headerData(self, section, orientation, role):
         
+        if role == QtCore.Qt.DisplayRole:
+            
+            if orientation == QtCore.Qt.Horizontal:
+                
+                if section < len(self.__headers):
+                    return self.__headers[section]
+                else:
+                    return "not implemented"  
+      
     
-    def removeRows(self, position, rows=1, parent=QModelIndex()):
+    def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
         Simple removal of a single row of fmodel.
         """
@@ -105,21 +102,15 @@ class ForwardModelModel(QAbstractTableModel):
         # TODO also remember to delete actual directory on the disk
         self.endRemoveRows()
         return True
-        
             
         
     def initializeModel(self):
         """
         Reads the active subject's forwardModels directory and populates the
         data accordingly.
-        
-        Eli:
-        
-        1. Lue forwardModels-hakemistot ja ota kustakin param-filu
-        2. Parsi kustakin param-filusta parametrit ja laita ne fModelInfoList,
-        listaan dicteinä.
         """
         
+        # The param files don't exist by default, so lots of trying here.
         if os.path.isdir(self.fmodelsDirectory):
             for d in self.fmodelsDirectory:
                 try: 
@@ -142,8 +133,36 @@ class ForwardModelModel(QAbstractTableModel):
                 
                 mergedDict = dict(sSpaceDict.items() + wshedDict.items() + 
                                   setupFModelDict.items())
-                self.fmodelInfoList.append(mergedDict)
+                
+                fmlist = self.fmodel_dict_to_list(mergedDict)
+                
+                self.fmodelInfoList.append(fmlist)
 
+
+    def fmodel_dict_to_list(self, fmdict):
+        """
+        TODO: desc
+        """
+        
+        fmList = []
+        
+        fmList.append(fmdict['fmname'])
+        fmList.append(fmdict['spacing'])
+        fmList.append(fmdict['ico'])
+        fmList.append(fmdict['surfname'])
+        fmList.append(fmdict['cps'])
+        fmList.append(fmdict['atlas'])
+        fmList.append(fmdict['triang. ico'])
+        fmList.append(fmdict['homog'])
+        fmList.append(fmdict['innershift'])
+        fmList.append(fmdict['outershift'])
+        fmList.append(fmdict['skullshift'])
+        fmList.append(fmdict['brainc'])
+        fmList.append(fmdict['skullc'])
+        fmList.append(fmdict['scalpc'])
+        
+        return fmList
+        
 
 # class CoregistrationModel(QAbstractTableModel):
     
