@@ -239,17 +239,17 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
                                    wshedArgs = None, setupFModelArgs= None):
     """
     Writes the parameters used to create the forward model to the directory
-    corresponding to.
+    corresponding to the said forward model.
     """
     
-    targetDir = subject._reconFiles_directory
+    targetDir = subject._forwardModels_directory
     
     sspaceArgsFile = os.path.join(targetDir, fmname, 
                                       'setupSourceSpace.param')
     wshedArgsFile = os.path.join(targetDir, fmname, 
-                                     'wshed.param')
+                                      'wshed.param')
     setupFModelArgsFile = os.path.join(targetDir, fmname,
-                                           'setupFModel.param')
+                                      'setupFModel.param')
        
     try:
         if sspaceArgs != None:

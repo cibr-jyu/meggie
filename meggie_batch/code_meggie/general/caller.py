@@ -930,10 +930,10 @@ class Caller(object):
             "model setup parameters will be used, others are ignored) \n \n" + \
             "3) Compute all phases again"
             bemButtonText = 'Bem model \n setup only'
-            computeButtonText = 'Compute all \n phases again' 
-            reply = QtGui.QMessageBox.information(self.parent, title, text, 'Cancel',
-                                                  bemButtonText, 
-                                                  computeButtonText)
+            computeAllButtonText = 'Compute all \n phases again' 
+            reply = QtGui.QMessageBox.information(self.parent, title, text, 
+                                                  'Cancel', bemButtonText,
+                                                  computeAllButtonText)
         
         if reply == 0:
             # To keep forward model dialog open
@@ -944,8 +944,23 @@ class Caller(object):
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
-            fileManager.write_forward_model_parameters(fmname,
-            activeSubject, None, None, setupFModelArgs) 
+        
+            try:
+                fileManager.create_fModel_directory(fmname, activeSubject)          
+                fileManager.write_forward_model_parameters(fmname,
+                    activeSubject, None, None, setupFModelArgs) 
+                mergedDict = dict([('fmname', fmname)] + \
+                                  setupSourceSpaceArgs.items() + \
+                                  waterShedArgs.items() + \
+                                  setupFModelArgs.items())
+                
+                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+            except Exception as e:
+                message = 'There was a problem creating forward model files. ' + \
+                      'Please copy the following to your bug report: ' + str(e)
+                # TODO: get traceback here
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
         
         if reply == 2:
             # To make overwriting unnecessary
@@ -957,19 +972,23 @@ class Caller(object):
             # Right name and place for triang files, see above.
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
-            fileManager.write_forward_model_parameters(fmname, activeSubject,
-            setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
-        try:
-            fileManager.create_fModel_directory(fmname, activeSubject)
-            self.parent.add_new_fModel_to_MVCModel(fmname,setupSourceSpaceArgs,
-                            waterShedArgs, setupFModelArgs)
-        except Exception as e:
-            message = 'There was a problem creating forward model files. ' + \
-                  'Please copy the following to your bug report: ' + str(e)
-            # TODO: get traceback here
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            try:
+                fileManager.create_fModel_directory(fmname, activeSubject)          
+                fileManager.write_forward_model_parameters(fmname, activeSubject,
+                    setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+                mergedDict = dict([('fmname', fmname)] + \
+                                  setupSourceSpaceArgs.items() + \
+                                  waterShedArgs.items() + \
+                                  setupFModelArgs.items())
+                
+                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+            except Exception as e:
+                message = 'There was a problem creating forward model files. ' + \
+                      'Please copy the following to your bug report: ' + str(e)
+                # TODO: get traceback here
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
             
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):

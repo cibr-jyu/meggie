@@ -52,42 +52,47 @@ class ForwardModelDialog(QtGui.QDialog):
     def collectParametersIntoDictionary(self):
         """
         Collects the parameters from the ui fields of the dialog and returns
-        them in a dictionary.
+        them in a dictionary of dictionaries, one dictionary for each phase
+        of forward model creation. 
         """
-        fmdict = {}
+        setupSourceSpaceDict = {}
+        waterShedDict = {}
+        setupFmodelDict =  {}
         
-        fmdict['fmname'] = str(self.ui.lineEditFModelName.text())
-        fmdict['spacing'] = str(self.ui.spinBoxSpacing.value())
-        fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
-        fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
-        fmdict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
+        setupSourceSpaceDict['fmname'] = str(self.ui.lineEditFModelName.text())
+        setupSourceSpaceDict['spacing'] = str(self.ui.spinBoxSpacing.value())
+        setupSourceSpaceDict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
+        setupSourceSpaceDict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
+        setupSourceSpaceDict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
         self.ui.radioButtonPatchStatYes:
-            fmdict['computeCorticalStats'] = True
-        else: fmdict['computeCorticalStats'] = False
+            setupSourceSpaceDict['computeCorticalStats'] = True
+        else: setupSourceSpaceDict['computeCorticalStats'] = False
             
         if self.ui.buttonGroupAtlas.checkedButton() == \
         self.ui.radioButtonAtlasYes:
-            fmdict['useAtlas'] = True
-        else: fmdict['useAtlas'] = False                    
+            waterShedDict['useAtlas'] = True
+        else: waterShedDict['useAtlas'] = False                    
         
-        fmdict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
-        fmdict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+        setupFmodelDict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
+        setupFmodelDict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
         
         if self.ui.buttonGroupNosol.checkedButton == \
         self.ui.radioButtonNoSolYes:
-            fmdict['nosol'] = True
-        else: fmdict['nosol'] = False
+            setupFmodelDict['nosol'] = True
+        else: setupFmodelDict['nosol'] = False
         
-        fmdict['innerShift'] = str(self.ui.spinBoxInnerShift.value())
-        fmdict['outerShift'] = str(self.ui.spinBoxOuterShift.value())
-        fmdict['skullShift'] = str(self.ui.spinBoxSkullShift.value())
-        fmdict['brainc'] = str(self.ui.doubleSpinBoxBrainConductivity.value())
-        fmdict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
-        fmdict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
+        setupFmodelDict['innerShift'] = str(self.ui.spinBoxInnerShift.value())
+        setupFmodelDict['outerShift'] = str(self.ui.spinBoxOuterShift.value())
+        setupFmodelDict['skullShift'] = str(self.ui.spinBoxSkullShift.value())
+        setupFmodelDict['brainc'] = str(self.ui.doubleSpinBoxBrainConductivity.value())
+        setupFmodelDict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
+        setupFmodelDict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
         
-        return fmdict
+        finalDict = {'sspaceArgs': setupSourceSpaceDict, 'wshedArgs': waterShedDict,
+                     'sfmodelArgs': setupFmodelDict}
+        return finalDict
         
         
     def convertParameterDictionaryToCommandlineParameterTuple(self, fmdict):

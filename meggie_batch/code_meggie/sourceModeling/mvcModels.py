@@ -111,8 +111,11 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         """
         
         # The param files don't exist by default, so lots of trying here.
-        if os.path.isdir(self.fmodelsDirectory):
-            for d in self.fmodelsDirectory:
+        fmdir = self.fmodelsDirectory
+        
+        if os.path.isdir(fmdir):
+            for d in [name for name in os.listdir(fmdir)
+                        if os.path.isdir(os.path.join(fmdir, name))]:
                 try: 
                     sSpaceDict = fileManager.unpickle(os.path.join(d, 
                                                   'setupSourceSpace.param'))
@@ -131,10 +134,16 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                 except:
                     setupFModelDict = dict()
                 
-                mergedDict = dict(sSpaceDict.items() + wshedDict.items() + 
+                mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
+                                  wshedDict.items() + \
                                   setupFModelDict.items())
                 
-                fmlist = self.fmodel_dict_to_list(mergedDict)
+                # No need to crash on missing parameters files, just don't
+                # try to add anything to the list.
+                try:
+                    fmlist = self.fmodel_dict_to_list(mergedDict)
+                except:
+                    continue
                 
                 self.fmodelInfoList.append(fmlist)
 

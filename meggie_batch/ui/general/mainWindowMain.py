@@ -1117,10 +1117,14 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Implement this last if needed.
         return
 
+
+
 ### Code for populating and updating various lists and tables in the MainWindow ###       
     
-    def add_new_fModel_to_MVCModel(self):
-        pass
+    def add_new_fModel_to_MVCModel(self, mparamdict):
+        fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
+        self.forwardModelModel.fmodelInfoList.append(fmlist)
+        
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
