@@ -268,6 +268,72 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
         messageBox.exec_()
            
 
+def convertFModelParamDictToCmdlineParamTuple(fmdict):
+        """
+        Converts the parameters input in the dialog into valid command line
+        argument strings for various MNE-C-scripts (mne_setup_source_space, 
+        mne_watershed_bem, mne_setup_forward_model) used in forward model
+        creation.
+        
+        Keyword arguments:
+        
+        pdict        -- dictionary of three dictionaries, created by 
+                        ForwardModelDialogMain.
+        
+        Returns a tuple of lists with suitable arguments for commandline tools.
+        Looks like this:
+        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
+        mne_setup_forward_model_argumentList) 
+        """
+        
+        # Arguments for source space setup
+        if fmdict['sspaceArgs']['surfaceDecimMethod'] == 'traditional (default)':
+            sDecimIcoArg = []
+        else: sDecimIcoArg = ['--ico', fmdict['sspaceArgs']['surfaceDecimValue']]
+        
+        if fmdict['sspaceArgs']['computeCorticalStats'] == True:
+            cpsArg = ['--cps']
+        else: cpsArg = []
+        
+        spacingArg = ['--spacing', fmdict['sspaceArgs']['spacing']]
+        surfaceArg = ['--surface', fmdict['sspaceArgs']['surfaceName']]
+        
+        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
+        
+        # Arguments for BEM model meshes
+        if fmdict['wsshedArgs']['useAtlas'] == True:
+            waterShedArgs = ['--atlas']
+        else: waterShedArgs = []
+        
+        # Arguments for BEM model setup
+        surfArg = ['--surf']
+        bemIcoArg = ['--ico', fmdict['sfmodelArgs']['triangFilesIco']]
+        
+        if fmdict['sfmodelArgs']['compartModel'] == 'three layer':
+            braincArg = fmdict['sfmodelArgs']['brainc']
+            skullcArg = fmdict['sfmodelArgs']['skullc']
+            scalpcArg = fmdict['sfmodelArgs']['scalpc']
+            homogArg = ['']
+        else:
+            braincArg = ['']
+            skullcArg = ['']
+            scalpcArg = ['']
+            homogArg = ['--homog']
+
+        if fmdict['sfmodelArgs']['nosol'] == True:
+            nosolArg = ['--nosol']
+        else: nosolArg = ['']
+        
+        innerShiftArg = ['--innerShift', fmdict['sfmodelArgs']['innerShift']] 
+        outerShiftArg = ['--outerShift', fmdict['sfmodelArgs']['outerShift']] 
+        skullShiftArg = ['--outerShift', fmdict['sfmodelArgs']['skullShift']] 
+        
+        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
+                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
+                          outerShiftArg + skullShiftArg
+        
+        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+
 def link_triang_files(subject):
     """
     Create symlinks to bem directory, linking them to surface triangulation

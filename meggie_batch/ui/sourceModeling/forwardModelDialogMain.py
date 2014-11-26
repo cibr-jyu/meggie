@@ -58,12 +58,11 @@ class ForwardModelDialog(QtGui.QDialog):
         setupSourceSpaceDict = {}
         waterShedDict = {}
         setupFmodelDict =  {}
-        
-        setupSourceSpaceDict['fmname'] = str(self.ui.lineEditFModelName.text())
+         
         setupSourceSpaceDict['spacing'] = str(self.ui.spinBoxSpacing.value())
         setupSourceSpaceDict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
         setupSourceSpaceDict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
-        setupSourceSpaceDict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
+        setupSourceSpaceDict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
         self.ui.radioButtonPatchStatYes:
@@ -90,75 +89,11 @@ class ForwardModelDialog(QtGui.QDialog):
         setupFmodelDict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
         setupFmodelDict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
         
-        finalDict = {'sspaceArgs': setupSourceSpaceDict, 'wshedArgs': waterShedDict,
+        fmname = self.ui.lineEditFModelName.text()
+        finalDict = {'fmname': fmname, 'sspaceArgs': setupSourceSpaceDict,
+                     'wsshedArgs': waterShedDict, 
                      'sfmodelArgs': setupFmodelDict}
         return finalDict
-        
-        
-    def convertParameterDictionaryToCommandlineParameterTuple(self, fmdict):
-        """
-        Converts the parameters input in the dialog into valid command line
-        argument strings for various MNE-C-scripts (mne_setup_source_space, 
-        mne_watershed_bem, mne_setup_forward_model) used in forward model
-        creation.
-        
-        Keyword arguments:
-        
-        pdict        -- dictionary
-        
-        Returns a tuple of lists with suitable arguments for commandline tools.
-        Looks like this:
-        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
-        mne_setup_forward_model_argumentList) 
-        """
-        
-        # Arguments for source space setup
-        if fmdict['surfaceDecimMethod'] == 'traditional (default)':
-            sDecimIcoArg = []
-        else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
-        
-        if fmdict['computeCorticalStats'] == True:
-            cpsArg = ['--cps']
-        else: cpsArg = []
-        
-        spacingArg = ['--spacing', fmdict['spacing']]
-        surfaceArg = ['--surface', fmdict['surfaceName']]
-        
-        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
-        
-        # Arguments for BEM model meshes
-        if fmdict['useAtlas'] == True:
-            waterShedArgs = ['--atlas']
-        else: waterShedArgs = []
-        
-        # Arguments for BEM model setup
-        surfArg = ['--surf']
-        bemIcoArg = ['--ico', fmdict['triangFilesIco']]
-        
-        if fmdict['compartModel'] == 'three layer':
-            braincArg = fmdict['brainc']
-            skullcArg = fmdict['skullc']
-            scalpcArg = fmdict['scalpc']
-            homogArg = ['']
-        else:
-            braincArg = ['']
-            skullcArg = ['']
-            scalpcArg = ['']
-            homogArg = ['--homog']
-
-        if fmdict['nosol'] == True:
-            nosolArg = ['--nosol']
-        else: nosolArg = ['']
-        
-        innerShiftArg = ['--innerShift', fmdict['innerShift']] 
-        outerShiftArg = ['--outerShift', fmdict['outerShift']] 
-        skullShiftArg = ['--outerShift', fmdict['skullShift']] 
-        
-        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
-                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
-                          outerShiftArg + skullShiftArg
-        
-        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
         
         
     def accept(self):
@@ -202,10 +137,7 @@ class ForwardModelDialog(QtGui.QDialog):
             self.messageBox.exec_()
             return
         
-        
-        cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(
-                                                                        fmdict)
-        if self.parent.caller.create_forward_model(fmname, cmdTuple) == False:
+        if self.parent.caller.create_forward_model(fmdict) == False:
             return
         
         self.close()

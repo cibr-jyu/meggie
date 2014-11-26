@@ -39,7 +39,7 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
-
+import traceback
 
 from PyQt4 import QtCore, QtGui
 
@@ -868,8 +868,7 @@ class Caller(object):
             return False
         
         
-    def create_forward_model(self, fmname, (setupSourceSpaceArgs, waterShedArgs, 
-                             setupFModelArgs)):
+    def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
@@ -911,6 +910,11 @@ class Caller(object):
                                                 'reconFiles_brain_surface')
         wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
         
+        fmname = fmdict['fmname']
+        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)  = \
+        fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
+        
+        
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
         reply = 2
@@ -948,18 +952,21 @@ class Caller(object):
             try:
                 fileManager.create_fModel_directory(fmname, activeSubject)          
                 fileManager.write_forward_model_parameters(fmname,
-                    activeSubject, None, None, setupFModelArgs) 
+                    activeSubject, None, None, setupFModelArgs)
+                # FIXME: should only use sfmodelArgs from the dict,
+                # others should come from existing .param files.
                 mergedDict = dict([('fmname', fmname)] + \
-                                  setupSourceSpaceArgs.items() + \
-                                  waterShedArgs.items() + \
-                                  setupFModelArgs.items())
+                                  fmdict['sspaceArgs'].items() + \
+                                  fmdict['wsshedArgs'].items() + \
+                                  fmdict['sfmodelArgs'].items())
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
             except Exception as e:
+                tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
-                      'Please copy the following to your bug report: ' + str(e)
-                # TODO: get traceback here
-                self.messageBox = messageBoxes.shortMessageBox(message)
+                      'Please copy the following to your bug report:\n\n' + \
+                      str(tb)
+                self.messageBox = messageBoxes.longMessageBox('Error', message)
                 self.messageBox.show()
         
         if reply == 2:
@@ -978,16 +985,17 @@ class Caller(object):
                 fileManager.write_forward_model_parameters(fmname, activeSubject,
                     setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
                 mergedDict = dict([('fmname', fmname)] + \
-                                  setupSourceSpaceArgs.items() + \
-                                  waterShedArgs.items() + \
-                                  setupFModelArgs.items())
+                                  fmdict['sspaceArgs'].items() + \
+                                  fmdict['wsshedArgs'].items() + \
+                                  fmdict['sfmodelArgs'].items())
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
             except Exception as e:
+                tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
-                      'Please copy the following to your bug report: ' + str(e)
-                # TODO: get traceback here
-                self.messageBox = messageBoxes.shortMessageBox(message)
+                      'Please copy the following to your bug report:\n\n' + \
+                       str(tb)
+                self.messageBox = messageBoxes.longMessageBox('Error', message)
                 self.messageBox.show()
             
     

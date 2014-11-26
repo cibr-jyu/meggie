@@ -155,17 +155,19 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         
         fmList = []
         
+        # TODO: compartModel and decimMethod need some shortening
         fmList.append(fmdict['fmname'])
         fmList.append(fmdict['spacing'])
-        fmList.append(fmdict['ico'])
-        fmList.append(fmdict['surfname'])
-        fmList.append(fmdict['cps'])
-        fmList.append(fmdict['atlas'])
-        fmList.append(fmdict['triang. ico'])
-        fmList.append(fmdict['homog'])
-        fmList.append(fmdict['innershift'])
-        fmList.append(fmdict['outershift'])
-        fmList.append(fmdict['skullshift'])
+        fmList.append(fmdict['surfaceDecimMethod'])
+        fmList.append(fmdict['surfaceDecimValue'])
+        fmList.append(fmdict['surfaceName'])
+        fmList.append(fmdict['computeCorticalStats'])
+        fmList.append(fmdict['useAtlas'])
+        fmList.append(fmdict['triangFilesIco'])
+        fmList.append(fmdict['compartModel'])
+        fmList.append(fmdict['innerShift'])
+        fmList.append(fmdict['outerShift'])
+        fmList.append(fmdict['skullShift'])
         fmList.append(fmdict['brainc'])
         fmList.append(fmdict['skullc'])
         fmList.append(fmdict['scalpc'])
