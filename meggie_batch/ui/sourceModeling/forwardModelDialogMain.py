@@ -52,108 +52,48 @@ class ForwardModelDialog(QtGui.QDialog):
     def collectParametersIntoDictionary(self):
         """
         Collects the parameters from the ui fields of the dialog and returns
-        them in a dictionary.
+        them in a dictionary of dictionaries, one dictionary for each phase
+        of forward model creation. 
         """
-        fmdict = {}
-        
-        fmdict['fmname'] = str(self.ui.lineEditFModelName.text())
-        fmdict['spacing'] = str(self.ui.spinBoxSpacing.value())
-        fmdict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
-        fmdict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
-        fmdict['surfaceName'] = str(self.ui.comboBoxSurfaceName.currentText())
+        setupSourceSpaceDict = {}
+        waterShedDict = {}
+        setupFmodelDict =  {}
+         
+        setupSourceSpaceDict['spacing'] = str(self.ui.spinBoxSpacing.value())
+        setupSourceSpaceDict['surfaceDecimMethod'] = self.ui.comboBoxSurfaceDecimMethod.currentText()
+        setupSourceSpaceDict['surfaceDecimValue'] = str(self.ui.spinBoxSurfaceDecimValue.value())
+        setupSourceSpaceDict['surfaceName'] = self.ui.comboBoxSurfaceName.currentText()
         
         if self.ui.buttonGroupCorticalPatchStats.checkedButton() == \
         self.ui.radioButtonPatchStatYes:
-            fmdict['computeCorticalStats'] = True
-        else: fmdict['computeCorticalStats'] = False
+            setupSourceSpaceDict['computeCorticalStats'] = True
+        else: setupSourceSpaceDict['computeCorticalStats'] = False
             
         if self.ui.buttonGroupAtlas.checkedButton() == \
         self.ui.radioButtonAtlasYes:
-            fmdict['useAtlas'] = True
-        else: fmdict['useAtlas'] = False                    
+            waterShedDict['useAtlas'] = True
+        else: waterShedDict['useAtlas'] = False                    
         
-        fmdict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
-        fmdict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
+        setupFmodelDict['triangFilesIco'] = str(self.ui.spinBoxTriangFilesIco.value())
+        setupFmodelDict['compartModel'] = self.ui.comboBoxCompartmentModel.currentText()
         
         if self.ui.buttonGroupNosol.checkedButton == \
         self.ui.radioButtonNoSolYes:
-            fmdict['nosol'] = True
-        else: fmdict['nosol'] = False
+            setupFmodelDict['nosol'] = True
+        else: setupFmodelDict['nosol'] = False
         
-        fmdict['innerShift'] = str(self.ui.spinBoxInnerShift.value())
-        fmdict['outerShift'] = str(self.ui.spinBoxOuterShift.value())
-        fmdict['skullShift'] = str(self.ui.spinBoxSkullShift.value())
-        fmdict['brainc'] = str(self.ui.doubleSpinBoxBrainConductivity.value())
-        fmdict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
-        fmdict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
+        setupFmodelDict['innerShift'] = str(self.ui.spinBoxInnerShift.value())
+        setupFmodelDict['outerShift'] = str(self.ui.spinBoxOuterShift.value())
+        setupFmodelDict['skullShift'] = str(self.ui.spinBoxSkullShift.value())
+        setupFmodelDict['brainc'] = str(self.ui.doubleSpinBoxBrainConductivity.value())
+        setupFmodelDict['skullc'] = str(self.ui.doubleSpinBoxSkullConductivity.value())
+        setupFmodelDict['scalpc'] = str(self.ui.doubleSpinBoxScalpConductivity.value())
         
-        return fmdict
-        
-        
-    def convertParameterDictionaryToCommandlineParameterTuple(self, fmdict):
-        """
-        Converts the parameters input in the dialog into valid command line
-        argument strings for various MNE-C-scripts (mne_setup_source_space, 
-        mne_watershed_bem, mne_setup_forward_model) used in forward model
-        creation.
-        
-        Keyword arguments:
-        
-        pdict        -- dictionary
-        
-        Returns a tuple of lists with suitable arguments for commandline tools.
-        Looks like this:
-        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
-        mne_setup_forward_model_argumentList) 
-        """
-        
-        # Arguments for source space setup
-        if fmdict['surfaceDecimMethod'] == 'traditional (default)':
-            sDecimIcoArg = []
-        else: sDecimIcoArg = ['--ico', fmdict['surfaceDecimValue']]
-        
-        if fmdict['computeCorticalStats'] == True:
-            cpsArg = ['--cps']
-        else: cpsArg = []
-        
-        spacingArg = ['--spacing', fmdict['spacing']]
-        surfaceArg = ['--surface', fmdict['surfaceName']]
-        
-        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
-        
-        # Arguments for BEM model meshes
-        if fmdict['useAtlas'] == True:
-            waterShedArgs = ['--atlas']
-        else: waterShedArgs = []
-        
-        # Arguments for BEM model setup
-        surfArg = ['--surf']
-        bemIcoArg = ['--ico', fmdict['triangFilesIco']]
-        
-        if fmdict['compartModel'] == 'three layer':
-            braincArg = fmdict['brainc']
-            skullcArg = fmdict['skullc']
-            scalpcArg = fmdict['scalpc']
-            homogArg = ['']
-        else:
-            braincArg = ['']
-            skullcArg = ['']
-            scalpcArg = ['']
-            homogArg = ['--homog']
-
-        if fmdict['nosol'] == True:
-            nosolArg = ['--nosol']
-        else: nosolArg = ['']
-        
-        innerShiftArg = ['--innerShift', fmdict['innerShift']] 
-        outerShiftArg = ['--outerShift', fmdict['outerShift']] 
-        skullShiftArg = ['--outerShift', fmdict['skullShift']] 
-        
-        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
-                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
-                          outerShiftArg + skullShiftArg
-        
-        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+        fmname = self.ui.lineEditFModelName.text()
+        finalDict = {'fmname': fmname, 'sspaceArgs': setupSourceSpaceDict,
+                     'wsshedArgs': waterShedDict, 
+                     'sfmodelArgs': setupFmodelDict}
+        return finalDict
         
         
     def accept(self):
@@ -197,9 +137,7 @@ class ForwardModelDialog(QtGui.QDialog):
             self.messageBox.exec_()
             return
         
-        
-        cmdTuple = self.convertParameterDictionaryToCommandlineParameterTuple(
-                                                                        fmdict)
-        if self.parent.caller.create_forward_model(fmname, cmdTuple) == False:
+        if self.parent.caller.create_forward_model(fmdict) == False:
             return
+        
         self.close()

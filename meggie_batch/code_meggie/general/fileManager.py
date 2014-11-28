@@ -1,4 +1,5 @@
 # coding: latin1
+from pickle import UnpicklingError
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 # All rights reserved.
@@ -40,14 +41,16 @@ import mne
 import os
 import pickle
 import shutil
+import glob
+
+# For copy_tree. Because shutil.copytree has restrictions regarding the
+# destination directory (ie. it must not exist beforehand).
+from distutils import dir_util
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-# For copy_tree. Because shutil.copytree has restrictions regarding the
-# destination directory (ie. it must not exist beforehand).
-from distutils import dir_util
 
 import messageBoxes
 from statistic import Statistic
@@ -120,6 +123,33 @@ def copy_recon_files(aSubject, sourceDirectory):
             return False
     
     
+def move_trans_file(subject, fModelName):
+    """
+    Copy the translated coordinated file from the subject root directory
+    to the desired forward model directory. Should only be needed after creating
+    a new forward model for the subject, and requires the directory to exist
+    beforehand.
+    
+    Keyword arguments:
+    
+    subject       -- the subject whose coordinate file and forward model
+                     are in question.
+    fModelName    -- name of the forward model.
+    
+    """
+    original = os.path.join(subject._subject_path, 'reconFiles-trans.fif')
+    targetDirectory = os.path.join(subject._forwardModels_directory,
+                               fModelName, 'reconFiles')
+    
+    try:
+        shutil.copy(original, targetDirectory)
+        os.remove(original)
+    except IOError as e:
+        return e
+    
+    return True
+    
+    
 def remove_sourceAnalysis_files(aSubject):
     """
     Recursively removes contents of the source analysis directory.
@@ -137,8 +167,12 @@ def remove_sourceAnalysis_files(aSubject):
 def create_fModel_directory(fmname, subject):
     """
     Create a directory for the final forward model (under the directory of the
-    subject) and copy the whole bem directory to it. Also make symbolic links
-    to subjects mri- and surf-directories to avoid copying them around.
+    subject) and:
+    
+    - copy the whole bem directory to it. 
+    - make symbolic links to subjects mri- and surf-directories to avoid 
+    copying them around.
+    - copy parameter files used to create the forward model to the directory.
     
     Keyword arguments:
     
@@ -148,7 +182,9 @@ def create_fModel_directory(fmname, subject):
                      experiment).
     """
     
-    fromCopyDir = os.path.join(subject._reconFiles_directory, 'bem')
+    fromCopyDirData = os.path.join(subject._reconFiles_directory, 'bem')
+    fromCopyDirParams = subject._reconFiles_directory
+    
     
     # If this is the first forward model, the forwardModels directory doesn't
     # exist yet.
@@ -156,33 +192,31 @@ def create_fModel_directory(fmname, subject):
         subject.create_forwardModels_directory()
     
     # Existence actually checked already by check_fModel_name via
-    # forwardModelDialog.
+    # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
+    # requires the directory name to be the same as the subject name.
     fmDir = os.path.join(subject._forwardModels_directory, fmname)
+    fmDirFinal = os.path.join(fmDir, 'reconFiles')
     if not os.path.isdir(fmDir):
-        os.mkdir(fmDir)  
+        os.mkdir(fmDir)
+        os.mkdir(fmDirFinal)
     
     # Need to have and actual directory named bem for mne.gui.coregistration.
     # Symlinks below for same reason.
-    toCopyDir = os.path.join(fmDir, 'bem')
-    if not os.path.isdir(toCopyDir):
-        os.mkdir(toCopyDir)
+    toCopyDirData = os.path.join(fmDirFinal, 'bem')
+    if not os.path.isdir(toCopyDirData):
+        os.mkdir(toCopyDirData)
     
     try:
-        dir_util.copy_tree(fromCopyDir, toCopyDir, preserve_symlinks=1)
-    except IOError as e:
-        os.rmdir(toCopyDir)
-        message = 'There was a problem with copying forward model files: ' + \
-                  str(e)
-        messageBox = messageBoxes.shortMessageBox(message)
-        messageBox.exec_()
+        dir_util.copy_tree(fromCopyDirData, toCopyDirData, preserve_symlinks=1)
+        # Copy parameter files.
+        pattern = os.path.join(fromCopyDirParams,'*.param')
     
-    """
-    TODO: Currently not needed, may be in the future.
-    mriDir = os.path.join(subject._reconFiles_directory, 'mri')
-    surfDir = os.path.join(subject._reconFiles_directory, 'surf')
-    os.symlink(mriDir, os.path.join(fmDir, 'mri'))
-    os.symlink(surfDir, os.path.join(fmDir, 'surf'))
-    """
+        for f in glob.glob(pattern):
+            shutil.copy(f, fmDirFinal)
+    except Exception:
+        os.rmdir(fmDir)
+        raise
+    
 
 def check_fModel_name(fmname, subject):
     """
@@ -200,6 +234,105 @@ def check_fModel_name(fmname, subject):
     
     return False
 
+
+def write_forward_model_parameters(fmname, subject, sspaceArgs=None, 
+                                   wshedArgs = None, setupFModelArgs= None):
+    """
+    Writes the parameters used to create the forward model to the directory
+    corresponding to the said forward model.
+    """
+    
+    targetDir = subject._forwardModels_directory
+    
+    sspaceArgsFile = os.path.join(targetDir, fmname, 
+                                      'setupSourceSpace.param')
+    wshedArgsFile = os.path.join(targetDir, fmname, 
+                                      'wshed.param')
+    setupFModelArgsFile = os.path.join(targetDir, fmname,
+                                      'setupFModel.param')
+       
+    try:
+        if sspaceArgs != None:
+            pickleObjectToFile(sspaceArgs, sspaceArgsFile)
+        
+        if wshedArgs != None:
+            pickleObjectToFile(wshedArgs, wshedArgsFile)
+        
+        if setupFModelArgs != None:
+            pickleObjectToFile(setupFModelArgs, setupFModelArgsFile)
+    except IOError:
+        message = 'There was a problem with saving forward model parameters. ' + \
+                  'You should not continue using the program before the ' + \
+                  'problem is fixed.'
+        messageBox = messageBoxes.shortMessageBox(message)
+        messageBox.exec_()
+           
+
+def convertFModelParamDictToCmdlineParamTuple(fmdict):
+        """
+        Converts the parameters input in the dialog into valid command line
+        argument strings for various MNE-C-scripts (mne_setup_source_space, 
+        mne_watershed_bem, mne_setup_forward_model) used in forward model
+        creation.
+        
+        Keyword arguments:
+        
+        pdict        -- dictionary of three dictionaries, created by 
+                        ForwardModelDialogMain.
+        
+        Returns a tuple of lists with suitable arguments for commandline tools.
+        Looks like this:
+        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
+        mne_setup_forward_model_argumentList) 
+        """
+        
+        # Arguments for source space setup
+        if fmdict['sspaceArgs']['surfaceDecimMethod'] == 'traditional (default)':
+            sDecimIcoArg = []
+        else: sDecimIcoArg = ['--ico', fmdict['sspaceArgs']['surfaceDecimValue']]
+        
+        if fmdict['sspaceArgs']['computeCorticalStats'] == True:
+            cpsArg = ['--cps']
+        else: cpsArg = []
+        
+        spacingArg = ['--spacing', fmdict['sspaceArgs']['spacing']]
+        surfaceArg = ['--surface', fmdict['sspaceArgs']['surfaceName']]
+        
+        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
+        
+        # Arguments for BEM model meshes
+        if fmdict['wsshedArgs']['useAtlas'] == True:
+            waterShedArgs = ['--atlas']
+        else: waterShedArgs = []
+        
+        # Arguments for BEM model setup
+        surfArg = ['--surf']
+        bemIcoArg = ['--ico', fmdict['sfmodelArgs']['triangFilesIco']]
+        
+        if fmdict['sfmodelArgs']['compartModel'] == 'three layer':
+            braincArg = fmdict['sfmodelArgs']['brainc']
+            skullcArg = fmdict['sfmodelArgs']['skullc']
+            scalpcArg = fmdict['sfmodelArgs']['scalpc']
+            homogArg = ['']
+        else:
+            braincArg = ['']
+            skullcArg = ['']
+            scalpcArg = ['']
+            homogArg = ['--homog']
+
+        if fmdict['sfmodelArgs']['nosol'] == True:
+            nosolArg = ['--nosol']
+        else: nosolArg = ['']
+        
+        innerShiftArg = ['--innerShift', fmdict['sfmodelArgs']['innerShift']] 
+        outerShiftArg = ['--outerShift', fmdict['sfmodelArgs']['outerShift']] 
+        skullShiftArg = ['--outerShift', fmdict['sfmodelArgs']['skullShift']] 
+        
+        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
+                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
+                          outerShiftArg + skullShiftArg
+        
+        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
 
 def link_triang_files(subject):
     """
@@ -492,10 +625,15 @@ def unpickle(fpath):
     
     fpath -- the path to the pickled file.
     
-    Return the unpickled object or None if unpickling failed.
-    Raise an IOError if unpickling fails.
+    Return the unpickled object. If there is an exception, raise it to
+    allow the calling method to decide a what to do.
     """
-    return pickle.load(open(fpath, 'rb'))
+    try:
+        unpickledObject = pickle.load(open(fpath, 'rb'))
+    except Exception:
+        raise
+    
+    return unpickledObject
     
     
 def save_epoch(fpath, epoch, overwrite=False):

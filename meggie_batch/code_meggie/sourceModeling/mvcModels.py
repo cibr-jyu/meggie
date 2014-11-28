@@ -9,14 +9,12 @@ Contains models for views in various UI components, mainly MainWindow.
 TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import sys
-import csv
+from PyQt4 import QtCore, QtGui
 import os
-from csv import Dialect
 
-class ForwardModelModel(QAbstractListModel):
+import fileManager
+
+class ForwardModelModel(QtCore.QAbstractTableModel):
     '''
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
@@ -27,36 +25,29 @@ class ForwardModelModel(QAbstractListModel):
     hakemistoon
     '''
 
-    def __init__(self, experiment):
-        self.fmodelDirectory = experiment._active_subject.\
+    def __init__(self, experiment, parent=None):
+        QtCore.QAbstractTableModel.__init__(self)
+        self.fmodelsDirectory = experiment._active_subject.\
                       _forwardModels_directory
                       
         # File that includes forward model names, their parameters and 
         # corresponding files. Full path needed, hence the directory.
-        self.fmodelFile = self.getCurrentFmodelModelFile()
         
         # Actually not needed, as the model is not editable via GUI.
         self.dirty = False
-        # Info of the forward models, read from the self.FmodelFile.
-        # TODO sisältääkö generoidut tiedostot jo infoa fmodeleista, jolloin
-        # tässä riittäisi pelkkä hakemiston polku?
-        self.fmodelInfoList = [dict()]
-        self.fmodelInfoListKeys = ["name","fpath"]
         
-        # One could put column headers here
-        # self.__headers = headers
+        # Each dictionary in the list includes parameters
+        self.fmodelInfoList = []
         
+        # Column headers i.e. names of parameters.
+        self.__headers = ['name', 'spacing', 'ico', 'surfname', 'cps', 'atlas',
+                          'triang. ico', 'homog', 'innershift', 'outershift',
+                          'skullshift', 'brainc', 'skullc', 'scalpc']
         
-    def getCurrentFmodelModelFile(self):
-        filename = os.path.join(self.fmodelDirectory, "fmodelModel")
-            
-        if os.path.isfile(filename):
-            return filename
-        
-        return None
+        self.initializeModel()
         
     
-    def rowCount(self, index=QModelIndex()):
+    def rowCount(self, parent):
         """
         The associated view should have as many rows as there are 
         forward model names.
@@ -64,12 +55,12 @@ class ForwardModelModel(QAbstractListModel):
         return len(self.fmodelInfoList)
     
     
-    def columnCount(self, index=QModelIndex()):
+    def columnCount(self, parent):
         """
         The associated view only has one column, the one to show the name 
         of the forward model. Increase value to get more colums.
         """
-        return 1
+        return len(self.__headers)
     
         
     def data(self, index, role):
@@ -77,77 +68,112 @@ class ForwardModelModel(QAbstractListModel):
         Standard data method for the QAbstractTableModel.
         """
         if not index.isValid():
-            return QVariant()
+            return QtCore.QVariant()
         
         # No need to use anything else but displayrole here. 
-        if role == Qt.DisplayRole:
+        if role == QtCore.Qt.DisplayRole:
             row = index.row()
-            # column = index.column() needed if shown more info than just name
+            column = index.column()
+            value = self.fmodelInfoList[row][column]
+            return value
             
-            fmodel = self.fmodelInfoList[row]
-            fmname = fmodel["name"]
-            return fmname
-            
-        else: return QVariant()
+        else: return QtCore.QVariant()
+      
+      
+    def headerData(self, section, orientation, role):
         
+        if role == QtCore.Qt.DisplayRole:
+            
+            if orientation == QtCore.Qt.Horizontal:
+                
+                if section < len(self.__headers):
+                    return self.__headers[section]
+                else:
+                    return "not implemented"  
+      
     
-    def removeRows(self, position, rows=1, parent=QModelIndex()):
+    def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
         Simple removal of a single row of fmodel.
         """
         self.beginRemoveRows(parent, position, position + rows - 1)
         value = self.fmodelInfo[position]
         self.fmodelInfo.remove(value)
+        # TODO also remember to delete actual directory on the disk
         self.endRemoveRows()
         return True
-        
-
-    def writeModelToDisk(self):
-        """
-        Writes to disk the info related to the fmodel, currently name and
-        the path to the directory of the fmodel.
-        
-        TODO: probably not needed, see readModelFromDisk.
-        """
-        
-        dialect = Dialect()
-        dialect.delimiter = ";"
-        
-        try:
-            filename = os.path.join(self.fmodelDirectory, "fmodelModel")
-            writer = csv.DictWriter(filename, self.fmodelInfoListKeys)
-            writer = writer.writerows(self.fmodelInfoList)
-        except IOError:
-            raise Exception("Problem writing to desired directory")
-        
-        
-    def readModelFromDisk(self):
-        """
-        Reads from disk the info related to fmodel, currently name and
-        the path to the directory of the fmodel.
-        
-        TODO: should probably read the fmodel directories directly from disk and
-        populate model from it, instead of trying to keep the model file in
-        sync. If possible, just read fmodel directory names, and if parameters
-        need showing, try to read them from files, too.
-        """
-        
-        cdialect = Dialect()
-        cdialect.delimiter = ";"
-        
-        try:
-            fileReadDict = csv.DictReader(self.fmodelFile, dialect=cdialect)
-            self.fmodelInfoList = fileReadDict  
-        except IOError:
-            self.fmodelInfoList = None
-            raise Exception("No forward model model file found")
             
         
-
     def initializeModel(self):
         """
-        
+        Reads the active subject's forwardModels directory and populates the
+        data accordingly.
         """
         
+        # The param files don't exist by default, so lots of trying here.
+        fmdir = self.fmodelsDirectory
+        
+        if os.path.isdir(fmdir):
+            for d in [name for name in os.listdir(fmdir)
+                        if os.path.isdir(os.path.join(fmdir, name))]:
+                try: 
+                    sSpaceDict = fileManager.unpickle(os.path.join(d, 
+                                                  'setupSourceSpace.param'))
+                except:
+                    sSpaceDict = dict()
+                    
+                try:
+                    wshedDict = fileManager.unpickle(os.path.join(d,
+                                                 'wshed.param'))
+                except:
+                    wshedDict = dict()
+                    
+                try:
+                    setupFModelDict = fileManager.unpickle(os.path.join(d, 
+                                                       'setupFModel.param'))
+                except:
+                    setupFModelDict = dict()
+                
+                mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
+                                  wshedDict.items() + \
+                                  setupFModelDict.items())
+                
+                # No need to crash on missing parameters files, just don't
+                # try to add anything to the list.
+                try:
+                    fmlist = self.fmodel_dict_to_list(mergedDict)
+                except:
+                    continue
+                
+                self.fmodelInfoList.append(fmlist)
+
+
+    def fmodel_dict_to_list(self, fmdict):
+        """
+        TODO: desc
+        """
+        
+        fmList = []
+        
+        # TODO: compartModel and decimMethod need some shortening
+        fmList.append(fmdict['fmname'])
+        fmList.append(fmdict['spacing'])
+        fmList.append(fmdict['surfaceDecimMethod'])
+        fmList.append(fmdict['surfaceDecimValue'])
+        fmList.append(fmdict['surfaceName'])
+        fmList.append(fmdict['computeCorticalStats'])
+        fmList.append(fmdict['useAtlas'])
+        fmList.append(fmdict['triangFilesIco'])
+        fmList.append(fmdict['compartModel'])
+        fmList.append(fmdict['innerShift'])
+        fmList.append(fmdict['outerShift'])
+        fmList.append(fmdict['skullShift'])
+        fmList.append(fmdict['brainc'])
+        fmList.append(fmdict['skullc'])
+        fmList.append(fmdict['scalpc'])
+        
+        return fmList
+        
+
 # class CoregistrationModel(QAbstractTableModel):
     

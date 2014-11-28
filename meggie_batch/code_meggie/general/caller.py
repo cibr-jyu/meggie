@@ -1,5 +1,6 @@
 # coding: latin1
 import shutil
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -38,7 +39,7 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
-
+import traceback
 
 from PyQt4 import QtCore, QtGui
 
@@ -867,8 +868,7 @@ class Caller(object):
             return False
         
         
-    def create_forward_model(self, fmname, (setupSourceSpaceArgs, waterShedArgs, 
-                             setupFModelArgs)):
+    def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate directory.
         The steps taken are the following:
@@ -910,6 +910,11 @@ class Caller(object):
                                                 'reconFiles_brain_surface')
         wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
         
+        fmname = fmdict['fmname']
+        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)  = \
+        fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
+        
+        
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
         reply = 2
@@ -929,10 +934,10 @@ class Caller(object):
             "model setup parameters will be used, others are ignored) \n \n" + \
             "3) Compute all phases again"
             bemButtonText = 'Bem model \n setup only'
-            computeButtonText = 'Compute all \n phases again' 
-            reply = QtGui.QMessageBox.information(self.parent, title, text, 'Cancel',
-                                                  bemButtonText, 
-                                                  computeButtonText)
+            computeAllButtonText = 'Compute all \n phases again' 
+            reply = QtGui.QMessageBox.information(self.parent, title, text, 
+                                                  'Cancel', bemButtonText,
+                                                  computeAllButtonText)
         
         if reply == 0:
             # To keep forward model dialog open
@@ -943,6 +948,26 @@ class Caller(object):
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
+        
+            try:
+                fileManager.create_fModel_directory(fmname, activeSubject)          
+                fileManager.write_forward_model_parameters(fmname,
+                    activeSubject, None, None, setupFModelArgs)
+                # FIXME: should only use sfmodelArgs from the dict,
+                # others should come from existing .param files.
+                mergedDict = dict([('fmname', fmname)] + \
+                                  fmdict['sspaceArgs'].items() + \
+                                  fmdict['wsshedArgs'].items() + \
+                                  fmdict['sfmodelArgs'].items())
+                
+                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+            except Exception as e:
+                tb = traceback.format_exc()
+                message = 'There was a problem creating forward model files. ' + \
+                      'Please copy the following to your bug report:\n\n' + \
+                      str(tb)
+                self.messageBox = messageBoxes.longMessageBox('Error', message)
+                self.messageBox.show()
         
         if reply == 2:
             # To make overwriting unnecessary
@@ -955,8 +980,24 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
-        fileManager.create_fModel_directory(fmname, activeSubject)
-    
+            try:
+                fileManager.create_fModel_directory(fmname, activeSubject)          
+                fileManager.write_forward_model_parameters(fmname, activeSubject,
+                    setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+                mergedDict = dict([('fmname', fmname)] + \
+                                  fmdict['sspaceArgs'].items() + \
+                                  fmdict['wsshedArgs'].items() + \
+                                  fmdict['sfmodelArgs'].items())
+                
+                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+            except Exception as e:
+                tb = traceback.format_exc()
+                message = 'There was a problem creating forward model files. ' + \
+                      'Please copy the following to your bug report:\n\n' + \
+                       str(tb)
+                self.messageBox = messageBoxes.longMessageBox('Error', message)
+                self.messageBox.show()
+            
     
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:
@@ -1042,27 +1083,27 @@ class Caller(object):
         
         activeSubject = self.parent._experiment._active_subject
         
-        #
-        subjects_dir = activeSubject._forwardModels_directory
-        
-        # TODO: Should probably whatever forwardModel user selects from the list 
-        subject = ''
-        
+        # TODO: Should be whatever forwardModel user selects from 
+        # the list. Now 9 for testing purposes.
+        selectedFmodelName = '9'
+        subjects_dir = os.path.join(activeSubject._forwardModels_directory,
+                               selectedFmodelName)
+        subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path, 
                   self.parent.experiment._working_file_names[self.experiment.
                   _active_subject_name])
         
-        message = 'An MNE gui for coregistration will now be opened. Please ' + \
-        'note the following to ensure that everything works smoothly: \n \n' + \
-        '1) "MRI Subject" and "Head Shape Source" files are automatically set ' + \
-        'to right files by Meggie. \n \n' + \
-        '2) ***'
-        self.messageBox = messageBoxes.shortMessageBox(message)
-        self.messageBox.exec_()
-        
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
-                               raw=rawPath,
+                               raw=rawPath, subject=subject,
                                subjects_dir=subjects_dir)
+        QtCore.QCoreApplication.processEvents()
+        
+        # Needed for copying the resulting trans file to the right location.
+        self.coregHowtoDialog = holdCoregistrationDialog(self, activeSubject,
+                                                         selectedFmodelName) 
+        self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
+        self.coregHowtoDialog.show()
+        
         
 
     def update_experiment_working_file(self, fname, raw):

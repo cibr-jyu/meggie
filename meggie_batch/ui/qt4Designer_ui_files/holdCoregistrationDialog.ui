@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogHoldCoregistration</class>
+ <widget class="QDialog" name="DialogHoldCoregistration">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>565</width>
+    <height>368</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Coregistering with MNE-Python coregistration gui</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="labelCoregInfo">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;An MNE-Python user interface for coregistration has been opened. Please note the following to ensure that everything works smoothly:&lt;/p&gt;&lt;p&gt;1) &amp;quot;MRI Subject&amp;quot; and &amp;quot;Head Shape Source&amp;quot; files are automatically set to right files by Meggie. You should not mess with them.&lt;/p&gt;&lt;p&gt;2) If you also want to save the fiducials file elsewhere (&amp;quot;Save as...&amp;quot; in &amp;quot;MRI Fiducials&amp;quot; box), you can do that too, as long as you also save the file to the default location.&lt;/p&gt;&lt;p&gt;3) The MNE-Python coregistration user interface does not automatically copy the translated coordinate file to the right place for Meggie. To ensure that the file gets copied, please click &amp;quot;Copy coordinate file&amp;quot; button in this dialog AFTER you have finished the coregistration and saved the coordinate file to the default location (the final &amp;quot;Save as...&amp;quot; button in the coregistration tab). You can also save the file elsewhere after that, if you wish.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCopy">
+       <property name="text">
+        <string>Copy coordinate file</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="0">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="labelTransFileWarning">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;No translation file found. Are you sure you have saved it to the default location provided by the final &amp;quot;Save as...&amp;quot; button?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

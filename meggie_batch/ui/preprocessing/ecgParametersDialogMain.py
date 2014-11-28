@@ -30,7 +30,7 @@
 """
 Created on Apr 16, 2013
 
-@author: Kari Aliranta, Jaakko Leppakangas
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 Contains the EcgParametersDialog-class used for collecting parameter values
 for calculating ECG projections.
 """
@@ -77,6 +77,7 @@ class EcgParametersDialog(QtGui.QDialog):
         """
         #paramdict = parent.experiment.parse_parameter_file('ecgproj')
         #self.set_previous_values(paramdict)     
+        
         
     def selection_changed(self):
         """Unpickles parameter file from subject path and updates the values
@@ -145,6 +146,7 @@ class EcgParametersDialog(QtGui.QDialog):
                     
                     # TODO:
                     self.set_default_values()
+            
                  
     def set_default_values(self):
         """Sets default values for dialog.
@@ -171,6 +173,7 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.checkBoxEEGProj.setChecked(False)
         self.ui.checkBoxSSPProj.setChecked(True)
         self.ui.checkBoxSSPCompute.setChecked(True)
+        
         
     def set_previous_values(self, dic):
         """
@@ -219,6 +222,7 @@ class EcgParametersDialog(QtGui.QDialog):
                                            dic.get('average')))
         # TODO get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
+             
                                            
     def accept(self):
         """
@@ -314,6 +318,7 @@ class EcgParametersDialog(QtGui.QDialog):
             self.messageBox.show()
         self.close()
 
+
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed.
         """
@@ -327,6 +332,7 @@ class EcgParametersDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
     
+    
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's ecg parameters dictionary.
         """
@@ -337,6 +343,7 @@ class EcgParametersDialog(QtGui.QDialog):
             if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                             currentItem().text()):
                 subject._ecg_params = dictionary
+        
         
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' ecg parameters dictionaries.
@@ -394,6 +401,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 return ch_name
 
         return ''
+        
         
     def collect_parameter_values(self, batch_checked):
         """Collects parameter values from dialog.

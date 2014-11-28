@@ -142,12 +142,8 @@ class MainWindow(QtGui.QMainWindow):
         # Connect signals and slots
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.epochList.item_added.connect(self.epochs_added)
-        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
-        
-        # Models for several views in tab, e.g. forward model setup tab. 
-        # Also linking corresponding views to models.
-        # self.forwardModelModel = None
-        # self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
+        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(
+                              self.on_pushButtonMNE_Browse_Raw_clicked)
         
         # TODO should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
@@ -156,6 +152,17 @@ class MainWindow(QtGui.QMainWindow):
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
+        
+        
+        # Models for several views in tab, e.g. forward model setup tab. 
+        # Also linking corresponding views to models.
+        
+        if self._experiment != None:
+            self.forwardModelModel = ForwardModelModel(self._experiment)
+            self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
+            self.ui.tableViewFModelsForCoregistration.setModel(
+                                                      self.forwardModelModel)
+            
         
         
     #Property definitions below
@@ -1086,8 +1093,8 @@ class MainWindow(QtGui.QMainWindow):
         targetName = os.path.join(subjectPath, 'reconFiles-trans.fif')
         
         path = QtGui.QFileDialog.getOpenFileName(
-               self, 'Select directory of the existing coordinate file ' +
-               '(should end with "-trans.fif")' )
+               self, 'Select the existing coordinate file ' +
+               '(the file should end with "-trans.fif")' )
         if path == '':
             return
         else: 
@@ -1110,8 +1117,14 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Implement this last if needed.
         return
 
-### Code for populating various lists and tables in the MainWindow ###       
+
+
+### Code for populating and updating various lists and tables in the MainWindow ###       
     
+    def add_new_fModel_to_MVCModel(self, mparamdict):
+        fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
+        self.forwardModelModel.fmodelInfoList.append(fmlist)
+        
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
