@@ -103,11 +103,19 @@ class EcgParametersDialog(QtGui.QDialog):
                         dic = fileManager.unpickle(os.path.join(subject._subject_path, 'ecg_proj.param'))
                     
                     channel_name = dic.get('ch_name')
-                    
-                    
-                    ECG_channel_index = self.ui.comboBoxECGChannel.\
-                    findText(dic.get('ch_name')[-4:], QtCore.Qt.MatchContains)
-                    self.ui.comboBoxECGChannel.setCurrentIndex(ECG_channel_index)
+                    if channel_name not in channel_list:
+                        channel_name = self.channel_name_validator(channel_name, channel_list)
+                    if channel_name == '':
+                        #self.ui.comboBoxECGChannel.setItemText(0, '')
+                        pass
+                    else:
+                        ECG_channel_index = self.ui.comboBoxECGChannel.\
+                        findText(channel_name, QtCore.Qt.MatchContains)
+                        self.ui.comboBoxECGChannel.setCurrentIndex(ECG_channel_index)
+                        
+                    #ECG_channel_index = self.ui.comboBoxECGChannel.\
+                    #findText(dic.get('ch_name')[-4:], QtCore.Qt.MatchContains)
+                    #self.ui.comboBoxECGChannel.setCurrentIndex(ECG_channel_index)
                     self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
                     self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
                     self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
@@ -221,11 +229,8 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
-        
         # TODO: Add browser for saved param files.
         # TODO: Add possibility to save param files with user chosen name.
-        
-        
         # If batch processing is not enabled, the raw is taken from the active
         # subject.
         if self.ui.checkBoxBatch.isChecked() == False:
@@ -237,7 +242,8 @@ class EcgParametersDialog(QtGui.QDialog):
                 if event_checker == -1:
                     return
             except Exception, err:
-                error_message = 'Cannot calculate projections: ' + str(err) + \
+                error_message = 'Cannot calculate projections for subject: ' + \
+                self.parent.experiment._active_subject_name + \
                 '\nCheck parameters.'
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
                 self.messageBox.show()
@@ -245,75 +251,71 @@ class EcgParametersDialog(QtGui.QDialog):
             # No need to initialize the whole main window again.
             self.parent.ui.pushButtonApplyECG.setEnabled(True)
             self.parent.ui.checkBoxECGComputed.setChecked(True)
+            self.close()
+            return
         
-        else:
-            # TODO: Remove active_subject from memory to free more memory
-            # for batch process and process the active_subject as last
-            # or first to optimize the running time. If process as first
-            # read working file again after batch is done. If process as
-            # last, just set the raw as the active_subject's working_file.
-            
-            # TODO change subjects list to subjects dictionary in experiment
-            # str(self.ui.listWidgetSubjects.currentItem().text())
-            # subject = self.parent.experiment._subjects[subject_name]
-            
-            
-            for i in range(self.ui.listWidgetSubjects.count()):
-                for subject in self.parent.experiment._subjects:
-                    if subject._subject_name == str(self.ui.listWidgetSubjects.\
-                                                    item(i).text()):
-                        
-                        # TODO: currently active subject raw file is in memory:
-                        # if subject._working_file is not None:
-                        #     raw = subject._working_file
+        recently_active_subject = self.parent.experiment._active_subject._subject_name
+        self.parent.experiment._active_subject._working_file = None
+        self.parent.experiment._active_subject = None
 
-                        # Reads and returns the raw file.
+        # Calculation is prevented because of incorrect ECG channel.        
+        incorrect_ECG_channel = ''
+        # Calculation is prevented because of...
+        error_message = ''
+        for i in range(self.ui.listWidgetSubjects.count()):
+            for subject in self.parent.experiment._subjects:
+                if subject._subject_name == str(self.ui.listWidgetSubjects.\
+                                                item(i).text()):
+                    #TODO use this instead of reading the raw file before channel name check
+                    ch_name = subject._ecg_params['ch_name']
+                    ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
+                    if ch_name not in ch_list:
+                        ch_name = self.channel_name_validator(ch_name, ch_list)
+                        if ch_name == '':
+                            incorrect_ECG_channel += \
+                            '\nCalculation prevented for the subject: ' + \
+                            subject._subject_name
+                            #print 'Calculation prevented for the subject: ' + subject._subject_name
+                            continue
+                        subject._ecg_params['ch_name'] = ch_name
+                    
+                    if subject._working_file is not None:
+                        raw = subject._working_file
+                    else:
                         raw = self.parent.experiment.\
                         get_subject_working_file(subject._subject_name)
-                        subject._ecg_params['i'] = raw
-                        
-                                                
-                        # Fixes the ecg_params ch_name to match with the raw
-                        # file ch_name. Assume that if the first channel name
-                        # has/doesn't have whitespace the same applies for the
-                        # rest of the channel names.
-                        ch_names = MeasurementInfo(raw).MEG_channel_names
-                        if ch_names[0][3] is not subject._ecg_params['ch_name'][3]:
-                            # subjec._ecg_params['ch_name'] is a QString object.
-                            ch_name = str(subject._ecg_params['ch_name'])
-                            ch_name = ch_name.replace(' ', '')
-                            if ch_names[0][3] is not ch_name[3]:
-                                # TODO: Add more options if problems occur,
-                                # for example ECG channel would mix up with
-                                # replace('C', 'C ').
-                                
-                                # Replaces MEG and EOG
-                                ch_name = ch_name.replace('G', 'G ')
-                                # Replaces STI
-                                ch_name = ch_name.replace('I', 'I ')
-                                # Replaces MISC
-                                ch_name = ch_name.replace('C', 'C ')
-                            subject._ecg_params['ch_name'] = ch_name
-                        try:
-                            event_checker = self.parent.caller.\
-                            call_ecg_ssp(subject._ecg_params)
-                            if event_checker == -1:
-                                return
-                            if subject == self.parent.experiment._active_subject:
-                                # Update the main window if also the active
-                                # subject is processed.
-                                self.parent.ui.pushButtonApplyECG.setEnabled(True)
-                                self.parent.ui.checkBoxECGComputed.setChecked(True)
-                        except Exception, err:
-                            error_message = 'Cannot calculate projections: ' + \
-                            str(err) + '\nCheck parameters.'
-                            self.messageBox = messageBoxes.shortMessageBox(
-                                              error_message)
-                            self.messageBox.show()
-                            
-                        # Remove extra raw file from memory
+                    subject._ecg_params['i'] = raw
+                    # Remove extra raw reference from memory
+                    del raw
+                    try:
+                        event_checker = self.parent.caller.\
+                        call_ecg_ssp(subject._ecg_params)
+                        if event_checker == -1:
+                            return
+                    except Exception, err:
+                        error_message += '\nCannot calculate projections for subject: ' + \
+                        subject._subject_name + '. Check parameters.'
+                        subject._working_file = None
                         del subject._ecg_params['i']
-                        fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+                        continue
+                    # Remove extra raw file from memory
+                    try:
+                        del subject._ecg_params['i']
+                    except Exception:
+                        pass
+                    fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+                    subject._working_file = None
+                    #++i
+                    
+                    raw = self.parent.experiment.get_subject_working_file(subject._subject_name)
+                    subject._working_file = raw
+        self.parent.experiment.activate_subject(recently_active_subject)
+        if len(error_message) > 0:
+            self.messageBox = messageBoxes.shortMessageBox(error_message)
+            self.messageBox.show()
+        if len(incorrect_ECG_channel) > 0:
+            self.messageBox = messageBoxes.shortMessageBox(incorrect_ECG_channel)
+            self.messageBox.show()
         self.close()
 
 
@@ -348,11 +350,57 @@ class EcgParametersDialog(QtGui.QDialog):
         """
         if checked is None: return
         batch_checked = True
-        
+        error_message = ''
         for i in range(self.ui.listWidgetSubjects.count()):
             for subject in self.parent.experiment._subjects:
                 if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
                     subject._ecg_params = self.collect_parameter_values(batch_checked)
+                    ch_name = subject._ecg_params['ch_name']
+                    ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
+                    if ch_name not in ch_list:
+                        ch_name = self.channel_name_validator(ch_name, ch_list)
+                    if ch_name == '':
+                        error_message += 'Selected channel does not exist ' + \
+                                         'for subject: ' + subject._subject_name + \
+                                         '\n'
+        if len(error_message) is not 0:
+            self.messageBox = messageBoxes.\
+            shortMessageBox(error_message + '\nPlease change your ECG ' + \
+                            'detection channel for the subject/s above!')
+            self.messageBox.show()
+        #self.validate_channel()
+        
+    def channel_name_validator(self, ch_name, ch_list):
+        """Checks if the ch_list has the given ch_name by matching it with the
+        ch_list spacing style.
+        Returns empty string if the ch_name doesn't match.
+        
+        Keyword arguments:
+        ch_name    -- name of the channel
+        (e.g. 'MEG 0113', 'MISC201', 'EOG 061')
+        
+        ch_list    -- list of the channels
+        [MEG 0112]
+        [MEG 0113]
+           ...
+        [EOG 061]
+           ...
+           etc.
+        """
+        if ' ' in ch_name:
+            ch_name = ch_name.replace(" ", "")
+            if ch_name in ch_list:
+                return ch_name
+        else:
+            ch_name = ch_name.replace("MEG", "MEG ")
+            ch_name = ch_name.replace("EOG", "EOG ")
+            ch_name = ch_name.replace("STI", "STI ")
+            ch_name = ch_name.replace("MISC", "MISC ")
+            ch_name = ch_name.replace("ECG", "ECG ")
+            if ch_name in ch_list:
+                return ch_name
+
+        return ''
         
         
     def collect_parameter_values(self, batch_checked):
@@ -368,9 +416,7 @@ class EcgParametersDialog(QtGui.QDialog):
         2. would have to read raw every time when creating params dictionaries
         """
         dictionary = dict()
-        if batch_checked:
-            pass
-        else:
+        if batch_checked is False:
             raw = self.parent.experiment.active_subject.working_file
             dictionary = {'i': raw}
         
