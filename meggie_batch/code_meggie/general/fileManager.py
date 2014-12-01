@@ -200,7 +200,7 @@ def create_fModel_directory(fmname, subject):
         os.mkdir(fmDir)
         os.mkdir(fmDirFinal)
     
-    # Need to have and actual directory named bem for mne.gui.coregistration.
+    # Need to have an actual directory named bem for mne.gui.coregistration.
     # Symlinks below for same reason.
     toCopyDirData = os.path.join(fmDirFinal, 'bem')
     if not os.path.isdir(toCopyDirData):
@@ -242,21 +242,24 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
     corresponding to the said forward model.
     """
     
-    targetDir = subject._forwardModels_directory
+    targetDir = os.path.join(subject._forwardModels_directory, fmname)
     
-    sspaceArgsFile = os.path.join(targetDir, fmname, 
-                                      'setupSourceSpace.param')
-    wshedArgsFile = os.path.join(targetDir, fmname, 
-                                      'wshed.param')
-    setupFModelArgsFile = os.path.join(targetDir, fmname,
-                                      'setupFModel.param')
+    sspaceArgsFile = os.path.join(targetDir, 'setupSourceSpace.param')
+    wshedArgsFile = os.path.join(targetDir, 'wshed.param')
+    setupFModelArgsFile = os.path.join(targetDir, 'setupFModel.param')
        
     try:
         if sspaceArgs != None:
             pickleObjectToFile(sspaceArgs, sspaceArgsFile)
+        else:
+            # Use previously created file instead.
+            copy(sspaceArgsFile, targetDir)
         
         if wshedArgs != None:
             pickleObjectToFile(wshedArgs, wshedArgsFile)
+        else:
+            # Use previously created file instead.
+            copy(wshedArgsFile, targetDir)
         
         if setupFModelArgs != None:
             pickleObjectToFile(setupFModelArgs, setupFModelArgsFile)

@@ -881,12 +881,9 @@ class Caller(object):
         
         Keyword arguments:
         
-        fmname        -- name for the forwardModel to-be
-        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs) -- tuple with
-            arguments for each of the scripts to be called. Please note that
-            each argument is assumed to be a list of strings, like 
-            ['$MNE_ROOT/bin/mne_setup_forward_model', '--surf', '--homog']
-        
+        fmdict        -- dictionary, including in three dictionaries, the
+                         parameters for three separate mne scripts run
+                         in the forward model creation.
         """
         activeSubject = self.parent.experiment._active_subject
     
@@ -899,8 +896,10 @@ class Caller(object):
         
         # Some test files for whether setup_source_space has and watershed
         # have already been run. MNE scripts delete these if something fails,
-        # so it should be save to base tests of these.
+        # so it should be save to base tests on these.
         bemDir = os.path.join(activeSubject._reconFiles_directory, 'bem/')
+        fmDir = activeSubject._forwardModels_directory
+        
         
         # Should have the source space description file.
         sourceSpaceSetupTestList = glob.glob(bemDir + '*src.fif') 
@@ -913,6 +912,7 @@ class Caller(object):
         fmname = fmdict['fmname']
         (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)  = \
         fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
+        
         
         
         # Check if source space is already setup and watershed calculated, and
@@ -952,16 +952,23 @@ class Caller(object):
             try:
                 fileManager.create_fModel_directory(fmname, activeSubject)          
                 fileManager.write_forward_model_parameters(fmname,
-                    activeSubject, None, None, setupFModelArgs)
+                    activeSubject, None, None, fmdict['sfmodelArgs'])
                 # FIXME: should only use sfmodelArgs from the dict,
                 # others should come from existing .param files.
+                
+                
+                
+                sspaceArgsDict = fileManager.unpickle(fm)
+                wshedArgsDict = fileManager.unpickle(fpath)
+                
+                
                 mergedDict = dict([('fmname', fmname)] + \
-                                  fmdict['sspaceArgs'].items() + \
-                                  fmdict['wsshedArgs'].items() + \
+                                  sspaceArgsDict.items() + \
+                                  wshedArgsDict.items() + \
                                   fmdict['sfmodelArgs'].items())
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
-            except Exception as e:
+            except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
                       'Please copy the following to your bug report:\n\n' + \
@@ -983,14 +990,15 @@ class Caller(object):
             try:
                 fileManager.create_fModel_directory(fmname, activeSubject)          
                 fileManager.write_forward_model_parameters(fmname, activeSubject,
-                    setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+                    fmdict['sspaceArgs'], fmdict['wsshedArgs'],
+                    fmdict['sfmodelArgs'])
                 mergedDict = dict([('fmname', fmname)] + \
                                   fmdict['sspaceArgs'].items() + \
                                   fmdict['wsshedArgs'].items() + \
                                   fmdict['sfmodelArgs'].items())
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
-            except Exception as e:
+            except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
                       'Please copy the following to your bug report:\n\n' + \
