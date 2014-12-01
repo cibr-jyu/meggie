@@ -158,11 +158,11 @@ class MainWindow(QtGui.QMainWindow):
         # Also linking corresponding views to models.
         
         if self._experiment != None:
-            self.forwardModelModel = ForwardModelModel(self._experiment)
+            self.forwardModelModel = ForwardModelModel(self._experiment, self)
             self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
             self.ui.tableViewFModelsForCoregistration.setModel(
                                                       self.forwardModelModel)
-            
+    
         
         
     #Property definitions below
@@ -1123,8 +1123,9 @@ class MainWindow(QtGui.QMainWindow):
     
     def add_new_fModel_to_MVCModel(self, mparamdict):
         fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
-        self.forwardModelModel.fmodelInfoList.append(fmlist)
-        
+        self.forwardModelModel.add_fmodel(fmlist)
+
+
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
@@ -1301,20 +1302,10 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel, "Forward model creation")
         self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration, "Coregistration")
         self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution, "Forward solution creation")
-        
-        # TODO remove this, not needed with separate subject list
-        # If no subjects added to the experiment, there is no reason to enable
-        # more tabs to confuse the user.
-        #if len(self.experiment._subject_paths) == 0 or \
-        #self.experiment.active_subject_path == '':
-        
-        """
-        if self.experiment.active_subject_path == '':
-            self.ui.tabWidget.setTabEnabled(2,False)
-            self.ui.tabWidget.setTabEnabled(3,False)
-            self.ui.tabWidget.setTabEnabled(4,False)
-            self.ui.tabWidget.setTabEnabled(5,False)
-        """
+        self.ui.tabWidget.insertTab(9, self.ui.tabNoiseCovariance, "Noise covariance")
+        self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator, "Inverse operator")
+        self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate, "Source estimate")
+        self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis, "Source analysis")
         
         
     def enable_tabs(self):

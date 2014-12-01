@@ -956,12 +956,12 @@ class Caller(object):
                 # FIXME: should only use sfmodelArgs from the dict,
                 # others should come from existing .param files.
                 
-                
-                
-                sspaceArgsDict = fileManager.unpickle(fm)
-                wshedArgsDict = fileManager.unpickle(fpath)
-                
-                
+                sspaceParamPath = os.path.join(fmDir, fmname, 
+                                               'setupSourceSpace.param' )
+                wshedParamPath = os.path.join(fmDir, fmname, 'wshed.param')
+                sspaceArgsDict = fileManager.unpickle(sspaceParamPath)
+                wshedArgsDict = fileManager.unpickle(wshedParamPath)
+                     
                 mergedDict = dict([('fmname', fmname)] + \
                                   sspaceArgsDict.items() + \
                                   wshedArgsDict.items() + \
@@ -980,12 +980,12 @@ class Caller(object):
             # To make overwriting unnecessary
             if os.path.isdir(bemDir):
                 shutil.rmtree(bemDir)
-            self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
-            self._call_mne_watershed_bem(waterShedArgs, env)
+            # self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
+            # self._call_mne_watershed_bem(waterShedArgs, env)
             
             # Right name and place for triang files, see above.
-            fileManager.link_triang_files(activeSubject)
-            self._call_mne_setup_forward_model(setupFModelArgs, env)    
+            # fileManager.link_triang_files(activeSubject)
+            # self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
             try:
                 fileManager.create_fModel_directory(fmname, activeSubject)          

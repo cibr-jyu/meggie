@@ -9,7 +9,7 @@ Contains models for views in various UI components, mainly MainWindow.
 TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 import os
 
 import fileManager
@@ -33,16 +33,17 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # File that includes forward model names, their parameters and 
         # corresponding files. Full path needed, hence the directory.
         
-        # Actually not needed, as the model is not editable via GUI.
-        self.dirty = False
+        self.parent = parent
+        
         
         # Each dictionary in the list includes parameters
         self.fmodelInfoList = []
         
         # Column headers i.e. names of parameters.
-        self.__headers = ['name', 'spacing', 'ico', 'surfname', 'cps', 'atlas',
-                          'triang. ico', 'homog', 'innershift', 'outershift',
-                          'skullshift', 'brainc', 'skullc', 'scalpc']
+        self.__headers = ['name', 'spacing', 'ico', 'decimvalue', 'surfname',
+                          'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
+                          'outershift','skullshift', 'brainc', 'skullc',
+                          'scalpc']
         
         self.initializeModel()
         
@@ -76,8 +77,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             column = index.column()
             value = self.fmodelInfoList[row][column]
             return value
-            
-        else: return QtCore.QVariant()
       
       
     def headerData(self, section, orientation, role):
@@ -99,7 +98,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.beginRemoveRows(parent, position, position + rows - 1)
         value = self.fmodelInfo[position]
         self.fmodelInfo.remove(value)
-        # TODO also remember to delete actual directory on the disk
+        # TODO also remember to delete actual directory on the disk,
+        # probably best to do this first, actually.
         self.endRemoveRows()
         return True
             
@@ -117,19 +117,19 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             for d in [name for name in os.listdir(fmdir)
                         if os.path.isdir(os.path.join(fmdir, name))]:
                 try: 
-                    sSpaceDict = fileManager.unpickle(os.path.join(d, 
+                    sSpaceDict = fileManager.unpickle(os.path.join(fmdir, d, 
                                                   'setupSourceSpace.param'))
                 except:
                     sSpaceDict = dict()
                     
                 try:
-                    wshedDict = fileManager.unpickle(os.path.join(d,
+                    wshedDict = fileManager.unpickle(os.path.join(fmdir, d,
                                                  'wshed.param'))
                 except:
                     wshedDict = dict()
                     
                 try:
-                    setupFModelDict = fileManager.unpickle(os.path.join(d, 
+                    setupFModelDict = fileManager.unpickle(os.path.join(fmdir, d, 
                                                        'setupFModel.param'))
                 except:
                     setupFModelDict = dict()
@@ -173,7 +173,15 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         fmList.append(fmdict['scalpc'])
         
         return fmList
+       
         
+    def add_fmodel(self, fmlist):
+        self.fmodelInfoList.append(fmlist)
+        self.layoutAboutToBeChanged.emit()
+        self.layoutChanged.emit()
+        
+        
+    
 
 # class CoregistrationModel(QAbstractTableModel):
     

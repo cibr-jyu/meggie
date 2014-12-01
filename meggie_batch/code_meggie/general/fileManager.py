@@ -185,7 +185,6 @@ def create_fModel_directory(fmname, subject):
     fromCopyDirData = os.path.join(subject._reconFiles_directory, 'bem')
     fromCopyDirParams = subject._reconFiles_directory
     
-    
     # If this is the first forward model, the forwardModels directory doesn't
     # exist yet.
     if not os.path.isdir(subject._forwardModels_directory):
@@ -207,14 +206,18 @@ def create_fModel_directory(fmname, subject):
         os.mkdir(toCopyDirData)
     
     try:
-        dir_util.copy_tree(fromCopyDirData, toCopyDirData, preserve_symlinks=1)
+        # Can return if previous directory doesn't exist.
+        if os.path.isdir(fromCopyDirData):
+            dir_util.copy_tree(fromCopyDirData, toCopyDirData,
+                               preserve_symlinks=1)
+        else: return
         # Copy parameter files.
         pattern = os.path.join(fromCopyDirParams,'*.param')
     
         for f in glob.glob(pattern):
             shutil.copy(f, fmDirFinal)
     except Exception:
-        os.rmdir(fmDir)
+        shutil.rmtree(fmDir)
         raise
     
 
