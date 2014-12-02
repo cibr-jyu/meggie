@@ -671,4 +671,5 @@ class ExperimentHandler(QObject):
             self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler.previous_experiment_name = \
             self.parent.experiment._experiment_name
+            self.parent.preferencesHandler.write_preferences_to_disk()
         

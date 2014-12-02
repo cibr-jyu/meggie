@@ -953,14 +953,12 @@ class Caller(object):
                 fileManager.create_fModel_directory(fmname, activeSubject)          
                 fileManager.write_forward_model_parameters(fmname,
                     activeSubject, None, None, fmdict['sfmodelArgs'])
-                # FIXME: should only use sfmodelArgs from the dict,
-                # others should come from existing .param files.
                 
-                sspaceParamPath = os.path.join(fmDir, fmname, 
-                                               'setupSourceSpace.param' )
-                wshedParamPath = os.path.join(fmDir, fmname, 'wshed.param')
-                sspaceArgsDict = fileManager.unpickle(sspaceParamPath)
-                wshedArgsDict = fileManager.unpickle(wshedParamPath)
+                # These should always exist, should be safe to unpickle.
+                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param' )
+                wshedParamFile = os.path.join(fmDir, 'wshed.param')
+                sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
+                wshedArgsDict = fileManager.unpickle(wshedParamFile)
                      
                 mergedDict = dict([('fmname', fmname)] + \
                                   sspaceArgsDict.items() + \
@@ -980,12 +978,12 @@ class Caller(object):
             # To make overwriting unnecessary
             if os.path.isdir(bemDir):
                 shutil.rmtree(bemDir)
-            # self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
-            # self._call_mne_watershed_bem(waterShedArgs, env)
+            self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
+            self._call_mne_watershed_bem(waterShedArgs, env)
             
             # Right name and place for triang files, see above.
-            # fileManager.link_triang_files(activeSubject)
-            # self._call_mne_setup_forward_model(setupFModelArgs, env)    
+            fileManager.link_triang_files(activeSubject)
+            self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
             try:
                 fileManager.create_fModel_directory(fmname, activeSubject)          
@@ -1093,7 +1091,13 @@ class Caller(object):
         
         # TODO: Should be whatever forwardModel user selects from 
         # the list. Now 9 for testing purposes.
-        selectedFmodelName = '9'
+        
+        selectedRow = 0
+        
+        selectedFmodelName = self.parent.ui.tableViewFModelsForCoregistration.\
+                             model().index(selectedRow, 1)
+        
+                             
         subjects_dir = os.path.join(activeSubject._forwardModels_directory,
                                selectedFmodelName)
         subject = 'reconFiles'

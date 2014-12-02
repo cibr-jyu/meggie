@@ -46,6 +46,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                           'scalpc']
         
         self.initializeModel()
+        self.layoutAboutToBeChanged.emit()
+        self.layoutChanged.emit()
         
     
     def rowCount(self, parent):

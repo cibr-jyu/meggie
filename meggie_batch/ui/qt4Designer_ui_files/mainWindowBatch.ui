@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2594,7 +2594,12 @@
               </property>
               <property name="text">
                <string>Make 
- source estimate...</string>
+ source estimate...
+HUOM! Tämän takaa 
+voisi valita 
+käytettävän 
+inverse operatorin
+ </string>
               </property>
              </widget>
              <widget class="QLabel" name="label_35">

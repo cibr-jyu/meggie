@@ -242,38 +242,41 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
                                    wshedArgs = None, setupFModelArgs= None):
     """
     Writes the parameters used to create the forward model to the directory
-    corresponding to the said forward model.
+    corresponding to the said forward model. Saves the previous parameter files
+    in the forward model directory root.
     """
     
+    fmdir = subject._forwardModels_directory
     targetDir = os.path.join(subject._forwardModels_directory, fmname)
     
-    sspaceArgsFile = os.path.join(targetDir, 'setupSourceSpace.param')
-    wshedArgsFile = os.path.join(targetDir, 'wshed.param')
-    setupFModelArgsFile = os.path.join(targetDir, 'setupFModel.param')
+    sspaceArgsFile = os.path.join(fmdir, 'setupSourceSpace.param')
+    wshedArgsFile = os.path.join(fmdir, 'wshed.param')
+    setupFModelArgsFile = os.path.join(fmdir, 'setupFModel.param')
        
     try:
         if sspaceArgs != None:
             pickleObjectToFile(sspaceArgs, sspaceArgsFile)
-        else:
-            # Use previously created file instead.
-            copy(sspaceArgsFile, targetDir)
         
         if wshedArgs != None:
             pickleObjectToFile(wshedArgs, wshedArgsFile)
-        else:
-            # Use previously created file instead.
-            copy(wshedArgsFile, targetDir)
         
         if setupFModelArgs != None:
             pickleObjectToFile(setupFModelArgs, setupFModelArgsFile)
+            
+        # Copy from the root to the actual directory
+        shutil.copy(sspaceArgsFile, targetDir)
+        shutil.copy(wshedArgsFile, targetDir)
+        shutil.copy(setupFModelArgsFile, targetDir)
+        
+            
     except IOError:
         message = 'There was a problem with saving forward model parameters. ' + \
                   'You should not continue using the program before the ' + \
                   'problem is fixed.'
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox.exec_()
+    
            
-
 def convertFModelParamDictToCmdlineParamTuple(fmdict):
         """
         Converts the parameters input in the dialog into valid command line
