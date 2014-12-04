@@ -1108,8 +1108,15 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
         if checked is None: return
-        self.caller.coregister_with_mne_gui_coregistration()
         
+        
+        if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
+            message = 'Please select a forward model to coregister.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        self.caller.coregister_with_mne_gui_coregistration()
         
         
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):

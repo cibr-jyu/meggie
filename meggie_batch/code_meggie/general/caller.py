@@ -1089,14 +1089,12 @@ class Caller(object):
         
         activeSubject = self.parent._experiment._active_subject
         
-        # TODO: Should be whatever forwardModel user selects from 
-        # the list. Now 9 for testing purposes.
+        tableView = self.parent.ui.tableViewFModelsForCoregistration
         
-        selectedRow = 0
-        
-        selectedFmodelName = self.parent.ui.tableViewFModelsForCoregistration.\
-                             model().index(selectedRow, 1)
-        
+        # Selection for view is SingleSelection / SelectRows, so this
+        # should return indexes for only one row.
+        selectedRowIndexes = tableView.selectedIndexes()
+        selectedFmodelName = selectedRowIndexes[0].data() 
                              
         subjects_dir = os.path.join(activeSubject._forwardModels_directory,
                                selectedFmodelName)
@@ -1115,7 +1113,6 @@ class Caller(object):
                                                          selectedFmodelName) 
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
         self.coregHowtoDialog.show()
-        
         
 
     def update_experiment_working_file(self, fname, raw):
