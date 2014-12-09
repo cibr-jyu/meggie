@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>244</height>
+    <width>640</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>190</y>
+     <x>460</x>
+     <y>270</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>30</y>
+     <y>20</y>
      <width>251</width>
      <height>21</height>
     </rect>
@@ -57,8 +57,8 @@
   <widget class="QPushButton" name="pushButtonBrowse">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>50</y>
+     <x>540</x>
+     <y>40</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -73,27 +73,27 @@
     <string>Browse...</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEditFileName">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>50</y>
-     <width>271</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButtonShowFileInfo">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>90</y>
+     <y>200</y>
      <width>107</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Show file info</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidgetFileNames">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>521</width>
+     <height>151</height>
+    </rect>
    </property>
   </widget>
  </widget>
