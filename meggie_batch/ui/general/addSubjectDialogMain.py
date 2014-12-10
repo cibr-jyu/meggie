@@ -79,13 +79,14 @@ class AddSubjectDialog(QtGui.QDialog):
             raw_path = item.text()
             raw_path_prefix = raw_path.split('.')[-2]
             subject_name = os.path.basename(raw_path_prefix)
-            subject_name_QString = str(subject_name)
+            subject_name_string = str(subject_name)
             
             # Check if the subject is already added to the experiment.
             # TODO: If the subject is already added, add a running index after
             # the name. See: eventSelectionDialogMain set_event_name method.
+            # subject_name is unicode and MatchExactly needs a string.
             if len(self.parent.ui.listWidgetSubjects.
-                   findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
+                   findItems(subject_name_string, QtCore.Qt.MatchExactly)) > 0:
                 message = 'Subject ' + item.text() + ' is already added ' +\
                         'to the experiment. Change the filename of the raw ' +\
                         'every time you want to create a new subject with ' +\

@@ -486,9 +486,9 @@ class Experiment(QObject):
         Keyword arguments:
         subject_name    -- name of the subject
         """
-        raw = fileManager.open_raw(self._working_file_names[subject_name])
-        return raw
-        
+        #raw = fileManager.open_raw(self._working_file_names[subject_name])
+        #return raw
+        return fileManager.open_raw(self._working_file_names[subject_name])
                 
     def save_experiment_settings(self):
         """
