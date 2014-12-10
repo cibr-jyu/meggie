@@ -25,18 +25,16 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     hakemistoon
     '''
 
-    def __init__(self, experiment, parent=None):
+    # Connecting some useful signals
+    
+    
+
+    def __init__(self, parent=None):
         QtCore.QAbstractTableModel.__init__(self)
-        self.fmodelsDirectory = experiment._active_subject.\
-                      _forwardModels_directory
-                      
-        # File that includes forward model names, their parameters and 
-        # corresponding files. Full path needed, hence the directory.
-        
         self.parent = parent
         
-        
-        # Each dictionary in the list includes parameters
+        # Each dictionary in the list includes parameters for single forward
+        # model.
         self.fmodelInfoList = []
         
         # Column headers i.e. names of parameters.
@@ -44,11 +42,23 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                           'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
                           'outershift','skullshift', 'brainc', 'skullc',
                           'scalpc']
+
+        # May well be None, if no experiment is loaded.
+        if self.parent._experiment == None:
+            return
         
-        self.initializeModel()
-        self.layoutAboutToBeChanged.emit()
-        self.layoutChanged.emit()
+        self._fmodels_directory = None
         
+        # The experiment may not have an active subject, no need to try to
+        # initialize model in that case.
+        try:
+            self._fmodels_directory = self.parent._experiment._active_subject.\
+                      _forwardModels_directory
+        except AttributeError:
+            return
+        
+        self.initialize_model()
+    
     
     def rowCount(self, parent):
         """
@@ -99,56 +109,76 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         """
         self.beginRemoveRows(parent, position, position + rows - 1)
         value = self.fmodelInfo[position]
-        self.fmodelInfo.remove(value)
-        # TODO also remember to delete actual directory on the disk,
-        # probably best to do this first, actually.
+        
+        try:
+            
+            self.fmodelInfo.remove(value)
+        except Exception: raise
+        
         self.endRemoveRows()
-        return True
             
         
-    def initializeModel(self):
+    def initialize_model(self):
         """
         Reads the active subject's forwardModels directory and populates the
         data accordingly.
         """
         
-        # The param files don't exist by default, so lots of trying here.
-        fmdir = self.fmodelsDirectory
+        try:
+            self._fmodels_directory = self.parent._experiment._active_subject.\
+                      _forwardModels_directory
+        except AttributeError:
+            pass
         
-        if os.path.isdir(fmdir):
-            for d in [name for name in os.listdir(fmdir)
-                        if os.path.isdir(os.path.join(fmdir, name))]:
-                try: 
-                    sSpaceDict = fileManager.unpickle(os.path.join(fmdir, d, 
-                                                  'setupSourceSpace.param'))
-                except:
-                    sSpaceDict = dict()
-                    
-                try:
-                    wshedDict = fileManager.unpickle(os.path.join(fmdir, d,
-                                                 'wshed.param'))
-                except:
-                    wshedDict = dict()
-                    
-                try:
-                    setupFModelDict = fileManager.unpickle(os.path.join(fmdir, d, 
-                                                       'setupFModel.param'))
-                except:
-                    setupFModelDict = dict()
+        # The param files don't exist by default, so lots of trying here.
+        fmdir = self._fmodels_directory
+        
+        if not os.path.isdir(fmdir):
+            del self.fmodelInfoList[:]
+            self.layoutAboutToBeChanged.emit()
+            self.layoutChanged.emit()
+            return
+            
+        # Better empty the list anyway, otherwise the forward models 
+        # from the previous active subject end up staying there.
+        del self.fmodelInfoList[:]
+            
+        for d in [name for name in os.listdir(fmdir)
+                    if os.path.isdir(os.path.join(fmdir, name))]:
+            try: 
+                sSpaceDict = fileManager.unpickle(os.path.join(fmdir, d, 
+                                              'setupSourceSpace.param'))
+            except Exception:
+                sSpaceDict = dict()
                 
-                mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
-                                  wshedDict.items() + \
-                                  setupFModelDict.items())
+            try:
+                wshedDict = fileManager.unpickle(os.path.join(fmdir, d,
+                                             'wshed.param'))
+            except Exception:
+                wshedDict = dict()
                 
-                # No need to crash on missing parameters files, just don't
-                # try to add anything to the list.
-                try:
-                    fmlist = self.fmodel_dict_to_list(mergedDict)
-                except:
-                    continue
-                
-                self.fmodelInfoList.append(fmlist)
+            try:
+                setupFModelDict = fileManager.unpickle(os.path.join(fmdir, d, 
+                                                   'setupFModel.param'))
+            except Exception:
+                setupFModelDict = dict()
+            
+            mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
+                              wshedDict.items() + \
+                              setupFModelDict.items())
+            
+            # No need to crash on missing parameters files, just don't
+            # try to add anything to the list.
+            try:
+                fmlist = self.fmodel_dict_to_list(mergedDict)
+            except Exception:
+                pass
+            
+            self.fmodelInfoList.append(fmlist)
 
+        self.layoutAboutToBeChanged.emit()
+        self.layoutChanged.emit()
+        
 
     def fmodel_dict_to_list(self, fmdict):
         """
@@ -178,8 +208,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
        
         
     def add_fmodel(self, fmlist):
-        self.fmodelInfoList.append(fmlist)
         self.layoutAboutToBeChanged.emit()
+        self.fmodelInfoList.append(fmlist)
         self.layoutChanged.emit()
         
         

@@ -1088,11 +1088,10 @@ class Caller(object):
         """
         
         activeSubject = self.parent._experiment._active_subject
-        
         tableView = self.parent.ui.tableViewFModelsForCoregistration
         
-        # Selection for view is SingleSelection / SelectRows, so this
-        # should return indexes for only one row.
+        # Selection for the view is SingleSelection / SelectRows, so this
+        # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
         selectedFmodelName = selectedRowIndexes[0].data() 
                              

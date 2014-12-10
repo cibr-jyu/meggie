@@ -43,7 +43,7 @@ import fileManager
 from subject import Subject
 import messageBoxes
 
-from PyQt4.QtCore import QObject
+from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4 import QtGui
 
 
@@ -71,14 +71,12 @@ class Experiment(QObject):
     working_file_names -- The complete path of the working file
     """
     
+    
     def __init__(self):
         """
         Constructor sets default values for attributes.
         """
         QObject.__init__(self)
-        # TODO: name of the experiment is QString.
-        # Preferably change it to string in createExperimentDialogMain or
-        # in experiment_name.setter.
         self._experiment_name = 'experiment'
         self._workspace = ''
         self._author = 'unknown author'
@@ -614,8 +612,6 @@ class ExperimentHandler(QObject):
             self.messageBox.show()
             return
         
-        # TODO: why this?
-        # QtGui.QApplication.processEvents()
         # Give control of the experiment to the main window of the application
         self.parent.experiment = experiment
         
@@ -633,9 +629,10 @@ class ExperimentHandler(QObject):
         self.parent.preferencesHandler.write_preferences_to_disk()
         
         # Update the main UI to be less empty and allow actions for a new
-        # experiment.
+        # experiment. Also tell the MVC models they can initialize themselves.
         self.parent.add_tabs()
         self.parent._initialize_ui() 
+        self.parent.reinitialize_models() 
         
         
     def open_existing_experiment(self, name):
@@ -666,6 +663,7 @@ class ExperimentHandler(QObject):
             self.parent.experiment.activate_subject(self.parent._experiment._active_subject_name)
             self.parent.add_tabs()
             self.parent._initialize_ui()
+            self.parent.reinitialize_models() 
 
             # Sets the experiment for caller, so it can use its information.
             self.parent.caller.experiment = self.parent._experiment

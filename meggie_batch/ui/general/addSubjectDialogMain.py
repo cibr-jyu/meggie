@@ -112,6 +112,10 @@ class AddSubjectDialog(QtGui.QDialog):
         """
         self.parent.experiment.save_experiment_settings()
         self.parent._initialize_ui()
+        
+        # To tell the MVC models that the active subject has changed.
+        self.parent.reinitialize_models() 
+        
         self.close()
         
         
