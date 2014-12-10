@@ -177,7 +177,7 @@ def create_fModel_directory(fmname, subject):
     Keyword arguments:
     
     fmname        -- desired name for the forward model.
-    subject       -- The subject (as an object) whose model while are to be
+    subject       -- The subject (as an object) whose model files are to be
                      copied (probably always the active subject of the current
                      experiment).
     """
@@ -200,7 +200,7 @@ def create_fModel_directory(fmname, subject):
         os.mkdir(fmDirFinal)
     
     # Need to have an actual directory named bem for mne.gui.coregistration.
-    # Symlinks below for same reason.
+    # Symlinks preserved below for same reason.
     toCopyDirData = os.path.join(fmDirFinal, 'bem')
     if not os.path.isdir(toCopyDirData):
         os.mkdir(toCopyDirData)
@@ -211,6 +211,7 @@ def create_fModel_directory(fmname, subject):
             dir_util.copy_tree(fromCopyDirData, toCopyDirData,
                                preserve_symlinks=1)
         else: return
+        
         # Copy parameter files.
         pattern = os.path.join(fromCopyDirParams,'*.param')
     
@@ -220,6 +221,24 @@ def create_fModel_directory(fmname, subject):
         shutil.rmtree(fmDir)
         raise
     
+    
+def remove_fModel_directory(fmname, subject):
+    """
+    Remove an fModel directory named fmname from the directory of the subject.
+    
+    Keyword arguments:
+    
+    fmname        -- name of the forward model to be removed.
+    subject       -- The subject (as an object) whose model directory and
+                     files under it are to be removed.
+    """
+    fmDir = os.path.join(subject._forwardModels_directory, fmname)
+    
+    try:
+        shutil.rmtree(fmDir)
+    except IOError:
+        pass
+
 
 def check_fModel_name(fmname, subject):
     """
@@ -343,6 +362,7 @@ def convertFModelParamDictToCmdlineParamTuple(fmdict):
         
         return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
 
+
 def link_triang_files(subject):
     """
     Create symlinks to bem directory, linking them to surface triangulation
@@ -364,7 +384,7 @@ def link_triang_files(subject):
                os.path.join(bemDir, 'outer_skull.surf'))
         os.symlink(os.path.join(watershedDir, 'reconFiles_outer_skin_surface'), 
                os.path.join(bemDir, 'outer_skin.surf'))
-    except:
+    except Exception:
         pass
     
 

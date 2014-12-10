@@ -139,11 +139,18 @@ class MainWindow(QtGui.QMainWindow):
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
         
-        # Connect signals and slots
+        # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(
                               self.on_pushButtonMNE_Browse_Raw_clicked)
+        
+        # Models for several views in the UI, e.g. in the forward model setup 
+        # tab. Also linking corresponding views to models.     
+        self.forwardModelModel = ForwardModelModel(self)
+        self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
+        self.ui.tableViewFModelsForCoregistration.setModel(
+                                                  self.forwardModelModel)        
         
         # TODO should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
@@ -154,18 +161,8 @@ class MainWindow(QtGui.QMainWindow):
             self.experimentHandler.open_existing_experiment(name)
         
         
-        # Models for several views in tab, e.g. forward model setup tab. 
-        # Also linking corresponding views to models.
-        
-        if self._experiment != None:
-            self.forwardModelModel = ForwardModelModel(self._experiment, self)
-            self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
-            self.ui.tableViewFModelsForCoregistration.setModel(
-                                                      self.forwardModelModel)
-    
         
         
-    #Property definitions below
     @property
     def experiment(self):
         return self._experiment
@@ -861,18 +858,8 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: change scales ja muita optioita
         self.experiment.active_subject._working_file.plot()
         pl.show()
-        """
-        try:
-            self.caller.call_mne_browse_raw(self.experiment.active_subject._working_file.\
-                                            info.get('filename'))
-        except Exception, err:
-            self.messageBox = messageBox.shortMessageBox()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()
-            return        
-        """
 
-        
+
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
         Call Elekta's MaxFilter.
@@ -1023,6 +1010,9 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.experiment.activate_subject(subject_name)
         self._initialize_ui()
+        
+        # To tell the MVC models that the active subject has changed.
+        self.reinitialize_models() 
 
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
@@ -1079,11 +1069,24 @@ class MainWindow(QtGui.QMainWindow):
         
 
     def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
-            """
-            Removes selected forward model from the forward model list.
-            """
-            # TODO: do this after the mvc system works.
-            return
+        """
+        Removes selected forward model from the forward model list and
+        from the disk.
+        """
+        tableView = self.ui.tableViewFModelsForCoregistration
+        
+        # Selection for the view is SingleSelection / SelectRows, so this
+        # should return indexes for single row.
+        selectedRowIndexes = tableView.selectedIndexes()
+        selectedRowNumber = selectedRowIndexes[0].row() 
+        
+        try:
+            self.forwardModelModel.removeRows(selectedRowNumber)
+        except Exception:
+            message = 'There was a problem removing forward model. Nothing ' + \
+            'was removed.'
+            self. messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
 
 
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
@@ -1364,6 +1367,16 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 self.epochList.hide()
                 #self.epochParamsList.hide()
+
+
+    def reinitialize_models(self):
+        """
+        Tell all the MVC models of the views in Meggie that they should
+        (re)initialize themselves. Should only be needed when active subject
+        changes, updating the models when items are added to them is based
+        on events.
+        """
+        self.forwardModelModel.initialize_model()
 
 
 
