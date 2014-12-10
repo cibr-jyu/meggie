@@ -66,46 +66,49 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent = parent
         self.experiment = self.parent.experiment
         self.ui.pushButtonShowFileInfo.setEnabled(False)
-        self.ui.lineEditFileName.textChanged.connect(self.file_path_changed)
+        #self.ui.lineEditFileName.textChanged.connect(self.file_path_changed)
         
+        #if self.ui.listWidgetFileNames.count() > 0:
+        self.ui.listWidgetFileNames.itemClicked.connect(self.file_path_changed)
     
     def accept(self):
         """Add the new subject.
         """
-        raw_path = str(self.ui.lineEditFileName.text())
-        raw_path_prefix = raw_path.split('.')[-2]
-        subject_name = os.path.basename(raw_path_prefix)
-        subject_name_QString = subject_name
+        for i in range(self.ui.listWidgetFileNames.count()):
+            item = self.ui.listWidgetFileNames.item(i)
+            raw_path = item.text()
+            raw_path_prefix = raw_path.split('.')[-2]
+            subject_name = os.path.basename(raw_path_prefix)
+            subject_name_QString = str(subject_name)
+            
+            # Check if the subject is already added to the experiment.
+            # TODO: If the subject is already added, add a running index after
+            # the name. See: eventSelectionDialogMain set_event_name method.
+            if len(self.parent.ui.listWidgetSubjects.
+                   findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
+                message = 'Subject ' + item.text() + ' is already added ' +\
+                        'to the experiment. Change the filename of the raw ' +\
+                        'every time you want to create a new subject with ' +\
+                        'the same raw file.' 
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                return
+                   
+            self.parent.experiment.create_subject(subject_name, self.experiment, raw_path) 
+            self.parent.experiment.activate_subject(subject_name)
+            """
+            # Activation releases memory which isn't done here, so
+            # the method needs to be called separately.
+            # self.parent.experiment.release_memory()
+            """
+        # TODO Activate the last created subject here, not inside loop.
+        # release_memory function in Experiment needs fixing.
         
-        # Check if the subject is already added to the experiment.
-        # TODO: If the subject is already added, add a running index after
-        # the name. See: eventSelectionDialogMain set_event_name method.
-        if len(self.parent.ui.listWidgetSubjects.
-               findItems(subject_name_QString, QtCore.Qt.MatchExactly)) > 0:
-            message = 'Subject is already added to the experiment.' + \
-                    ' Change the filename of the raw every time you want' + \
-                    ' to create a new subject with the same raw file.' 
-            self.messageBox = messageBoxes.shortMessageBox(message) 
-            self.messageBox.show()
-            return
-               
-        self.parent.experiment.create_subject(subject_name, self.experiment, raw_path) 
-        self.parent.experiment.activate_subject(subject_name)
-                
         """
-        # Set properties to be handled in open_active_subject method.
-        self.parent.experiment._active_subject_name = str(subject_name)
-        self.parent.experiment._active_subject_path = os.path.\
-        join(self.parent.experiment.workspace,
-             self.parent.experiment.experiment_name, subject_name)
-        
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
         self.parent.experiment._active_subject_raw_path = raw_path
         """
-        #self.parent.experiment._active_subject_raw_path = os.path.\
-        #join(self.parent.experiment._active_subject_path, os.path.basename(raw_path)) 
-        
         self.parent.experiment.save_experiment_settings()
         self.parent._initialize_ui()
         
@@ -121,10 +124,17 @@ class AddSubjectDialog(QtGui.QDialog):
         """
         if checked is None: return
         
-        self.fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                                           '/home/'))
-        if self.fname != '':        
-            self.ui.lineEditFileName.setText(self.fname)
+        self.fnames = QtGui.QFileDialog.\
+                         getOpenFileNames(self, 'Select one or more files' + \
+                                         ' to open.', '/home/')
+        #if self.fname != '':        
+        #    self.ui.lineEditFileName.setText(self.fname)
+        if len(self.fnames) > 0:
+            for name in self.fnames:
+                item = QtGui.QListWidgetItem()
+                item.setText(name)
+                # TODO add name into the list of filenames
+                self.ui.listWidgetFileNames.addItem(item)
             
             
     def on_pushButtonShowFileInfo_clicked(self, checked = None):
@@ -132,7 +142,7 @@ class AddSubjectDialog(QtGui.QDialog):
         Opens the infoDialog for the raw file selected.
         """
         try:
-            self.raw = fileManager.open_raw(self.fname, pre_load = False)
+            self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.currentItem().text(), pre_load = False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
             
         except IOError as e:
@@ -161,7 +171,7 @@ class AddSubjectDialog(QtGui.QDialog):
     def file_path_changed(self):
         """A slot for enabling or disabling show file info button.
         """
-        if self.ui.lineEditFileName.text() == '':
+        if self.ui.listWidgetFileNames.currentItem() is not None:
+            self.ui.pushButtonShowFileInfo.setEnabled(True)
+        else:
             self.ui.pushButtonShowFileInfo.setEnabled(False)
-            
-        else: self.ui.pushButtonShowFileInfo.setEnabled(True)

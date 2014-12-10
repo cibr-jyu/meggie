@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'addSubjectDialog.ui'
+# Form implementation generated from reading ui file '/home/talli/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/addSubjectDialog.ui'
 #
-# Created: Thu Oct 31 10:59:02 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Tue Dec  9 11:39:42 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_AddSubject(object):
     def setupUi(self, AddSubject):
         AddSubject.setObjectName(_fromUtf8("AddSubject"))
-        AddSubject.resize(386, 244)
+        AddSubject.resize(640, 305)
         self.buttonBox = QtGui.QDialogButtonBox(AddSubject)
-        self.buttonBox.setGeometry(QtCore.QRect(200, 190, 171, 31))
+        self.buttonBox.setGeometry(QtCore.QRect(460, 270, 171, 31))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,26 +38,26 @@ class Ui_AddSubject(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.label = QtGui.QLabel(AddSubject)
-        self.label.setGeometry(QtCore.QRect(10, 30, 251, 21))
+        self.label.setGeometry(QtCore.QRect(10, 20, 251, 21))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName(_fromUtf8("label"))
         self.pushButtonBrowse = QtGui.QPushButton(AddSubject)
-        self.pushButtonBrowse.setGeometry(QtCore.QRect(290, 50, 81, 31))
+        self.pushButtonBrowse.setGeometry(QtCore.QRect(540, 40, 81, 31))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButtonBrowse.sizePolicy().hasHeightForWidth())
         self.pushButtonBrowse.setSizePolicy(sizePolicy)
         self.pushButtonBrowse.setObjectName(_fromUtf8("pushButtonBrowse"))
-        self.lineEditFileName = QtGui.QLineEdit(AddSubject)
-        self.lineEditFileName.setGeometry(QtCore.QRect(10, 50, 271, 31))
-        self.lineEditFileName.setObjectName(_fromUtf8("lineEditFileName"))
         self.pushButtonShowFileInfo = QtGui.QPushButton(AddSubject)
-        self.pushButtonShowFileInfo.setGeometry(QtCore.QRect(10, 90, 107, 31))
+        self.pushButtonShowFileInfo.setGeometry(QtCore.QRect(10, 200, 107, 31))
         self.pushButtonShowFileInfo.setObjectName(_fromUtf8("pushButtonShowFileInfo"))
+        self.listWidgetFileNames = QtGui.QListWidget(AddSubject)
+        self.listWidgetFileNames.setGeometry(QtCore.QRect(10, 40, 521, 151))
+        self.listWidgetFileNames.setObjectName(_fromUtf8("listWidgetFileNames"))
 
         self.retranslateUi(AddSubject)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), AddSubject.accept)

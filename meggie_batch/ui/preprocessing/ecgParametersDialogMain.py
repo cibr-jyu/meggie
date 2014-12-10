@@ -378,7 +378,6 @@ class EcgParametersDialog(QtGui.QDialog):
         Keyword arguments:
         ch_name    -- name of the channel
         (e.g. 'MEG 0113', 'MISC201', 'EOG 061')
-        
         ch_list    -- list of the channels
         [MEG 0112]
         [MEG 0113]
@@ -399,9 +398,7 @@ class EcgParametersDialog(QtGui.QDialog):
             ch_name = ch_name.replace("ECG", "ECG ")
             if ch_name in ch_list:
                 return ch_name
-
         return ''
-        
         
     def collect_parameter_values(self, batch_checked):
         """Collects parameter values from dialog.
