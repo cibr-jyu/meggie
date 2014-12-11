@@ -1073,14 +1073,17 @@ class MainWindow(QtGui.QMainWindow):
         Removes selected forward model from the forward model list and
         from the disk.
         """
-        tableView = self.ui.tableViewFModelsForCoregistration
+        if checked is None: return
+        
+        tableView = self.ui.tableViewForwardModels
         
         # Selection for the view is SingleSelection / SelectRows, so this
         # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
-        selectedRowNumber = selectedRowIndexes[0].row() 
+        selectedRowNumber = selectedRowIndexes[0].row()
         
         try:
+            # fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
         except Exception:
             message = 'There was a problem removing forward model. Nothing ' + \

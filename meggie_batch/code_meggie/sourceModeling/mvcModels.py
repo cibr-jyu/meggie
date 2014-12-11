@@ -24,9 +24,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     noille forward modeleille, ja sitten asettaa self.filename siihen
     hakemistoon
     '''
-
-    # Connecting some useful signals
-    
     
 
     def __init__(self, parent=None):
@@ -105,15 +102,24 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
-        Simple removal of a single row of fmodel.
+        Simple removal of a single row from the model.
         """
+        
+        
         self.beginRemoveRows(parent, position, position + rows - 1)
-        value = self.fmodelInfo[position]
+        singleFMitem = self.fmodelInfoList[position]
+        
+        subject = self.parent._experiment._active_subject
+        fmname = singleFMitem[0]
+        
+        # TODO: fileManager.remove_fModel_directory(fmname, subject) here
         
         try:
-            
-            self.fmodelInfo.remove(value)
+            fileManager.remove_fModel_directory(fmname, subject)
+            self.fmodelInfoList.remove(singleFMitem)
         except Exception: raise
+        
+        
         
         self.endRemoveRows()
             
@@ -128,7 +134,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             self._fmodels_directory = self.parent._experiment._active_subject.\
                       _forwardModels_directory
         except AttributeError:
-            pass
+            return
         
         # The param files don't exist by default, so lots of trying here.
         fmdir = self._fmodels_directory

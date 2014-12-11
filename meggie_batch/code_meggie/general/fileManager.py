@@ -236,8 +236,7 @@ def remove_fModel_directory(fmname, subject):
     
     try:
         shutil.rmtree(fmDir)
-    except IOError:
-        pass
+    except IOError: raise
 
 
 def check_fModel_name(fmname, subject):
