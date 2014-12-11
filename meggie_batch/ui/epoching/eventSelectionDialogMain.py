@@ -154,10 +154,10 @@ class EventSelectionDialog(QtGui.QDialog):
             doubleSpinBoxEOGReject_3.value()
             
         events = []
-        # TODO: what type of data is in slots 32 and 33?
+        
         for i in xrange(self.ui.listWidgetEvents.count()):
-            event = self.ui.listWidgetEvents.item(i).data(32).toPyObject()
-            event_name = self.ui.listWidgetEvents.item(i).data(33).toPyObject()
+            event = self.ui.listWidgetEvents.item(i).data(32)
+            event_name = self.ui.listWidgetEvents.item(i).data(33)
             event_tup = (event, event_name)
             events.append(event_tup)
             
@@ -206,8 +206,6 @@ class EventSelectionDialog(QtGui.QDialog):
         
         params -- A dict containing the parameter values to be used.
         """
-        #toPyObject() which is used to convert the data in a QListWidgetItem
-        #back in to a dict turns the keys into QStrings for some reason.
         params_str = dict((str(key), value) for
                           key, value in params.iteritems())
         for item in params_str['events']:
@@ -285,7 +283,7 @@ class EventSelectionDialog(QtGui.QDialog):
             
             #If the item was the last one with a certain name, remove the name
             #from the used names -list.
-            name = item.data(33).toPyObject()
+            name = item.data(33)
             if len(self.ui.listWidgetEvents.findItems(name + ' ',
                                                       QtCore.Qt.\
                                                       MatchStartsWith)) == 0:
@@ -359,9 +357,9 @@ class EventSelectionDialog(QtGui.QDialog):
         events = np.ndarray((self.ui.listWidgetEvents.count(),4), dtype=object)
         for index in xrange(self.ui.listWidgetEvents.count()):
             category = (self.ui.listWidgetEvents.item(index).
-                        data(33).toPyObject())
+                        data(33))
             events[index,0] = str(category)
-            event = self.ui.listWidgetEvents.item(index).data(32).toPyObject()
+            event = self.ui.listWidgetEvents.item(index).data(32)
             events[index,1:] = event
         #events = self.create_eventlist()'
         if len(events) > 0:
