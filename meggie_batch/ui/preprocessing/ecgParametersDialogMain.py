@@ -36,6 +36,7 @@ for calculating ECG projections.
 """
 import os
 import ast
+import gc
 
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
@@ -253,7 +254,6 @@ class EcgParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxECGComputed.setChecked(True)
             self.close()
             return
-        
         recently_active_subject = self.parent.experiment._active_subject._subject_name
         self.parent.experiment._active_subject._working_file = None
         self.parent.experiment._active_subject = None
@@ -262,53 +262,16 @@ class EcgParametersDialog(QtGui.QDialog):
         incorrect_ECG_channel = ''
         # Calculation is prevented because of...
         error_message = ''
+        subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
-            for subject in self.parent.experiment._subjects:
-                if subject._subject_name == str(self.ui.listWidgetSubjects.\
-                                                item(i).text()):
-                    #TODO use this instead of reading the raw file before channel name check
-                    ch_name = subject._ecg_params['ch_name']
-                    ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
-                    if ch_name not in ch_list:
-                        ch_name = self.channel_name_validator(ch_name, ch_list)
-                        if ch_name == '':
-                            incorrect_ECG_channel += \
-                            '\nCalculation prevented for the subject: ' + \
-                            subject._subject_name
-                            #print 'Calculation prevented for the subject: ' + subject._subject_name
-                            continue
-                        subject._ecg_params['ch_name'] = ch_name
-                    
-                    if subject._working_file is not None:
-                        raw = subject._working_file
-                    else:
-                        raw = self.parent.experiment.\
-                        get_subject_working_file(subject._subject_name)
-                    subject._ecg_params['i'] = raw
-                    # Remove extra raw reference from memory
-                    del raw
-                    try:
-                        event_checker = self.parent.caller.\
-                        call_ecg_ssp(subject._ecg_params)
-                        if event_checker == -1:
-                            return
-                    except Exception, err:
-                        error_message += '\nCannot calculate projections for subject: ' + \
-                        subject._subject_name + '. Check parameters.'
-                        subject._working_file = None
-                        del subject._ecg_params['i']
-                        continue
-                    # Remove extra raw file from memory
-                    try:
-                        del subject._ecg_params['i']
-                    except Exception:
-                        pass
-                    fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
-                    subject._working_file = None
-                    #++i
-                    
-                    raw = self.parent.experiment.get_subject_working_file(subject._subject_name)
-                    subject._working_file = raw
+            item = self.ui.listWidgetSubjects.item(i)
+            subject_names.append(item.text())
+        for subject in self.parent.experiment._subjects:
+            if subject._subject_name in subject_names:
+                
+                # Calculation is done in a separate method so that Python
+                # frees memory from the earlier subject's data calculation.
+                self.calculate_ecg(subject, incorrect_ECG_channel, error_message)
         self.parent.experiment.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
@@ -490,4 +453,48 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()
 
         return dictionary
-        
+    
+    def calculate_ecg(self, subject, incorrect_ECG_channel, error_message):
+        """
+        """
+                        
+        #TODO use this instead of reading the raw file before channel name check
+        #
+        collected = gc.collect()
+        print "Garbage collector: collected %d objects." % (collected)
+        ch_name = subject._ecg_params['ch_name']
+        ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
+        if ch_name not in ch_list:
+            ch_name = self.channel_name_validator(ch_name, ch_list)
+            if ch_name == '':
+                incorrect_ECG_channel += \
+                '\nCalculation prevented for the subject: ' + \
+                subject._subject_name
+                #print 'Calculation prevented for the subject: ' + subject._subject_name
+                #continue
+                return
+            subject._ecg_params['ch_name'] = ch_name
+
+        subject._ecg_params['i'] = self.parent.experiment.\
+        get_subject_working_file(subject._subject_name)
+        try:
+            event_checker = self.parent.caller.\
+            call_ecg_ssp(subject._ecg_params)
+            if event_checker == -1:
+                return
+        except Exception, err:
+            error_message += '\nCannot calculate projections for subject: ' + \
+            subject._subject_name + '. Check parameters.'
+            subject._working_file = None
+            del subject._ecg_params['i']
+            #del subject._ecg_params['i']
+            #continue
+            return
+        # Remove extra raw file from memory
+        try:
+            del subject._ecg_params['i']
+        except Exception:
+            pass
+        fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+        subject._working_file = None
+        #++i
