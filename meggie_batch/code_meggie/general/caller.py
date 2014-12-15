@@ -899,8 +899,7 @@ class Caller(object):
         # so it should be save to base tests on these.
         bemDir = os.path.join(activeSubject._reconFiles_directory, 'bem/')
         fmDir = activeSubject._forwardModels_directory
-        
-        
+                
         # Should have the source space description file.
         sourceSpaceSetupTestList = glob.glob(bemDir + '*src.fif') 
         
@@ -912,8 +911,6 @@ class Caller(object):
         fmname = fmdict['fmname']
         (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)  = \
         fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
-        
-        
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.

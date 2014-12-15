@@ -216,19 +216,16 @@ class Subject(QObject):
                             ' subject/experiment name already exists')
             return
         if os.path.exists(path):
-            # TODO: Check if the file is saved with .fif suffix,
-            # if not, save the file with .fif suffix.
-            mne.io.RawFIFF.save(self._working_file, os.path.join(path, \
-                              str(os.path.basename(file_name))))
-            self.create_epochs_directory()
-            self.create_evokeds_directory()
-            
-            # Save channel names list under subject folder
-            fileManager.pickleObjectToFile(self._working_file.ch_names, os.path.join(self._subject_path, 'channels'))
-        else:
-            raise Exception('No rights to save the raw file to the chosen ' + 
-                            'path or bad raw file name.')
-
+            try:
+                # TODO: Check if the file is saved with .fif suffix,
+                # if not, save the file with .fif suffix.
+                mne.io.RawFIFF.save(self._working_file, os.path.join(path, \
+                                  str(os.path.basename(file_name))))
+                
+                # Save channel names list under subject folder
+                fileManager.pickleObjectToFile(self._working_file.ch_names,
+                    os.path.join(self._subject_path, 'channels'))
+            except Exception: raise
 
         
 ### Code for creating various directories under subject directory ###

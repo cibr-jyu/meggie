@@ -40,6 +40,7 @@ import fileManager
 from subject import Subject
 from infoDialogMain import InfoDialog
 import messageBoxes
+import traceback
 
 import os, sys
 
@@ -50,10 +51,6 @@ from infoDialogUi import Ui_infoDialog
 class AddSubjectDialog(QtGui.QDialog):
     """
     Class for creating subjects from raw measurement data files.
-    FIXME: This is madness! (Adding new subject, activating a subject etc.,
-    experiment having attributes about active subject AND active subject as an
-    attribute AT THE SAME TIME. Also makes _initialize_ui in mainWindows an 
-    insane mess.)
     
     Properties:
     parent    -- mainWindowMain is the parent class
@@ -72,8 +69,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.ui.listWidgetFileNames.itemClicked.connect(self.file_path_changed)
     
     def accept(self):
-        """Add the new subject.
-        """
+        """ Add the new subject. """
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -82,9 +78,6 @@ class AddSubjectDialog(QtGui.QDialog):
             subject_name_string = str(subject_name)
             
             # Check if the subject is already added to the experiment.
-            # TODO: If the subject is already added, add a running index after
-            # the name. See: eventSelectionDialogMain set_event_name method.
-            # subject_name is unicode and MatchExactly needs a string.
             if len(self.parent.ui.listWidgetSubjects.
                    findItems(subject_name_string, QtCore.Qt.MatchExactly)) > 0:
                 message = 'Subject ' + item.text() + ' is already added ' +\
@@ -94,17 +87,21 @@ class AddSubjectDialog(QtGui.QDialog):
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
                 return
-                   
-            self.parent.experiment.create_subject(subject_name, self.experiment, raw_path) 
+                 
+            try:  
+                self.parent.experiment.create_subject(subject_name, 
+                                                      self.experiment, raw_path)
+            except Exception:
+                tb = traceback.format_exc()
+                title = 'Problem creating a new subject'
+                message = 'There was a problem creating a new subject. ' + \
+                      'Please copy the following to your bug report:\n\n' + \
+                       str(tb)
+                self.messageBox = messageBoxes.longMessageBox(title, message)
+                self.messageBox.show()
+             
             self.parent.experiment.activate_subject(subject_name)
-            """
-            # Activation releases memory which isn't done here, so
-            # the method needs to be called separately.
-            # self.parent.experiment.release_memory()
-            """
-        # TODO Activate the last created subject here, not inside loop.
-        # release_memory function in Experiment needs fixing.
-        
+            
         """
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.

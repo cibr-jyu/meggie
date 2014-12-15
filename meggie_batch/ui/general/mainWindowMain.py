@@ -35,10 +35,11 @@ Contains the MainWindow-class that holds the main window of the application.
 """
 
 import os,sys
- 
-from PyQt4 import QtCore,QtGui
-from PyQt4.QtGui import QWhatsThis, QFont
 
+ 
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
+from PyQt4.QtCore import QRegExp
 
 from mne import fiff
 
@@ -47,10 +48,6 @@ matplotlib.use('Qt4Agg')
 import pylab as pl
 from caller import Caller
 
-# For using MNE-Python drawing methods in separate processes
-# (can't use threads, as MNE-Python usually uses pyplot, which is not thread-
-# safe)
-import multiprocessing
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
@@ -146,13 +143,30 @@ class MainWindow(QtGui.QMainWindow):
                               self.on_pushButtonMNE_Browse_Raw_clicked)
         
         # Models for several views in the UI, e.g. in the forward model setup 
-        # tab. Also linking corresponding views to models.     
+        # tab.
         self.forwardModelModel = ForwardModelModel(self)
-        self.ui.tableViewForwardModels.setModel(self.forwardModelModel) 
-        self.ui.tableViewFModelsForCoregistration.setModel(
-                                                  self.forwardModelModel)        
         
-        # TODO should show empty mainWindow with "loading previous experiment
+        # Proxymodels for tuning what is actually shown in the views below.
+        self.proxyModelTableViewForwardSolutionSource = QtGui.\
+            QSortFilterProxyModel(self)
+        self.proxyModelTableViewForwardSolutionSource.setFilterKeyColumn(15)
+        rx = QtCore.QRegExp('yes')
+        self.proxyModelTableViewForwardSolutionSource.setFilterRegExp(rx)
+        self.proxyModelTableViewForwardSolutionSource.\
+            setSourceModel(self.forwardModelModel)
+        
+        
+        # Linking corresponding views to models above and tuning them     
+        self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
+        self.ui.tableViewFModelsForCoregistration.\
+        setModel(self.forwardModelModel)
+        
+        tvfm = self.ui.tableViewFModelsForSolution
+        tvfm.setModel(self.proxyModelTableViewForwardSolutionSource)     
+        [tvfm.setColumnHidden(colnum, True) for colnum in 
+         range(1, self.forwardModelModel.columnCount(self))]
+        
+        # TODO: should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
         # the experiment, currently doesn't.
         # If the user has chosen to open the previous experiment automatically.
@@ -160,9 +174,7 @@ class MainWindow(QtGui.QMainWindow):
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
-        
-        
-        
+   
     @property
     def experiment(self):
         return self._experiment

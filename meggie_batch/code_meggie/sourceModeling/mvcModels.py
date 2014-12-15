@@ -15,7 +15,7 @@ import os
 import fileManager
 
 class ForwardModelModel(QtCore.QAbstractTableModel):
-    '''
+    """
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
     the former is model as in model-view-controller, the latter is an MNE term. 
@@ -23,8 +23,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     TODO pitäis varmaan kysyä heti initialisoidessa subjectilta, onko hakemistoa
     noille forward modeleille, ja sitten asettaa self.filename siihen
     hakemistoon
-    '''
-    
+    """
 
     def __init__(self, parent=None):
         QtCore.QAbstractTableModel.__init__(self)
@@ -38,7 +37,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.__headers = ['name', 'spacing', 'ico', 'decimvalue', 'surfname',
                           'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
                           'outershift','skullshift', 'brainc', 'skullc',
-                          'scalpc']
+                          'scalpc', 'coregistered']
 
         # May well be None, if no experiment is loaded.
         if self.parent._experiment == None:
@@ -67,8 +66,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     
     def columnCount(self, parent):
         """
-        The associated view only has one column, the one to show the name 
-        of the forward model. Increase value to get more colums.
+        The associated view should have as many columns as there are 
+        header fields, if we want to show all information.
         """
         return len(self.__headers)
     
@@ -102,25 +101,19 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
-        Simple removal of a single row from the model.
+        Removal of a single row from the model. Also removes the corresponding
+        directory from the disk.
         """
-        
-        
         self.beginRemoveRows(parent, position, position + rows - 1)
         singleFMitem = self.fmodelInfoList[position]
         
         subject = self.parent._experiment._active_subject
         fmname = singleFMitem[0]
         
-        # TODO: fileManager.remove_fModel_directory(fmname, subject) here
-        
         try:
             fileManager.remove_fModel_directory(fmname, subject)
             self.fmodelInfoList.remove(singleFMitem)
         except Exception: raise
-        
-        
-        
         self.endRemoveRows()
             
         
@@ -130,25 +123,32 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         data accordingly.
         """
         
-        try:
-            self._fmodels_directory = self.parent._experiment._active_subject.\
-                      _forwardModels_directory
-        except AttributeError:
+        # This mostly checks whether or not there is an active subject.    
+        if self.parent._experiment._active_subject == None:
+            self._fmodels_directory = None
+            del self.fmodelInfoList[:]
+            self.layoutAboutToBeChanged.emit()
+            self.layoutChanged.emit()
             return
         
-        # The param files don't exist by default, so lots of trying here.
+        self._fmodels_directory = self.parent._experiment._active_subject.\
+                      _forwardModels_directory
         fmdir = self._fmodels_directory
         
+        # This really should not need checking nowadays, just exists for 
+        # handling old style subject directories. 
         if not os.path.isdir(fmdir):
+            self._fmodels_directory = None
             del self.fmodelInfoList[:]
             self.layoutAboutToBeChanged.emit()
             self.layoutChanged.emit()
             return
             
-        # Better empty the list anyway, otherwise the forward models 
+        # Best to empty the list anyway, otherwise the forward models 
         # from the previous active subject end up staying there.
         del self.fmodelInfoList[:]
             
+        # The param files don't exist by default, so lots of trying here.
         for d in [name for name in os.listdir(fmdir)
                     if os.path.isdir(os.path.join(fmdir, name))]:
             try: 
@@ -169,9 +169,19 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             except Exception:
                 setupFModelDict = dict()
             
+            # Check if forward model has coregistration file present
+            transFilePath = os.path.join(fmdir, d, 'reconFiles', 
+                                        'reconFiles-trans.fif')
+            
+            if os.path.isfile(transFilePath):
+                isCoreg = 'yes'
+            else:
+                isCoreg = 'no'
+            
             mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
                               wshedDict.items() + \
-                              setupFModelDict.items())
+                              setupFModelDict.items() + \
+                              [('coregistered', isCoreg)])
             
             # No need to crash on missing parameters files, just don't
             # try to add anything to the list.
@@ -209,6 +219,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         fmList.append(fmdict['brainc'])
         fmList.append(fmdict['skullc'])
         fmList.append(fmdict['scalpc'])
+        fmList.append(fmdict['coregistered'])
         
         return fmList
        

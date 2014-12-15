@@ -119,14 +119,14 @@ class ForwardModelDialog(QtGui.QDialog):
             message = "'mri', 'bem' and 'surf' are not acceptable fmodel names" + \
                       " (they get mixed up with directory names created by MNE)."
             self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            self.messageBox.exec_()
             return
         
         # Forward model should have a name.
         if (fmdict['fmname']) == '':
             message = "Please give a name to your forward model."
             self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            self.messageBox.exec_()
             return
         
         # Name should only use alphanumeric and underscores.

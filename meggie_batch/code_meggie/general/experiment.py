@@ -363,15 +363,25 @@ class Experiment(QObject):
         complete_raw_path = os.path.join(subject.subject_path, os.path.basename(raw_path))
         # Check if file already exists.
         if not os.path.isfile(complete_raw_path):
-            # save_raw method calls create_epochs_directory in experiment
-            subject.save_raw(raw_path, subject.subject_path)
-            # When activating subject the working_file filename is the one where
-            # the file was originally found. This changes it to
-            # the location of the subject path.
-            subject._working_file.info['filename'] = complete_raw_path
-        else:
-            pass
-            # TODO: show error for already existing subject.
+            try:
+                # Makes the actual subject path on disk and copies raw file there.
+                subject.save_raw(raw_path, subject.subject_path)
+                
+                # Best to create these right away to avoid insane amount of
+                # checking later on.
+                subject.create_epochs_directory()
+                subject.create_evokeds_directory()
+                subject.create_sourceAnalysis_directory()
+                subject.create_reconFiles_directory()
+                subject.create_forwardModels_directory()
+                # When activating subject the working_file filename is the one
+                # where the file was originally found. This changes it to
+                # the location of the subject path.
+                subject._working_file.info['filename'] = complete_raw_path
+            except Exception: 
+                # FIXME: remove whole subject directory as cleanup.
+                raise
+    
         self._subjects.append(subject)
         self._active_subject_name = subject_name
         self.add_subject_path(subject.subject_path)
