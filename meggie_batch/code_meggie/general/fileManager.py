@@ -56,21 +56,6 @@ import messageBoxes
 from statistic import Statistic
     
     
-def copy(original, target):
-    """Copy the file at original to target.
-    
-    return True if no exceptions were raised, otherwise return
-    the exception 
-    """
-    try:
-        shutil.copyfile(original, target)
-    
-    except IOError as e:
-        return e
-    
-    return True
-
-
 def copy_recon_files(aSubject, sourceDirectory):
         """
         Copies mri and surf files from the given directory to under the active
@@ -84,18 +69,7 @@ def copy_recon_files(aSubject, sourceDirectory):
         
         Returns True if copying was successful, else returns False.
         
-        """
-        
-        mriDir = os.path.join(sourceDirectory, 'mri')
-        surfDir = os.path.join(sourceDirectory, 'surf')
-        
-        if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
-            message = "Reconstructed image directory should have both 'surf' " + \
-             "and 'mri' directories in it."
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox.exec_()   
-            return False          
-        
+        """         
         activeSubject = aSubject
         
         reconDir = activeSubject._reconFiles_directory
@@ -113,14 +87,7 @@ def copy_recon_files(aSubject, sourceDirectory):
             print '\n Meggie: Copying recon files... \n'
             dir_util.copy_tree(sourceDirectory, dst)
             print '\n Meggie: Recon files copying complete! \n'
-            return True
-        except IOError:
-            message = 'Could not copy files. Either the disk is full ' + \
-            ' , you have no rights to read the directory or something weird' + \
-            ' happened.'
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox.exec_()   
-            return False
+        except IOError: raise
     
     
 def move_trans_file(subject, fModelName):
@@ -144,10 +111,7 @@ def move_trans_file(subject, fModelName):
     try:
         shutil.copy(original, targetDirectory)
         os.remove(original)
-    except IOError as e:
-        return e
-    
-    return True
+    except IOError: raise
     
     
 def remove_sourceAnalysis_files(aSubject):
@@ -284,15 +248,8 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
         # Copy from the root to the actual directory
         shutil.copy(sspaceArgsFile, targetDir)
         shutil.copy(wshedArgsFile, targetDir)
-        shutil.copy(setupFModelArgsFile, targetDir)
-        
-            
-    except IOError:
-        message = 'There was a problem with saving forward model parameters. ' + \
-                  'You should not continue using the program before the ' + \
-                  'problem is fixed.'
-        messageBox = messageBoxes.shortMessageBox(message)
-        messageBox.exec_()
+        shutil.copy(setupFModelArgsFile, targetDir)     
+    except Exception: raise
     
            
 def convertFModelParamDictToCmdlineParamTuple(fmdict):
@@ -459,29 +416,19 @@ def delete_file_at(folder, files):
     folder -- The location of the deleted files
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
-              
-    Return True if operation was succesful, otherwise return False.
     """
     try:
-        # TODO: using os.path.join assumes strings being used
-        # when files consist QStrings
-        # os.remove(os.path.join(folder, files))
-        os.remove(folder + '/' + files)
+        os.remove(os.path.join(folder, files))
     except OSError:
         message = 'Could not delete selected files.'
         messageBox = messageBoxes.shortMessageBox(message)
         messageBox._exec()
     except TypeError:
         # If files is a list object instead of string.
-        for file in files:
+        for f in files:
             try:
-                # TODO: using os.path.join assumes strings being used
-                # when files consist QStrings
-                # os.remove(os.path.join(folder, file))
-                os.remove(folder + '/' + file)
-            except OSError as e:
-                return False
-    return True
+                os.remove(os.path.join(folder, f))
+            except OSError: raise
     
     
 def load_epochs(fname):

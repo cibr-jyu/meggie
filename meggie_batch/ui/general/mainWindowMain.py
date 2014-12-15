@@ -41,13 +41,14 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
 from PyQt4.QtCore import QRegExp
 
+import shutil
+
 from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
 import pylab as pl
 from caller import Caller
-
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
@@ -155,7 +156,6 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutionSource.\
             setSourceModel(self.forwardModelModel)
         
-        
         # Linking corresponding views to models above and tuning them     
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
         self.ui.tableViewFModelsForCoregistration.\
@@ -163,8 +163,8 @@ class MainWindow(QtGui.QMainWindow):
         
         tvfm = self.ui.tableViewFModelsForSolution
         tvfm.setModel(self.proxyModelTableViewForwardSolutionSource)     
-        [tvfm.setColumnHidden(colnum, True) for colnum in 
-         range(1, self.forwardModelModel.columnCount(self))]
+        for colnum in range(1, self.forwardModelModel.columnCount(self)):
+            tvfm.setColumnHidden(colnum, True)
         
         # TODO: should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
@@ -556,7 +556,7 @@ class MainWindow(QtGui.QMainWindow):
             epochs = self.experiment.active_subject._epochs[collection_name]._raw
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
-        fileManager.copy(os.path.join(self.experiment.active_subject.\
+        shutil.copyfile(os.path.join(self.experiment.active_subject.\
                                            _epochs_directory,
                               str(self.epochList.currentItem().text()) +
                               '.csv'), fname + '.csv')
@@ -1028,6 +1028,11 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
+        """
+        Copies reconstructed mri files from the directory supplied by the user
+        to the corresponding directory under the active subject directory
+        """
+        
         if checked is None : return
         
         activeSubject = self._experiment._active_subject
@@ -1052,14 +1057,27 @@ class MainWindow(QtGui.QMainWindow):
         if path == '':
             return
         
+        mriDir = os.path.join(path, 'mri')
+        surfDir = os.path.join(path, 'surf')  
+        if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
+            message = "Reconstructed image directory should have both 'surf' " + \
+             "and 'mri' directories in it."
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.exec_()
+            return  
+        
         activeSubject = self.experiment._active_subject
           
-        if fileManager.copy_recon_files(activeSubject, path) == True:
+        try: 
+            fileManager.copy_recon_files(activeSubject, path)
             self.ui.lineEditRecon.setText(path)
+        except Exception:
+            message = 'Could not copy files. Either the disk is full ' + \
+            ' , you have no rights to read the directory or something weird' + \
+            ' happened.'
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.exec_()   
             
-            # Scourging of the source analysis files here - actually, is this
-            # necessary?
-            # fileManager.remove_sourceAnalysis_files(activeSubject)
         self._initialize_ui()
         
         
@@ -1117,7 +1135,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         else: 
             try:
-                fileManager.copy(path, targetName)
+                shutil.copyfile(path, targetName)
             except IOError:
                 message = 'There was a problem while copying the coordinate file.'
                 messageBox = messageBoxes.shortMessageBox(message)

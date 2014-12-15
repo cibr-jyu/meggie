@@ -52,9 +52,10 @@ class holdCoregistrationDialog(QtGui.QDialog):
             self.ui.labelTransFileWarning.setHidden(False)
             return
         
-        if fileManager.move_trans_file(self.subject, self.fModel):
+        try:
+            fileManager.move_trans_file(self.subject, self.fModel)
             self.close()
-        else: 
+        except IOError: 
             message = 'There was an unknown problem copying the trans file. '
             self.ui.labelTransFileWarning.setText(message)
             self.ui.labelTransFileWarning.setHidden(False)

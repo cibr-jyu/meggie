@@ -75,7 +75,6 @@ class Subject(QObject):
         # forward model objects.
         self._epochs = dict()
         self._evokeds = dict()
-        self._forwardModels = dict()
         self._ecg_params = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
@@ -390,7 +389,9 @@ class Subject(QObject):
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
         
-        if fileManager.delete_file_at(self._epochs_directory, files_to_delete) == False:
+        try: 
+            fileManager.delete_file_at(self._epochs_directory, files_to_delete)
+        except OSError:
             message = 'Epochs could not be deleted from epochs folder.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
@@ -433,14 +434,13 @@ class Subject(QObject):
         """
         Removes evoked object from the evoked dictionary.
         
-        
         Keyword arguments:
         name    -- name of the evoked in QString
         """
-        # TODO should not do this if f.delete_file_at fails
-        del self._evokeds[str(name)]
-        
-        if fileManager.delete_file_at(self._evokeds_directory, name) == False:
+        try:
+            fileManager.delete_file_at(self._evokeds_directory, name)
+            del self._evokeds[str(name)]
+        except OSError:
             message = 'Evoked could not be deleted from average folder.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
@@ -453,19 +453,6 @@ class Subject(QObject):
         Adds a ForwardModels object to the forwardModels dictionary.
         """
         self._forwardModels[str(name)] = fmodel
-        
-        
-    def remove_forwardModel(self, name):
-        """
-        Removes a ForwardModels object from the forwardModels dictionary.
-        """
-        if fileManager.delete_file_at(self._forwardModels_directory, name) == False:
-            message = 'Forward model could not be deleted from forwardModels ' + \
-            'folder'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
-        del self._forwardModels[str(name)]
     
     
     def handle_new_forwardModels(self, name, params):

@@ -960,7 +960,8 @@ class Caller(object):
                 mergedDict = dict([('fmname', fmname)] + \
                                   sspaceArgsDict.items() + \
                                   wshedArgsDict.items() + \
-                                  fmdict['sfmodelArgs'].items())
+                                  fmdict['sfmodelArgs'].items() + \
+                                  [('coregistered', 'no')])
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
             except Exception:
@@ -990,7 +991,8 @@ class Caller(object):
                 mergedDict = dict([('fmname', fmname)] + \
                                   fmdict['sspaceArgs'].items() + \
                                   fmdict['wsshedArgs'].items() + \
-                                  fmdict['sfmodelArgs'].items())
+                                  fmdict['sfmodelArgs'].items() + \
+                                  [('coregistered', 'no')])
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
             except Exception:
