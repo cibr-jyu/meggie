@@ -428,7 +428,7 @@ class MainWindow(QtGui.QMainWindow):
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.experiment.active_subject._epochs[fname]
         fileManager.save_epoch(fpath, epochs_object)
-
+        self.epochParameterDialog = None
 
     def closeEvent(self, event):
         """
