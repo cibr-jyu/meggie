@@ -67,7 +67,7 @@ class EventSelectionDialog(QtGui.QDialog):
     epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
 
 
-    def __init__(self, parent, raw, params = None):
+    def __init__(self, parent, params = None):
         """Initialize the event selection dialog.
         
         Keyword arguments:
@@ -79,7 +79,6 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.raw = raw
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
         keys = map(str, parent.experiment.active_subject._event_set.keys())
@@ -171,7 +170,7 @@ class EventSelectionDialog(QtGui.QDialog):
             meg = 'grad'
         else: meg = False
         
-        picks = mne.fiff.pick_types(self.raw.info, meg=meg, eeg=eeg,
+        picks = mne.fiff.pick_types(self.parent.experiment.active_subject._working_file.info, meg=meg, eeg=eeg,
                                     stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
@@ -193,7 +192,7 @@ class EventSelectionDialog(QtGui.QDialog):
         Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.raw, self.parent.experiment.active_subject._stim_channel)
+        e = Events(self.parent.experiment.active_subject._working_file, self.parent.experiment.active_subject._stim_channel)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
