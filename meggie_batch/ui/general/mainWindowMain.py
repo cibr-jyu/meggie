@@ -1169,7 +1169,6 @@ class MainWindow(QtGui.QMainWindow):
         self.forwardModelModel.add_fmodel(fmlist)
 
 
-
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
     def _initialize_ui(self):

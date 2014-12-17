@@ -1,5 +1,4 @@
 # coding: latin1
-from pickle import UnpicklingError
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 # All rights reserved.
