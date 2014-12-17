@@ -408,10 +408,7 @@ class MainWindow(QtGui.QMainWindow):
         Open the epoch dialog. 
         """
         if checked is None: return
-        self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.\
-                                                         active_subject.\
-                                                         working_file)
+        self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.epoch_params_ready.\
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
@@ -428,7 +425,7 @@ class MainWindow(QtGui.QMainWindow):
         fpath = os.path.join(self.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.experiment.active_subject._epochs[fname]
         fileManager.save_epoch(fpath, epochs_object)
-        self.epochParameterDialog = None
+        
 
     def closeEvent(self, event):
         """
@@ -526,10 +523,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         collection_name = str(self.epochList.currentItem().text())
         params = self.experiment.active_subject._epochs[collection_name]._params
-        self.epochParameterDialog = EventSelectionDialog(self, self.\
-                                                         experiment.\
-                                                         active_subject.working_file,
-                                                         params)
+        self.epochParameterDialog = EventSelectionDialog(self)
 
         # modify_epochs removes the previous Epochs object and raw files
         # created from it and creates new Epochs object and raw files.
