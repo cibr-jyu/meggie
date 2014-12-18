@@ -1109,7 +1109,6 @@ class MainWindow(QtGui.QMainWindow):
         selectedRowNumber = selectedRowIndexes[0].row()
         
         try:
-            # fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
         except Exception:
             message = 'There was a problem removing forward model. Nothing ' + \
