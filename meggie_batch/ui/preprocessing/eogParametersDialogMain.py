@@ -38,6 +38,7 @@ calculating EOG projections.
 import os
 import ast
 import gc
+import traceback
 
 from PyQt4 import QtCore,QtGui
 from eogParametersDialogUi import Ui_Dialog
@@ -91,24 +92,25 @@ class EogParametersDialog(QtGui.QDialog):
                 #self.parent.ui.checkBoxEOGComputed.setChecked(False)
             self.close()
             return
-
-        # In case of batch process:
-        # 1. Calculation is first done for the active subject to prevent an
-        #    excessive reading of a raw file.
-        error_message = self.\
-        calculate_eog(self.parent.experiment._active_subject, error_message)    
         recently_active_subject = self.parent.experiment._active_subject._subject_name
-        # Free the memory usage from the active subject to the batch process.
-        self.parent.experiment._active_subject._working_file = None
-        self.parent.experiment._active_subject = None
-        
-        # 2. Calculation is done for the rest of the subjects.
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
             if item.text() == recently_active_subject:
                 continue
             subject_names.append(item.text())
+
+        # In case of batch process:
+        # 1. Calculation is first done for the active subject to prevent an
+        #    excessive reading of a raw file.
+        if recently_active_subject in subject_names:
+            error_message = self.\
+            calculate_eog(self.parent.experiment._active_subject, error_message)    
+        # Free the memory usage from the active subject to the batch process.
+        self.parent.experiment._active_subject._working_file = None
+        self.parent.experiment._active_subject = None
+        
+        # 2. Calculation is done for the rest of the subjects.
         for subject in self.parent.experiment._subjects:
             if subject._subject_name in subject_names:
                 
@@ -121,6 +123,19 @@ class EogParametersDialog(QtGui.QDialog):
             self.messageBox.show()
         self.parent._initialize_ui()
         self.close()
+
+    def on_pushButtonRemove_clicked(self, checked=None):
+        """Removes subject from the list of subjects to be processed.
+        """
+        if checked is None: return
+        item = self.ui.listWidgetSubjects.currentItem()
+        if self.ui.listWidgetSubjects.currentItem() is not None:
+            row = self.ui.listWidgetSubjects.row(item)
+            self.ui.listWidgetSubjects.takeItem(row)
+        else:
+            message = 'Select a subject to remove.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
 
 
     def on_pushButtonApply_clicked(self, checked=None):
@@ -310,7 +325,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxGradReject.setProperty("value", 3000.00)
         self.ui.doubleSpinBoxMagReject.setProperty("value", 4000.00)
         self.ui.doubleSpinBoxEEGReject.setProperty("value", 100.00)
-        self.ui.doubleSpinBoxEOGReject.setProperty("value", 1000000000.00)
+        self.ui.doubleSpinBoxEOGReject.setProperty("value", 250.00)
         self.ui.lineEditBad.setProperty("value", '')
         self.ui.spinBoxStart.setProperty("value", 5)
         self.ui.spinBoxTaps.setProperty("value", 2048)
@@ -388,9 +403,12 @@ class EogParametersDialog(QtGui.QDialog):
             call_eog_ssp(subject._eog_params)
             if event_checker == -1:
                 return error_message
-        except Exception, err:
+        except Exception:
+            tb = traceback.format_exc()
+            #error_message += '\n' + subject._subject_name + ': ' + str(err)
             error_message += '\nAn error occurred during calculation for subject: ' + \
-            subject._subject_name + '. Proceed with care and check parameters!'
+            subject._subject_name + '. Proceed with care and check parameters!\n\n' + \
+            str(tb)
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._eog_params['i']
