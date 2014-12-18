@@ -861,6 +861,7 @@ class MainWindow(QtGui.QMainWindow):
         Call mne_browse_raw.
         """
         if checked is None: return
+        if self.experiment is None: return
         # TODO: change scales ja muita optioita
         self.experiment.active_subject._working_file.plot()
         pl.show()
@@ -1007,6 +1008,7 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
+        if self.ui.listWidgetSubjects.currentItem() is None: return
         subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:
@@ -1161,7 +1163,6 @@ class MainWindow(QtGui.QMainWindow):
     def add_new_fModel_to_MVCModel(self, mparamdict):
         fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
         self.forwardModelModel.add_fmodel(fmlist)
-
 
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
