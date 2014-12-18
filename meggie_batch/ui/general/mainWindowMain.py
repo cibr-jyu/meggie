@@ -861,6 +861,7 @@ class MainWindow(QtGui.QMainWindow):
         Call mne_browse_raw.
         """
         if checked is None: return
+        if self.experiment is None: return
         # TODO: change scales ja muita optioita
         self.experiment.active_subject._working_file.plot()
         pl.show()
@@ -1007,6 +1008,7 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
+        if self.ui.listWidgetSubjects.currentItem() is None: return
         subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:

@@ -2,7 +2,7 @@
 import shutil
 from holdCoregistrationDialogMain import holdCoregistrationDialog
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ from PyQt4 import QtCore, QtGui
 import mne
 # from mne import fiff -- mne.fiff is deprecated in MNE 0.8
 # TODO formerly in mne.fiff, usage may have changed
-from mne import evoked
+
 from mne.time_frequency import induced_power
 
 from mne import filter as MNEfilter
@@ -647,7 +647,7 @@ class Caller(object):
             ca.plot(evokeds[0].times , data)
             
             ca.set_xlabel('Time (s)')
-            # TODO Mikä yksikkö tässä, ja pitääkö skaalata?
+            # TODO Mika yksikko tassa, ja pitaako skaalata?
             ca.set_ylabel('Magnitude / dB')                    
         fig.show()
    
@@ -1124,5 +1124,5 @@ class Caller(object):
         self.parent.experiment.active_subject_raw_path = fname
         self.parent.experiment.active_subject.working_file = raw
         status = "Current working file: " + \
-        os.path.basename(self.experiment.active_subject_raw_path)
-        self.parent.statusLabel.setText(QtCore.QString(status))
+        os.path.basename(self.parent.experiment.active_subject_raw_path)
+        self.parent.statusLabel.setText(status)
