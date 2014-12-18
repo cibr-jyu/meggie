@@ -135,6 +135,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                       _forwardModels_directory
         fmdir = self._fmodels_directory
         
+        """
         # This really should not need checking nowadays, just exists for 
         # handling old style subject directories. 
         if not os.path.isdir(fmdir):
@@ -143,6 +144,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             self.layoutAboutToBeChanged.emit()
             self.layoutChanged.emit()
             return
+        """
             
         # Best to empty the list anyway, otherwise the forward models 
         # from the previous active subject end up staying there.
@@ -151,50 +153,65 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # The param files don't exist by default, so lots of trying here.
         for d in [name for name in os.listdir(fmdir)
                     if os.path.isdir(os.path.join(fmdir, name))]:
-            try: 
-                sSpaceDict = fileManager.unpickle(os.path.join(fmdir, d, 
-                                              'setupSourceSpace.param'))
-            except Exception:
-                sSpaceDict = dict()
-                
-            try:
-                wshedDict = fileManager.unpickle(os.path.join(fmdir, d,
-                                             'wshed.param'))
-            except Exception:
-                wshedDict = dict()
-                
-            try:
-                setupFModelDict = fileManager.unpickle(os.path.join(fmdir, d, 
-                                                   'setupFModel.param'))
-            except Exception:
-                setupFModelDict = dict()
             
-            # Check if forward model has coregistration file present
-            transFilePath = os.path.join(fmdir, d, 'reconFiles', 
-                                        'reconFiles-trans.fif')
-            
-            if os.path.isfile(transFilePath):
-                isCoreg = 'yes'
-            else:
-                isCoreg = 'no'
-            
-            mergedDict = dict([('fmname', d)] + sSpaceDict.items() + \
-                              wshedDict.items() + \
-                              setupFModelDict.items() + \
-                              [('coregistered', isCoreg)])
-            
-            # No need to crash on missing parameters files, just don't
-            # try to add anything to the list.
-            try:
-                fmlist = self.fmodel_dict_to_list(mergedDict)
-            except Exception:
-                pass
-            
-            self.fmodelInfoList.append(fmlist)
+            pmlist = self.create_single_FM_param_list(fmdir, d)                
+            self.fmodelInfoList.append(pmlist)
 
         self.layoutAboutToBeChanged.emit()
         self.layoutChanged.emit()
         
+        
+    def create_single_FM_param_list(self, fmdir, fmname):
+        """
+        Creates a list of parameters corresponding to a single forward model.
+        
+        Keyword arguments:
+        fmdir       -- the directory the forward models are located at.
+        fmname      -- the name of the forward model.
+        
+        Returns the list, or None if there is no such model.
+        
+        """ 
+        try: 
+            sSpaceDict = fileManager.unpickle(os.path.join(fmdir, fmname, 
+                                              'setupSourceSpace.param'))
+        except Exception:
+            sSpaceDict = dict()
+            
+        try:
+            wshedDict = fileManager.unpickle(os.path.join(fmdir, fmname,
+                                         'wshed.param'))
+        except Exception:
+            wshedDict = dict()
+            
+        try:
+            setupFModelDict = fileManager.unpickle(os.path.join(fmdir, fmname, 
+                                               'setupFModel.param'))
+        except Exception:
+            setupFModelDict = dict()
+        
+        # Check if forward model has coregistration file present
+        transFilePath = os.path.join(fmdir, fmname, 'reconFiles', 
+                                    'reconFiles-trans.fif')
+        
+        if os.path.isfile(transFilePath):
+            isCoreg = 'yes'
+        else:
+            isCoreg = 'no'
+        
+        mergedDict = dict([('fmname', fmname)] + sSpaceDict.items() + \
+                          wshedDict.items() + \
+                          setupFModelDict.items() + \
+                          [('coregistered', isCoreg)])
+        
+        # No need to crash on missing parameters files, just don't
+        # try to add anything to the list.
+        try:
+            fmDictList = self.fmodel_dict_to_list(mergedDict)
+            return fmDictList
+        except Exception:
+            return None
+    
 
     def fmodel_dict_to_list(self, fmdict):
         """
@@ -230,7 +247,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.layoutChanged.emit()
         
         
-    
-
+        
 # class CoregistrationModel(QAbstractTableModel):
     

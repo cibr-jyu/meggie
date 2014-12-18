@@ -19,7 +19,7 @@ class holdCoregistrationDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         self.subject = activeSubject
-        self.fModel = selectedFmodelName
+        self.fModelName = selectedFmodelName
         self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint |
                             QtCore.Qt.WindowCloseButtonHint |
                             QtCore.Qt.WindowStaysOnTopHint)
@@ -53,7 +53,30 @@ class holdCoregistrationDialog(QtGui.QDialog):
             return
         
         try:
-            fileManager.move_trans_file(self.subject, self.fModel)
+            fileManager.move_trans_file(self.subject, self.fModelName)
+            
+            """
+            Remove the current fModel from the MVC model and add it back, so
+            that the presence of trans file gets noted.
+            """
+            fModelModel = self.parent.parent.forwardModelModel
+            fModelList = fModelModel.fmodelInfoList
+            for fm in fModelList:
+                if fm[0] == self.fModelName:
+                    fModelList.remove(fm)
+                    break
+            
+            fModelModel.layoutAboutToBeChanged.emit()
+            fModelModel.layoutChanged.emit()
+        
+            fmdir = self.subject._forwardModels_directory
+            pmlist = fModelModel.create_single_FM_param_list(fmdir,
+                                                             self.fModelName)
+            fModelModel.fmodelInfoList.append(pmlist)
+            
+            fModelModel.layoutAboutToBeChanged.emit()
+            fModelModel.layoutChanged.emit()
+            
             self.close()
         except IOError: 
             message = 'There was an unknown problem copying the trans file. '
