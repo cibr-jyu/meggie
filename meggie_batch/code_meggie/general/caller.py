@@ -1124,5 +1124,5 @@ class Caller(object):
         self.parent.experiment.active_subject_raw_path = fname
         self.parent.experiment.active_subject.working_file = raw
         status = "Current working file: " + \
-        os.path.basename(self.experiment.active_subject_raw_path)
-        self.parent.statusLabel.setText(QtCore.QString(status))
+        os.path.basename(self.parent.experiment.active_subject_raw_path)
+        self.parent.statusLabel.setText(status)

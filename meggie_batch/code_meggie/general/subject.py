@@ -76,6 +76,7 @@ class Subject(QObject):
         self._epochs = dict()
         self._evokeds = dict()
         self._ecg_params = dict()
+        self._eog_params = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
                                           self._experiment.experiment_name,
                                           self._subject_name)
@@ -174,6 +175,22 @@ class Subject(QObject):
         ecg_params    -- dictionary of ecg parameters
         """
         self._ecg_params = ecg_params
+
+    @property
+    def eog_params(self):
+        """Returns eog_params.
+        """
+        return self._eog_params
+
+    @eog_params.setter
+    def eog_params(self, eog_params):
+        """Sets eog_params.
+        
+        Keyword arguments:
+        eog_params    -- dictionary of eog parameters
+        """
+        self._eog_params = eog_params
+
 
     @property
     def stim_channel(self):

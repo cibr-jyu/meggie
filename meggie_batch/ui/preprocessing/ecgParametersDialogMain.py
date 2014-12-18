@@ -42,7 +42,6 @@ from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
 
 import fileManager
-from caller import Caller
 from measurementInfo import MeasurementInfo
 
 import messageBoxes
@@ -138,7 +137,7 @@ class EcgParametersDialog(QtGui.QDialog):
                     self.ui.lineEditBad.setProperty("value", dic.get('bads'))
                     self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
                     self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-                    self.ui.spinBoxJobs.setProperty("value", dic.get('njobs'))
+                    self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
                     self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
                     self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
                     self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
@@ -230,54 +229,67 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
-        # TODO: Add browser for saved param files.
-        # TODO: Add possibility to save param files with user chosen name.
-        # If batch processing is not enabled, the raw is taken from the active
-        # subject.
-        if self.ui.checkBoxBatch.isChecked() == False:
-            dictionary = self.collect_parameter_values(False)
-            # Uses the caller related to main window
-            try:
-                # Returns -1 if no events found with current settings.
-                event_checker = self.parent.caller.call_ecg_ssp(dictionary)
-                if event_checker == -1:
-                    return
-            except Exception, err:
-                error_message = 'Cannot calculate projections for subject: ' + \
-                self.parent.experiment._active_subject_name + \
-                '\nCheck parameters.'
-                self.messageBox = messageBoxes.shortMessageBox(error_message)
-                self.messageBox.show()
-                return
-            # No need to initialize the whole main window again.
-            self.parent.ui.pushButtonApplyECG.setEnabled(True)
-            self.parent.ui.checkBoxECGComputed.setChecked(True)
-            self.close()
-            return
-        recently_active_subject = self.parent.experiment._active_subject._subject_name
-        self.parent.experiment._active_subject._working_file = None
-        self.parent.experiment._active_subject = None
-
         # Calculation is prevented because of incorrect ECG channel.        
         incorrect_ECG_channel = ''
         # Calculation is prevented because of...
         error_message = ''
+        
+        # If calculation is done for the active subject only, the subject does
+        # not need to be activated again and the raw file stays in memory.
+        if self.ui.checkBoxBatch.isChecked() == False:
+            self.parent.experiment._active_subject._ecg_params = self.\
+            collect_parameter_values(False)
+            incorrect_ECG_channel, error_message = \
+            self.calculate_ecg(self.parent.experiment._active_subject,\
+                               incorrect_ECG_channel, error_message)
+            self.parent.ui.pushButtonApplyECG.setEnabled(True)
+            self.parent.ui.checkBoxECGComputed.setChecked(True)
+            if len(error_message) > 0:
+                self.messageBox = messageBoxes.shortMessageBox(error_message)
+                self.messageBox.show()
+                #self.parent.ui.pushButtonApplyECG.setEnabled(False)
+                #self.parent.ui.checkBoxECGComputed.setChecked(False)
+            if len(incorrect_ECG_channel) > 0:
+                self.messageBox = messageBoxes.\
+                shortMessageBox(incorrect_ECG_channel)
+                self.messageBox.show()
+                #self.parent.ui.pushButtonApplyECG.setEnabled(False)
+                #self.parent.ui.checkBoxECGComputed.setChecked(False)
+            self.close()
+            return
+
+        # In case of batch process:
+        # 1. Calculation is first done for the active subject to prevent an
+        #    excessive reading of a raw file.
+        incorrect_ECG_channel, error_message = self.\
+        calculate_ecg(self.parent.experiment._active_subject,\
+                      incorrect_ECG_channel, error_message)    
+        recently_active_subject = self.parent.experiment._active_subject._subject_name
+        # Free the memory usage from the active subject to the batch process.
+        self.parent.experiment._active_subject._working_file = None
+        self.parent.experiment._active_subject = None
+        
+        # 2. Calculation is done for the rest of the subjects.
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
+            if item.text() == recently_active_subject:
+                continue
             subject_names.append(item.text())
         for subject in self.parent.experiment._subjects:
             if subject._subject_name in subject_names:
                 
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
-                self.calculate_ecg(subject, incorrect_ECG_channel, error_message)
+                incorrect_ECG_channel, error_message = self.\
+                calculate_ecg(subject, incorrect_ECG_channel, error_message)
         self.parent.experiment.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
         if len(incorrect_ECG_channel) > 0:
-            self.messageBox = messageBoxes.shortMessageBox(incorrect_ECG_channel)
+            self.messageBox = messageBoxes.\
+            shortMessageBox(incorrect_ECG_channel)
             self.messageBox.show()
         self.close()
 
@@ -331,7 +343,7 @@ class EcgParametersDialog(QtGui.QDialog):
             shortMessageBox(error_message + '\nPlease change your ECG ' + \
                             'detection channel for the subject/s above!')
             self.messageBox.show()
-        #self.validate_channel()
+
         
     def channel_name_validator(self, ch_name, ch_list):
         """Checks if the ch_list has the given ch_name by matching it with the
@@ -455,13 +467,16 @@ class EcgParametersDialog(QtGui.QDialog):
         return dictionary
     
     def calculate_ecg(self, subject, incorrect_ECG_channel, error_message):
+        """Calls caller class for calculating the projections for the given
+        subject and passes errors to accept method.
+        
+        Keyword arguments:
+        subject               -- Subject object
+        incorrect_ECG_channel -- string to store incorrect channel selection
+        error_message         -- string to store unsuccessful subject
+                                 calculation
         """
-        """
-                        
-        #TODO use this instead of reading the raw file before channel name check
-        #
-        collected = gc.collect()
-        print "Garbage collector: collected %d objects." % (collected)
+        gc.collect()
         ch_name = subject._ecg_params['ch_name']
         ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
         if ch_name not in ch_list:
@@ -470,31 +485,30 @@ class EcgParametersDialog(QtGui.QDialog):
                 incorrect_ECG_channel += \
                 '\nCalculation prevented for the subject: ' + \
                 subject._subject_name
-                #print 'Calculation prevented for the subject: ' + subject._subject_name
-                #continue
-                return
+                return incorrect_ECG_channel, error_message
             subject._ecg_params['ch_name'] = ch_name
-
-        subject._ecg_params['i'] = self.parent.experiment.\
-        get_subject_working_file(subject._subject_name)
+        if subject._subject_name == self.parent.experiment._active_subject_name:
+            subject._ecg_params['i'] = self.parent.experiment._active_subject._working_file
+        else:
+            subject._ecg_params['i'] = self.parent.experiment.\
+            get_subject_working_file(subject._subject_name)
         try:
             event_checker = self.parent.caller.\
             call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
-                return
+                return incorrect_ECG_channel, error_message
         except Exception, err:
-            error_message += '\nCannot calculate projections for subject: ' + \
-            subject._subject_name + '. Check parameters.'
-            subject._working_file = None
+            error_message += '\nAn error occurred during calculation for subject: ' + \
+            subject._subject_name + '. Proceed with care and check parameters!'
+            if self.ui.checkBoxBatch.isChecked() == True:
+                subject._working_file = None
             del subject._ecg_params['i']
-            #del subject._ecg_params['i']
-            #continue
-            return
-        # Remove extra raw file from memory
+            return incorrect_ECG_channel, error_message
         try:
             del subject._ecg_params['i']
         except Exception:
             pass
         fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
-        subject._working_file = None
-        #++i
+        if self.ui.checkBoxBatch.isChecked() == True:
+            subject._working_file = None
+        return incorrect_ECG_channel, error_message
