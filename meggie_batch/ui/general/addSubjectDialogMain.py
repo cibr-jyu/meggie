@@ -66,7 +66,8 @@ class AddSubjectDialog(QtGui.QDialog):
         #self.ui.lineEditFileName.textChanged.connect(self.file_path_changed)
         
         #if self.ui.listWidgetFileNames.count() > 0:
-        self.ui.listWidgetFileNames.itemClicked.connect(self.file_path_changed)
+        self.ui.listWidgetFileNames.itemSelectionChanged.connect(self.file_path_changed)
+        #self.ui.listWidgetFileNames.itemActivated.connect(self.item_activated)
     
     def accept(self):
         """ Add the new subject. """
@@ -132,6 +133,8 @@ class AddSubjectDialog(QtGui.QDialog):
                 item = QtGui.QListWidgetItem()
                 item.setText(name)
                 # TODO add name into the list of filenames
+                if len(self.ui.listWidgetFileNames.findItems(item.text(), QtCore.Qt.MatchExactly)) > 0:
+                    continue
                 self.ui.listWidgetFileNames.addItem(item)
             
             
@@ -139,6 +142,7 @@ class AddSubjectDialog(QtGui.QDialog):
         """
         Opens the infoDialog for the raw file selected.
         """
+        if checked is None: return
         try:
             self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.currentItem().text(), pre_load = False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
@@ -164,12 +168,33 @@ class AddSubjectDialog(QtGui.QDialog):
         self.infoDialog.show()
 
         QtGui.QApplication.processEvents()
+
+        
+    def on_pushButtonRemove_clicked(self, checked = None):
+        """Removes selected filenames on the listWidgetFileNames.
+        """
+        if checked is None: return
+        """
+        item = self.ui.listWidgetFileNames.currentItem()
+        i = self.ui.listWidgetFileNames.indexFromItem(item)
+        row = i.row()
+        self.ui.listWidgetFileNames.takeItem(row)
+        """
+        for item in self.ui.listWidgetFileNames.selectedItems():
+            i = self.ui.listWidgetFileNames.indexFromItem(item)
+            row = i.row()
+            self.ui.listWidgetFileNames.takeItem(row)
         
         
     def file_path_changed(self):
         """A slot for enabling or disabling show file info button.
         """
-        if self.ui.listWidgetFileNames.currentItem() is not None:
+        items = self.ui.listWidgetFileNames.selectedItems()
+        if len(items) > 0:
+            self.ui.pushButtonRemove.setEnabled(True)
+        else:
+            self.ui.pushButtonRemove.setEnabled(False)
+        if len(items) == 1:
             self.ui.pushButtonShowFileInfo.setEnabled(True)
         else:
             self.ui.pushButtonShowFileInfo.setEnabled(False)
