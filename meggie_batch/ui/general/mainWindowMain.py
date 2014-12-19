@@ -60,7 +60,6 @@ from visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
 from maxFilterDialogMain import MaxFilterDialog
 from eogParametersDialogMain import EogParametersDialog
 from ecgParametersDialogMain import EcgParametersDialog
-# from workSpaceDialogMain import WorkSpaceDialog
 from preferencesDialogMain import PreferencesDialog
 from evokedStatsDialogMain import EvokedStatsDialog
 from addECGProjectionsMain import AddECGProjections
@@ -73,6 +72,8 @@ from aboutDialogMain import AboutDialog
 from filterDialogMain import FilterDialog
 from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
+from forwardSolutionDialogMain import ForwardSolutionDialog
+
 import messageBoxes
 
 import experiment
@@ -1140,7 +1141,6 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
         if checked is None: return
         
-        
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
             message = 'Please select a forward model to coregister.'
             self.messageBox = messageBoxes.shortMessageBox(message)
@@ -1148,6 +1148,13 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         self.caller.coregister_with_mne_gui_coregistration()
+        
+        
+    def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
+        if checked is None: return
+        
+        self.fSolutionDialog = ForwardSolutionDialog()
+        self.fSolutionDialog.show()
         
         
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):

@@ -5,9 +5,8 @@ Created on 30.6.2014
 '''
 
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
-from forwardModels import ForwardModels
 from forwardModelDialogUi import Ui_forwardModelDialog
 import messageBoxes
 import string

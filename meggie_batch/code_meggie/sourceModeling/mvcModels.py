@@ -37,7 +37,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.__headers = ['name', 'spacing', 'ico', 'decimvalue', 'surfname',
                           'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
                           'outershift','skullshift', 'brainc', 'skullc',
-                          'scalpc', 'coregistered']
+                          'scalpc', 'coregistered', 'fsolution']
 
         # May well be None, if no experiment is loaded.
         if self.parent._experiment == None:
@@ -190,7 +190,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         except Exception:
             setupFModelDict = dict()
         
-        # Check if forward model has coregistration file present
+        # Check if forward model has coregistration and forward solution
+        # files present.
         transFilePath = os.path.join(fmdir, fmname, 'reconFiles', 
                                     'reconFiles-trans.fif')
         
@@ -198,6 +199,9 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             isCoreg = 'yes'
         else:
             isCoreg = 'no'
+        
+        fsolFilePath = os.path.join(fmdir, fmname, 'reconFiles',)
+        
         
         mergedDict = dict([('fmname', fmname)] + sSpaceDict.items() + \
                           wshedDict.items() + \
@@ -237,6 +241,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         fmList.append(fmdict['skullc'])
         fmList.append(fmdict['scalpc'])
         fmList.append(fmdict['coregistered'])
+        fmList.append(fmdict['fsolution'])
         
         return fmList
        

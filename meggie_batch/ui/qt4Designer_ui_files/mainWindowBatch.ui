@@ -2251,6 +2251,12 @@
                      <property name="alternatingRowColors">
                       <bool>true</bool>
                      </property>
+                     <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
+                     </property>
+                     <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                     </property>
                      <property name="sortingEnabled">
                       <bool>true</bool>
                      </property>
@@ -2260,14 +2266,14 @@
                     </widget>
                    </item>
                    <item row="2" column="0">
-                    <widget class="QPushButton" name="pushButton_2">
+                    <widget class="QPushButton" name="pushButtonRemoveForwardSolution">
                      <property name="text">
-                      <string>Delete selected forward solution</string>
+                      <string>Remove selected forward solution</string>
                      </property>
                     </widget>
                    </item>
                    <item row="1" column="0">
-                    <widget class="QPushButton" name="pushButton">
+                    <widget class="QPushButton" name="pushButtonCreateForwardSolution">
                      <property name="text">
                       <string>Create forward solution for selected forward model...</string>
                      </property>
