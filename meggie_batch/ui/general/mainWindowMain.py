@@ -1209,6 +1209,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # Deactivate various buttons. They will be
         # activated later if prerequisites are met.
+        self.ui.pushButtonApplyECG.setEnabled(False)
+        self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonConvertToMNE.setEnabled(False)
         self.ui.pushButtonCheckTalairach.setEnabled(False)
         self.ui.pushButtonSkullStrip.setEnabled(False)
@@ -1269,7 +1271,7 @@ class MainWindow(QtGui.QMainWindow):
                 if self.experiment.active_subject.check_eog_projs():
                     self.ui.pushButtonApplyEOG.setEnabled(True)
                     self.ui.checkBoxEOGComputed.setChecked(True)
-                #Check whether ECG projections are applied    
+                #Check whether ECG projections are applied
                 if self.experiment.active_subject.check_ecg_applied():
                     self.ui.checkBoxECGApplied.setChecked(True)
                 #Check whether EOG projections are applied

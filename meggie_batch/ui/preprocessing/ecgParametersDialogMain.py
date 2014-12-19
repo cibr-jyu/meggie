@@ -37,6 +37,7 @@ for calculating ECG projections.
 import os
 import ast
 import gc
+import traceback
 
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
@@ -258,24 +259,27 @@ class EcgParametersDialog(QtGui.QDialog):
             self.close()
             return
 
-        # In case of batch process:
-        # 1. Calculation is first done for the active subject to prevent an
-        #    excessive reading of a raw file.
-        incorrect_ECG_channel, error_message = self.\
-        calculate_ecg(self.parent.experiment._active_subject,\
-                      incorrect_ECG_channel, error_message)    
         recently_active_subject = self.parent.experiment._active_subject._subject_name
-        # Free the memory usage from the active subject to the batch process.
-        self.parent.experiment._active_subject._working_file = None
-        self.parent.experiment._active_subject = None
-        
-        # 2. Calculation is done for the rest of the subjects.
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
             if item.text() == recently_active_subject:
                 continue
             subject_names.append(item.text())
+
+
+        # In case of batch process:
+        # 1. Calculation is first done for the active subject to prevent an
+        #    excessive reading of a raw file.
+        if recently_active_subject in subject_names:
+            incorrect_ECG_channel, error_message = self.\
+            calculate_ecg(self.parent.experiment._active_subject,\
+                          incorrect_ECG_channel, error_message)    
+        # Free the memory usage from the active subject to the batch process.
+        self.parent.experiment._active_subject._working_file = None
+        self.parent.experiment._active_subject = None
+        
+        # 2. Calculation is done for the rest of the subjects.
         for subject in self.parent.experiment._subjects:
             if subject._subject_name in subject_names:
                 
@@ -497,9 +501,12 @@ class EcgParametersDialog(QtGui.QDialog):
             call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
                 return incorrect_ECG_channel, error_message
-        except Exception, err:
+        except Exception:
+            tb = traceback.format_exc()
+            #error_message += '\n' + subject._subject_name + ': ' + str(err)
             error_message += '\nAn error occurred during calculation for subject: ' + \
-            subject._subject_name + '. Proceed with care and check parameters!'
+            subject._subject_name + '. Proceed with care and check parameters!\n\n' + \
+            str(tb)
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._ecg_params['i']
