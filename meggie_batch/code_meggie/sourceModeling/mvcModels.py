@@ -133,12 +133,12 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         
         self._fmodels_directory = self.parent._experiment._active_subject.\
                       _forwardModels_directory
-        fmdir = self._fmodels_directory
+        fmsdir = self._fmodels_directory
         
         """
         # This really should not need checking nowadays, just exists for 
         # handling old style subject directories. 
-        if not os.path.isdir(fmdir):
+        if not os.path.isdir(fmsdir):
             self._fmodels_directory = None
             del self.fmodelInfoList[:]
             self.layoutAboutToBeChanged.emit()
@@ -151,10 +151,10 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         del self.fmodelInfoList[:]
             
         # The param files don't exist by default, so lots of trying here.
-        for d in [name for name in os.listdir(fmdir)
-                    if os.path.isdir(os.path.join(fmdir, name))]:
+        for d in [name for name in os.listdir(fmsdir)
+                    if os.path.isdir(os.path.join(fmsdir, name))]:
             
-            pmlist = self.create_single_FM_param_list(fmdir, d)                
+            pmlist = self.create_single_FM_param_list(fmsdir, d)                
             self.fmodelInfoList.append(pmlist)
 
         self.layoutAboutToBeChanged.emit()
@@ -190,8 +190,14 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         except Exception:
             setupFModelDict = dict()
         
+        try:
+            fSolDict = fileManager.unpickle(os.path.join(fmdir, fmname, 
+                                                         'fSolution.param'))
+        except Exception:
+            fSolDict = dict()
+        
         # Check if forward model has coregistration and forward solution
-        # files present.
+        # files present (allows manual import of both from outside Meggie).
         transFilePath = os.path.join(fmdir, fmname, 'reconFiles', 
                                     'reconFiles-trans.fif')
         
@@ -200,15 +206,21 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         else:
             isCoreg = 'no'
         
-        fsolFilePath = os.path.join(fmdir, fmname, 'reconFiles',)
+        fsolFilePath = os.path.join(fmdir, fmname, 'reconFiles',
+                                    'reconFiles-fwd.fif')
         
+        if os.path.isfile(fsolFilePath):
+            isFsol = 'yes'
+        else:
+            isFsol = 'no'
         
         mergedDict = dict([('fmname', fmname)] + sSpaceDict.items() + \
                           wshedDict.items() + \
                           setupFModelDict.items() + \
-                          [('coregistered', isCoreg)])
+                          fSolDict.items() + \
+                          [('coregistered', isCoreg)] + [('fsolution', isFsol)])
         
-        # No need to crash on missing parameters files, just don't
+        # No need to crash on missing forward model parameters files, just don't
         # try to add anything to the list.
         try:
             fmDictList = self.fmodel_dict_to_list(mergedDict)
@@ -242,6 +254,27 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         fmList.append(fmdict['scalpc'])
         fmList.append(fmdict['coregistered'])
         fmList.append(fmdict['fsolution'])
+        
+        # If there are no forward solution parameters, add dummy ones.
+        try:
+            fmList.append(fmdict['includeMEG'])
+        except Exception:
+            fmList.append('--')
+            
+        try:
+            fmList.append(fmdict['includeEEG'])
+        except Exception:
+            fmList.append('--')
+        
+        try:
+            fmList.append(fmdict['mindist'])
+        except Exception:
+            fmList.append('--')
+         
+        try:   
+            fmList.append(fmdict['ignoreref'])
+        except Exception:
+            fmList.append('--')
         
         return fmList
        
