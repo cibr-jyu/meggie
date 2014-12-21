@@ -89,7 +89,9 @@ class AddSubjectDialog(QtGui.QDialog):
                 self.messageBox.show()
                 return
                  
-            try:  
+            try:
+                if self.parent.experiment._active_subject is not None:
+                    self.parent.experiment.release_memory()
                 self.parent.experiment.create_subject(subject_name, 
                                                       self.experiment, raw_path)
             except Exception:
