@@ -416,19 +416,15 @@ def delete_file_at(folder, files):
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
     """
+
     try:
-        os.remove(os.path.join(folder, files))
-    except OSError:
-        message = 'Could not delete selected files.'
-        messageBox = messageBoxes.shortMessageBox(message)
-        messageBox._exec()
-    except TypeError:
-        # If files is a list object instead of string.
-        for f in files:
-            try:
+        if isinstance(files, list):
+            for f in files:
                 os.remove(os.path.join(folder, f))
-            except OSError: raise
-    
+            return
+        os.remove(os.path.join(folder, files))
+    except OSError: raise
+
     
 def load_epochs(fname):
     """Load epochs from a folder.

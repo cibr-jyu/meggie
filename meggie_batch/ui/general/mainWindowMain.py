@@ -652,7 +652,7 @@ class MainWindow(QtGui.QMainWindow):
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
-            fiff.write_evoked(os.path.join(saveFolder, evoked_name), evoked)
+            fiff.write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
             print '[done]'
         except IOError:
             message = 'Writing to selected folder is not allowed. You can still' \
@@ -760,7 +760,7 @@ class MainWindow(QtGui.QMainWindow):
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_collection_name + ' ...'
-            fiff.write_evoked(os.path.join(saveFolder, evoked_collection_name), evokeds)
+            fiff.write_evokeds(os.path.join(saveFolder, evoked_collection_name), evokeds)
             print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
