@@ -11,6 +11,7 @@ from forwardSolutionDialogUi import Ui_DialogCreateFSolution
 import messageBoxes
 
 import multiprocessing
+import caller
 
 
 class ForwardSolutionDialog(QtGui.QDialog):
@@ -32,7 +33,6 @@ class ForwardSolutionDialog(QtGui.QDialog):
         Gets the arguments from the gui and passes them to the caller for 
         forward solution creation.
         """
-        
         paramdict = {}
         
         paramdict['includeMEG'] = self.ui.checkBoxIncludeMEG.isChecked()
@@ -47,4 +47,5 @@ class ForwardSolutionDialog(QtGui.QDialog):
             
         paramdict['njobs'] = self.ui.spinBoxNJobs.value()
     
+        self.parent.caller.create_forward_solution(paramdict)
         

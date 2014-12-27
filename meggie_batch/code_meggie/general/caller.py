@@ -1149,13 +1149,20 @@ class Caller(object):
         
         targetFileName = os.path.join(fmdir, 'reconFiles', 'reconFiles-fwd.fif')
     
-        mne.make_forward_solution(rawInfo, transFilePath, srcFilePath, 
+        try:
+            mne.make_forward_solution(rawInfo, transFilePath, srcFilePath, 
                                   bemSolFilePath, targetFileName,
                                   fsdict['includeMEG'], fsdict['includeEEG'],
                                   fsdict['mindist'], fsdict ['ignoreref'], True,
                                   fsdict['njobs'])
-        
-        fileManager.write_forward_solution_parameters()
+            fileManager.write_forward_solution_parameters(fmdir, fsdict)
+            self.parent.forwardModelModel.initialize_model()
+        except Exception as e:
+            title = 'Error'
+            message = 'There was a problem with forward solution. The ' + \
+            'MNE-Python message was: \n\n' + str(e)
+            self.messageBox = messageBoxes.longMessageBox(title, message)
+            self.messageBox.show()
         
 
     def update_experiment_working_file(self, fname, raw):

@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>9</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2431,7 +2431,7 @@
                 <x>21</x>
                 <y>11</y>
                 <width>347</width>
-                <height>461</height>
+                <height>262</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -2440,19 +2440,11 @@
                  <property name="title">
                   <string>Forward solutions to base inverse operator on:</string>
                  </property>
-                 <widget class="QLabel" name="label_15">
-                  <property name="geometry">
-                   <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>281</width>
-                    <height>20</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>Forward solutions -välilehden lista tähän</string>
-                  </property>
-                 </widget>
+                 <layout class="QGridLayout" name="gridLayout_21">
+                  <item row="0" column="0">
+                   <widget class="QTableView" name="tableViewFSolutionsToInverse"/>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
@@ -2501,7 +2493,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_25">
                   <item row="0" column="0">
-                   <widget class="QListView" name="listView"/>
+                   <widget class="QTableView" name="tableView"/>
                   </item>
                  </layout>
                 </widget>

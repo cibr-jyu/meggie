@@ -157,6 +157,14 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutionSource.\
             setSourceModel(self.forwardModelModel)
         
+        self.proxyModelTableViewForwardSolutions = QtGui.\
+            QSortFilterProxyModel(self)
+        self.proxyModelTableViewForwardSolutions.setFilterKeyColumn(16)
+        rx2 = QtCore.QRegExp('yes')
+        self.proxyModelTableViewForwardSolutions.setFilterRegExp(rx2)
+        self.proxyModelTableViewForwardSolutions.\
+            setSourceModel(self.forwardModelModel)
+        
         # Linking corresponding views to models above and tuning them     
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
         self.ui.tableViewFModelsForCoregistration.\
@@ -164,7 +172,7 @@ class MainWindow(QtGui.QMainWindow):
         
         tvfm = self.ui.tableViewFModelsForSolution
         tvfm.setModel(self.proxyModelTableViewForwardSolutionSource)     
-        for colnum in range(1, self.forwardModelModel.columnCount(self)):
+        for colnum in range(1, 16):
             tvfm.setColumnHidden(colnum, True)
         
         # TODO: should show empty mainWindow with "loading previous experiment
@@ -1152,8 +1160,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
         if checked is None: return
-        
-        self.fSolutionDialog = ForwardSolutionDialog()
+        self.fSolutionDialog = ForwardSolutionDialog(self)
         self.fSolutionDialog.show()
         
         

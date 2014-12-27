@@ -37,7 +37,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.__headers = ['name', 'spacing', 'ico', 'decimvalue', 'surfname',
                           'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
                           'outershift','skullshift', 'brainc', 'skullc',
-                          'scalpc', 'coregistered', 'fsolution']
+                          'scalpc', 'coregistered', 'fsolution', 'includeMEG',
+                          'includeEEG', 'minDist', 'ignoreRef']
 
         # May well be None, if no experiment is loaded.
         if self.parent._experiment == None:
