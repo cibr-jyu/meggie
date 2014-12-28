@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>9</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2493,7 +2493,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_25">
                   <item row="0" column="0">
-                   <widget class="QTableView" name="tableView"/>
+                   <widget class="QTableView" name="tableViewInverseOperators"/>
                   </item>
                  </layout>
                 </widget>

@@ -1125,7 +1125,7 @@ class Caller(object):
         """
         
         activeSubject = self.parent._experiment._active_subject 
-        rawInfo = activeSubject._working_file.info()
+        rawInfo = activeSubject._working_file.info
         
         tableView = self.parent.ui.tableViewFModelsForSolution
         selectedRowIndexes = tableView.selectedIndexes()
