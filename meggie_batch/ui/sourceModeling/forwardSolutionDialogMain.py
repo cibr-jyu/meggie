@@ -27,6 +27,20 @@ class ForwardSolutionDialog(QtGui.QDialog):
         self.ui.spinBoxNJobs.setMaximum = cores
         self.ui.spinBoxNJobs.setValue(cores - 1)
         
+        tableView = self.parent.ui.tableViewFModelsForSolution
+        selectedRowIndexes = tableView.selectedIndexes()
+        
+        compartModelIndex = self.parent.forwardModelModel.index(
+                                            selectedRowIndexes[0].row(), 8)
+        compartModel = self.parent.forwardModelModel.data(compartModelIndex)
+        
+        if compartModel == 'single (usually used with MEG)':
+            self.ui.checkBoxIncludeEEG.setChecked(False)
+            self.ui.checkBoxIncludeEEG.setEnabled(False)
+            self.ui.labelIncludEEG.setEnabled(False)
+            self.ui.labelIncludEEG.setToolTip('disabled due to single ' + \
+                                           'compartment model in forward model')
+        
         
     def accept(self):
         """

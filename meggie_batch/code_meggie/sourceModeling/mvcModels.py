@@ -73,7 +73,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         return len(self.__headers)
     
         
-    def data(self, index, role):
+    def data(self, index, role=QtCore.Qt.DisplayRole):
         """
         Standard data method for the QAbstractTableModel.
         """
