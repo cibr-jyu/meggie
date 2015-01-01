@@ -167,13 +167,19 @@ class MainWindow(QtGui.QMainWindow):
         
         # Linking corresponding views to models above and tuning them     
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
+        for colnum in range(17, 21):
+            self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
+        
         self.ui.tableViewFModelsForCoregistration.\
         setModel(self.forwardModelModel)
+        for colnum in range(16, 21):
+            self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
+                                                                      True)
         
-        tvfm = self.ui.tableViewFModelsForSolution
-        tvfm.setModel(self.proxyModelTableViewForwardSolutionSource)     
+        tvfs = self.ui.tableViewFModelsForSolution
+        tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)     
         for colnum in range(1, 16):
-            tvfm.setColumnHidden(colnum, True)
+            tvfs.setColumnHidden(colnum, True)
         
         # TODO: should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load

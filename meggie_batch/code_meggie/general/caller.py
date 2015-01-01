@@ -962,7 +962,8 @@ class Caller(object):
                                   sspaceArgsDict.items() + \
                                   wshedArgsDict.items() + \
                                   fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')])
+                                  [('coregistered', 'no')] + \
+                                  [('fsolution', 'no')])
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)
             except Exception:
@@ -993,7 +994,7 @@ class Caller(object):
                                   fmdict['sspaceArgs'].items() + \
                                   fmdict['wsshedArgs'].items() + \
                                   fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')]
+                                  [('coregistered', 'no')] + \
                                   [('fsolution', 'no')])
                 
                 self.parent.add_new_fModel_to_MVCModel(mergedDict)

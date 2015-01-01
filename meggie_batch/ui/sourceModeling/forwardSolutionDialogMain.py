@@ -60,6 +60,5 @@ class ForwardSolutionDialog(QtGui.QDialog):
             paramdict['ignoreref'] = False
             
         paramdict['njobs'] = self.ui.spinBoxNJobs.value()
-    
-        self.parent.caller.create_forward_solution(paramdict)
-        
+        self.parent.caller.create_forward_solution(paramdict)   
+        self.close()
