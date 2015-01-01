@@ -1116,6 +1116,16 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
+        reply = QtGui.QMessageBox.question(self, 'Removing forward model',
+                'Do you really want to ' + \
+                'the selected forward model, including the coregistration ' + \
+                'and forward solution files related to it?',                                            
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No)
+                
+        if reply == QtGui.QMessageBox.No:
+            return
+        
         tableView = self.ui.tableViewForwardModels
         
         # Selection for the view is SingleSelection / SelectRows, so this
