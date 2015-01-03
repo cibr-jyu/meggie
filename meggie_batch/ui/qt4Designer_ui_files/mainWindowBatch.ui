@@ -2060,7 +2060,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>Forward models available for coregistration:</string>
+                   <string>Forward models available for coregistration:            </string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
                    <item row="0" column="0">
@@ -2088,7 +2088,7 @@
                    <item row="1" column="0">
                     <widget class="QGroupBox" name="groupBoxCoregister">
                      <property name="title">
-                      <string>Coregister the selected forward model:</string>
+                      <string>(Re-)coregister the selected forward model:</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_24">
                       <item row="0" column="0">
@@ -2265,17 +2265,10 @@
                      </attribute>
                     </widget>
                    </item>
-                   <item row="2" column="0">
-                    <widget class="QPushButton" name="pushButtonRemoveForwardSolution">
-                     <property name="text">
-                      <string>Remove selected forward solution</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="0">
                     <widget class="QPushButton" name="pushButtonCreateForwardSolution">
                      <property name="text">
-                      <string>Create forward solution for selected forward model...</string>
+                      <string>(Re)create forward solution for selected forward model...</string>
                      </property>
                     </widget>
                    </item>

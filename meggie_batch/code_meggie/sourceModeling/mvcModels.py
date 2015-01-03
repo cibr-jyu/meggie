@@ -34,11 +34,11 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         self.fmodelInfoList = []
         
         # Column headers i.e. names of parameters.
-        self.__headers = ['name', 'spacing', 'ico', 'decimvalue', 'surfname',
-                          'cps', 'atlas', 'triang. ico', 'homog', 'innershift',
-                          'outershift','skullshift', 'brainc', 'skullc',
-                          'scalpc', 'coregistered', 'fsolution', 'includeMEG',
-                          'includeEEG', 'minDist', 'ignoreRef']
+        self.__headers = ['name', 'decim. method' , 'spacing', 'ico value', 
+                          'surfname', 'cps', 'atlas', 'triang. ico', 'homog',
+                          'innershift','outershift','skullshift', 'brainc',
+                          'skullc', 'scalpc', 'coregistered', 'fsolution',
+                          'includeMEG', 'includeEEG', 'minDist', 'ignoreRef']
 
         # May well be None, if no experiment is loaded.
         if self.parent._experiment == None:
@@ -151,7 +151,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # from the previous active subject end up staying there.
         del self.fmodelInfoList[:]
             
-        # The param files don't exist by default, so lots of trying here.
         for d in [name for name in os.listdir(fmsdir)
                     if os.path.isdir(os.path.join(fmsdir, name))]:
             
@@ -173,6 +172,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         Returns the list, or None if there is no such model.
         
         """ 
+        
+        # The param files don't exist by default, so lots of trying here.
         try: 
             sSpaceDict = fileManager.unpickle(os.path.join(fmdir, fmname, 
                                               'setupSourceSpace.param'))
@@ -239,9 +240,17 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         
         # TODO: compartModel and decimMethod need some shortening
         fmList.append(fmdict['fmname'])
-        fmList.append(fmdict['spacing'])
+        
         fmList.append(fmdict['surfaceDecimMethod'])
-        fmList.append(fmdict['surfaceDecimValue'])
+        
+        if fmdict['surfaceDecimMethod'] == 'traditional (default)':
+            fmList.append(fmdict['spacing'])
+        else: fmList.append('--')
+        
+        if fmdict['surfaceDecimMethod'] == 'traditional (default)':
+            fmList.append('--')
+        else: fmList.append(fmdict['surfaceDecimValue'])
+        
         fmList.append(fmdict['surfaceName'])
         fmList.append(fmdict['computeCorticalStats'])
         fmList.append(fmdict['useAtlas'])

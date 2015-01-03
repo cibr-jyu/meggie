@@ -1143,11 +1143,26 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
+        """
+        Open a file browser dialog for the user to choose
+        a translated coordinate file to use with the currently selected forward
+        model.
+        """
         if checked is None: return
         
-        subjectPath = self._experiment._active_subject._subject_path
-        targetName = os.path.join(subjectPath, 'reconFiles-trans.fif')
+        activeSubject = self._experiment._active_subject
+        tableView = self.ui.tableViewFModelsForCoregistration
         
+        # Selection for the view is SingleSelection / SelectRows, so this
+        # should return indexes for single row.
+        selectedRowIndexes = tableView.selectedIndexes()
+        selectedFmodelName = selectedRowIndexes[0].data() 
+        
+        subjectPath = activeSubject._subject_path
+        targetName = os.path.join(subjectPath, 'sourceAnalysis', 'forwardModels',
+                                  selectedFmodelName, 'reconFiles',
+                                  'reconFiles-trans.fif')   
+    
         path = QtGui.QFileDialog.getOpenFileName(
                self, 'Select the existing coordinate file ' +
                '(the file should end with "-trans.fif")' )
@@ -1160,7 +1175,9 @@ class MainWindow(QtGui.QMainWindow):
                 message = 'There was a problem while copying the coordinate file.'
                 messageBox = messageBoxes.shortMessageBox(message)
                 messageBox.exec_()
-                
+        
+        self.forwardModelModel.initialize_model()
+        
     
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
         if checked is None: return
@@ -1185,6 +1202,7 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Implement this last if needed.
         return
 
+    
 
 
 ### Code for populating and updating various lists and tables in the MainWindow ###       
@@ -1458,7 +1476,7 @@ def main():
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
             
-    window.show()
+    window.showMaximized()
     
     sys.exit(app.exec_())
 
