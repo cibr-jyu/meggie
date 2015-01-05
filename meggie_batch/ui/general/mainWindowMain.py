@@ -1116,6 +1116,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
+        if self.ui.tableViewForwardModels.selectedIndexes() == []:
+            message = 'Please select a forward model to remove.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
         reply = QtGui.QMessageBox.question(self, 'Removing forward model',
                 'Do you really want to ' + \
                 'the selected forward model, including the coregistration ' + \
@@ -1180,10 +1186,14 @@ class MainWindow(QtGui.QMainWindow):
         
     
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
+        """
+        Open a dialog for coregistering the currently selected
+        forward model in tableViewFModelsForCoregistration.
+        """
         if checked is None: return
         
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
-            message = 'Please select a forward model to coregister.'
+            message = 'Please select a forward model to (re-)coregister.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
@@ -1192,7 +1202,19 @@ class MainWindow(QtGui.QMainWindow):
         
         
     def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
+        """
+        Open a dialog for creating a forward solution for the currently selected
+        forward model in tableViewFModelsForSolution.
+        """
         if checked is None: return
+        
+        if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
+            message = 'Please select a forward model to (re)create a forward ' + \
+            'solution for.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
         self.fSolutionDialog = ForwardSolutionDialog(self)
         self.fSolutionDialog.show()
         
@@ -1202,6 +1224,25 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: Implement this last if needed.
         return
 
+
+    def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
+        """
+        Open a dialog for computing noise covariance matrix based on raw file
+        (measurement file with a subject but without epochs, or an empty room 
+        measurement).
+        """
+        if checked is None: return
+        
+        # self.covarianceRawDialog = covarianceRawDialog(self)
+        # self.covarianceRawDialog.show()    
+          
+    
+    def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
+        """
+        Open a dialog for computing noise covariance matrix based on data before
+        epochs.
+        """
+        if checked is None: return
     
 
 

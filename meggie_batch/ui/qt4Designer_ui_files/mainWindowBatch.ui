@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2336,14 +2336,14 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_14">
                <item>
-                <widget class="QPushButton" name="pushButton_3">
+                <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
                  <property name="text">
                   <string>Compute noise covariance matrix based on raw file...</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
                  <property name="text">
                   <string>Compute noise covariance matrix based on epochs...</string>
                  </property>
