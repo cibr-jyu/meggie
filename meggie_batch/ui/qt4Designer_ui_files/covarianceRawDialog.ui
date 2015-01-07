@@ -6,17 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>566</height>
+    <width>502</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
@@ -38,26 +35,50 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="0" colspan="2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelBeginTime">
+     <property name="text">
+      <string>Beginning of time interval (seconds from start):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxStartTime">
+     <property name="prefix">
+      <string/>
+     </property>
+     <property name="suffix">
+      <string> s</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelEndTime">
+     <property name="text">
+      <string>End of time interval (seconds from start):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxEndTime">
+     <property name="suffix">
+      <string> s</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBoxRejection">
      <property name="title">
       <string>Rejection</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBoxReject">
-        <property name="text">
-         <string>Reject chunks of data</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QFrame" name="frameRejection">
+      <item row="2" column="0">
+       <widget class="QFrame" name="frameRejectionPeakToPeak">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -72,84 +93,20 @@
          <item row="0" column="0">
           <widget class="QLabel" name="labelRejections">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Rejection parameters:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Reject chunks of data based on peak to peak amplitude:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="labelFlatness">
-             <property name="text">
-              <string>Reject based on flatness of signal:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxFlatGrad">
-             <property name="text">
-              <string>grad.</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxFlatMag">
-             <property name="text">
-              <string>mag.</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxFlatEeg">
-             <property name="text">
-              <string>EEG</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxFlatEog">
-             <property name="text">
-              <string>EOG</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxFlatEcg">
-             <property name="text">
-              <string>ECG</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="2" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="labelChunkLength">
-             <property name="text">
-              <string>Chunk length for rejection (tstep):</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxChunkLength">
-             <property name="suffix">
-              <string> s</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="3" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_30">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_31">
                <item>
-                <widget class="QLabel" name="labelGradReject">
+                <widget class="QCheckBox" name="checkBoxGradReject">
                  <property name="text">
-                  <string>Grad:</string>
+                  <string>grad.</string>
                  </property>
                 </widget>
                </item>
@@ -174,9 +131,9 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_32">
                <item>
-                <widget class="QLabel" name="labelEegReject">
+                <widget class="QCheckBox" name="checkBoxEEGReject">
                  <property name="text">
-                  <string>EEG:</string>
+                  <string>EEG</string>
                  </property>
                 </widget>
                </item>
@@ -202,9 +159,9 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_33">
                <item>
-                <widget class="QLabel" name="labelMagReject">
+                <widget class="QCheckBox" name="checkBoxMagReject">
                  <property name="text">
-                  <string>Mag:</string>
+                  <string>mag.</string>
                  </property>
                 </widget>
                </item>
@@ -226,9 +183,9 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_34">
                <item>
-                <widget class="QLabel" name="labelEogReject">
+                <widget class="QCheckBox" name="checkBoxEOGReject">
                  <property name="text">
-                  <string>EOG:</string>
+                  <string>EOG</string>
                  </property>
                 </widget>
                </item>
@@ -254,10 +211,222 @@
         </layout>
        </widget>
       </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="labelChunkLength">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Chunk length for rejection (tstep):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxChunkLength">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="suffix">
+           <string> s</string>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QFrame" name="frameRejectionFlatness">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="lineWidth">
+         <number>1</number>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelRejectionsFlatness">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Reject chunks of data based on signal flatness:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_40">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_41">
+               <item>
+                <widget class="QCheckBox" name="checkBoxFlatGrad">
+                 <property name="text">
+                  <string>grad.</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxFlatGrad">
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_42">
+               <item>
+                <widget class="QCheckBox" name="checkBoxFlatEeg">
+                 <property name="text">
+                  <string>EEG</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxFlatEEG">
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QCheckBox" name="checkBoxFlatECG">
+                 <property name="text">
+                  <string>ECG</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxFlatECG">
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_43">
+               <item>
+                <widget class="QCheckBox" name="checkBoxFlatMag">
+                 <property name="text">
+                  <string>mag.</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxFlatMag">
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_44">
+               <item>
+                <widget class="QCheckBox" name="checkBoxFlatEOG">
+                 <property name="text">
+                  <string>EOG</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxFlatEOG">
+                 <property name="suffix">
+                  <string/>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxRejection">
+        <property name="text">
+         <string>Reject signals based on parameters below</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBoxIncludeChannels">
      <property name="title">
       <string>Include channels:</string>
@@ -295,6 +464,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="plainText">
+             <string>***example of input here***Preferably also possibility to choose channels based on region***</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -304,44 +476,13 @@
      </layout>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="5" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="labelBeginTime">
-     <property name="text">
-      <string>Beginning of time interval (seconds from start):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxStartTime">
-     <property name="prefix">
-      <string/>
-     </property>
-     <property name="suffix">
-      <string> s</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="labelEndTime">
-     <property name="text">
-      <string>End of time interval (seconds from start):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxEndTime">
-     <property name="suffix">
-      <string> s</string>
      </property>
     </widget>
    </item>
@@ -356,8 +497,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>675</x>
-     <y>614</y>
+     <x>591</x>
+     <y>685</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -372,28 +513,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>675</x>
-     <y>620</y>
+     <x>591</x>
+     <y>685</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxReject</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frameRejection</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>179</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>110</x>
-     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -404,12 +529,76 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>117</x>
-     <y>490</y>
+     <x>145</x>
+     <y>553</y>
     </hint>
     <hint type="destinationlabel">
      <x>250</x>
      <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxRejection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelChunkLength</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>86</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxRejection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxChunkLength</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>329</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>345</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxRejection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameRejectionPeakToPeak</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>288</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>459</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxRejection</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameRejectionFlatness</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>342</y>
     </hint>
    </hints>
   </connection>
