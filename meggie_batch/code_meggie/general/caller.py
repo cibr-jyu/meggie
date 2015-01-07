@@ -965,7 +965,9 @@ class Caller(object):
                                   [('coregistered', 'no')] + \
                                   [('fsolution', 'no')])
                 
-                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+                fmlist = self.parent.forwardModelModel.\
+                         fmodel_dict_to_list(mergedDict)
+                self.parent.forwardModelModel.add_fmodel(fmlist)
             except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
@@ -997,7 +999,9 @@ class Caller(object):
                                   [('coregistered', 'no')] + \
                                   [('fsolution', 'no')])
                 
-                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+                fmlist = self.parent.forwardModelModel.\
+                         fmodel_dict_to_list(mergedDict)
+                self.parent.forwardModelModel.add_fmodel(fmlist)             
             except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \

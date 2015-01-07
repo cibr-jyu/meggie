@@ -1244,14 +1244,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
     
-
+    
 
 ### Code for populating and updating various lists and tables in the MainWindow ###       
     
-    def add_new_fModel_to_MVCModel(self, mparamdict):
-        fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
-        self.forwardModelModel.add_fmodel(fmlist)
-
+    
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
