@@ -98,15 +98,13 @@ class PreferencesHandler(object):
     
     def set_env_variables(self):
         """
-        Set various shell environment variables
-        needed by MNE-C scripts and FreeSurfer.
+        Set various shell environment variables needed by MNE-C scripts and
+        FreeSurfer.
         """
         
         print 'Meggie: setting environment variables needed by MNE and ' + \
               'Freesurfer ... \n'
         
-        # TODO: check that this actually is right (in pref. dialog?) 
-        # and alert user if not
         os.environ['MNE_ROOT'] = self.MNERoot
         
         # Let's set stuff that mne_setup_sh and mne_setup usually handle, to

@@ -47,7 +47,24 @@ class ForwardModelDialog(QtGui.QDialog):
         whiteIndex = self.ui.comboBoxSurfaceName.findText('white')
         self.ui.comboBoxSurfaceName.setCurrentIndex(whiteIndex)
         
-        
+    
+    def on_comboBoxSurfaceDecimMethod_currentIndexChanged(self):
+        """
+        To disable and enable input fields for spacing and ico as needed.
+        """
+        if self.ui.comboBoxSurfaceDecimMethod.currentText() == \
+        'traditional (default)':
+            self.ui.spinBoxSurfaceDecimValue.setEnabled(False)
+            self.ui.labelIcoValue.setEnabled(False)
+            self.ui.labelSpacing.setEnabled(True)
+            self.ui.spinBoxSpacing.setEnabled(True)
+        else:
+            self.ui.spinBoxSurfaceDecimValue.setEnabled(True)
+            self.ui.labelIcoValue.setEnabled(True)
+            self.ui.labelSpacing.setEnabled(False)
+            self.ui.spinBoxSpacing.setEnabled(False)
+            
+    
     def collectParametersIntoDictionary(self):
         """
         Collects the parameters from the ui fields of the dialog and returns
@@ -132,6 +149,15 @@ class ForwardModelDialog(QtGui.QDialog):
         if not re.match('^[\w+$]' ,fmdict['fmname']): 
             message = 'Please only use alphabets, numbers and underscores in ' + \
             'forward model name'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
+        # To help the user with the weird ico parameter.
+        if (fmdict['sspaceArgs']['surfaceDecimMethod']) != 'traditional (default)' and \
+        fmdict['sspaceArgs']['surfaceDecimValue'] == '0':
+            message = 'You need to use a nonzero ico parameter if you ' + \
+            'to use a nontraditional cortical surface decimation method.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return

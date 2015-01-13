@@ -40,6 +40,7 @@ import subprocess
 import os
 import glob
 import traceback
+import fnmatch
 
 from PyQt4 import QtCore, QtGui
 
@@ -961,9 +962,12 @@ class Caller(object):
                                   sspaceArgsDict.items() + \
                                   wshedArgsDict.items() + \
                                   fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')])
+                                  [('coregistered', 'no')] + \
+                                  [('fsolution', 'no')])
                 
-                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+                fmlist = self.parent.forwardModelModel.\
+                         fmodel_dict_to_list(mergedDict)
+                self.parent.forwardModelModel.add_fmodel(fmlist)
             except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
@@ -992,9 +996,12 @@ class Caller(object):
                                   fmdict['sspaceArgs'].items() + \
                                   fmdict['wsshedArgs'].items() + \
                                   fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')])
+                                  [('coregistered', 'no')] + \
+                                  [('fsolution', 'no')])
                 
-                self.parent.add_new_fModel_to_MVCModel(mergedDict)
+                fmlist = self.parent.forwardModelModel.\
+                         fmodel_dict_to_list(mergedDict)
+                self.parent.forwardModelModel.add_fmodel(fmlist)             
             except Exception:
                 tb = traceback.format_exc()
                 message = 'There was a problem creating forward model files. ' + \
@@ -1111,6 +1118,56 @@ class Caller(object):
                                                          selectedFmodelName) 
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
         self.coregHowtoDialog.show()
+        
+
+    def create_forward_solution(self, fsdict):
+        """
+        Creates a forward solution based on parameters given in fsdict.
+        
+        Keyword arguments:
+        
+        fsdict    -- dictionary of parameters for forward solution creation.
+        """
+        
+        activeSubject = self.parent._experiment._active_subject 
+        rawInfo = activeSubject._working_file.info
+        
+        tableView = self.parent.ui.tableViewFModelsForSolution
+        selectedRowIndexes = tableView.selectedIndexes()
+        selectedFmodelName = selectedRowIndexes[0].data()
+        
+        fmdir = os.path.join(activeSubject._forwardModels_directory,
+                               selectedFmodelName) 
+        transFilePath = os.path.join(fmdir, 'reconFiles',
+                                     'reconFiles-trans.fif')
+        
+        srcFileDir = os.path.join(fmdir, 'reconFiles', 'bem')
+        srcFilePath = None
+        for f in os.listdir(srcFileDir):
+            if fnmatch.fnmatch(f, 'reconFiles*src.fif'):
+                srcFilePath = os.path.join(srcFileDir, f)
+        
+        bemSolFilePath = None
+        for f in os.listdir(srcFileDir):
+            if fnmatch.fnmatch(f, 'reconFiles*bem-sol.fif'):
+                bemSolFilePath = os.path.join(srcFileDir, f)
+        
+        targetFileName = os.path.join(fmdir, 'reconFiles', 'reconFiles-fwd.fif')
+    
+        try:
+            mne.make_forward_solution(rawInfo, transFilePath, srcFilePath, 
+                                  bemSolFilePath, targetFileName,
+                                  fsdict['includeMEG'], fsdict['includeEEG'],
+                                  fsdict['mindist'], fsdict ['ignoreref'], True,
+                                  fsdict['njobs'])
+            fileManager.write_forward_solution_parameters(fmdir, fsdict)
+            self.parent.forwardModelModel.initialize_model()
+        except Exception as e:
+            title = 'Error'
+            message = 'There was a problem with forward solution. The ' + \
+            'MNE-Python message was: \n\n' + str(e)
+            self.messageBox = messageBoxes.longMessageBox(title, message)
+            self.messageBox.show()
         
 
     def update_experiment_working_file(self, fname, raw):

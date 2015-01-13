@@ -318,6 +318,17 @@ def convertFModelParamDictToCmdlineParamTuple(fmdict):
         return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
 
 
+def write_forward_solution_parameters(fmdir, fsdict):
+    """
+    
+    """
+    fsparamFile = os.path.join(fmdir, 'fSolution.param')
+    
+    try:
+        pickleObjectToFile(fsdict, fsparamFile)
+    except Exception: raise    
+
+
 def link_triang_files(subject):
     """
     Create symlinks to bem directory, linking them to surface triangulation

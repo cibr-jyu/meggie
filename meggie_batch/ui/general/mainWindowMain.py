@@ -157,15 +157,29 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutionSource.\
             setSourceModel(self.forwardModelModel)
         
+        self.proxyModelTableViewForwardSolutions = QtGui.\
+            QSortFilterProxyModel(self)
+        self.proxyModelTableViewForwardSolutions.setFilterKeyColumn(16)
+        rx2 = QtCore.QRegExp('yes')
+        self.proxyModelTableViewForwardSolutions.setFilterRegExp(rx2)
+        self.proxyModelTableViewForwardSolutions.\
+            setSourceModel(self.forwardModelModel)
+        
         # Linking corresponding views to models above and tuning them     
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
+        for colnum in range(17, 21):
+            self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
+        
         self.ui.tableViewFModelsForCoregistration.\
         setModel(self.forwardModelModel)
+        for colnum in range(16, 21):
+            self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
+                                                                      True)
         
-        tvfm = self.ui.tableViewFModelsForSolution
-        tvfm.setModel(self.proxyModelTableViewForwardSolutionSource)     
-        for colnum in range(1, self.forwardModelModel.columnCount(self)):
-            tvfm.setColumnHidden(colnum, True)
+        tvfs = self.ui.tableViewFModelsForSolution
+        tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)     
+        for colnum in range(1, 16):
+            tvfs.setColumnHidden(colnum, True)
         
         # TODO: should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
@@ -1102,6 +1116,22 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
+        if self.ui.tableViewForwardModels.selectedIndexes() == []:
+            message = 'Please select a forward model to remove.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        reply = QtGui.QMessageBox.question(self, 'Removing forward model',
+                'Do you really want to ' + \
+                'the selected forward model, including the coregistration ' + \
+                'and forward solution files related to it?',                                            
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No)
+                
+        if reply == QtGui.QMessageBox.No:
+            return
+        
         tableView = self.ui.tableViewForwardModels
         
         # Selection for the view is SingleSelection / SelectRows, so this
@@ -1119,11 +1149,26 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
+        """
+        Open a file browser dialog for the user to choose
+        a translated coordinate file to use with the currently selected forward
+        model.
+        """
         if checked is None: return
         
-        subjectPath = self._experiment._active_subject._subject_path
-        targetName = os.path.join(subjectPath, 'reconFiles-trans.fif')
+        activeSubject = self._experiment._active_subject
+        tableView = self.ui.tableViewFModelsForCoregistration
         
+        # Selection for the view is SingleSelection / SelectRows, so this
+        # should return indexes for single row.
+        selectedRowIndexes = tableView.selectedIndexes()
+        selectedFmodelName = selectedRowIndexes[0].data() 
+        
+        subjectPath = activeSubject._subject_path
+        targetName = os.path.join(subjectPath, 'sourceAnalysis', 'forwardModels',
+                                  selectedFmodelName, 'reconFiles',
+                                  'reconFiles-trans.fif')   
+    
         path = QtGui.QFileDialog.getOpenFileName(
                self, 'Select the existing coordinate file ' +
                '(the file should end with "-trans.fif")' )
@@ -1136,13 +1181,19 @@ class MainWindow(QtGui.QMainWindow):
                 message = 'There was a problem while copying the coordinate file.'
                 messageBox = messageBoxes.shortMessageBox(message)
                 messageBox.exec_()
-                
+        
+        self.forwardModelModel.initialize_model()
+        
     
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
+        """
+        Open a dialog for coregistering the currently selected
+        forward model in tableViewFModelsForCoregistration.
+        """
         if checked is None: return
         
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
-            message = 'Please select a forward model to coregister.'
+            message = 'Please select a forward model to (re-)coregister.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
@@ -1151,9 +1202,20 @@ class MainWindow(QtGui.QMainWindow):
         
         
     def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
+        """
+        Open a dialog for creating a forward solution for the currently selected
+        forward model in tableViewFModelsForSolution.
+        """
         if checked is None: return
         
-        self.fSolutionDialog = ForwardSolutionDialog()
+        if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
+            message = 'Please select a forward model to (re)create a forward ' + \
+            'solution for.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        self.fSolutionDialog = ForwardSolutionDialog(self)
         self.fSolutionDialog.show()
         
         
@@ -1163,13 +1225,30 @@ class MainWindow(QtGui.QMainWindow):
         return
 
 
+    def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
+        """
+        Open a dialog for computing noise covariance matrix based on raw file
+        (measurement file with a subject but without epochs, or an empty room 
+        measurement).
+        """
+        if checked is None: return
+        
+        # self.covarianceRawDialog = covarianceRawDialog(self)
+        # self.covarianceRawDialog.show()    
+          
+    
+    def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
+        """
+        Open a dialog for computing noise covariance matrix based on data before
+        epochs.
+        """
+        if checked is None: return
+    
+    
 
 ### Code for populating and updating various lists and tables in the MainWindow ###       
     
-    def add_new_fModel_to_MVCModel(self, mparamdict):
-        fmlist = self.forwardModelModel.fmodel_dict_to_list(mparamdict)
-        self.forwardModelModel.add_fmodel(fmlist)
-
+    
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
@@ -1435,7 +1514,7 @@ def main():
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
             
-    window.show()
+    window.showMaximized()
     
     sys.exit(app.exec_())
 

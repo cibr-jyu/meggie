@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>579</width>
-    <height>564</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <widget class="QLabel" name="label_17">
+      <widget class="QLabel" name="labelFModelName">
        <property name="text">
         <string>Forward model name:</string>
        </property>
@@ -48,7 +48,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="labelHomog">
         <property name="text">
          <string>Compartment model (homog) :</string>
         </property>
@@ -81,14 +81,14 @@
         </property>
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_14">
+          <widget class="QLabel" name="labelShifts">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Shifts:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_13">
+          <widget class="QLabel" name="labelInnerShift">
            <property name="text">
             <string>inner:</string>
            </property>
@@ -111,7 +111,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_15">
+          <widget class="QLabel" name="labelOuterShift">
            <property name="text">
             <string>outer:</string>
            </property>
@@ -131,7 +131,7 @@
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="label_16">
+          <widget class="QLabel" name="labelSkullShift">
            <property name="text">
             <string>skull:</string>
            </property>
@@ -163,14 +163,14 @@
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="labelConductivity">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Conductivity:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_10">
+          <widget class="QLabel" name="labelBrainComp">
            <property name="text">
             <string>brainc:</string>
            </property>
@@ -196,7 +196,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="labelSkullComp">
            <property name="text">
             <string>skullc:</string>
            </property>
@@ -225,7 +225,7 @@
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="label_12">
+          <widget class="QLabel" name="labelScalpComp">
            <property name="text">
             <string>scalpc:</string>
            </property>
@@ -251,7 +251,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="labelTriangIco">
         <property name="text">
          <string>Triangulation files ico-number:</string>
         </property>
@@ -285,7 +285,7 @@
        </layout>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_18">
+       <widget class="QLabel" name="labelNoSol">
         <property name="text">
          <string>Nosol:</string>
         </property>
@@ -313,38 +313,8 @@
       <string>Source space setup parameters:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Spacing:</string>
-        </property>
-        <property name="buddy">
-         <cstring>spinBoxSpacing</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBoxSurfaceName"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="spinBoxSpacing">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="suffix">
-         <string> mm</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Compute cortical patch statistics:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_3">
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelSurface">
         <property name="text">
          <string>Surface name (default is &quot;white&quot;):</string>
         </property>
@@ -353,8 +323,24 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="2" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinBoxSpacing">
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="suffix">
+         <string> mm</string>
+        </property>
+        <property name="value">
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QComboBox" name="comboBoxSurfaceName"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelIco">
         <property name="text">
          <string>Cortical surface decimation method (ico):</string>
         </property>
@@ -363,35 +349,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QComboBox" name="comboBoxSurfaceDecimMethod">
-          <item>
-           <property name="text">
-            <string>traditional (default)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>icosahedron or octahedron</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxSurfaceDecimValue">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="5" column="1">
+      <item row="6" column="1" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QRadioButton" name="radioButtonPatchStatNo">
@@ -418,6 +376,57 @@
         </item>
        </layout>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelSpacing">
+        <property name="text">
+         <string>Spacing (default is 7 mm):</string>
+        </property>
+        <property name="buddy">
+         <cstring>spinBoxSpacing</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="labelCPS">
+        <property name="text">
+         <string>Compute cortical patch statistics:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QSpinBox" name="spinBoxSurfaceDecimValue">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QComboBox" name="comboBoxSurfaceDecimMethod">
+        <item>
+         <property name="text">
+          <string>traditional (default)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>icosahedron or octahedron</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelIcoValue">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Ico value:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -428,7 +437,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="labelAtlas">
         <property name="text">
          <string>Use atlas:</string>
         </property>
@@ -475,8 +484,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>603</x>
-     <y>554</y>
+     <x>569</x>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -491,8 +500,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>603</x>
-     <y>554</y>
+     <x>569</x>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

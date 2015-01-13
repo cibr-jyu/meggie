@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2060,7 +2060,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>Forward models available for coregistration:</string>
+                   <string>Forward models available for coregistration:            </string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
                    <item row="0" column="0">
@@ -2088,7 +2088,7 @@
                    <item row="1" column="0">
                     <widget class="QGroupBox" name="groupBoxCoregister">
                      <property name="title">
-                      <string>Coregister the selected forward model:</string>
+                      <string>(Re-)coregister the selected forward model:</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_24">
                       <item row="0" column="0">
@@ -2265,17 +2265,10 @@
                      </attribute>
                     </widget>
                    </item>
-                   <item row="2" column="0">
-                    <widget class="QPushButton" name="pushButtonRemoveForwardSolution">
-                     <property name="text">
-                      <string>Remove selected forward solution</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="0">
                     <widget class="QPushButton" name="pushButtonCreateForwardSolution">
                      <property name="text">
-                      <string>Create forward solution for selected forward model...</string>
+                      <string>(Re)create forward solution for selected forward model...</string>
                      </property>
                     </widget>
                    </item>
@@ -2343,14 +2336,14 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_14">
                <item>
-                <widget class="QPushButton" name="pushButton_3">
+                <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
                  <property name="text">
                   <string>Compute noise covariance matrix based on raw file...</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
                  <property name="text">
                   <string>Compute noise covariance matrix based on epochs...</string>
                  </property>
@@ -2431,7 +2424,7 @@
                 <x>21</x>
                 <y>11</y>
                 <width>347</width>
-                <height>461</height>
+                <height>262</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -2440,19 +2433,11 @@
                  <property name="title">
                   <string>Forward solutions to base inverse operator on:</string>
                  </property>
-                 <widget class="QLabel" name="label_15">
-                  <property name="geometry">
-                   <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>281</width>
-                    <height>20</height>
-                   </rect>
-                  </property>
-                  <property name="text">
-                   <string>Forward solutions -välilehden lista tähän</string>
-                  </property>
-                 </widget>
+                 <layout class="QGridLayout" name="gridLayout_21">
+                  <item row="0" column="0">
+                   <widget class="QTableView" name="tableViewFSolutionsToInverse"/>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
@@ -2501,7 +2486,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_25">
                   <item row="0" column="0">
-                   <widget class="QListView" name="listView"/>
+                   <widget class="QTableView" name="tableViewInverseOperators"/>
                   </item>
                  </layout>
                 </widget>

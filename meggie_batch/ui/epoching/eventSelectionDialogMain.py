@@ -57,7 +57,6 @@ import mne
 import numpy as np
 
 class EventSelectionDialog(QtGui.QDialog):
-    
     """
     Class containing the logic for EventSelectionDialog. It is used for
     collecting desired events from continuous data.
