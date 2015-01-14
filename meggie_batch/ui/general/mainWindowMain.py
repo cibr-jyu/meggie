@@ -878,9 +878,18 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.experiment is None: return
         # TODO: change scales ja muita optioita
+        try:
+            self.caller.call_mne_browse_raw(self.experiment.active_subject._working_file.\
+                                            info.get('filename'))
+        except Exception, err:
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
+            self.messageBox.show()
+            return
+        """
+        #Another way of viewing the raw:
         self.experiment.active_subject._working_file.plot()
         pl.show()
-
+        """
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
