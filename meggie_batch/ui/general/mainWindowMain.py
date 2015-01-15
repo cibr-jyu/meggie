@@ -1325,6 +1325,7 @@ class MainWindow(QtGui.QMainWindow):
                 for item in evokeds_items:
                     self.evokedList.addItem(item)
                     self.evokedList.setCurrentItem(item)
+            # This updates the 'Subject info' section below the subject list.
             InfoDialog(self.experiment.active_subject.working_file,
                         self.ui, False)
             if self.experiment.active_subject._event_set is not None:

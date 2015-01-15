@@ -6,67 +6,81 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>623</height>
+    <width>496</width>
+    <height>831</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="labelRawFile">
-       <property name="text">
-        <string>Raw file to use:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEditRawFile"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonBrowse">
-       <property name="text">
-        <string>Browse...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="labelBeginTime">
-     <property name="text">
-      <string>Beginning of time interval (seconds from start):</string>
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Use raw file from:</string>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxStartTime">
-     <property name="prefix">
-      <string/>
-     </property>
-     <property name="suffix">
-      <string> s</string>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QRadioButton" name="radioButtonSubjectList">
+            <property name="text">
+             <string>subject
+list</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListView" name="listViewSubjects"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QRadioButton" name="radioButtonElseWhere">
+            <property name="text">
+             <string>elsewhere:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditRawFile">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonBrowse">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButtonShowInfo">
+        <property name="text">
+         <string>Show info for the selected raw file (will take a while)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="labelEndTime">
-     <property name="text">
-      <string>End of time interval (seconds from start):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxEndTime">
-     <property name="suffix">
-      <string> s</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBoxRejection">
      <property name="title">
       <string>Rejection</string>
@@ -426,7 +440,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0">
     <widget class="QGroupBox" name="groupBoxIncludeChannels">
      <property name="title">
       <string>Include channels:</string>
@@ -465,7 +479,7 @@
              <bool>false</bool>
             </property>
             <property name="plainText">
-             <string>***example of input here***Preferably also possibility to choose channels based on region***</string>
+             <string>***Problem: input to mne method is by channel indexes (0, 1 etc.), but user input should be by channel names (MEG1331 etc.)***</string>
             </property>
            </widget>
           </item>
@@ -476,7 +490,47 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBoxStartEnd">
+     <property name="title">
+      <string>Time interval:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelBeginTime">
+        <property name="text">
+         <string>Beginning of time interval (seconds from start):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxStartTime">
+        <property name="prefix">
+         <string/>
+        </property>
+        <property name="suffix">
+         <string> s</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelEndTime">
+        <property name="text">
+         <string>End of time interval (seconds from start):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxEndTime">
+        <property name="suffix">
+         <string> s</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -497,8 +551,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>591</x>
-     <y>685</y>
+     <x>574</x>
+     <y>728</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -513,8 +567,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>591</x>
-     <y>685</y>
+     <x>574</x>
+     <y>728</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -529,12 +583,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>145</x>
-     <y>553</y>
+     <x>163</x>
+     <y>651</y>
     </hint>
     <hint type="destinationlabel">
-     <x>250</x>
-     <y>504</y>
+     <x>423</x>
+     <y>615</y>
     </hint>
    </hints>
   </connection>
@@ -545,12 +599,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>77</x>
-     <y>144</y>
+     <x>83</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>86</x>
-     <y>170</y>
+     <x>93</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -561,12 +615,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>329</x>
-     <y>141</y>
+     <x>335</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>345</x>
-     <y>165</y>
+     <x>476</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -577,12 +631,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>288</x>
-     <y>140</y>
+     <x>294</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
-     <x>459</x>
-     <y>210</y>
+     <x>465</x>
+     <y>331</y>
     </hint>
    </hints>
   </connection>
@@ -593,17 +647,66 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
+     <x>205</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>441</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonSubjectList</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listViewSubjects</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonElseWhere</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEditRawFile</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>155</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonElseWhere</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonBrowse</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
      <y>145</y>
     </hint>
     <hint type="destinationlabel">
-     <x>150</x>
-     <y>342</y>
+     <x>642</x>
+     <y>156</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroupIncludeChannels"/>
+  <buttongroup name="buttonGroupRawFileSource"/>
  </buttongroups>
 </ui>

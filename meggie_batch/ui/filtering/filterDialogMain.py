@@ -13,7 +13,6 @@ from mplWidget import MplWidget, MplCanvas
 from caller import Caller
 from measurementInfo import MeasurementInfo
 from matplotlib import pyplot as plt
-import validator
 
 import messageBoxes
 

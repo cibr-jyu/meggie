@@ -45,7 +45,7 @@ class InfoDialog(QtGui.QDialog):
     Dialog to get and show the info from the raw file. Can be used to direct
     the extracted information from the file to the dialog itself or some
     other ui with similar element names. Currently used for setting the
-    parameters in the Raw tab of the mainWindow. 
+    subject info fields below the subject list in the mainWindow. 
     """
     def __init__(self, raw, targetUi, create_window):
         """

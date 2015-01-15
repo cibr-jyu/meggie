@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1588</width>
-    <height>732</height>
+    <width>1379</width>
+    <height>765</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1211</width>
+         <width>1100</width>
          <height>750</height>
         </rect>
        </property>
@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -2691,7 +2691,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1588</width>
+     <width>1379</width>
      <height>23</height>
     </rect>
    </property>

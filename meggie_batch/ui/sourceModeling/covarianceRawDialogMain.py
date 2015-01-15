@@ -5,8 +5,9 @@ Created on 7.1.2015
 '''
 
 from PyQt4 import QtGui
-
 from covarianceRawDialogUi import Ui_covarianceRawDialog
+
+import messageBoxes
 
 
 class CovarianceRawDialog(QtGui.QDialog):
@@ -65,9 +66,24 @@ class CovarianceRawDialog(QtGui.QDialog):
         if len(flatDict) > 0:
             pdict['flat'] = flatDict
         else: pdict['flat'] = None
-            
-        pdict
-            
+        
+        if self.ui.buttonGroupIncludeChannels.checkedButton() == \
+        self.ui.radioButtonIncludeAll:
+            pdict['picks'] = None
+        else:
+            # TODO: this needs a parser, see validatorParser module
+            pdict['picks'] = self.ui.plainTextEditIncludeChannelList.\
+                             toPlainText()
+        
+        # Basic sanity checking for input values
+        if pdict['starttime'] >= pdict['endtime']:
+            message = 'Check beginning and end of your time interval'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        self.parent.caller.create_covariance_from_raw(pdict)
+        
     def on_pushButtonBrowse_clicked(self, checked=None):
         """
         Open file browser for raw data file.

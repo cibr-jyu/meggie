@@ -191,7 +191,7 @@ class EcgParametersDialog(QtGui.QDialog):
         """
         Sets the values in the newly created dialog to those in the dictionary
         given. See the *** for the specifics about the dictionary.
-        TODO exact source of dictionary information
+        TODO: exact source of dictionary information
         """
         self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
         self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
@@ -221,7 +221,7 @@ class EcgParametersDialog(QtGui.QDialog):
                                            dic.get('no-proj')))
         self.ui.checkBoxSSPCompute.setChecked(ast.literal_eval(
                                            dic.get('average')))
-        # TODO get the selected channel from the combobox
+        # TODO: get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
              
                                            

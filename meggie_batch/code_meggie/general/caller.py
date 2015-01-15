@@ -1170,6 +1170,23 @@ class Caller(object):
             self.messageBox.show()
         
 
+    def create_covariance_from_raw(self, cvdict):
+        """
+        Computes a covariance matrix based on raw file and saves it to the 
+        approriate location under the subject.
+        
+        Keyword arguments:
+        
+        cvdict        -- dictionary containing parameters for covariance
+                         computation
+        """
+        
+        # raw
+        
+        
+        cov = mne.compute_raw_data_covariance()
+
+
     def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working file for the experiment the caller relates
