@@ -263,8 +263,8 @@ class EcgParametersDialog(QtGui.QDialog):
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
-            if item.text() == recently_active_subject:
-                continue
+            #if item.text() == recently_active_subject:
+            #    continue
             subject_names.append(item.text())
 
 
@@ -282,7 +282,8 @@ class EcgParametersDialog(QtGui.QDialog):
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.parent.experiment._subjects:
             if subject._subject_name in subject_names:
-                
+                if subject._subject_name == recently_active_subject:
+                    continue
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
                 incorrect_ECG_channel, error_message = self.\

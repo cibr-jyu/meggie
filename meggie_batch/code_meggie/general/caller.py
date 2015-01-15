@@ -116,8 +116,8 @@ class Caller(object):
                                     stderr=subprocess.STDOUT)
         for line in proc.stdout.readlines():
             print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval
+        #retval = proc.wait()
+        #print "the program return code was %d" % retval
      
         
     def call_maxfilter(self, dic, custom):
