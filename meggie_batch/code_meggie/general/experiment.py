@@ -247,48 +247,44 @@ class Experiment(QObject):
         self._subjects.append(subject)
 
 
-    def remove_subject(self, item, main_window):
+    def remove_subject(self, sname, main_window):
         """
         Removes the subject folder and its contents under experiment tree.
         Removes the subject information from experiment properties and updates
         the experiment settings file.
-        Removes the item from the listWidgetSubjects.
         
         Keyword arguments:
-        item        -- currently active item on self.ui.listWidgetSubjects
+        sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        subject_name = str(item.text())
-        subject_path = os.path.join(self.workspace, self.experiment_name, subject_name)
+        subject_path = os.path.join(self.workspace, self.experiment_name, sname)
         
         if (subject_path in path for path in self.subject_paths):
             # Need to call _subject_paths to be able to remove.
             # Doesn't work if call subject_path without _.
             self._subject_paths.remove(subject_path)
-            del self._working_file_names[subject_name]
+            del self._working_file_names[sname]
         
         # If subject is not created with the chosen subject list item,
         # hence activated using activate -button after opening an existing
         # experiment, only subject_paths list and working_file_names dictionary
         # needs to be updated.
         for subject in self._subjects:
-            if subject.subject_name == subject_name:
+            if subject.subject_name == sname:
                 self._subjects.remove(subject)
         
         # If active subject is removed, the active properties have to be
         # reseted to default values.    
-        if subject_path == os.path.join(self._workspace, self._experiment_name, self.active_subject_name):
+        if subject_path == os.path.join(self._workspace, self._experiment_name,
+                                        self.active_subject_name):
             self._active_subject_name = ''
             self._active_subject = None
         
         try:
             shutil.rmtree(subject_path)
         except OSError:
-            raise Exception('Could not remove the contents of the subject' + \
-                            ' folder.')
-        row = main_window.ui.listWidgetSubjects.row(item)
+            raise
         self.save_experiment_settings()
-        main_window.ui.listWidgetSubjects.takeItem(row)
         main_window._initialize_ui()
 
 

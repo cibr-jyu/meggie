@@ -9,10 +9,12 @@ Contains models for views in various UI components, mainly MainWindow.
 TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QFont
 import os
 
 import fileManager
+
 
 class ForwardModelModel(QtCore.QAbstractTableModel):
     """
@@ -127,8 +129,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # This mostly checks whether or not there is an active subject.    
         if self.parent._experiment._active_subject == None:
             self._fmodels_directory = None
-            del self.fmodelInfoList[:]
             self.layoutAboutToBeChanged.emit()
+            del self.fmodelInfoList[:]
             self.layoutChanged.emit()
             return
         
@@ -136,17 +138,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                       _forwardModels_directory
         fmsdir = self._fmodels_directory
         
-        """
-        # This really should not need checking nowadays, just exists for 
-        # handling old style subject directories. 
-        if not os.path.isdir(fmsdir):
-            self._fmodels_directory = None
-            del self.fmodelInfoList[:]
-            self.layoutAboutToBeChanged.emit()
-            self.layoutChanged.emit()
-            return
-        """
-            
+        self.layoutAboutToBeChanged.emit()
+        
         # Best to empty the list anyway, otherwise the forward models 
         # from the previous active subject end up staying there.
         del self.fmodelInfoList[:]
@@ -157,7 +150,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             pmlist = self.create_single_FM_param_list(fmsdir, d)                
             self.fmodelInfoList.append(pmlist)
 
-        self.layoutAboutToBeChanged.emit()
         self.layoutChanged.emit()
         
         
@@ -296,5 +288,97 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         
         
         
-# class CoregistrationModel(QAbstractTableModel):
+class SubjectListModel(QtCore.QAbstractListModel):
+    """
+    Simple model class for storing data for subject lists.
+    """
     
+    def __init__(self, parent=None):
+        QtCore.QAbstractListModel.__init__(self)
+        self.parent = parent
+        
+        # Each dictionary in the list includes name of a single subject. 
+        self.subjectNameList = []
+        self.initialize_model()
+    
+    
+    def rowCount(self, parent):
+        """
+        The associated view should have as many rows as there are 
+        subject names.
+        """
+        return len(self.subjectNameList)
+    
+        
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        """
+        Standard data method for the QAbstractListModel.
+        """
+        if not index.isValid():
+            return QtCore.QVariant()
+        
+        try:
+            activeSubjectName = self.parent._experiment._active_subject.\
+            _subject_name
+        except Exception:
+            activeSubjectName = None
+         
+        if role == QtCore.Qt.DisplayRole:
+            row = index.row()
+            value = self.subjectNameList[row]
+            return value
+        
+        # TODO: use Qt.BackgroundRole to color the background green 
+        # (QtGui.QColor(175,254,101)) if subject active, red
+        # (QtGui.QColor(253,47,75)) otherwise
+                            
+        if role == QtCore.Qt.FontRole:  
+            row = index.row()
+            subjectName = self.subjectNameList[row]
+            if activeSubjectName != None:
+                if subjectName == activeSubjectName:
+                    itemFont = QFont('defaultFamily')
+                    itemFont.setBold(True)
+                    return itemFont
+            else:
+                return None
+            
+        if role == QtCore.Qt.BackgroundColorRole:
+            row = index.row()
+            subjectName = self.subjectNameList[row]
+            if subjectName == activeSubjectName:
+                return QtGui.QColor(132,255,132)
+            else:
+                return QtGui.QColor(255,132,132)
+                
+    
+    def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
+        """
+        Removal of a single row from the model.
+        """
+        self.beginRemoveRows(parent, position, position + rows - 1)
+        singleItem = self.subjectNameList[position]
+        self.subjectNameList.remove(singleItem)
+        self.endRemoveRows()
+        
+    
+    def initialize_model(self):
+        """
+        Reads the experiment directory and populates the
+        subjectNameList accordingly.
+        """
+        
+        self.layoutAboutToBeChanged.emit()
+        del self.subjectNameList[:]
+        
+        if self.parent._experiment == None:
+            self.layoutChanged.emit()
+            return
+        
+        if (len(self.parent.experiment._subject_paths) > 0):
+            for path in self.parent.experiment._subject_paths:
+                subjectName = path.split('/')[-1]
+                self.subjectNameList.append(subjectName)
+
+        self.layoutChanged.emit()
+        

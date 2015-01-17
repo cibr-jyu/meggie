@@ -82,7 +82,7 @@ from events import Events
 from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
-from mvcModels import ForwardModelModel
+from mvcModels import ForwardModelModel, SubjectListModel
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -147,6 +147,7 @@ class MainWindow(QtGui.QMainWindow):
         # Models for several views in the UI, e.g. in the forward model setup 
         # tab.
         self.forwardModelModel = ForwardModelModel(self)
+        self.subjectListModel = SubjectListModel(self)
         
         # Proxymodels for tuning what is actually shown in the views below.
         self.proxyModelTableViewForwardSolutionSource = QtGui.\
@@ -166,6 +167,9 @@ class MainWindow(QtGui.QMainWindow):
             setSourceModel(self.forwardModelModel)
         
         # Linking corresponding views to models above and tuning them     
+        
+        self.ui.listViewSubjects.setModel(self.subjectListModel)
+        
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
         for colnum in range(17, 21):
             self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
@@ -267,7 +271,6 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
         
-                
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.show()
 
@@ -278,27 +281,32 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         
-        if self.ui.listWidgetSubjects.count() == 0:
-            return
+        selIndexes = self.ui.listViewSubjects.selectedIndexes()
         
-        elif self.ui.listWidgetSubjects.currentItem() is None:
-            self.messageBox = messageBoxes.shortMessageBox('No subject selected.')
+        if selIndexes == []:
+            message = 'No subject selected for removal.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-            
-        item_str = self.ui.listWidgetSubjects.currentItem().text()
+        
+        subject_name = selIndexes[0].data()
             
         message = 'Permanently remove subject and the related files?'
-            
         reply = QtGui.QMessageBox.question(self, 'delete subject',
                                            message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
             
         if reply == QtGui.QMessageBox.Yes:
-            self.experiment.remove_subject(self.ui.listWidgetSubjects.currentItem(), self)
-            # TODO: listWidgetSubects.currentItem() should be removed here
-
+            try:
+                self.experiment.remove_subject(subject_name, self)
+                self.subjectListModel.removeRows(selIndexes[0].row())
+            except Exception:
+                message = 'Could not remove the contents of the subject' + \
+                            ' folder.'
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+        
         
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -1032,8 +1040,11 @@ class MainWindow(QtGui.QMainWindow):
         Activates a subject.
         """
         if checked is None: return
-        if self.ui.listWidgetSubjects.currentItem() is None: return
-        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        if self.ui.listViewSubjects.selectedIndexes() == []: return
+        
+        selIndexes = self.ui.listViewSubjects.selectedIndexes()
+        subject_name = selIndexes[0].data()
+        
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:
             return      
@@ -1274,7 +1285,6 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.evokedList.clear()
-        self.ui.listWidgetSubjects.clear()
         
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
@@ -1308,6 +1318,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # If experiment has subjects added, the active_subject info will be added
         # and tabs enabled for processing.
+        """
         if (len(self.experiment._subject_paths) > 0):
             for path in self.experiment._subject_paths:
                 item = QtGui.QListWidgetItem()
@@ -1320,10 +1331,9 @@ class MainWindow(QtGui.QMainWindow):
                     itemFont.setBold(True)
                     item.setFont(itemFont)
                 self.ui.listWidgetSubjects.addItem(item)
+        """
         
         if self.experiment.active_subject is not None:
-            #item = QtGui.QListWidgetItem(self.experiment._active_subject_name)
-            self.ui.listWidgetSubjects.addItem(item)
             epochs_items = self.experiment.load_epochs(self.experiment.active_subject)
             evokeds_items = self.experiment.load_evokeds(self.experiment.active_subject)
             if epochs_items is not None:
@@ -1338,8 +1348,7 @@ class MainWindow(QtGui.QMainWindow):
             InfoDialog(self.experiment.active_subject.working_file,
                         self.ui, False)
             if self.experiment.active_subject._event_set is not None:
-                self.populate_raw_tab_event_list()
-            
+                self.populate_raw_tab_event_list()    
             
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
         if self.experiment.active_subject is None:
@@ -1501,7 +1510,9 @@ class MainWindow(QtGui.QMainWindow):
         changes, updating the models when items are added to them is based
         on events.
         """
+        # FIXME: this should be called separately after adding a forward model.
         self.forwardModelModel.initialize_model()
+        self.subjectListModel.initialize_model()
 
 
 

@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">
@@ -3195,15 +3195,12 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="0">
       <widget class="QGroupBox" name="groupBoxSubject_2">
        <property name="title">
-        <string>Subjects (active in bold):</string>
+        <string>Subjects (active in bold and green):</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_12">
         <property name="margin">
          <number>9</number>
         </property>
-        <item row="0" column="0">
-         <widget class="QListWidget" name="listWidgetSubjects"/>
-        </item>
         <item row="1" column="0">
          <layout class="QGridLayout" name="gridLayout_5">
           <property name="sizeConstraint">
@@ -3238,6 +3235,9 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QListView" name="listViewSubjects"/>
         </item>
        </layout>
       </widget>

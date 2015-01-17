@@ -79,8 +79,8 @@ class AddSubjectDialog(QtGui.QDialog):
             subject_name_string = str(subject_name)
             
             # Check if the subject is already added to the experiment.
-            if len(self.parent.ui.listWidgetSubjects.
-                   findItems(subject_name_string, QtCore.Qt.MatchExactly)) > 0:
+            if subject_name_string in self.parent.subjectListModel.\
+            subjectNameList:
                 message = 'Subject ' + item.text() + ' is already added ' +\
                         'to the experiment. Change the filename of the raw ' +\
                         'every time you want to create a new subject with ' +\
