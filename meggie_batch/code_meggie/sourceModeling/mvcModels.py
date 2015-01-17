@@ -125,17 +125,18 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         Reads the active subject's forwardModels directory and populates the
         data accordingly.
         """
-        
-        # This mostly checks whether or not there is an active subject.    
-        if self.parent._experiment._active_subject == None:
+        activeSubject = self.parent._experiment._active_subject
+        if activeSubject == None:
             self._fmodels_directory = None
             self.layoutAboutToBeChanged.emit()
             del self.fmodelInfoList[:]
             self.layoutChanged.emit()
             return
         
-        self._fmodels_directory = self.parent._experiment._active_subject.\
-                      _forwardModels_directory
+        if not os.path.isdir(activeSubject._forwardModels_directory):
+            activeSubject.create_forwardModels_directory()
+        
+        self._fmodels_directory = activeSubject._forwardModels_directory
         fmsdir = self._fmodels_directory
         
         self.layoutAboutToBeChanged.emit()
@@ -327,10 +328,6 @@ class SubjectListModel(QtCore.QAbstractListModel):
             row = index.row()
             value = self.subjectNameList[row]
             return value
-        
-        # TODO: use Qt.BackgroundRole to color the background green 
-        # (QtGui.QColor(175,254,101)) if subject active, red
-        # (QtGui.QColor(253,47,75)) otherwise
                             
         if role == QtCore.Qt.FontRole:  
             row = index.row()
@@ -349,7 +346,7 @@ class SubjectListModel(QtCore.QAbstractListModel):
             if subjectName == activeSubjectName:
                 return QtGui.QColor(132,255,132)
             else:
-                return QtGui.QColor(255,132,132)
+                return None
                 
     
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):

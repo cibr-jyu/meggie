@@ -1334,6 +1334,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         
         if self.experiment.active_subject is not None:
+            # Populate epoch and evoked lists
             epochs_items = self.experiment.load_epochs(self.experiment.active_subject)
             evokeds_items = self.experiment.load_evokeds(self.experiment.active_subject)
             if epochs_items is not None:
@@ -1344,6 +1345,7 @@ class MainWindow(QtGui.QMainWindow):
                 for item in evokeds_items:
                     self.evokedList.addItem(item)
                     self.evokedList.setCurrentItem(item)
+            
             # This updates the 'Subject info' section below the subject list.
             InfoDialog(self.experiment.active_subject.working_file,
                         self.ui, False)
@@ -1451,21 +1453,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate, "Source estimate")
         self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis, "Source analysis")
         
-        
-    def enable_tabs(self):
-        """
-        Method for enabling the tabs.
-        """
-        self.ui.tabWidget.setTabEnabled(0,True)
-        self.ui.tabWidget.setTabEnabled(1,True)
-        self.ui.tabWidget.setTabEnabled(2,True)
-        self.ui.tabWidget.setTabEnabled(3,True)
-        self.ui.tabWidget.setTabEnabled(4,True)
-        self.ui.tabWidget.setTabEnabled(5,True)
-        self.ui.tabWidget.setTabEnabled(6,True)
-        self.ui.tabWidget.setTabEnabled(7,True)
-        self.ui.tabWidget.setTabEnabled(8,True)
-
 
     def on_currentChanged(self):
             """
@@ -1475,8 +1462,7 @@ class MainWindow(QtGui.QMainWindow):
             """
             index = self.ui.tabWidget.currentIndex()
             #self.tab = self.ui.tabWidget.currentWidget()
-            
-            
+             
             if index == 1:
                 self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
                 #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)

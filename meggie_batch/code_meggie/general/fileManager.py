@@ -443,7 +443,7 @@ def load_epochs(fname):
     Keyword arguments:
     fname -- the name of the fif-file containing epochs.
     
-    return epochs in a QListWidgetItem 
+    Return a tuple with an Epochs instance and
     """
     split = os.path.split(fname)
     folder = split[0] + '/'
@@ -466,7 +466,7 @@ def load_epochs(fname):
     except IOError:
         parameters = None
         return epochs, parameters
-    # The events need to be converted back to QListWidgetItems.
+
     event_list = []
     event_dict = parameters['events']
     for key in event_dict:
