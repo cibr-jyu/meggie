@@ -73,6 +73,7 @@ from filterDialogMain import FilterDialog
 from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
 from forwardSolutionDialogMain import ForwardSolutionDialog
+from covarianceRawDialogMain import CovarianceRawDialog
 
 import messageBoxes
 
@@ -1253,8 +1254,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
-        # self.covarianceRawDialog = covarianceRawDialog(self)
-        # self.covarianceRawDialog.show()    
+        self.covarianceRawDialog = CovarianceRawDialog(self)
+        self.covarianceRawDialog.show()    
           
     
     def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):

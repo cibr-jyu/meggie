@@ -1,7 +1,4 @@
 # coding: latin1
-import shutil
-from holdCoregistrationDialogMain import holdCoregistrationDialog
-
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
@@ -77,6 +74,9 @@ import glob
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from scimath.units.energy import cal
+
+import shutil
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 
 class Caller(object):
@@ -1181,11 +1181,38 @@ class Caller(object):
                          computation
         """
         
-        # raw
+        rawname = cvdict['rawsubjectname']
+        if rawname != None:
+            if rawname == self.parent._experiment.active_subject_name():
+                raw = self.parent._experiment._active_subject.working_file()
+            else:
+                raw = fileManager.open_raw(rawname, True)
+        else:
+            
+            raw = fileManager.open_raw(cvdict['rawfilepath'], True)
         
+        tmin = cvdict['starttime']
+        tmax = cvdict['endtime']
+        tstep = cvdict['tstep']
+        reject = cvdict['reject']
+        flat = cvdict['flat']
+        picks = cvdict['picks']
         
-        cov = mne.compute_raw_data_covariance()
-
+        cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep, reject,
+                                              flat, picks)
+        
+        fileNameToWrite = rawname + '-cov.fif'
+        filePathToWrite = os.path.join(
+                            self.parent._experiment._active_subject.
+                            _source_analysis_directory, fileNameToWrite)
+        
+        try:
+            mne.write_cov(filePathToWrite, cov)
+        except IOError:
+            message = 'Could not write covariance file.'
+            self.messagebox = messageBoxes.shortMessageBox(message)
+            self.messagebox.show()
+            
 
     def update_experiment_working_file(self, fname, raw):
         """

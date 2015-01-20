@@ -21,7 +21,8 @@ class CovarianceRawDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_covarianceRawDialog()
         self.ui.setupUi(self)
-        
+        self.ui.listViewSubjects.setModel(self.parent.subjectListModel)
+           
            
     def accept(self):
         """
@@ -33,13 +34,23 @@ class CovarianceRawDialog(QtGui.QDialog):
         
         pdict = dict()
         
-        pdict['rawfilename'] = self.ui.lineEditRawFile.text()
+        if self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonSubjectList:
+            selIndexes = self.ui.listViewSubjects.selectedIndexes()
+            subjectName = selIndexes[0].data()
+            pdict['rawsubjectname'] = subjectName
+            pdict['rawfilepath'] = None 
+        else:
+            pdict['rawfilepath'] = self.ui.lineEditRawFile.text()
+            pdict['rawsubjectname'] = None
+        
         pdict['starttime'] = self.ui.doubleSpinBoxStartTime.value()
         pdict['endtime'] = self.ui.doubleSpinBoxEndTime.value()
         
         rejectDict = dict()
         flatDict = dict()
         if self.ui.checkBoxRejection.isChecked():
+            rejectDict['tstep'] = self.ui.doubleSpinBoxChunkLength.value()
             if self.ui.checkBoxRejectGrad.isChecked():
                 rejectDict['grad'] = self.ui.doubleSpinBoxGradReject.value()
             if self.ui.checkBoxRejectMag.isChecked():
@@ -82,12 +93,32 @@ class CovarianceRawDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         
+        if (self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonSubjectList and \
+        len(self.ui.listViewSubjects.selectedIndexes()) == 0) or \
+        self.ui.lineEditRawFile.text() == '' :
+            message = 'Please select a raw file to compute covariance from.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
         self.parent.caller.create_covariance_from_raw(pdict)
+        
         
     def on_pushButtonBrowse_clicked(self, checked=None):
         """
         Open file browser for raw data file.
         """
-        self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Select raw ' + \
+        if checked is None: return
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Select raw ' + \
                       'to use', '/home/')
+        self.ui.lineEditRawFile = fname
+        
+        
+    def on_pushButtonShowInfo_clicked(self, checked=None):
+        """
+        Show basic information about the raw selected raw file.
+        """
+        if checked is None: return
+        
         

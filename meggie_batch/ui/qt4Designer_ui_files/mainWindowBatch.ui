@@ -89,7 +89,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>8</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tabPreprocessing">
              <property name="minimumSize">

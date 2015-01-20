@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Compute covariance from raw file</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
    <item row="0" column="0">
@@ -27,12 +27,15 @@
           <item>
            <widget class="QRadioButton" name="radioButtonSubjectList">
             <property name="text">
-             <string>subject
-list</string>
+             <string>subject list
+(working file)</string>
             </property>
             <property name="checked">
              <bool>true</bool>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroupRawFile</string>
+            </attribute>
            </widget>
           </item>
           <item>
@@ -47,6 +50,9 @@ list</string>
             <property name="text">
              <string>elsewhere:</string>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroupRawFile</string>
+            </attribute>
            </widget>
           </item>
           <item>
@@ -551,8 +557,8 @@ list</string>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>574</x>
-     <y>728</y>
+     <x>486</x>
+     <y>821</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -567,8 +573,8 @@ list</string>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>574</x>
-     <y>728</y>
+     <x>486</x>
+     <y>821</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -583,12 +589,12 @@ list</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>651</y>
+     <x>176</x>
+     <y>739</y>
     </hint>
     <hint type="destinationlabel">
-     <x>423</x>
-     <y>615</y>
+     <x>475</x>
+     <y>775</y>
     </hint>
    </hints>
   </connection>
@@ -599,12 +605,12 @@ list</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>271</y>
+     <x>109</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
-     <x>93</x>
-     <y>299</y>
+     <x>120</x>
+     <y>391</y>
     </hint>
    </hints>
   </connection>
@@ -615,12 +621,12 @@ list</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>335</x>
-     <y>271</y>
+     <x>361</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
      <x>476</x>
-     <y>299</y>
+     <y>391</y>
     </hint>
    </hints>
   </connection>
@@ -631,12 +637,12 @@ list</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>294</x>
-     <y>271</y>
+     <x>320</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
-     <x>465</x>
-     <y>331</y>
+     <x>477</x>
+     <y>485</y>
     </hint>
    </hints>
   </connection>
@@ -647,12 +653,12 @@ list</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>205</x>
-     <y>271</y>
+     <x>231</x>
+     <y>359</y>
     </hint>
     <hint type="destinationlabel">
-     <x>156</x>
-     <y>441</y>
+     <x>182</x>
+     <y>611</y>
     </hint>
    </hints>
   </connection>
@@ -660,7 +666,7 @@ list</string>
    <sender>radioButtonSubjectList</sender>
    <signal>toggled(bool)</signal>
    <receiver>listViewSubjects</receiver>
-   <slot>setDisabled(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>60</x>
@@ -699,13 +705,30 @@ list</string>
      <y>145</y>
     </hint>
     <hint type="destinationlabel">
-     <x>642</x>
-     <y>156</y>
+     <x>475</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonElseWhere</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listViewSubjects</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroupIncludeChannels"/>
+  <buttongroup name="buttonGroupRawFile"/>
  </buttongroups>
 </ui>

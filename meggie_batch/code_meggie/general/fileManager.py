@@ -427,7 +427,6 @@ def delete_file_at(folder, files):
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
     """
-
     try:
         if isinstance(files, list):
             for f in files:
@@ -443,7 +442,8 @@ def load_epochs(fname):
     Keyword arguments:
     fname -- the name of the fif-file containing epochs.
     
-    Return a tuple with an Epochs instance and
+    # TODO: fix this.
+    Return a tuple with an Epochs instance and 
     """
     split = os.path.split(fname)
     folder = split[0] + '/'
