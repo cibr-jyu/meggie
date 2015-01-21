@@ -8,6 +8,10 @@ from PyQt4 import QtGui
 from covarianceRawDialogUi import Ui_covarianceRawDialog
 
 import messageBoxes
+import fileManager
+import os
+from infoDialogUi import Ui_infoDialog
+from infoDialogMain import InfoDialog
 
 
 class CovarianceRawDialog(QtGui.QDialog):
@@ -29,9 +33,6 @@ class CovarianceRawDialog(QtGui.QDialog):
         Gets the arguments from the gui and passes them to caller for computing
         the noise covariance matrix. 
         """
-        
-        # TODO: basic input sanity checking here (start time later than end etc.
-        
         pdict = dict()
         
         if self.ui.buttonGroupRawFile.checkedButton() == \
@@ -46,14 +47,15 @@ class CovarianceRawDialog(QtGui.QDialog):
         
         pdict['starttime'] = self.ui.doubleSpinBoxStartTime.value()
         pdict['endtime'] = self.ui.doubleSpinBoxEndTime.value()
+        pdict['tstep'] = self.ui.doubleSpinBoxChunkLength.value()
+        
         
         rejectDict = dict()
         flatDict = dict()
         if self.ui.checkBoxRejection.isChecked():
-            rejectDict['tstep'] = self.ui.doubleSpinBoxChunkLength.value()
-            if self.ui.checkBoxRejectGrad.isChecked():
+            if self.ui.checkBoxGradReject.isChecked():
                 rejectDict['grad'] = self.ui.doubleSpinBoxGradReject.value()
-            if self.ui.checkBoxRejectMag.isChecked():
+            if self.ui.checkBoxMagReject.isChecked():
                 rejectDict['mag'] = self.ui.doubleSpinBoxMagReject.value()
             if self.ui.checkBoxEEGReject.isChecked():
                 rejectDict['eeg'] = self.ui.doubleSpinBoxEEGReject.value()
@@ -69,7 +71,7 @@ class CovarianceRawDialog(QtGui.QDialog):
                 flatDict['ecg'] = self.ui.doubleSpinBoxFlatECG.value()
             if self.ui.checkBoxFlatEOG.isChecked():
                 flatDict['eog'] = self.ui.doubleSpinBoxFlatEOG.value()
-            
+         
         if len(rejectDict) > 0:
             pdict['reject'] = rejectDict
         else: pdict['reject'] = None
@@ -96,7 +98,9 @@ class CovarianceRawDialog(QtGui.QDialog):
         if (self.ui.buttonGroupRawFile.checkedButton() == \
         self.ui.radioButtonSubjectList and \
         len(self.ui.listViewSubjects.selectedIndexes()) == 0) or \
-        self.ui.lineEditRawFile.text() == '' :
+        (self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonElseWhere and \
+        self.ui.lineEditRawFile.text()) == '' :
             message = 'Please select a raw file to compute covariance from.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
@@ -112,7 +116,7 @@ class CovarianceRawDialog(QtGui.QDialog):
         if checked is None: return
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Select raw ' + \
                       'to use', '/home/')
-        self.ui.lineEditRawFile = fname
+        self.ui.lineEditRawFile.setText(fname)
         
         
     def on_pushButtonShowInfo_clicked(self, checked=None):
@@ -121,4 +125,24 @@ class CovarianceRawDialog(QtGui.QDialog):
         """
         if checked is None: return
         
+        if self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonSubjectList:
+            selIndexes = self.ui.listViewSubjects.selectedIndexes()
+            subjectName = selIndexes[0].data()
+            subjectPath = os.path.join(self.parent.experiment.workspace,
+                                       self.parent.experiment.experiment_name,
+                                       subjectName, subjectName + '.fif')
+        else:
+            subjectPath = self.ui.lineEditRawFile.text()
         
+        try:
+            raw = fileManager.open_raw(subjectPath, False)
+        except Exception:
+            message = 'Could not open file for showing info.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
+        info = Ui_infoDialog()
+        self.infoDialog = InfoDialog(raw, info, True)
+        self.infoDialog.show()

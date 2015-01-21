@@ -1181,12 +1181,12 @@ class Caller(object):
                          computation
         """
         
-        rawname = cvdict['rawsubjectname']
-        if rawname != None:
-            if rawname == self.parent._experiment.active_subject_name():
-                raw = self.parent._experiment._active_subject.working_file()
+        subjectName = cvdict['rawsubjectname']
+        if subjectName != None:
+            if subjectName == self.parent.experiment.active_subject_name:
+                raw = self.parent.experiment.active_subject.working_file()
             else:
-                raw = fileManager.open_raw(rawname, True)
+                raw = fileManager.open_raw(cvdict['rawfilepath'], True)
         else:
             
             raw = fileManager.open_raw(cvdict['rawfilepath'], True)
@@ -1194,14 +1194,25 @@ class Caller(object):
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
         tstep = cvdict['tstep']
+        
         reject = cvdict['reject']
         flat = cvdict['flat']
         picks = cvdict['picks']
         
-        cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep, reject,
-                                              flat, picks)
+        try:
+            cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
+                  reject, flat, picks)
+        except ValueError as e:
+            message = 'Could not compute covariance. MNE error message was: ' +\
+            '\n\n' + str(e)
+            self.messagebox = messageBoxes.shortMessageBox(message)
+            self.messagebox.show()
+            return
         
-        fileNameToWrite = rawname + '-cov.fif'
+        # TODO: this should be name of the cov source file + ending, to
+        # show what the cov file is based on (parse subject name from path,
+        # if an external file is used.
+        fileNameToWrite = subjectName + '-cov.fif'
         filePathToWrite = os.path.join(
                             self.parent._experiment._active_subject.
                             _source_analysis_directory, fileNameToWrite)

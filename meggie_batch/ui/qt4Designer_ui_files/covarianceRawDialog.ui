@@ -728,7 +728,7 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroupIncludeChannels"/>
   <buttongroup name="buttonGroupRawFile"/>
+  <buttongroup name="buttonGroupIncludeChannels"/>
  </buttongroups>
 </ui>
