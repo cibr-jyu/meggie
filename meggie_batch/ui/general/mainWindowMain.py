@@ -1316,23 +1316,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
         self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
         
-        # If experiment has subjects added, the active_subject info will be added
-        # and tabs enabled for processing.
-        """
-        if (len(self.experiment._subject_paths) > 0):
-            for path in self.experiment._subject_paths:
-                item = QtGui.QListWidgetItem()
-                # -1 is the index for the subject name
-                itemSubjectName = path.split('/')[-1]
-                item.setText(itemSubjectName)
-                # Let's bold the name of the active subject in the subject list.
-                if itemSubjectName == self.experiment.active_subject_name:
-                    itemFont = QFont('defaultFamily')
-                    itemFont.setBold(True)
-                    item.setFont(itemFont)
-                self.ui.listWidgetSubjects.addItem(item)
-        """
-        
         if self.experiment.active_subject is not None:
             # Populate epoch and evoked lists
             epochs_items = self.experiment.load_epochs(self.experiment.active_subject)
@@ -1496,7 +1479,6 @@ class MainWindow(QtGui.QMainWindow):
         changes, updating the models when items are added to them is based
         on events.
         """
-        # FIXME: this should be called separately after adding a forward model.
         self.forwardModelModel.initialize_model()
         self.subjectListModel.initialize_model()
 
