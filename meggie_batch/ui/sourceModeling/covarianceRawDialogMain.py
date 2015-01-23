@@ -35,6 +35,18 @@ class CovarianceRawDialog(QtGui.QDialog):
         """
         pdict = dict()
         
+        # Basic sanity checking for selections.
+        if (self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonSubjectList and \
+        len(self.ui.listViewSubjects.selectedIndexes()) == 0) or \
+        (self.ui.buttonGroupRawFile.checkedButton() == \
+        self.ui.radioButtonElseWhere and \
+        self.ui.lineEditRawFile.text()) == '' :
+            message = 'Please select a raw file to compute covariance from.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        
         if self.ui.buttonGroupRawFile.checkedButton() == \
         self.ui.radioButtonSubjectList:
             selIndexes = self.ui.listViewSubjects.selectedIndexes()
@@ -88,25 +100,28 @@ class CovarianceRawDialog(QtGui.QDialog):
             pdict['picks'] = self.ui.plainTextEditIncludeChannelList.\
                              toPlainText()
         
-        # Basic sanity checking for input values
+        # Basic sanity checking for input values.
         if pdict['starttime'] >= pdict['endtime']:
             message = 'Check beginning and end of your time interval'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         
-        if (self.ui.buttonGroupRawFile.checkedButton() == \
-        self.ui.radioButtonSubjectList and \
-        len(self.ui.listViewSubjects.selectedIndexes()) == 0) or \
-        (self.ui.buttonGroupRawFile.checkedButton() == \
-        self.ui.radioButtonElseWhere and \
-        self.ui.lineEditRawFile.text()) == '' :
-            message = 'Please select a raw file to compute covariance from.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+        try:
+            self.parent.caller.create_covariance_from_raw(pdict)    
+        except ValueError as e:
+            message = 'Could not compute covariance. MNE error message was: ' +\
+            '\n\n' + str(e)
+            self.messagebox = messageBoxes.shortMessageBox(message)
+            self.messagebox.show()
+            return   
+        except IOError:
+            message = 'Could not write covariance file.'
+            self.messagebox = messageBoxes.shortMessageBox(message)
+            self.messagebox.show()
             return
         
-        self.parent.caller.create_covariance_from_raw(pdict)
+        self.close()
         
         
     def on_pushButtonBrowse_clicked(self, checked=None):

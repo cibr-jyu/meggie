@@ -570,13 +570,13 @@ def open_raw(fname, pre_load=True):
         return mne.io.Raw(fname, preload=pre_load)
         # self.raw = mne.io.RawFIFF(str(fname))
     except IOError:
-        raise IOError('File does not exist or is not a raw-file')
+        raise IOError('File does not exist or is not a raw-file.')
     
     except OSError:
         raise OSError('You do not have permission to read the file.')
     
     except ValueError:
-        raise ValueError('File is not a raw-file')
+        raise ValueError('File is not a raw-file.')
     
     
 def pickleObjectToFile(picklable, fpath):

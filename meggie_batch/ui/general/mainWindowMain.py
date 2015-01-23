@@ -1,4 +1,5 @@
 # coding: latin1
+import traceback
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -36,7 +37,6 @@ Contains the MainWindow-class that holds the main window of the application.
 
 import os,sys
 
- 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
 from PyQt4.QtCore import QRegExp
@@ -47,7 +47,6 @@ from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-import pylab as pl
 from caller import Caller
 
 from mainWindowUi import Ui_MainWindow
@@ -1512,18 +1511,32 @@ class MainWindow(QtGui.QMainWindow):
         self.preferencesDialog = PreferencesDialog(self)
         self.preferencesDialog.exec_()
 
-        
+
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
         
+
+
+### Code related to application initialization ###     
+
+
+def exception_hook(exctype, value, tracebackObj):
+    traceback.print_tb(tracebackObj)
+    title = 'Unknown error'
+    message = 'Something unexpected happened. Please copy the following ' + \
+    'to your bug report:\n\n' + 'Exception type: ' + str(exctype) + '\n\n' + \
+    'Exception value: ' + str(value) + '\n\n\n' + 'Traceback:\n\n' + \
+    ''.join(traceback.format_tb(tracebackObj))
+    messagebox = messageBoxes.longMessageBox(title, message)
+    messagebox.exec_()
+   
         
-        
-def main(): 
+def main():
+    sys.excepthook = exception_hook
+    
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
             
     window.showMaximized()
     
     sys.exit(app.exec_())
-
-    

@@ -25,6 +25,7 @@
 #The views and conclusions contained in the software and documentation are those
 #of the authors and should not be interpreted as representing official policies, 
 #either expressed or implied, of the FreeBSD Project.
+from copy import deepcopy
 
 """
 Created on Apr 11, 2013
@@ -1180,16 +1181,22 @@ class Caller(object):
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
-        
         subjectName = cvdict['rawsubjectname']
-        if subjectName != None:
-            if subjectName == self.parent.experiment.active_subject_name:
-                raw = self.parent.experiment.active_subject.working_file()
+        fileNameToWrite = ''
+        try:
+            if subjectName != None:
+                if subjectName == self.parent.experiment.active_subject_name:
+                    raw = self.parent.experiment.active_subject.working_file
+                else:
+                    fileNameToWrite = subjectName + '-cov.fif'
+                    raw = self.parent.experiment.get_subject_working_file(
+                                                        subjectName) 
             else:
                 raw = fileManager.open_raw(cvdict['rawfilepath'], True)
-        else:
-            
-            raw = fileManager.open_raw(cvdict['rawfilepath'], True)
+                basename = os.path.basename(cvdict['rawfilepath'])
+                fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
+        except Exception:
+            raise
         
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
@@ -1202,27 +1209,25 @@ class Caller(object):
         try:
             cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
                   reject, flat, picks)
-        except ValueError as e:
-            message = 'Could not compute covariance. MNE error message was: ' +\
-            '\n\n' + str(e)
-            self.messagebox = messageBoxes.shortMessageBox(message)
-            self.messagebox.show()
-            return
+        except ValueError:
+            raise
         
-        # TODO: this should be name of the cov source file + ending, to
-        # show what the cov file is based on (parse subject name from path,
-        # if an external file is used.
-        fileNameToWrite = subjectName + '-cov.fif'
-        filePathToWrite = os.path.join(
-                            self.parent._experiment._active_subject.
-                            _source_analysis_directory, fileNameToWrite)
+        sourceAnalysisDir = self.parent._experiment._active_subject. \
+                            _source_analysis_directory
         
+        # Remove previous covariance file before creating a new one.
+        for (dirpath, dirnames, filenames) in os.walk(sourceAnalysisDir):
+            for f in filenames:
+                fullPathToF = os.path.join(sourceAnalysisDir, f)
+                if fullPathToF[-8:] == '-cov.fif':
+                    os.remove(fullPathToF)
+                    break
+        
+        filePathToWrite = os.path.join(sourceAnalysisDir, fileNameToWrite)
         try:
             mne.write_cov(filePathToWrite, cov)
         except IOError:
-            message = 'Could not write covariance file.'
-            self.messagebox = messageBoxes.shortMessageBox(message)
-            self.messagebox.show()
+            raise
             
 
     def update_experiment_working_file(self, fname, raw):
