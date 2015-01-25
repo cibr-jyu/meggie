@@ -510,19 +510,18 @@ class Experiment(QObject):
                 raise Exception('No rights to save to the chosen path or' + 
                                 ' experiment name already exists. \n')
                 return
-        else:
         
-            # String conversion, because shutil doesn't accept QStrings
-            settingsFileName = str(self._experiment_name + '.exp')
-            
-            # Actually a file object
-            settingsFile = open(os.path.join(experiment_directory, 
-                                settingsFileName), 'wb')
-            
-            # Protocol 2 used because of file object being pickled
-            pickle.dump(self, settingsFile, 2)
-            print '[done]'
-            settingsFile.close()        
+        # String conversion, because shutil doesn't accept QStrings
+        settingsFileName = str(self._experiment_name + '.exp')
+        
+        # Actually a file object
+        settingsFile = open(os.path.join(experiment_directory, 
+                            settingsFileName), 'wb')
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(self, settingsFile, 2)
+        print '[done]'
+        settingsFile.close()        
     
 
     def __getstate__(self):
@@ -597,7 +596,8 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-               
+        if self.parent._experiment is not None:
+            self.parent._experiment.release_memory()    
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -662,6 +662,8 @@ class ExperimentHandler(QObject):
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
         if os.path.exists(path) and os.path.isfile(fname):
+            if self.parent._experiment is not None:
+                self.parent._experiment.release_memory()
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
             self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
