@@ -135,7 +135,8 @@ class AddSubjectDialog(QtGui.QDialog):
                 item = QtGui.QListWidgetItem()
                 item.setText(name)
                 # TODO add name into the list of filenames
-                if len(self.ui.listWidgetFileNames.findItems(item.text(), QtCore.Qt.MatchExactly)) > 0:
+                if len(self.ui.listWidgetFileNames.findItems(item.text(), 
+                   QtCore.Qt.MatchExactly)) > 0:
                     continue
                 self.ui.listWidgetFileNames.addItem(item)
             
@@ -146,23 +147,13 @@ class AddSubjectDialog(QtGui.QDialog):
         """
         if checked is None: return
         try:
-            self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.currentItem().text(), pre_load = False)
+            self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.\
+                       currentItem().text(), pre_load = False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
             
-        except IOError as e:
+        except (IOError, OSError, ValueError) as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
-            return
-        
-        except OSError as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
-        
-        except ValueError as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
             return
             
         info = Ui_infoDialog()

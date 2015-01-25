@@ -282,7 +282,7 @@ class Experiment(QObject):
         
         try:
             shutil.rmtree(subject_path)
-        except OSError:
+        except OSError('Could not remove the contents of the subject folder.'):
             raise
         self.save_experiment_settings()
         main_window._initialize_ui()

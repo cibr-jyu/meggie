@@ -1,4 +1,5 @@
 # coding: latin1
+import traceback
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -36,7 +37,6 @@ Contains the MainWindow-class that holds the main window of the application.
 
 import os,sys
 
- 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
 from PyQt4.QtCore import QRegExp
@@ -47,7 +47,6 @@ from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-import pylab as pl
 from caller import Caller
 
 from mainWindowUi import Ui_MainWindow
@@ -73,6 +72,7 @@ from filterDialogMain import FilterDialog
 from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
 from forwardSolutionDialogMain import ForwardSolutionDialog
+from covarianceRawDialogMain import CovarianceRawDialog
 
 import messageBoxes
 
@@ -1253,8 +1253,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
-        # self.covarianceRawDialog = covarianceRawDialog(self)
-        # self.covarianceRawDialog.show()    
+        self.covarianceRawDialog = CovarianceRawDialog(self)
+        self.covarianceRawDialog.show()    
           
     
     def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
@@ -1315,23 +1315,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonCheckSurfaces.setEnabled(False)
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
         self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
-        
-        # If experiment has subjects added, the active_subject info will be added
-        # and tabs enabled for processing.
-        """
-        if (len(self.experiment._subject_paths) > 0):
-            for path in self.experiment._subject_paths:
-                item = QtGui.QListWidgetItem()
-                # -1 is the index for the subject name
-                itemSubjectName = path.split('/')[-1]
-                item.setText(itemSubjectName)
-                # Let's bold the name of the active subject in the subject list.
-                if itemSubjectName == self.experiment.active_subject_name:
-                    itemFont = QFont('defaultFamily')
-                    itemFont.setBold(True)
-                    item.setFont(itemFont)
-                self.ui.listWidgetSubjects.addItem(item)
-        """
         
         if self.experiment.active_subject is not None:
             # Populate epoch and evoked lists
@@ -1496,7 +1479,6 @@ class MainWindow(QtGui.QMainWindow):
         changes, updating the models when items are added to them is based
         on events.
         """
-        # FIXME: this should be called separately after adding a forward model.
         self.forwardModelModel.initialize_model()
         self.subjectListModel.initialize_model()
 
@@ -1511,18 +1493,32 @@ class MainWindow(QtGui.QMainWindow):
         self.preferencesDialog = PreferencesDialog(self)
         self.preferencesDialog.exec_()
 
-        
+
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
         
+
+
+### Code related to application initialization ###     
+
+
+def exception_hook(exctype, value, tracebackObj):
+    traceback.print_tb(tracebackObj)
+    title = 'Unknown error'
+    message = 'Something unexpected happened. Please copy the following ' + \
+    'to your bug report:\n\n' + 'Exception type: ' + str(exctype) + '\n\n' + \
+    'Exception value: ' + str(value) + '\n\n\n' + 'Traceback:\n\n' + \
+    ''.join(traceback.format_tb(tracebackObj))
+    messagebox = messageBoxes.longMessageBox(title, message)
+    messagebox.exec_()
+   
         
-        
-def main(): 
+def main():
+    sys.excepthook = exception_hook
+    
     app = QtGui.QApplication(sys.argv)
     window=MainWindow()
             
     window.showMaximized()
     
     sys.exit(app.exec_())
-
-    

@@ -1,7 +1,4 @@
 # coding: latin1
-import shutil
-from holdCoregistrationDialogMain import holdCoregistrationDialog
-
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
@@ -28,6 +25,7 @@ from holdCoregistrationDialogMain import holdCoregistrationDialog
 #The views and conclusions contained in the software and documentation are those
 #of the authors and should not be interpreted as representing official policies, 
 #either expressed or implied, of the FreeBSD Project.
+from copy import deepcopy
 
 """
 Created on Apr 11, 2013
@@ -77,6 +75,9 @@ import glob
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from scimath.units.energy import cal
+
+import shutil
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 
 class Caller(object):
@@ -1181,12 +1182,54 @@ class Caller(object):
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
+        subjectName = cvdict['rawsubjectname']
+        fileNameToWrite = ''
+        try:
+            if subjectName != None:
+                if subjectName == self.parent.experiment.active_subject_name:
+                    raw = self.parent.experiment.active_subject.working_file
+                else:
+                    fileNameToWrite = subjectName + '-cov.fif'
+                    raw = self.parent.experiment.get_subject_working_file(
+                                                        subjectName) 
+            else:
+                raw = fileManager.open_raw(cvdict['rawfilepath'], True)
+                basename = os.path.basename(cvdict['rawfilepath'])
+                fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
+        except Exception:
+            raise
         
-        # raw
+        tmin = cvdict['starttime']
+        tmax = cvdict['endtime']
+        tstep = cvdict['tstep']
         
+        reject = cvdict['reject']
+        flat = cvdict['flat']
+        picks = cvdict['picks']
         
-        cov = mne.compute_raw_data_covariance()
-
+        try:
+            cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
+                  reject, flat, picks)
+        except ValueError:
+            raise
+        
+        sourceAnalysisDir = self.parent._experiment._active_subject. \
+                            _source_analysis_directory
+        
+        # Remove previous covariance file before creating a new one.
+        for (dirpath, dirnames, filenames) in os.walk(sourceAnalysisDir):
+            for f in filenames:
+                fullPathToF = os.path.join(sourceAnalysisDir, f)
+                if fullPathToF[-8:] == '-cov.fif':
+                    os.remove(fullPathToF)
+                    break
+        
+        filePathToWrite = os.path.join(sourceAnalysisDir, fileNameToWrite)
+        try:
+            mne.write_cov(filePathToWrite, cov)
+        except IOError:
+            raise
+            
 
     def update_experiment_working_file(self, fname, raw):
         """

@@ -113,6 +113,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         subject = self.parent._experiment._active_subject
         fmname = singleFMitem[0]
         
+        # TODO: see how this is handled with subject list and follow.
         try:
             fileManager.remove_fModel_directory(fmname, subject)
             self.fmodelInfoList.remove(singleFMitem)
