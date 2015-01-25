@@ -488,7 +488,8 @@ class Caller(object):
         if not ' ' in evokeds[0].ch_names[0]:
             # TODO: add whitespace on evokeds ch_names or remove whitespace
             # from layout names.
-            layout.names = _clean_names(layout.names, remove_whitespace=True)
+            #layout.names = _clean_names(layout.names, remove_whitespace=True)
+            layout.names = [str(name).replace(' ','') for name in layout.names]
         """
         COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
           '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
