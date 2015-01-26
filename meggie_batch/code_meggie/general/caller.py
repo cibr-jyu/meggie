@@ -150,7 +150,7 @@ class Caller(object):
         """ 
         TODO Write parameter file. Implement after the actual MaxFilter
         calling has been tested. 
-        self.experiment.save_parameter_file('maxfilter', raw, , dic)
+        self.parent.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
         self.parent.experiment.save_experiment_settings()
    
@@ -438,7 +438,8 @@ class Caller(object):
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
-        rawFileName = os.path.splitext(os.path.split(self.parent.experiment._working_file_names[self.experiment._active_subject_name])[1])[0]
+        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
+        _working_file_names[self.parent.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
@@ -1107,8 +1108,8 @@ class Caller(object):
                                selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path, 
-                  self.parent.experiment._working_file_names[self.experiment.
-                  _active_subject_name])
+                  self.parent.experiment._working_file_names[self.parent.\
+                  experiment._active_subject_name])
         
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
                                raw=rawPath, subject=subject,
