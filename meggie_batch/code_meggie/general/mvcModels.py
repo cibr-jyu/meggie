@@ -6,7 +6,6 @@ Created on 26.6.2014
 @author: kpaliran
 
 Contains models for views in various UI components, mainly MainWindow.
-TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
 from PyQt4 import QtCore, QtGui
@@ -109,15 +108,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         """
         self.beginRemoveRows(parent, position, position + rows - 1)
         singleFMitem = self.fmodelInfoList[position]
-        
-        subject = self.parent._experiment._active_subject
-        fmname = singleFMitem[0]
-        
-        # TODO: see how this is handled with subject list and follow.
-        try:
-            fileManager.remove_fModel_directory(fmname, subject)
-            self.fmodelInfoList.remove(singleFMitem)
-        except Exception: raise
+        self.fmodelInfoList.remove(singleFMitem)
         self.endRemoveRows()
             
         

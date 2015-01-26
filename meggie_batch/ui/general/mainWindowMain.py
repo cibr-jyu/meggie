@@ -1158,8 +1158,11 @@ class MainWindow(QtGui.QMainWindow):
         # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
         selectedRowNumber = selectedRowIndexes[0].row()
+        fmname = selectedRowIndexes[0].data()
+        subject = self.experiment.active_subject
         
         try:
+            fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
         except Exception:
             message = 'There was a problem removing forward model. Nothing ' + \
