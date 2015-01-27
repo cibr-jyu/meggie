@@ -38,6 +38,7 @@ import os
 import re
 import csv
 import shutil
+import gc
 
 import fileManager
 from subject import Subject
@@ -596,8 +597,9 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-        if self.parent._experiment is not None:
-            self.parent._experiment.release_memory()    
+        # Releases memory from the previously open experiment
+        self.parent._experiment = None
+        gc.collect()
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -662,8 +664,9 @@ class ExperimentHandler(QObject):
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
         if os.path.exists(path) and os.path.isfile(fname):
-            if self.parent._experiment is not None:
-                self.parent._experiment.release_memory()
+            # Releases memory from the previously open experiment
+            self.parent._experiment = None
+            gc.collect()
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
             self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
@@ -672,8 +675,6 @@ class ExperimentHandler(QObject):
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
 
-            # Sets the experiment for caller, so it can use its information.
-            self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler.previous_experiment_name = \
             self.parent.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
