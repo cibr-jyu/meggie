@@ -1,32 +1,4 @@
 # coding: latin1
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
-#All rights reserved.
-#
-#Redistribution and use in source and binary forms, with or without
-#modification, are permitted provided that the following conditions are met: 
-#
-#1. Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer. 
-#2. Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution. 
-#
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-#The views and conclusions contained in the software and documentation are those
-#of the authors and should not be interpreted as representing official policies, 
-#either expressed or implied, of the FreeBSD Project.
-from copy import deepcopy
-
 """
 Created on Apr 11, 2013
 
@@ -39,45 +11,36 @@ import os
 import glob
 import traceback
 import fnmatch
+import re
+import shutil
 
 from PyQt4 import QtCore, QtGui
 
 import mne
-# from mne import fiff -- mne.fiff is deprecated in MNE 0.8
-# TODO formerly in mne.fiff, usage may have changed
-
 from mne.time_frequency import induced_power
-
 from mne import filter as MNEfilter
-
 from mne.layouts import read_layout
 from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
-
 from mne.viz import plot_topo
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 # from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
-import csv
 
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-import re
+
 import messageBoxes
 import fileManager
-import glob
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
-from scimath.units.energy import cal
-
-import shutil
-from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 
 class Caller(object):
@@ -1188,6 +1151,7 @@ class Caller(object):
         try:
             if subjectName != None:
                 if subjectName == self.parent.experiment.active_subject_name:
+                    fileNameToWrite = subjectName + '-cov.fif'
                     raw = self.parent.experiment.active_subject.working_file
                 else:
                     fileNameToWrite = subjectName + '-cov.fif'
@@ -1214,23 +1178,31 @@ class Caller(object):
         except ValueError:
             raise
         
-        sourceAnalysisDir = self.parent._experiment._active_subject. \
+        sourceAnalysisDir = self.parent.experiment.active_subject. \
                             _source_analysis_directory
         
         # Remove previous covariance file before creating a new one.
-        for (dirpath, dirnames, filenames) in os.walk(sourceAnalysisDir):
-            for f in filenames:
-                fullPathToF = os.path.join(sourceAnalysisDir, f)
-                if fullPathToF[-8:] == '-cov.fif':
-                    os.remove(fullPathToF)
-                    break
+        fileManager.remove_files_with_regex(sourceAnalysisDir,'.*-cov.fif')
         
         filePathToWrite = os.path.join(sourceAnalysisDir, fileNameToWrite)
         try:
             mne.write_cov(filePathToWrite, cov)
-        except IOError:
+        except IOError as err:
+            err.message = 'Could not write covariance file. ' + \
+            'The error message was: \n\n' + err.message 
             raise
-            
+        
+        # Delete previous and write a new parameter file.
+        try:
+            fileManager.remove_files_with_regex(sourceAnalysisDir,
+                                                'covariance.param')
+            cvparamFile = os.path.join(sourceAnalysisDir, 'covariance.param')
+            fileManager.pickleObjectToFile(cvdict,cvparamFile)
+        except Exception:
+            fileManager.remove_files_with_regex(sourceAnalysisDir,
+                                                '*-cov.fif')
+            raise
+        
 
     def update_experiment_working_file(self, fname, raw):
         """

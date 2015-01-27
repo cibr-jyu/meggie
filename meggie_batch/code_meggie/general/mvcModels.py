@@ -103,8 +103,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
-        Removal of a single row from the model. Also removes the corresponding
-        directory from the disk.
+        Removal of a single row from the model.
         """
         self.beginRemoveRows(parent, position, position + rows - 1)
         singleFMitem = self.fmodelInfoList[position]
@@ -329,14 +328,6 @@ class SubjectListModel(QtCore.QAbstractListModel):
                     itemFont = QFont('defaultFamily')
                     itemFont.setBold(True)
                     return itemFont
-            else:
-                return None
-            
-        if role == QtCore.Qt.BackgroundColorRole:
-            row = index.row()
-            subjectName = self.subjectNameList[row]
-            if subjectName == activeSubjectName:
-                return QtGui.QColor(132,255,132)
             else:
                 return None
                 

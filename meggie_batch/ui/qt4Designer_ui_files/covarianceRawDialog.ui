@@ -89,7 +89,7 @@
    <item row="2" column="0">
     <widget class="QGroupBox" name="groupBoxRejection">
      <property name="title">
-      <string>Rejection</string>
+      <string>Rejection:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="2" column="0">

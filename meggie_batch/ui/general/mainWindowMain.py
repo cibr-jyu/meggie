@@ -1,5 +1,6 @@
 # coding: latin1
 import traceback
+from covarianceWidgetNoneMain import CovarianceWidgetNone
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -1348,6 +1349,7 @@ class MainWindow(QtGui.QMainWindow):
             status = "Current working file: " + \
             os.path.basename(self._experiment._working_file_names[self.experiment._active_subject_name])
             self.statusLabel.setText(status)
+            
             try:
                 #Check whether ECG projections are calculated
                 if self.experiment.active_subject.check_ecg_projs():
@@ -1386,7 +1388,38 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
             
+        self.fill_covariance_info_box()
+    
+    
+    def fill_covariance_info_box(self):
+        """
+        Fills the info box in the covariance tab with info about the
+        current covariance matrix info for the active subject, if said info
+        exists.
+        """
         
+        cvParamFilePath = os.path.join(self.experiment.active_subject.
+        _source_analysis_directory, 'covariance.param')
+        
+        cvdict = None
+        if os.path.isfile(cvParamFilePath):
+            try:
+                cvdict = fileManager.unpickle(cvParamFilePath)
+            except Exception:
+                pass
+        
+        layout = QtGui.QGridLayout()
+        self.ui.frameCovarianceInfoWidget.setLayout(layout)
+        
+        if cvdict == None:
+            self.covarianceWidgetNone = CovarianceWidgetNone(self)
+            layout.addWidget(self.covarianceWidgetNone)
+        
+        
+        
+        
+            
+    
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
@@ -1491,7 +1524,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def check_workspace(self):
         """
-        Open the workspace chooser dialog.
+        Open the preferences dialog, in this case for choosing the workspace.
         """
         self.preferencesDialog = PreferencesDialog(self)
         self.preferencesDialog.exec_()

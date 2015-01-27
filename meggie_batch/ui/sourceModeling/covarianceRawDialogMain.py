@@ -12,6 +12,7 @@ import fileManager
 import os
 from infoDialogUi import Ui_infoDialog
 from infoDialogMain import InfoDialog
+from pickle import PickleError
 
 
 class CovarianceRawDialog(QtGui.QDialog):
@@ -115,9 +116,14 @@ class CovarianceRawDialog(QtGui.QDialog):
             self.messagebox = messageBoxes.shortMessageBox(message)
             self.messagebox.show()
             return   
-        except IOError:
-            message = 'Could not write covariance file.'
-            self.messagebox = messageBoxes.shortMessageBox(message)
+        except IOError as e:
+            self.messagebox = messageBoxes.shortMessageBox(str(e.message) + \
+            str(e))
+            self.messagebox.show()
+            return
+        except PickleError as e:
+            self.messagebox = messageBoxes.shortMessageBox('Could not write ' +\
+            + 'parameter file. There error message was:\n\n' + str(e))
             self.messagebox.show()
             return
         
