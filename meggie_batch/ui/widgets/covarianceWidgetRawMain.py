@@ -20,7 +20,7 @@ class CovarianceWidgetRaw(QtGui.QWidget):
         """
         QtGui.QWidget.__init__(self, parent)
         
-        self.ui = Ui_covarianceRawWidget
+        self.ui = Ui_covarianceRawWidget()
         self.ui.setupUi(self)
         self.parent = parent
         

@@ -108,6 +108,10 @@ class CovarianceRawDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         
+        # To differentiate between covariance matrix created from raw 
+        # and covariance matrix created from epochs.
+        pdict['covarianceSource'] = 'raw'
+        
         try:
             self.parent.caller.create_covariance_from_raw(pdict)    
         except ValueError as e:

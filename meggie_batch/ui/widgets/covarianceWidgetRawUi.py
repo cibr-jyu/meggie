@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/covarianceWidgetRaw.ui'
 #
-# Created: Tue Jan 27 20:08:51 2015
+# Created: Wed Jan 28 18:45:35 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_covarianceRawWidget(object):
     def setupUi(self, covarianceRawWidget):
         covarianceRawWidget.setObjectName(_fromUtf8("covarianceRawWidget"))
-        covarianceRawWidget.resize(594, 571)
+        covarianceRawWidget.resize(483, 607)
         self.gridLayout_2 = QtGui.QGridLayout(covarianceRawWidget)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.groupBox_3 = QtGui.QGroupBox(covarianceRawWidget)
@@ -85,14 +85,21 @@ class Ui_covarianceRawWidget(object):
         self.textBrowserTmax.setSizeIncrement(QtCore.QSize(0, 31))
         self.textBrowserTmax.setObjectName(_fromUtf8("textBrowserTmax"))
         self.formLayout_16.setWidget(2, QtGui.QFormLayout.FieldRole, self.textBrowserTmax)
+        self.labelTimeStep = QtGui.QLabel(self.groupBoxEpochTimes_2)
+        self.labelTimeStep.setObjectName(_fromUtf8("labelTimeStep"))
+        self.formLayout_16.setWidget(3, QtGui.QFormLayout.LabelRole, self.labelTimeStep)
+        self.textBrowserTstep = QtGui.QTextBrowser(self.groupBoxEpochTimes_2)
+        self.textBrowserTstep.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.textBrowserTstep.setObjectName(_fromUtf8("textBrowserTstep"))
+        self.formLayout_16.setWidget(3, QtGui.QFormLayout.FieldRole, self.textBrowserTstep)
         self.gridLayout.addWidget(self.groupBoxEpochTimes_2, 1, 0, 1, 1)
         self.groupBoxRejections_2 = QtGui.QGroupBox(self.groupBox_3)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxRejections_2.sizePolicy().hasHeightForWidth())
         self.groupBoxRejections_2.setSizePolicy(sizePolicy)
-        self.groupBoxRejections_2.setMaximumSize(QtCore.QSize(550, 231))
+        self.groupBoxRejections_2.setMaximumSize(QtCore.QSize(1000, 231))
         self.groupBoxRejections_2.setObjectName(_fromUtf8("groupBoxRejections_2"))
         self.gridLayout_26 = QtGui.QGridLayout(self.groupBoxRejections_2)
         self.gridLayout_26.setObjectName(_fromUtf8("gridLayout_26"))
@@ -197,6 +204,7 @@ class Ui_covarianceRawWidget(object):
         self.groupBoxEpochTimes_2.setTitle(_translate("covarianceRawWidget", "Time limits:", None))
         self.labelTminCovariance.setText(_translate("covarianceRawWidget", "Start time:", None))
         self.labelTmaxCovariance.setText(_translate("covarianceRawWidget", "End time:", None))
+        self.labelTimeStep.setText(_translate("covarianceRawWidget", "Time step (for rejection):", None))
         self.groupBoxRejections_2.setTitle(_translate("covarianceRawWidget", "Rejection parameters:", None))
         self.labelEogRejectCovariance.setText(_translate("covarianceRawWidget", "EOG:", None))
         self.labelStimReject_2.setText(_translate("covarianceRawWidget", "ECG:", None))

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>571</height>
+    <width>414</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,12 @@
             <width>485</width>
             <height>29</height>
            </size>
+          </property>
+          <property name="lineWrapMode">
+           <enum>QTextEdit::NoWrap</enum>
+          </property>
+          <property name="lineWrapColumnOrWidth">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -156,20 +162,37 @@
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelTimeStep">
+           <property name="text">
+            <string>Time step (for rejection):</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QTextBrowser" name="textBrowserTstep">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QGroupBox" name="groupBoxRejections_2">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>550</width>
+          <width>1000</width>
           <height>231</height>
          </size>
         </property>
@@ -323,7 +346,7 @@
           <widget class="QTextBrowser" name="textBrowserFlatGrad"/>
          </item>
          <item row="1" column="3">
-          <widget class="QTextBrowser" name="textBrowserFlatPeak"/>
+          <widget class="QTextBrowser" name="textBrowserFlatMag"/>
          </item>
          <item row="1" column="2">
           <widget class="QTextBrowser" name="textBrowserMagPeakCovariance">

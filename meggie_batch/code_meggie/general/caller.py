@@ -1198,11 +1198,14 @@ class Caller(object):
                                                 'covariance.param')
             cvparamFile = os.path.join(sourceAnalysisDir, 'covariance.param')
             fileManager.pickleObjectToFile(cvdict,cvparamFile)
+            
         except Exception:
             fileManager.remove_files_with_regex(sourceAnalysisDir,
                                                 '*-cov.fif')
             raise
         
+        # Update ui.
+        self.parent.fill_covariance_info_box()
 
     def update_experiment_working_file(self, fname, raw):
         """

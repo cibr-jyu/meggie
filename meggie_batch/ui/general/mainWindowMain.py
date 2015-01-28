@@ -1,6 +1,7 @@
 # coding: latin1
 import traceback
 from covarianceWidgetNoneMain import CovarianceWidgetNone
+from covarianceWidgetRawMain import CovarianceWidgetRaw
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -1414,11 +1415,49 @@ class MainWindow(QtGui.QMainWindow):
         if cvdict == None:
             self.covarianceWidgetNone = CovarianceWidgetNone(self)
             layout.addWidget(self.covarianceWidgetNone)
+            return
         
+        if cvdict['covarianceSource'] == 'raw':
+            self.covarianceWidgetRaw = CovarianceWidgetRaw(self)
+            cvwui = self.covarianceWidgetRaw.ui
+            if cvdict['rawsubjectname'] != None:
+                cvwui.textBrowserBasedOn.setText(cvdict['rawsubjectname'])
+            else:
+                cvwui.textBrowserBasedOn.setText(cvdict['rawfilepath'])
+            cvwui.textBrowserTmin.setText(str(cvdict['starttime']))
+            cvwui.textBrowserTmax.setText(str(cvdict['endtime']))
+            cvwui.textBrowserTstep.setText(str(cvdict['tstep']))
+            if cvdict['reject'] != None:
+                cvwui.textBrowserGradPeakCovariance.setText(
+                str(cvdict.get('reject').get('grad', 'Not used')))
+                cvwui.textBrowserMagPeakCovariance.setText(
+                str(cvdict.get('reject').get('mag', 'Not used')))
+                cvwui.textBrowserEEGPeakCovariance.setText(
+                str(cvdict.get('reject').get('eeg', 'Not used')))
+                cvwui.textBrowserEOGPeakCovariance.setText(
+                str(cvdict.get('reject').get('eog', 'Not used')))
+            if cvdict['flat'] != None:
+                cvwui.textBrowserFlatGrad.setText(
+                str(cvdict.get('flat').get('grad', 'Not used')))
+                cvwui.textBrowserFlatMag.setText(
+                str(cvdict.get('flat').get('mag', 'Not used')))
+                cvwui.textBrowserFlatEEG.setText(
+                str(cvdict.get('flat').get('eeg', 'Not used')))
+                cvwui.textBrowserFlatEOG.setText(
+                str(cvdict.get('flat').get('eog', 'Not used')))
+                cvwui.textBrowserFlatECG.setText(
+                str(cvdict.get('flat').get('ecg', 'Not used')))
         
+        for i in reversed(range(layout.count())): 
+            layout.itemAt(i).widget().setParent(None)
+        layout.update()
+        layout.addWidget(self.covarianceWidgetRaw)
+        layout.update()
         
-        
-            
+        if cvdict['covarianceSource'] == 'epochs':
+            # TODO: implement this functionality, then use existing
+            # CovarianceWidgetEpochs
+            pass
     
     def populate_raw_tab_event_list(self):
         """
