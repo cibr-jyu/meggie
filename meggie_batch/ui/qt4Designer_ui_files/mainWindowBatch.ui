@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1473</width>
+    <width>1542</width>
     <height>722</height>
    </rect>
   </property>
@@ -32,6 +32,12 @@
    <string>Meggie</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>400</height>
+    </size>
+   </property>
    <layout class="QGridLayout" name="gridLayout_7">
     <item row="0" column="0">
      <widget class="QScrollArea" name="scrollArea">
@@ -41,7 +47,16 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>600</width>
+        <height>600</height>
+       </size>
+      </property>
       <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
       <property name="widgetResizable">
@@ -52,7 +67,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1100</width>
+         <width>1165</width>
          <height>750</height>
         </rect>
        </property>
@@ -71,7 +86,7 @@
              <bool>true</bool>
             </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -79,7 +94,7 @@
             <property name="minimumSize">
              <size>
               <width>200</width>
-              <height>0</height>
+              <height>400</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -1652,6 +1667,12 @@
              </widget>
             </widget>
             <widget class="QWidget" name="tabTFR">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <attribute name="title">
               <string>TFR</string>
              </attribute>
@@ -2284,33 +2305,78 @@
               <string>Noise covariance</string>
              </attribute>
              <layout class="QFormLayout" name="formLayout_16">
-              <item row="0" column="0">
-               <layout class="QVBoxLayout" name="verticalLayout_14">
+              <property name="fieldGrowthPolicy">
+               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+              </property>
+              <item row="0" column="0" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_34">
                 <item>
-                 <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
-                  <property name="text">
-                   <string>Compute noise covariance matrix based on raw file...</string>
+                 <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <property name="topMargin">
+                   <number>13</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
+                    <property name="text">
+                     <string>Compute noise covariance matrix based on raw file...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
+                    <property name="text">
+                     <string>Compute noise covariance matrix based on epochs...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frameCovarianceInfoWidget">
+                  <property name="maximumSize">
+                   <size>
+                    <width>600</width>
+                    <height>800</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
-                  <property name="text">
-                   <string>Compute noise covariance matrix based on epochs...</string>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                 </widget>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
-              </item>
-              <item row="0" column="1">
-               <widget class="QFrame" name="frameCovarianceInfoWidget">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
               </item>
              </layout>
             </widget>
@@ -2653,7 +2719,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1473</width>
+     <width>1542</width>
      <height>23</height>
     </rect>
    </property>
@@ -3209,7 +3275,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionCreate_experiment">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/createExperiment.png</normaloff>:/toolBarIcons/images/createExperiment.png</iconset>
    </property>
    <property name="text">
@@ -3218,7 +3284,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionOpen_experiment">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/openExperiment.png</normaloff>:/toolBarIcons/images/openExperiment.png</iconset>
    </property>
    <property name="text">
@@ -3247,7 +3313,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShowExperimentInfo">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/showExperimentInfo.png</normaloff>:/toolBarIcons/images/showExperimentInfo.png</iconset>
    </property>
    <property name="text">
@@ -3259,7 +3325,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionHide_Show_subject_list_and_info">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/mainWindowIcons.qrc">
      <normaloff>:/toolBarIcons/images/subjectList.png</normaloff>:/toolBarIcons/images/subjectList.png</iconset>
    </property>
    <property name="text">

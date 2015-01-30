@@ -6,51 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>607</height>
+    <width>600</width>
+    <height>587</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>600</width>
+    <height>800</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_3">
+     <property name="maximumSize">
+      <size>
+       <width>600</width>
+       <height>800</height>
+      </size>
+     </property>
      <property name="title">
       <string>Current covariance matrix info:</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_34">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Based on:</string>
         </property>
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Based on:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextBrowser" name="textBrowserBasedOn">
-          <property name="maximumSize">
-           <size>
-            <width>485</width>
-            <height>29</height>
-           </size>
-          </property>
-          <property name="lineWrapMode">
-           <enum>QTextEdit::NoWrap</enum>
-          </property>
-          <property name="lineWrapColumnOrWidth">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       </widget>
       </item>
-      <item row="1" column="0">
+      <item row="1" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBoxEpochTimes_2">
         <property name="title">
          <string>Time limits:</string>
@@ -182,7 +177,7 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="2" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBoxRejections_2">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -407,7 +402,7 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="3" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBoxPicks">
         <property name="title">
          <string>Picks:</string>
@@ -417,6 +412,28 @@
           <widget class="QTextBrowser" name="textBrowserPicks"/>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QTextBrowser" name="textBrowserBasedOn">
+        <property name="maximumSize">
+         <size>
+          <width>10000</width>
+          <height>29</height>
+         </size>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="lineWrapMode">
+         <enum>QTextEdit::NoWrap</enum>
+        </property>
+        <property name="lineWrapColumnOrWidth">
+         <number>0</number>
+        </property>
        </widget>
       </item>
      </layout>

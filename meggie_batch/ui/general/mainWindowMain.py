@@ -1434,22 +1434,22 @@ class MainWindow(QtGui.QMainWindow):
             cvwui.textBrowserTstep.setText(str(cvdict['tstep']))
             if cvdict['reject'] != None:
                 cvwui.textBrowserGradPeakCovariance.setText(
-                str(cvdict.get('reject').get('grad', 'Not used')))
+                str(cvdict.get('reject').get('grad', '')))
                 cvwui.textBrowserMagPeakCovariance.setText(
-                str(cvdict.get('reject').get('mag', 'Not used')))
+                str(cvdict.get('reject').get('mag', '')))
                 cvwui.textBrowserEEGPeakCovariance.setText(
-                str(cvdict.get('reject').get('eeg', 'Not used')))
+                str(cvdict.get('reject').get('eeg', '')))
                 cvwui.textBrowserEOGPeakCovariance.setText(
-                str(cvdict.get('reject').get('eog', 'Not used')))
+                str(cvdict.get('reject').get('eog', '')))
             if cvdict['flat'] != None:
                 cvwui.textBrowserFlatGrad.setText(
-                str(cvdict.get('flat').get('grad', 'Not used')))
+                str(cvdict.get('flat').get('grad', '')))
                 cvwui.textBrowserFlatMag.setText(
-                str(cvdict.get('flat').get('mag', 'Not used')))
+                str(cvdict.get('flat').get('mag', '')))
                 cvwui.textBrowserFlatEEG.setText(
-                str(cvdict.get('flat').get('eeg', 'Not used')))
+                str(cvdict.get('flat').get('eeg', '')))
                 cvwui.textBrowserFlatEOG.setText(
-                str(cvdict.get('flat').get('eog', 'Not used')))
+                str(cvdict.get('flat').get('eog', '')))
                 cvwui.textBrowserFlatECG.setText(
                 str(cvdict.get('flat').get('ecg', 'Not used')))
             covLayout.addWidget(covarianceWidgetRaw)

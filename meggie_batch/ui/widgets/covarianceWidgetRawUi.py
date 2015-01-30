@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/covarianceWidgetRaw.ui'
 #
-# Created: Thu Jan 29 15:08:03 2015
+# Created: Fri Jan 30 16:18:42 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,26 +26,19 @@ except AttributeError:
 class Ui_covarianceRawWidget(object):
     def setupUi(self, covarianceRawWidget):
         covarianceRawWidget.setObjectName(_fromUtf8("covarianceRawWidget"))
-        covarianceRawWidget.resize(414, 607)
+        covarianceRawWidget.resize(600, 587)
+        covarianceRawWidget.setMaximumSize(QtCore.QSize(600, 800))
         self.gridLayout_2 = QtGui.QGridLayout(covarianceRawWidget)
+        self.gridLayout_2.setContentsMargins(-1, 0, -1, 0)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.groupBox_3 = QtGui.QGroupBox(covarianceRawWidget)
+        self.groupBox_3.setMaximumSize(QtCore.QSize(600, 800))
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
-        self.gridLayout = QtGui.QGridLayout(self.groupBox_3)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.horizontalLayout_34 = QtGui.QHBoxLayout()
-        self.horizontalLayout_34.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
-        self.horizontalLayout_34.setObjectName(_fromUtf8("horizontalLayout_34"))
+        self.formLayout = QtGui.QFormLayout(self.groupBox_3)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.label_7 = QtGui.QLabel(self.groupBox_3)
         self.label_7.setObjectName(_fromUtf8("label_7"))
-        self.horizontalLayout_34.addWidget(self.label_7)
-        self.textBrowserBasedOn = QtGui.QTextBrowser(self.groupBox_3)
-        self.textBrowserBasedOn.setMaximumSize(QtCore.QSize(485, 29))
-        self.textBrowserBasedOn.setLineWrapMode(QtGui.QTextEdit.NoWrap)
-        self.textBrowserBasedOn.setLineWrapColumnOrWidth(0)
-        self.textBrowserBasedOn.setObjectName(_fromUtf8("textBrowserBasedOn"))
-        self.horizontalLayout_34.addWidget(self.textBrowserBasedOn)
-        self.gridLayout.addLayout(self.horizontalLayout_34, 0, 0, 1, 1)
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_7)
         self.groupBoxEpochTimes_2 = QtGui.QGroupBox(self.groupBox_3)
         self.groupBoxEpochTimes_2.setObjectName(_fromUtf8("groupBoxEpochTimes_2"))
         self.formLayout_16 = QtGui.QFormLayout(self.groupBoxEpochTimes_2)
@@ -94,7 +87,7 @@ class Ui_covarianceRawWidget(object):
         self.textBrowserTstep.setMaximumSize(QtCore.QSize(16777215, 30))
         self.textBrowserTstep.setObjectName(_fromUtf8("textBrowserTstep"))
         self.formLayout_16.setWidget(3, QtGui.QFormLayout.FieldRole, self.textBrowserTstep)
-        self.gridLayout.addWidget(self.groupBoxEpochTimes_2, 1, 0, 1, 1)
+        self.formLayout.setWidget(1, QtGui.QFormLayout.SpanningRole, self.groupBoxEpochTimes_2)
         self.groupBoxRejections_2 = QtGui.QGroupBox(self.groupBox_3)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -185,7 +178,7 @@ class Ui_covarianceRawWidget(object):
         self.textBrowserGradPeakCovariance.setMaximumSize(QtCore.QSize(16777215, 30))
         self.textBrowserGradPeakCovariance.setObjectName(_fromUtf8("textBrowserGradPeakCovariance"))
         self.gridLayout_26.addWidget(self.textBrowserGradPeakCovariance, 2, 2, 1, 1)
-        self.gridLayout.addWidget(self.groupBoxRejections_2, 2, 0, 1, 1)
+        self.formLayout.setWidget(2, QtGui.QFormLayout.SpanningRole, self.groupBoxRejections_2)
         self.groupBoxPicks = QtGui.QGroupBox(self.groupBox_3)
         self.groupBoxPicks.setObjectName(_fromUtf8("groupBoxPicks"))
         self.gridLayout_30 = QtGui.QGridLayout(self.groupBoxPicks)
@@ -193,7 +186,15 @@ class Ui_covarianceRawWidget(object):
         self.textBrowserPicks = QtGui.QTextBrowser(self.groupBoxPicks)
         self.textBrowserPicks.setObjectName(_fromUtf8("textBrowserPicks"))
         self.gridLayout_30.addWidget(self.textBrowserPicks, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.groupBoxPicks, 3, 0, 1, 1)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.SpanningRole, self.groupBoxPicks)
+        self.textBrowserBasedOn = QtGui.QTextBrowser(self.groupBox_3)
+        self.textBrowserBasedOn.setMaximumSize(QtCore.QSize(10000, 29))
+        self.textBrowserBasedOn.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowserBasedOn.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowserBasedOn.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.textBrowserBasedOn.setLineWrapColumnOrWidth(0)
+        self.textBrowserBasedOn.setObjectName(_fromUtf8("textBrowserBasedOn"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.textBrowserBasedOn)
         self.gridLayout_2.addWidget(self.groupBox_3, 0, 0, 1, 1)
 
         self.retranslateUi(covarianceRawWidget)

@@ -41,6 +41,7 @@ from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
+from forwardModelSkipDialogMain import ForwardModelSkipDialog
 
 
 class Caller(object):
@@ -881,33 +882,34 @@ class Caller(object):
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
-        reply = 2
+        reply = 'cancel'
         if len(sourceSpaceSetupTestList) > 0 and \
         os.path.exists(waterShedSurfaceTestFile) and \
         os.path.exists(wsCorTestFile):
-            title = 'Reuse existing files?'
-            text = "It seems you already have a setup source space and BEM " + \
-            "model meshes created with watershed algorithm. If you don't " + \
-            "need to create them again, Meggie can reuse them and only " + \
-            "setup a new forward model. This will save a considerable amount " + \
-            " of time, especially in BEM model meshes creation. You can: \n \n" + \
-            "1) press Cancel to get back to previous dialog to adjust " + \
-            " parameters \n \n" + \
-            "2) Press \"BEM model setup only\" to reuse previously created " + \
-            "files for a new forward model (only forward model name and BEM"  + \
-            "model setup parameters will be used, others are ignored) \n \n" + \
-            "3) Compute all phases again"
-            bemButtonText = 'Bem model \n setup only'
-            computeAllButtonText = 'Compute all \n phases again' 
-            reply = QtGui.QMessageBox.information(self.parent, title, text, 
-                                                  'Cancel', bemButtonText,
-                                                  computeAllButtonText)
         
-        if reply == 0:
+            try: 
+                sSpaceDict = fileManager.unpickle(os.path.join(fmDir, 
+                                                  'setupSourceSpace.param'))
+            except Exception:
+                sSpaceDict = dict()
+                
+            try:
+                wshedDict = fileManager.unpickle(os.path.join(fmDir, 
+                                                              'wshed.param'))
+            except Exception:
+                wshedDict = dict()
+        
+            fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
+                                                      wshedDict)
+            
+            reply = fModelSkipDialog.exec_()
+            
+        
+        if reply == 'cancel':
             # To keep forward model dialog open
             return False
         
-        if reply == 1:
+        if reply == 'bemOnly':
             # Need to do this to get triangulation files to right place and
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
@@ -919,7 +921,7 @@ class Caller(object):
                     activeSubject, None, None, fmdict['sfmodelArgs'])
                 
                 # These should always exist, should be safe to unpickle.
-                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param' )
+                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
                 wshedParamFile = os.path.join(fmDir, 'wshed.param')
                 sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
                 wshedArgsDict = fileManager.unpickle(wshedParamFile)
@@ -942,7 +944,7 @@ class Caller(object):
                 self.messageBox = messageBoxes.longMessageBox('Error', message)
                 self.messageBox.show()
         
-        if reply == 2:
+        if reply == 'computeAll':
             # To make overwriting unnecessary
             if os.path.isdir(bemDir):
                 shutil.rmtree(bemDir)
