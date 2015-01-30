@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/covarianceWidgetRaw.ui'
 #
-# Created: Wed Jan 28 18:45:35 2015
+# Created: Thu Jan 29 15:08:03 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_covarianceRawWidget(object):
     def setupUi(self, covarianceRawWidget):
         covarianceRawWidget.setObjectName(_fromUtf8("covarianceRawWidget"))
-        covarianceRawWidget.resize(483, 607)
+        covarianceRawWidget.resize(414, 607)
         self.gridLayout_2 = QtGui.QGridLayout(covarianceRawWidget)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.groupBox_3 = QtGui.QGroupBox(covarianceRawWidget)
@@ -41,6 +41,8 @@ class Ui_covarianceRawWidget(object):
         self.horizontalLayout_34.addWidget(self.label_7)
         self.textBrowserBasedOn = QtGui.QTextBrowser(self.groupBox_3)
         self.textBrowserBasedOn.setMaximumSize(QtCore.QSize(485, 29))
+        self.textBrowserBasedOn.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.textBrowserBasedOn.setLineWrapColumnOrWidth(0)
         self.textBrowserBasedOn.setObjectName(_fromUtf8("textBrowserBasedOn"))
         self.horizontalLayout_34.addWidget(self.textBrowserBasedOn)
         self.gridLayout.addLayout(self.horizontalLayout_34, 0, 0, 1, 1)
@@ -157,9 +159,9 @@ class Ui_covarianceRawWidget(object):
         self.textBrowserFlatGrad = QtGui.QTextBrowser(self.groupBoxRejections_2)
         self.textBrowserFlatGrad.setObjectName(_fromUtf8("textBrowserFlatGrad"))
         self.gridLayout_26.addWidget(self.textBrowserFlatGrad, 2, 3, 1, 1)
-        self.textBrowserFlatPeak = QtGui.QTextBrowser(self.groupBoxRejections_2)
-        self.textBrowserFlatPeak.setObjectName(_fromUtf8("textBrowserFlatPeak"))
-        self.gridLayout_26.addWidget(self.textBrowserFlatPeak, 1, 3, 1, 1)
+        self.textBrowserFlatMag = QtGui.QTextBrowser(self.groupBoxRejections_2)
+        self.textBrowserFlatMag.setObjectName(_fromUtf8("textBrowserFlatMag"))
+        self.gridLayout_26.addWidget(self.textBrowserFlatMag, 1, 3, 1, 1)
         self.textBrowserMagPeakCovariance = QtGui.QTextBrowser(self.groupBoxRejections_2)
         self.textBrowserMagPeakCovariance.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)

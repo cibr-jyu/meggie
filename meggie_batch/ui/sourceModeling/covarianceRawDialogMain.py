@@ -13,6 +13,7 @@ import os
 from infoDialogUi import Ui_infoDialog
 from infoDialogMain import InfoDialog
 from pickle import PickleError
+from PyQt4.QtGui import QApplication
 
 
 class CovarianceRawDialog(QtGui.QDialog):

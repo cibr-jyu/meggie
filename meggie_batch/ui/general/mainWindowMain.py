@@ -1,7 +1,4 @@
 # coding: latin1
-import traceback
-from covarianceWidgetNoneMain import CovarianceWidgetNone
-from covarianceWidgetRawMain import CovarianceWidgetRaw
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -37,13 +34,11 @@ Created on Mar 16, 2013
 Contains the MainWindow-class that holds the main window of the application.
 """
 
-import os,sys
+import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
-from PyQt4.QtCore import QRegExp
-
-import shutil
+from PyQt4.QtGui import QWhatsThis, QApplication
+import sip
 
 from mne import fiff
 
@@ -75,7 +70,8 @@ from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
 from forwardSolutionDialogMain import ForwardSolutionDialog
 from covarianceRawDialogMain import CovarianceRawDialog
-
+from covarianceWidgetNoneMain import CovarianceWidgetNone
+from covarianceWidgetRawMain import CovarianceWidgetRaw
 import messageBoxes
 
 import experiment
@@ -85,6 +81,7 @@ from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel, SubjectListModel
+
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -97,10 +94,12 @@ class MainWindow(QtGui.QMainWindow):
     #experiment_value_changed = QtCore.pyqtSignal()
 
 
-    def __init__(self):
+    def __init__(self, application):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        self.app = application
         
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
@@ -1389,10 +1388,10 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
             
-        self.fill_covariance_info_box()
+        self.update_covariance_info_box()
+
     
-    
-    def fill_covariance_info_box(self):
+    def update_covariance_info_box(self):
         """
         Fills the info box in the covariance tab with info about the
         current covariance matrix info for the active subject, if said info
@@ -1409,17 +1408,23 @@ class MainWindow(QtGui.QMainWindow):
             except Exception:
                 pass
         
-        layout = QtGui.QGridLayout()
-        self.ui.frameCovarianceInfoWidget.setLayout(layout)
+        if self.ui.frameCovarianceInfoWidget.layout() != None:
+            sip.delete(self.ui.frameCovarianceInfoWidget.layout())
+        
+        for child in self.ui.frameCovarianceInfoWidget.children():
+            child.setParent(None)
+        
+        covLayout = QtGui.QGridLayout()
+        self.ui.frameCovarianceInfoWidget.setLayout(covLayout)
         
         if cvdict == None:
-            self.covarianceWidgetNone = CovarianceWidgetNone(self)
-            layout.addWidget(self.covarianceWidgetNone)
+            covarianceWidgetNone = CovarianceWidgetNone()
+            covLayout.addWidget(covarianceWidgetNone)
             return
         
         if cvdict['covarianceSource'] == 'raw':
-            self.covarianceWidgetRaw = CovarianceWidgetRaw(self)
-            cvwui = self.covarianceWidgetRaw.ui
+            covarianceWidgetRaw = CovarianceWidgetRaw()
+            cvwui = covarianceWidgetRaw.ui
             if cvdict['rawsubjectname'] != None:
                 cvwui.textBrowserBasedOn.setText(cvdict['rawsubjectname'])
             else:
@@ -1447,17 +1452,13 @@ class MainWindow(QtGui.QMainWindow):
                 str(cvdict.get('flat').get('eog', 'Not used')))
                 cvwui.textBrowserFlatECG.setText(
                 str(cvdict.get('flat').get('ecg', 'Not used')))
-        
-        for i in reversed(range(layout.count())): 
-            layout.itemAt(i).widget().setParent(None)
-        layout.update()
-        layout.addWidget(self.covarianceWidgetRaw)
-        layout.update()
-        
+            covLayout.addWidget(covarianceWidgetRaw)
+            
         if cvdict['covarianceSource'] == 'epochs':
             # TODO: implement this functionality, then use existing
             # CovarianceWidgetEpochs
             pass
+    
     
     def populate_raw_tab_event_list(self):
         """
@@ -1592,7 +1593,7 @@ def main():
     sys.excepthook = exception_hook
     
     app = QtGui.QApplication(sys.argv)
-    window=MainWindow()
+    window=MainWindow(app)
             
     window.showMaximized()
     

@@ -14,7 +14,7 @@ class CovarianceWidgetRaw(QtGui.QWidget):
     raw file.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         """
         Constructor
         """

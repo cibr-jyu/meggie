@@ -1205,7 +1205,8 @@ class Caller(object):
             raise
         
         # Update ui.
-        self.parent.fill_covariance_info_box()
+        self.parent.update_covariance_info_box()
+
 
     def update_experiment_working_file(self, fname, raw):
         """
