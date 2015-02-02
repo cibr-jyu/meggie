@@ -107,25 +107,6 @@
          <string>Source space setup parameters:</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="1" colspan="2">
-          <widget class="QSpinBox" name="spinBoxSurfaceDecimValue">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="labelIco">
            <property name="text">
@@ -146,28 +127,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1" colspan="2">
-          <widget class="QSpinBox" name="spinBoxSpacing">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="suffix">
-            <string> mm</string>
-           </property>
-           <property name="value">
-            <number>7</number>
-           </property>
-          </widget>
-         </item>
          <item row="6" column="0">
           <widget class="QLabel" name="labelCPS">
            <property name="text">
@@ -175,47 +134,20 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QRadioButton" name="radioButtonPatchStatNo">
-             <property name="text">
-              <string>no (default)</string>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButtonPatchStatYes">
-             <property name="text">
-              <string>yes</string>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="labelSpacing">
-           <property name="text">
-            <string>Spacing (default is 7 mm):</string>
+           <property name="enabled">
+            <bool>false</bool>
            </property>
-           <property name="buddy">
-            <cstring>spinBoxSpacing</cstring>
+           <property name="text">
+            <string>Spacing:</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="labelSurface">
+          <widget class="QLabel" name="labelSurfaceName">
            <property name="text">
-            <string>Surface name (default is &quot;white&quot;):</string>
+            <string>Surface name:</string>
            </property>
           </widget>
          </item>
@@ -227,9 +159,36 @@
           </widget>
          </item>
          <item row="4" column="1" colspan="2">
-          <widget class="QLabel" name="labelSurfaceName">
+          <widget class="QLabel" name="labelSurfaceName_2">
            <property name="text">
             <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1" colspan="2">
+          <widget class="QLabel" name="labelComputePatchStats">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="labelIcoValue_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Not used</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="labelSpacing_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Not used</string>
            </property>
           </widget>
          </item>
@@ -249,38 +208,18 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
-          <widget class="QLabel" name="labelAtlas">
+          <widget class="QLabel" name="labelUseAtlas">
            <property name="text">
             <string>Use atlas:</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QRadioButton" name="radioButtonAtlasNo">
-             <property name="text">
-              <string>no (default)</string>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButtonAtlasYes">
-             <property name="text">
-              <string>yes</string>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QLabel" name="labelUseAtlas_2">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

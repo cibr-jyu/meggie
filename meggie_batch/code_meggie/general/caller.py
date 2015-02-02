@@ -882,7 +882,7 @@ class Caller(object):
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
-        reply = 'cancel'
+        reply = 'computeAll'
         if len(sourceSpaceSetupTestList) > 0 and \
         os.path.exists(waterShedSurfaceTestFile) and \
         os.path.exists(wsCorTestFile):
@@ -902,7 +902,8 @@ class Caller(object):
             fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
                                                       wshedDict)
             
-            reply = fModelSkipDialog.exec_()
+            fModelSkipDialog.exec_()
+            reply = fModelSkipDialog.get_return_value()
             
         
         if reply == 'cancel':
