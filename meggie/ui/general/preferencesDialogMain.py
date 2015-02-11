@@ -36,20 +36,114 @@ Contains the PreferencesDialog-class used in setting the preferences for
 the application.
 """
 
+import os
+import ConfigParser
 from PyQt4 import QtCore, QtGui
-from preferencesDialogUi import Ui_Dialog
+
+import prefecences
+
+from preferencesDialogUi import Ui_DialogPreferences
+import messageBoxes
 
 
 class PreferencesDialog(QtGui.QDialog):
     """
-    Dialog to set the preferences for the application. Only allows choosing the
-    calibration file for the experiment.
+    Dialog to set the preferences for the application (workspace directory
+    and MNE root directory).
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         """
         Constructor
         """
         QtGui.QDialog.__init__(self)
-        self.ui = Ui_Dialog() 
+        self.ui = Ui_DialogPreferences() 
         self.ui.setupUi(self)
+        
+        self.parent = parent
+        
+        self._workFilepath = ''
+        self._MNERootPath = ''
+        self._FreeSurferHome = '' 
+    
+        # Prefill previous values to UI and attributes from config file.
+        workDirectory = self.parent.preferencesHandler.working_directory
+        MNERootPath = self.parent.preferencesHandler.MNERoot
+        FreeSurferHome = self.parent.preferencesHandler.FreeSurferHome
+            
+        if self.parent.preferencesHandler.auto_load_last_open_experiment == True:
+            self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
+        
+        if self.parent.preferencesHandler.confirm_quit == True:
+            self.ui.checkBoxConfirmQuit.setChecked(True)       
+        
+        self._workFilepath = workDirectory
+        self._MNERootPath = MNERootPath
+        self._FreeSurferHome = FreeSurferHome
+        
+        self.ui.LineEditFilePath.setText(self._workFilepath)
+        self.ui.lineEditMNERoot.setText(self._MNERootPath)
+        self.ui.lineEditFreeSurferHome.setText(self._FreeSurferHome)
+     
+       
+    def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
+        """
+        Opens a filebrowser to select the workspace.
+        """
+        # Standard workaround for file dialog opening twice
+        if checked is None: return 
+        
+        self._workFilepath = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Select a workspace directory"))
+        self.ui.LineEditFilePath.setText(self._workFilepath)
+    
+    
+    def on_pushButtonBrowseMNERoot_clicked(self, checked=None):
+        if checked is None: return  
+        
+        self._MNERootPath = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Point Meggie to your MNE root directory"))
+        self.ui.lineEditMNERoot.setText(self._MNERootPath)
+    
+    
+    def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
+        if checked is None: return
+        
+        self._FreeSurferHome = str(QtGui.QFileDialog.getExistingDirectory(
+               self, "Point Meggie to your FreeSurfer home directory"))
+        self.ui.lineEditFreeSurferHome.setText(self._FreeSurferHome)
+    
+        
+    def accept(self):
+        
+        if os.path.isdir(self._workFilepath):
+            workFilePath = self._workFilepath
+        else:
+            message = 'No file path found for working file'
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox.show()
+            return
+        
+        if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() == True:
+            autoLoadLastOpenExp = True
+        else: autoLoadLastOpenExp = False
+        
+        if self.ui.checkBoxConfirmQuit.isChecked() == True:
+            confirmQuit = True
+        else: confirmQuit = False
+        
+        # MNE Root path can be empty or wrong here, we can annoy user about
+        # it if he really tries to use something MNE-related. Same goes for
+        # FreeSurfer.
+        MNERootPath = self._MNERootPath
+        FreeSurferPath = self._FreeSurferHome
+        
+        self.parent.preferencesHandler.working_directory = workFilePath
+        self.parent.preferencesHandler.MNERoot = MNERootPath
+        self.parent.preferencesHandler.FreeSurferHome = FreeSurferPath
+        self.parent.preferencesHandler.auto_load_last_open_experiment = \
+            autoLoadLastOpenExp
+        self.parent.preferencesHandler.confirm_quit = confirmQuit
+        self.parent.preferencesHandler.write_preferences_to_disk()
+        self.parent.preferencesHandler.set_env_variables()
+        self.close()
