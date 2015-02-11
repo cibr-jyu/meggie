@@ -34,20 +34,16 @@ Created on Mar 16, 2013
 Contains the MainWindow-class that holds the main window of the application.
 """
 
-import os,sys
+import os, sys, traceback, shutil
 
- 
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QWhatsThis, QFont, QSortFilterProxyModel
-from PyQt4.QtCore import QRegExp
-
-import shutil
+from PyQt4.QtGui import QWhatsThis, QApplication
+import sip
 
 from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-import pylab as pl
 from caller import Caller
 
 from mainWindowUi import Ui_MainWindow
@@ -73,7 +69,9 @@ from filterDialogMain import FilterDialog
 from forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
 from forwardSolutionDialogMain import ForwardSolutionDialog
-
+from covarianceRawDialogMain import CovarianceRawDialog
+from covarianceWidgetNoneMain import CovarianceWidgetNone
+from covarianceWidgetRawMain import CovarianceWidgetRaw
 import messageBoxes
 
 import experiment
@@ -83,6 +81,7 @@ from prefecences import PreferencesHandler
 import fileManager
 from listWidget import ListWidget
 from mvcModels import ForwardModelModel, SubjectListModel
+
 
 class MainWindow(QtGui.QMainWindow):
     """
@@ -95,10 +94,12 @@ class MainWindow(QtGui.QMainWindow):
     #experiment_value_changed = QtCore.pyqtSignal()
 
 
-    def __init__(self):
+    def __init__(self, application):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        self.app = application
         
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
@@ -1158,8 +1159,11 @@ class MainWindow(QtGui.QMainWindow):
         # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
         selectedRowNumber = selectedRowIndexes[0].row()
+        fmname = selectedRowIndexes[0].data()
+        subject = self.experiment.active_subject
         
         try:
+            fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
         except Exception:
             message = 'There was a problem removing forward model. Nothing ' + \
@@ -1253,8 +1257,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         
-        # self.covarianceRawDialog = covarianceRawDialog(self)
-        # self.covarianceRawDialog.show()    
+        self.covarianceRawDialog = CovarianceRawDialog(self)
+        self.covarianceRawDialog.show()    
           
     
     def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
@@ -1316,23 +1320,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
         self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
         
-        # If experiment has subjects added, the active_subject info will be added
-        # and tabs enabled for processing.
-        """
-        if (len(self.experiment._subject_paths) > 0):
-            for path in self.experiment._subject_paths:
-                item = QtGui.QListWidgetItem()
-                # -1 is the index for the subject name
-                itemSubjectName = path.split('/')[-1]
-                item.setText(itemSubjectName)
-                # Let's bold the name of the active subject in the subject list.
-                if itemSubjectName == self.experiment.active_subject_name:
-                    itemFont = QFont('defaultFamily')
-                    itemFont.setBold(True)
-                    item.setFont(itemFont)
-                self.ui.listWidgetSubjects.addItem(item)
-        """
-        
         if self.experiment.active_subject is not None:
             # Populate epoch and evoked lists
             epochs_items = self.experiment.load_epochs(self.experiment.active_subject)
@@ -1362,6 +1349,7 @@ class MainWindow(QtGui.QMainWindow):
             status = "Current working file: " + \
             os.path.basename(self._experiment._working_file_names[self.experiment._active_subject_name])
             self.statusLabel.setText(status)
+            
             try:
                 #Check whether ECG projections are calculated
                 if self.experiment.active_subject.check_ecg_projs():
@@ -1400,7 +1388,78 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
             
+        self.update_covariance_info_box()
+
+    
+    def update_covariance_info_box(self):
+        """
+        Fills the info box in the covariance tab with info about the
+        current covariance matrix info for the active subject, if said info
+        exists.
+        """
         
+        cvParamFilePath = os.path.join(self.experiment.active_subject.
+        _source_analysis_directory, 'covariance.param')
+        
+        cvdict = None
+        if os.path.isfile(cvParamFilePath):
+            try:
+                cvdict = fileManager.unpickle(cvParamFilePath)
+            except Exception:
+                pass
+        
+        if self.ui.frameCovarianceInfoWidget.layout() != None:
+            sip.delete(self.ui.frameCovarianceInfoWidget.layout())
+        
+        for child in self.ui.frameCovarianceInfoWidget.children():
+            child.setParent(None)
+        
+        covLayout = QtGui.QGridLayout()
+        self.ui.frameCovarianceInfoWidget.setLayout(covLayout)
+        
+        if cvdict == None:
+            covarianceWidgetNone = CovarianceWidgetNone()
+            covLayout.addWidget(covarianceWidgetNone)
+            return
+        
+        if cvdict['covarianceSource'] == 'raw':
+            covarianceWidgetRaw = CovarianceWidgetRaw()
+            cvwui = covarianceWidgetRaw.ui
+            if cvdict['rawsubjectname'] != None:
+                cvwui.textBrowserBasedOn.setText(cvdict['rawsubjectname'])
+            else:
+                cvwui.textBrowserBasedOn.setText(cvdict['rawfilepath'])
+            cvwui.textBrowserTmin.setText(str(cvdict['starttime']))
+            cvwui.textBrowserTmax.setText(str(cvdict['endtime']))
+            cvwui.textBrowserTstep.setText(str(cvdict['tstep']))
+            if cvdict['reject'] != None:
+                cvwui.textBrowserGradPeakCovariance.setText(
+                str(cvdict.get('reject').get('grad', '')))
+                cvwui.textBrowserMagPeakCovariance.setText(
+                str(cvdict.get('reject').get('mag', '')))
+                cvwui.textBrowserEEGPeakCovariance.setText(
+                str(cvdict.get('reject').get('eeg', '')))
+                cvwui.textBrowserEOGPeakCovariance.setText(
+                str(cvdict.get('reject').get('eog', '')))
+            if cvdict['flat'] != None:
+                cvwui.textBrowserFlatGrad.setText(
+                str(cvdict.get('flat').get('grad', '')))
+                cvwui.textBrowserFlatMag.setText(
+                str(cvdict.get('flat').get('mag', '')))
+                cvwui.textBrowserFlatEEG.setText(
+                str(cvdict.get('flat').get('eeg', '')))
+                cvwui.textBrowserFlatEOG.setText(
+                str(cvdict.get('flat').get('eog', '')))
+                cvwui.textBrowserFlatECG.setText(
+                str(cvdict.get('flat').get('ecg', 'Not used')))
+            covLayout.addWidget(covarianceWidgetRaw)
+            
+        if cvdict['covarianceSource'] == 'epochs':
+            # TODO: implement this functionality, then use existing
+            # CovarianceWidgetEpochs
+            pass
+    
+    
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
@@ -1496,7 +1555,6 @@ class MainWindow(QtGui.QMainWindow):
         changes, updating the models when items are added to them is based
         on events.
         """
-        # FIXME: this should be called separately after adding a forward model.
         self.forwardModelModel.initialize_model()
         self.subjectListModel.initialize_model()
 
@@ -1506,23 +1564,37 @@ class MainWindow(QtGui.QMainWindow):
         
     def check_workspace(self):
         """
-        Open the workspace chooser dialog.
+        Open the preferences dialog, in this case for choosing the workspace.
         """
         self.preferencesDialog = PreferencesDialog(self)
         self.preferencesDialog.exec_()
 
-        
+
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
         
+
+
+### Code related to application initialization ###     
+
+
+def exception_hook(exctype, value, tracebackObj):
+    traceback.print_tb(tracebackObj)
+    title = 'Unknown error'
+    message = 'Something unexpected happened. Please copy the following ' + \
+    'to your bug report:\n\n' + 'Exception type: ' + str(exctype) + '\n\n' + \
+    'Exception value: ' + str(value) + '\n\n\n' + 'Traceback:\n\n' + \
+    ''.join(traceback.format_tb(tracebackObj))
+    messagebox = messageBoxes.longMessageBox(title, message)
+    messagebox.exec_()
+   
         
-        
-def main(): 
+def main():
+    sys.excepthook = exception_hook
+    
     app = QtGui.QApplication(sys.argv)
-    window=MainWindow()
+    window=MainWindow(app)
             
     window.showMaximized()
     
     sys.exit(app.exec_())
-
-    

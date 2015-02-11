@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1379</width>
-    <height>765</height>
+    <width>1542</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,6 +32,12 @@
    <string>Meggie</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>400</height>
+    </size>
+   </property>
    <layout class="QGridLayout" name="gridLayout_7">
     <item row="0" column="0">
      <widget class="QScrollArea" name="scrollArea">
@@ -41,7 +47,16 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>600</width>
+        <height>600</height>
+       </size>
+      </property>
       <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
       <property name="widgetResizable">
@@ -52,7 +67,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1100</width>
+         <width>1165</width>
          <height>750</height>
         </rect>
        </property>
@@ -71,7 +86,7 @@
              <bool>true</bool>
             </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -79,7 +94,7 @@
             <property name="minimumSize">
              <size>
               <width>200</width>
-              <height>0</height>
+              <height>400</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -1342,64 +1357,6 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tabTFR">
-             <attribute name="title">
-              <string>TFR</string>
-             </attribute>
-             <layout class="QGridLayout" name="gridLayout_8">
-              <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_33">
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout">
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxEpochsTFR">
-                    <property name="title">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxAvailableTFR">
-                    <property name="maximumSize">
-                     <size>
-                      <width>500</width>
-                      <height>180</height>
-                     </size>
-                    </property>
-                    <property name="title">
-                     <string>Available actions:</string>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_27">
-                     <item row="1" column="0">
-                      <widget class="QPushButton" name="pushButtonTFRTopology">
-                       <property name="text">
-                        <string>TFR topology vizualization</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QPushButton" name="pushButtonTFR">
-                       <property name="text">
-                        <string>TFR visualization</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBoxEpochParamsTFR">
-                  <property name="title">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
             <widget class="QWidget" name="tabAveraging">
              <attribute name="title">
               <string>Averaging</string>
@@ -1708,6 +1665,70 @@
                </item>
               </layout>
              </widget>
+            </widget>
+            <widget class="QWidget" name="tabTFR">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <attribute name="title">
+              <string>TFR</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_8">
+              <item row="0" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_33">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout">
+                  <item>
+                   <widget class="QGroupBox" name="groupBoxEpochsTFR">
+                    <property name="title">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="groupBoxAvailableTFR">
+                    <property name="maximumSize">
+                     <size>
+                      <width>500</width>
+                      <height>180</height>
+                     </size>
+                    </property>
+                    <property name="title">
+                     <string>Available actions:</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_27">
+                     <item row="1" column="0">
+                      <widget class="QPushButton" name="pushButtonTFRTopology">
+                       <property name="text">
+                        <string>TFR topology vizualization</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="pushButtonTFR">
+                       <property name="text">
+                        <string>TFR visualization</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBoxEpochParamsTFR">
+                  <property name="title">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="tabSourcePreparation">
              <attribute name="title">
@@ -2283,74 +2304,81 @@
              <attribute name="title">
               <string>Noise covariance</string>
              </attribute>
-             <widget class="QGroupBox" name="groupBox_3">
-              <property name="geometry">
-               <rect>
-                <x>440</x>
-                <y>20</y>
-                <width>531</width>
-                <height>241</height>
-               </rect>
+             <layout class="QFormLayout" name="formLayout_16">
+              <property name="fieldGrowthPolicy">
+               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
               </property>
-              <property name="title">
-               <string>Current covariance matrix info:</string>
-              </property>
-              <widget class="QLabel" name="label_7">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>30</y>
-                 <width>271</width>
-                 <height>31</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Based on:</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_8">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>90</y>
-                 <width>321</width>
-                 <height>101</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Tänne eri tiedot riippuen siitä, perustuuko raw-filuun vai epookkeihin. Talletus levylle, koska näitä ei dokumentaation mukaan voi lukea tiedostosta tai cov-instanssista (mutta tarkista silti, voiko)</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QWidget" name="layoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>30</y>
-                <width>359</width>
-                <height>62</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_14">
-               <item>
-                <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
-                 <property name="text">
-                  <string>Compute noise covariance matrix based on raw file...</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
-                 <property name="text">
-                  <string>Compute noise covariance matrix based on epochs...</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+              <item row="0" column="0" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout_34">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <property name="topMargin">
+                   <number>13</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonComputeCovarianceRaw">
+                    <property name="text">
+                     <string>Compute noise covariance matrix based on raw file...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonComputeCovarianceEpochs">
+                    <property name="text">
+                     <string>Compute noise covariance matrix based on epochs...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frameCovarianceInfoWidget">
+                  <property name="maximumSize">
+                   <size>
+                    <width>600</width>
+                    <height>800</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>1</number>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="tabInverseOperator">
              <attribute name="title">
@@ -2691,7 +2719,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1379</width>
+     <width>1542</width>
      <height>23</height>
     </rect>
    </property>
@@ -3195,7 +3223,7 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="0">
       <widget class="QGroupBox" name="groupBoxSubject_2">
        <property name="title">
-        <string>Subjects (active in bold and green):</string>
+        <string>Subjects (active in bold):</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_12">
         <property name="margin">

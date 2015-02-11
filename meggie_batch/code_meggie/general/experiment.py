@@ -38,6 +38,7 @@ import os
 import re
 import csv
 import shutil
+import gc
 
 import fileManager
 from subject import Subject
@@ -282,7 +283,7 @@ class Experiment(QObject):
         
         try:
             shutil.rmtree(subject_path)
-        except OSError:
+        except OSError('Could not remove the contents of the subject folder.'):
             raise
         self.save_experiment_settings()
         main_window._initialize_ui()
@@ -510,19 +511,18 @@ class Experiment(QObject):
                 raise Exception('No rights to save to the chosen path or' + 
                                 ' experiment name already exists. \n')
                 return
-        else:
         
-            # String conversion, because shutil doesn't accept QStrings
-            settingsFileName = str(self._experiment_name + '.exp')
-            
-            # Actually a file object
-            settingsFile = open(os.path.join(experiment_directory, 
-                                settingsFileName), 'wb')
-            
-            # Protocol 2 used because of file object being pickled
-            pickle.dump(self, settingsFile, 2)
-            print '[done]'
-            settingsFile.close()        
+        # String conversion, because shutil doesn't accept QStrings
+        settingsFileName = str(self._experiment_name + '.exp')
+        
+        # Actually a file object
+        settingsFile = open(os.path.join(experiment_directory, 
+                            settingsFileName), 'wb')
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(self, settingsFile, 2)
+        print '[done]'
+        settingsFile.close()        
     
 
     def __getstate__(self):
@@ -597,7 +597,9 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-               
+        # Releases memory from the previously open experiment
+        self.parent._experiment = None
+        gc.collect()
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -662,6 +664,9 @@ class ExperimentHandler(QObject):
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
         if os.path.exists(path) and os.path.isfile(fname):
+            # Releases memory from the previously open experiment
+            self.parent._experiment = None
+            gc.collect()
             output = open(fname, 'rb')
             self.parent._experiment = pickle.load(output)
             self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
@@ -670,8 +675,6 @@ class ExperimentHandler(QObject):
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
 
-            # Sets the experiment for caller, so it can use its information.
-            self.parent.caller.experiment = self.parent._experiment
             self.parent.preferencesHandler.previous_experiment_name = \
             self.parent.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()

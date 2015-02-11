@@ -6,7 +6,6 @@ Created on 26.6.2014
 @author: kpaliran
 
 Contains models for views in various UI components, mainly MainWindow.
-TODO Also contains methods for writing the models to disk (using fileManager module).
 '''
 
 from PyQt4 import QtCore, QtGui
@@ -104,19 +103,11 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
-        Removal of a single row from the model. Also removes the corresponding
-        directory from the disk.
+        Removal of a single row from the model.
         """
         self.beginRemoveRows(parent, position, position + rows - 1)
         singleFMitem = self.fmodelInfoList[position]
-        
-        subject = self.parent._experiment._active_subject
-        fmname = singleFMitem[0]
-        
-        try:
-            fileManager.remove_fModel_directory(fmname, subject)
-            self.fmodelInfoList.remove(singleFMitem)
-        except Exception: raise
+        self.fmodelInfoList.remove(singleFMitem)
         self.endRemoveRows()
             
         
@@ -337,14 +328,6 @@ class SubjectListModel(QtCore.QAbstractListModel):
                     itemFont = QFont('defaultFamily')
                     itemFont.setBold(True)
                     return itemFont
-            else:
-                return None
-            
-        if role == QtCore.Qt.BackgroundColorRole:
-            row = index.row()
-            subjectName = self.subjectNameList[row]
-            if subjectName == activeSubjectName:
-                return QtGui.QColor(132,255,132)
             else:
                 return None
                 

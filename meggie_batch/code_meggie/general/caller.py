@@ -1,34 +1,4 @@
 # coding: latin1
-import shutil
-from holdCoregistrationDialogMain import holdCoregistrationDialog
-
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
-#All rights reserved.
-#
-#Redistribution and use in source and binary forms, with or without
-#modification, are permitted provided that the following conditions are met: 
-#
-#1. Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer. 
-#2. Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution. 
-#
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-#The views and conclusions contained in the software and documentation are those
-#of the authors and should not be interpreted as representing official policies, 
-#either expressed or implied, of the FreeBSD Project.
-
 """
 Created on Apr 11, 2013
 
@@ -41,42 +11,37 @@ import os
 import glob
 import traceback
 import fnmatch
+import re
+import shutil
 
 from PyQt4 import QtCore, QtGui
 
 import mne
-# from mne import fiff -- mne.fiff is deprecated in MNE 0.8
-# TODO formerly in mne.fiff, usage may have changed
-
 from mne.time_frequency import induced_power
-
 from mne import filter as MNEfilter
-
 from mne.layouts import read_layout
 from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
-
 from mne.viz import plot_topo
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 # from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
-import csv
 
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-import re
+
 import messageBoxes
 import fileManager
-import glob
+from holdCoregistrationDialogMain import holdCoregistrationDialog
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
-from scimath.units.energy import cal
+from forwardModelSkipDialogMain import ForwardModelSkipDialog
 
 
 class Caller(object):
@@ -149,7 +114,7 @@ class Caller(object):
         """ 
         TODO Write parameter file. Implement after the actual MaxFilter
         calling has been tested. 
-        self.experiment.save_parameter_file('maxfilter', raw, , dic)
+        self.parent.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
         self.parent.experiment.save_experiment_settings()
    
@@ -437,7 +402,8 @@ class Caller(object):
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
-        rawFileName = os.path.splitext(os.path.split(self.parent.experiment._working_file_names[self.experiment._active_subject_name])[1])[0]
+        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
+        _working_file_names[self.parent.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
@@ -488,7 +454,8 @@ class Caller(object):
         if not ' ' in evokeds[0].ch_names[0]:
             # TODO: add whitespace on evokeds ch_names or remove whitespace
             # from layout names.
-            layout.names = _clean_names(layout.names, remove_whitespace=True)
+            #layout.names = _clean_names(layout.names, remove_whitespace=True)
+            layout.names = [str(name).replace(' ','') for name in layout.names]
         """
         COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
           '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
@@ -915,33 +882,35 @@ class Caller(object):
         
         # Check if source space is already setup and watershed calculated, and
         # offer to skip them and only perform setup_forward_model.
-        reply = 2
+        reply = 'computeAll'
         if len(sourceSpaceSetupTestList) > 0 and \
         os.path.exists(waterShedSurfaceTestFile) and \
         os.path.exists(wsCorTestFile):
-            title = 'Reuse existing files?'
-            text = "It seems you already have a setup source space and BEM " + \
-            "model meshes created with watershed algorithm. If you don't " + \
-            "need to create them again, Meggie can reuse them and only " + \
-            "setup a new forward model. This will save a considerable amount " + \
-            " of time, especially in BEM model meshes creation. You can: \n \n" + \
-            "1) press Cancel to get back to previous dialog to adjust " + \
-            " parameters \n \n" + \
-            "2) Press \"BEM model setup only\" to reuse previously created " + \
-            "files for a new forward model (only forward model name and BEM"  + \
-            "model setup parameters will be used, others are ignored) \n \n" + \
-            "3) Compute all phases again"
-            bemButtonText = 'Bem model \n setup only'
-            computeAllButtonText = 'Compute all \n phases again' 
-            reply = QtGui.QMessageBox.information(self.parent, title, text, 
-                                                  'Cancel', bemButtonText,
-                                                  computeAllButtonText)
         
-        if reply == 0:
+            try: 
+                sSpaceDict = fileManager.unpickle(os.path.join(fmDir, 
+                                                  'setupSourceSpace.param'))
+            except Exception:
+                sSpaceDict = dict()
+                
+            try:
+                wshedDict = fileManager.unpickle(os.path.join(fmDir, 
+                                                              'wshed.param'))
+            except Exception:
+                wshedDict = dict()
+        
+            fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
+                                                      wshedDict)
+            
+            fModelSkipDialog.exec_()
+            reply = fModelSkipDialog.get_return_value()
+            
+        
+        if reply == 'cancel':
             # To keep forward model dialog open
             return False
         
-        if reply == 1:
+        if reply == 'bemOnly':
             # Need to do this to get triangulation files to right place and
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
@@ -953,7 +922,7 @@ class Caller(object):
                     activeSubject, None, None, fmdict['sfmodelArgs'])
                 
                 # These should always exist, should be safe to unpickle.
-                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param' )
+                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
                 wshedParamFile = os.path.join(fmDir, 'wshed.param')
                 sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
                 wshedArgsDict = fileManager.unpickle(wshedParamFile)
@@ -976,7 +945,7 @@ class Caller(object):
                 self.messageBox = messageBoxes.longMessageBox('Error', message)
                 self.messageBox.show()
         
-        if reply == 2:
+        if reply == 'computeAll':
             # To make overwriting unnecessary
             if os.path.isdir(bemDir):
                 shutil.rmtree(bemDir)
@@ -1105,8 +1074,8 @@ class Caller(object):
                                selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path, 
-                  self.parent.experiment._working_file_names[self.experiment.
-                  _active_subject_name])
+                  self.parent.experiment._working_file_names[self.parent.\
+                  experiment._active_subject_name])
         
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
                                raw=rawPath, subject=subject,
@@ -1180,11 +1149,66 @@ class Caller(object):
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
+        subjectName = cvdict['rawsubjectname']
+        fileNameToWrite = ''
+        try:
+            if subjectName != None:
+                if subjectName == self.parent.experiment.active_subject_name:
+                    fileNameToWrite = subjectName + '-cov.fif'
+                    raw = self.parent.experiment.active_subject.working_file
+                else:
+                    fileNameToWrite = subjectName + '-cov.fif'
+                    raw = self.parent.experiment.get_subject_working_file(
+                                                        subjectName) 
+            else:
+                raw = fileManager.open_raw(cvdict['rawfilepath'], True)
+                basename = os.path.basename(cvdict['rawfilepath'])
+                fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
+        except Exception:
+            raise
         
-        # raw
+        tmin = cvdict['starttime']
+        tmax = cvdict['endtime']
+        tstep = cvdict['tstep']
         
+        reject = cvdict['reject']
+        flat = cvdict['flat']
+        picks = cvdict['picks']
         
-        cov = mne.compute_raw_data_covariance()
+        try:
+            cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
+                  reject, flat, picks)
+        except ValueError:
+            raise
+        
+        sourceAnalysisDir = self.parent.experiment.active_subject. \
+                            _source_analysis_directory
+        
+        # Remove previous covariance file before creating a new one.
+        fileManager.remove_files_with_regex(sourceAnalysisDir,'.*-cov.fif')
+        
+        filePathToWrite = os.path.join(sourceAnalysisDir, fileNameToWrite)
+        try:
+            mne.write_cov(filePathToWrite, cov)
+        except IOError as err:
+            err.message = 'Could not write covariance file. ' + \
+            'The error message was: \n\n' + err.message 
+            raise
+        
+        # Delete previous and write a new parameter file.
+        try:
+            fileManager.remove_files_with_regex(sourceAnalysisDir,
+                                                'covariance.param')
+            cvparamFile = os.path.join(sourceAnalysisDir, 'covariance.param')
+            fileManager.pickleObjectToFile(cvdict,cvparamFile)
+            
+        except Exception:
+            fileManager.remove_files_with_regex(sourceAnalysisDir,
+                                                '*-cov.fif')
+            raise
+        
+        # Update ui.
+        self.parent.update_covariance_info_box()
 
 
     def update_experiment_working_file(self, fname, raw):

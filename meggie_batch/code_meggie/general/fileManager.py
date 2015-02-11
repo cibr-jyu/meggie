@@ -1,32 +1,4 @@
 # coding: latin1
-
-# Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met: 
-#
-# 1. Redistributions of source code must retain the above copyright notice, this
-#   list of conditions and the following disclaimer. 
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution. 
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# The views and conclusions contained in the software and documentation are those
-# of the authors and should not be interpreted as representing official policies, 
-# either expressed or implied, of the FreeBSD Project.
-
 """
 Created on Mar 13, 2013
 
@@ -41,6 +13,7 @@ import os
 import pickle
 import shutil
 import glob
+import re
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
@@ -320,6 +293,12 @@ def convertFModelParamDictToCmdlineParamTuple(fmdict):
 
 def write_forward_solution_parameters(fmdir, fsdict):
     """
+    Writes (pickles) the forward solution parameters to a file.
+    
+    Keyword arguments:
+    fmdir    -- directory to which the parameter file should be pickled (should
+                be forward models directory).
+    fsdict   -- dictionary of parameters to pickle.
     
     """
     fsparamFile = os.path.join(fmdir, 'fSolution.param')
@@ -327,6 +306,22 @@ def write_forward_solution_parameters(fmdir, fsdict):
     try:
         pickleObjectToFile(fsdict, fsparamFile)
     except Exception: raise    
+
+
+def remove_files_with_regex(directory, pattern):
+    """
+    Removes, from the given directory, files with a given regex pattern in
+    their names.
+    
+    Keyword arguments:
+    directory    -- directory to search the files for.
+    pattern      -- regex pattern to match.
+    """
+    try:
+        for f in os.listdir(directory):
+            if re.search(pattern, f):
+                os.remove(os.path.join(directory, f))
+    except IOError: raise
 
 
 def link_triang_files(subject):
@@ -427,7 +422,6 @@ def delete_file_at(folder, files):
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
     """
-
     try:
         if isinstance(files, list):
             for f in files:
@@ -443,7 +437,8 @@ def load_epochs(fname):
     Keyword arguments:
     fname -- the name of the fif-file containing epochs.
     
-    Return a tuple with an Epochs instance and
+    # TODO: fix this.
+    Return a tuple with an Epochs instance and 
     """
     split = os.path.split(fname)
     folder = split[0] + '/'
@@ -570,13 +565,13 @@ def open_raw(fname, pre_load=True):
         return mne.io.Raw(fname, preload=pre_load)
         # self.raw = mne.io.RawFIFF(str(fname))
     except IOError:
-        raise IOError('File does not exist or is not a raw-file')
+        raise IOError('File does not exist or is not a raw-file.')
     
     except OSError:
         raise OSError('You do not have permission to read the file.')
     
     except ValueError:
-        raise ValueError('File is not a raw-file')
+        raise ValueError('File is not a raw-file.')
     
     
 def pickleObjectToFile(picklable, fpath):
