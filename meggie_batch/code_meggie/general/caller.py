@@ -989,8 +989,9 @@ class Caller(object):
             setupSourceSpaceArgs
             mne_setup_source_spaceCommand = ' '.join(
                                             mne_setup_source_space_commandList)
-            subprocess.check_output(mne_setup_source_spaceCommand,
+            setupSSproc = subprocess.check_output(mne_setup_source_spaceCommand,
                                     shell=True, env=env)
+            self.parent.processes.append(setupSSproc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_source_space. ' + \
@@ -1013,8 +1014,9 @@ class Caller(object):
             mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
                                     waterShedArgs
             mne_watershed_bemCommand = ' '.join(mne_watershed_bem_commandList)
-            subprocess.check_output(mne_watershed_bemCommand,
+            wsProc = subprocess.check_output(mne_watershed_bemCommand,
                                     shell=True, env=env)
+            self.parent.processes.append(wsProc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_watershed_bem. ' + \
@@ -1038,8 +1040,9 @@ class Caller(object):
                 ['$MNE_ROOT/bin/mne_setup_forward_model'] + setupFModelArgs
             mne_setup_forward_modelCommand = ' '.join(
                                         mne_setup_forward_modelCommandList)
-            subprocess.check_output(mne_setup_forward_modelCommand, shell=True,
+            setupFModelProc = subprocess.check_output(mne_setup_forward_modelCommand, shell=True,
                                     env=env)
+            self.parent.processes.append(setupFModelProc)
         except CalledProcessError as e:    
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_forward_model. ' + \

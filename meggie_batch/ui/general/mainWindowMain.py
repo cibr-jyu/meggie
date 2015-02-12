@@ -34,7 +34,7 @@ Created on Mar 16, 2013
 Contains the MainWindow-class that holds the main window of the application.
 """
 
-import os, sys, traceback, shutil
+import os, sys, traceback, shutil, atexit
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QApplication
@@ -99,7 +99,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        self.app = application
+        # List of subprocesses, used for terminating MNE-C processes on Meggie
+        # quit.
+        self.processes = [] 
         
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
@@ -1559,7 +1561,6 @@ class MainWindow(QtGui.QMainWindow):
         self.subjectListModel.initialize_model()
 
 
-
 ### Miscellaneous code ###
         
     def check_workspace(self):
@@ -1573,6 +1574,17 @@ class MainWindow(QtGui.QMainWindow):
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
         
+
+    @atexit.register
+    def terminate_subprocesses(self, procs):
+        """
+        TODO: currently of no use, as this does not run when Meggie is simply
+        killed (and the only way to shutdown Meggie mid-processing
+        with current unthreaded design is by killing it with SIGKILL) 
+        For terminating MNE-C subprocesses at Meggie exit.
+        """
+        for proc in self.processes:
+            proc.terminate()
 
 
 ### Code related to application initialization ###     

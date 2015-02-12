@@ -49,6 +49,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/prepr
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/general/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/sourceModeling/")
 
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/widgets/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/epoching/")
