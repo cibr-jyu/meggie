@@ -42,7 +42,7 @@ sip.setapi('QString', 2)
 
 os.environ['QT_API'] = 'pyqt'
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/externalmodules/")
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/externalModules/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/tests/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/epoching/")
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/preprocessing/")
