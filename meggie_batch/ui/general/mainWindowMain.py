@@ -39,6 +39,7 @@ import os, sys, traceback, shutil
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QApplication
 import sip
+import mne
 
 from mne import fiff
 
@@ -193,7 +194,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
-        
    
     @property
     def experiment(self):
@@ -1043,11 +1043,14 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.ui.listViewSubjects.selectedIndexes() == []: return
         
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
         
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:
+            QtGui.QApplication.restoreOverrideCursor()
             return      
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
@@ -1057,6 +1060,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models() 
+        QtGui.QApplication.restoreOverrideCursor()
 
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
