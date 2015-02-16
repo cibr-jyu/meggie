@@ -38,6 +38,8 @@ import glob
 import mne
 
 from PyQt4 import QtCore,QtGui
+
+from code_meggie.general.caller import Caller
 from addProjectionsUi import Ui_Dialog
 import messageBoxes
 
@@ -55,6 +57,7 @@ class AddECGProjections(QtGui.QDialog):
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
+        self.caller = Caller.Instance()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         directory = self.parent.experiment.active_subject.subject_path
@@ -85,7 +88,7 @@ class AddECGProjections(QtGui.QDialog):
         mne.write_proj(self.proj_file, applied)
         
         #TODO: working_file instead of raw_file
-        self.parent.caller.apply_ecg(self.parent.experiment.active_subject.working_file,
+        self.caller.apply_ecg(self.parent.experiment.active_subject.working_file,
                                 self.parent.experiment.active_subject.subject_path)
         """
         except Exception, err:

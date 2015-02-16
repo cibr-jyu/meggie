@@ -42,8 +42,9 @@ from holdCoregistrationDialogMain import holdCoregistrationDialog
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from forwardModelSkipDialogMain import ForwardModelSkipDialog
+from singleton import Singleton
 
-
+@Singleton
 class Caller(object):
     """
     Class for simple of calling third party software. Includes methods that
@@ -52,7 +53,7 @@ class Caller(object):
     More complicated functionality like epoching can be found in separate
     classes.
     """
-    def __init__(self, parent):
+    def __init__(self):
         """
         Constructor
         Keyword arguments:
@@ -60,8 +61,11 @@ class Caller(object):
         """
         # Easiest way to reach experiment, active subject, preferences etc. is
         # via parent, so let's use it.
+        print "Caller created"
+        #self.parent = parent
+        
+    def setParent(self, parent):
         self.parent = parent
-    
     
     def call_mne_browse_raw(self, filename):
         """

@@ -43,6 +43,7 @@ from threading import Thread
 from PyQt4 import QtCore,QtGui
 
 import messageBoxes
+from code_meggie.general.caller import Caller
 
 class MaxFilterDialog(QtGui.QDialog):
     """
@@ -217,7 +218,7 @@ class MaxFilterDialog(QtGui.QDialog):
         custom = self.ui.textEditCustom.toPlainText()
         
         # Uses the caller related to mainwindow.
-        caller = self.parent.caller
+        caller = Caller.Instance()
         
         try:
             caller.call_maxfilter(dictionary, custom)

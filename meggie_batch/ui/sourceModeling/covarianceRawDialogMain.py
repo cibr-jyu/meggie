@@ -5,15 +5,18 @@ Created on 7.1.2015
 '''
 
 from PyQt4 import QtGui
-from covarianceRawDialogUi import Ui_covarianceRawDialog
+from PyQt4.QtGui import QApplication
 
+from covarianceRawDialogUi import Ui_covarianceRawDialog
 import messageBoxes
-import fileManager
-import os
 from infoDialogUi import Ui_infoDialog
 from infoDialogMain import InfoDialog
+from code_meggie.general.caller import Caller
+
+import fileManager
+import os
 from pickle import PickleError
-from PyQt4.QtGui import QApplication
+
 
 
 class CovarianceRawDialog(QtGui.QDialog):
@@ -114,7 +117,8 @@ class CovarianceRawDialog(QtGui.QDialog):
         pdict['covarianceSource'] = 'raw'
         
         try:
-            self.parent.caller.create_covariance_from_raw(pdict)    
+            caller = Caller.Instance()
+            caller.create_covariance_from_raw(pdict)    
         except ValueError as e:
             message = 'Could not compute covariance. MNE error message was: ' +\
             '\n\n' + str(e)

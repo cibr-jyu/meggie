@@ -39,6 +39,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from TFRfromEpochsUi import Ui_DialogEpochsTFR
+from caller import Caller
 
 class TFRDialog(QtGui.QDialog):
     """
@@ -76,7 +77,8 @@ class TFRDialog(QtGui.QDialog):
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
         try:
-            self.parent.caller.TFR(self.raw, self.epochs, ch_index,
+            caller = Caller.Instance()
+            caller.TFR(self.raw, self.epochs, ch_index,
                                    minfreq, maxfreq, interval, ncycles, decim)
         except Exception, err:
             self.messageBox = messageBox.AppForm()

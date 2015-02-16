@@ -37,6 +37,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from TFRtopologyUi import Ui_DialogTFRTopology
+from caller import Caller
 import messageBoxes
 
 class TFRTopologyDialog(QtGui.QDialog):
@@ -87,7 +88,8 @@ class TFRTopologyDialog(QtGui.QDialog):
             reptype = 'induced'
         else: reptype = 'phase'
         try:
-            self.parent.caller.TFR_topology(self.raw, self.epochs,
+            caller = Caller.Instance()
+            caller.TFR_topology(self.raw, self.epochs,
                                             reptype, minfreq, maxfreq, decim,
                                             mode, blstart, blend, interval,
                                             ncycles)

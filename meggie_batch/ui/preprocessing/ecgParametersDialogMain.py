@@ -44,6 +44,7 @@ from ecgParametersDialogUi import Ui_Dialog
 
 import fileManager
 from measurementInfo import MeasurementInfo
+from code_meggie.general.caller import Caller
 
 import messageBoxes
 
@@ -230,6 +231,8 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of incorrect ECG channel.        
         incorrect_ECG_channel = ''
         # Calculation is prevented because of...
@@ -247,16 +250,19 @@ class EcgParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxECGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
             if len(incorrect_ECG_channel) > 0:
                 self.messageBox = messageBoxes.\
                 shortMessageBox(incorrect_ECG_channel)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
             self.close()
+            QtGui.QApplication.restoreOverrideCursor()
             return
 
         recently_active_subject = self.parent.experiment._active_subject._subject_name
@@ -297,7 +303,7 @@ class EcgParametersDialog(QtGui.QDialog):
             shortMessageBox(incorrect_ECG_channel)
             self.messageBox.show()
         self.close()
-
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed.
@@ -498,8 +504,8 @@ class EcgParametersDialog(QtGui.QDialog):
             subject._ecg_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            event_checker = self.parent.caller.\
-            call_ecg_ssp(subject._ecg_params)
+            caller = Caller.Instance()
+            event_checker = caller.call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
                 return incorrect_ECG_channel, error_message
         except Exception:

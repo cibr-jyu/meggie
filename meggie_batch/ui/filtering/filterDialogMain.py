@@ -21,6 +21,7 @@ class FilterDialog(QtGui.QDialog):
     Class containing the logic for filterDialog. It collects the parameters
     needed for filtering and shows the preview for the filter if required.
     """
+    caller = Caller.Instance()
 
 
     def __init__(self, parent):
@@ -64,7 +65,7 @@ class FilterDialog(QtGui.QDialog):
         # environment.
         
         self.filterParameterDictionary = self.get_filter_parameters()
-        self.previewFile = self.parent.caller.\
+        self.previewFile = self.caller.\
                                   filter(self.filterParameterDictionary, False)
         
         # TODO draw the image
@@ -201,7 +202,7 @@ class FilterDialog(QtGui.QDialog):
         self._validateFilterFreq(paramDict, samplerate)
         self._validateFilterLength(paramDict)
         
-        filteredData = self.parent.caller.filter(self.dataToFilter, 
+        filteredData = self.caller.filter(self.dataToFilter, 
                                                  samplerate, paramDict)
         
         # Replace the data in the working file with the filtered data

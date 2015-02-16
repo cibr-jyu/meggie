@@ -42,6 +42,7 @@ import traceback
 
 from PyQt4 import QtCore,QtGui
 from eogParametersDialogUi import Ui_Dialog
+from code_meggie.general.caller import Caller
 
 import fileManager
 
@@ -400,8 +401,8 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            event_checker = self.parent.caller.\
-            call_eog_ssp(subject._eog_params)
+            caller = Caller.Instance()
+            event_checker = caller.call_eog_ssp(subject._eog_params)
             if event_checker == -1:
                 return error_message
         except Exception:

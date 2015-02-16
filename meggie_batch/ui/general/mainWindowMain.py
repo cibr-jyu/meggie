@@ -109,7 +109,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
-        self.caller = Caller(self)
+        self.caller = Caller.Instance()
+        self.caller.setParent(self)
        
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
