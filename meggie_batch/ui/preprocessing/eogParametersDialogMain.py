@@ -74,6 +74,8 @@ class EogParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and passes 
         them to the caller class.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of...
         error_message = ''
         
@@ -88,10 +90,12 @@ class EogParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxEOGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyEOG.setEnabled(False)
                 #self.parent.ui.checkBoxEOGComputed.setChecked(False)
             self.close()
+            QtGui.QApplication.restoreOverrideCursor()
             return
         recently_active_subject = self.parent.experiment._active_subject._subject_name
         subject_names = []
@@ -124,6 +128,7 @@ class EogParametersDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
         self.parent._initialize_ui()
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):
