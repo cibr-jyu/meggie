@@ -39,7 +39,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from TFRfromEpochsUi import Ui_DialogEpochsTFR
-from caller import Caller
+from code_meggie.general.caller import Caller
 
 class TFRDialog(QtGui.QDialog):
     """

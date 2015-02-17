@@ -11,7 +11,7 @@ from forwardSolutionDialogUi import Ui_DialogCreateFSolution
 import messageBoxes
 
 import multiprocessing
-from caller import Caller
+from code_meggie.general.caller import Caller
 
 
 class ForwardSolutionDialog(QtGui.QDialog):

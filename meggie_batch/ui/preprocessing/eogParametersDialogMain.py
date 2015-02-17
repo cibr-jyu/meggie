@@ -53,7 +53,7 @@ class EogParametersDialog(QtGui.QDialog):
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
     """
-
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         """
@@ -406,8 +406,8 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            caller = Caller.Instance()
-            event_checker = caller.call_eog_ssp(subject._eog_params)
+            
+            event_checker = self.caller.call_eog_ssp(subject._eog_params)
             if event_checker == -1:
                 return error_message
         except Exception:

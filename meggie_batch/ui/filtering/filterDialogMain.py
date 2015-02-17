@@ -10,7 +10,7 @@ from PyQt4 import QtCore,QtGui
 from filterDialogUi import Ui_DialogFilter
 from mplWidget import MplWidget, MplCanvas
 
-from caller import Caller
+from code_meggie.general.caller import Caller
 from measurementInfo import MeasurementInfo
 from matplotlib import pyplot as plt
 

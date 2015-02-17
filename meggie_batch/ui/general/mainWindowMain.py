@@ -45,34 +45,33 @@ from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-from caller import Caller
+from code_meggie.general.caller import Caller
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
 from addSubjectDialogMain import AddSubjectDialog
 from infoDialogMain import InfoDialog
-from eventSelectionDialogMain import EventSelectionDialog
-from eventSelectionDialogUi import Ui_EventSelectionDialog
-from visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
-from maxFilterDialogMain import MaxFilterDialog
-from eogParametersDialogMain import EogParametersDialog
-from ecgParametersDialogMain import EcgParametersDialog
+from ui.epoching.eventSelectionDialogMain import EventSelectionDialog
+from ui.visualization.visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
+from ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
+from ui.preprocessing.eogParametersDialogMain import EogParametersDialog
+from ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from preferencesDialogMain import PreferencesDialog
 from evokedStatsDialogMain import EvokedStatsDialog
-from addECGProjectionsMain import AddECGProjections
-from addEOGProjectionsMain import AddEOGProjections
-from TFRDialogMain import TFRDialog
-from TFRTopologyDialogMain import TFRTopologyDialog
-from spectrumDialogMain import SpectrumDialog
-from epochWidgetMain import EpochWidget
+from ui.preprocessing.addECGProjectionsMain import AddECGProjections
+from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
+from ui.visualization.TFRDialogMain import TFRDialog
+from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
+from ui.visualization.spectrumDialogMain import SpectrumDialog
+from ui.widgets.epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
-from filterDialogMain import FilterDialog
-from forwardModelDialogMain import ForwardModelDialog
+from ui.filtering.filterDialogMain import FilterDialog
+from ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
-from forwardSolutionDialogMain import ForwardSolutionDialog
-from covarianceRawDialogMain import CovarianceRawDialog
-from covarianceWidgetNoneMain import CovarianceWidgetNone
-from covarianceWidgetRawMain import CovarianceWidgetRaw
+from ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
+from ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
+from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
+from ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 import messageBoxes
 
 import experiment
@@ -93,7 +92,7 @@ class MainWindow(QtGui.QMainWindow):
     #experiment_value_changed was made useless. All the stuff moved to
     #_initialize_ui() method.
     #experiment_value_changed = QtCore.pyqtSignal()
-
+    caller = Caller.Instance()
 
     def __init__(self, application):
         QtGui.QMainWindow.__init__(self)
@@ -109,7 +108,6 @@ class MainWindow(QtGui.QMainWindow):
         
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
-        self.caller = Caller.Instance()
         self.caller.setParent(self)
        
         # For storing and handling program wide prefences.

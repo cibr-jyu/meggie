@@ -57,7 +57,6 @@ class AddECGProjections(QtGui.QDialog):
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.caller = Caller.Instance()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         directory = self.parent.experiment.active_subject.subject_path
@@ -86,9 +85,9 @@ class AddECGProjections(QtGui.QDialog):
         #try:
         # Overwrites the projection file with desired vectors.
         mne.write_proj(self.proj_file, applied)
-        
+        caller = Caller.Instance()
         #TODO: working_file instead of raw_file
-        self.caller.apply_ecg(self.parent.experiment.active_subject.working_file,
+        caller.apply_ecg(self.parent.experiment.active_subject.working_file,
                                 self.parent.experiment.active_subject.subject_path)
         """
         except Exception, err:

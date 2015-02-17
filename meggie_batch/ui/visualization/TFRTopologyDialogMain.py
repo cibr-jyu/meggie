@@ -37,7 +37,7 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 from TFRtopologyUi import Ui_DialogTFRTopology
-from caller import Caller
+from code_meggie.general.caller import Caller
 import messageBoxes
 
 class TFRTopologyDialog(QtGui.QDialog):

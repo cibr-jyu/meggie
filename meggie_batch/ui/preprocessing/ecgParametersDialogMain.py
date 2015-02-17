@@ -53,7 +53,7 @@ class EcgParametersDialog(QtGui.QDialog):
     Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
     """
-
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -504,8 +504,7 @@ class EcgParametersDialog(QtGui.QDialog):
             subject._ecg_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            caller = Caller.Instance()
-            event_checker = caller.call_ecg_ssp(subject._ecg_params)
+            event_checker = self.caller.call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
                 return incorrect_ECG_channel, error_message
         except Exception:
