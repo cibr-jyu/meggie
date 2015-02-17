@@ -39,39 +39,39 @@ import os, sys, traceback, shutil, atexit
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QApplication
 import sip
+import mne
 
 from mne import fiff
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-from caller import Caller
+from code_meggie.general.caller import Caller
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
 from addSubjectDialogMain import AddSubjectDialog
 from infoDialogMain import InfoDialog
-from eventSelectionDialogMain import EventSelectionDialog
-from eventSelectionDialogUi import Ui_EventSelectionDialog
-from visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
-from maxFilterDialogMain import MaxFilterDialog
-from eogParametersDialogMain import EogParametersDialog
-from ecgParametersDialogMain import EcgParametersDialog
+from ui.epoching.eventSelectionDialogMain import EventSelectionDialog
+from ui.visualization.visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
+from ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
+from ui.preprocessing.eogParametersDialogMain import EogParametersDialog
+from ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from preferencesDialogMain import PreferencesDialog
 from evokedStatsDialogMain import EvokedStatsDialog
-from addECGProjectionsMain import AddECGProjections
-from addEOGProjectionsMain import AddEOGProjections
-from TFRDialogMain import TFRDialog
-from TFRTopologyDialogMain import TFRTopologyDialog
-from spectrumDialogMain import SpectrumDialog
-from epochWidgetMain import EpochWidget
+from ui.preprocessing.addECGProjectionsMain import AddECGProjections
+from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
+from ui.visualization.TFRDialogMain import TFRDialog
+from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
+from ui.visualization.spectrumDialogMain import SpectrumDialog
+from ui.widgets.epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
-from filterDialogMain import FilterDialog
-from forwardModelDialogMain import ForwardModelDialog
+from ui.filtering.filterDialogMain import FilterDialog
+from ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
 from experimentInfoDialogMain import experimentInfoDialog
-from forwardSolutionDialogMain import ForwardSolutionDialog
-from covarianceRawDialogMain import CovarianceRawDialog
-from covarianceWidgetNoneMain import CovarianceWidgetNone
-from covarianceWidgetRawMain import CovarianceWidgetRaw
+from ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
+from ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
+from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
+from ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 import messageBoxes
 
 import experiment
@@ -92,7 +92,7 @@ class MainWindow(QtGui.QMainWindow):
     #experiment_value_changed was made useless. All the stuff moved to
     #_initialize_ui() method.
     #experiment_value_changed = QtCore.pyqtSignal()
-
+    caller = Caller.Instance()
 
     def __init__(self, application):
         QtGui.QMainWindow.__init__(self)
@@ -110,7 +110,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
-        self.caller = Caller(self)
+        self.caller.setParent(self)
        
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
@@ -195,7 +195,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
-        
    
     @property
     def experiment(self):
@@ -1045,11 +1044,14 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.ui.listViewSubjects.selectedIndexes() == []: return
         
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
         
         # Not much point trying to activate an already active subject.
         if subject_name == self.experiment.active_subject_name:
+            QtGui.QApplication.restoreOverrideCursor()
             return      
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
@@ -1059,6 +1061,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models() 
+        QtGui.QApplication.restoreOverrideCursor()
 
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):

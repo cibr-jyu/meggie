@@ -38,6 +38,8 @@ import glob
 import mne
 
 from PyQt4 import QtCore,QtGui
+
+from code_meggie.general.caller import Caller
 from addProjectionsUi import Ui_Dialog
 import messageBoxes
 
@@ -83,9 +85,9 @@ class AddECGProjections(QtGui.QDialog):
         #try:
         # Overwrites the projection file with desired vectors.
         mne.write_proj(self.proj_file, applied)
-        
+        caller = Caller.Instance()
         #TODO: working_file instead of raw_file
-        self.parent.caller.apply_ecg(self.parent.experiment.active_subject.working_file,
+        caller.apply_ecg(self.parent.experiment.active_subject.working_file,
                                 self.parent.experiment.active_subject.subject_path)
         """
         except Exception, err:

@@ -71,6 +71,8 @@ class AddSubjectDialog(QtGui.QDialog):
     
     def accept(self):
         """ Add the new subject. """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -81,6 +83,7 @@ class AddSubjectDialog(QtGui.QDialog):
             # Check if the subject is already added to the experiment.
             if subject_name_string in self.parent.subjectListModel.\
             subjectNameList:
+                QtGui.QApplication.restoreOverrideCursor() 
                 message = 'Subject ' + item.text() + ' is already added ' +\
                         'to the experiment. Change the filename of the raw ' +\
                         'every time you want to create a new subject with ' +\
@@ -117,6 +120,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent.reinitialize_models() 
         
         self.close()
+        QtGui.QApplication.restoreOverrideCursor() 
         
         
     def on_pushButtonBrowse_clicked(self, checked=None):

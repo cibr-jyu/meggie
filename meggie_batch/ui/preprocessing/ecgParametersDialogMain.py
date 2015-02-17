@@ -44,6 +44,7 @@ from ecgParametersDialogUi import Ui_Dialog
 
 import fileManager
 from measurementInfo import MeasurementInfo
+from code_meggie.general.caller import Caller
 
 import messageBoxes
 
@@ -52,7 +53,7 @@ class EcgParametersDialog(QtGui.QDialog):
     Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
     """
-
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -230,6 +231,8 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of incorrect ECG channel.        
         incorrect_ECG_channel = ''
         # Calculation is prevented because of...
@@ -247,16 +250,19 @@ class EcgParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxECGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
             if len(incorrect_ECG_channel) > 0:
                 self.messageBox = messageBoxes.\
                 shortMessageBox(incorrect_ECG_channel)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
             self.close()
+            QtGui.QApplication.restoreOverrideCursor()
             return
 
         recently_active_subject = self.parent.experiment._active_subject._subject_name
@@ -297,7 +303,7 @@ class EcgParametersDialog(QtGui.QDialog):
             shortMessageBox(incorrect_ECG_channel)
             self.messageBox.show()
         self.close()
-
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed.
@@ -481,6 +487,8 @@ class EcgParametersDialog(QtGui.QDialog):
         error_message         -- string to store unsuccessful subject
                                  calculation
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         gc.collect()
         ch_name = subject._ecg_params['ch_name']
         ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
@@ -490,6 +498,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 incorrect_ECG_channel += \
                 '\nCalculation prevented for the subject: ' + \
                 subject._subject_name
+                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
             subject._ecg_params['ch_name'] = ch_name
         if subject._subject_name == self.parent.experiment._active_subject_name:
@@ -498,9 +507,9 @@ class EcgParametersDialog(QtGui.QDialog):
             subject._ecg_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            event_checker = self.parent.caller.\
-            call_ecg_ssp(subject._ecg_params)
+            event_checker = self.caller.call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
+                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
         except Exception:
             tb = traceback.format_exc()
@@ -511,6 +520,7 @@ class EcgParametersDialog(QtGui.QDialog):
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._ecg_params['i']
+            QtGui.QApplication.restoreOverrideCursor()
             return incorrect_ECG_channel, error_message
         try:
             del subject._ecg_params['i']
@@ -519,4 +529,5 @@ class EcgParametersDialog(QtGui.QDialog):
         fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
         if self.ui.checkBoxBatch.isChecked() == True:
             subject._working_file = None
+        QtGui.QApplication.restoreOverrideCursor()
         return incorrect_ECG_channel, error_message

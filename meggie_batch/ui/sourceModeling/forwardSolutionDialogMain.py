@@ -11,7 +11,7 @@ from forwardSolutionDialogUi import Ui_DialogCreateFSolution
 import messageBoxes
 
 import multiprocessing
-import caller
+from code_meggie.general.caller import Caller
 
 
 class ForwardSolutionDialog(QtGui.QDialog):
@@ -60,5 +60,6 @@ class ForwardSolutionDialog(QtGui.QDialog):
             paramdict['ignoreref'] = False
             
         paramdict['njobs'] = self.ui.spinBoxNJobs.value()
-        self.parent.caller.create_forward_solution(paramdict)   
+        caller = Caller.Instance()
+        caller.create_forward_solution(paramdict)   
         self.close()

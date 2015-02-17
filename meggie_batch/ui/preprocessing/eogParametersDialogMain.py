@@ -42,6 +42,7 @@ import traceback
 
 from PyQt4 import QtCore,QtGui
 from eogParametersDialogUi import Ui_Dialog
+from code_meggie.general.caller import Caller
 
 import fileManager
 
@@ -52,7 +53,7 @@ class EogParametersDialog(QtGui.QDialog):
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
     """
-
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         """
@@ -73,6 +74,8 @@ class EogParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and passes 
         them to the caller class.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of...
         error_message = ''
         
@@ -87,10 +90,12 @@ class EogParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxEOGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
+                QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyEOG.setEnabled(False)
                 #self.parent.ui.checkBoxEOGComputed.setChecked(False)
             self.close()
+            QtGui.QApplication.restoreOverrideCursor()
             return
         recently_active_subject = self.parent.experiment._active_subject._subject_name
         subject_names = []
@@ -123,6 +128,7 @@ class EogParametersDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
         self.parent._initialize_ui()
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):
@@ -400,8 +406,8 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.parent.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            event_checker = self.parent.caller.\
-            call_eog_ssp(subject._eog_params)
+            
+            event_checker = self.caller.call_eog_ssp(subject._eog_params)
             if event_checker == -1:
                 return error_message
         except Exception:

@@ -8,6 +8,7 @@ Created on 30.6.2014
 from PyQt4 import QtGui
 
 from forwardModelDialogUi import Ui_forwardModelDialog
+from code_meggie.general.caller import Caller
 import messageBoxes
 import string
 
@@ -163,7 +164,8 @@ class ForwardModelDialog(QtGui.QDialog):
             return
         
         # FIXME: use try-except here
-        if self.parent.caller.create_forward_model(fmdict) == False:
+        caller = Caller.Instance()
+        if caller.create_forward_model(fmdict) == False:
             return
         
         self.close()

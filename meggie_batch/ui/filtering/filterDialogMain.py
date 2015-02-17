@@ -10,7 +10,7 @@ from PyQt4 import QtCore,QtGui
 from filterDialogUi import Ui_DialogFilter
 from mplWidget import MplWidget, MplCanvas
 
-from caller import Caller
+from code_meggie.general.caller import Caller
 from measurementInfo import MeasurementInfo
 from matplotlib import pyplot as plt
 
@@ -21,6 +21,7 @@ class FilterDialog(QtGui.QDialog):
     Class containing the logic for filterDialog. It collects the parameters
     needed for filtering and shows the preview for the filter if required.
     """
+    caller = Caller.Instance()
 
 
     def __init__(self, parent):
@@ -32,7 +33,6 @@ class FilterDialog(QtGui.QDialog):
         self.dataToFilter = None
         self.previewFigure = None
         
-        
     def on_pushButtonPreview_clicked(self, checked=None):
         """
         Draws the preview.
@@ -40,12 +40,9 @@ class FilterDialog(QtGui.QDialog):
         if checked is None: return
         self.drawPreview()      
         
-        
     def drawPreview(self):
         """
         Draws the frequency and impulse response into the preview window.
-        
-        TODO: does nothing right now
         """
         
         # Clear the previous figure to keep the pyplot state environment clean
@@ -57,7 +54,6 @@ class FilterDialog(QtGui.QDialog):
         # on pylab, therefore needing manual cleaning of pyplot state
         # environment.
         
-        self.dataToFilter = self.parent.experiment.active_subject._working_file._data
         self.filterParameterDictionary = self.get_filter_parameters()
         samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
         self.previewFile = self.parent.caller.filter(self.dataToFilter,
@@ -79,7 +75,6 @@ class FilterDialog(QtGui.QDialog):
         # etc.
         def onclick(event):
             fig.canvas.mpl_connect('button_press_event', onclick)
-        
         
     def get_filter_parameters(self):
         """
@@ -175,7 +170,6 @@ class FilterDialog(QtGui.QDialog):
             
         return dictionary    
     
-    
     def accept(self):
         """
         Get the parameters dictionary and relay it to caller.filter to
@@ -232,19 +226,17 @@ class FilterDialog(QtGui.QDialog):
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
             if ( paramDict['low_cutoff_freq'] > samplerate/2 ):
                 self._show_filter_freq_error(samplerate)
-                return False
     
         if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
             if ( paramDict['high_cutoff_freq'] > samplerate/2 ):
                 self._show_filter_freq_error(samplerate)
-                return False
     
     def _show_filter_freq_error(self, samplerate):
         message = 'Cutoff frequencies should be lower than samplerate/2 ' + \
                     '(' + 'current samplerate is ' + str(samplerate) + ' Hz)'
         self.messageBox = messageBoxes.shortMessageBox(message)
         self.messageBox.show()
-
+        return
     
     def _validateFilterLength(self, paramDict):
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:

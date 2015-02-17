@@ -42,8 +42,9 @@ from holdCoregistrationDialogMain import holdCoregistrationDialog
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from forwardModelSkipDialogMain import ForwardModelSkipDialog
+from singleton import Singleton
 
-
+@Singleton
 class Caller(object):
     """
     Class for simple of calling third party software. Includes methods that
@@ -52,17 +53,20 @@ class Caller(object):
     More complicated functionality like epoching can be found in separate
     classes.
     """
-    def __init__(self, parent):
+    parent = None
+    def __init__(self):
         """
         Constructor
+        """
+        print "Caller created"
+        
+    def setParent(self, parent):
+        """
         Keyword arguments:
         parent        -- Parent of this object.
         """
-        # Easiest way to reach experiment, active subject, preferences etc. is
-        # via parent, so let's use it.
         self.parent = parent
-    
-    
+
     def call_mne_browse_raw(self, filename):
         """
         Opens mne_browse_raw with the given file as a parameter
@@ -70,6 +74,7 @@ class Caller(object):
         filename      -- file to open mne_browse_raw with
         Raises an exception if MNE_ROOT is not set.
         """
+        print str(self.parent)
         if os.environ.get('MNE_ROOT') is None:
             raise Exception('Environment variable MNE_ROOT not set.')
         
@@ -329,7 +334,6 @@ class Caller(object):
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
-        self.parent.experiment.update_experiment_settings()
  
         
     def apply_eog(self, raw, directory):
