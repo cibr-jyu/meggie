@@ -487,6 +487,8 @@ class EcgParametersDialog(QtGui.QDialog):
         error_message         -- string to store unsuccessful subject
                                  calculation
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         gc.collect()
         ch_name = subject._ecg_params['ch_name']
         ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
@@ -496,6 +498,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 incorrect_ECG_channel += \
                 '\nCalculation prevented for the subject: ' + \
                 subject._subject_name
+                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
             subject._ecg_params['ch_name'] = ch_name
         if subject._subject_name == self.parent.experiment._active_subject_name:
@@ -506,6 +509,7 @@ class EcgParametersDialog(QtGui.QDialog):
         try:
             event_checker = self.caller.call_ecg_ssp(subject._ecg_params)
             if event_checker == -1:
+                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
         except Exception:
             tb = traceback.format_exc()
@@ -516,6 +520,7 @@ class EcgParametersDialog(QtGui.QDialog):
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._ecg_params['i']
+            QtGui.QApplication.restoreOverrideCursor()
             return incorrect_ECG_channel, error_message
         try:
             del subject._ecg_params['i']
@@ -524,4 +529,5 @@ class EcgParametersDialog(QtGui.QDialog):
         fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
         if self.ui.checkBoxBatch.isChecked() == True:
             subject._working_file = None
+        QtGui.QApplication.restoreOverrideCursor()
         return incorrect_ECG_channel, error_message
