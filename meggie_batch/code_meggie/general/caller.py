@@ -789,13 +789,13 @@ class Caller(object):
         """
         
         if dic.get('lowpass') == True:                
-            dataToFilter = MNEfilter.filter.low_pass_filter(dataToFilter, samplerate, 
+            dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
                         dic.get('low_cutoff_freq'), dic.get('low_length'),
                         dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
         if dic.get('highpass') == True:
-            dataToFilter = MNEfilter.filter.high_pass_filter(dataToFilter, samplerate, 
+            dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
                         dic.get('high_cutoff_freq'), dic.get('high_length'),
                         dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
                         True)

@@ -1575,22 +1575,24 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionSet_workspace.setVisible(False)
         
 
+    """
     @atexit.register
     def terminate_subprocesses(self, procs):
-        """
+        
         TODO: currently of no use, as this does not run when Meggie is simply
         killed (and the only way to shutdown Meggie mid-processing
         with current unthreaded design is by killing it with SIGKILL) 
         For terminating MNE-C subprocesses at Meggie exit.
-        """
+        
         for proc in self.processes:
             proc.terminate()
-
+    """
 
 ### Code related to application initialization ###     
 
 
 def exception_hook(exctype, value, tracebackObj):
+    print str(exctype) + ': ' + str(value)
     traceback.print_tb(tracebackObj)
     title = 'Unknown error'
     message = 'Something unexpected happened. Please copy the following ' + \
