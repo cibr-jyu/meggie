@@ -36,15 +36,14 @@ Classes needed for controlling Meggie experiments.
 """
 import os
 import re
-import csv
 import shutil
 import gc
 
 import fileManager
 from subject import Subject
-import messageBoxes
+from ui.general import messageBoxes
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
 
@@ -326,7 +325,6 @@ class Experiment(QObject):
         self._active_subject_name = subject_name
         if subject_name == '':
             return
-        working_file_name = ''
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
             message = 'There is no working file in the chosen subject folder.'
@@ -598,7 +596,7 @@ class ExperimentHandler(QObject):
            
         """
         # Releases memory from the previously open experiment
-        self.parent._experiment = None
+        #self.parent._experiment = None
         gc.collect()
         try:
             experiment = Experiment()
@@ -610,6 +608,7 @@ class ExperimentHandler(QObject):
             message = 'Cannot assign attribute to experiment.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
+            return None
         
         try:
             workspace = self.parent.preferencesHandler.working_directory
@@ -617,17 +616,17 @@ class ExperimentHandler(QObject):
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
-            return
+            return None
         
         # Give control of the experiment to the main window of the application
-        self.parent.experiment = experiment
+        #self.parent.experiment = experiment
         
         try:
-            self.parent.experiment.save_experiment_settings()
+            experiment.save_experiment_settings()
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
-            return
+            return None
         
         # Tell the preferencesHandler that this is the experiment we've had
         # open last.
@@ -637,9 +636,10 @@ class ExperimentHandler(QObject):
         
         # Update the main UI to be less empty and allow actions for a new
         # experiment. Also tell the MVC models they can initialize themselves.
-        self.parent.add_tabs()
-        self.parent._initialize_ui() 
-        self.parent.reinitialize_models() 
+        #self.parent.add_tabs()
+        #self.parent._initialize_ui() 
+        #self.parent.reinitialize_models() 
+        return experiment
         
         
     def open_existing_experiment(self, name):

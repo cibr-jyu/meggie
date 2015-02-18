@@ -34,12 +34,11 @@ Created on Mar 16, 2013
 Contains the MainWindow-class that holds the main window of the application.
 """
 
-import os, sys, traceback, shutil, atexit
+import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QWhatsThis, QApplication
+from PyQt4.QtGui import QWhatsThis
 import sip
-import mne
 
 from mne import fiff
 
@@ -74,13 +73,13 @@ from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 import messageBoxes
 
-import experiment
-from epochs import Epochs
-from events import Events
-from prefecences import PreferencesHandler
-import fileManager
-from listWidget import ListWidget
-from mvcModels import ForwardModelModel, SubjectListModel
+from code_meggie.general import experiment
+from code_meggie.general.experiment import Experiment
+from code_meggie.epoching.epochs import Epochs
+from code_meggie.general.prefecences import PreferencesHandler
+from code_meggie.general import fileManager
+from ui.widgets.listWidget import ListWidget
+from code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -235,13 +234,26 @@ class MainWindow(QtGui.QMainWindow):
         
         if self.preferencesHandler.working_directory != '':
             self.dialog = CreateExperimentDialog(self)
+            self.dialog.experimentCreated.connect(self.setExperiment)
             self.dialog.show()
         else:
             self.check_workspace()
             if self.preferencesHandler.working_directory != '':
                 self.dialog = CreateExperimentDialog(self)
+                self.dialog.experimentCreated.connect(self.setExperiment)
                 self.dialog.show()   
-
+                
+    
+    @QtCore.pyqtSlot(Experiment)
+    def setExperiment(self, newExperiment):
+        """
+        Temporary setter for experiment.
+        """
+        self._experiment = newExperiment
+        self.add_tabs()
+        self._initialize_ui() 
+        self.reinitialize_models() 
+        
         
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
@@ -742,6 +754,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # Cue for the user that we are preparing visualization.
         # TODO: should use threads and events.
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         self.ui.pushButtonVisualizeEvokedDataset.setText(
                                     '      Visualizing...      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
@@ -759,6 +773,7 @@ class MainWindow(QtGui.QMainWindow):
         oldText = 'Visualize selected dataset'
         self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
+        QtGui.QApplication.restoreOverrideCursor()
               
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):

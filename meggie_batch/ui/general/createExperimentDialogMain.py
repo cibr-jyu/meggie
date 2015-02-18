@@ -35,7 +35,9 @@ CreateExperimentDialog-window.
 """
 
 from PyQt4 import QtGui
+from PyQt4.QtCore import pyqtSignal
 
+from code_meggie.general.experiment import Experiment
 import messageBoxes
 from createExperimentDialogUi import Ui_CreateExperimentDialog
 
@@ -46,6 +48,7 @@ class CreateExperimentDialog(QtGui.QDialog):
     setting up a new experiment for analyzing MEG data.
     """
     fname = ''
+    experimentCreated = pyqtSignal(Experiment)
     
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -74,6 +77,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                    'description': self.ui.textEditDescription.toPlainText()
                   }
         
-        self.parent.experimentHandler.initialize_new_experiment(expDict)
-        
+        experiment = self.parent.experimentHandler.initialize_new_experiment(expDict)
+        self.experimentCreated.emit(experiment)
         self.close()
+        
