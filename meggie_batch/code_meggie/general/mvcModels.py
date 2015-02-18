@@ -8,7 +8,7 @@ Created on 26.6.2014
 Contains models for views in various UI components, mainly MainWindow.
 '''
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 from PyQt4.QtGui import QFont
 import os
 
@@ -19,11 +19,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     """
     Model class for forward model related views in MainWindow. Please don't get
     confused by the "model" and "forward model" -
-    the former is model as in model-view-controller, the latter is an MNE term. 
-    
-    TODO pitäis varmaan kysyä heti initialisoidessa subjectilta, onko hakemistoa
-    noille forward modeleille, ja sitten asettaa self.filename siihen
-    hakemistoon
+    the former is model as in model-view-controller, the latter is an MNE term.
     """
 
     def __init__(self, parent=None):

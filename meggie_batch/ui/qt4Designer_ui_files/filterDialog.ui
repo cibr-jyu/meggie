@@ -6,49 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>992</height>
+    <width>686</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Filtering</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="0">
-    <widget class="QPushButton" name="pushButtonPreview">
-     <property name="text">
-      <string>Preview</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBoxPreview">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>3</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Preview</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="MplWidget" name="widgetMpl" native="true"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QFrame" name="frameFilterSelection">
      <property name="sizePolicy">
@@ -72,8 +37,117 @@
      <property name="lineWidth">
       <number>0</number>
      </property>
-     <layout class="QFormLayout" name="formLayout_6">
-      <item row="0" column="0" colspan="2">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QFrame" name="frameHighpass">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <widget class="QFrame" name="frame_2">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelHighpassCutoff">
+              <property name="text">
+               <string>Cutoff frequency:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassCutoff">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string> Hz</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>1000000000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelHighpassTransitionWidth">
+              <property name="text">
+               <string>Transition band width:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassTransBandwidth">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="suffix">
+               <string> Hz</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelHighpassFilterLength">
+              <property name="text">
+               <string>Filter length:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEditHighpassLength">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="placeholderText">
+               <string>e.g. 10s, 500ms</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBoxHighpass">
+           <property name="text">
+            <string>Highpass filter</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
        <widget class="QFrame" name="frameLowpass">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -197,136 +271,7 @@
         </layout>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="Line" name="line">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QFrame" name="frameHighpass">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <item row="1" column="0">
-          <widget class="QFrame" name="frame_2">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QFormLayout" name="formLayout_2">
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelHighpassCutoff">
-              <property name="text">
-               <string>Cutoff frequency:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassCutoff">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="suffix">
-               <string> Hz</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="maximum">
-               <double>1000000000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelHighpassTransitionWidth">
-              <property name="text">
-               <string>Transition band width:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighpassTransBandwidth">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="suffix">
-               <string> Hz</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="maximum">
-               <double>10000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelHighpassFilterLength">
-              <property name="text">
-               <string>Filter length:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditHighpassLength">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxHighpass">
-           <property name="text">
-            <string>Highpass filter</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="2">
+      <item row="1" column="0">
        <widget class="QFrame" name="frameBandPass">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -358,7 +303,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFreq1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFreq">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -380,14 +325,14 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="labelBandpassTransitionWidthLow">
+             <widget class="QLabel" name="labelBandStopNotchWidth">
               <property name="text">
                <string>Band width:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopWidth1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopWidth">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -409,14 +354,14 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="labelBandstopFilterLength1">
+             <widget class="QLabel" name="labelBandstopFilterLength">
               <property name="text">
                <string>Filter length:</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditBandstopLength1">
+             <widget class="QLineEdit" name="lineEditBandstopLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -429,7 +374,7 @@
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxBandstop1">
+          <widget class="QCheckBox" name="checkBoxBandstop">
            <property name="text">
             <string>BandStop filter (notch)</string>
            </property>
@@ -438,17 +383,17 @@
         </layout>
        </widget>
       </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="QFrame" name="frameBandPass_3">
+      <item row="1" column="1">
+       <widget class="QFrame" name="frameBandStop_3">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_8">
+        <layout class="QGridLayout" name="gridLayout_7">
          <item row="1" column="0">
-          <widget class="QFrame" name="frame_5">
+          <widget class="QFrame" name="frame_4">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -458,12 +403,12 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QFormLayout" name="formLayout_5">
+           <layout class="QFormLayout" name="formLayout_4">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="labelBandStopFreq_3">
+             <widget class="QLabel" name="labelBandStopFreq2">
               <property name="text">
                <string>Notch frequency:</string>
               </property>
@@ -492,14 +437,14 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="labelBandpassTransitionWidthLow_3">
+             <widget class="QLabel" name="labelBandStopNotchWidth2">
               <property name="text">
                <string>Band width:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopwidth2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopWidth2">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -550,131 +495,35 @@
         </layout>
        </widget>
       </item>
-      <item row="6" column="1">
-       <widget class="QFrame" name="frameBandPass_2">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_7">
-         <item row="1" column="0">
-          <widget class="QFrame" name="frame_4">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QFormLayout" name="formLayout_4">
-            <property name="fieldGrowthPolicy">
-             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelBandStopFreq_2">
-              <property name="text">
-               <string>Notch frequency:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFreq3">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="suffix">
-               <string> Hz</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="maximum">
-               <double>10000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>150.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelBandpassTransitionWidthLow_2">
-              <property name="text">
-               <string>Band width:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopWidth3">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="suffix">
-               <string> Hz</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="maximum">
-               <double>10000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelBandstopFilterLength3">
-              <property name="text">
-               <string>Filter length:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditBandstopLength3">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxBandstop3">
-           <property name="text">
-            <string>BandStop filter (notch)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButtonPreview">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Preview with given filters</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>MplWidget</class>
-   <extends>QWidget</extends>
-   <header>mplWidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>checkBoxLowpass</tabstop>
   <tabstop>doubleSpinBoxLowpassCutoff</tabstop>
@@ -684,20 +533,15 @@
   <tabstop>doubleSpinBoxHighpassCutoff</tabstop>
   <tabstop>doubleSpinBoxHighpassTransBandwidth</tabstop>
   <tabstop>lineEditHighpassLength</tabstop>
-  <tabstop>checkBoxBandstop1</tabstop>
-  <tabstop>doubleSpinBoxBandstopFreq1</tabstop>
-  <tabstop>doubleSpinBoxBandstopWidth1</tabstop>
-  <tabstop>lineEditBandstopLength1</tabstop>
+  <tabstop>checkBoxBandstop</tabstop>
+  <tabstop>doubleSpinBoxBandstopFreq</tabstop>
+  <tabstop>doubleSpinBoxBandstopWidth</tabstop>
+  <tabstop>lineEditBandstopLength</tabstop>
   <tabstop>checkBoxBandstop2</tabstop>
   <tabstop>doubleSpinBoxBandstopFreq2</tabstop>
-  <tabstop>doubleSpinBoxBandstopwidth2</tabstop>
+  <tabstop>doubleSpinBoxBandstopWidth2</tabstop>
   <tabstop>lineEditBandstopLength2</tabstop>
-  <tabstop>checkBoxBandstop3</tabstop>
-  <tabstop>doubleSpinBoxBandstopFreq3</tabstop>
-  <tabstop>doubleSpinBoxBandstopWidth3</tabstop>
-  <tabstop>lineEditBandstopLength3</tabstop>
   <tabstop>pushButtonPreview</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -766,7 +610,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxBandstop1</sender>
+   <sender>checkBoxBandstop</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_3</receiver>
    <slot>setEnabled(bool)</slot>
@@ -783,22 +627,6 @@
   </connection>
   <connection>
    <sender>checkBoxBandstop2</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frame_5</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>214</x>
-     <y>564</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>165</x>
-     <y>594</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBandstop3</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_4</receiver>
    <slot>setEnabled(bool)</slot>

@@ -31,7 +31,7 @@ class FilterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.filterParameterDictionary = None
         self.dataToFilter = None
-        self.previewFigure = None
+        self.caller = Caller.Instance()
         
     def on_pushButtonPreview_clicked(self, checked=None):
         """
@@ -39,42 +39,49 @@ class FilterDialog(QtGui.QDialog):
         """
         if checked is None: return
         self.drawPreview()      
+    
         
     def drawPreview(self):
         """
-        Draws the frequency and impulse response into the preview window.
+        TODO: do this if needed.
+        
+        Shows the data (mne.raw.plot()) filtered with the given filters, but
+        does not actually modify it.
+        
+        Uses fileManager to copy the raw file to a temporary directory, then
+        uses raw.plot() with it (check if plotting can be used without loading
+        raw file to memory, i. e. preload=False).
+        
+        Other possibility is to take an in-memory copy of the raw object
+        and show it with raw.plot().
         """
         
-        # Clear the previous figure to keep the pyplot state environment clean
-        # and save memory. 
-        if self.previewFigure != None:
-            plt.close(self.previewFigure)
+        paramDict = self.get_filter_parameters()
+        if paramDict.get('isEmpty') == True:
+                message = 'Please select filter(s) to apply'
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                return    
         
-        # Plot the filtered channels with mne.io.RawFIFF.plot (which is based
-        # on pylab, therefore needing manual cleaning of pyplot state
-        # environment.
-        
-        self.filterParameterDictionary = self.get_filter_parameters()
+        self.dataToFilter = self.parent.experiment.active_subject.\
+                            _working_file._data
         samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
-        self.previewFile = self.parent.caller.filter(self.dataToFilter,
-                                         self.filterParameterDictionary, 
-                                         copy=True)
         
-        # TODO draw the image
-        # self.previewFigure = 
+        # Check if the filter frequency values are sane or not.
+        if (self._validateFilterFreq(paramDict, samplerate) == False) or \
+        (self._validateFilterLength(paramDict) == False):
+            return
         
-        #previewFigure.set_canvas(self.ui.widgetMpl.canvas)
-        self.ui.widgetMpl.canvas.figure = self.previewFigure
-        self.ui.widgetMpl.canvas.draw()
+        try: 
+            self.caller.filter(self.dataToFilter, samplerate, paramDict, True)
+        except ValueError as e:
+            message = 'There was problem with filtering. MNE-Python error ' + \
+            'message was: \n\n' + str(e)
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
         
-        # TODO This should scale the preview figure to fit the preview frame,
-        # but doesn't work
-        self.ui.widgetMpl.canvas.updateGeometry()
         
-        # TODO the preview figure should accept clicks, because of scrollbars
-        # etc.
-        def onclick(event):
-            fig.canvas.mpl_connect('button_press_event', onclick)
         
     def get_filter_parameters(self):
         """
@@ -111,23 +118,23 @@ class FilterDialog(QtGui.QDialog):
         else:
             dictionary['highpass'] = False
         
-        if self.ui.checkBoxBandstop1.isChecked() == True:
+        if self.ui.checkBoxBandstop.isChecked() == True:
             dictionary['isEmpty'] = False
             dictionary['bandstop1'] = True
             
             dictionary['bandstop1_l_freq'] = \
-                self.ui.doubleSpinBoxBandstopFreq1.value() - \
-                self.ui.doubleSpinBoxBandstopWidth1.value()/2
+                self.ui.doubleSpinBoxBandstopFreq.value() - \
+                self.ui.doubleSpinBoxBandstopWidth.value()/2
                 
             dictionary['bandstop1_h_freq'] = \
-                self.ui.doubleSpinBoxBandstopFreq1.value() + \
-                self.ui.doubleSpinBoxBandstopWidth1.value()/2
+                self.ui.doubleSpinBoxBandstopFreq.value() + \
+                self.ui.doubleSpinBoxBandstopWidth.value()/2
                         
             dictionary['bandstop1_trans_bandwidth'] = self.ui.\
-            doubleSpinBoxBandstopWidth1.value()
+            doubleSpinBoxBandstopWidth.value()
             
             dictionary['bandstop1_length'] = str(self.ui.\
-                                             lineEditBandstopLength1.text())
+                                             lineEditBandstopLength.text())
         else:
             dictionary['bandstop1'] = False
         
@@ -151,32 +158,36 @@ class FilterDialog(QtGui.QDialog):
         else:
             dictionary['bandstop2'] = False
             
+        """    
         if self.ui.checkBoxBandstop3.isChecked() == True:
             dictionary['isEmpty'] = False
             dictionary['bandstop3'] = True
             
             dictionary['bandstop3_l_freq'] = \
                 self.ui.doubleSpinBoxBandstopFreq3.value() - \
-                self.ui.doubleSpinBoxBandstopWidth3/2
+                self.ui.doubleSpinBoxBandstopWidth2/2
             
             dictionary['bandstop3_h_freq'] = \
                 self.ui.doubleSpinBoxBandstopFreq3.value() + \
-                self.ui.doubleSpinBoxBandstopWidth3/2
+                self.ui.doubleSpinBoxBandstopWidth2/2
             
+            dictionary['bandstop3_trans_bandwidth'] = self.ui.\
+                                    doubleSpinBoxBandstopwidth3.value()
+                                    
             dictionary['bandstop3_length'] = str(self.ui.\
                                              lineEditBandstopLength3.text())
         else:
             dictionary['bandstop3'] = False
+        """
             
         return dictionary    
+    
     
     def accept(self):
         """
         Get the parameters dictionary and relay it to caller.filter to
         actually do the filtering.
         """
-        if self.previewFigure != None:
-            plt.close(self.previewFigure)
         
         paramDict = self.get_filter_parameters()
         if paramDict.get('isEmpty') == True:
@@ -185,7 +196,8 @@ class FilterDialog(QtGui.QDialog):
                 self.messageBox.show()
                 return    
         
-        self.dataToFilter = self.parent.experiment.active_subject._working_file._data
+        self.dataToFilter = self.parent.experiment.active_subject.\
+                            _working_file._data
         samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
         
         # Check if the filter frequency values are sane or not.
@@ -194,8 +206,7 @@ class FilterDialog(QtGui.QDialog):
             return
         
         try: 
-            filteredData = self.parent.caller.filter(self.dataToFilter, 
-                                                 samplerate, paramDict)
+            self.caller.filter(self.dataToFilter, samplerate, paramDict)
         except ValueError as e:
             message = 'There was problem with filtering. MNE-Python error ' + \
             'message was: \n\n' + str(e)
@@ -204,7 +215,7 @@ class FilterDialog(QtGui.QDialog):
             return
         
         # Replace the data in the working file with the filtered data
-        self.parent.experiment.active_subject._working_file._data = filteredData
+        
         
         # Update the working file info fields with the new values
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
@@ -231,12 +242,14 @@ class FilterDialog(QtGui.QDialog):
             if ( paramDict['high_cutoff_freq'] > samplerate/2 ):
                 self._show_filter_freq_error(samplerate)
     
+    
     def _show_filter_freq_error(self, samplerate):
         message = 'Cutoff frequencies should be lower than samplerate/2 ' + \
                     '(' + 'current samplerate is ' + str(samplerate) + ' Hz)'
         self.messageBox = messageBoxes.shortMessageBox(message)
         self.messageBox.show()
         return
+    
     
     def _validateFilterLength(self, paramDict):
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
@@ -253,6 +266,7 @@ class FilterDialog(QtGui.QDialog):
                 self._showLengthError('high pass')
                 return False
     
+    
     def _showLengthError(self, filterSource):
         """
         Show the error for wrong type of filter length string.
@@ -266,13 +280,3 @@ class FilterDialog(QtGui.QDialog):
         self.messageBox = messageBoxes.shortMessageBox(message)
         self.messageBox.show()
         
-    
-    def reject(self):
-        if self.previewFigure != None:
-            plt.close(self.previewFigure)
-        self.close()
-      
-    def closeEvent(self, event):
-        if self.previewFigure != None:
-            plt.close(self.previewFigure)
-        event.accept()

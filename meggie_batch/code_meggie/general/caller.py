@@ -14,7 +14,7 @@ import fnmatch
 import re
 import shutil
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 import mne
 from mne.time_frequency import induced_power
@@ -43,6 +43,8 @@ from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from forwardModelSkipDialogMain import ForwardModelSkipDialog
 from singleton import Singleton
+from copy import deepcopy
+from mne.viz.raw import plot_raw
 
 @Singleton
 class Caller(object):
@@ -778,11 +780,11 @@ class Caller(object):
         pl.show()
        
                             
-    def filter(self, dataToFilter, samplerate, dic):
+    def filter(self, dataToFilter, samplerate, dic, preview=False):
         """
         Filters the data array in place according to parameters in paramDict.
-        Depending on the parameters, the filter is lowpass, highpass or
-        bandstop (notch) filter.
+        Depending on the parameters, the filter is one or more of
+        lowpass, highpass and bandstop (notch) filter.
         
         Keyword arguments:
         
@@ -792,19 +794,35 @@ class Caller(object):
         
         """
         
+        raw = self.parent.experiment.active_subject._working_file
+        
         if dic.get('lowpass') == True:                
             dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
                         dic.get('low_cutoff_freq'), dic.get('low_length'),
                         dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
                         True)
-        
+            
         if dic.get('highpass') == True:
             dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
                         dic.get('high_cutoff_freq'), dic.get('high_length'),
                         dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
                         True)
         
-        return dataToFilter
+        if dic.get('bandstop1') == True:
+            dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
+                        dic.get('bandstop1_l_freq'), 
+                        dic.get('bandstop1_h_freq'), 
+                        dic.get('bandstop1_length'), 
+                        dic.get('bandstop1_trans_bandwidth'),
+                        dic.get('bandstop1_trans_bandwidth'), n)
+            
+        if preview == True:
+            previewRaw = deepcopy(raw)
+            previewRaw._data = dataToFilter
+            plot_raw(previewRaw)
+            return
+            
+        raw.data = dataToFilter
     
     
     
