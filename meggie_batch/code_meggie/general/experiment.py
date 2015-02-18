@@ -36,15 +36,14 @@ Classes needed for controlling Meggie experiments.
 """
 import os
 import re
-import csv
 import shutil
 import gc
 
 import fileManager
 from subject import Subject
-import messageBoxes
+from ui.general import messageBoxes
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
 
@@ -623,7 +622,7 @@ class ExperimentHandler(QObject):
         #self.parent.experiment = experiment
         
         try:
-            self.parent.experiment.save_experiment_settings()
+            experiment.save_experiment_settings()
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
@@ -637,9 +636,9 @@ class ExperimentHandler(QObject):
         
         # Update the main UI to be less empty and allow actions for a new
         # experiment. Also tell the MVC models they can initialize themselves.
-        self.parent.add_tabs()
-        self.parent._initialize_ui() 
-        self.parent.reinitialize_models() 
+        #self.parent.add_tabs()
+        #self.parent._initialize_ui() 
+        #self.parent.reinitialize_models() 
         return experiment
         
         

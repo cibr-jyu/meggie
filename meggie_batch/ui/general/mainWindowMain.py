@@ -250,6 +250,9 @@ class MainWindow(QtGui.QMainWindow):
         Temporary setter for experiment.
         """
         self._experiment = newExperiment
+        self.add_tabs()
+        self._initialize_ui() 
+        self.reinitialize_models() 
         
         
     def on_actionOpen_experiment_triggered(self, checked=None):
