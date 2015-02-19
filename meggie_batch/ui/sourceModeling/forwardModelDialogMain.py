@@ -26,6 +26,7 @@ class ForwardModelDialog(QtGui.QDialog):
     TODO Removing forward models from disk and view coordination is handled by
     ***
     """
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -41,7 +42,7 @@ class ForwardModelDialog(QtGui.QDialog):
         and populate the self.ui.comboBoxSurfaceName with them. Set white as
         default, like mne_setup_source_space suggests.
         """
-        activeSubject = self.parent.experiment._active_subject
+        activeSubject = self.caller.experiment._active_subject
         surfaceNames = fileManager.read_surface_names_into_list(activeSubject)
         self.ui.comboBoxSurfaceName.addItems(surfaceNames)
         
@@ -122,7 +123,7 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict = self.collectParametersIntoDictionary()
         fmname = fmdict['fmname']
         
-        activeSubject = self.parent._experiment._active_subject
+        activeSubject = self.caller._experiment._active_subject
         if fileManager.check_fModel_name(fmname, activeSubject):
             message = 'That forward model name is already in use. Please ' + \
             'select another.'

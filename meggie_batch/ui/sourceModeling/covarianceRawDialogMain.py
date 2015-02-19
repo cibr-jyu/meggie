@@ -24,6 +24,7 @@ class CovarianceRawDialog(QtGui.QDialog):
     The class containing the logic for the dialog for collecting the
     parameters computing the noise covariance for a raw file.
     """
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -117,8 +118,7 @@ class CovarianceRawDialog(QtGui.QDialog):
         pdict['covarianceSource'] = 'raw'
         
         try:
-            caller = Caller.Instance()
-            caller.create_covariance_from_raw(pdict)    
+            self.caller.create_covariance_from_raw(pdict)    
         except ValueError as e:
             message = 'Could not compute covariance. MNE error message was: ' +\
             '\n\n' + str(e)
@@ -159,8 +159,8 @@ class CovarianceRawDialog(QtGui.QDialog):
         self.ui.radioButtonSubjectList:
             selIndexes = self.ui.listViewSubjects.selectedIndexes()
             subjectName = selIndexes[0].data()
-            subjectPath = os.path.join(self.parent.experiment.workspace,
-                                       self.parent.experiment.experiment_name,
+            subjectPath = os.path.join(self.caller.experiment.workspace,
+                                       self.caller.experiment.experiment_name,
                                        subjectName, subjectName + '.fif')
         else:
             subjectPath = self.ui.lineEditRawFile.text()

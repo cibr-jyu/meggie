@@ -63,7 +63,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in module eogParametersDialog
         self.ui.setupUi(self)
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
             self.ui.listWidgetSubjects.addItem(item)
         # Connect signals and slots
@@ -82,10 +82,10 @@ class EogParametersDialog(QtGui.QDialog):
         # If calculation is done for the active subject only, the subject does
         # not need to be activated again and the raw file stays in memory.
         if self.ui.checkBoxBatch.isChecked() == False:
-            self.parent.experiment._active_subject._eog_params = self.\
+            self.caller.experiment._active_subject._eog_params = self.\
             collect_parameter_values(False)
             error_message = self.\
-            calculate_eog(self.parent.experiment._active_subject, error_message)
+            calculate_eog(self.caller.experiment._active_subject, error_message)
             self.parent.ui.pushButtonApplyEOG.setEnabled(True)
             self.parent.ui.checkBoxEOGComputed.setChecked(True)
             if len(error_message) > 0:
@@ -97,7 +97,7 @@ class EogParametersDialog(QtGui.QDialog):
             self.close()
             QtGui.QApplication.restoreOverrideCursor()
             return
-        recently_active_subject = self.parent.experiment._active_subject._subject_name
+        recently_active_subject = self.caller.experiment._active_subject._subject_name
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
@@ -110,20 +110,20 @@ class EogParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             error_message = self.\
-            calculate_eog(self.parent.experiment._active_subject, error_message)    
+            calculate_eog(self.caller.experiment._active_subject, error_message)    
         # Free the memory usage from the active subject to the batch process.
-        self.parent.experiment._active_subject._working_file = None
-        self.parent.experiment._active_subject = None
+        self.caller.experiment._active_subject._working_file = None
+        self.caller.experiment._active_subject = None
         
         # 2. Calculation is done for the rest of the subjects.
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject._subject_name in subject_names:
                 if subject._subject_name == recently_active_subject:
                     continue
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
                 error_message = self.calculate_eog(subject, error_message)
-        self.parent.experiment.activate_subject(recently_active_subject)
+        self.caller.experiment.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
@@ -151,7 +151,7 @@ class EogParametersDialog(QtGui.QDialog):
         if checked is None: return
         batch_checked = True
         dictionary = self.collect_parameter_values(batch_checked)
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                             currentItem().text()):
                 subject._eog_params = dictionary
@@ -163,7 +163,7 @@ class EogParametersDialog(QtGui.QDialog):
         if checked is None: return
         batch_checked = True
         for i in range(self.ui.listWidgetSubjects.count()):
-            for subject in self.parent.experiment._subjects:
+            for subject in self.caller.experiment._subjects:
                 if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
                     subject._eog_params = self.collect_parameter_values(batch_checked)
 
@@ -182,7 +182,7 @@ class EogParametersDialog(QtGui.QDialog):
         """
         dictionary = dict()
         if batch_checked is False:
-            raw = self.parent.experiment.active_subject.working_file
+            raw = self.caller.experiment.active_subject.working_file
             dictionary = {'i': raw}
         
         
@@ -277,7 +277,7 @@ class EogParametersDialog(QtGui.QDialog):
         # we could set:
         # subject = self.parent.experiment._subjects[subject_name]
         
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject_name == subject._subject_name:
                 try:
                     if len(subject._eog_params) > 0:
@@ -400,10 +400,10 @@ class EogParametersDialog(QtGui.QDialog):
                                  calculation
         """
         gc.collect()
-        if subject._subject_name == self.parent.experiment._active_subject_name:
-            subject._eog_params['i'] = self.parent.experiment._active_subject._working_file
+        if subject._subject_name == self.caller.experiment._active_subject_name:
+            subject._eog_params['i'] = self.caller.experiment._active_subject._working_file
         else:
-            subject._eog_params['i'] = self.parent.experiment.\
+            subject._eog_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
             

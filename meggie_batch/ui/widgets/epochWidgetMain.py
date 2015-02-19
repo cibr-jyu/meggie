@@ -9,6 +9,7 @@ Contains the EpochWidget-class used for listing epoch collections.
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
+from code_meggie.general.caller import Caller
 from epochWidgetUi import Ui_Form
 
 class EpochWidget(QtGui.QWidget):
@@ -127,7 +128,8 @@ class EpochWidget(QtGui.QWidget):
     def selection_changed(self):
         item = self.ui.listWidgetEpochs.currentItem()
         if item is None: return
-        epochs = self.parent.experiment.active_subject._epochs[item.text()]
+        caller = Caller.Instance()
+        epochs = caller.experiment.active_subject._epochs[item.text()]
         if self.ui.listWidgetEpochs.currentItem() is None:
             self.parent.clear_epoch_collection_parameters()
         else:

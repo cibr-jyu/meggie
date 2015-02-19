@@ -42,6 +42,7 @@ import gc
 import fileManager
 from subject import Subject
 from ui.general import messageBoxes
+from code_meggie.general.caller import Caller
 
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
@@ -664,18 +665,18 @@ class ExperimentHandler(QObject):
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
         if os.path.exists(path) and os.path.isfile(fname):
+            caller = Caller.Instance()
             # Releases memory from the previously open experiment
-            self.parent._experiment = None
+            caller._experiment = None
             gc.collect()
             output = open(fname, 'rb')
-            self.parent._experiment = pickle.load(output)
-            self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
-            self.parent.experiment.activate_subject(self.parent._experiment._active_subject_name)
+            caller._experiment = pickle.load(output)
+            caller.experiment.create_subjects(caller._experiment, caller._experiment._subject_paths)
+            caller.experiment.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
 
-            self.parent.preferencesHandler.previous_experiment_name = \
-            self.parent.experiment._experiment_name
+            self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
         

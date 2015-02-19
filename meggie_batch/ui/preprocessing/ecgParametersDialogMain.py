@@ -61,10 +61,10 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
-        MEG_channels = MeasurementInfo(parent.experiment.active_subject.working_file). \
+        MEG_channels = MeasurementInfo(self.caller.experiment.active_subject.working_file). \
         MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
             self.ui.listWidgetSubjects.addItem(item)
             
@@ -90,7 +90,7 @@ class EcgParametersDialog(QtGui.QDialog):
         # we could set:
         # subject = self.parent.experiment._subjects[subject_name]
         
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject_name == subject._subject_name:
                 try:
                     # TODO: clear comboBoxECGChannel and unpickle channel names
@@ -241,10 +241,10 @@ class EcgParametersDialog(QtGui.QDialog):
         # If calculation is done for the active subject only, the subject does
         # not need to be activated again and the raw file stays in memory.
         if self.ui.checkBoxBatch.isChecked() == False:
-            self.parent.experiment._active_subject._ecg_params = self.\
+            self.caller.experiment._active_subject._ecg_params = self.\
             collect_parameter_values(False)
             incorrect_ECG_channel, error_message = \
-            self.calculate_ecg(self.parent.experiment._active_subject,\
+            self.calculate_ecg(self.caller.experiment._active_subject,\
                                incorrect_ECG_channel, error_message)
             self.parent.ui.pushButtonApplyECG.setEnabled(True)
             self.parent.ui.checkBoxECGComputed.setChecked(True)
@@ -265,7 +265,7 @@ class EcgParametersDialog(QtGui.QDialog):
             QtGui.QApplication.restoreOverrideCursor()
             return
 
-        recently_active_subject = self.parent.experiment._active_subject._subject_name
+        recently_active_subject = self.caller.experiment._active_subject._subject_name
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
@@ -279,14 +279,14 @@ class EcgParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             incorrect_ECG_channel, error_message = self.\
-            calculate_ecg(self.parent.experiment._active_subject,\
+            calculate_ecg(self.caller.experiment._active_subject,\
                           incorrect_ECG_channel, error_message)    
         # Free the memory usage from the active subject to the batch process.
-        self.parent.experiment._active_subject._working_file = None
-        self.parent.experiment._active_subject = None
+        self.caller.experiment._active_subject._working_file = None
+        self.caller.experiment._active_subject = None
         
         # 2. Calculation is done for the rest of the subjects.
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject._subject_name in subject_names:
                 if subject._subject_name == recently_active_subject:
                     continue
@@ -294,7 +294,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 # frees memory from the earlier subject's data calculation.
                 incorrect_ECG_channel, error_message = self.\
                 calculate_ecg(subject, incorrect_ECG_channel, error_message)
-        self.parent.experiment.activate_subject(recently_active_subject)
+        self.caller.experiment.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
@@ -325,7 +325,7 @@ class EcgParametersDialog(QtGui.QDialog):
         if checked is None: return
         batch_checked = True
         dictionary = self.collect_parameter_values(batch_checked)
-        for subject in self.parent.experiment._subjects:
+        for subject in self.caller.experiment._subjects:
             if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                             currentItem().text()):
                 subject._ecg_params = dictionary
@@ -338,7 +338,7 @@ class EcgParametersDialog(QtGui.QDialog):
         batch_checked = True
         error_message = ''
         for i in range(self.ui.listWidgetSubjects.count()):
-            for subject in self.parent.experiment._subjects:
+            for subject in self.caller.experiment._subjects:
                 if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
                     subject._ecg_params = self.collect_parameter_values(batch_checked)
                     ch_name = subject._ecg_params['ch_name']
@@ -400,7 +400,7 @@ class EcgParametersDialog(QtGui.QDialog):
         """
         dictionary = dict()
         if batch_checked is False:
-            raw = self.parent.experiment.active_subject.working_file
+            raw = self.caller.experiment.active_subject.working_file
             dictionary = {'i': raw}
         
         tmin = self.ui.doubleSpinBoxTmin.value()
@@ -501,10 +501,10 @@ class EcgParametersDialog(QtGui.QDialog):
                 QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
             subject._ecg_params['ch_name'] = ch_name
-        if subject._subject_name == self.parent.experiment._active_subject_name:
-            subject._ecg_params['i'] = self.parent.experiment._active_subject._working_file
+        if subject._subject_name == self.caller.experiment._active_subject_name:
+            subject._ecg_params['i'] = self.caller.experiment._active_subject._working_file
         else:
-            subject._ecg_params['i'] = self.parent.experiment.\
+            subject._ecg_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
             event_checker = self.caller.call_ecg_ssp(subject._ecg_params)
