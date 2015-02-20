@@ -14,7 +14,7 @@ import fnmatch
 import re
 import shutil
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 
 import mne
 from mne.time_frequency import induced_power
@@ -793,7 +793,7 @@ class Caller(object):
         pl.show()
        
                             
-    def filter(self, dataToFilter, samplerate, dic, preview=False):
+    def filter(self, dataToFilter, samplerate, dic):
         """
         Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is one or more of
@@ -805,9 +805,8 @@ class Caller(object):
         samplerate           -- intended samplerate of the array
         dic                  -- Dictionary with filtering parameters
         
+        Returns the filtered array.
         """
-        
-        raw = self.experiment.active_subject._working_file
         
         if dic.get('lowpass') == True:                
             dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
@@ -827,16 +826,18 @@ class Caller(object):
                         dic.get('bandstop1_h_freq'), 
                         dic.get('bandstop1_length'), 
                         dic.get('bandstop1_trans_bandwidth'),
-                        dic.get('bandstop1_trans_bandwidth'), 2)
+                        dic.get('bandstop1_trans_bandwidth'), n_jobs=2)
             
-        if preview == True:
-            previewRaw = deepcopy(raw)
-            previewRaw._data = dataToFilter
-            plot_raw(previewRaw)
-            return
+        if dic.get('bandstop2') == True:
+            dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
+                        dic.get('bandstop2_l_freq'), 
+                        dic.get('bandstop2_h_freq'), 
+                        dic.get('bandstop2_length'), 
+                        dic.get('bandstop2_trans_bandwidth'),
+                        dic.get('bandstop2_trans_bandwidth'), n_jobs=2)
             
-        raw.data = dataToFilter
-    
+            
+        return dataToFilter
     
     
 ### Methods needed for source modeling ###    

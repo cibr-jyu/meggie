@@ -6,6 +6,7 @@ Created on Aug 20, 2013
 '''
 import os
 
+import mne
 from PyQt4 import QtCore,QtGui
 from filterDialogUi import Ui_DialogFilter
 from mplWidget import MplWidget, MplCanvas
@@ -15,14 +16,13 @@ from measurementInfo import MeasurementInfo
 from matplotlib import pyplot as plt
 
 import messageBoxes
+from copy import deepcopy
 
 class FilterDialog(QtGui.QDialog):
     """
     Class containing the logic for filterDialog. It collects the parameters
     needed for filtering and shows the preview for the filter if required.
     """
-    caller = Caller.Instance()
-
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -38,22 +38,23 @@ class FilterDialog(QtGui.QDialog):
         Draws the preview.
         """
         if checked is None: return
+        
+        paramDict = self.get_filter_parameters()
+        if paramDict.get('isEmpty') == True:
+                message = 'Please select filter(s) to preview'
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                return    
+        
         self.drawPreview()      
     
         
     def drawPreview(self):
         """
-        TODO: do this if needed.
-        
         Shows the data (mne.raw.plot()) filtered with the given filters, but
-        does not actually modify it.
-        
-        Uses fileManager to copy the raw file to a temporary directory, then
-        uses raw.plot() with it (check if plotting can be used without loading
-        raw file to memory, i. e. preload=False).
-        
-        Other possibility is to take an in-memory copy of the raw object
-        and show it with raw.plot().
+        does not actually modify it. Also asks whether the previewed file
+        should be saved over the working file, and saves if the user answers
+        yes.
         """
         
         paramDict = self.get_filter_parameters()
@@ -73,7 +74,8 @@ class FilterDialog(QtGui.QDialog):
             return
         
         try: 
-            self.caller.filter(self.dataToFilter, samplerate, paramDict, True)
+            filteredData = self.caller.filter(self.dataToFilter, samplerate,
+                                              paramDict)
         except ValueError as e:
             message = 'There was problem with filtering. MNE-Python error ' + \
             'message was: \n\n' + str(e)
@@ -81,6 +83,36 @@ class FilterDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         
+        raw = self.caller.experiment.active_subject._working_file
+        previewRaw = deepcopy(raw)
+        previewRaw._data = filteredData
+        previewRaw.plot()
+           
+        reply = QtGui.QMessageBox.question(self, 'Apply filters?', 
+                    'Apply the previewed filters to the working file?', 
+                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                    QtGui.QMessageBox.Yes)
+           
+        if reply == QtGui.QMessageBox.Yes:
+            fname = previewRaw.info.get('filename')
+            # This actually saves the file over current working file,
+            # because the previewRaw filename is the same as that of raw
+            # file it is copied from. 
+            previewRaw.save(fname, overwrite=True)
+            raw = mne.io.RawFIFF(fname, preload=True)
+            self.caller.update_experiment_working_file(fname, raw)
+            
+            # Update the working file info fields with the new values
+            if 'lowpass' in paramDict and paramDict['lowpass'] == True:
+                self.caller.experiment.active_subject.\
+                _working_file.info['lowpass'] = paramDict['low_cutoff_freq']
+        
+            if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
+                self.caller.experiment.active_subject.\
+                _working_file.info['highpass'] = paramDict['high_cutoff_freq']
+            
+            self.parent._initialize_ui()
+        else: return
         
         
     def get_filter_parameters(self):
@@ -144,41 +176,19 @@ class FilterDialog(QtGui.QDialog):
             
             dictionary['bandstop2_l_freq'] = \
                 self.ui.doubleSpinBoxBandstopFreq2.value() - \
-                self.ui.doubleSpinBoxBandstopWidth2/2
+                self.ui.doubleSpinBoxBandstopWidth2.value()/2
             
             dictionary['bandstop2_h_freq'] = \
                 self.ui.doubleSpinBoxBandstopFreq2.value() + \
-                self.ui.doubleSpinBoxBandstopWidth2/2
+                self.ui.doubleSpinBoxBandstopWidth2.value()/2
             
             dictionary['bandstop2_trans_bandwidth'] = self.ui.\
-                                    doubleSpinBoxBandstopwidth2.value()
+                doubleSpinBoxBandstopWidth2.value()
                                     
             dictionary['bandstop2_length'] = str(self.ui.\
                                              lineEditBandstopLength2.text())
         else:
             dictionary['bandstop2'] = False
-            
-        """    
-        if self.ui.checkBoxBandstop3.isChecked() == True:
-            dictionary['isEmpty'] = False
-            dictionary['bandstop3'] = True
-            
-            dictionary['bandstop3_l_freq'] = \
-                self.ui.doubleSpinBoxBandstopFreq3.value() - \
-                self.ui.doubleSpinBoxBandstopWidth2/2
-            
-            dictionary['bandstop3_h_freq'] = \
-                self.ui.doubleSpinBoxBandstopFreq3.value() + \
-                self.ui.doubleSpinBoxBandstopWidth2/2
-            
-            dictionary['bandstop3_trans_bandwidth'] = self.ui.\
-                                    doubleSpinBoxBandstopwidth3.value()
-                                    
-            dictionary['bandstop3_length'] = str(self.ui.\
-                                             lineEditBandstopLength3.text())
-        else:
-            dictionary['bandstop3'] = False
-        """
             
         return dictionary    
     
@@ -206,7 +216,8 @@ class FilterDialog(QtGui.QDialog):
             return
         
         try: 
-            self.caller.filter(self.dataToFilter, samplerate, paramDict)
+            filteredData = self.caller.filter(self.dataToFilter, samplerate,
+                                              paramDict)
         except ValueError as e:
             message = 'There was problem with filtering. MNE-Python error ' + \
             'message was: \n\n' + str(e)
@@ -214,8 +225,12 @@ class FilterDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         
-        # Replace the data in the working file with the filtered data
-        
+        raw = self.caller.experiment.active_subject._working_file
+        raw.data = filteredData
+        fname = raw.info.get('filename')
+        raw.save(fname, overwrite=True)
+        raw = mne.io.RawFIFF(fname, preload=True)
+        self.caller.update_experiment_working_file(fname, raw)
         
         # Update the working file info fields with the new values
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:

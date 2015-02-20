@@ -52,6 +52,5 @@ for root, dirs, files in os.walk(runpath):
         sys.path.append(root)
 
 from ui.general import mainWindowMain  
-
 if __name__ == '__main__':
     mainWindowMain.main()

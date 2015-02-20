@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/filterDialog.ui'
 #
-# Created: Wed Feb 18 22:08:26 2015
+# Created: Fri Feb 20 19:30:22 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
