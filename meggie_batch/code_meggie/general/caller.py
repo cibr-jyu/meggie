@@ -814,7 +814,7 @@ class Caller(object):
                         dic.get('bandstop1_h_freq'), 
                         dic.get('bandstop1_length'), 
                         dic.get('bandstop1_trans_bandwidth'),
-                        dic.get('bandstop1_trans_bandwidth'), n)
+                        dic.get('bandstop1_trans_bandwidth'), 2)
             
         if preview == True:
             previewRaw = deepcopy(raw)

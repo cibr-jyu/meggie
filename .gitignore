@@ -3,4 +3,6 @@
 preferences.cfg
 *.~lock.*
 *.orig
-
+.project
+.pydevproject
+.settings/

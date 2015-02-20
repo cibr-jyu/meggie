@@ -70,18 +70,14 @@ class EpochWidget(QtGui.QWidget):
                     self.addItem(item, suffix)
                 
             else:
-                qstr_suffix = QtCore.QString('')
-                qstr_suffix.append(QtCore.QString('%1').arg(suffix))
-
                 if not self.ui.listWidgetEpochs.findItems(item.text() +\
-                                                          qstr_suffix,\
+                                                          suffix,\
                                                           QtCore.Qt.\
                                                           MatchFixedString):
-                    item.setText(item.text() + qstr_suffix)
+                    item.setText(item.text() + suffix)
                     self.ui.listWidgetEpochs.addItem(item)
                     self.ui.listWidgetEpochs.sortItems()
-                    self.item_added.emit(item)
-                    
+                    self.item_added.emit(item) 
                 else:
                     suffix += 1
                     self.addItem(item, suffix)
