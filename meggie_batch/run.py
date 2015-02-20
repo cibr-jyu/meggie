@@ -39,32 +39,19 @@ import sip
 # For interoperability with Canopy and to remove need to mess with QStrings.
 sip.setapi('QVariant', 2)
 sip.setapi('QString', 2)
-
 os.environ['QT_API'] = 'pyqt'
 
-# To make Meggie user static MNE instead of possible system one
+# To make Meggie user static MNE instead of a possible system one
 sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) + "/externalModules/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/tests/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/epoching/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/preprocessing/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/general/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code_meggie/sourceModeling/")
 
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/widgets/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/epoching/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/general/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/preprocessing/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/visualization/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/filtering/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/icons/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/sourceModeling/")
+# Recursively append everything in Meggie to syspath to make running from
+# command line viable
+runpath = os.path.dirname(os.path.abspath(__file__))
+for root, dirs, files in os.walk(runpath):
+    if runpath is not root:
+        sys.path.append(root)
 
 from ui.general import mainWindowMain  
 
 if __name__ == '__main__':
     mainWindowMain.main()
-    
-        
