@@ -12,6 +12,7 @@ from PyQt4 import QtCore
 from PyQt4.QtGui import QFont
 import os
 
+from code_meggie.general.caller import Caller
 import fileManager
 
 
@@ -21,6 +22,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
     confused by the "model" and "forward model" -
     the former is model as in model-view-controller, the latter is an MNE term.
     """
+    caller = Caller.Instance()
 
     def __init__(self, parent=None):
         QtCore.QAbstractTableModel.__init__(self)
@@ -38,7 +40,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                           'includeMEG', 'includeEEG', 'minDist', 'ignoreRef']
 
         # May well be None, if no experiment is loaded.
-        if self.parent._experiment == None:
+        if self.caller.experiment == None:
             return
         
         self._fmodels_directory = None
@@ -46,7 +48,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # The experiment may not have an active subject, no need to try to
         # initialize model in that case.
         try:
-            self._fmodels_directory = self.parent._experiment._active_subject.\
+            self._fmodels_directory = self.caller._experiment._active_subject.\
                       _forwardModels_directory
         except AttributeError:
             return
@@ -112,7 +114,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         Reads the active subject's forwardModels directory and populates the
         data accordingly.
         """
-        activeSubject = self.parent._experiment._active_subject
+        activeSubject = self.caller._experiment._active_subject
         if activeSubject == None:
             self._fmodels_directory = None
             self.layoutAboutToBeChanged.emit()
@@ -280,6 +282,7 @@ class SubjectListModel(QtCore.QAbstractListModel):
     """
     Simple model class for storing data for subject lists.
     """
+    caller = Caller.Instance()
     
     def __init__(self, parent=None):
         QtCore.QAbstractListModel.__init__(self)
@@ -306,9 +309,10 @@ class SubjectListModel(QtCore.QAbstractListModel):
             return QtCore.QVariant()
         
         try:
-            activeSubjectName = self.parent._experiment._active_subject.\
+            activeSubjectName = self.caller._experiment._active_subject.\
             _subject_name
-        except Exception:
+        except Exception as e:
+            print str(e)
             activeSubjectName = None
          
         if role == QtCore.Qt.DisplayRole:
@@ -347,12 +351,12 @@ class SubjectListModel(QtCore.QAbstractListModel):
         self.layoutAboutToBeChanged.emit()
         del self.subjectNameList[:]
         
-        if self.parent._experiment == None:
+        if self.caller.experiment == None:
             self.layoutChanged.emit()
             return
-        
-        if (len(self.parent.experiment._subject_paths) > 0):
-            for path in self.parent.experiment._subject_paths:
+
+        if (len(self.caller.experiment._subject_paths) > 0):
+            for path in self.caller.experiment._subject_paths:
                 subjectName = path.split('/')[-1]
                 self.subjectNameList.append(subjectName)
 

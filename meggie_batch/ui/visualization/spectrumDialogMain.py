@@ -36,12 +36,14 @@ Contains the SpectrumDialog-class used in plotting magnitude spectrums.
 from PyQt4 import QtCore,QtGui
 
 from spectrumDialogUi import Ui_DialogSpectrum
+from code_meggie.general.caller import Caller
 
 class SpectrumDialog(QtGui.QDialog):
     """
     Dialog for getting the channel from the user and plotting
     the magnitude spectrum.
     """
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         '''
@@ -53,7 +55,7 @@ class SpectrumDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogSpectrum()
         self.ui.setupUi(self)
-        ch_names = self.parent.experiment.active_subject._working_file.ch_names
+        ch_names = self.caller.experiment.active_subject._working_file.ch_names
         self.ui.comboBoxChannel.addItems(ch_names)
         
     def accept(self):
@@ -63,9 +65,9 @@ class SpectrumDialog(QtGui.QDialog):
         """
         # TODO: muuta
         ch_index = self.ui.comboBoxChannel.currentIndex()
-        raw = self.parent.experiment.active_subject._working_file
+        raw = self.caller.experiment.active_subject._working_file
         print ch_index
         #self.parent.caller.magnitude_spectrum(raw, ch_index)
         # TODO: fmin ja fmax valinnat
-        self.parent.experiment.active_subject._working_file.plot_psds(picks=ch_index)
+        self.caller.experiment.active_subject._working_file.plot_psds(picks=ch_index)
         self.close()

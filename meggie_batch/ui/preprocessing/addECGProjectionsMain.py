@@ -48,7 +48,7 @@ class AddECGProjections(QtGui.QDialog):
     Class containing the logic for adding ECG projections.
     Projections should be created and saved in a file before adding them.
     """
-    
+    caller = Caller.Instance()
     def __init__(self, parent):
         """
         Constructor. Initializes the dialog.
@@ -59,7 +59,7 @@ class AddECGProjections(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment.active_subject.subject_path
+        directory = self.caller.experiment.active_subject.subject_path
         self.proj_file = glob.glob(directory + '/*_ecg_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
@@ -85,10 +85,10 @@ class AddECGProjections(QtGui.QDialog):
         #try:
         # Overwrites the projection file with desired vectors.
         mne.write_proj(self.proj_file, applied)
-        caller = Caller.Instance()
+
         #TODO: working_file instead of raw_file
-        caller.apply_ecg(self.parent.experiment.active_subject.working_file,
-                                self.parent.experiment.active_subject.subject_path)
+        self.caller.apply_ecg(self.caller.experiment.active_subject.working_file,
+                                self.caller.experiment.active_subject.subject_path)
         """
         except Exception, err:
             self.messageBox = messageBox.AppForm()

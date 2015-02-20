@@ -56,11 +56,13 @@ class Caller(object):
     classes.
     """
     parent = None
+    _experiment = None
     def __init__(self):
         """
         Constructor
         """
         print "Caller created"
+        
         
     def setParent(self, parent):
         """
@@ -68,6 +70,17 @@ class Caller(object):
         parent        -- Parent of this object.
         """
         self.parent = parent
+        
+        
+    @property
+    def experiment(self):
+        return self._experiment
+
+    
+    @experiment.setter
+    def experiment(self, experiment):
+        self._experiment = experiment
+        
 
     def call_mne_browse_raw(self, filename):
         """
@@ -121,9 +134,9 @@ class Caller(object):
         """ 
         TODO Write parameter file. Implement after the actual MaxFilter
         calling has been tested. 
-        self.parent.experiment.save_parameter_file('maxfilter', raw, , dic)
+        self.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
-        self.parent.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
    
         
     def call_ecg_ssp(self, dic):
@@ -331,7 +344,7 @@ class Caller(object):
             message = 'There is more than one ECG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.parent.experiment.active_subject._subject_path
+                    self.experiment.active_subject._subject_path
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
@@ -375,12 +388,12 @@ class Caller(object):
             message = 'There is more than one EOG projection file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.parent.experiment.active_subject._subject_path 
+                    self.experiment.active_subject._subject_path 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         self.update_experiment_working_file(appliedfilename, raw)
-        self.parent.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
  
     
     def average(self, epochs, category):
@@ -403,13 +416,13 @@ class Caller(object):
         """
         evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
         
-        saveFolder = os.path.join(self.parent.experiment.active_subject._epochs_directory, 'average')
+        saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
-        rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
-        _working_file_names[self.parent.experiment._active_subject_name])[1])[0]
+        rawFileName = os.path.splitext(os.path.split(self.experiment.\
+        _working_file_names[self.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
@@ -495,7 +508,7 @@ class Caller(object):
                 colors_events.append('#CD7F32')
                 #i += 1
         
-        self.mi = MeasurementInfo(self.parent.experiment.active_subject.working_file)
+        self.mi = MeasurementInfo(self.experiment.active_subject.working_file)
         
         #title = str(self.category.keys())
         title = ''
@@ -526,7 +539,7 @@ class Caller(object):
         # TODO: draggable doesn't work with l.set_frame_on(False)
         # l.draggable(True)
         
-        prefix, suffix = os.path.splitext(self.parent.experiment.active_subject.\
+        prefix, suffix = os.path.splitext(self.experiment.active_subject.\
                                           _working_file.info.get('filename'))
         
         def onclick(event):
@@ -607,7 +620,7 @@ class Caller(object):
                 
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.parent.experiment.active_subject._working_file)
+        mi = MeasurementInfo(self.experiment.active_subject._working_file)
         fig.canvas.set_window_title(mi.subject_name + 
              '-- channel average for ' + averageTitleString)
         fig.suptitle('Channel average for ' + averageTitleString)
@@ -794,7 +807,7 @@ class Caller(object):
         
         """
         
-        raw = self.parent.experiment.active_subject._working_file
+        raw = self.experiment.active_subject._working_file
         
         if dic.get('lowpass') == True:                
             dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
@@ -836,7 +849,7 @@ class Caller(object):
         Return True if creation successful, False if there was an error. 
         """
         
-        sourceAnalDir = self.parent.experiment.active_subject.\
+        sourceAnalDir = self.experiment.active_subject.\
                             _source_analysis_directory
         
         
@@ -875,7 +888,7 @@ class Caller(object):
                          parameters for three separate mne scripts run
                          in the forward model creation.
         """
-        activeSubject = self.parent.experiment._active_subject
+        activeSubject = self.experiment._active_subject
     
         # Set env variables to point to appropriate directories. 
         os.environ['SUBJECTS_DIR'] = activeSubject._source_analysis_directory
@@ -1099,7 +1112,7 @@ class Caller(object):
                                selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path, 
-                  self.parent.experiment._working_file_names[self.parent.\
+                  self.experiment._working_file_names[self.parent.\
                   experiment._active_subject_name])
         
         mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
@@ -1178,12 +1191,12 @@ class Caller(object):
         fileNameToWrite = ''
         try:
             if subjectName != None:
-                if subjectName == self.parent.experiment.active_subject_name:
+                if subjectName == self.experiment.active_subject_name:
                     fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.parent.experiment.active_subject.working_file
+                    raw = self.experiment.active_subject.working_file
                 else:
                     fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.parent.experiment.get_subject_working_file(
+                    raw = self.experiment.get_subject_working_file(
                                                         subjectName) 
             else:
                 raw = fileManager.open_raw(cvdict['rawfilepath'], True)
@@ -1206,7 +1219,7 @@ class Caller(object):
         except ValueError:
             raise
         
-        sourceAnalysisDir = self.parent.experiment.active_subject. \
+        sourceAnalysisDir = self.experiment.active_subject. \
                             _source_analysis_directory
         
         # Remove previous covariance file before creating a new one.
@@ -1243,9 +1256,9 @@ class Caller(object):
         fname    -- name of the new working file
         raw      -- working file data
         """
-        self.parent.experiment.update_working_file(fname)
-        self.parent.experiment.active_subject_raw_path = fname
-        self.parent.experiment.active_subject.working_file = raw
+        self.experiment.update_working_file(fname)
+        self.experiment.active_subject_raw_path = fname
+        self.experiment.active_subject.working_file = raw
         status = "Current working file: " + \
-        os.path.basename(self.parent.experiment.active_subject_raw_path)
+        os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)

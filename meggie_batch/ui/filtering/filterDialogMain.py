@@ -63,9 +63,9 @@ class FilterDialog(QtGui.QDialog):
                 self.messageBox.show()
                 return    
         
-        self.dataToFilter = self.parent.experiment.active_subject.\
+        self.dataToFilter = self.caller.experiment.active_subject.\
                             _working_file._data
-        samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
+        samplerate = self.caller.experiment.active_subject._working_file.info['sfreq']
         
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, samplerate) == False) or \
@@ -196,9 +196,9 @@ class FilterDialog(QtGui.QDialog):
                 self.messageBox.show()
                 return    
         
-        self.dataToFilter = self.parent.experiment.active_subject.\
+        self.dataToFilter = self.caller.experiment.active_subject.\
                             _working_file._data
-        samplerate = self.parent.experiment.active_subject._working_file.info['sfreq']
+        samplerate = self.caller.experiment.active_subject._working_file.info['sfreq']
         
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, samplerate) == False) or \
@@ -219,11 +219,11 @@ class FilterDialog(QtGui.QDialog):
         
         # Update the working file info fields with the new values
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-            self.parent.experiment.active_subject._working_file.info['lowpass'] = \
+            self.caller.experiment.active_subject._working_file.info['lowpass'] = \
                 paramDict['low_cutoff_freq']
         
         if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-            self.parent.experiment.active_subject._working_file.info['highpass'] = \
+            self.caller.experiment.active_subject._working_file.info['highpass'] = \
                 paramDict['high_cutoff_freq']
         
         self.parent._initialize_ui()

@@ -36,6 +36,7 @@ Created on Oct 31, 2013
 from PyQt4 import QtCore,QtGui
 
 from addSubjectDialogUi import Ui_AddSubject
+from code_meggie.general.caller import Caller
 import fileManager
 from subject import Subject
 from infoDialogMain import InfoDialog
@@ -55,13 +56,15 @@ class AddSubjectDialog(QtGui.QDialog):
     Properties:
     parent    -- mainWindowMain is the parent class
     """
+    caller = Caller.Instance()
     
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_AddSubject()
         self.ui.setupUi(self)
+        
         self.parent = parent
-        self.experiment = self.parent.experiment
+        #self.experiment = caller.experiment
         self.ui.pushButtonShowFileInfo.setEnabled(False)
         #self.ui.lineEditFileName.textChanged.connect(self.file_path_changed)
         
@@ -93,10 +96,10 @@ class AddSubjectDialog(QtGui.QDialog):
                 return
                  
             try:
-                if self.parent.experiment._active_subject is not None:
-                    self.parent.experiment.release_memory()
-                self.parent.experiment.create_subject(subject_name, 
-                                                      self.experiment, raw_path)
+                if self.caller.experiment._active_subject is not None:
+                    self.caller.experiment.release_memory()
+                self.caller.experiment.create_subject(subject_name, 
+                                                      self.caller.experiment, raw_path)
             except Exception:
                 tb = traceback.format_exc()
                 title = 'Problem creating a new subject'
@@ -106,14 +109,14 @@ class AddSubjectDialog(QtGui.QDialog):
                 self.messageBox = messageBoxes.longMessageBox(title, message)
                 self.messageBox.show()
              
-            self.parent.experiment.activate_subject(subject_name)
+            self.caller.experiment.activate_subject(subject_name)
             
         """
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
         self.parent.experiment._active_subject_raw_path = raw_path
         """
-        self.parent.experiment.save_experiment_settings()
+        self.caller.experiment.save_experiment_settings()
         self.parent._initialize_ui()
         
         # To tell the MVC models that the active subject has changed.

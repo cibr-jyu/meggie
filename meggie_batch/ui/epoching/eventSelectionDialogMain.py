@@ -34,17 +34,16 @@ Created on Mar 19, 2013
 Contains the EventSelectionDialog-class that holds the logic for
 EventSelectionDialog-window.
 """
-import messageBoxes
+from ui.general import messageBoxes
 
 from PyQt4 import QtCore,QtGui
 #from PyQt4.QtCore import QString
 from eventSelectionDialogUi import Ui_EventSelectionDialog
-from epochDialogMain import EpochDialog
+from code_meggie.general.caller import Caller
 
 from epochs import Epochs
 from events import Events
 import fileManager
-import string
 
 from xlrd import XLRDError
 
@@ -61,7 +60,7 @@ class EventSelectionDialog(QtGui.QDialog):
     Class containing the logic for EventSelectionDialog. It is used for
     collecting desired events from continuous data.
     """
-    
+    caller = Caller.Instance()
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
 
@@ -80,7 +79,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
-        keys = map(str, parent.experiment.active_subject._event_set.keys())
+        keys = map(str, self.caller.experiment.active_subject._event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event')
         self.used_names = []
@@ -123,7 +122,7 @@ class EventSelectionDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        stim_channel = self.parent.experiment.active_subject._stim_channel
+        stim_channel = self.caller.experiment.active_subject._stim_channel
         
         collectionName = self.ui.lineEditCollectionName.text()
         if len(self.parent.epochList.ui.listWidgetEpochs.\
@@ -169,7 +168,7 @@ class EventSelectionDialog(QtGui.QDialog):
             meg = 'grad'
         else: meg = False
         
-        picks = mne.fiff.pick_types(self.parent.experiment.active_subject._working_file.info, meg=meg, eeg=eeg,
+        picks = mne.fiff.pick_types(self.caller.experiment.active_subject._working_file.info, meg=meg, eeg=eeg,
                                     stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
@@ -191,7 +190,7 @@ class EventSelectionDialog(QtGui.QDialog):
         Pick desired events from the raw data.
         """
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.parent.experiment.active_subject._working_file, self.parent.experiment.active_subject._stim_channel)
+        e = Events(self.caller.experiment.active_subject._working_file, self.caller.experiment.active_subject._stim_channel)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
@@ -363,7 +362,7 @@ class EventSelectionDialog(QtGui.QDialog):
         if len(events) > 0:
             print 'Writing events...'
             try:
-                activeSubject = self.parent._experiment._active_subject
+                activeSubject = self.caller._experiment._active_subject
                 fileManager.write_events(events, activeSubject)
             except UnicodeDecodeError, err:
                 message = 'Cannot save events: ' + str(err)
@@ -381,7 +380,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if checked is None: return # Standard workaround
         filename = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                    self.parent.experiment.subject_directory))
+                                    self.caller.experiment.subject_directory))
         if filename == '':
             return
         self.ui.listWidgetEvents.clear()

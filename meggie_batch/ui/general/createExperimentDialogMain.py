@@ -78,6 +78,7 @@ class CreateExperimentDialog(QtGui.QDialog):
                   }
         
         experiment = self.parent.experimentHandler.initialize_new_experiment(expDict)
+        
         self.experimentCreated.emit(experiment)
         self.close()
         

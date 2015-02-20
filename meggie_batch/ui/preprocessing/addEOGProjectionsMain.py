@@ -48,6 +48,7 @@ class AddEOGProjections(QtGui.QDialog):
     Class for adding EOG projections.
     Projections should be created and saved in a file before adding them.
     """
+    caller = Caller.Instance()
     
     def __init__(self, parent):
         """
@@ -59,7 +60,7 @@ class AddEOGProjections(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment._active_subject._subject_path
+        directory = self.caller.experiment._active_subject._subject_path
         self.proj_file = glob.glob(directory + '/*_eog_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
@@ -87,9 +88,9 @@ class AddEOGProjections(QtGui.QDialog):
         try:
             # Overwrites the projection file with desired vectors.
             mne.write_proj(self.proj_file, applied)
-            caller = Caller.Instance()
-            caller.apply_eog(self.parent.experiment.active_subject.working_file,
-                                         self.parent.experiment._active_subject._subject_path)
+            
+            self.caller.apply_eog(self.caller.experiment.active_subject.working_file,
+                                         self.caller.experiment._active_subject._subject_path)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = messageBoxes.shortMessageBox(str(err))
