@@ -38,6 +38,7 @@ import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis
+from PyQt4.Qt import QApplication
 import sip
 
 from mne import fiff
@@ -106,6 +107,12 @@ class MainWindow(QtGui.QMainWindow):
         # defined by the CreateExperimentDialog or the by the Open_experiment_
         # triggered action.
         #self._experiment = None
+        
+        # Direct output to console
+        self.directOutput()
+        self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+        sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+        sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
         
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
@@ -195,6 +202,12 @@ class MainWindow(QtGui.QMainWindow):
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
+    def update_ui(self):
+        """
+        Method for repainting the ui.
+        Used for keeping the ui responsive when threading.
+        """
+        QApplication.processEvents()
         
 ### Code for catching signals and reacting to them ###
     def on_actionQuit_triggered(self, checked=None):
@@ -1054,14 +1067,14 @@ class MainWindow(QtGui.QMainWindow):
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
         
+        
         # Not much point trying to activate an already active subject.
         if subject_name == self.caller.experiment.active_subject_name:
-            QtGui.QApplication.restoreOverrideCursor()
             return      
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.experiment.activate_subject(subject_name)
+        self.caller.activate_subject(subject_name)
         self._initialize_ui()
         
         # To tell the MVC models that the active subject has changed.
@@ -1570,6 +1583,17 @@ class MainWindow(QtGui.QMainWindow):
 
 
 ### Miscellaneous code ###
+
+    def directOutput(self):
+        """
+        Method for directing stdout to the console and back.
+        """
+        if self.ui.actionDirectToConsole.isChecked():
+            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+        else:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
         
     def check_workspace(self):
         """
@@ -1595,7 +1619,54 @@ class MainWindow(QtGui.QMainWindow):
         for proc in self.processes:
             proc.terminate()
     """
+    
+    
+    def __del__(self):
+        """
+        Restores stdout at the end.
+        """
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
+
+    def normalOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stdout.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+        
+        
+    def errorOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stderr.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+
+
+class EmittingStream(QtCore.QObject):
+
+    textWritten = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+        
+    def flush(self):
+        pass
+        
 ### Code related to application initialization ###     
 
 

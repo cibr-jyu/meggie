@@ -86,14 +86,14 @@ class EogParametersDialog(QtGui.QDialog):
             collect_parameter_values(False)
             error_message = self.\
             calculate_eog(self.caller.experiment._active_subject, error_message)
-            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-            self.parent.ui.checkBoxEOGComputed.setChecked(True)
             if len(error_message) > 0:
-                self.messageBox = messageBoxes.shortMessageBox(error_message)
+                #Exception already handled in caller
                 QtGui.QApplication.restoreOverrideCursor()
-                self.messageBox.show()
-                #self.parent.ui.pushButtonApplyEOG.setEnabled(False)
-                #self.parent.ui.checkBoxEOGComputed.setChecked(False)
+                self.close()
+                return
+            else:
+                self.parent.ui.pushButtonApplyEOG.setEnabled(True)
+                self.parent.ui.checkBoxEOGComputed.setChecked(True)
             self.close()
             QtGui.QApplication.restoreOverrideCursor()
             return
@@ -123,7 +123,7 @@ class EogParametersDialog(QtGui.QDialog):
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
                 error_message = self.calculate_eog(subject, error_message)
-        self.caller.experiment.activate_subject(recently_active_subject)
+        self.caller.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()
@@ -406,10 +406,9 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            
-            event_checker = self.caller.call_eog_ssp(subject._eog_params)
-            if event_checker == -1:
-                return error_message
+            result = self.caller.call_eog_ssp(subject._eog_params)
+            if not result == 0:
+                return "Error"
         except Exception:
             tb = traceback.format_exc()
             #error_message += '\n' + subject._subject_name + ': ' + str(err)

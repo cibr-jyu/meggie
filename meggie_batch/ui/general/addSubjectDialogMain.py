@@ -109,7 +109,7 @@ class AddSubjectDialog(QtGui.QDialog):
                 self.messageBox = messageBoxes.longMessageBox(title, message)
                 self.messageBox.show()
              
-            self.caller.experiment.activate_subject(subject_name)
+            self.caller.activate_subject(subject_name)
             
         """
         # Set source file path here temporarily. create_active_subject in

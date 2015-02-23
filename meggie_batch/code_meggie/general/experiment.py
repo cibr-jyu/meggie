@@ -38,6 +38,7 @@ import os
 import re
 import shutil
 import gc
+from threading import Event
 
 import fileManager
 from subject import Subject
@@ -72,6 +73,7 @@ class Experiment(QObject):
     working_file_names -- The complete path of the working file
     """
     
+    e = Event()
     
     def __init__(self):
         """
@@ -233,6 +235,13 @@ class Experiment(QObject):
         """
         self._active_subject = subject
     
+
+    def is_ready(self):
+        """
+        Method for polling threaded processes.
+        """
+        return self.e.is_set()
+
     
     def add_subject(self, subject):
         """
@@ -322,16 +331,14 @@ class Experiment(QObject):
         subject_name -- name of the subject
         """
         # Remove raw files from memory before activating new subject.
+        self.e.clear()
         self.release_memory()
         self._active_subject_name = subject_name
-        if subject_name == '':
-            return
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
-            message = 'There is no working file in the chosen subject folder.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()  
-            return
+            print 'There is no working file in the chosen subject folder.'
+            self.e.set()
+            return 1
         
         # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
@@ -343,7 +350,8 @@ class Experiment(QObject):
                 # case of addSubjectDialogMain accept() method).
                 self.load_working_file(subject)
                 self.save_experiment_settings()
-        
+        self.e.set()
+        return 0
  
     def create_subject(self, subject_name, experiment, raw_path):
         """Creates a Subject when adding a new one to the experiment.
@@ -422,8 +430,8 @@ class Experiment(QObject):
         if subject._working_file is None:
             path = os.path.join(self._workspace, self._experiment_name, subject._subject_name)
             files = os.listdir(path)
-            for file in files:
-                file_path = os.path.join(path, file)
+            for f in files:
+                file_path = os.path.join(path, f)
                 if file_path in self._working_file_names.values():
                     raw = fileManager.open_raw(os.path.join(path, file_path))
                     # TODO: set channel names with whitespaces for the subject.working_file
@@ -442,12 +450,12 @@ class Experiment(QObject):
             self.active_subject.create_epochs_directory
         epoch_items = []
         files = os.listdir(subject._epochs_directory)
-        for file in files:
-            if file.endswith('.fif'):
+        for f in files:
+            if f.endswith('.fif'):
                 fname = os.path.join(subject._epochs_directory,
-                                     file)
+                                     f)
                 
-                name = file[:-4]
+                name = f[:-4]
                 epochs, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, epochs, params)
                 item = QtGui.QListWidgetItem(name)
@@ -672,7 +680,7 @@ class ExperimentHandler(QObject):
             output = open(fname, 'rb')
             caller._experiment = pickle.load(output)
             caller.experiment.create_subjects(caller._experiment, caller._experiment._subject_paths)
-            caller.experiment.activate_subject(caller._experiment._active_subject_name)
+            caller.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 

@@ -85,20 +85,17 @@ class AddEOGProjections(QtGui.QDialog):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))
             if check_box.checkState() == QtCore.Qt.Checked:
                 applied.append(self.projs[index])
-        try:
-            # Overwrites the projection file with desired vectors.
-            mne.write_proj(self.proj_file, applied)
+                
+        # Overwrites the projection file with desired vectors.
+        mne.write_proj(self.proj_file, applied)
             
-            self.caller.apply_eog(self.caller.experiment.active_subject.working_file,
-                                         self.caller.experiment._active_subject._subject_path)
-        except Exception, err:
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.exec_()#show()
-            return
-        # No need to initialize whole mainwindow again.
-        #self.parent._initialize_ui()
-        self.parent.ui.checkBoxEOGApplied.setChecked(True)
+        result = self.caller.apply_eog(self.caller.experiment.active_subject.\
+                              working_file,
+                              self.caller.experiment._active_subject.\
+                              _subject_path)
+        
+        if result == 0:
+            self.parent.ui.checkBoxEOGApplied.setChecked(True)
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
         

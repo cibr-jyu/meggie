@@ -45,8 +45,8 @@ import mne
 
 from measurementInfo import MeasurementInfo
 import fileManager
-from epochs import Epochs
-from evoked import Evoked
+from code_meggie.epoching.epochs import Epochs
+from code_meggie.epoching.evoked import Evoked
 from forwardModels import ForwardModels
 import messageBoxes
 
