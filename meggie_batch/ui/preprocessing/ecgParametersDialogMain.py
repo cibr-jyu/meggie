@@ -246,12 +246,12 @@ class EcgParametersDialog(QtGui.QDialog):
             incorrect_ECG_channel, error_message = \
             self.calculate_ecg(self.caller.experiment._active_subject,\
                                incorrect_ECG_channel, error_message)
-            self.parent.ui.pushButtonApplyECG.setEnabled(True)
-            self.parent.ui.checkBoxECGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
                 QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
+                self.close()
+                return
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
             if len(incorrect_ECG_channel) > 0:
@@ -259,10 +259,14 @@ class EcgParametersDialog(QtGui.QDialog):
                 shortMessageBox(incorrect_ECG_channel)
                 QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
+                self.close()
+                return
                 #self.parent.ui.pushButtonApplyECG.setEnabled(False)
                 #self.parent.ui.checkBoxECGComputed.setChecked(False)
-            self.close()
+            self.parent.ui.pushButtonApplyECG.setEnabled(True)
+            self.parent.ui.checkBoxECGComputed.setChecked(True)
             QtGui.QApplication.restoreOverrideCursor()
+            self.close()
             return
 
         recently_active_subject = self.caller.experiment._active_subject._subject_name
@@ -504,10 +508,10 @@ class EcgParametersDialog(QtGui.QDialog):
             subject._ecg_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            event_checker = self.caller.call_ecg_ssp(subject._ecg_params)
-            if event_checker == -1:
+            result = self.caller.call_ecg_ssp(subject._ecg_params)
+            if not result == 0:
                 QtGui.QApplication.restoreOverrideCursor()
-                return incorrect_ECG_channel, error_message
+                return incorrect_ECG_channel, 'Error while computing ECG projections.'
         except Exception:
             tb = traceback.format_exc()
             #error_message += '\n' + subject._subject_name + ': ' + str(err)

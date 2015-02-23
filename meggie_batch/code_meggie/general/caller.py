@@ -158,6 +158,7 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            return -1
         
     def _call_ecg_ssp(self, dic):
         """
@@ -267,6 +268,7 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            return -1
         
     def _call_eog_ssp(self, dic):
         """
