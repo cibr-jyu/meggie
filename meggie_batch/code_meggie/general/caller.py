@@ -44,7 +44,6 @@ from subprocess import CalledProcessError
 from threading import Thread, Event
 from singleton import Singleton
 from time import sleep
-from __builtin__ import None
 
 @Singleton
 class Caller(object):
@@ -592,12 +591,12 @@ class Caller(object):
                 colors_events.append('#CD7F32')
                 #i += 1
         
-        self.mi = MeasurementInfo(self.experiment.active_subject.working_file)
+        mi = MeasurementInfo(self.experiment.active_subject.working_file)
         
         #title = str(self.category.keys())
         title = ''
         fig = plot_topo(evokeds, layout, color=colors_events, title=title)
-        fig.canvas.set_window_title(self.mi.subject_name)
+        fig.canvas.set_window_title(mi.subject_name)
         
         # fig.set_rasterized(True) <-- this didn't help with the problem of 
         # drawing figures everytime figure size changes.
