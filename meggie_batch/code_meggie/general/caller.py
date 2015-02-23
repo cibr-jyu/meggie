@@ -44,6 +44,7 @@ from subprocess import CalledProcessError
 from threading import Thread, Event
 from singleton import Singleton
 from time import sleep
+from __builtin__ import None
 
 @Singleton
 class Caller(object):
@@ -156,7 +157,8 @@ class Caller(object):
             self.parent.updateUi()
             if self.e.is_set(): break
         if not self.result is None:
-            raise Exception(self.result)
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
         
     def _call_ecg_ssp(self, dic):
         """
@@ -255,6 +257,22 @@ class Caller(object):
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
+        self.e.clear()
+        self.result = None
+        self.thread = Thread(target = self._call_eog_ssp, args=(dic,))
+        self.thread.start()
+        while True:
+            sleep(0.2)
+            self.parent.updateUi()
+            if self.e.is_set(): break
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+        
+    def _call_eog_ssp(self, dic):
+        """
+        Performed in a worker thread.
+        """
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
@@ -298,14 +316,18 @@ class Caller(object):
             eog_proj_fname = prefix + '_eog_avg_proj.fif'
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
-            
-        projs, events = mne.preprocessing.compute_proj_eog(raw_in, None,
+        try:
+            projs, events = mne.preprocessing.compute_proj_eog(raw_in, None,
                             tmin, tmax, grad, mag, eeg,
                             filter_low, filter_high, comp_ssp, taps,
                             njobs, reject, flat, bads,
                             eeg_proj, excl_ssp, event_id,
                             eog_low_freq, eog_high_freq, start)
-        
+        except Exception as e:
+            print 'Exception while computing eog projections.'
+            self.result = e
+            self.e.set() 
+            return;
         # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -315,7 +337,7 @@ class Caller(object):
         
         print "Writing EOG events in %s" % eog_event_fname
         mne.write_events(eog_event_fname, events)
-        
+        self.e.set()
         """
         # Write parameter file
         self.parent.experiment.\
@@ -332,6 +354,26 @@ class Caller(object):
         raw           -- Data to apply to
         directory     -- Directory of the projection file
         """
+        self.e.clear()
+        self.result = None
+        self.thread = Thread(target = self._apply_ecg, args=(raw, directory))
+        self.thread.start()
+        while True:
+            sleep(0.2)
+            self.parent.updateUi()
+            if self.e.is_set(): break
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 1
+        else:
+            return 0
+        
+    def _apply_ecg(self, raw, directory):
+        """
+        Performed in a worker thread.
+        """
         # If there already is a file with eog projections applied on it, apply
         # ecg projections on this file instead of current.
         if len(filter(os.path.isfile, 
@@ -343,8 +385,8 @@ class Caller(object):
                            glob.glob(directory + '/*_ecg_*proj.fif'))
         if len(proj_file) == 0:
             message = 'There is no proj file.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            self.result = Exception(message)
+            
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
         # be added? The newest perhaps.
@@ -361,15 +403,16 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            message = 'There is more than one ECG projection file to apply. ' + \
+            self.result = Exception('There is more than one ECG projection '+ \
+                                    'file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.experiment.active_subject._subject_path
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+                    self.experiment.active_subject._subject_path)
+            self.e.set()
             return
         self.update_experiment_working_file(appliedfilename, raw)
- 
+        self.e.set()
+        
         
     def apply_eog(self, raw, directory):
         """
@@ -377,6 +420,27 @@ class Caller(object):
         Keyword arguments:
         raw           -- Data to apply to
         directory     -- Directory of the projection file
+        """
+        self.e.clear()
+        self.result = None
+        self.thread = Thread(target = self._apply_eog, args=(raw, directory))
+        self.thread.start()
+        while True:
+            sleep(0.2)
+            self.parent.updateUi()
+            if self.e.is_set(): break
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 1
+        else:
+            return 0
+            
+    
+    def _apply_eog(self, raw, directory):
+        """
+        Performed in a worker thread.
         """
         if len(filter(os.path.isfile, 
                       glob.glob(directory + '/*-ecg_applied.fif'))) > 0:
@@ -386,9 +450,8 @@ class Caller(object):
         proj_file = filter(os.path.isfile,
                            glob.glob(directory + '/*_eog_*proj.fif'))
         if len(proj_file) == 0:
-            message = 'There is no proj file.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            self.result = Exception('There is no proj file.')
+            self.e.set()
         #Checks if there is exactly one projection file.
         # TODO: If there is more than one projection file, which one should
         # be added? The newest?
@@ -405,15 +468,16 @@ class Caller(object):
             raw.save(appliedfilename)
             raw = mne.io.RawFIFF(appliedfilename, preload=True)
         else:
-            message = 'There is more than one EOG projection file to apply. ' + \
+            self.result = Exception('There is more than one EOG projection '+ \
+                                    'file to apply. ' + \
                     'Remove all others but the one you want to apply.\n' + \
                     'Projection files are found under subject folder: ' + \
-                    self.experiment.active_subject._subject_path 
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+                    self.experiment.active_subject._subject_path) 
+            self.e.set()
             return
         self.update_experiment_working_file(appliedfilename, raw)
         self.experiment.save_experiment_settings()
+        self.e.set()
  
     
     def average(self, epochs, category):

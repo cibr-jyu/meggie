@@ -42,11 +42,11 @@ import traceback
 from PyQt4 import QtCore,QtGui
 from ecgParametersDialogUi import Ui_Dialog
 
-import fileManager
-from measurementInfo import MeasurementInfo
+from code_meggie.general import fileManager
+from code_meggie.general.measurementInfo import MeasurementInfo
 from code_meggie.general.caller import Caller
 
-import messageBoxes
+from ui.general import messageBoxes
 
 class EcgParametersDialog(QtGui.QDialog):
     """
@@ -461,15 +461,12 @@ class EcgParametersDialog(QtGui.QDialog):
         njobs = self.ui.spinBoxJobs.value()
         dictionary['n-jobs'] = njobs
         
-        eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
         eeg_proj = self.ui.checkBoxEEGProj.isChecked()
         dictionary['avg-ref'] = eeg_proj
         
-        excl_ssp = self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked
         excl_ssp = self.ui.checkBoxSSPProj.isChecked()
         dictionary['no-proj'] = excl_ssp
         
-        comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         comp_ssp = self.ui.checkBoxSSPCompute.isChecked()
         dictionary['average'] = comp_ssp
         
