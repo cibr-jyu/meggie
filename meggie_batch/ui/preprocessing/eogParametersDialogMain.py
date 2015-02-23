@@ -86,14 +86,15 @@ class EogParametersDialog(QtGui.QDialog):
             collect_parameter_values(False)
             error_message = self.\
             calculate_eog(self.caller.experiment._active_subject, error_message)
-            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-            self.parent.ui.checkBoxEOGComputed.setChecked(True)
             if len(error_message) > 0:
                 self.messageBox = messageBoxes.shortMessageBox(error_message)
                 QtGui.QApplication.restoreOverrideCursor()
                 self.messageBox.show()
                 #self.parent.ui.pushButtonApplyEOG.setEnabled(False)
                 #self.parent.ui.checkBoxEOGComputed.setChecked(False)
+            else:
+                self.parent.ui.pushButtonApplyEOG.setEnabled(True)
+                self.parent.ui.checkBoxEOGComputed.setChecked(True)
             self.close()
             QtGui.QApplication.restoreOverrideCursor()
             return
@@ -406,7 +407,6 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)
         try:
-            
             event_checker = self.caller.call_eog_ssp(subject._eog_params)
             if event_checker == -1:
                 return error_message

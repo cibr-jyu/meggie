@@ -108,6 +108,12 @@ class MainWindow(QtGui.QMainWindow):
         # triggered action.
         #self._experiment = None
         
+        # Direct output to console
+        self.directOutput()
+        self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+        sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+        sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+        
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
         self.caller.setParent(self)
@@ -1577,6 +1583,17 @@ class MainWindow(QtGui.QMainWindow):
 
 
 ### Miscellaneous code ###
+
+    def directOutput(self):
+        """
+        Method for directing stdout to the console and back.
+        """
+        if self.ui.actionDirectToConsole.isChecked():
+            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+        else:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
         
     def check_workspace(self):
         """
@@ -1602,7 +1619,54 @@ class MainWindow(QtGui.QMainWindow):
         for proc in self.processes:
             proc.terminate()
     """
+    
+    
+    def __del__(self):
+        """
+        Restores stdout at the end.
+        """
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
+
+    def normalOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stdout.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+        
+        
+    def errorOutputWritten(self, text):
+        """
+        Appends text to 'console' at the bottom of the dialog.
+        Used for redirecting stderr.
+        Parameters:
+        text - Text to write to the console.
+        """
+        cursor = self.ui.textEditConsole.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.End)
+        cursor.insertText(text)
+        self.ui.textEditConsole.setTextCursor(cursor)
+        self.ui.textEditConsole.ensureCursorVisible()
+
+
+class EmittingStream(QtCore.QObject):
+
+    textWritten = QtCore.pyqtSignal(str)
+
+    def write(self, text):
+        self.textWritten.emit(str(text))
+        
+    def flush(self):
+        pass
+        
 ### Code related to application initialization ###     
 
 

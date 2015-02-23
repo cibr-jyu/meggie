@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/mainWindowBatch.ui'
+# Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Fri Jan 30 17:49:52 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Mon Feb 23 05:35:55 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(1542, 722)
+        MainWindow.resize(1542, 885)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -40,10 +40,13 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_7 = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout_7.setObjectName(_fromUtf8("gridLayout_7"))
-        self.scrollArea = QtGui.QScrollArea(self.centralwidget)
+        self.splitter = QtGui.QSplitter(self.centralwidget)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setObjectName(_fromUtf8("splitter"))
+        self.scrollArea = QtGui.QScrollArea(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(8)
         sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
         self.scrollArea.setSizePolicy(sizePolicy)
         self.scrollArea.setMinimumSize(QtCore.QSize(600, 600))
@@ -52,7 +55,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1165, 750))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1168, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -1051,7 +1054,7 @@ class Ui_MainWindow(object):
         self.label_17.setFont(font)
         self.label_17.setObjectName(_fromUtf8("label_17"))
         self.layoutWidget2 = QtGui.QWidget(self.tabInverseOperator)
-        self.layoutWidget2.setGeometry(QtCore.QRect(21, 11, 347, 262))
+        self.layoutWidget2.setGeometry(QtCore.QRect(21, 11, 381, 262))
         self.layoutWidget2.setObjectName(_fromUtf8("layoutWidget2"))
         self.verticalLayout_15 = QtGui.QVBoxLayout(self.layoutWidget2)
         self.verticalLayout_15.setMargin(0)
@@ -1071,7 +1074,7 @@ class Ui_MainWindow(object):
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.verticalLayout_15.addWidget(self.groupBox_8)
         self.layoutWidget3 = QtGui.QWidget(self.tabInverseOperator)
-        self.layoutWidget3.setGeometry(QtCore.QRect(560, 10, 339, 461))
+        self.layoutWidget3.setGeometry(QtCore.QRect(560, 10, 374, 461))
         self.layoutWidget3.setObjectName(_fromUtf8("layoutWidget3"))
         self.formLayout_13 = QtGui.QFormLayout(self.layoutWidget3)
         self.formLayout_13.setMargin(0)
@@ -1151,10 +1154,18 @@ class Ui_MainWindow(object):
         self.gridLayout_22.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout_22, 0, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_3)
-        self.gridLayout_7.addWidget(self.scrollArea, 0, 0, 1, 1)
+        self.textEditConsole = QtGui.QTextEdit(self.splitter)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.textEditConsole.sizePolicy().hasHeightForWidth())
+        self.textEditConsole.setSizePolicy(sizePolicy)
+        self.textEditConsole.setReadOnly(True)
+        self.textEditConsole.setObjectName(_fromUtf8("textEditConsole"))
+        self.gridLayout_7.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1542, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1542, 25))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -1456,12 +1467,17 @@ class Ui_MainWindow(object):
         icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/toolBarIcons/images/whatsThisMode.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.actionToggle_whatsthis_mode.setIcon(icon4)
         self.actionToggle_whatsthis_mode.setObjectName(_fromUtf8("actionToggle_whatsthis_mode"))
+        self.actionDirectToConsole = QtGui.QAction(MainWindow)
+        self.actionDirectToConsole.setCheckable(True)
+        self.actionDirectToConsole.setChecked(True)
+        self.actionDirectToConsole.setObjectName(_fromUtf8("actionDirectToConsole"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionShowExperimentInfo)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
+        self.menuTools.addAction(self.actionDirectToConsole)
         self.menuTools.addAction(self.actionPreferences)
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addAction(self.actionToggle_whatsthis_mode)
@@ -1477,7 +1493,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionHide_Show_subject_list_and_info)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(8)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
         QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -1611,9 +1627,10 @@ class Ui_MainWindow(object):
         self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Sans\'; font-size:9.5pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourceAnalysis), _translate("MainWindow", "Source analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
@@ -1649,5 +1666,6 @@ class Ui_MainWindow(object):
         self.actionHide_Show_subject_list_and_info.setToolTip(_translate("MainWindow", "Hide/show subject list and info", None))
         self.actionToggle_whatsthis_mode.setText(_translate("MainWindow", "Toggle whatsthis mode", None))
         self.actionToggle_whatsthis_mode.setToolTip(_translate("MainWindow", "Click this, then click something in the user interface to get more info about it", None))
+        self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
 
 import mainWindowIcons_rc
