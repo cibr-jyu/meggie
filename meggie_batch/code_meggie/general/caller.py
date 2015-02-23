@@ -793,7 +793,7 @@ class Caller(object):
         pl.show()
        
                             
-    def filter(self, dataToFilter, samplerate, dic):
+    def filter(self, dataToFilter, info, samplerate, dic):
         """
         Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is one or more of
@@ -802,23 +802,34 @@ class Caller(object):
         Keyword arguments:
         
         dataToFilter         -- array of data to filter
+        info                 -- info for the data file to filter
         samplerate           -- intended samplerate of the array
         dic                  -- Dictionary with filtering parameters
         
         Returns the filtered array.
         """
         
+        # Exclude non-data and bad channels from filtering with picks.
+        picks = mne.pick_types(info, meg=True, eeg=True, stim=False, eog=False, 
+        ecg=False, emg=False, ref_meg='auto', misc=False, resp=False, 
+        chpi=False, exci=False, ias=False, syst=False, include=[], 
+        exclude='bads', selection=None)
+        
+        # TODO: check if this holds for mne.filter
+        # n_jobs is 2 because of the increasing memory requirements for 
+        # multicore filtering, see 
+        # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html#mne.io.RawFIFF.filter
         if dic.get('lowpass') == True:                
             dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
                         dic.get('low_cutoff_freq'), dic.get('low_length'),
-                        dic.get('low_trans_bandwidth'),'fft', None, None, 3, 
-                        True)
+                        dic.get('low_trans_bandwidth'),'fft', None, picks=picks,
+                        n_jobs=2, copy=True)
             
         if dic.get('highpass') == True:
             dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
                         dic.get('high_cutoff_freq'), dic.get('high_length'),
-                        dic.get('high_trans_bandwidth'),'fft', None, None, 3, 
-                        True)
+                        dic.get('high_trans_bandwidth'),'fft', None, 
+                        picks=picks, n_jobs=3, copy=True)
         
         if dic.get('bandstop1') == True:
             dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
@@ -826,7 +837,8 @@ class Caller(object):
                         dic.get('bandstop1_h_freq'), 
                         dic.get('bandstop1_length'), 
                         dic.get('bandstop1_trans_bandwidth'),
-                        dic.get('bandstop1_trans_bandwidth'), n_jobs=2)
+                        dic.get('bandstop1_trans_bandwidth'),picks=picks,
+                        n_jobs=2, copy=True)
             
         if dic.get('bandstop2') == True:
             dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
@@ -834,8 +846,8 @@ class Caller(object):
                         dic.get('bandstop2_h_freq'), 
                         dic.get('bandstop2_length'), 
                         dic.get('bandstop2_trans_bandwidth'),
-                        dic.get('bandstop2_trans_bandwidth'), n_jobs=2)
-            
+                        dic.get('bandstop2_trans_bandwidth'), picks=picks,
+                        n_jobs=2, copy=True)
             
         return dataToFilter
     

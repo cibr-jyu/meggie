@@ -58,14 +58,11 @@ class FilterDialog(QtGui.QDialog):
         """
         
         paramDict = self.get_filter_parameters()
-        if paramDict.get('isEmpty') == True:
-                message = 'Please select filter(s) to apply'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return    
-        
         self.dataToFilter = self.caller.experiment.active_subject.\
                             _working_file._data
+        info = self.caller.experiment.active_subject.\
+                            _working_file.info
+                            
         samplerate = self.caller.experiment.active_subject._working_file.info['sfreq']
         
         # Check if the filter frequency values are sane or not.
@@ -74,7 +71,7 @@ class FilterDialog(QtGui.QDialog):
             return
         
         try: 
-            filteredData = self.caller.filter(self.dataToFilter, samplerate,
+            filteredData = self.caller.filter(self.dataToFilter, info, samplerate,
                                               paramDict)
         except ValueError as e:
             message = 'There was problem with filtering. MNE-Python error ' + \
@@ -86,30 +83,33 @@ class FilterDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject._working_file
         previewRaw = deepcopy(raw)
         previewRaw._data = filteredData
-        previewRaw.plot()
-           
+        
+        # This should really block, but doesn't.
+        previewRaw.plot(block=True)                       
+        
         reply = QtGui.QMessageBox.question(self, 'Apply filters?', 
                     'Apply the previewed filters to the working file?', 
                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.Yes)
+                    QtGui.QMessageBox.Yes)  
            
         if reply == QtGui.QMessageBox.Yes:
             fname = previewRaw.info.get('filename')
             # This actually saves the file over current working file,
             # because the previewRaw filename is the same as that of raw
             # file it is copied from. 
+            
+            # Update the data file with new filter values.
+            if 'lowpass' in paramDict and paramDict['lowpass'] == True:
+                previewRaw.info['lowpass'] = paramDict['low_cutoff_freq']
+        
+            if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
+                previewRaw.info['highpass'] = paramDict['high_cutoff_freq']
+    
             previewRaw.save(fname, overwrite=True)
             raw = mne.io.RawFIFF(fname, preload=True)
             self.caller.update_experiment_working_file(fname, raw)
             
-            # Update the working file info fields with the new values
-            if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-                self.caller.experiment.active_subject.\
-                _working_file.info['lowpass'] = paramDict['low_cutoff_freq']
-        
-            if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-                self.caller.experiment.active_subject.\
-                _working_file.info['highpass'] = paramDict['high_cutoff_freq']
+            
             
             self.parent._initialize_ui()
         else: return
@@ -117,8 +117,8 @@ class FilterDialog(QtGui.QDialog):
         
     def get_filter_parameters(self):
         """
-        Gets the filtering parameters from the UI fields. Uses default
-        working file as the filtering target file.
+        Gets the filtering parameters from the UI fields and performs
+        rudimentary sanity checks on them.
         """
         
         dictionary = {}
@@ -190,6 +190,12 @@ class FilterDialog(QtGui.QDialog):
         else:
             dictionary['bandstop2'] = False
             
+        if dictionary.get('isEmpty') == True:
+                message = 'Please select filter(s) to apply'
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                return    
+            
         return dictionary    
     
     
@@ -199,16 +205,13 @@ class FilterDialog(QtGui.QDialog):
         actually do the filtering.
         """
         
-        paramDict = self.get_filter_parameters()
-        if paramDict.get('isEmpty') == True:
-                message = 'Please select filter(s) to apply'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return    
-        
+        paramDict = self.get_filter_parameters()   
         self.dataToFilter = self.caller.experiment.active_subject.\
                             _working_file._data
-        samplerate = self.caller.experiment.active_subject._working_file.info['sfreq']
+        samplerate = self.caller.experiment.active_subject.\
+        _working_file.info['sfreq']
+        info = self.caller.experiment.active_subject.\
+                            _working_file.info
         
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, samplerate) == False) or \
@@ -216,8 +219,8 @@ class FilterDialog(QtGui.QDialog):
             return
         
         try: 
-            filteredData = self.caller.filter(self.dataToFilter, samplerate,
-                                              paramDict)
+            filteredData = self.caller.filter(self.dataToFilter, info,
+                                              samplerate, paramDict)
         except ValueError as e:
             message = 'There was problem with filtering. MNE-Python error ' + \
             'message was: \n\n' + str(e)
@@ -226,20 +229,19 @@ class FilterDialog(QtGui.QDialog):
             return
         
         raw = self.caller.experiment.active_subject._working_file
-        raw.data = filteredData
+        raw._data = filteredData
         fname = raw.info.get('filename')
+        
+        # Update the data file with new filter values.
+        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
+            raw.info['lowpass'] = paramDict['low_cutoff_freq']
+    
+        if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
+            raw.info['highpass'] = paramDict['high_cutoff_freq']
+        
         raw.save(fname, overwrite=True)
         raw = mne.io.RawFIFF(fname, preload=True)
         self.caller.update_experiment_working_file(fname, raw)
-        
-        # Update the working file info fields with the new values
-        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-            self.caller.experiment.active_subject._working_file.info['lowpass'] = \
-                paramDict['low_cutoff_freq']
-        
-        if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-            self.caller.experiment.active_subject._working_file.info['highpass'] = \
-                paramDict['high_cutoff_freq']
         
         self.parent._initialize_ui()
         self.close()
