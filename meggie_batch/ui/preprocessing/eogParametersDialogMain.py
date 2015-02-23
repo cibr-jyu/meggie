@@ -123,7 +123,7 @@ class EogParametersDialog(QtGui.QDialog):
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
                 error_message = self.calculate_eog(subject, error_message)
-        self.caller.experiment.activate_subject(recently_active_subject)
+        self.caller.activate_subject(recently_active_subject)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()

@@ -202,7 +202,7 @@ class MainWindow(QtGui.QMainWindow):
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
-    def updateUi(self):
+    def update_ui(self):
         """
         Method for repainting the ui.
         Used for keeping the ui responsive when threading.
@@ -1067,14 +1067,14 @@ class MainWindow(QtGui.QMainWindow):
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
         
+        
         # Not much point trying to activate an already active subject.
         if subject_name == self.caller.experiment.active_subject_name:
-            QtGui.QApplication.restoreOverrideCursor()
             return      
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.experiment.activate_subject(subject_name)
+        self.caller.activate_subject(subject_name)
         self._initialize_ui()
         
         # To tell the MVC models that the active subject has changed.

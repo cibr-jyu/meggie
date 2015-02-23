@@ -72,7 +72,7 @@ class Caller(object):
         parent        -- Parent of this object.
         """
         self.parent = parent
-        
+
         
     @property
     def experiment(self):
@@ -82,6 +82,32 @@ class Caller(object):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
+        
+    
+    def activate_subject(self, name):
+        """
+        Activates the subject.
+        Keyword arguments:
+        name      -- Name of the subject to activate.
+        """
+        if name == '':
+            return
+        from multiprocessing.pool import ThreadPool
+        pool = ThreadPool(processes=1)
+
+        async_result = pool.apply_async(self.experiment.activate_subject, 
+                                        (name,))
+        while(True):
+            sleep(0.2)
+            if self.experiment.is_ready(): break;
+            self.parent.update_ui()
+            
+        return_val = async_result.get()
+        if not return_val == 0:
+            self.messageBox = messageBoxes.shortMessageBox('Could not set ' + \
+                                        name + ' as active subject. ' + \
+                                        'Check console.')
+            self.messageBox.show()
         
 
     def call_mne_browse_raw(self, filename):
@@ -153,7 +179,7 @@ class Caller(object):
         self.thread.start()
         while True:
             sleep(0.2)
-            self.parent.updateUi()
+            self.parent.update_ui()
             if self.e.is_set(): break
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
@@ -263,7 +289,7 @@ class Caller(object):
         self.thread.start()
         while True:
             sleep(0.2)
-            self.parent.updateUi()
+            self.parent.update_ui()
             if self.e.is_set(): break
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
@@ -361,7 +387,7 @@ class Caller(object):
         self.thread.start()
         while True:
             sleep(0.2)
-            self.parent.updateUi()
+            self.parent.update_ui()
             if self.e.is_set(): break
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
@@ -428,7 +454,7 @@ class Caller(object):
         self.thread.start()
         while True:
             sleep(0.2)
-            self.parent.updateUi()
+            self.parent.update_ui()
             if self.e.is_set(): break
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
