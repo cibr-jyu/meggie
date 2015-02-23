@@ -41,7 +41,6 @@ from PyQt4 import QtCore,QtGui
 from eventSelectionDialogUi import Ui_EventSelectionDialog
 from code_meggie.general.caller import Caller
 
-from epochs import Epochs
 from events import Events
 import fileManager
 
