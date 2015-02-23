@@ -38,6 +38,7 @@ import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis
+from PyQt4.Qt import QApplication
 import sip
 
 from mne import fiff
@@ -195,6 +196,12 @@ class MainWindow(QtGui.QMainWindow):
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
+    def updateUi(self):
+        """
+        Method for repainting the ui.
+        Used for keeping the ui responsive when threading.
+        """
+        QApplication.processEvents()
         
 ### Code for catching signals and reacting to them ###
     def on_actionQuit_triggered(self, checked=None):

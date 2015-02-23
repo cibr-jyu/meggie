@@ -14,16 +14,15 @@ import fnmatch
 import re
 import shutil
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 import mne
 from mne.time_frequency import induced_power
-from mne import filter as MNEfilter
 from mne.layouts import read_layout
-from mne.layouts.layout import _pair_grad_sensors
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
+from mne.viz import topo
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 # from mne.viz import _clean_names
@@ -35,16 +34,16 @@ import pylab as pl
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
-import messageBoxes
+from ui.general import messageBoxes
 import fileManager
-from holdCoregistrationDialogMain import holdCoregistrationDialog
+from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
+from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
-from forwardModelSkipDialogMain import ForwardModelSkipDialog
+from threading import Thread, Event
 from singleton import Singleton
-from copy import deepcopy
-from mne.viz.raw import plot_raw
+from time import sleep
 
 @Singleton
 class Caller(object):
@@ -57,6 +56,9 @@ class Caller(object):
     """
     parent = None
     _experiment = None
+    e = Event()
+    result = None #Used for storing exceptions from threads.
+    
     def __init__(self):
         """
         Constructor
@@ -145,6 +147,21 @@ class Caller(object):
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
         """
+        self.e.clear()
+        self.result = None
+        self.thread = Thread(target = self._call_ecg_ssp, args=(dic,))
+        self.thread.start()
+        while True:
+            sleep(0.2)
+            self.parent.updateUi()
+            if self.e.is_set(): break
+        if not self.result is None:
+            raise Exception(self.result)
+        
+    def _call_ecg_ssp(self, dic):
+        """
+        Performed in a worker thread.
+        """
         raw_in = dic.get('i')
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
@@ -184,9 +201,8 @@ class Caller(object):
         if raw_in.info.get('filename').endswith('_raw.fif') or \
         raw_in.info.get('filename').endswith('-raw.fif'):
             prefix = raw_in.info.get('filename')[:-8]
-            suffix = '.fif'
         else:
-            prefix, suffix = os.path.splitext(raw_in.info.get('filename')) 
+            prefix, _ = os.path.splitext(raw_in.info.get('filename')) 
         
         ecg_event_fname = prefix + '_ecg-eve.fif'
         
@@ -203,12 +219,16 @@ class Caller(object):
                             bads, eeg_proj, excl_ssp, event_id,
                             ecg_low_freq, ecg_high_freq, start, qrs_threshold)
         except Exception, err:
-            raise Exception(err)
+            self.result = err
+            self.e.set()
+            return -1
         
         if len(events) == 0:
-            message = 'No ECG events found. Change settings.'
-            self.messageBox = messageBoxes.shortMessageBox()
-            self.messageBox.show()
+            self.result = Exception('No ECG events found. Change settings.')
+            #message = 'No ECG events found. Change settings.'
+            #self.messageBox = messageBoxes.shortMessageBox(message)
+            #self.messageBox.show()
+            self.e.set()
             return -1
         
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -219,7 +239,7 @@ class Caller(object):
         
         print "Writing ECG events in %s" % ecg_event_fname
         mne.write_events(ecg_event_fname, events)
-        
+        self.e.set()
         """
         # Write parameter file
         self.parent.experiment.\
@@ -755,14 +775,16 @@ class Caller(object):
         
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
-            fig = plot_topo_power(epochs, power, frequencies, layout,
+            fig = topo.plot_topo_power(epochs, power, frequencies, layout,
                             baseline=baseline, mode=mode, decim=decim, 
                             vmin=0., vmax=14, title=title)
             fig.show()
         else: 
             title = 'TFR topology: ' + 'Phase locking'
-            fig = plot_topo_phase_lock(epochs, phase_lock, frequencies, layout,
-                     baseline=baseline, mode=mode, decim=decim, title=title)
+            fig = topo.plot_topo_phase_lock(epochs, phase_lock, frequencies, 
+                                            layout, baseline=baseline, 
+                                            mode=mode, decim=decim, 
+                                            title=title)
             fig.show()  
             
         def onclick(event):
