@@ -968,7 +968,29 @@ class Caller(object):
         
         Returns the filtered array.
         """
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+
+        async_result = pool.apply_async(self._filter, 
+                                        (dataToFilter, info, samplerate, dic,))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return dataToFilter
+        filteredData = async_result.get()
+        return filteredData
         
+    def _filter(self, dataToFilter, info, samplerate, dic):
+        """
+        Performed in a working thread.
+        """
         # Exclude non-data and bad channels from filtering with picks.
         picks = mne.pick_types(info, meg=True, eeg=True, stim=False, eog=False, 
         ecg=False, emg=False, ref_meg='auto', misc=False, resp=False, 
@@ -979,38 +1001,42 @@ class Caller(object):
         # n_jobs is 2 because of the increasing memory requirements for 
         # multicore filtering, see 
         # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html#mne.io.RawFIFF.filter
-        if dic.get('lowpass') == True:                
-            dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
-                        dic.get('low_cutoff_freq'), dic.get('low_length'),
-                        dic.get('low_trans_bandwidth'),'fft', None, picks=picks,
-                        n_jobs=2, copy=True)
+        try:
+            if dic.get('lowpass') == True:                
+                dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
+                            dic.get('low_cutoff_freq'), dic.get('low_length'),
+                            dic.get('low_trans_bandwidth'),'fft', None, picks=picks,
+                            n_jobs=2, copy=True)
+                
+            if dic.get('highpass') == True:
+                dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
+                            dic.get('high_cutoff_freq'), dic.get('high_length'),
+                            dic.get('high_trans_bandwidth'),'fft', None, 
+                            picks=picks, n_jobs=3, copy=True)
             
-        if dic.get('highpass') == True:
-            dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
-                        dic.get('high_cutoff_freq'), dic.get('high_length'),
-                        dic.get('high_trans_bandwidth'),'fft', None, 
-                        picks=picks, n_jobs=3, copy=True)
-        
-        if dic.get('bandstop1') == True:
-            dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
-                        dic.get('bandstop1_l_freq'), 
-                        dic.get('bandstop1_h_freq'), 
-                        dic.get('bandstop1_length'), 
-                        dic.get('bandstop1_trans_bandwidth'),
-                        dic.get('bandstop1_trans_bandwidth'),picks=picks,
-                        n_jobs=2, copy=True)
-            
-        if dic.get('bandstop2') == True:
-            dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
-                        dic.get('bandstop2_l_freq'), 
-                        dic.get('bandstop2_h_freq'), 
-                        dic.get('bandstop2_length'), 
-                        dic.get('bandstop2_trans_bandwidth'),
-                        dic.get('bandstop2_trans_bandwidth'), picks=picks,
-                        n_jobs=2, copy=True)
-            
+            if dic.get('bandstop1') == True:
+                dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
+                            dic.get('bandstop1_l_freq'), 
+                            dic.get('bandstop1_h_freq'), 
+                            dic.get('bandstop1_length'), 
+                            dic.get('bandstop1_trans_bandwidth'),
+                            dic.get('bandstop1_trans_bandwidth'),picks=picks,
+                            n_jobs=2, copy=True)
+                
+            if dic.get('bandstop2') == True:
+                dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
+                            dic.get('bandstop2_l_freq'), 
+                            dic.get('bandstop2_h_freq'), 
+                            dic.get('bandstop2_length'), 
+                            dic.get('bandstop2_trans_bandwidth'),
+                            dic.get('bandstop2_trans_bandwidth'), picks=picks,
+                            n_jobs=2, copy=True)
+        except Exception as e:
+            self.result = e
+            self.e.set()
+            return dataToFilter
+        self.e.set()
         return dataToFilter
-    
     
 ### Methods needed for source modeling ###    
 

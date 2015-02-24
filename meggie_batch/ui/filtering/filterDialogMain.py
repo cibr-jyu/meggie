@@ -204,7 +204,8 @@ class FilterDialog(QtGui.QDialog):
         Get the parameters dictionary and relay it to caller.filter to
         actually do the filtering.
         """
-        
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         paramDict = self.get_filter_parameters()   
         self.dataToFilter = self.caller.experiment.active_subject.\
                             _working_file._data
@@ -215,7 +216,8 @@ class FilterDialog(QtGui.QDialog):
         
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, samplerate) == False) or \
-        (self._validateFilterLength(paramDict) == False):
+                        (self._validateFilterLength(paramDict) == False):
+            QtGui.QApplication.restoreOverrideCursor()
             return
         
         try: 
@@ -226,6 +228,7 @@ class FilterDialog(QtGui.QDialog):
             'message was: \n\n' + str(e)
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
+            QtGui.QApplication.restoreOverrideCursor()
             return
         
         raw = self.caller.experiment.active_subject._working_file
@@ -244,6 +247,7 @@ class FilterDialog(QtGui.QDialog):
         self.caller.update_experiment_working_file(fname, raw)
         
         self.parent._initialize_ui()
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()
     
     
