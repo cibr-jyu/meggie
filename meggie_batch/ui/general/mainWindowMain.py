@@ -755,9 +755,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         TODO: get evoked from active_subject._evokeds dictionary
         """
-        
-        # Cue for the user that we are preparing visualization.
-        # TODO: should use threads and events.
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         self.ui.pushButtonVisualizeEvokedDataset.setText(
@@ -771,13 +768,18 @@ class MainWindow(QtGui.QMainWindow):
         category = evoked._categories
         
         print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
-        self.caller.draw_evoked_potentials(evoked_raw, category)
-        print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
-        
-        oldText = 'Visualize selected dataset'
-        self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
-        self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
-        QtGui.QApplication.restoreOverrideCursor()
+        try:
+            self.caller.draw_evoked_potentials(evoked_raw, category)
+            print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
+        except Exception as e:
+            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +\
+                                                str(e))
+            mBox.exec_()
+        finally:
+            oldText = 'Visualize selected dataset'
+            self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
+            self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
+            QtGui.QApplication.restoreOverrideCursor()
               
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
@@ -787,7 +789,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return
         evoked_collection_name = str(self.evokedList.currentItem().text())
-        evoked = self.caler.experiment.active_subject._evokeds[evoked_name]
+        evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
         """
         TODO: get evoked from active_subject._evokeds dictionary
