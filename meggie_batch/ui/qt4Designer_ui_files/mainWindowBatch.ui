@@ -179,6 +179,9 @@
                          <property name="enabled">
                           <bool>false</bool>
                          </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
@@ -225,6 +228,9 @@
                         <widget class="QCheckBox" name="checkBoxEOGApplied">
                          <property name="enabled">
                           <bool>false</bool>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
                          </property>
                          <property name="text">
                           <string/>
@@ -276,6 +282,9 @@
                          <property name="enabled">
                           <bool>false</bool>
                          </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
@@ -316,6 +325,9 @@
                          <property name="enabled">
                           <bool>false</bool>
                          </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
+                         </property>
                          <property name="text">
                           <string/>
                          </property>
@@ -355,6 +367,9 @@
                         <widget class="QCheckBox" name="checkBoxMaxFilterApplied">
                          <property name="enabled">
                           <bool>false</bool>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
                          </property>
                          <property name="text">
                           <string/>
@@ -405,6 +420,9 @@
                         <widget class="QCheckBox" name="checkBoxMaxFilterComputed">
                          <property name="enabled">
                           <bool>false</bool>
+                         </property>
+                         <property name="focusPolicy">
+                          <enum>Qt::NoFocus</enum>
                          </property>
                          <property name="inputMethodHints">
                           <set>Qt::ImhDigitsOnly</set>

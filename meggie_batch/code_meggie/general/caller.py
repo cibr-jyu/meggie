@@ -670,7 +670,6 @@ class Caller(object):
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
-        
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -681,13 +680,13 @@ class Caller(object):
             sleep(0.2)
             if self.e.is_set(): break;
             self.parent.update_ui()
-            
-        averageTitleString, gradDataList, evokeds = async_result.get()
+
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
             self.result = None
             return 
+        averageTitleString, gradDataList, evokeds = async_result.get()
 
         #averageTitleString = return_val[0]
         #gradDataList = return_val[1]
@@ -731,7 +730,12 @@ class Caller(object):
             channelsToAve = channelSet
             averageTitle = str(channelSet).strip('[]')
         else:
-            channelsToAve = mne.selection.read_selection(lobeName)
+            try:
+                channelsToAve = mne.selection.read_selection(lobeName)
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
             averageTitle = lobeName
         
         # pyPlot doesn't seem to like QStrings, need to convert to string
@@ -765,8 +769,13 @@ class Caller(object):
             # and numbers.
             
             # Picks only the desired channels from the evokeds.
-            evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
-                                                        channelsToAve)
+            try:
+                evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
+                                                            channelsToAve)
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
                    
             # Returns channel indices for grad channel pairs in evokedToAve.
             gradsIdxs = _pair_grad_sensors_from_ch_names(evokedToAve.\
@@ -774,13 +783,17 @@ class Caller(object):
             
             # Merges the grad channel pairs in evokedToAve
             # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
-            gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
+            if len(gradsIdxs) > 0:
+                gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
             
-            # Averages the gradData
-            averagedGradData = np.mean(gradData, axis=0)
+                # Averages the gradData
+                averagedGradData = np.mean(gradData, axis=0)
             
-            # Links the event name and the corresponding data
-            gradDataList.append((evokeds[i].comment, averagedGradData))
+                # Links the event name and the corresponding data
+                gradDataList.append((evokeds[i].comment, averagedGradData))
+            else:
+                averagedData = np.mean(evokeds[i].data, axis=0)
+                gradDataList.append((evokeds[i].comment, averagedData))
         self.e.set()
         return averageTitleString, gradDataList, evokeds
     

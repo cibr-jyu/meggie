@@ -159,6 +159,8 @@ class Epochs(QObject):
             else:
                 epochs = mne.Epochs(raw, events, category,
                                 tmin, tmax, picks=picks, reject=reject)
+                if len(epochs.get_data()) == 0:
+                    raise Exception('Could not find any data. Check parameters!')
                 return epochs
         else:
             raise TypeError('Not a Raw object.')
