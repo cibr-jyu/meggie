@@ -1033,16 +1033,19 @@ class MainWindow(QtGui.QMainWindow):
         """
         TODO: get epochs from active_subject._epochs dictionary
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         epochs_name = str(self.epochList.ui.listWidgetEpochs.\
                           currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
+        #epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
         if self.ui.radioButtonLobe.isChecked() == True:
-            self.caller.average_channels(epochs, self.ui.comboBoxLobes.\
+            self.caller.average_channels(epochs_name, self.ui.comboBoxLobes.\
                                          currentText(), None)
         else:
             customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
             plainText
-            self.caller.average_channels(epochs, None, customChannels)
+            self.caller.average_channels(epochs_name, None, customChannels)
+        QtGui.QApplication.restoreOverrideCursor()
     
             
     def on_pushButtonFilter_clicked(self, checked=None):

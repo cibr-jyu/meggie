@@ -23,9 +23,10 @@ from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
 from mne.viz import topo
+from mne.utils import _clean_names
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
-# from mne.viz import _clean_names
+#from mne.viz import _clean_names
 
 from measurementInfo import MeasurementInfo
 
@@ -42,6 +43,7 @@ from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
 from threading import Thread, Event
+from multiprocessing.pool import ThreadPool
 from singleton import Singleton
 from time import sleep
 
@@ -92,7 +94,6 @@ class Caller(object):
         """
         if name == '':
             return
-        from multiprocessing.pool import ThreadPool
         pool = ThreadPool(processes=1)
 
         async_result = pool.apply_async(self.experiment.activate_subject, 
@@ -659,23 +660,72 @@ class Caller(object):
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         
-    def average_channels(self, epochs, lobeName, channelSet=None):
+    def average_channels(self, epochs_name, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
         if it is provided. Only for gradiometer channels.
         
         Keyword arguments:
-        epochs       -- epochs to average.
+        epochs_name  -- name of the epochs to average.
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
         
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+
+        async_result = pool.apply_async(self._average_channels, 
+                                        (epochs_name, lobeName, channelSet,))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+            
+        return_val = async_result.get()
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 
+
+        averageTitleString = return_val[0]
+        gradDataList = return_val[1]
+        evokeds = return_val[2]
+        
+        plt.clf()
+        fig = plt.figure()
+        mi = MeasurementInfo(self.experiment.active_subject._working_file)
+        fig.canvas.set_window_title(mi.subject_name + 
+             '-- channel average for ' + averageTitleString)
+        fig.suptitle('Channel average for ' + averageTitleString)
+        subplots_adjust(hspace=1)
+                
+        # Draw a separate plot for each event type
+        for index, (eventName, data) in enumerate(gradDataList):
+            ca = fig.add_subplot(len(gradDataList), 1, index+1) 
+            ca.set_title(eventName)
+            # Times information is the same as in original evokeds
+            ca.plot(evokeds[0].times , data)
+            
+            ca.set_xlabel('Time (s)')
+            # TODO Mika yksikko tassa, ja pitaako skaalata?
+            ca.set_ylabel('Magnitude / dB')                    
+        fig.show()
+        
+    
+    def _average_channels(self, epochs_name, lobeName, channelSet=None):
+        """
+        Performed in a worker thread.
+        """
+        epochs = self.experiment.active_subject._epochs[epochs_name].raw
         if not channelSet == None:
             if not isinstance(channelSet, set) or len(channelSet) < 2 or \
                    not channelSet.issubset(set(epochs.ch_names)):
-                raise ValueError('Please check that you have at least two ' + 
+                self.result = ValueError('Please check that you have at least two ' + 
                 'channels, the channels are actual channels in the epochs ' +
                 'data and they are in the right form')
+                self.e.set()
                 return           
             channelsToAve = channelSet
             averageTitle = str(channelSet).strip('[]')
@@ -687,7 +737,9 @@ class Caller(object):
         averageTitleString = str(averageTitle)
         
         if epochs is None:
-            raise Exception('No epochs found.')
+            self.result = Exception('No epochs found.')
+            self.e.set()
+            return
         category = epochs.event_id
         
         # Creates evoked potentials from the given events (variable 'name' 
@@ -728,27 +780,8 @@ class Caller(object):
             
             # Links the event name and the corresponding data
             gradDataList.append((evokeds[i].comment, averagedGradData))
-                
-        plt.clf()
-        fig = plt.figure()
-        mi = MeasurementInfo(self.experiment.active_subject._working_file)
-        fig.canvas.set_window_title(mi.subject_name + 
-             '-- channel average for ' + averageTitleString)
-        fig.suptitle('Channel average for ' + averageTitleString)
-        subplots_adjust(hspace=1)
-                
-        # Draw a separate plot for each event type
-        for index, (eventName, data) in enumerate(gradDataList):
-            ca = fig.add_subplot(len(gradDataList), 1, index+1) 
-            ca.set_title(eventName)
-            # Times information is the same as in original evokeds
-            ca.plot(evokeds[0].times , data)
-            
-            ca.set_xlabel('Time (s)')
-            # TODO Mika yksikko tassa, ja pitaako skaalata?
-            ca.set_ylabel('Magnitude / dB')                    
-        fig.show()
-   
+        self.e.set()
+        return (averageTitleString, gradDataList, evokeds)
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
