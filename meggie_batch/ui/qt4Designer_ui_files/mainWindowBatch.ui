@@ -1455,28 +1455,51 @@
                           <item>
                            <layout class="QHBoxLayout" name="horizontalLayout_15">
                             <item>
-                             <widget class="QRadioButton" name="radioButtonCustomChannels">
-                              <property name="text">
-                               <string>Custom channels:</string>
-                              </property>
-                              <attribute name="buttonGroup">
-                               <string>buttonGroupChannelAverage</string>
-                              </attribute>
-                             </widget>
+                             <layout class="QVBoxLayout" name="verticalLayout_26">
+                              <item>
+                               <widget class="QRadioButton" name="radioButtonCustomChannels">
+                                <property name="text">
+                                 <string>Custom channels:</string>
+                                </property>
+                                <attribute name="buttonGroup">
+                                 <string>buttonGroupChannelAverage</string>
+                                </attribute>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="pushButtonModifyChannels">
+                                <property name="enabled">
+                                 <bool>false</bool>
+                                </property>
+                                <property name="text">
+                                 <string>Modify...</string>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
                             </item>
                             <item>
-                             <widget class="QPlainTextEdit" name="plainTextEditCustomChannelsToAverage">
+                             <widget class="QListWidget" name="listWidgetChannels">
                               <property name="enabled">
                                <bool>false</bool>
                               </property>
-                              <property name="accessibleDescription">
-                               <string/>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
                               </property>
-                              <property name="documentTitle">
-                               <string/>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>50</height>
+                               </size>
                               </property>
-                              <property name="plainText">
-                               <string>This should be a comma separated list without MEG prefix and spaces, e.g. 1122,1123.</string>
+                              <property name="toolTip">
+                               <string>Displays the selected bad channels.</string>
+                              </property>
+                              <property name="flow">
+                               <enum>QListView::LeftToRight</enum>
                               </property>
                              </widget>
                             </item>
@@ -3416,16 +3439,32 @@ p, li { white-space: pre-wrap; }
   <connection>
    <sender>radioButtonCustomChannels</sender>
    <signal>toggled(bool)</signal>
-   <receiver>plainTextEditCustomChannelsToAverage</receiver>
+   <receiver>pushButtonModifyChannels</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>548</x>
-     <y>652</y>
+     <x>462</x>
+     <y>613</y>
     </hint>
     <hint type="destinationlabel">
-     <x>807</x>
-     <y>672</y>
+     <x>490</x>
+     <y>651</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonCustomChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetChannels</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>538</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>581</x>
+     <y>614</y>
     </hint>
    </hints>
   </connection>

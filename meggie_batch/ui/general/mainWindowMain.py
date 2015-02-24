@@ -51,6 +51,7 @@ from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
 from addSubjectDialogMain import AddSubjectDialog
 from infoDialogMain import InfoDialog
+from channelSelectionDialogMain import ChannelSelectionDialog
 from ui.epoching.eventSelectionDialogMain import EventSelectionDialog
 from ui.visualization.visualizeEpochChannelDialogMain import VisualizeEpochChannelDialog
 from ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
@@ -1026,7 +1027,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
             message = 'Please select an epoch collection to channel average.'
-            self.messageBox = messageBoxes.shortMessageBox()
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
         
@@ -1042,10 +1043,39 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.average_channels(epochs_name, self.ui.comboBoxLobes.\
                                          currentText(), None)
         else:
-            customChannels = self.ui.plainTextEditCustomChannelsToAverage.\
-            plainText
-            self.caller.average_channels(epochs_name, None, customChannels)
+            channels = []
+            for i in xrange(self.ui.listWidgetChannels.count()):
+                item = self.ui.listWidgetChannels.item(i)
+                channels.append(str(item.text()))
+            self.caller.average_channels(epochs_name, None, set(channels))
         QtGui.QApplication.restoreOverrideCursor()
+        
+        
+    def on_pushButtonModifyChannels_clicked(self, checked=None):
+        """
+        Slot for adding channels to the list for averaging epochs.
+        """
+        if checked is None: return
+        channels = []
+        for i in xrange(self.ui.listWidgetChannels.count()):
+            item = self.ui.listWidgetChannels.item(i)
+            channels.append(str(item.text()))
+                            
+        channelDialog = ChannelSelectionDialog(channels, 'Select channels')
+        channelDialog.channelsChanged.connect(self.channels_modified)
+        channelDialog.exec_()
+       
+       
+    @QtCore.pyqtSlot(list)
+    def channels_modified(self, channels):
+        """
+        Slot for signal from channelSelectionDialog.
+        Adds selected channels to the list for averaging.
+        Keyword arguments:
+        channels -- Channels to add to the list.
+        """
+        self.ui.listWidgetChannels.clear()
+        self.ui.listWidgetChannels.addItems(channels)
     
             
     def on_pushButtonFilter_clicked(self, checked=None):

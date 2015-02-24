@@ -682,17 +682,18 @@ class Caller(object):
             if self.e.is_set(): break;
             self.parent.update_ui()
             
-        return_val = async_result.get()
+        averageTitleString, gradDataList, evokeds = async_result.get()
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
             self.result = None
             return 
 
-        averageTitleString = return_val[0]
-        gradDataList = return_val[1]
-        evokeds = return_val[2]
+        #averageTitleString = return_val[0]
+        #gradDataList = return_val[1]
+        #evokeds = return_val[2]
         
+        # Plotting:
         plt.clf()
         fig = plt.figure()
         mi = MeasurementInfo(self.experiment.active_subject._working_file)
@@ -781,7 +782,7 @@ class Caller(object):
             # Links the event name and the corresponding data
             gradDataList.append((evokeds[i].comment, averagedGradData))
         self.e.set()
-        return (averageTitleString, gradDataList, evokeds)
+        return averageTitleString, gradDataList, evokeds
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):

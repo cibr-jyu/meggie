@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Mon Feb 23 05:35:55 2015
+# Created: Tue Feb 24 03:27:23 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -596,16 +596,28 @@ class Ui_MainWindow(object):
         self.verticalLayout_22.addLayout(self.horizontalLayout_14)
         self.horizontalLayout_15 = QtGui.QHBoxLayout()
         self.horizontalLayout_15.setObjectName(_fromUtf8("horizontalLayout_15"))
+        self.verticalLayout_26 = QtGui.QVBoxLayout()
+        self.verticalLayout_26.setObjectName(_fromUtf8("verticalLayout_26"))
         self.radioButtonCustomChannels = QtGui.QRadioButton(self.groupBoxChannelAverages)
         self.radioButtonCustomChannels.setObjectName(_fromUtf8("radioButtonCustomChannels"))
         self.buttonGroupChannelAverage.addButton(self.radioButtonCustomChannels)
-        self.horizontalLayout_15.addWidget(self.radioButtonCustomChannels)
-        self.plainTextEditCustomChannelsToAverage = QtGui.QPlainTextEdit(self.groupBoxChannelAverages)
-        self.plainTextEditCustomChannelsToAverage.setEnabled(False)
-        self.plainTextEditCustomChannelsToAverage.setAccessibleDescription(_fromUtf8(""))
-        self.plainTextEditCustomChannelsToAverage.setDocumentTitle(_fromUtf8(""))
-        self.plainTextEditCustomChannelsToAverage.setObjectName(_fromUtf8("plainTextEditCustomChannelsToAverage"))
-        self.horizontalLayout_15.addWidget(self.plainTextEditCustomChannelsToAverage)
+        self.verticalLayout_26.addWidget(self.radioButtonCustomChannels)
+        self.pushButtonModifyChannels = QtGui.QPushButton(self.groupBoxChannelAverages)
+        self.pushButtonModifyChannels.setEnabled(False)
+        self.pushButtonModifyChannels.setObjectName(_fromUtf8("pushButtonModifyChannels"))
+        self.verticalLayout_26.addWidget(self.pushButtonModifyChannels)
+        self.horizontalLayout_15.addLayout(self.verticalLayout_26)
+        self.listWidgetChannels = QtGui.QListWidget(self.groupBoxChannelAverages)
+        self.listWidgetChannels.setEnabled(False)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.listWidgetChannels.sizePolicy().hasHeightForWidth())
+        self.listWidgetChannels.setSizePolicy(sizePolicy)
+        self.listWidgetChannels.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.listWidgetChannels.setFlow(QtGui.QListView.LeftToRight)
+        self.listWidgetChannels.setObjectName(_fromUtf8("listWidgetChannels"))
+        self.horizontalLayout_15.addWidget(self.listWidgetChannels)
         self.verticalLayout_22.addLayout(self.horizontalLayout_15)
         self.pushButtonChannelAverages = QtGui.QPushButton(self.groupBoxChannelAverages)
         self.pushButtonChannelAverages.setObjectName(_fromUtf8("pushButtonChannelAverages"))
@@ -1495,7 +1507,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonLobe, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLobes.setEnabled)
-        QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.plainTextEditCustomChannelsToAverage.setEnabled)
+        QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.pushButtonModifyChannels.setEnabled)
+        QtCore.QObject.connect(self.radioButtonCustomChannels, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.listWidgetChannels.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1541,7 +1554,8 @@ class Ui_MainWindow(object):
         self.groupBoxChannelAverages.setTitle(_translate("MainWindow", "Channel Averages", None))
         self.radioButtonLobe.setText(_translate("MainWindow", "Lobe:", None))
         self.radioButtonCustomChannels.setText(_translate("MainWindow", "Custom channels:", None))
-        self.plainTextEditCustomChannelsToAverage.setPlainText(_translate("MainWindow", "This should be a comma separated list without MEG prefix and spaces, e.g. 1122,1123.", None))
+        self.pushButtonModifyChannels.setText(_translate("MainWindow", "Modify...", None))
+        self.listWidgetChannels.setToolTip(_translate("MainWindow", "Displays the selected bad channels.", None))
         self.pushButtonChannelAverages.setText(_translate("MainWindow", "Show channel averages", None))
         self.pushButtonCreateEvoked.setText(_translate("MainWindow", "------ Create evoked dataset ----->", None))
         self.label.setText(_translate("MainWindow", "Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.", None))
