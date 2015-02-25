@@ -10,6 +10,7 @@ A module for various file operations needed by Meggie.
 import mne
 
 import os
+from os.path import isfile, join
 import pickle
 import shutil
 import glob
@@ -729,4 +730,14 @@ def read_events(filename):
     return sheet
     
     
+def get_layouts():
+    """
+    Finds the layout files from MNE_ROOT.
+    Returns a list of strings of found files. 
+    """
+    root = os.getenv('MNE_ROOT' '')
+    path = root + '/share/mne/mne_analyze/lout'
+    files = [ f[:-5] for f in os.listdir(path)\
+                        if isfile(join(path,f)) and f.endswith('.lout') ]
+    return files
     

@@ -203,6 +203,11 @@ class MainWindow(QtGui.QMainWindow):
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
         
+        #Populate layouts combobox.
+        layouts = fileManager.get_layouts()
+        self.ui.comboBoxLayout.addItems(layouts)    
+        
+        
     def update_ui(self):
         """
         Method for repainting the ui.
@@ -757,10 +762,20 @@ class MainWindow(QtGui.QMainWindow):
         """
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
+        layout = ''
+        if self.ui.radioButtonSelectLayout.isChecked():
+            layout = str(self.ui.comboBoxLayout.currentText())
+        elif self.ui.radioButtonLayoutFromFile.isChecked():
+            layout = str(self.ui.labelLayout.text())
+        if layout == '':
+            QtGui.QApplication.restoreOverrideCursor()
+            mBox = messageBoxes.shortMessageBox('No layout selected!')
+            mBox.exec_()
+            return
+            
         self.ui.pushButtonVisualizeEvokedDataset.setText(
                                     '      Visualizing...      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
-        QtCore.QCoreApplication.processEvents()
         
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
@@ -769,7 +784,7 @@ class MainWindow(QtGui.QMainWindow):
         
         print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
         try:
-            self.caller.draw_evoked_potentials(evoked_raw, category)
+            self.caller.draw_evoked_potentials(evoked_raw, layout, category)
             print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
         except Exception as e:
             mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +\
@@ -835,6 +850,16 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
         self.caller.experiment.active_subject.handle_new_evoked(item.text(), evoked, category)
+        
+        
+    def on_pushButtonBrowseLayout_clicked(self, checked=None):
+        """
+        """
+        if checked is None: return
+        fName = str(QtGui.QFileDialog.getOpenFileName(self,
+                            "Select a layout file", '/home/', 
+                            "Layout-files (*.lout *.lay);;All files (*.*)"))
+        self.ui.labelLayout.setText(fName)
 
         
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):

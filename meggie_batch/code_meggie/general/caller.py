@@ -569,7 +569,7 @@ class Caller(object):
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
  
                 
-    def draw_evoked_potentials(self, evokeds, category):
+    def draw_evoked_potentials(self, evokeds, layout, category):
         """
         Draws a topography representation of the evoked potentials.
         
@@ -578,45 +578,46 @@ class Caller(object):
         evokeds
         category
         """
-        layout = read_layout('Vectorview-all')
+        layout = read_layout(layout)
+        #layout = read_layout('Vectorview-all')
         
         # Checks if there are whitespaces in evokeds ch_names.
         # If not, whitespaces in layout.names need to be removed.
-        if not ' ' in evokeds[0].ch_names[0]:
+        #if not ' ' in evokeds[0].ch_names[0]:
             # TODO: add whitespace on evokeds ch_names or remove whitespace
             # from layout names.
             #layout.names = _clean_names(layout.names, remove_whitespace=True)
-            layout.names = [str(name).replace(' ','') for name in layout.names]
+        #    layout.names = [str(name).replace(' ','') for name in layout.names]
         """
         COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
           '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
         """
         #colors = ['y','m','c','r','g','b','w','k']
         colors_events = []
-        i = 0
+        #i = 0
         for value in category.values():
             if value == 1:
                 colors_events.append('w')
                 #i += 1
-            if value == 2:
+            elif value == 2:
                 colors_events.append('b')
                 #i += 1
-            if value == 3:
+            elif value == 3:
                 colors_events.append('r')
                 #i += 1
-            if value == 4:
+            elif value == 4:
                 colors_events.append('c')
                 #i += 1
-            if value == 5:
+            elif value == 5:
                 colors_events.append('m')
                 #i += 1
-            if value == 8:
+            elif value == 8:
                 colors_events.append('g')
                 #i += 1
-            if value == 16:
+            elif value == 16:
                 colors_events.append('y')
                 #i += 1
-            if value == 32:
+            elif value == 32:
                 colors_events.append('#CD7F32')
                 #i += 1
         
@@ -1002,19 +1003,22 @@ class Caller(object):
         # multicore filtering, see 
         # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html#mne.io.RawFIFF.filter
         try:
-            if dic.get('lowpass') == True:                
+            if dic.get('lowpass') == True:
+                print "Low-pass filtering..."
                 dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
                             dic.get('low_cutoff_freq'), dic.get('low_length'),
                             dic.get('low_trans_bandwidth'),'fft', None, picks=picks,
                             n_jobs=2, copy=True)
                 
             if dic.get('highpass') == True:
+                print "High-pass filtering..."
                 dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
                             dic.get('high_cutoff_freq'), dic.get('high_length'),
                             dic.get('high_trans_bandwidth'),'fft', None, 
                             picks=picks, n_jobs=3, copy=True)
             
             if dic.get('bandstop1') == True:
+                print "Band-stop filtering..."
                 dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
                             dic.get('bandstop1_l_freq'), 
                             dic.get('bandstop1_h_freq'), 
@@ -1024,6 +1028,7 @@ class Caller(object):
                             n_jobs=2, copy=True)
                 
             if dic.get('bandstop2') == True:
+                print "Band-stop filtering..."
                 dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
                             dic.get('bandstop2_l_freq'), 
                             dic.get('bandstop2_h_freq'), 
@@ -1035,6 +1040,7 @@ class Caller(object):
             self.result = e
             self.e.set()
             return dataToFilter
+        print "Done"
         self.e.set()
         return dataToFilter
     
