@@ -33,11 +33,9 @@ Created on Apr 26, 2013
 @author: Jaakko Leppakangas
 Contains the TFRDialog-class used for creating TFRs.
 """
-import messageBoxes
+from ui.general.messageBoxes import shortMessageBox
 
-import mne
-
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 from TFRfromEpochsUi import Ui_DialogEpochsTFR
 from code_meggie.general.caller import Caller
 
@@ -70,6 +68,8 @@ class TFRDialog(QtGui.QDialog):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
@@ -81,8 +81,9 @@ class TFRDialog(QtGui.QDialog):
             caller.TFR(self.raw, self.epochs, ch_index,
                                    minfreq, maxfreq, interval, ncycles, decim)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox = shortMessageBox(str(err))
+            QtGui.QApplication.restoreOverrideCursor()
             self.messageBox.show()
             return
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()

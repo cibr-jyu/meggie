@@ -814,29 +814,30 @@ class Caller(object):
         ncycles       -- Value used to count the number of cycles.
         decim         -- Temporal decimation factor.
         """
-        evoked = epochs.average()
-        data = epochs.get_data()
-        times = 1e3 * epochs.times # s to ms
-        evoked_data = evoked.data * 1e13
-        try:
-            data = data[:, ch_index:(ch_index+1), :]
-            evoked_data = evoked_data[ch_index:(ch_index+1), :]
-        except Exception, err:
-            raise Exception('Could not find epoch data: ' + str(err))
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+        
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
-        Fs = raw.info['sfreq']
-        try:
-            power, phase_lock = induced_power(data, Fs=Fs,
-                                              frequencies=frequencies,
-                                              n_cycles=ncycles, n_jobs=1,
-                                              use_fft=False, decim=decim,
-                                              zero_mean=True)
-        except ValueError, err:
-            raise ValueError(err)
-        # baseline corrections with ratio
-        power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
+        async_result = pool.apply_async(self._TFR, 
+                                        (raw, epochs, ch_index, frequencies, 
+                                         ncycles, decim))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 
+        
+        power, phase_lock, times, evoked, evoked_data = async_result.get()
+
+        print 'Plotting TFR...'
         fig = pl.figure()
         #pl.clf()
         pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
@@ -870,6 +871,41 @@ class Caller(object):
         pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
         fig.show()
+        
+        
+    def _TFR(self, raw, epochs, ch_index, frequencies, ncycles, decim):
+        """
+        Perfromed in a worker thread.
+        """
+        print 'Computing induced power...'
+        evoked = epochs.average()
+        data = epochs.get_data()
+        times = 1e3 * epochs.times # s to ms
+        evoked_data = evoked.data * 1e13
+        try:
+            data = data[:, ch_index:(ch_index+1), :]
+            evoked_data = evoked_data[ch_index:(ch_index+1), :]
+        except Exception, err:
+            self.result = Exception('Could not find epoch data: ' + str(err))
+            self.e.set()
+            return
+        
+        Fs = raw.info['sfreq']
+        try:
+            power, phase_lock = induced_power(data, Fs=Fs,
+                                              frequencies=frequencies,
+                                              n_cycles=ncycles, n_jobs=1,
+                                              use_fft=False, decim=decim,
+                                              zero_mean=True)
+        except ValueError, err:
+            self.result = err
+            self.e.set()
+            return
+        # baseline corrections with ratio
+        power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
+        print 'Done'
+        self.e.set()
+        return power, phase_lock, times, evoked, evoked_data
         
         
     def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  

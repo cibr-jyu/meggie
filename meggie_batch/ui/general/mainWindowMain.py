@@ -1014,7 +1014,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must create epochs before TFR.'
-            self.messageBox = messageBoxes.shortMessageBox()
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         
