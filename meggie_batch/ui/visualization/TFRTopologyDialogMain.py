@@ -38,7 +38,7 @@ import mne
 from PyQt4 import QtCore,QtGui
 from TFRtopologyUi import Ui_DialogTFRTopology
 from code_meggie.general.caller import Caller
-import messageBoxes
+from ui.general.messageBoxes import shortMessageBox
 
 class TFRTopologyDialog(QtGui.QDialog):
     """
@@ -60,7 +60,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.parent = parent
         self.raw = raw
         self.epochs = epochs
-        ch_names = self.epochs.ch_names
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
     
@@ -70,6 +69,8 @@ class TFRTopologyDialog(QtGui.QDialog):
         to the caller. Also checks for erroneus parameter values and gives 
         feedback to the user.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
@@ -94,8 +95,9 @@ class TFRTopologyDialog(QtGui.QDialog):
                                             mode, blstart, blend, interval,
                                             ncycles)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox = shortMessageBox(str(err))
             self.messageBox.show()
             return
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()

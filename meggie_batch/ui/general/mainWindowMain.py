@@ -1039,7 +1039,6 @@ class MainWindow(QtGui.QMainWindow):
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
                                      currentItem().text())
         epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
-        epochs_raw = epochs._raw
         self.tfrTop_dialog = TFRTopologyDialog(self, 
                                                self.caller.experiment.active_subject.\
                                                _working_file, 

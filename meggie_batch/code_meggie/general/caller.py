@@ -928,13 +928,51 @@ class Caller(object):
         interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
         """
+        
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+        
+        # Find intervals for given frequency band
+        frequencies = np.arange(minfreq, maxfreq, interval)
+        
+        async_result = pool.apply_async(self._TFR_topology, 
+                                        (raw, epochs, reptype, mode, 
+                                         frequencies, blstart, 
+                                         blend, ncycles, decim))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 
+        
+        fig = async_result.get()
+        
+
+        fig.show()  
+            
+        def onclick(event):
+            pl.show(block=False)
+        
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        
+        
+    def _TFR_topology(self, raw, epochs, reptype, mode, frequencies, blstart, 
+                      blend, ncycles, decim):
+        """
+        Performed in a worker thread.
+        """
+        
         # TODO: Let the user define the title of the figure.
         data = epochs.get_data()
         
         # Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, interval)
         Fs = raw.info['sfreq']
-        decim = 3
         
         try:
             power, phase_lock = induced_power(data, Fs=Fs,
@@ -942,31 +980,38 @@ class Caller(object):
                                               n_cycles=ncycles, n_jobs=3,
                                               use_fft=False, decim=decim,
                                               zero_mean=True)
-        except ValueError, err:
-            raise ValueError(err)
+        except ValueError as err:
+            self.result = err
+            self.e.set()
+            return
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
         #mode = 'ratio'  # set mode for baseline rescaling
-        
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
-            fig = topo.plot_topo_power(epochs, power, frequencies, layout,
+            try:
+                fig = topo.plot_topo_power(epochs, power, frequencies, layout,
                             baseline=baseline, mode=mode, decim=decim, 
                             vmin=0., vmax=14, title=title)
-            fig.show()
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
         else: 
             title = 'TFR topology: ' + 'Phase locking'
-            fig = topo.plot_topo_phase_lock(epochs, phase_lock, frequencies, 
+            try:
+                fig = topo.plot_topo_phase_lock(epochs, phase_lock, 
+                                            frequencies, 
                                             layout, baseline=baseline, 
                                             mode=mode, decim=decim, 
                                             title=title)
-            fig.show()  
-            
-        def onclick(event):
-            pl.show(block=False)
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
+        self.e.set()
+        return fig
         
-        fig.canvas.mpl_connect('button_press_event', onclick)
- 
         
     def magnitude_spectrum(self, raw, ch_index):
         """
