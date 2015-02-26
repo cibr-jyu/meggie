@@ -24,6 +24,7 @@ from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
 from mne.viz import topo
 from mne.utils import _clean_names
+from mne.time_frequency.tfr import tfr_morlet
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 #from mne.viz import _clean_names
@@ -46,6 +47,7 @@ from threading import Thread, Event
 from multiprocessing.pool import ThreadPool
 from singleton import Singleton
 from time import sleep
+
 
 @Singleton
 class Caller(object):
@@ -951,16 +953,61 @@ class Caller(object):
             self.result = None
             return 
         
-        fig = async_result.get()
-        
-
-        fig.show()  
+        power, itc = async_result.get()
+        self.parent.update_ui()
+        layout = read_layout('Vectorview-all')
+        baseline = (blstart, blend)  # set the baseline for induced power
+        print "Plotting..."
+        self.parent.update_ui()
+        #mode = 'ratio'  # set mode for baseline rescaling
             
+        if ( reptype == 'induced' ):
+            pass #obsolete?
+        elif reptype == 'phase':
+            pass #obsolete?
+        elif reptype == 'average':
+            try:
+                fig = power.plot_topomap(fmin=minfreq, fmax=maxfreq, 
+                                         layout=layout, baseline=baseline, 
+                                         mode=mode, cmap='Reds', show=False)
+                print 'Plotting topology. Please be patient...'
+                self.parent.update_ui()
+                fig = power.plot_topo(baseline=baseline, mode=mode, 
+                                      fmin=minfreq, fmax=maxfreq,
+                                      layout=layout,
+                                      title='Average power', cmap='Reds')
+                #fig.show()
+            except Exception as e:
+                self.messageBox = messageBoxes.shortMessageBox(str(e))
+                self.messageBox.show()
+                return
+        elif reptype == 'itc':
+            try:
+                title = 'Inter-Trial coherence'
+                fig = itc.plot_topo(baseline=baseline, mode=mode, 
+                                    fmin=minfreq, fmax=maxfreq, vmin=0.,
+                                    vmax=1., layout=layout, 
+                                    title=title, cmap='Reds')
+                
+                #fig = topo.plot_topo_phase_lock(epochs, phase_lock, 
+                #                            frequencies, 
+                #                            layout, baseline=baseline, 
+                #                            mode=mode, decim=decim, 
+                #                            title=title)
+                fig.show()
+            except Exception as e:
+                self.messageBox = messageBoxes.shortMessageBox(str(e))
+                self.messageBox.show()
+                return
+        """
+        fig = self._TFR_topology(raw, epochs, reptype, mode, 
+                                         frequencies, blstart, 
+                                         blend, ncycles, decim)
+        """    
         def onclick(event):
             pl.show(block=False)
-        
-        fig.canvas.mpl_connect('button_press_event', onclick)
-        
+        fig.canvas.mpl_connect('button_press_event', onclick)     
+             
         
     def _TFR_topology(self, raw, epochs, reptype, mode, frequencies, blstart, 
                       blend, ncycles, decim):
@@ -969,30 +1016,37 @@ class Caller(object):
         """
         
         # TODO: Let the user define the title of the figure.
-        data = epochs.get_data()
+        #data = epochs.get_data()
         
         # Find intervals for given frequency band
-        Fs = raw.info['sfreq']
+        #Fs = raw.info['sfreq']
         
         try:
+            #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
+            power, itc = tfr_morlet(epochs, freqs=frequencies, n_cycles=ncycles, use_fft=False,
+                        return_itc=True, decim=decim, n_jobs=3)
+            
+            """
             power, phase_lock = induced_power(data, Fs=Fs,
                                               frequencies=frequencies,
                                               n_cycles=ncycles, n_jobs=3,
                                               use_fft=False, decim=decim,
-                                              zero_mean=True)
+                                              zero_mean=True)"""
         except ValueError as err:
             self.result = err
             self.e.set()
             return
+        """
         layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
         #mode = 'ratio'  # set mode for baseline rescaling
         if ( reptype == 'induced' ):
             title='TFR topology: ' + 'Induced power'
             try:
-                fig = topo.plot_topo_power(epochs, power, frequencies, layout,
-                            baseline=baseline, mode=mode, decim=decim, 
-                            vmin=0., vmax=14, title=title)
+                power.plot_topo(baseline=baseline, mode=mode, title='Average power')
+                fig = power.plot_topomap(fmin=frequencies[0], fmax=frequencies[-1], layout=layout,
+                            baseline=baseline, mode=mode,
+                            title=title)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -1011,7 +1065,9 @@ class Caller(object):
                 return
         self.e.set()
         return fig
-        
+        """
+        self.e.set()
+        return power, itc
         
     def magnitude_spectrum(self, raw, ch_index):
         """

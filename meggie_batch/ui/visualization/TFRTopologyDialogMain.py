@@ -87,7 +87,9 @@ class TFRTopologyDialog(QtGui.QDialog):
         
         if ( self.ui.radioButtonInduced.isChecked() ):
             reptype = 'induced'
-        else: reptype = 'phase'
+        elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
+        elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
+        elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
         try:
             caller = Caller.Instance()
             caller.TFR_topology(self.raw, self.epochs,
