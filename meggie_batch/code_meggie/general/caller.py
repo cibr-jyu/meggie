@@ -22,9 +22,10 @@ from mne.layouts import read_layout
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
-from mne.viz import topo
+from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet
+from mne.time_frequency import compute_raw_psd
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 #from mne.viz import _clean_names
@@ -188,6 +189,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
             return -1
+        return 0
         
     def _call_ecg_ssp(self, dic):
         """
@@ -266,10 +268,22 @@ class Caller(object):
             os.remove(preload)
         
         print "Writing ECG projections in %s" % ecg_proj_fname
-        mne.write_proj(ecg_proj_fname, projs)
+        try:
+            mne.write_proj(ecg_proj_fname, projs)
+        except Exception as e:
+            self.result = e
+            self.e.set()
+            return -1
         
         print "Writing ECG events in %s" % ecg_event_fname
-        mne.write_events(ecg_event_fname, events)
+        try:
+            mne.write_events(ecg_event_fname, events)
+        except Exception as e:
+            self.result = e
+            print str(e)
+            self.e.set()
+            return -1
+        
         self.e.set()
         """
         # Write parameter file
@@ -298,6 +312,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
             return -1
+        return 0
         
     def _call_eog_ssp(self, dic):
         """
@@ -773,8 +788,8 @@ class Caller(object):
             
             # Picks only the desired channels from the evokeds.
             try:
-                evokedToAve = mne.fiff.pick_channels_evoked(evokeds[i],
-                                                            channelsToAve)
+                evokedToAve = mne.pick_channels_evoked(evokeds[i], 
+                                                       channelsToAve)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -960,7 +975,7 @@ class Caller(object):
         print "Plotting..."
         self.parent.update_ui()
         #mode = 'ratio'  # set mode for baseline rescaling
-            
+    
         if ( reptype == 'induced' ):
             pass #obsolete?
         elif reptype == 'phase':
@@ -1068,7 +1083,120 @@ class Caller(object):
         """
         self.e.set()
         return power, itc
+    
+    
+    def plot_power_spectrum(self, params, colors, channelColors):
         
+        try:
+            lout = mne.layouts.read_layout(params['lout'], 
+                                           scale=True)
+        except Exception:
+            message = 'Could not read layout information.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        raw = self.experiment.active_subject.working_file
+        #self.computeSpectrum(params)
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+        
+        async_result = pool.apply_async(self._compute_spectrum, 
+                                        (raw, params,))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 
+        
+        psds = async_result.get()
+        print "Plotting power spectrum..."
+        print raw.info['projs']
+        self.parent.update_ui()
+        
+        def my_callback(ax, ch_idx):
+            """
+            Callback for the interactive plot.
+            Opens a channel specific plot.
+            """
+            for i in xrange(len(psds)):
+                color = colors[i]
+                ax.plot(psds[i][1], psds[i][0][ch_idx], color=color)
+            plt.xlabel('Frequency (Hz)')
+            if params['log']:
+                plt.ylabel('Power (dB)')
+            else:
+                plt.ylabel('(uV)')
+            plt.show()
+           
+        # draw topography
+        for ax, idx in iter_topography(raw.info,
+                            fig_facecolor='white', axis_spinecolor='white', 
+                            axis_facecolor='white', layout=lout, 
+                            on_pick=my_callback):
+            for i in xrange(len(psds)):
+                channel = raw.info['ch_names'][idx]
+                if (channel in channelColors[i][1]):
+                    ax.plot(psds[i][0][idx], 
+                            color=channelColors[i][0], linewidth=0.2)
+                else:
+                    ax.plot(psds[i][0][idx], color=colors[i],
+                            linewidth=0.2)
+        plt.show()
+    
+    def _compute_spectrum(self, raw, params):
+        """
+        Performed in a worker thread.
+        """
+        times = params['times']
+        fmin = params['fmin']
+        fmax = params['fmax']
+        nfft = params['nfft']
+        try:
+            if params['ch'] == 'meg':
+                picks = mne.pick_types(raw.info, meg=True, eeg=False, 
+                                       exclude=[])
+            elif params['ch'] == 'eeg':
+                picks = mne.pick_types(raw.info, meg=False, eeg=True, 
+                                       exclude=[])
+        except Exception as e:
+            self.result = e
+            self.e.set()
+            return
+        psdList = []    
+        for time in times:
+            try:
+                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1], 
+                              fmin=fmin, fmax=fmax, n_fft=nfft, 
+                              picks=picks, proj=True, verbose=True)
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
+            if params['log']:
+                psds = 10 * np.log10(psds)
+            psdList.append((psds, freqs))
+        self.e.set()
+        return psdList
+        """
+        try:
+            psds = self.computePowerSpectrum(params['times'], params['fmin'],
+                                             params['fmax'], params['nfft'],
+                                             params['log'])
+        except Exception as e:
+            self.result = e
+            self.e.set()
+            return
+        print "Done"
+        self.e.set()
+        return psds
+        """
+            
     def magnitude_spectrum(self, raw, ch_index):
         """
         Plots magnitude spectrum of the selected channel.

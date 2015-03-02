@@ -103,3 +103,4 @@ class TFRTopologyDialog(QtGui.QDialog):
             return
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
+        return

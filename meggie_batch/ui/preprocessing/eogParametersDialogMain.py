@@ -41,6 +41,7 @@ import gc
 import traceback
 
 from PyQt4 import QtCore,QtGui
+from PyQt4.QtCore import pyqtSignal
 from eogParametersDialogUi import Ui_Dialog
 from code_meggie.general.caller import Caller
 
@@ -54,6 +55,7 @@ class EogParametersDialog(QtGui.QDialog):
     parameter values for calculating EOG projections.
     """
     caller = Caller.Instance()
+    computed = pyqtSignal(bool)
 
     def __init__(self, parent):
         """
@@ -95,6 +97,7 @@ class EogParametersDialog(QtGui.QDialog):
                 self.parent.ui.pushButtonApplyEOG.setEnabled(True)
                 self.parent.ui.checkBoxEOGComputed.setChecked(True)
             self.close()
+            self.parent._initialize_ui()
             QtGui.QApplication.restoreOverrideCursor()
             return
         recently_active_subject = self.caller.experiment._active_subject._subject_name

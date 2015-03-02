@@ -64,6 +64,7 @@ from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from ui.visualization.TFRDialogMain import TFRDialog
 from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
 from ui.visualization.spectrumDialogMain import SpectrumDialog
+from ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
 from ui.widgets.epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
 from ui.filtering.filterDialogMain import FilterDialog
@@ -963,13 +964,18 @@ class MainWindow(QtGui.QMainWindow):
         self.maxFilterDialog.show()
 
         
-    def on_pushButtonSpectrum_clicked(self):
+    def on_pushButtonSpectrum_clicked(self, checked=None):
         """
         Open the magnitude spectrum visualization dialog.
         """
+        """
         self.spectrumDialog = SpectrumDialog(self)
         self.spectrumDialog.show()
-    
+        """
+        if checked is None: return
+        spectrumDialog = PowerSpectrumDialog(self)
+        spectrumDialog.exec_()
+                
         
     def on_pushButtonEOG_clicked(self, checked=None):
         """
@@ -977,6 +983,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return 
         self.eogDialog = EogParametersDialog(self)
+        self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
 
         
@@ -1031,6 +1038,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         Opens the dialog for plotting TFR topology.
         """
+        if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must create epochs before TFR.'
             self.messageBox = messageBoxes.shortMessageBox(message)
@@ -1043,7 +1051,7 @@ class MainWindow(QtGui.QMainWindow):
                                                self.caller.experiment.active_subject.\
                                                _working_file, 
                                                epochs._raw)
-        self.tfrTop_dialog.show()
+        self.tfrTop_dialog.exec_()
     
         
     def on_pushButtonChannelAverages_clicked(self, checked=None):
@@ -1149,7 +1157,7 @@ class MainWindow(QtGui.QMainWindow):
         
         if checked is None : return
         
-        activeSubject = self._experiment._active_subject
+        activeSubject = self.caller.experiment._active_subject
         
         # Probably not created yet, because this is the first step of source
         # analysis.
