@@ -41,7 +41,6 @@ import mne
 from PyQt4 import QtCore,QtGui
 from addProjectionsUi import Ui_Dialog
 from code_meggie.general.caller import Caller
-import messageBoxes
 
 class AddEOGProjections(QtGui.QDialog):
     """

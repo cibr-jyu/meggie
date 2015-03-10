@@ -138,6 +138,7 @@ class Epochs(QObject):
         
         Returns a set of epochs
         """
+        events = np.array(events) # Just to make sure it is a numpy array.
         if mag and grad:
             meg = True
         elif mag:
@@ -157,8 +158,11 @@ class Epochs(QObject):
                 self.messageBox.show()  
                 
             else:
-                epochs = mne.Epochs(raw, events, category,
+                try:
+                    epochs = mne.Epochs(raw, events, category,
                                 tmin, tmax, picks=picks, reject=reject)
+                except Exception as e:
+                    print str(e)
                 if len(epochs.get_data()) == 0:
                     raise Exception('Could not find any data. Check parameters!')
                 return epochs

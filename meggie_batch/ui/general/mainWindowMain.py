@@ -37,7 +37,7 @@ Contains the MainWindow-class that holds the main window of the application.
 import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QWhatsThis
+from PyQt4.QtGui import QWhatsThis, QAbstractItemView
 from PyQt4.Qt import QApplication
 import sip
 
@@ -208,6 +208,8 @@ class MainWindow(QtGui.QMainWindow):
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)    
         
+        self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
+        self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
         
     def update_ui(self):
         """
@@ -855,6 +857,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
+        Opens a dialog for selecting a layout file.
         """
         if checked is None: return
         fName = str(QtGui.QFileDialog.getOpenFileName(self,
@@ -1477,7 +1480,17 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller._experiment._active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
-            
+        
+        projs = self.caller.experiment._active_subject.working_file.info['projs']
+        self.ui.listWidgetProjs.clear()
+        for proj in projs:
+            self.ui.listWidgetProjs.addItem(str(proj))
+        
+        bads = self.caller.experiment._active_subject.working_file.info['bads']
+        self.ui.listWidgetBads.clear()
+        for bad in bads:
+            self.ui.listWidgetBads.addItems(bad)
+        
         self.update_covariance_info_box()
 
     

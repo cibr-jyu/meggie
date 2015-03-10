@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Wed Feb 25 03:53:48 2015
+# Created: Tue Mar  3 03:42:45 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -252,6 +252,36 @@ class Ui_MainWindow(object):
         self.horizontalLayout_32.addWidget(self.pushButtonMNE_Browse_Raw_2)
         self.gridLayout_3.addLayout(self.horizontalLayout_32, 0, 0, 1, 1)
         self.verticalLayout_21.addWidget(self.groupBoxVisualization_2)
+        self.splitter_2 = QtGui.QSplitter(self.tabPreprocessing)
+        self.splitter_2.setGeometry(QtCore.QRect(630, 30, 258, 571))
+        self.splitter_2.setOrientation(QtCore.Qt.Vertical)
+        self.splitter_2.setObjectName(_fromUtf8("splitter_2"))
+        self.widget = QtGui.QWidget(self.splitter_2)
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout_29 = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout_29.setMargin(0)
+        self.verticalLayout_29.setObjectName(_fromUtf8("verticalLayout_29"))
+        self.labelBads = QtGui.QLabel(self.widget)
+        self.labelBads.setObjectName(_fromUtf8("labelBads"))
+        self.verticalLayout_29.addWidget(self.labelBads)
+        self.listWidgetBads = QtGui.QListWidget(self.widget)
+        self.listWidgetBads.setEnabled(True)
+        self.listWidgetBads.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.listWidgetBads.setObjectName(_fromUtf8("listWidgetBads"))
+        self.verticalLayout_29.addWidget(self.listWidgetBads)
+        self.widget1 = QtGui.QWidget(self.splitter_2)
+        self.widget1.setObjectName(_fromUtf8("widget1"))
+        self.verticalLayout_28 = QtGui.QVBoxLayout(self.widget1)
+        self.verticalLayout_28.setMargin(0)
+        self.verticalLayout_28.setObjectName(_fromUtf8("verticalLayout_28"))
+        self.labelProjs = QtGui.QLabel(self.widget1)
+        self.labelProjs.setObjectName(_fromUtf8("labelProjs"))
+        self.verticalLayout_28.addWidget(self.labelProjs)
+        self.listWidgetProjs = QtGui.QListWidget(self.widget1)
+        self.listWidgetProjs.setEnabled(True)
+        self.listWidgetProjs.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.listWidgetProjs.setObjectName(_fromUtf8("listWidgetProjs"))
+        self.verticalLayout_28.addWidget(self.listWidgetProjs)
         self.tabWidget.addTab(self.tabPreprocessing, _fromUtf8(""))
         self.tabEpoching = QtGui.QWidget()
         self.tabEpoching.setObjectName(_fromUtf8("tabEpoching"))
@@ -1566,6 +1596,10 @@ class Ui_MainWindow(object):
         self.groupBoxVisualization_2.setTitle(_translate("MainWindow", "Visualization:", None))
         self.pushButtonSpectrum.setText(_translate("MainWindow", "Magnitude spectrum", None))
         self.pushButtonMNE_Browse_Raw_2.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
+        self.labelBads.setText(_translate("MainWindow", "Bad channels", None))
+        self.listWidgetBads.setSortingEnabled(False)
+        self.labelProjs.setText(_translate("MainWindow", "Added projection items", None))
+        self.listWidgetProjs.setSortingEnabled(False)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
         self.groupBoxAvailableEpoching.setTitle(_translate("MainWindow", "Available actions for epoch collections:", None))
         self.pushButtonCreateEpochs.setText(_translate("MainWindow", "Create new collection...", None))

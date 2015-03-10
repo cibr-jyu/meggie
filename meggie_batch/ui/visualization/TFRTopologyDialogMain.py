@@ -1,4 +1,5 @@
 # coding: latin1
+from code_meggie.general import fileManager
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -33,8 +34,6 @@ Created on Apr 26, 2013
 @author: Kari Aliranta, Jaakko Leppakangas
 Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 """
-import mne
-
 from PyQt4 import QtCore,QtGui
 from TFRtopologyUi import Ui_DialogTFRTopology
 from code_meggie.general.caller import Caller
@@ -62,6 +61,19 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.epochs = epochs
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
+        layouts = fileManager.get_layouts()
+        self.ui.comboBoxLayout.addItems(layouts)
+        
+        
+    def on_pushButtonBrowseLayout_clicked(self, checked=None):
+        """
+        """
+        if checked is None: return
+        fName = str(QtGui.QFileDialog.getOpenFileName(self,
+                            "Select a layout file", '/home/', 
+                            "Layout-files (*.lout *.lay);;All files (*.*)"))
+        self.ui.labelLayout.setText(fName)
+        
     
     def accept(self):
         """
@@ -85,17 +97,28 @@ class TFRTopologyDialog(QtGui.QDialog):
             blend = None
         else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
         
-        if ( self.ui.radioButtonInduced.isChecked() ):
-            reptype = 'induced'
+        if self.ui.radioButtonInduced.isChecked(): reptype = 'induced'
         elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
         elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
         elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
+        
+        # TODO: Currently for EEG topologies are loaded from external files and MEG from pre-loaded topologies. Might change in the future!
+        if self.ui.radioButtonSelectLayout.isChecked():
+            ch_type = 'mag'
+            layout = self.ui.comboBoxLayout.currentText()
+        elif self.ui.radioButtonLayoutFromFile.isChecked():
+            ch_type = 'eeg'
+            layout = str(self.ui.labelLayout.text())
+        if layout == 'No layout selected' or layout == '':
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox = shortMessageBox('No layout selected')
+            self.messageBox.show()
+            return
         try:
             caller = Caller.Instance()
-            caller.TFR_topology(self.raw, self.epochs,
-                                            reptype, minfreq, maxfreq, decim,
-                                            mode, blstart, blend, interval,
-                                            ncycles)
+            caller.TFR_topology(self.raw, self.epochs, reptype, minfreq,
+                                maxfreq, decim, mode, blstart, blend, interval,
+                                ncycles, layout, ch_type)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))

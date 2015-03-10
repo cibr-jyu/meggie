@@ -583,6 +583,67 @@
                 </item>
                </layout>
               </widget>
+              <widget class="QSplitter" name="splitter_2">
+               <property name="geometry">
+                <rect>
+                 <x>630</x>
+                 <y>30</y>
+                 <width>258</width>
+                 <height>571</height>
+                </rect>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <widget class="QWidget" name="">
+                <layout class="QVBoxLayout" name="verticalLayout_29">
+                 <item>
+                  <widget class="QLabel" name="labelBads">
+                   <property name="text">
+                    <string>Bad channels</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="listWidgetBads">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="">
+                <layout class="QVBoxLayout" name="verticalLayout_28">
+                 <item>
+                  <widget class="QLabel" name="labelProjs">
+                   <property name="text">
+                    <string>Added projection items</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="listWidgetProjs">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">

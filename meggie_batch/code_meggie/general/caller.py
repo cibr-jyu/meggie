@@ -44,7 +44,7 @@ from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
 from matplotlib.pyplot import subplots_adjust
 from subprocess import CalledProcessError
-from threading import Thread, Event
+from threading import Thread, Event, activeCount
 from multiprocessing.pool import ThreadPool
 from singleton import Singleton
 from time import sleep
@@ -107,6 +107,7 @@ class Caller(object):
             self.parent.update_ui()
             
         return_val = async_result.get()
+        pool.terminate()
         if not return_val == 0:
             self.messageBox = messageBoxes.shortMessageBox('Could not set ' + \
                                         name + ' as active subject. ' + \
@@ -705,7 +706,7 @@ class Caller(object):
             self.result = None
             return 
         averageTitleString, gradDataList, evokeds = async_result.get()
-
+        pool.terminate()
         #averageTitleString = return_val[0]
         #gradDataList = return_val[1]
         #evokeds = return_val[2]
@@ -831,6 +832,7 @@ class Caller(object):
         ncycles       -- Value used to count the number of cycles.
         decim         -- Temporal decimation factor.
         """
+        plt.close()
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -853,6 +855,7 @@ class Caller(object):
             return 
         
         power, phase_lock, times, evoked, evoked_data = async_result.get()
+        pool.terminate()
 
         print 'Plotting TFR...'
         fig = pl.figure()
@@ -926,7 +929,7 @@ class Caller(object):
         
         
     def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
-                     blstart, blend, interval, ncycles):
+                     blstart, blend, interval, ncycles, lout, ch_type='mag'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
@@ -944,8 +947,11 @@ class Caller(object):
         blend         -- Ending point for baseline correction.
         interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
+        layout        -- Layout to use.
+        ch_type       -- Determines if the topomap plotting uses eeg or mag.
         """
-        
+        plt.close()
+        print "Number of threads active", activeCount()
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -969,8 +975,10 @@ class Caller(object):
             return 
         
         power, itc = async_result.get()
+        pool.terminate()
         self.parent.update_ui()
-        layout = read_layout('Vectorview-all')
+        layout = read_layout(lout)
+        #layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
         print "Plotting..."
         self.parent.update_ui()
@@ -983,8 +991,9 @@ class Caller(object):
         elif reptype == 'average':
             try:
                 fig = power.plot_topomap(fmin=minfreq, fmax=maxfreq, 
-                                         layout=layout, baseline=baseline, 
-                                         mode=mode, cmap='Reds', show=False)
+                                         ch_type=ch_type, layout=layout,
+                                         baseline=baseline, mode=mode,
+                                         cmap='Reds', show=False)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
                 fig = power.plot_topo(baseline=baseline, mode=mode, 
@@ -999,6 +1008,10 @@ class Caller(object):
         elif reptype == 'itc':
             try:
                 title = 'Inter-Trial coherence'
+                fig = itc.plot_topomap(fmin=minfreq, fmax=maxfreq, 
+                                         ch_type=ch_type, layout=layout,
+                                         baseline=baseline, mode=mode,
+                                         cmap='Reds', show=False)
                 fig = itc.plot_topo(baseline=baseline, mode=mode, 
                                     fmin=minfreq, fmax=maxfreq, vmin=0.,
                                     vmax=1., layout=layout, 
@@ -1021,7 +1034,7 @@ class Caller(object):
         """    
         def onclick(event):
             pl.show(block=False)
-        fig.canvas.mpl_connect('button_press_event', onclick)     
+        fig.canvas.mpl_connect('button_press_event', onclick)
              
         
     def _TFR_topology(self, raw, epochs, reptype, mode, frequencies, blstart, 
@@ -1049,6 +1062,10 @@ class Caller(object):
                                               zero_mean=True)"""
         except ValueError as err:
             self.result = err
+            self.e.set()
+            return
+        except Exception as e:
+            self.result = e
             self.e.set()
             return
         """
@@ -1115,6 +1132,7 @@ class Caller(object):
             return 
         
         psds = async_result.get()
+        pool.terminate()
         print "Plotting power spectrum..."
         print raw.info['projs']
         self.parent.update_ui()
@@ -1199,6 +1217,8 @@ class Caller(object):
             
     def magnitude_spectrum(self, raw, ch_index):
         """
+        Replaced by plot_power_spectrum.
+        CURRENTLY NOT IN USE!
         Plots magnitude spectrum of the selected channel.
         Keyword arguments:
         raw           -- A raw object.
@@ -1251,6 +1271,7 @@ class Caller(object):
             self.result = None
             return dataToFilter
         filteredData = async_result.get()
+        pool.terminate()
         return filteredData
         
     def _filter(self, dataToFilter, info, samplerate, dic):

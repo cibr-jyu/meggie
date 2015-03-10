@@ -41,8 +41,8 @@ from PyQt4 import QtCore,QtGui
 from eventSelectionDialogUi import Ui_EventSelectionDialog
 from code_meggie.general.caller import Caller
 
-from events import Events
-import fileManager
+from code_meggie.epoching.events import Events
+from code_meggie.general import fileManager
 
 from xlrd import XLRDError
 
@@ -78,7 +78,10 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
-        keys = map(str, self.caller.experiment.active_subject._event_set.keys())
+        if self.caller.experiment.active_subject._event_set is None:
+            keys = []
+        else:
+            keys = map(str, self.caller.experiment.active_subject._event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event')
         self.used_names = []
@@ -379,7 +382,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if checked is None: return # Standard workaround
         filename = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                    self.caller.experiment.subject_directory))
+                                    self.caller.experiment.active_subject.subject_path))
         if filename == '':
             return
         self.ui.listWidgetEvents.clear()
@@ -401,6 +404,7 @@ class EventSelectionDialog(QtGui.QDialog):
                                                               (row_index,3)
                                                               .value)))
                 event = map(int, sheet.row_values(row_index)[1:4])
+                print event
                 item.setData(32, event)
                 item.setData(33, str(sheet.cell(row_index,0).value))
                 self.ui.listWidgetEvents.addItem(item)

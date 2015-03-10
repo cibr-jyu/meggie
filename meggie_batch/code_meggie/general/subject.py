@@ -37,18 +37,17 @@ Created on Oct 22, 2013
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui,QtCore
 
-import os, sys
+import os
 import glob
 
 import numpy as np
 import mne
 
-from measurementInfo import MeasurementInfo
 import fileManager
 from code_meggie.epoching.epochs import Epochs
 from code_meggie.epoching.evoked import Evoked
-from forwardModels import ForwardModels
-import messageBoxes
+from code_meggie.sourceModeling.forwardModels import ForwardModels
+from ui.general import messageBoxes
 
 class Subject(QObject):
     
@@ -97,14 +96,14 @@ class Subject(QObject):
     @property
     def raw_data(self):
         """
-        Returns the raw data file of the subject.
+        Returns the raw data object of the subject.
         """
         return self._raw_data
     
     @raw_data.setter
     def raw_data(self, raw_data):
         """
-        Sets the raw data file for the subject.
+        Sets the raw data object for the subject.
         Raises an exception if the given data type is wrong. 
         Keyword arguments:
         raw_data        -- the raw data file of the measured data
@@ -145,14 +144,15 @@ class Subject(QObject):
     @property
     def working_file(self):
         """
-        Returns the current working file.
+        Returns the current working raw object.
         """
         return self._working_file
     
     @working_file.setter
     def working_file(self, raw):
         """
-        Sets the current working file and notifies the main window to show it.
+        Sets the current working raw object and notifies the main window to
+        show it.
         Keyword arguments:
         raw         -- raw data file.
         """
@@ -494,9 +494,9 @@ class Subject(QObject):
         self.add_forwardModel(name, fmodel)
     
    
- 
-### Code for checking the state of the subject ###        
-        
+
+### Code for checking the state of the subject ###   
+
     def check_ecg_projs(self):
         """
         Checks the subject folder for ECG projection files.
