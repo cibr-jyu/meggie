@@ -34,6 +34,7 @@ class EpochWidget(QtGui.QWidget):
         
         # Connect listWidgetEpochs.currentItemChanged method to change
         # parameters on epochParamsWidget
+        self.ui.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.ContiguousSelection)
         self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
         
     def addItem(self, item, suffix = 1):

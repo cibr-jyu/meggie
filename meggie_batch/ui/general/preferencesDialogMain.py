@@ -60,15 +60,17 @@ class PreferencesDialog(QtGui.QDialog):
         self.ui = Ui_DialogPreferences() 
         self.ui.setupUi(self)
         
-        self.parent = parent
+        self.parent = parent 
         
-        self._workFilepath = ''
-        self._MNERootPath = ''
-        self._FreeSurferHome = '' 
+        #self._workFilepath = ''
+        #self._MNERootPath = os.environ.get('MNE_ROOT', '')
+        #self._FreeSurferHome = '' 
     
         # Prefill previous values to UI and attributes from config file.
         workDirectory = self.parent.preferencesHandler.working_directory
-        MNERootPath = self.parent.preferencesHandler.MNERoot
+        MNERootPath = os.environ.get('MNE_ROOT', '')
+        if MNERootPath == '':
+            MNERootPath = self.parent.preferencesHandler.MNERoot
         FreeSurferHome = self.parent.preferencesHandler.FreeSurferHome
             
         if self.parent.preferencesHandler.auto_load_last_open_experiment == True:

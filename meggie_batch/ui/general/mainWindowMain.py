@@ -143,6 +143,7 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList = ListWidget(self.ui.widgetEvokeds)
         self.evokedList.setMinimumWidth(345)
         self.evokedList.setMaximumHeight(120)
+        #self.evokedList.setSelectionMode(QtGui.QAbstractItemView.ContiguousSelection)
         
         self.epocher = Epochs()
         
@@ -649,6 +650,7 @@ class MainWindow(QtGui.QMainWindow):
         Create averaged epoch collection (evoked dataset).
         Plot the evoked data as a topology.
         """
+        #TODO: MULTIPLE SELECTION
         if checked is None: return
         # If no events are selected, show a message to to the user and return.
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
@@ -656,10 +658,23 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
-        key = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[key]
+        items = self.epochList.ui.listWidgetEpochs.selectedItems()
         
-        category = epochs._raw.event_id
+        prefix = ''
+        epochs = []
+        category = dict()
+        for item in items:
+            if not prefix == '':
+                prefix = prefix + '-' 
+            key = str(item.text())
+            epoch = self.caller.experiment.active_subject._epochs[key]
+            epochs.append(epoch)
+            category.update(epoch._raw.event_id)
+            prefix = prefix + item.text()
+        #key = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        #epochs = self.caller.experiment.active_subject._epochs[key]
+        
+        #category = epochs._raw.event_id
         
         # New dictionary for event categories must be created, if user
         # manually chooses different event categories to be averaged. 
@@ -668,10 +683,10 @@ class MainWindow(QtGui.QMainWindow):
             for event in self.epochList.ui.listWidgetEvents.selectedItems():
                 event_name = (str(event.text())).split(':')
                 category_user_chosen[event_name[0]] = epochs._raw.event_id.get(event_name[0])
-            evoked = self.caller.average(epochs._raw,category_user_chosen)
+            evoked = self.caller.average(epochs, category_user_chosen)
             category = category_user_chosen
         else:
-            evoked = self.caller.average(epochs._raw,category)
+            evoked = self.caller.average(epochs, category)
         
         category_str = ''
         i = 0
@@ -681,9 +696,12 @@ class MainWindow(QtGui.QMainWindow):
                 i = 1
             else:
                 category_str += '-' + key
+        """
         epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
         evoked_name = str(epoch_collection.\
                           text() + '[' + category_str + ']' + '_evoked.fif')
+        """
+        evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
         item = QtGui.QListWidgetItem(evoked_name)
         
         # TODO: create separate method in fileManager to save evoked
@@ -782,8 +800,8 @@ class MainWindow(QtGui.QMainWindow):
         
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
-        evoked_raw = evoked._raw
         category = evoked._categories
+        evoked_raw = evoked._raw
         
         print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
         try:

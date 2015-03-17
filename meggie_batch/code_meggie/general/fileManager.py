@@ -737,7 +737,10 @@ def get_layouts():
     """
     root = os.getenv('MNE_ROOT' '')
     path = root + '/share/mne/mne_analyze/lout'
-    files = [ f[:-5] for f in os.listdir(path)\
+    try:
+        files = [ f[:-5] for f in os.listdir(path)\
                         if isfile(join(path,f)) and f.endswith('.lout') ]
+    except:
+        return []
     return files
     

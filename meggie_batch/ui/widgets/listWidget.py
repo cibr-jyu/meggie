@@ -3,7 +3,6 @@ Created on Sep 22, 2013
 
 @author: atmiraut
 """
-import sys
 
 from PyQt4 import QtGui, QtCore
 

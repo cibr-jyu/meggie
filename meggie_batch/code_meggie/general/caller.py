@@ -544,7 +544,12 @@ class Caller(object):
         # Creates evoked potentials from the given events (variable 'name' 
         # refers to different categories).
         """
-        evokeds = [epochs[name].average() for name in category.keys()] #self.category.keys()
+        evokeds = []
+        #[epochs._raw[name].average() for name in category.keys()]
+        for epoch in epochs: # epoch == single set of epochs
+            for name in category.keys():
+                if name in epoch._raw.event_id:
+                    evokeds.append(epoch._raw[name].average()) #self.category.keys()
         
         saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         
@@ -610,7 +615,8 @@ class Caller(object):
         COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
           '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
         """
-        #colors = ['y','m','c','r','g','b','w','k']
+        colors = ['y','m','c','r','g','b','w','k']
+        """
         colors_events = []
         #i = 0
         for value in category.values():
@@ -638,13 +644,18 @@ class Caller(object):
             elif value == 32:
                 colors_events.append('#CD7F32')
                 #i += 1
-        
+        """
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
         
         #title = str(self.category.keys())
-        title = ''
-        fig = plot_topo(evokeds, layout, color=colors_events, title=title)
-        fig.canvas.set_window_title(mi.subject_name)
+        title = mi.subject_name
+        fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)], title=title)
+        conditions = [e.comment for e in evokeds]
+        for cond, col, pos in zip(conditions, colors[:len(evokeds)], (0.025, 0.07)):
+            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+
+        #fig = plot_topo(evokeds, layout, color=colors_events, title=title)
+        #fig.canvas.set_window_title(mi.subject_name)
         
         # fig.set_rasterized(True) <-- this didn't help with the problem of 
         # drawing figures everytime figure size changes.
@@ -660,13 +671,13 @@ class Caller(object):
             items.append(key)
         fontP = FontProperties()
         fontP.set_size(12)
-        l = pl.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
-                       prop=fontP)
+        #l = plt.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
+        #               prop=fontP)
         
-        l.set_frame_on(False)
+        #l.set_frame_on(False)
         # Sets the color of the event names text as white instead of black.
-        for text in l.get_texts():
-            text.set_color('w')
+        #for text in l.get_texts():
+        #    text.set_color('w')
         # TODO: draggable doesn't work with l.set_frame_on(False)
         # l.draggable(True)
         
@@ -674,7 +685,7 @@ class Caller(object):
                                           _working_file.info.get('filename'))
         
         def onclick(event):
-            pl.show(block=False)
+            plt.show(block=False)
             
         fig.canvas.mpl_connect('button_press_event', onclick)
       
