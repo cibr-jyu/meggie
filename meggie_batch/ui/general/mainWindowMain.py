@@ -682,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
             category_user_chosen = dict()
             for event in self.epochList.ui.listWidgetEvents.selectedItems():
                 event_name = (str(event.text())).split(':')
-                category_user_chosen[event_name[0]] = epochs._raw.event_id.get(event_name[0])
+                category_user_chosen[event_name[0]] = epochs[0]._raw.event_id.get(event_name[0])
             evoked = self.caller.average(epochs, category_user_chosen)
             category = category_user_chosen
         else:
