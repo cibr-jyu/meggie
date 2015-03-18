@@ -30,24 +30,24 @@ from mne.time_frequency import compute_raw_psd
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
 #from mne.viz import _clean_names
 
-from measurementInfo import MeasurementInfo
-
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
+from matplotlib.pyplot import subplots_adjust
+from os import listdir
+from os.path import isfile, join
+from subprocess import CalledProcessError
+from threading import Thread, Event, activeCount
+from multiprocessing.pool import ThreadPool
+from time import sleep
 
 from ui.general import messageBoxes
 import fileManager
 from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
-
-from matplotlib.pyplot import subplots_adjust
-from subprocess import CalledProcessError
-from threading import Thread, Event, activeCount
-from multiprocessing.pool import ThreadPool
+from measurementInfo import MeasurementInfo
 from singleton import Singleton
-from time import sleep
 
 
 @Singleton
@@ -651,7 +651,8 @@ class Caller(object):
         title = mi.subject_name
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)], title=title)
         conditions = [e.comment for e in evokeds]
-        for cond, col, pos in zip(conditions, colors[:len(evokeds)], (0.025, 0.07)):
+        positions = np.arange(0.025, 0.025+0.04*len(evokeds), 0.04)
+        for cond, col, pos in zip(conditions, colors[:len(evokeds)], positions):#np.arange(0.025, len(evokeds) * 0.02 + 0.025, 0.2)):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
         #fig = plot_topo(evokeds, layout, color=colors_events, title=title)
@@ -826,6 +827,91 @@ class Caller(object):
                 gradDataList.append((evokeds[i].comment, averagedData))
         self.e.set()
         return averageTitleString, gradDataList, evokeds
+    
+    
+    def plot_group_average(self, groups, layout):
+        """
+        Plots group average of all subjects in the experiment.
+        Keyword arguments:
+        groups           -- A list of group names.
+        """
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+
+        async_result = pool.apply_async(self._group_average, 
+                                        (groups,))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            if isinstance(self.result, Exception):
+                self.result = None
+                return 
+            self.result = None
+        evokeds, groups = async_result.get()
+        print evokeds
+        pool.terminate()
+        print "Plotting evoked potentials..."
+        self.draw_evoked_potentials(evokeds, layout, groups)
+        
+        
+    def _group_average(self, groups):
+        """
+        Performed in a worker thread.
+        """
+        evokeds = dict()
+        eweights = dict()
+        for group in groups:
+            evokeds[group] = []
+            eweights[group] = []
+        subjects = self.experiment.get_subjects()
+        files2ave = []
+        for subject in subjects:
+            directory = subject._evokeds_directory
+            print directory
+            files = [ f for f in listdir(directory)\
+                      if isfile(join(directory,f)) and f.endswith('.fif') ]
+            for f in files:
+                fgroups = re.split('[\[\]]', f) # '1-2-3'
+                if not len(fgroups) == 3: 
+                    continue 
+                fgroups = re.split('[-]', fgroups[1]) # ['1','2','3']
+                if sorted(fgroups) == sorted(groups):
+                    files2ave.append(directory + '/' + f)
+        
+        if len(files2ave) < len(subjects):
+            self.result = Warning("Evoked responses not found from every subject.")
+        print files2ave
+        for f in files2ave:
+            for group in groups:
+                try:
+                    evoked = mne.read_evokeds(f, condition=group)
+                except Exception as e:
+                    self.result = e
+                    self.e.set()
+                    return
+                evokeds[group].append(evoked.data)
+                eweights[group].append(evoked.nave)
+        evs = []
+        for group in groups:
+            try:
+                data = evokeds[group]
+                w = eweights[group]
+                ave = np.average(data, axis=0)#, weights=w)
+                evs.append(mne.EvokedArray(ave, info=evokeds[group][0].info, comment=group))
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return 
+            
+        self.e.set()
+        return evs, groups
+        
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):

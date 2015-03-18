@@ -474,7 +474,7 @@ def load_epochs(fname):
     return epochs, parameters
     
     
-def load_evoked(folder, file):
+def load_evoked(folder, fName):
     """Load evokeds to the list when mainWindow is initialized
     
     Keyword arguments:
@@ -482,7 +482,7 @@ def load_evoked(folder, file):
     file -- the name of the fif-file containing evokeds.
     
     """
-    split = os.path.split(file)
+    split = os.path.split(fName)
     name = os.path.splitext(split[1])[0]
     if name == '': return
     category = dict()
@@ -494,8 +494,8 @@ def load_evoked(folder, file):
     # since both 'index out of bound' and 'no evoked data found' raise
     # ValueError.
     try:
-            while mne.fiff.Evoked(os.path.join(folder, file), setno=i) is not None:
-                evoked = mne.fiff.Evoked(os.path.join(folder, file), setno=i)
+            while mne.fiff.Evoked(os.path.join(folder, fName), setno=i) is not None:
+                evoked = mne.fiff.Evoked(os.path.join(folder, fName), setno=i)
                 event_name = evoked.comment  # .split('_', 1)
                 if i < 5:
                     category[event_name] = i + 1
@@ -540,7 +540,7 @@ def load_evoked(folder, file):
                     """
     except ValueError:
         try:
-            if mne.fiff.Evoked(os.path.join(folder, file), setno=0) is not None:
+            if mne.fiff.Evoked(os.path.join(folder, fName), setno=0) is not None:
         # if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
                 return evokeds, category
         except ValueError:

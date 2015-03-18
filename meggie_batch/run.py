@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,6 @@ for root, dirs, files in os.walk(runpath):
     if runpath is not root:
         sys.path.append(root)
 
-from ui.general import mainWindowMain  
+from ui.general import mainWindowMain
 if __name__ == '__main__':
     mainWindowMain.main()

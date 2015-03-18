@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -274,7 +274,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Standard workaround for file dialog opening twice
         if checked is None: return        
-       
+        
         path = str(QtGui.QFileDialog.getExistingDirectory(
                    self, "Select _experiment directory"))
         if path == '': return
@@ -682,7 +682,8 @@ class MainWindow(QtGui.QMainWindow):
             category_user_chosen = dict()
             for event in self.epochList.ui.listWidgetEvents.selectedItems():
                 event_name = (str(event.text())).split(':')
-                category_user_chosen[event_name[0]] = epochs[0]._raw.event_id.get(event_name[0])
+                for epoch in epochs:
+                    category_user_chosen[event_name[0] + epoch.name] = epoch._raw.event_id.get(event_name[0])
             evoked = self.caller.average(epochs, category_user_chosen)
             category = category_user_chosen
         else:
@@ -817,6 +818,21 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
             QtGui.QApplication.restoreOverrideCursor()
               
+              
+    def on_pushButtonGroupAverage_clicked(self, checked=None):
+        """
+        """
+        if checked is None: return
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        evoked_name = str(self.evokedList.currentItem().text())
+        import re
+        groups = re.split('[\[\]]', evoked_name)[1] # '1-2-3'
+        groups = re.split('[-]', groups) # ['1','2','3']
+        layout = str(self.ui.labelLayout.text())
+        self.caller.plot_group_average(groups, layout)
+        QtGui.QApplication.restoreOverrideCursor()
+        
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
@@ -1507,7 +1523,7 @@ class MainWindow(QtGui.QMainWindow):
         bads = self.caller.experiment._active_subject.working_file.info['bads']
         self.ui.listWidgetBads.clear()
         for bad in bads:
-            self.ui.listWidgetBads.addItems(bad)
+            self.ui.listWidgetBads.addItem(bad)
         
         self.update_covariance_info_box()
 

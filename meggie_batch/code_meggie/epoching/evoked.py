@@ -6,8 +6,6 @@ Created on 20.2.2014
 
 from PyQt4.QtCore import QObject
 
-import mne
-
 
 class Evoked(QObject):
     """

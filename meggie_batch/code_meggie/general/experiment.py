@@ -257,6 +257,13 @@ class Experiment(QObject):
         self._subjects.append(subject)
 
 
+    def get_subjects(self):
+        """
+        Returns a list of all subjects.
+        """
+        return self._subjects
+        
+
     def remove_subject(self, sname, main_window):
         """
         Removes the subject folder and its contents under experiment tree.
@@ -661,13 +668,16 @@ class ExperimentHandler(QObject):
         name        -- name of the existing experiment to be opened
         """
         
-        if name is not '':    
+        if name is not '':
+            print "Opening experiment " + name
             try:
                 path = os.path.join(
                             self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
-                pass
+                mBox = messageBoxes.shortMessageBox("Error opening the expriment.")
+                mBox.exec_()
+                return
         else:
             return
         
@@ -677,8 +687,16 @@ class ExperimentHandler(QObject):
             # Releases memory from the previously open experiment
             caller._experiment = None
             gc.collect()
-            output = open(fname, 'rb')
-            caller._experiment = pickle.load(output)
+            print "Opening file " + fname
+            try:
+                output = open(fname, 'rb')
+                caller._experiment = pickle.load(output)
+            except Exception as e:
+                print str(e)
+                return
+            finally:
+                print "Closing"
+                output.close()
             caller.experiment.create_subjects(caller._experiment, caller._experiment._subject_paths)
             caller.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()

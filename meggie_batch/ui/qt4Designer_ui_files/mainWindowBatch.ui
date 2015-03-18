@@ -613,7 +613,7 @@
                     <set>QAbstractItemView::NoEditTriggers</set>
                    </property>
                    <property name="sortingEnabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -1804,6 +1804,13 @@
                       </layout>
                      </item>
                     </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonGroupAverage">
+                    <property name="text">
+                     <string>Group average for all subjects</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
