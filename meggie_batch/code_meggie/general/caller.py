@@ -929,8 +929,6 @@ class Caller(object):
                     return
                 info = evoked.info['ch_names']
                 for cidx in xrange(len(info)):
-                    print len(evoked.data[cidx])
-                    print ''
                     evokeds[group][info[cidx]].append(evoked.data[cidx])
                 eweights[group].append(evoked.nave)
         evs = []
@@ -948,11 +946,6 @@ class Caller(object):
                     if not ch in usedChannels: usedChannels.append(ch)
                     data = evokeds[group][ch]
                     w = eweights[group]
-                    print groups
-                    print len(data)
-                    print len(data[0])
-                    print len(data[1])
-                    print w
                     ave = np.average(data, axis=0, weights=w)
                     evokedSet.append(ave)
                 except Exception as e:
