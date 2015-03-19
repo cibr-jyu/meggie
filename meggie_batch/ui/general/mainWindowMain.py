@@ -824,9 +824,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         if checked is None: return
+        item = self.evokedList.currentItem()
+        if item is None: return
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        evoked_name = str(self.evokedList.currentItem().text())
+        
+        evoked_name = str(item.text())
         import re
         groups = re.split('[\[\]]', evoked_name)[1] # '1-2-3'
         groups = re.split('[-]', groups) # ['1','2','3']
