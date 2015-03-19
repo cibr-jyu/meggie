@@ -14,7 +14,7 @@ import fnmatch
 import re
 import shutil
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 
 import mne
 from mne.time_frequency import induced_power
@@ -48,6 +48,7 @@ from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDia
 from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 from measurementInfo import MeasurementInfo
 from singleton import Singleton
+from copy import deepcopy
 
 
 @Singleton
@@ -592,7 +593,7 @@ class Caller(object):
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
  
                 
-    def draw_evoked_potentials(self, evokeds, layout, category):
+    def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
         Draws a topography representation of the evoked potentials.
         
@@ -667,11 +668,13 @@ class Caller(object):
         fig.show()
         
         # Create a legend to show which color belongs to which event.
+        """
         items = []
         for key in category.keys():
             items.append(key)
         fontP = FontProperties()
         fontP.set_size(12)
+        """
         #l = plt.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
         #               prop=fontP)
         
@@ -835,6 +838,7 @@ class Caller(object):
         Keyword arguments:
         groups           -- A list of group names.
         """
+        
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -847,27 +851,45 @@ class Caller(object):
             self.parent.update_ui()
 
         if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            if isinstance(self.result, Exception):
+            if isinstance(self.result, Warning): #TODO: Maybe should move GUI actions elsewhere.
+                QtGui.QApplication.restoreOverrideCursor()
+                reply = QtGui.QMessageBox.question(self.parent, 
+                                        str(self.result),
+                                        str(self.result) + \
+                                        " Draw the evoked potentials anyway?",
+                                        QtGui.QMessageBox.Yes,
+                                        QtGui.QMessageBox.No)
                 self.result = None
-                return 
-            self.result = None
+                if reply == QtGui.QMessageBox.No:
+                    return
+                else:
+                    QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+            else:
+                self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+                self.messageBox.show()
+                self.result = None
+                return
+            
         evokeds, groups = async_result.get()
-        print evokeds
+
         pool.terminate()
         print "Plotting evoked potentials..."
-        self.draw_evoked_potentials(evokeds, layout, groups)
+        self.parent.update_ui()
+        self.draw_evoked_potentials(evokeds, layout)
         
         
     def _group_average(self, groups):
         """
         Performed in a worker thread.
         """
+        chs = self.experiment.active_subject.working_file.info['ch_names']
         evokeds = dict()
         eweights = dict()
         for group in groups:
-            evokeds[group] = []
+            evokeds[group] = dict()
+            for ch in chs:
+                evokeds[group][ch] = []                
             eweights[group] = []
         subjects = self.experiment.get_subjects()
         files2ave = []
@@ -886,31 +908,68 @@ class Caller(object):
         
         if len(files2ave) < len(subjects):
             self.result = Warning("Evoked responses not found from every subject.")
+
+        evokedTmin = 0
+        evokedInfo = []
         print files2ave
         for f in files2ave:
             for group in groups:
                 try:
                     evoked = mne.read_evokeds(f, condition=group)
+                    evokedTmin = evoked.first / evoked.info['sfreq']
+                    evokedInfo = evoked.info
                 except Exception as e:
                     self.result = e
                     self.e.set()
                     return
-                evokeds[group].append(evoked.data)
+                info = evoked.info['ch_names']
+                for cidx in xrange(len(info)):
+                    evokeds[group][info[cidx]].append(evoked.data[cidx])
                 eweights[group].append(evoked.nave)
         evs = []
+        usedChannels = []
+        bads = []
         for group in groups:
-            try:
-                data = evokeds[group]
-                w = eweights[group]
-                ave = np.average(data, axis=0)#, weights=w)
-                evs.append(mne.EvokedArray(ave, info=evokeds[group][0].info, comment=group))
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return 
-            
+            max_key = max(evokeds[group], key= lambda x: len(evokeds[group][x]))
+            length = len(evokeds[group][max_key])
+            evokedSet = []
+            for ch in chs:
+                if len(evokeds[group][ch]) < length:
+                    if not ch in bads: bads.append(ch)
+                    continue
+                try:
+                    if not ch in usedChannels: usedChannels.append(ch)
+                    data = evokeds[group][ch]
+                    w = eweights[group]
+                    ave = np.average(data, axis=0, weights=w)
+                    evokedSet.append(ave)
+                except Exception as e:
+                    self.result = e
+                    self.e.set()
+                    return 
+            evs.append(deepcopy(evokedSet))
+
+        print 'Used channels: ' + str(usedChannels)
+        print '\nBad channels: ' + str(bads)
+        evokedInfo['ch_names'] = usedChannels
+        evokedInfo['bads'] = bads
+        evokedInfo['nchan'] = len(usedChannels)
+
+        averagedEvokeds = []
+        try:
+            for groupidx in xrange(len(groups)):
+                averagedEvokeds.append(mne.EvokedArray(evs[groupidx], 
+                                                    info=evokedInfo,
+                                                    tmin=evokedTmin, 
+                                                    comment=groups[groupidx]))
+        except Exception as e:
+            print str(e)
+            self.result = e
+            self.e.set()
+            return
+                
         self.e.set()
-        return evs, groups
+        return averagedEvokeds, groups
         
     
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,

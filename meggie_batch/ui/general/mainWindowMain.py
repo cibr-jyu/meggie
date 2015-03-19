@@ -801,12 +801,11 @@ class MainWindow(QtGui.QMainWindow):
         
         evoked_name = str(self.evokedList.currentItem().text())
         evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
-        category = evoked._categories
         evoked_raw = evoked._raw
         
         print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
         try:
-            self.caller.draw_evoked_potentials(evoked_raw, layout, category)
+            self.caller.draw_evoked_potentials(evoked_raw, layout)
             print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
         except Exception as e:
             mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +\

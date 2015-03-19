@@ -37,7 +37,7 @@ import messageBoxes
 from epochDialogUi import Ui_Dialog
 from code_meggie.general.caller import Caller
 
-from epochs import Epochs
+from mne.epochs import Epochs
 
 from PyQt4 import QtCore,QtGui
 
