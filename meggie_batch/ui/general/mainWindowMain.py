@@ -652,13 +652,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         #TODO: MULTIPLE SELECTION
         if checked is None: return
+
+        items = self.epochList.ui.listWidgetEpochs.selectedItems()
         # If no events are selected, show a message to to the user and return.
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
+        if len(items) == 0: 
             message = 'Please select an epoch collection to average.' 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
-        items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
         
         prefix = ''
         epochs = []
@@ -829,8 +831,14 @@ class MainWindow(QtGui.QMainWindow):
         groups = re.split('[\[\]]', evoked_name)[1] # '1-2-3'
         groups = re.split('[-]', groups) # ['1','2','3']
         layout = str(self.ui.labelLayout.text())
-        self.caller.plot_group_average(groups, layout)
-        QtGui.QApplication.restoreOverrideCursor()
+        try:
+            self.caller.plot_group_average(groups, layout)
+        except Exception as e:
+            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +\
+                                                str(e))
+            mBox.exec_()
+        finally:
+            QtGui.QApplication.restoreOverrideCursor()
         
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):

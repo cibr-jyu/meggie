@@ -603,6 +603,7 @@ class Caller(object):
         category
         """
         layout = read_layout(layout)
+
         #layout = read_layout('Vectorview-all')
         
         # Checks if there are whitespaces in evokeds ch_names.
@@ -838,7 +839,6 @@ class Caller(object):
         Keyword arguments:
         groups           -- A list of group names.
         """
-        
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -854,11 +854,11 @@ class Caller(object):
             if isinstance(self.result, Warning): #TODO: Maybe should move GUI actions elsewhere.
                 QtGui.QApplication.restoreOverrideCursor()
                 reply = QtGui.QMessageBox.question(self.parent, 
-                                        str(self.result),
-                                        str(self.result) + \
-                                        " Draw the evoked potentials anyway?",
-                                        QtGui.QMessageBox.Yes,
-                                        QtGui.QMessageBox.No)
+                            "Evoked responses not found from every subject.",
+                            str(self.result) + \
+                            "Draw the evoked potentials anyway?",
+                            QtGui.QMessageBox.Yes,
+                            QtGui.QMessageBox.No)
                 self.result = None
                 if reply == QtGui.QMessageBox.No:
                     return
@@ -906,9 +906,14 @@ class Caller(object):
                 if sorted(fgroups) == sorted(groups):
                     files2ave.append(directory + '/' + f)
         
+        print "Found " + str(len(files2ave)) + " subjects with evoked " + \
+                        "responses labeled: " + str(groups)
         if len(files2ave) < len(subjects):
-            self.result = Warning("Evoked responses not found from every subject.")
-
+            self.result = Warning("Found only " + str(len(files2ave)) + \
+                                  " subjects of " + str(len(subjects)) + \
+                                  " with evoked responses labeled: " + \
+                                  str(groups) + "!\n")
+        
         evokedTmin = 0
         evokedInfo = []
         print files2ave
