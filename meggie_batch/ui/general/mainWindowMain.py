@@ -680,7 +680,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # New dictionary for event categories must be created, if user
         # manually chooses different event categories to be averaged. 
-        if len(self.epochList.ui.listWidgetEvents.selectedItems()):
+        if False:
+        #if len(self.epochList.ui.listWidgetEvents.selectedItems()):
             category_user_chosen = dict()
             for event in self.epochList.ui.listWidgetEvents.selectedItems():
                 event_name = (str(event.text())).split(':')

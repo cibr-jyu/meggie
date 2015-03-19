@@ -921,8 +921,6 @@ class Caller(object):
             for group in groups:
                 try:
                     evoked = mne.read_evokeds(f, condition=group)
-                    if evoked.comment.startswith("epochs_"):
-                        evoked.comment = evoked.comment[7:]
                     evokedTmin = evoked.first / evoked.info['sfreq']
                     evokedInfo = evoked.info
                 except Exception as e:
