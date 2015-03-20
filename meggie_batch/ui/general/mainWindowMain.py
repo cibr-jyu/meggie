@@ -1185,6 +1185,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Not much point trying to activate an already active subject.
         if subject_name == self.caller.experiment.active_subject_name:
+            QtGui.QApplication.restoreOverrideCursor()
             return      
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.

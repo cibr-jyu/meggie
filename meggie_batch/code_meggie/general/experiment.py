@@ -112,7 +112,7 @@ class Experiment(QObject):
         experiment_name    -- the name of the experiment
         """
         if (len(experiment_name) <= 30):
-            if re.match("^[A-Za-z0-9 ]*$", experiment_name):
+            if re.match("^[A-Za-z0-9_ ]*$", experiment_name):
                 self._experiment_name = str(experiment_name)
             else:
                 message = 'Use only letters and numbers in experiment name'
