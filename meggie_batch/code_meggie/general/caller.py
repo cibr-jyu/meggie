@@ -891,7 +891,8 @@ class Caller(object):
             f.write('\n')
             i = 0
             for evoked in evokeds:
-                f.write(repr(groups[i] + '\n'))
+                f.write(repr(groups[i]))
+                f.write('\n')
                 i = i + 1
                 for ch_idx in xrange(len(evoked.ch_names)):
                     f.write(repr(evoked.ch_names[ch_idx] + ', '))
