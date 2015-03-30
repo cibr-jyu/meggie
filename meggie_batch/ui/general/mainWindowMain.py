@@ -834,7 +834,10 @@ class MainWindow(QtGui.QMainWindow):
         import re
         groups = re.split('[\[\]]', evoked_name)[1] # '1-2-3'
         groups = re.split('[-]', groups) # ['1','2','3']
-        layout = str(self.ui.labelLayout.text())
+        if self.ui.radioButtonSelectLayout.isChecked():
+            layout = self.ui.comboBoxLayout.currentText()
+        else:
+            layout = str(self.ui.labelLayout.text())
         try:
             self.caller.plot_group_average(groups, layout)
         except Exception as e:

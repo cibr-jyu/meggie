@@ -114,6 +114,9 @@ class Experiment(QObject):
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9_ ]*$", experiment_name):
                 self._experiment_name = str(experiment_name)
+                exp_path = os.path.join(self._workspace,
+                                        self._experiment_name)
+                os.mkdir(exp_path + '/output')
             else:
                 message = 'Use only letters and numbers in experiment name'
                 self.messageBox = messageBoxes.shortMessageBox(message)

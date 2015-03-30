@@ -651,7 +651,8 @@ class Caller(object):
         
         #title = str(self.category.keys())
         title = mi.subject_name
-        fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)], title=title)
+        fig = plot_topo(evokeds, layout,
+                        color=colors[:len(evokeds)], title=title)
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025+0.04*len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)], positions):#np.arange(0.025, len(evokeds) * 0.02 + 0.025, 0.2)):
@@ -874,6 +875,32 @@ class Caller(object):
         evokeds, groups = async_result.get()
 
         pool.terminate()
+        
+        write2file = True
+        if write2file: #TODO add option in GUI for this
+            exp_path = os.path.join(self.experiment.workspace,
+                                    self.experiment.experiment_name)
+            if not os.path.isdir(exp_path + '/output'):
+                os.mkdir(exp_path + '/output')
+            fName = exp_path + '/output/group_average.txt'
+            f = open(fName, 'w')
+            f.write('Times, ')
+            for time in evokeds[0].times:
+                f.write(repr(time))
+                f.write(', ')
+            f.write('\n')
+            i = 0
+            for evoked in evokeds:
+                f.write(repr(groups[i] + '\n'))
+                i = i + 1
+                for ch_idx in xrange(len(evoked.ch_names)):
+                    f.write(repr(evoked.ch_names[ch_idx] + ', '))
+                    for j in xrange(len(evoked.data[ch_idx])):
+                        f.write(repr(evoked.data[ch_idx][j]))
+                        f.write(', ')
+                    f.write('\n')
+            f.close()
+            
         print "Plotting evoked potentials..."
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
