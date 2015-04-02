@@ -1085,26 +1085,23 @@ class MainWindow(QtGui.QMainWindow):
         self.tfr_dialog.show()
     
     
-    def on_pushButtonTFRTopology_clicked(self,checked=None):
+    def on_pushButtonTFRTopology_clicked(self, checked=None):
         """
         Opens the dialog for plotting TFR topology.
         """
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must create epochs before TFR.'
+            message = 'You must select the epochs for TFR.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
                                      currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
-        self.tfrTop_dialog = TFRTopologyDialog(self, 
-                                               self.caller.experiment.active_subject.\
-                                               _working_file, 
-                                               epochs._raw)
+        #epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
+        self.tfrTop_dialog = TFRTopologyDialog(self, epochs_collection_name)# epochs._raw)
         self.tfrTop_dialog.exec_()
-    
-        
+
+
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """
         Shows the channels average graph.
@@ -1676,6 +1673,8 @@ class MainWindow(QtGui.QMainWindow):
              
             if index == 1:
                 self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
+                self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
+                                    QAbstractItemView.SingleSelection)
                 #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
                 self.epochList.show()
                 #self.epochParamsList.show()
@@ -1683,6 +1682,8 @@ class MainWindow(QtGui.QMainWindow):
             
             if index == 2:
                 self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
+                self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
+                                    QAbstractItemView.MultiSelection)                
                 #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
                 self.epochList.show()
                 #self.epochParamsList.show()
@@ -1690,6 +1691,8 @@ class MainWindow(QtGui.QMainWindow):
            
             if index == 3:
                 self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+                self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
+                                    QAbstractItemView.SingleSelection)
                 #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
                 self.epochList.show()
                 #self.epochParamsList.show()

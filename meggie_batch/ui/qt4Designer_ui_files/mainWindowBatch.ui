@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1542</width>
+    <width>1473</width>
     <height>885</height>
    </rect>
   </property>
@@ -71,7 +71,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1168</width>
+          <width>1100</width>
           <height>750</height>
          </rect>
         </property>
@@ -565,7 +565,7 @@
                      <item>
                       <widget class="QPushButton" name="pushButtonSpectrum">
                        <property name="text">
-                        <string>Magnitude spectrum</string>
+                        <string>Power spectrum</string>
                        </property>
                       </widget>
                      </item>
@@ -2912,7 +2912,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1542</width>
+     <width>1473</width>
      <height>25</height>
     </rect>
    </property>
@@ -3613,12 +3613,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1279</x>
-     <y>658</y>
+     <x>1369</x>
+     <y>650</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1430</x>
-     <y>659</y>
+     <x>1544</x>
+     <y>653</y>
     </hint>
    </hints>
   </connection>
@@ -3629,12 +3629,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1244</x>
-     <y>658</y>
+     <x>1369</x>
+     <y>650</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1230</x>
-     <y>688</y>
+     <x>1545</x>
+     <y>677</y>
     </hint>
    </hints>
   </connection>
@@ -3645,12 +3645,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1281</x>
-     <y>618</y>
+     <x>1369</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1389</x>
-     <y>625</y>
+     <x>1544</x>
+     <y>618</y>
     </hint>
    </hints>
   </connection>

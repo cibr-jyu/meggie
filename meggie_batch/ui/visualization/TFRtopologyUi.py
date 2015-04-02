@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Thu Mar  5 05:44:35 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Tue Mar 31 04:49:44 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,23 +26,15 @@ except AttributeError:
 class Ui_DialogTFRTopology(object):
     def setupUi(self, DialogTFRTopology):
         DialogTFRTopology.setObjectName(_fromUtf8("DialogTFRTopology"))
-        DialogTFRTopology.resize(381, 647)
+        DialogTFRTopology.resize(381, 709)
         self.gridLayout_2 = QtGui.QGridLayout(DialogTFRTopology)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.buttonBox = QtGui.QDialogButtonBox(DialogTFRTopology)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.verticalLayout.addWidget(self.buttonBox)
-        self.gridLayout_2.addLayout(self.verticalLayout, 2, 0, 1, 1)
         self.scrollArea = QtGui.QScrollArea(DialogTFRTopology)
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 363, 499))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 363, 526))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
@@ -146,6 +138,8 @@ class Ui_DialogTFRTopology(object):
         self.gridLayout_5.addLayout(self.verticalLayout_6, 0, 1, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_5.addItem(spacerItem1, 0, 2, 1, 1)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem2, 1, 1, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxFrequencies, 1, 0, 1, 1)
         self.groupBoxBaseline = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -208,8 +202,8 @@ class Ui_DialogTFRTopology(object):
         self.horizontalLayout_4.addWidget(self.checkBoxBaselineEndNone)
         self.horizontalLayout_5.addLayout(self.horizontalLayout_4)
         self.gridLayout_3.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout_3.addItem(spacerItem2, 1, 1, 1, 1)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem3, 1, 1, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxBaseline, 2, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -243,7 +237,23 @@ class Ui_DialogTFRTopology(object):
         self.labelLayout.setEnabled(False)
         self.labelLayout.setObjectName(_fromUtf8("labelLayout"))
         self.verticalLayout_27.addWidget(self.labelLayout)
+        self.horizontalLayout_9 = QtGui.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
+        self.pushButtonGroupAverage = QtGui.QPushButton(DialogTFRTopology)
+        self.pushButtonGroupAverage.setObjectName(_fromUtf8("pushButtonGroupAverage"))
+        self.horizontalLayout_9.addWidget(self.pushButtonGroupAverage)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem4)
+        self.verticalLayout_27.addLayout(self.horizontalLayout_9)
         self.gridLayout_2.addLayout(self.verticalLayout_27, 1, 0, 1, 1)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.buttonBox = QtGui.QDialogButtonBox(DialogTFRTopology)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.verticalLayout.addWidget(self.buttonBox)
+        self.gridLayout_2.addLayout(self.verticalLayout, 2, 0, 1, 1)
 
         self.retranslateUi(DialogTFRTopology)
         self.comboBoxMode.setCurrentIndex(1)
@@ -275,7 +285,8 @@ class Ui_DialogTFRTopology(object):
         DialogTFRTopology.setTabOrder(self.radioButtonSelectLayout, self.comboBoxLayout)
         DialogTFRTopology.setTabOrder(self.comboBoxLayout, self.radioButtonLayoutFromFile)
         DialogTFRTopology.setTabOrder(self.radioButtonLayoutFromFile, self.pushButtonBrowseLayout)
-        DialogTFRTopology.setTabOrder(self.pushButtonBrowseLayout, self.buttonBox)
+        DialogTFRTopology.setTabOrder(self.pushButtonBrowseLayout, self.pushButtonGroupAverage)
+        DialogTFRTopology.setTabOrder(self.pushButtonGroupAverage, self.buttonBox)
 
     def retranslateUi(self, DialogTFRTopology):
         DialogTFRTopology.setWindowTitle(_translate("DialogTFRTopology", "Meggie - Show TFR topologies ", None))
@@ -307,4 +318,5 @@ class Ui_DialogTFRTopology(object):
         self.radioButtonLayoutFromFile.setText(_translate("DialogTFRTopology", "Layout from file", None))
         self.pushButtonBrowseLayout.setText(_translate("DialogTFRTopology", "Browse...", None))
         self.labelLayout.setText(_translate("DialogTFRTopology", "No layout selected", None))
+        self.pushButtonGroupAverage.setText(_translate("DialogTFRTopology", "Group average for all subjects", None))
 

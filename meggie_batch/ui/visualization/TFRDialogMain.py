@@ -33,11 +33,11 @@ Created on Apr 26, 2013
 @author: Jaakko Leppakangas
 Contains the TFRDialog-class used for creating TFRs.
 """
-from ui.general.messageBoxes import shortMessageBox
-
 from PyQt4 import QtCore, QtGui
+
 from TFRfromEpochsUi import Ui_DialogEpochsTFR
 from code_meggie.general.caller import Caller
+from ui.general.messageBoxes import shortMessageBox
 
 class TFRDialog(QtGui.QDialog):
     """
@@ -63,6 +63,7 @@ class TFRDialog(QtGui.QDialog):
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
+        
     
     def accept(self):
         """

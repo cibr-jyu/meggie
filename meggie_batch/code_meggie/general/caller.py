@@ -33,7 +33,6 @@ from mne.time_frequency import compute_raw_psd
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
 from matplotlib.pyplot import subplots_adjust
 from os import listdir
 from os.path import isfile, join
@@ -875,32 +874,6 @@ class Caller(object):
         evokeds, groups = async_result.get()
 
         pool.terminate()
-        
-        write2file = True
-        if write2file: #TODO add option in GUI for this
-            exp_path = os.path.join(self.experiment.workspace,
-                                    self.experiment.experiment_name)
-            if not os.path.isdir(exp_path + '/output'):
-                os.mkdir(exp_path + '/output')
-            fName = exp_path + '/output/group_average.txt'
-            f = open(fName, 'w')
-            f.write('Times, ')
-            for time in evokeds[0].times:
-                f.write(repr(time))
-                f.write(', ')
-            f.write('\n')
-            i = 0
-            for evoked in evokeds:
-                f.write(repr(groups[i]))
-                f.write('\n')
-                i = i + 1
-                for ch_idx in xrange(len(evoked.ch_names)):
-                    f.write(repr(evoked.ch_names[ch_idx] + ', '))
-                    for j in xrange(len(evoked.data[ch_idx])):
-                        f.write(repr(evoked.data[ch_idx][j]))
-                        f.write(', ')
-                    f.write('\n')
-            f.close()
             
         print "Plotting evoked potentials..."
         self.parent.update_ui()
@@ -1000,6 +973,34 @@ class Caller(object):
             self.result = e
             self.e.set()
             return
+        
+        write2file = True
+        if write2file: #TODO add option in GUI for this
+            exp_path = os.path.join(self.experiment.workspace,
+                                    self.experiment.experiment_name)
+            if not os.path.isdir(exp_path + '/output'):
+                os.mkdir(exp_path + '/output')
+            fName = '-'.join(groups) + '_group_average.txt'
+            fName = exp_path + '/output/' + fName
+            print 'Saving averages in ' + fName
+            f = open(fName, 'w')
+            f.write('Times, ')
+            for time in averagedEvokeds[0].times:
+                f.write(repr(time))
+                f.write(', ')
+            f.write('\n')
+            i = 0
+            for evoked in averagedEvokeds:
+                f.write(repr(groups[i]))
+                f.write('\n')
+                i = i + 1
+                for ch_idx in xrange(len(evoked.ch_names)):
+                    f.write(repr(evoked.ch_names[ch_idx] + ', '))
+                    for j in xrange(len(evoked.data[ch_idx])):
+                        f.write(repr(evoked.data[ch_idx][j]))
+                        f.write(', ')
+                    f.write('\n')
+            f.close()
                 
         self.e.set()
         return averagedEvokeds, groups
@@ -1117,7 +1118,7 @@ class Caller(object):
         return power, phase_lock, times, evoked, evoked_data
         
         
-    def TFR_topology(self, raw, epochs, reptype, minfreq, maxfreq, decim, mode,  
+    def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type='mag'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
@@ -1149,7 +1150,7 @@ class Caller(object):
         frequencies = np.arange(minfreq, maxfreq, interval)
         
         async_result = pool.apply_async(self._TFR_topology, 
-                                        (raw, epochs, reptype, mode, 
+                                        (epochs, reptype, mode, 
                                          frequencies, blstart, 
                                          blend, ncycles, decim))
         while(True):
@@ -1226,7 +1227,7 @@ class Caller(object):
         fig.canvas.mpl_connect('button_press_event', onclick)
              
         
-    def _TFR_topology(self, raw, epochs, reptype, mode, frequencies, blstart, 
+    def _TFR_topology(self, epochs, reptype, mode, frequencies, blstart, 
                       blend, ncycles, decim):
         """
         Performed in a worker thread.
@@ -1289,7 +1290,187 @@ class Caller(object):
         """
         self.e.set()
         return power, itc
-    
+        
+        
+    def TFR_average(self, epochs_name, reptype, mode, minfreq, maxfreq,
+                    interval, blstart, blend, ncycles, decim, layout,
+                    selected_channels, form, dpi, saveTopo):
+        """
+        """
+        layout = read_layout(layout)
+        frequencies = np.arange(minfreq, maxfreq, interval)
+        
+        self.e.clear()
+        self.result = None
+        pool = ThreadPool(processes=1)
+        async_result = pool.apply_async(self._TFR_average, 
+                                        ( epochs_name, reptype, mode, 
+                                         frequencies, ncycles, decim))
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break;
+            self.parent.update_ui()
+
+        if not self.result is None:
+            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
+            self.messageBox.show()
+            self.result = None
+            return 
+        
+        power, itc = async_result.get()
+        
+        baseline = (blstart, blend)
+        print 'Plotting topology...'
+        if reptype == 'average':
+            try:
+                self.parent.update_ui()
+                fig = power.plot_topo(baseline=baseline, mode=mode, 
+                                      fmin=minfreq, fmax=maxfreq,
+                                      layout=layout,
+                                      title='Average power', cmap='Reds')
+                fig.show()
+            except Exception as e:
+                self.messageBox = messageBoxes.shortMessageBox(str(e))
+                self.messageBox.show()
+                return
+        elif reptype == 'itc':
+            try:
+                title = 'Inter-Trial coherence'
+                fig = itc.plot_topo(baseline=baseline, mode=mode, 
+                                    fmin=minfreq, fmax=maxfreq, vmin=0.,
+                                    vmax=1., layout=layout, 
+                                    title=title, cmap='Reds')
+
+                exp_path = os.path.join(self.experiment.workspace,
+                                        self.experiment.experiment_name)
+                if saveTopo:
+                    print 'Saving topology figure to  '\
+                           + exp_path + '/output...'
+                    self.parent.update_ui()
+                    plt.savefig(exp_path + '/output/group_tfr_' + epochs_name\
+                                + '.' + form, dpi=dpi, format=form)
+                    plt.close()
+                else:
+                    fig.show()
+                if not os.path.isdir(exp_path + '/output'):
+                    os.mkdir(exp_path + '/output')
+                for channel in selected_channels:
+                    print 'Saving channel ' + channel + ' figure to ' \
+                           + exp_path + '/output...'
+                    self.parent.update_ui()
+                    plt.clf()
+                    idx = itc.ch_names.index(channel)
+                    itc.plot([idx], baseline=baseline, mode=mode, show=False)
+                    plt.savefig(exp_path + '/output/tfr_channel_' + channel\
+                                + '.' + form, dpi=dpi, format=form)
+                    plt.close()
+            except Exception as e:
+                self.messageBox = messageBoxes.shortMessageBox(str(e))
+                self.messageBox.show()
+                return
+
+        def onclick(event):
+            pl.show(block=False)
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        
+        
+    def _TFR_average(self, epochs_name, reptype, mode, frequencies, ncycles,
+                     decim):
+        """
+        Performed in a working thread.
+        """
+        chs = self.experiment.active_subject.working_file.info['ch_names']
+        subjects = self.experiment.get_subjects()
+        directory = ''
+        files2ave = []
+        for subject in subjects:
+            directory = subject._epochs_directory
+            print directory
+            fName = join(directory, epochs_name + '.fif')
+            if isfile(fName):
+                files2ave.append(fName)
+
+        print 'Found ' + str(len(files2ave)) + ' subjects with epochs ' + \
+                'labeled '+ epochs_name + '.'
+        if len(files2ave) < len(subjects):
+            self.result = Warning("Found only " + str(len(files2ave)) + \
+                                  " subjects of " + str(len(subjects)) + \
+                                  " with epochs labeled: " + \
+                                  epochs_name + "!\n")
+        powers = []
+        itcs = []
+        weights = []
+        bads = []
+        ch_names = []
+        print directory
+        print files2ave
+        for f in files2ave:
+            try:
+                epochs = mne.read_epochs(join(directory, f))
+                for bad in epochs.info['bads']:
+                    bads.append(bad)
+                for ch_name in epochs.info['ch_names']:
+                    ch_names.append(ch_name)
+                power, itc = tfr_morlet(epochs, freqs=frequencies,
+                                        n_cycles=ncycles, use_fft=False,
+                                        return_itc=True, decim=decim, n_jobs=3)
+                powers.append(power)
+                itcs.append(itc)
+                weights.append(len(epochs))
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
+        ch_names = list(set(ch_names))
+        bads = set(bads)
+        usedPowers = dict()
+        usedItcs = dict()
+        usedChannels = []
+        
+        # Populating the dictionaries
+        for ch in chs:
+            if ch in bads:
+                continue
+            elif not ch in ch_names:
+                continue
+            else:
+                usedChannels.append(ch)
+            if not usedPowers.has_key(ch):
+                usedPowers[ch] = []
+                usedItcs[ch] = []
+            for i in xrange(len(powers)):
+                cidx = powers[i].info['ch_names'].index(ch)
+                usedPowers[ch].append(powers[i].data[cidx])
+                usedItcs[ch].append(itcs[i].data[cidx])
+        averagePower = []
+        averageItc = []
+        
+        # Averaging the values
+        for ch in usedChannels:
+            averagePower.append(np.average(usedPowers[ch], axis=0,
+                                           weights=weights))
+            averageItc.append(np.average(usedItcs[ch], axis=0,
+                                         weights=weights))
+
+        info = mne.create_info(ch_names=usedChannels,
+                               sfreq=powers[0].info['sfreq'])
+        times = powers[0].times
+        nave = sum(weights)
+        averagePower = np.array(averagePower)
+        averageItc = np.array(averageItc)
+        try:
+            power = mne.time_frequency.AverageTFR(info, averagePower, times, 
+                                            frequencies, nave)
+            itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
+                                            frequencies, nave)
+        except Exception as e:
+            self.result = e
+            self.e.set()
+            return
+
+        self.e.set()
+        return power, itc
+        
     
     def plot_power_spectrum(self, params, colors, channelColors):
         

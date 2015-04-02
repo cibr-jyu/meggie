@@ -1,7 +1,6 @@
 # coding: latin1
-from code_meggie.general import fileManager
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -34,47 +33,50 @@ Created on Apr 26, 2013
 @author: Kari Aliranta, Jaakko Leppakangas
 Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 """
-from PyQt4 import QtCore,QtGui
-from TFRtopologyUi import Ui_DialogTFRTopology
+from PyQt4 import QtCore, QtGui
+
 from code_meggie.general.caller import Caller
+from TFRtopologyUi import Ui_DialogTFRTopology
+from TFRGroupAverageDialogMain import TFRGroupAverageDialog
 from ui.general.messageBoxes import shortMessageBox
+from code_meggie.general import fileManager
 
 class TFRTopologyDialog(QtGui.QDialog):
     """
     Class containing the logic for TFRTopologyDialog. Collects the necessary
     parameter values and passes them to the Caller-class.
     """
+    caller = Caller.Instance()    
     
-    def __init__(self, parent, raw, epochs):
+    def __init__(self, parent, epoch_name):
         """
         Initializes the TFR topology dialog.
         
         Keyword arguments:
         
         parent    --   this dialog's parent
-        raw       --   a raw data file
-        epochs    --   a collection of epochs
+        epoch_name    --   the name of a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.raw = raw
-        self.epochs = epochs
+        self.epoch_name = epoch_name
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
         
-        
+    
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
+        Opens a dialog for selecting a layout file.
         """
         if checked is None: return
         fName = str(QtGui.QFileDialog.getOpenFileName(self,
                             "Select a layout file", '/home/', 
                             "Layout-files (*.lout *.lay);;All files (*.*)"))
         self.ui.labelLayout.setText(fName)
-        
-    
+
+
     def accept(self):
         """
         Collects the parameter values from the dialog window and passes them
@@ -114,11 +116,11 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
+        epochs = self.caller.experiment.active_subject._epochs[self.epoch_name]
         try:
-            caller = Caller.Instance()
-            caller.TFR_topology(self.raw, self.epochs, reptype, minfreq,
-                                maxfreq, decim, mode, blstart, blend, interval,
-                                ncycles, layout, ch_type)
+            self.caller.TFR_topology(epochs._raw, reptype, minfreq, maxfreq,
+                                     decim, mode, blstart, blend, interval,
+                                     ncycles, layout, ch_type)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))
@@ -126,4 +128,67 @@ class TFRTopologyDialog(QtGui.QDialog):
             return
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
-        return
+        
+    def on_pushButtonGroupAverage_clicked(self, checked=None):
+        """
+        """
+        if checked is None: return
+        averageDialog = TFRGroupAverageDialog()
+        averageDialog.channels_selected.connect(self.compute_group_average)
+        averageDialog.exec_()
+
+
+    @QtCore.pyqtSlot(list, str, int, bool)
+    def compute_group_average(self, channels, form, dpi, saveTopo):
+        """
+        Starts the computation of group average TFR.
+        Parameters:
+        channels - Selected channels of interest.
+        """
+        print channels
+        print form
+        print dpi
+        print saveTopo
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        minfreq = self.ui.doubleSpinBoxMinFreq.value()
+        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+        decim = self.ui.spinBoxDecim.value()
+        mode = self.ui.comboBoxMode.currentText()
+        interval = self.ui.doubleSpinBoxFreqInterval.value()
+        ncycles = self.ui.spinBoxNcycles.value()
+        if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
+            blstart = None
+        else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
+
+        if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
+            blend = None
+        else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
+
+        if self.ui.radioButtonInduced.isChecked(): reptype = 'induced'
+        elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
+        elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
+        elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
+
+        if self.ui.radioButtonSelectLayout.isChecked():
+            layout = self.ui.comboBoxLayout.currentText()
+        elif self.ui.radioButtonLayoutFromFile.isChecked():
+            layout = str(self.ui.labelLayout.text())
+        if layout == 'No layout selected' or layout == '':
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox = shortMessageBox('No layout selected')
+            self.messageBox.show()
+            return
+        try:
+            self.caller.TFR_average(self.epoch_name, reptype, mode,
+                                    minfreq, maxfreq, interval, blstart,
+                                    blend, ncycles, decim, layout, channels,
+                                    form, dpi, saveTopo)
+        except Exception, err:
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox = shortMessageBox(str(err))
+            self.messageBox.show()
+            QtGui.QApplication.restoreOverrideCursor()
+            return
+        QtGui.QApplication.restoreOverrideCursor()
+        

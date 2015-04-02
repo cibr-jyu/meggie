@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Tue Mar 17 09:40:13 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Wed Apr  1 08:42:28 2015
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(1542, 885)
+        MainWindow.resize(1473, 885)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1168, 750))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1100, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -1243,7 +1243,7 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1542, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1473, 25))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -1597,10 +1597,10 @@ class Ui_MainWindow(object):
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections...", None))
         self.pushButtonApplyEOG.setText(_translate("MainWindow", "Apply EOG projections...", None))
         self.groupBoxVisualization_2.setTitle(_translate("MainWindow", "Visualization:", None))
-        self.pushButtonSpectrum.setText(_translate("MainWindow", "Magnitude spectrum", None))
+        self.pushButtonSpectrum.setText(_translate("MainWindow", "Power spectrum", None))
         self.pushButtonMNE_Browse_Raw_2.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
         self.labelBads.setText(_translate("MainWindow", "Bad channels", None))
-        self.listWidgetBads.setSortingEnabled(False)
+        self.listWidgetBads.setSortingEnabled(True)
         self.labelProjs.setText(_translate("MainWindow", "Added projection items", None))
         self.listWidgetProjs.setSortingEnabled(False)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPreprocessing), _translate("MainWindow", "Preprocessing", None))
