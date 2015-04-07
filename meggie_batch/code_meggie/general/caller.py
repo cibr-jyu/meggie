@@ -1421,14 +1421,34 @@ class Caller(object):
         form      - File format for the figures.
         epoch_name- Name of the epochs used for the TFR
         """
+        exp_path = os.path.join(self.experiment.workspace,
+                                self.experiment.experiment_name)
+        if not os.path.isdir(exp_path + '/output'):
+            os.mkdir(exp_path + '/output')
+        
+        for channel in channels:
+            if not channel in power.ch_names:
+                print 'Channel ' + channel + ' not found!'
+                continue
+            print 'Saving channel ' + channel + ' figure to ' \
+                    + exp_path + '/output...'
+            self.parent.update_ui()
+            plt.clf()
+            idx = power.ch_names.index(channel)
+            try:
+                power.plot([idx], baseline=baseline, mode=mode, show=False)
+                plt.savefig(exp_path + '/output/tfr_channel_' + channel + '_'\
+                        + epoch_name + '.' + form, dpi=dpi, format=form)
+            except Exception as e:
+                print 'Error while saving figure for channel ' + channel
+                print str(e)
+            finally:
+                plt.close()
         try:
             fig = power.plot_topo(baseline=baseline, mode=mode, 
-                                fmin=fmin, fmax=fmax, vmin=0.,
-                                vmax=1., layout=layout, 
-                                title=title, cmap='Reds', show=False)
-
-            exp_path = os.path.join(self.experiment.workspace,
-                                    self.experiment.experiment_name)
+                                  fmin=fmin, fmax=fmax, vmin=0.,
+                                  vmax=1., layout=layout, 
+                                  title=title, cmap='Reds', show=False)
             if save_topo:
                 print 'Saving topology figure to  '\
                         + exp_path + '/output...'
@@ -1443,19 +1463,7 @@ class Caller(object):
                 plt.savefig(fig_title, dpi=dpi, format=form)
                 plt.close()
             else:
-                fig.show(block=True)
-            if not os.path.isdir(exp_path + '/output'):
-                os.mkdir(exp_path + '/output')
-            for channel in channels:
-                print 'Saving channel ' + channel + ' figure to ' \
-                        + exp_path + '/output...'
-                self.parent.update_ui()
-                plt.clf()
-                idx = power.ch_names.index(channel)
-                power.plot([idx], baseline=baseline, mode=mode, show=False)
-                plt.savefig(exp_path + '/output/tfr_channel_' + channel + '_'\
-                            + epoch_name + '.' + form, dpi=dpi, format=form)
-                plt.close()
+                plt.show()
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
