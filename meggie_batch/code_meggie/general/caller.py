@@ -1243,13 +1243,7 @@ class Caller(object):
             #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
             power, itc = tfr_morlet(epochs, freqs=frequencies, n_cycles=ncycles, use_fft=False,
                         return_itc=True, decim=decim, n_jobs=3)
-            
-            """
-            power, phase_lock = induced_power(data, Fs=Fs,
-                                              frequencies=frequencies,
-                                              n_cycles=ncycles, n_jobs=3,
-                                              use_fft=False, decim=decim,
-                                              zero_mean=True)"""
+
         except ValueError as err:
             self.result = err
             self.e.set()
@@ -1258,53 +1252,31 @@ class Caller(object):
             self.result = e
             self.e.set()
             return
-        """
-        layout = read_layout('Vectorview-all')
-        baseline = (blstart, blend)  # set the baseline for induced power
-        #mode = 'ratio'  # set mode for baseline rescaling
-        if ( reptype == 'induced' ):
-            title='TFR topology: ' + 'Induced power'
-            try:
-                power.plot_topo(baseline=baseline, mode=mode, title='Average power')
-                fig = power.plot_topomap(fmin=frequencies[0], fmax=frequencies[-1], layout=layout,
-                            baseline=baseline, mode=mode,
-                            title=title)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
-        else: 
-            title = 'TFR topology: ' + 'Phase locking'
-            try:
-                fig = topo.plot_topo_phase_lock(epochs, phase_lock, 
-                                            frequencies, 
-                                            layout, baseline=baseline, 
-                                            mode=mode, decim=decim, 
-                                            title=title)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
-        self.e.set()
-        return fig
-        """
+
         self.e.set()
         return power, itc
         
         
     def TFR_average(self, epochs_name, reptype, mode, minfreq, maxfreq,
                     interval, blstart, blend, ncycles, decim, layout,
-                    selected_channels, form, dpi, saveTopo):
+                    selected_channels, form, dpi, save_topo):
         """
         """
-        layout = read_layout(layout)
+        try:
+            layout = read_layout(layout)
+        except Exception as e:
+            self.messageBox = messageBoxes.shortMessageBox('Could not read ' +
+                                'layout: ' + e)
+            self.messageBox.show()
+            return 
+        
         frequencies = np.arange(minfreq, maxfreq, interval)
         
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
         async_result = pool.apply_async(self._TFR_average, 
-                                        ( epochs_name, reptype, mode, 
+                                        ( epochs_name, reptype, 
                                          frequencies, ncycles, decim))
         while(True):
             sleep(0.2)
@@ -1322,60 +1294,18 @@ class Caller(object):
         baseline = (blstart, blend)
         print 'Plotting topology...'
         if reptype == 'average':
-            try:
-                self.parent.update_ui()
-                fig = power.plot_topo(baseline=baseline, mode=mode, 
-                                      fmin=minfreq, fmax=maxfreq,
-                                      layout=layout,
-                                      title='Average power', cmap='Reds')
-                fig.show()
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return
+            title = 'Average power ' + epochs_name
+            self._plot_TFR_topology(power, baseline, mode, minfreq, maxfreq,
+                                    layout, title, save_topo,
+                                    selected_channels, dpi, form, epochs_name)
         elif reptype == 'itc':
-            try:
-                title = 'Inter-Trial coherence'
-                fig = itc.plot_topo(baseline=baseline, mode=mode, 
-                                    fmin=minfreq, fmax=maxfreq, vmin=0.,
-                                    vmax=1., layout=layout, 
-                                    title=title, cmap='Reds')
+            title = 'Inter trial coherence ' + epochs_name
+            self._plot_TFR_topology(itc, baseline, mode, minfreq, maxfreq,
+                                    layout, title, save_topo,
+                                    selected_channels, dpi, form, epochs_name)
 
-                exp_path = os.path.join(self.experiment.workspace,
-                                        self.experiment.experiment_name)
-                if saveTopo:
-                    print 'Saving topology figure to  '\
-                           + exp_path + '/output...'
-                    self.parent.update_ui()
-                    plt.savefig(exp_path + '/output/group_tfr_' + epochs_name\
-                                + '.' + form, dpi=dpi, format=form)
-                    plt.close()
-                else:
-                    fig.show()
-                if not os.path.isdir(exp_path + '/output'):
-                    os.mkdir(exp_path + '/output')
-                for channel in selected_channels:
-                    print 'Saving channel ' + channel + ' figure to ' \
-                           + exp_path + '/output...'
-                    self.parent.update_ui()
-                    plt.clf()
-                    idx = itc.ch_names.index(channel)
-                    itc.plot([idx], baseline=baseline, mode=mode, show=False)
-                    plt.savefig(exp_path + '/output/tfr_channel_' + channel\
-                                + '.' + form, dpi=dpi, format=form)
-                    plt.close()
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return
 
-        def onclick(event):
-            pl.show(block=False)
-        fig.canvas.mpl_connect('button_press_event', onclick)
-        
-        
-    def _TFR_average(self, epochs_name, reptype, mode, frequencies, ncycles,
-                     decim):
+    def _TFR_average(self, epochs_name, reptype, frequencies, ncycles, decim):
         """
         Performed in a working thread.
         """
@@ -1470,6 +1400,64 @@ class Caller(object):
 
         self.e.set()
         return power, itc
+        
+        
+    def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
+                           title, save_topo=False, channels=[], dpi=200,
+                           form='png', epoch_name=''):
+        """
+        Convenience method for plotting TFR topologies.
+        Parameters:
+        power     - Average or itc power for plotting.
+        baseline  - Baseline for the image.
+        mode      -
+        fmin      - Minimum frequency of interest.
+        fmax      - Maximum frequency of interest.
+        layout    - Layout for the image.
+        title     - Title to show on the plot.
+        save_topo - Boolean to indicate whether the figure is to be saved.
+        channels  - Channels of interest.
+        dpi       - Dots per inch for the figures.
+        form      - File format for the figures.
+        epoch_name- Name of the epochs used for the TFR
+        """
+        try:
+            fig = power.plot_topo(baseline=baseline, mode=mode, 
+                                fmin=fmin, fmax=fmax, vmin=0.,
+                                vmax=1., layout=layout, 
+                                title=title, cmap='Reds')
+
+            exp_path = os.path.join(self.experiment.workspace,
+                                    self.experiment.experiment_name)
+            if save_topo:
+                print 'Saving topology figure to  '\
+                        + exp_path + '/output...'
+                self.parent.update_ui()
+                plt.savefig(exp_path + '/output/group_tfr_' + epoch_name\
+                            + '.' + form, dpi=dpi, format=form)
+                plt.close()
+            else:
+                fig.show()
+            if not os.path.isdir(exp_path + '/output'):
+                os.mkdir(exp_path + '/output')
+            for channel in channels:
+                print 'Saving channel ' + channel + ' figure to ' \
+                        + exp_path + '/output...'
+                self.parent.update_ui()
+                plt.clf()
+                idx = power.ch_names.index(channel)
+                power.plot([idx], baseline=baseline, mode=mode, show=False)
+                plt.savefig(exp_path + '/output/tfr_channel_' + channel\
+                            + '.' + form, dpi=dpi, format=form)
+                plt.close()
+        except Exception as e:
+            self.messageBox = messageBoxes.shortMessageBox(str(e))
+            self.messageBox.show()
+            return
+
+        def onclick(event):
+            pl.show(block=False)
+        fig.canvas.mpl_connect('button_press_event', onclick)
         
     
     def plot_power_spectrum(self, params, colors, channelColors):
