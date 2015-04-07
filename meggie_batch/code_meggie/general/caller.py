@@ -1299,7 +1299,7 @@ class Caller(object):
                                     layout, title, save_topo,
                                     selected_channels, dpi, form, epochs_name)
         elif reptype == 'itc':
-            title = 'Inter trial coherence ' + epochs_name
+            title = 'Inter-trial coherence ' + epochs_name
             self._plot_TFR_topology(itc, baseline, mode, minfreq, maxfreq,
                                     layout, title, save_topo,
                                     selected_channels, dpi, form, epochs_name)
@@ -1425,7 +1425,7 @@ class Caller(object):
             fig = power.plot_topo(baseline=baseline, mode=mode, 
                                 fmin=fmin, fmax=fmax, vmin=0.,
                                 vmax=1., layout=layout, 
-                                title=title, cmap='Reds')
+                                title=title, cmap='Reds', show=False)
 
             exp_path = os.path.join(self.experiment.workspace,
                                     self.experiment.experiment_name)
@@ -1433,11 +1433,17 @@ class Caller(object):
                 print 'Saving topology figure to  '\
                         + exp_path + '/output...'
                 self.parent.update_ui()
-                plt.savefig(exp_path + '/output/group_tfr_' + epoch_name\
-                            + '.' + form, dpi=dpi, format=form)
+                fig_title= ''
+                if title.startswith('Inter-trial'):
+                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
+                            + '_itc.' + form
+                elif title.startswith('Average'):
+                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
+                            + '_average.' + form
+                plt.savefig(fig_title, dpi=dpi, format=form)
                 plt.close()
             else:
-                fig.show()
+                fig.show(block=True)
             if not os.path.isdir(exp_path + '/output'):
                 os.mkdir(exp_path + '/output')
             for channel in channels:
@@ -1447,8 +1453,8 @@ class Caller(object):
                 plt.clf()
                 idx = power.ch_names.index(channel)
                 power.plot([idx], baseline=baseline, mode=mode, show=False)
-                plt.savefig(exp_path + '/output/tfr_channel_' + channel\
-                            + '.' + form, dpi=dpi, format=form)
+                plt.savefig(exp_path + '/output/tfr_channel_' + channel + '_'\
+                            + epoch_name + '.' + form, dpi=dpi, format=form)
                 plt.close()
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
