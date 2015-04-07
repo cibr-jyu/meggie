@@ -338,8 +338,8 @@ class Subject(QObject):
         params      -- epochs parameters
         """
         # Checks if epochs with given name exists.
-        if self._epochs.has_key(name):
-            return
+        #if self._epochs.has_key(name):
+        #    return
         #toPyObject turns the dict keys into QStrings so convert them back to
         #strings.
         #params_str = dict((str(k), v) for k, v in parameters.iteritems())

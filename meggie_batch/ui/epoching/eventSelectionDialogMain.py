@@ -87,6 +87,28 @@ class EventSelectionDialog(QtGui.QDialog):
         self.used_names = []
         if params is not None:
             self.fill_parameters(params)
+            
+            
+    def initialize(self, epochs_name):
+        """
+        Method for initializing the dialog. Used for modifying existing epoch
+        collection.
+        Keyword arguments
+        epoch_name -- Name of the epoch collection.
+        """
+        epochs = self.caller.experiment.active_subject._epochs[epochs_name].raw
+        self.ui.lineEditCollectionName.setText(epochs_name)
+        self.ui.doubleSpinBoxTmin.setValue(epochs.tmin)
+        self.ui.doubleSpinBoxTmax.setValue(epochs.tmax)
+        event_name = epochs.event_id.keys()[0]
+        self.ui.lineEditName.setText(event_name)
+        text = str(epochs.event_id.values()[0])
+        i = self.ui.comboBoxEventID.findText(text)
+        self.ui.comboBoxEventID.setCurrentIndex(i)
+        events = []
+        for event in epochs.events:
+            events.append([int(event[0]), int(event[1]), int(event[2])])
+        self.add_events(events, event_name)
 
         
     def add_events(self, events, event_name):
@@ -124,16 +146,21 @@ class EventSelectionDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        stim_channel = self.caller.experiment.active_subject._stim_channel
+        #stim_channel = self.caller.experiment.active_subject._stim_channel
         
         collectionName = self.ui.lineEditCollectionName.text()
         if len(self.parent.epochList.ui.listWidgetEpochs.\
             findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
-            message = 'Collection name ' + str(collectionName) + ' exists. ' + \
-            'Please change name of the epoch collection.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return None
+            message = 'Collection name ' + str(collectionName) + ' exists. ' +\
+                        'Overwrite existing epochs?'
+            reply = QtGui.QMessageBox.question(self, 'Collection exists',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.No:
+                return None
+            #self.messageBox = messageBoxes.shortMessageBox(message)
+            #self.messageBox.show()
         
         # QString to string
         collectionName = str(collectionName)

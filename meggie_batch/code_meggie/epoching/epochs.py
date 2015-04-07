@@ -162,7 +162,8 @@ class Epochs(QObject):
                     epochs = mne.Epochs(raw, events, category,
                                 tmin, tmax, picks=picks, reject=reject)
                 except Exception as e:
-                    print str(e)
+                    print e
+                    raise e
                 if len(epochs.get_data()) == 0:
                     raise Exception('Could not find any data. Check parameters!')
                 return epochs

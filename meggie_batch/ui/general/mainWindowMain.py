@@ -510,13 +510,19 @@ class MainWindow(QtGui.QMainWindow):
                                                       active_subject.\
                                                       _working_file)
         epoch_params['raw'] = self.caller.experiment.\
-        _working_file_names[self.caller.experiment._active_subject_name]
+            _working_file_names[self.caller.experiment._active_subject_name]
         
         fname = epoch_params['collectionName']
         item = QtGui.QListWidgetItem(fname)
-        self.caller.experiment.active_subject.handle_new_epochs(fname, epochs, epoch_params)
-        self.epochList.addItem(item)
+        self.caller.experiment.active_subject.handle_new_epochs(fname, epochs,
+                                                                epoch_params)
+        self.epochList.addItem(item, 1, overwrite=True)
         self.epochList.setCurrentItem(item)
+        
+        fname = str(item.text())
+        fpath = os.path.join(self.caller.experiment.active_subject._epochs_directory, fname)
+        epochs_object = self.caller.experiment.active_subject._epochs[fname]
+        fileManager.save_epoch(fpath, epochs_object, True)
 
         
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
@@ -571,15 +577,16 @@ class MainWindow(QtGui.QMainWindow):
         """
         TODO: get ed params from active_subject._evokeds dictionary
         """
+        
         collection_name = str(self.epochList.currentItem().text())
-        params = self.caller.experiment.active_subject._epochs[collection_name]._params
+        #params = self.caller.experiment.active_subject._epochs[collection_name]._params
         self.epochParameterDialog = EventSelectionDialog(self)
-
+        self.epochParameterDialog.initialize(collection_name)
         # modify_epochs removes the previous Epochs object and raw files
         # created from it and creates new Epochs object and raw files.
         # Also removes the epochWidget item and replaces it with the new one.
         self.epochParameterDialog.epoch_params_ready.\
-        connect(self.caller.experiment.active_subject.modify_epochs)
+        connect(self.create_new_epochs)
         self.epochParameterDialog.show()
 
                 

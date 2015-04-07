@@ -624,7 +624,7 @@ def save_epoch(fpath, epoch, overwrite=False):
     fpath     -- The full path and base name of the files without suffix
     epoch     -- Epochs object
     overwrite -- A boolean telling whether existing files should be
-                replaced. False by default. 
+                 replaced. False by default. 
     """
     if os.path.exists(fpath + '.fif') and overwrite is False:
         return

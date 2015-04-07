@@ -37,7 +37,7 @@ class EpochWidget(QtGui.QWidget):
         self.ui.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
         
-    def addItem(self, item, suffix = 1):
+    def addItem(self, item, suffix = 1, overwrite=False):
         """
         Add an item or items to the widget's list and sort the list.
         
@@ -68,15 +68,16 @@ class EpochWidget(QtGui.QWidget):
                     self.ui.listWidgetEpochs.sortItems()
                     self.item_added.emit(item)
                 else:
+                    if overwrite: return
                     suffix += 1
                     self.addItem(item, suffix)
                 
             else:
-                if not self.ui.listWidgetEpochs.findItems(item.text() +\
-                                                          suffix,\
+                if not self.ui.listWidgetEpochs.findItems(str(item.text()) +\
+                                                          str(suffix),\
                                                           QtCore.Qt.\
                                                           MatchFixedString):
-                    item.setText(item.text() + suffix)
+                    item.setText(str(item.text()) + str(suffix))
                     self.ui.listWidgetEpochs.addItem(item)
                     self.ui.listWidgetEpochs.sortItems()
                     self.item_added.emit(item) 
