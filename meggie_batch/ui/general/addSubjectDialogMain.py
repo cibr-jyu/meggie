@@ -38,12 +38,11 @@ from PyQt4 import QtCore,QtGui
 from addSubjectDialogUi import Ui_AddSubject
 from code_meggie.general.caller import Caller
 import fileManager
-from subject import Subject
 from infoDialogMain import InfoDialog
 import messageBoxes
 import traceback
 
-import os, sys
+import os
 
 from infoDialogUi import Ui_infoDialog
 

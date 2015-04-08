@@ -58,7 +58,7 @@
         <x>0</x>
         <y>0</y>
         <width>924</width>
-        <height>630</height>
+        <height>634</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -167,7 +167,7 @@
               <property name="title">
                <string>Rejection parameters</string>
               </property>
-              <widget class="QWidget" name="">
+              <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>10</x>
@@ -315,7 +315,7 @@
               <property name="title">
                <string>Epoch collection</string>
               </property>
-              <widget class="QWidget" name="">
+              <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>10</x>
@@ -464,7 +464,7 @@
               <item>
                <widget class="QPushButton" name="pushButtonReadEvents">
                 <property name="text">
-                 <string>Read events from file...</string>
+                 <string>Read events from xls file...</string>
                 </property>
                </widget>
               </item>
@@ -476,9 +476,6 @@
         </item>
        </layout>
       </widget>
-      <zorder></zorder>
-      <zorder>horizontalLayoutWidget_2</zorder>
-      <zorder>groupBoxEvent</zorder>
      </widget>
     </widget>
    </item>
@@ -486,15 +483,25 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>comboBoxEventID</tabstop>
-  <tabstop>lineEditName</tabstop>
   <tabstop>lineEditCollectionName</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
+  <tabstop>checkBoxStim</tabstop>
+  <tabstop>comboBoxEventID</tabstop>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>pushButtonAdd</tabstop>
+  <tabstop>pushButtonRemove</tabstop>
+  <tabstop>checkBoxGrad</tabstop>
   <tabstop>doubleSpinBoxGradReject_3</tabstop>
+  <tabstop>checkBoxMag</tabstop>
   <tabstop>doubleSpinBoxMagReject_3</tabstop>
+  <tabstop>checkBoxEeg</tabstop>
   <tabstop>doubleSpinBoxEEGReject_3</tabstop>
+  <tabstop>checkBoxEog</tabstop>
   <tabstop>doubleSpinBoxEOGReject_3</tabstop>
+  <tabstop>listWidgetEvents</tabstop>
+  <tabstop>pushButtonSaveEvents</tabstop>
+  <tabstop>pushButtonReadEvents</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCreateEpochs</tabstop>
  </tabstops>

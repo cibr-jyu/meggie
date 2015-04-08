@@ -63,7 +63,6 @@ from ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from ui.visualization.TFRDialogMain import TFRDialog
 from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
-from ui.visualization.spectrumDialogMain import SpectrumDialog
 from ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
 from ui.widgets.epochWidgetMain import EpochWidget
 from aboutDialogMain import AboutDialog
