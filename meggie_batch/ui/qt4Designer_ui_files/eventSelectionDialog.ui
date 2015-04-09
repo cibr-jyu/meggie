@@ -463,6 +463,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="pushButtonReadEvents">
+                <property name="toolTip">
+                 <string>You can add events from Excel files that are in form: name, sample, previous event id, current event id.</string>
+                </property>
                 <property name="text">
                  <string>Read events from xls file...</string>
                 </property>

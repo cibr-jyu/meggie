@@ -42,7 +42,7 @@ class TFRGroupAverageDialog(QtGui.QDialog):
     Class containing the logic for plotting group average TFRs over all
     subjects
     """
-    channels_selected = QtCore.pyqtSignal(list, str, int, bool)
+    channels_selected = QtCore.pyqtSignal(list, str, int, bool, bool, bool)
     
     def __init__(self):
         QtGui.QDialog.__init__(self)
@@ -94,9 +94,12 @@ class TFRGroupAverageDialog(QtGui.QDialog):
         dpi = self.ui.spinBoxDpi.value()
         saveTopo = self.ui.checkBoxSaveTopo.isChecked()
         channels = list()
-        if self.ui.checkBoxSavePlot.isChecked():
+        if self.ui.groupBox.isChecked():
             for i in xrange(self.ui.listWidgetChannels.count()):
                 channels.append(str(self.ui.listWidgetChannels.item(i).text()))
-        self.channels_selected.emit(channels, form, dpi, saveTopo)
+        savePlot = self.ui.checkBoxSavePlot.isChecked()
+        saveMax = self.ui.checkBoxSaveMaxima.isChecked()
+        self.channels_selected.emit(channels, form, dpi, saveTopo, savePlot,
+                                    saveMax)
         self.close()
         

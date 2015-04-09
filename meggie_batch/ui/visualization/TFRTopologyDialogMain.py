@@ -131,6 +131,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
+        Opens a dialog for group average parameters.
         """
         if checked is None: return
         averageDialog = TFRGroupAverageDialog()
@@ -138,17 +139,14 @@ class TFRTopologyDialog(QtGui.QDialog):
         averageDialog.exec_()
 
 
-    @QtCore.pyqtSlot(list, str, int, bool)
-    def compute_group_average(self, channels, form, dpi, saveTopo):
+    @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
+    def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
+                              saveMax):
         """
         Starts the computation of group average TFR.
         Parameters:
         channels - Selected channels of interest.
         """
-        print channels
-        print form
-        print dpi
-        print saveTopo
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
@@ -169,7 +167,12 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
         elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
         elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
-
+        
+        if saveMax:
+            saveMax = reptype
+        else:
+            saveMax = None
+            
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         elif self.ui.radioButtonLayoutFromFile.isChecked():
@@ -183,7 +186,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.caller.TFR_average(self.epoch_name, reptype, mode,
                                     minfreq, maxfreq, interval, blstart,
                                     blend, ncycles, decim, layout, channels,
-                                    form, dpi, saveTopo)
+                                    form, dpi, saveTopo, savePlot, saveMax)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))
