@@ -1119,7 +1119,7 @@ class Caller(object):
         
         
     def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  
-                     blstart, blend, interval, ncycles, lout, ch_type='mag'):
+                     blstart, blend, interval, ncycles, lout, ch_type, scalp):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
@@ -1138,7 +1138,9 @@ class Caller(object):
         interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
         layout        -- Layout to use.
-        ch_type       -- Determines if the topomap plotting uses eeg or mag.
+        ch_type       -- Channel type (mag | grad | eeg).
+        scalp         -- Parameter dictionary for scalp plot. If None, no scalp
+                         plot is drawn.
         """
         plt.close()
         print "Number of threads active", activeCount()
@@ -1180,10 +1182,14 @@ class Caller(object):
             pass #obsolete?
         elif reptype == 'average':
             try:
-                fig = power.plot_topomap(fmin=minfreq, fmax=maxfreq, 
-                                         ch_type=ch_type, layout=layout,
-                                         baseline=baseline, mode=mode,
-                                         cmap='Reds', show=False)
+                if scalp is not None:
+                    fig = power.plot_topomap(tmin=scalp['tmin'],
+                                             tmax=scalp['tmax'],
+                                             fmin=scalp['fmin'],
+                                             fmax=scalp['fmax'], 
+                                             ch_type=ch_type, layout=layout,
+                                             baseline=baseline, mode=mode,
+                                             cmap='Reds', show=False)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
                 fig = power.plot_topo(baseline=baseline, mode=mode, 
@@ -1198,20 +1204,19 @@ class Caller(object):
         elif reptype == 'itc':
             try:
                 title = 'Inter-Trial coherence'
-                fig = itc.plot_topomap(fmin=minfreq, fmax=maxfreq, 
-                                         ch_type=ch_type, layout=layout,
-                                         baseline=baseline, mode=mode,
-                                         cmap='Reds', show=False)
+                if scalp is not None:
+                    fig = itc.plot_topomap(tmin=scalp['tmin'],
+                                           tmax=scalp['tmax'],
+                                           fmin=scalp['fmin'],
+                                           fmax=scalp['fmax'], 
+                                           ch_type=ch_type, layout=layout,
+                                           baseline=baseline, mode=mode,
+                                           cmap='Reds', show=False)
                 fig = itc.plot_topo(baseline=baseline, mode=mode, 
                                     fmin=minfreq, fmax=maxfreq, vmin=0.,
                                     vmax=1., layout=layout, 
                                     title=title, cmap='Reds')
                 
-                #fig = topo.plot_topo_phase_lock(epochs, phase_lock, 
-                #                            frequencies, 
-                #                            layout, baseline=baseline, 
-                #                            mode=mode, decim=decim, 
-                #                            title=title)
                 fig.show()
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
@@ -1241,8 +1246,9 @@ class Caller(object):
         
         try:
             #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
-            power, itc = tfr_morlet(epochs, freqs=frequencies, n_cycles=ncycles, use_fft=False,
-                        return_itc=True, decim=decim, n_jobs=3)
+            power, itc = tfr_morlet(epochs, freqs=frequencies,
+                                    n_cycles=ncycles, use_fft=False,
+                                    return_itc=True, decim=decim, n_jobs=3)
 
         except ValueError as err:
             self.result = err
@@ -1259,8 +1265,11 @@ class Caller(object):
         
     def TFR_average(self, epochs_name, reptype, mode, minfreq, maxfreq,
                     interval, blstart, blend, ncycles, decim, layout,
-                    selected_channels, form, dpi, save_topo):
+                    selected_channels, form, dpi, save_topo, save_plot,
+                    save_max):
         """
+        Method for computing average TFR over all subjects in the experiment.
+        Creates data and picture files to output folder of the experiment.
         """
         try:
             layout = read_layout(layout)
@@ -1276,8 +1285,9 @@ class Caller(object):
         self.result = None
         pool = ThreadPool(processes=1)
         async_result = pool.apply_async(self._TFR_average, 
-                                        ( epochs_name, reptype, 
-                                         frequencies, ncycles, decim))
+                                        (epochs_name, selected_channels,
+                                         reptype, frequencies, ncycles, decim,
+                                         save_max))
         while(True):
             sleep(0.2)
             if self.e.is_set(): break;
@@ -1296,16 +1306,17 @@ class Caller(object):
         if reptype == 'average':
             title = 'Average power ' + epochs_name
             self._plot_TFR_topology(power, baseline, mode, minfreq, maxfreq,
-                                    layout, title, save_topo,
+                                    layout, title, save_topo, save_plot,
                                     selected_channels, dpi, form, epochs_name)
         elif reptype == 'itc':
             title = 'Inter-trial coherence ' + epochs_name
             self._plot_TFR_topology(itc, baseline, mode, minfreq, maxfreq,
-                                    layout, title, save_topo,
+                                    layout, title, save_topo, save_plot,
                                     selected_channels, dpi, form, epochs_name)
 
 
-    def _TFR_average(self, epochs_name, reptype, frequencies, ncycles, decim):
+    def _TFR_average(self, epochs_name, selected_channels, reptype,
+                     frequencies, ncycles, decim, save_max=False):
         """
         Performed in a working thread.
         """
@@ -1334,6 +1345,11 @@ class Caller(object):
         ch_names = []
         print directory
         print files2ave
+        if save_max:
+            exp_path = os.path.join(self.experiment.workspace,
+                                    self.experiment.experiment_name)
+            max_file = open(exp_path + '/output/' + save_max + '_maxima.txt',
+                            'w')
         for f in files2ave:
             try:
                 epochs = mne.read_epochs(join(directory, f))
@@ -1344,13 +1360,36 @@ class Caller(object):
                 power, itc = tfr_morlet(epochs, freqs=frequencies,
                                         n_cycles=ncycles, use_fft=False,
                                         return_itc=True, decim=decim, n_jobs=3)
+                if save_max is not None:
+                    # Write file for maxima
+                    p = None
+                    if save_max == 'itc':
+                        p = itc
+                    elif save_max == 'average':
+                        p = power
+                    max_file.write(f)
+                    max_file.write('\n')
+                    for ch in selected_channels:
+                        max_file.write(ch + '\n')
+                        idx = p.ch_names.index(ch)
+                        ch_data = p.data[idx]
+                        i = np.argmax(ch_data)
+                        f = i / len(ch_data[0])
+                        t = i % len(ch_data[0])
+                        f = p.freqs[f]
+                        t = p.times[t]
+                        string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
+                        max_file.write(string)
+                    max_file.write('\n')
                 powers.append(power)
                 itcs.append(itc)
                 weights.append(len(epochs))
             except Exception as e:
                 self.result = e
+                max_file.close()
                 self.e.set()
                 return
+        max_file.close()
         ch_names = list(set(ch_names))
         bads = set(bads)
         usedPowers = dict()
@@ -1403,8 +1442,8 @@ class Caller(object):
         
         
     def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
-                           title, save_topo=False, channels=[], dpi=200,
-                           form='png', epoch_name=''):
+                           title, save_topo=False, save_plot=False,
+                           channels=[], dpi=200, form='png', epoch_name=''):
         """
         Convenience method for plotting TFR topologies.
         Parameters:
@@ -1416,6 +1455,7 @@ class Caller(object):
         layout    - Layout for the image.
         title     - Title to show on the plot.
         save_topo - Boolean to indicate whether the figure is to be saved.
+        save_plot -
         channels  - Channels of interest.
         dpi       - Dots per inch for the figures.
         form      - File format for the figures.
@@ -1425,25 +1465,25 @@ class Caller(object):
                                 self.experiment.experiment_name)
         if not os.path.isdir(exp_path + '/output'):
             os.mkdir(exp_path + '/output')
-        
-        for channel in channels:
-            if not channel in power.ch_names:
-                print 'Channel ' + channel + ' not found!'
-                continue
-            print 'Saving channel ' + channel + ' figure to ' \
-                    + exp_path + '/output...'
-            self.parent.update_ui()
-            plt.clf()
-            idx = power.ch_names.index(channel)
-            try:
-                power.plot([idx], baseline=baseline, mode=mode, show=False)
-                plt.savefig(exp_path + '/output/tfr_channel_' + channel + '_'\
-                        + epoch_name + '.' + form, dpi=dpi, format=form)
-            except Exception as e:
-                print 'Error while saving figure for channel ' + channel
-                print str(e)
-            finally:
-                plt.close()
+        if save_plot:
+            for channel in channels:
+                if not channel in power.ch_names:
+                    print 'Channel ' + channel + ' not found!'
+                    continue
+                print 'Saving channel ' + channel + ' figure to ' \
+                        + exp_path + '/output...'
+                self.parent.update_ui()
+                plt.clf()
+                idx = power.ch_names.index(channel)
+                try:
+                    power.plot([idx], baseline=baseline, mode=mode, show=False)
+                    plt.savefig(exp_path + '/output/tfr_channel_' + channel \
+                        + '_' + epoch_name + '.' + form, dpi=dpi, format=form)
+                except Exception as e:
+                    print 'Error while saving figure for channel ' + channel
+                    print str(e)
+                finally:
+                    plt.close()
         try:
             fig = power.plot_topo(baseline=baseline, mode=mode, 
                                   fmin=fmin, fmax=fmax, vmin=0.,

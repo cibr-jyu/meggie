@@ -64,7 +64,12 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
-        
+        epochs = self.caller.experiment.active_subject._epochs[epoch_name]._raw
+        self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
+                
     
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
@@ -103,13 +108,10 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
         elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
         elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
-        
-        # TODO: Currently for EEG topologies are loaded from external files and MEG from pre-loaded topologies. Might change in the future!
+        ch_type = str(self.ui.comboBoxChannels.currentText())
         if self.ui.radioButtonSelectLayout.isChecked():
-            ch_type = 'mag'
             layout = self.ui.comboBoxLayout.currentText()
         elif self.ui.radioButtonLayoutFromFile.isChecked():
-            ch_type = 'eeg'
             layout = str(self.ui.labelLayout.text())
         if layout == 'No layout selected' or layout == '':
             QtGui.QApplication.restoreOverrideCursor()
@@ -117,10 +119,18 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         epochs = self.caller.experiment.active_subject._epochs[self.epoch_name]
+        scalp = dict()
+        if self.ui.groupBoxScalp.isChecked():
+            scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()
+            scalp['tmax'] = self.ui.doubleSpinBoxScalpTmax.value()
+            scalp['fmin'] = self.ui.doubleSpinBoxScalpFmin.value()
+            scalp['fmax'] = self.ui.doubleSpinBoxScalpFmax.value()
+        else:
+            scalp = None
         try:
             self.caller.TFR_topology(epochs._raw, reptype, minfreq, maxfreq,
                                      decim, mode, blstart, blend, interval,
-                                     ncycles, layout, ch_type)
+                                     ncycles, layout, ch_type, scalp)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))

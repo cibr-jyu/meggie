@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>381</width>
-    <height>709</height>
+    <width>544</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>363</width>
-        <height>526</height>
+        <width>526</width>
+        <height>552</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -38,7 +38,7 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxTopogpraphyType">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -50,7 +50,7 @@
           <string>Topography type</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QRadioButton" name="radioButtonInduced">
             <property name="enabled">
              <bool>false</bool>
@@ -63,7 +63,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QRadioButton" name="radioButtonPhase">
             <property name="enabled">
              <bool>false</bool>
@@ -73,7 +73,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QRadioButton" name="radioButtonAverage">
             <property name="text">
              <string>Average power</string>
@@ -83,25 +83,58 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QRadioButton" name="radioButtonITC">
             <property name="text">
              <string>Inter-trial coherence</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Channels:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxChannels">
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>mag</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>grad</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>eeg</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -118,7 +151,7 @@
           <string>Frequency window</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="1">
+          <item row="1" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_13">
@@ -131,6 +164,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
                 <property name="minimum">
                  <double>0.100000000000000</double>
                 </property>
@@ -155,6 +191,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
                 <property name="minimum">
                  <double>7.000000000000000</double>
                 </property>
@@ -179,6 +218,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
                 <property name="minimum">
                  <double>0.100000000000000</double>
                 </property>
@@ -233,20 +275,7 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="2">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -262,7 +291,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxBaseline">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -415,6 +444,125 @@
          </layout>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="groupBoxScalp">
+         <property name="toolTip">
+          <string>If checked, a scalp plot will be displayed.</string>
+         </property>
+         <property name="title">
+          <string>Scalp plot</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
+              <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Minimum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmin">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="value">
+                 <double>7.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Maximum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmax">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="value">
+                 <double>30.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Start time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmin">
+                <property name="minimum">
+                 <double>-10.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>End time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmax">
+                <property name="minimum">
+                 <double>-10.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -519,6 +667,7 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
+  <tabstop>comboBoxChannels</tabstop>
   <tabstop>radioButtonAverage</tabstop>
   <tabstop>radioButtonITC</tabstop>
   <tabstop>radioButtonInduced</tabstop>
@@ -528,6 +677,11 @@
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
   <tabstop>spinBoxNcycles</tabstop>
   <tabstop>spinBoxDecim</tabstop>
+  <tabstop>groupBoxScalp</tabstop>
+  <tabstop>doubleSpinBoxScalpFmin</tabstop>
+  <tabstop>doubleSpinBoxScalpFmax</tabstop>
+  <tabstop>doubleSpinBoxScalpTmin</tabstop>
+  <tabstop>doubleSpinBoxScalpTmax</tabstop>
   <tabstop>comboBoxMode</tabstop>
   <tabstop>doubleSpinBoxBaselineStart</tabstop>
   <tabstop>checkBoxBaselineStartNone</tabstop>

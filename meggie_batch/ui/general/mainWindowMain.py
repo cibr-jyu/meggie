@@ -724,7 +724,7 @@ class MainWindow(QtGui.QMainWindow):
                 message = 'Writing to selected folder is not allowed. ' + \
                 'You can still process the evoked file (visualize etc.).'
                 self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()  
+                self.messageBox.show()
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
