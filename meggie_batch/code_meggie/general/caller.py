@@ -1389,8 +1389,9 @@ class Caller(object):
                 max_file.close()
                 self.e.set()
                 return
-        print 'Closing file'
-        max_file.close()
+        if save_max:
+            print 'Closing file'
+            max_file.close()
         ch_names = list(set(ch_names))
         bads = set(bads)
         usedPowers = dict()
