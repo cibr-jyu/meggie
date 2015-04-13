@@ -1290,7 +1290,7 @@ class Caller(object):
                                          save_max))
         while(True):
             sleep(0.2)
-            if self.e.is_set(): break;
+            if self.e.is_set(): break
             self.parent.update_ui()
 
         if not self.result is None:
@@ -1389,6 +1389,7 @@ class Caller(object):
                 max_file.close()
                 self.e.set()
                 return
+        print 'Closing file'
         max_file.close()
         ch_names = list(set(ch_names))
         bads = set(bads)
@@ -1396,7 +1397,7 @@ class Caller(object):
         usedItcs = dict()
         usedChannels = []
         
-        # Populating the dictionaries
+        print 'Populating the dictionaries'
         for ch in chs:
             if ch in bads:
                 continue
@@ -1414,7 +1415,7 @@ class Caller(object):
         averagePower = []
         averageItc = []
         
-        # Averaging the values
+        print 'Averaging the values'
         for ch in usedChannels:
             averagePower.append(np.average(usedPowers[ch], axis=0,
                                            weights=weights))
@@ -1438,6 +1439,7 @@ class Caller(object):
             return
 
         self.e.set()
+        print 'Done'
         return power, itc
         
         
