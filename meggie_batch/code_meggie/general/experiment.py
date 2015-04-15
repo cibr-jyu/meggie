@@ -678,7 +678,8 @@ class ExperimentHandler(QObject):
                             self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
-                mBox = messageBoxes.shortMessageBox("Error opening the expriment.")
+                message = "Error opening the expriment."
+                mBox = messageBoxes.shortMessageBox(message)
                 mBox.exec_()
                 return
         else:
@@ -708,4 +709,9 @@ class ExperimentHandler(QObject):
 
             self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
+        else:
+            message = "Experiment configuration file (.exp) not found!"
+            mBox = messageBoxes.shortMessageBox(message)
+            mBox.exec_()
+            return
         

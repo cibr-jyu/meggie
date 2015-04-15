@@ -12,8 +12,6 @@ those parameters is impossible, needlessly compilicated or resource-hungry.
 
 import csv
 import os
-import fileManager
-
     
     
 

@@ -37,10 +37,7 @@ the application.
 """
 
 import os
-import ConfigParser
 from PyQt4 import QtCore, QtGui
-
-import prefecences
 
 from preferencesDialogUi import Ui_DialogPreferences
 import messageBoxes

@@ -1183,13 +1183,16 @@ class Caller(object):
         elif reptype == 'average':
             try:
                 if scalp is not None:
-                    fig = power.plot_topomap(tmin=scalp['tmin'],
+                    try:
+                        fig = power.plot_topomap(tmin=scalp['tmin'],
                                              tmax=scalp['tmax'],
                                              fmin=scalp['fmin'],
                                              fmax=scalp['fmax'], 
                                              ch_type=ch_type, layout=layout,
                                              baseline=baseline, mode=mode,
                                              cmap='Reds', show=False)
+                    except Exception as e:
+                        print str(e)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
                 fig = power.plot_topo(baseline=baseline, mode=mode, 

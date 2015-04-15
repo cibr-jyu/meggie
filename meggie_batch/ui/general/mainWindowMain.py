@@ -277,8 +277,12 @@ class MainWindow(QtGui.QMainWindow):
         path = str(QtGui.QFileDialog.getExistingDirectory(
                    self, "Select _experiment directory"))
         if path == '': return
-        
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        print 'Opening experiment ' + path
         self.experimentHandler.open_existing_experiment(os.path.basename(path))
+        print 'Done'
+        QtGui.QApplication.restoreOverrideCursor()
         
             
     def on_pushButtonAddSubjects_clicked(self, checked=None):
