@@ -38,7 +38,7 @@ the application.
 
 import os
 from PyQt4 import QtCore, QtGui
-
+from PyQt4.QtCore import pyqtSignal
 from preferencesDialogUi import Ui_DialogPreferences
 import messageBoxes
 
@@ -117,6 +117,7 @@ class PreferencesDialog(QtGui.QDialog):
         
         if os.path.isdir(self._workFilepath):
             workFilePath = self._workFilepath
+            self.parent.change_workspace(workFilePath)
         else:
             message = 'No file path found for working file'
             messageBox = messageBoxes.shortMessageBox(message)

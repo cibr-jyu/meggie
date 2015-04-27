@@ -101,6 +101,8 @@ class Caller(object):
 
         async_result = pool.apply_async(self.experiment.activate_subject, 
                                         (name,))
+
+        
         while(True):
             sleep(0.2)
             if self.experiment.is_ready(): break;
@@ -108,6 +110,7 @@ class Caller(object):
             
         return_val = async_result.get()
         pool.terminate()
+        
         if not return_val == 0:
             self.messageBox = messageBoxes.shortMessageBox('Could not set ' + \
                                         name + ' as active subject. ' + \
@@ -557,7 +560,7 @@ class Caller(object):
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
         rawFileName = os.path.splitext(os.path.split(self.experiment.\
-        _working_file_names[self.experiment._active_subject_name])[1])[0]
+                                                     _working_file_names[self.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
@@ -875,7 +878,7 @@ class Caller(object):
 
         pool.terminate()
             
-        print "Plotting evoked potentials..."
+        print "Plotting evoked..."
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
         
@@ -900,10 +903,10 @@ class Caller(object):
             files = [ f for f in listdir(directory)\
                       if isfile(join(directory,f)) and f.endswith('.fif') ]
             for f in files:
-                fgroups = re.split('[\[\]]', f) # '1-2-3'
+                fgroups = re.split('[\[\]]', f)  # '1-2-3'
                 if not len(fgroups) == 3: 
                     continue 
-                fgroups = re.split('[-]', fgroups[1]) # ['1','2','3']
+                fgroups = re.split('[-]', fgroups[1])  # ['1','2','3']
                 if sorted(fgroups) == sorted(groups):
                     files2ave.append(directory + '/' + f)
         
@@ -936,7 +939,8 @@ class Caller(object):
         usedChannels = []
         bads = []
         for group in groups:
-            max_key = max(evokeds[group], key= lambda x: len(evokeds[group][x]))
+            max_key = max(evokeds[group],
+                          key= lambda x: len(evokeds[group][x]))
             length = len(evokeds[group][max_key])
             evokedSet = []
             for ch in chs:
@@ -947,6 +951,13 @@ class Caller(object):
                     if not ch in usedChannels: usedChannels.append(ch)
                     data = evokeds[group][ch]
                     w = eweights[group]
+                    epoch_length = len(data[0])
+                    for d in data:
+                        if not len(d) == epoch_length:
+                            self.result = Exception("Epochs are different " +
+                                                    "in sizes!")
+                            self.e.set()
+                            return
                     ave = np.average(data, axis=0, weights=w)
                     evokedSet.append(ave)
                 except Exception as e:

@@ -116,7 +116,7 @@ class Experiment(QObject):
                 self._experiment_name = str(experiment_name)
                 exp_path = os.path.join(self._workspace,
                                         self._experiment_name)
-                os.mkdir(exp_path + '/output')
+                #os.mkdir(exp_path + '/output')
             else:
                 message = 'Use only letters and numbers in experiment name'
                 self.messageBox = messageBoxes.shortMessageBox(message)
@@ -321,15 +321,19 @@ class Experiment(QObject):
             self._subject_paths.append(subject_path)
 
 
-    def update_working_file(self, working_file_name):
+    def update_working_file(self, fname, subject_name=None):
         """
         Adds working file name to the working_file list.
         Updates to the previously processed file.
         
         Keyword arguments:
-        working_file_name    -- name of the working file
+        fname         -- Name of the working file.
+        subject_name  -- Name of the subject. If None, active subject is used.
         """
-        self._working_file_names[self.active_subject_name] = working_file_name
+        if subject_name:
+            self._working_file_names[subject_name] = fname
+        else:
+            self._working_file_names[self.active_subject_name] = fname
       
         
     def activate_subject(self, subject_name):
@@ -358,7 +362,12 @@ class Experiment(QObject):
                 self._active_subject_name = subject.subject_name
                 # Check if the working file is actually loaded already (in the
                 # case of addSubjectDialogMain accept() method).
-                self.load_working_file(subject)
+                try:
+                    self.load_working_file(subject)
+                except Exception as e:
+                    print str(e)
+                    self.e.set()
+                    return 1
                 self.save_experiment_settings()
         self.e.set()
         return 0
@@ -402,7 +411,7 @@ class Experiment(QObject):
         self.update_working_file(complete_raw_path)
         
         
-    def create_subjects(self, experiment, subject_paths):
+    def create_subjects(self, experiment, subject_paths, workspace):
         """Creates subjects when opening an experiment with subjects.
         Raw file is not set here.
         
@@ -411,8 +420,23 @@ class Experiment(QObject):
         subject_names -- list of subject names
         """
         for subject_path in subject_paths:
-            subject = Subject(experiment, os.path.basename(subject_path))
-            self._subjects.append(subject)
+            if os.path.exists(subject_path):
+                subject = Subject(experiment, os.path.basename(subject_path))
+                self._subjects.append(subject)
+            else:
+                folders = subject_path.split('/')
+                for i in range(len(folders)):
+                    path = workspace + '/' + '/'.join(folders[i:])
+                    if os.path.exists(path):
+                        print 'Could not find ' + subject_path + '.'
+                        print 'Using ' + path + ' instead.'
+                        print 'Changing experiment workspace to ' + workspace
+                        self.workspace = workspace
+                        subject = Subject(experiment, os.path.basename(path))
+                        self._subjects.append(subject)
+                        self.update_working_file(path + '/' + subject.subject_name + '.fif',
+                                                 subject.subject_name)
+                        break
             
     
     def release_memory(self):
@@ -462,8 +486,7 @@ class Experiment(QObject):
         files = os.listdir(subject._epochs_directory)
         for f in files:
             if f.endswith('.fif'):
-                fname = os.path.join(subject._epochs_directory,
-                                     f)
+                fname = os.path.join(subject._epochs_directory, f)
                 
                 name = f[:-4]
                 epochs, params = fileManager.load_epochs(fname)
@@ -488,16 +511,16 @@ class Experiment(QObject):
         """
         evokeds_items = []
         files = os.listdir(subject._evokeds_directory)
-        for file in files:
-            if file.endswith('.fif'):
+        for f in files:
+            if f.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                   file)
-                subject.handle_new_evoked(file, evoked, categories)
-                item = QtGui.QListWidgetItem(file)
+                                                   f)
+                subject.handle_new_evoked(f, evoked, categories)
+                item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
                 # Raw needs to be set when activating already created subject.
-                if subject._evokeds[file]._raw is None:
-                    subject._evokeds[file]._raw = evoked
+                if subject._evokeds[f]._raw is None:
+                    subject._evokeds[f]._raw = evoked
 
         return evokeds_items
             
@@ -701,7 +724,11 @@ class ExperimentHandler(QObject):
             finally:
                 print "Closing"
                 output.close()
-            caller.experiment.create_subjects(caller._experiment, caller._experiment._subject_paths)
+            self.parent.update_ui()
+            caller.experiment.create_subjects(caller._experiment,
+                            caller._experiment._subject_paths,
+                            self.parent.preferencesHandler.working_directory)
+            self.parent.update_ui()
             caller.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()
             self.parent._initialize_ui()

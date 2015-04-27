@@ -38,7 +38,7 @@ import os, sys, traceback, shutil
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QAbstractItemView
-from PyQt4.Qt import QApplication
+from PyQt4.Qt import QApplication, pyqtSlot
 import sip
 
 from mne import fiff
@@ -1741,8 +1741,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         Open the preferences dialog, in this case for choosing the workspace.
         """
-        self.preferencesDialog = PreferencesDialog(self)
-        self.preferencesDialog.exec_()
+        preferencesDialog = PreferencesDialog(self)
+        preferencesDialog.exec_()
+
+
+    def change_workspace(self, workspace):
+        self.caller.experiment.workspace = workspace
 
 
     def hide_workspace_option(self):
