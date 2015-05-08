@@ -463,6 +463,12 @@ class Experiment(QObject):
         #files = os.listdir(self.active_subject_path)
         if subject._working_file is None:
             path = os.path.join(self._workspace, self._experiment_name, subject._subject_name)
+            if not os.path.exists(path):
+                folders = path.split('/')
+                for i in range(len(folders)):
+                    path = self.workspace + '/' + '/'.join(folders[i:])
+                    if os.path.exists(path):
+                        break;
             files = os.listdir(path)
             for f in files:
                 file_path = os.path.join(path, f)
