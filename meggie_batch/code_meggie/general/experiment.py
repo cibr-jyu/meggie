@@ -427,6 +427,8 @@ class Experiment(QObject):
                 folders = subject_path.split('/')
                 for i in range(len(folders)):
                     path = workspace + '/' + '/'.join(folders[i:])
+                    # This here is done because the path might change when
+                    # moving external hard-drive from one computer to another.
                     if os.path.exists(path):
                         print 'Could not find ' + subject_path + '.'
                         print 'Using ' + path + ' instead.'
@@ -463,6 +465,8 @@ class Experiment(QObject):
         #files = os.listdir(self.active_subject_path)
         if subject._working_file is None:
             path = os.path.join(self._workspace, self._experiment_name, subject._subject_name)
+            # This here is done because the path might change when moving
+            # external hard-drive from one computer to another.
             if not os.path.exists(path):
                 folders = path.split('/')
                 for i in range(len(folders)):
@@ -489,7 +493,16 @@ class Experiment(QObject):
         if os.path.exists(self.active_subject._epochs_directory) is False:
             self.active_subject.create_epochs_directory
         epoch_items = []
-        files = os.listdir(subject._epochs_directory)
+        path = subject._epochs_directory
+        # This here is done because the path might change when moving external
+        # hard-drive from one computer to another.
+        if not os.path.exists(path):
+            folders = path.split('/')
+            for i in range(len(folders)):
+                path = self.workspace + '/' + '/'.join(folders[i:])
+                if os.path.exists(path):
+                    break;
+        files = os.listdir(path)
         for f in files:
             if f.endswith('.fif'):
                 fname = os.path.join(subject._epochs_directory, f)
