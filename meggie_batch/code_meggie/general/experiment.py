@@ -529,6 +529,14 @@ class Experiment(QObject):
         subject._evokeds objects.
         """
         evokeds_items = []
+        path = subject._evokeds_directory
+        if not os.path.exists(path):
+            folders = path.split('/')
+            for i in range(len(folders)):
+                path = self.workspace + '/' + '/'.join(folders[i:])
+                if os.path.exists(path):
+                    subject._evokeds_directory = path
+                    break;
         files = os.listdir(subject._evokeds_directory)
         for f in files:
             if f.endswith('.fif'):
