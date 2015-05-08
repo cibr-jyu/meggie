@@ -712,7 +712,12 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
-        
+        working_directory = self.parent.preferencesHandler.working_directory
+        if not os.path.exists(working_directory):
+            message = 'Could not find working directory. Check preferences.'
+            mBox = messageBoxes.shortMessageBox(message)
+            mBox.exec_()
+            return
         if name is not '':
             print "Opening experiment " + name
             try:
@@ -720,7 +725,7 @@ class ExperimentHandler(QObject):
                             self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
-                message = "Error opening the expriment."
+                message = "Error opening the experiment."
                 mBox = messageBoxes.shortMessageBox(message)
                 mBox.exec_()
                 return

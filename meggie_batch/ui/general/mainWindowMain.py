@@ -1746,6 +1746,8 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def change_workspace(self, workspace):
+        if self.caller.experiment is None:
+            return
         self.caller.experiment.workspace = workspace
 
 
