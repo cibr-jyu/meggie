@@ -505,7 +505,7 @@ class Experiment(QObject):
         files = os.listdir(path)
         for f in files:
             if f.endswith('.fif'):
-                fname = os.path.join(subject._epochs_directory, f)
+                fname = os.path.join(path, f)
                 
                 name = f[:-4]
                 epochs, params = fileManager.load_epochs(fname)
