@@ -752,8 +752,8 @@ class ExperimentHandler(QObject):
             caller.experiment.create_subjects(caller._experiment,
                             caller._experiment._subject_paths,
                             self.parent.preferencesHandler.working_directory)
-            if caller.experiment.working_directory != working_directory:
-                caller.experiment.working_directory = working_directory
+            if caller.experiment.workspace != working_directory:
+                caller.experiment.workspace = working_directory
             self.parent.update_ui()
             caller.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()
