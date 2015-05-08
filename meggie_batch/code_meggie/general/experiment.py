@@ -501,6 +501,7 @@ class Experiment(QObject):
             for i in range(len(folders)):
                 path = self.workspace + '/' + '/'.join(folders[i:])
                 if os.path.exists(path):
+                    subject._epochs_directory = path
                     break;
         files = os.listdir(path)
         for f in files:
