@@ -475,17 +475,22 @@ class Experiment(QObject):
                         break;
             files = os.listdir(path)
             for f in files:
+                if not f.endswith('.fif'): continue
                 file_path = os.path.join(path, f)
-                if file_path in self._working_file_names.values():
-                    raw = fileManager.open_raw(os.path.join(path, file_path))
+                for value in self._working_file_names.values():
+                    if value.endswith(f):
+                        
+                #if file_path in self._working_file_names.values():
+                        raw = fileManager.open_raw(file_path)
                     # TODO: set channel names with whitespaces for the subject.working_file
                     # Not necessarily needed when loading from subject folder because
                     # whitespaces are already added when new subject is added.
-                    subject._working_file = raw
-                else:
-                    self._working_file_names[path.split('/')[-1]] = file_path
-                    raw = fileManager.open_raw(os.path.join(path, file_path))
-                    subject._working_file = raw
+                        subject._working_file = raw
+                        break
+                #else:
+                #    self._working_file_names[path.split('/')[-1]] = file_path
+                #    raw = fileManager.open_raw(os.path.join(path, file_path))
+                #    subject._working_file = raw
         subject.find_stim_channel()
         subject.create_event_set()
         
