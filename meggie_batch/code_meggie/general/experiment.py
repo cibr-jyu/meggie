@@ -482,6 +482,10 @@ class Experiment(QObject):
                     # Not necessarily needed when loading from subject folder because
                     # whitespaces are already added when new subject is added.
                     subject._working_file = raw
+                else:
+                    self._working_file_names[path.split('/')[-1]] = file_path
+                    raw = fileManager.open_raw(os.path.join(path, file_path))
+                    subject._working_file = raw
         subject.find_stim_channel()
         subject.create_event_set()
         
