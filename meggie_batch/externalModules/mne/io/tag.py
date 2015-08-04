@@ -103,8 +103,8 @@ def read_big(fid, size=None):
         >>> fid_gz = gzip.open(fname_gz, 'rb')
         >>> y = np.fromstring(read_big(fid_gz))
         >>> assert np.all(x == y)
-        >>> shutil.rmtree(os.path.dirname(fname))
         >>> fid_gz.close()
+        >>> shutil.rmtree(os.path.dirname(fname))
 
     """
     # buf_size is chosen as a largest working power of 2 (16 MB):
@@ -156,8 +156,11 @@ def _fromstring_rows(fid, tag_size, dtype=None, shape=None, rlims=None):
         item_size = np.dtype(dtype).itemsize
         if not len(shape) == 2:
             raise ValueError('Only implemented for 2D matrices')
-        if not np.prod(shape) == tag_size / item_size:
-            raise ValueError('Wrong shape specified')
+        want_shape = np.prod(shape)
+        have_shape = tag_size // item_size
+        if want_shape != have_shape:
+            raise ValueError('Wrong shape specified, requested %s have %s'
+                             % (want_shape, have_shape))
         if not len(rlims) == 2:
             raise ValueError('rlims must have two elements')
         n_row_out = rlims[1] - rlims[0]
@@ -302,11 +305,20 @@ def read_tag(fid, pos=None, shape=None, rlims=None):
                 shape = (dims[1], dims[2])
                 if matrix_coding == matrix_coding_CCS:
                     #    CCS
-                    sparse.csc_matrix()
-                    sparse_indices = np.fromstring(fid.read(4 * nnz),
-                                                   dtype='>i4')
-                    sparse_ptrs = np.fromstring(fid.read(4 * (ncol + 1)),
-                                                dtype='>i4')
+                    tmp_indices = fid.read(4 * nnz)
+                    sparse_indices = np.fromstring(tmp_indices, dtype='>i4')
+                    tmp_ptrs = fid.read(4 * (ncol + 1))
+                    sparse_ptrs = np.fromstring(tmp_ptrs, dtype='>i4')
+                    if (sparse_ptrs[-1] > len(sparse_indices) or
+                            np.any(sparse_ptrs < 0)):
+                        # There was a bug in MNE-C that caused some data to be
+                        # stored without byte swapping
+                        sparse_indices = np.concatenate(
+                            (np.fromstring(tmp_indices[:4 * (nrow + 1)],
+                                           dtype='>i4'),
+                             np.fromstring(tmp_indices[4 * (nrow + 1):],
+                                           dtype='<i4')))
+                        sparse_ptrs = np.fromstring(tmp_ptrs, dtype='<i4')
                     tag.data = sparse.csc_matrix((sparse_data, sparse_indices,
                                                  sparse_ptrs), shape=shape)
                 else:
@@ -474,12 +486,25 @@ def read_tag(fid, pos=None, shape=None, rlims=None):
 
 def find_tag(fid, node, findkind):
     """Find Tag in an open FIF file descriptor
+
+    Parameters
+    ----------
+    fid : file-like
+        Open file.
+    node : dict
+        Node to search.
+    findkind : int
+        Tag kind to find.
+
+    Returns
+    -------
+    tag : instance of Tag
+        The first tag found.
     """
     for p in range(node['nent']):
         if node['directory'][p].kind == findkind:
             return read_tag(fid, node['directory'][p].pos)
-    tag = None
-    return tag
+    return None
 
 
 def has_tag(node, kind):

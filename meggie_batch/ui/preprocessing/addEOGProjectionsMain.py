@@ -89,12 +89,13 @@ class AddEOGProjections(QtGui.QDialog):
         mne.write_proj(self.proj_file, applied)
             
         result = self.caller.apply_eog(self.caller.experiment.active_subject.\
-                              working_file,
-                              self.caller.experiment._active_subject.\
-                              _subject_path)
+                                       working_file,
+                                       self.caller.experiment._active_subject.\
+                                       _subject_path)
         
         if result == 0:
             self.parent.ui.checkBoxEOGApplied.setChecked(True)
         QtGui.QApplication.restoreOverrideCursor()
+        self.parent._initialize_ui()
         self.close()
         

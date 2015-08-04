@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Wed Apr  1 08:42:28 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Tue Aug  4 05:47:13 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1100, 750))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1104, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -244,6 +244,9 @@ class Ui_MainWindow(object):
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.horizontalLayout_32 = QtGui.QHBoxLayout()
         self.horizontalLayout_32.setObjectName(_fromUtf8("horizontalLayout_32"))
+        self.pushButtonRawPlot = QtGui.QPushButton(self.groupBoxVisualization_2)
+        self.pushButtonRawPlot.setObjectName(_fromUtf8("pushButtonRawPlot"))
+        self.horizontalLayout_32.addWidget(self.pushButtonRawPlot)
         self.pushButtonSpectrum = QtGui.QPushButton(self.groupBoxVisualization_2)
         self.pushButtonSpectrum.setObjectName(_fromUtf8("pushButtonSpectrum"))
         self.horizontalLayout_32.addWidget(self.pushButtonSpectrum)
@@ -339,7 +342,10 @@ class Ui_MainWindow(object):
         self.formLayout_7.setLayout(0, QtGui.QFormLayout.FieldRole, self.verticalLayout_13)
         self.pushButtonVisualizeEpochChannels = QtGui.QPushButton(self.groupBoxAvailableEpoching)
         self.pushButtonVisualizeEpochChannels.setObjectName(_fromUtf8("pushButtonVisualizeEpochChannels"))
-        self.formLayout_7.setWidget(1, QtGui.QFormLayout.SpanningRole, self.pushButtonVisualizeEpochChannels)
+        self.formLayout_7.setWidget(1, QtGui.QFormLayout.LabelRole, self.pushButtonVisualizeEpochChannels)
+        self.pushButtonEpochsPlot = QtGui.QPushButton(self.groupBoxAvailableEpoching)
+        self.pushButtonEpochsPlot.setObjectName(_fromUtf8("pushButtonEpochsPlot"))
+        self.formLayout_7.setWidget(1, QtGui.QFormLayout.FieldRole, self.pushButtonEpochsPlot)
         self.gridLayout_19.addWidget(self.groupBoxAvailableEpoching, 1, 0, 1, 1)
         self.horizontalLayout_2.addWidget(self.frame_6)
         self.frameEpochCollectionParameters = QtGui.QFrame(self.tabEpoching)
@@ -1243,7 +1249,7 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1473, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1473, 27))
         self.menubar.setDefaultUp(False)
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
@@ -1597,6 +1603,7 @@ class Ui_MainWindow(object):
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections...", None))
         self.pushButtonApplyEOG.setText(_translate("MainWindow", "Apply EOG projections...", None))
         self.groupBoxVisualization_2.setTitle(_translate("MainWindow", "Visualization:", None))
+        self.pushButtonRawPlot.setText(_translate("MainWindow", "Raw plot", None))
         self.pushButtonSpectrum.setText(_translate("MainWindow", "Power spectrum", None))
         self.pushButtonMNE_Browse_Raw_2.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
         self.labelBads.setText(_translate("MainWindow", "Bad channels", None))
@@ -1611,6 +1618,7 @@ class Ui_MainWindow(object):
         self.pushButtonSaveEpochs.setText(_translate("MainWindow", "Export selected collection...", None))
         self.pushButtonLoadEpochs.setText(_translate("MainWindow", "Import collection...", None))
         self.pushButtonVisualizeEpochChannels.setText(_translate("MainWindow", "Visualize epochs in selected channels...", None))
+        self.pushButtonEpochsPlot.setText(_translate("MainWindow", "Epochs plot", None))
         self.label_3.setText(_translate("MainWindow", "Parameters of the selected epoch collection:", None))
         self.groupBoxEpochTimes.setTitle(_translate("MainWindow", "Time limits:", None))
         self.labelTmin.setText(_translate("MainWindow", "Start time:", None))
@@ -1719,10 +1727,10 @@ class Ui_MainWindow(object):
         self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans\'; font-size:10pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\"><br /></span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourceAnalysis), _translate("MainWindow", "Source analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))

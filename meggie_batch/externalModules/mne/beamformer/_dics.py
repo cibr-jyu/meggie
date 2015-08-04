@@ -12,12 +12,11 @@ import numpy as np
 from scipy import linalg
 
 from ..utils import logger, verbose
-from ..io.pick import pick_types
 from ..forward import _subject_from_forward
-from ..minimum_norm.inverse import combine_xyz
+from ..minimum_norm.inverse import combine_xyz, _check_reference
 from ..source_estimate import SourceEstimate
 from ..time_frequency import CrossSpectralDensity, compute_epochs_csd
-from ._lcmv import _prepare_beamformer_input
+from ._lcmv import _prepare_beamformer_input, _setup_picks
 from ..externals import six
 
 
@@ -64,7 +63,7 @@ def _apply_dics(data, info, tmin, forward, noise_csd, data_csd, reg,
         Source time courses.
     """
 
-    is_free_ori, picks, _, proj, vertno, G =\
+    is_free_ori, _, proj, vertno, G =\
         _prepare_beamformer_input(info, forward, label, picks, pick_ori)
 
     Cm = data_csd.data
@@ -157,7 +156,7 @@ def dics(evoked, forward, noise_csd, data_csd, reg=0.01, label=None,
 
     Parameters
     ----------
-    evoked : Evooked
+    evoked : Evoked
         Evoked data.
     forward : dict
         Forward operator.
@@ -180,18 +179,26 @@ def dics(evoked, forward, noise_csd, data_csd, reg=0.01, label=None,
     stc : SourceEstimate
         Source time courses
 
+    See Also
+    --------
+    dics_epochs
+
     Notes
     -----
     The original reference is:
     Gross et al. Dynamic imaging of coherent sources: Studying neural
     interactions in the human brain. PNAS (2001) vol. 98 (2) pp. 694-699
     """
+    _check_reference(evoked)
     info = evoked.info
     data = evoked.data
     tmin = evoked.times[0]
 
+    picks = _setup_picks(picks=None, info=info, forward=forward)
+    data = data[picks]
+
     stc = _apply_dics(data, info, tmin, forward, noise_csd, data_csd, reg=reg,
-                      label=label, pick_ori=pick_ori)
+                      label=label, pick_ori=pick_ori, picks=picks)
     return six.advance_iterator(stc)
 
 
@@ -238,23 +245,26 @@ def dics_epochs(epochs, forward, noise_csd, data_csd, reg=0.01, label=None,
     stc: list | generator of SourceEstimate
         The source estimates for all epochs
 
+    See Also
+    --------
+    dics
+
     Notes
     -----
     The original reference is:
     Gross et al. Dynamic imaging of coherent sources: Studying neural
     interactions in the human brain. PNAS (2001) vol. 98 (2) pp. 694-699
     """
+    _check_reference(epochs)
 
     info = epochs.info
     tmin = epochs.times[0]
 
-    # use only the good data channels
-    picks = pick_types(info, meg=True, eeg=True, ref_meg=False,
-                       exclude='bads')
+    picks = _setup_picks(picks=None, info=info, forward=forward)
     data = epochs.get_data()[:, picks, :]
 
     stcs = _apply_dics(data, info, tmin, forward, noise_csd, data_csd, reg=reg,
-                       label=label, pick_ori=pick_ori)
+                       label=label, pick_ori=pick_ori, picks=picks)
 
     if not return_generator:
         stcs = list(stcs)
@@ -314,9 +324,11 @@ def dics_source_power(info, forward, noise_csds, data_csds, reg=0.01,
     if isinstance(noise_csds, CrossSpectralDensity):
         noise_csds = [noise_csds]
 
-    csd_shapes = lambda x: tuple(c.data.shape for c in x)
+    def csd_shapes(x):
+        return tuple(c.data.shape for c in x)
+
     if (csd_shapes(data_csds) != csd_shapes(noise_csds) or
-       any([len(set(csd_shapes(c))) > 1 for c in [data_csds, noise_csds]])):
+       any(len(set(csd_shapes(c))) > 1 for c in [data_csds, noise_csds])):
         raise ValueError('One noise CSD matrix should be provided for each '
                          'data CSD matrix and vice versa. All CSD matrices '
                          'should have identical shape.')
@@ -338,7 +350,7 @@ def dics_source_power(info, forward, noise_csds, data_csds, reg=0.01,
     if len(frequencies) > 2:
         fstep = []
         for i in range(len(frequencies) - 1):
-            fstep.append(frequencies[i+1] - frequencies[i])
+            fstep.append(frequencies[i + 1] - frequencies[i])
         if not np.allclose(fstep, np.mean(fstep), 1e-5):
             warnings.warn('Uneven frequency spacing in CSD object, '
                           'frequencies in the resulting stc file will be '
@@ -349,8 +361,10 @@ def dics_source_power(info, forward, noise_csds, data_csds, reg=0.01,
     else:
         fstep = 1  # dummy value
 
-    is_free_ori, picks, _, proj, vertno, G =\
-        _prepare_beamformer_input(info, forward, label, picks=None,
+    picks = _setup_picks(picks=None, info=info, forward=forward)
+
+    is_free_ori, _, proj, vertno, G =\
+        _prepare_beamformer_input(info, forward, label, picks=picks,
                                   pick_ori=pick_ori)
 
     n_orient = 3 if is_free_ori else 1
@@ -446,6 +460,8 @@ def tf_dics(epochs, forward, noise_csds, tmin, tmax, tstep, win_lengths,
         tf source grid.
     mode : str
         Spectrum estimation mode can be either: 'multitaper' or 'fourier'.
+    n_ffts : list | None
+        FFT lengths to use for each frequency bin.
     mt_bandwidths : list of float
         The bandwidths of the multitaper windowing function in Hz. Only used in
         'multitaper' mode. One value should be provided for each frequency bin.
@@ -481,6 +497,7 @@ def tf_dics(epochs, forward, noise_csds, tmin, tmax, tstep, win_lengths,
     NOTE : Dalal et al. used a synthetic aperture magnetometry beamformer (SAM)
     in each time-frequency window instead of DICS.
     """
+    _check_reference(epochs)
 
     if pick_ori not in [None, 'normal']:
         raise ValueError('Unrecognized orientation option in pick_ori, '
@@ -587,7 +604,7 @@ def tf_dics(epochs, forward, noise_csds, tmin, tmax, tstep, win_lengths,
     # Creating stc objects containing all time points for each frequency bin
     stcs = []
     for i_freq, _ in enumerate(freq_bins):
-        stc = SourceEstimate(sol_final[i_freq, :, :].T, vertices=stc.vertno,
+        stc = SourceEstimate(sol_final[i_freq, :, :].T, vertices=stc.vertices,
                              tmin=tmin, tstep=tstep, subject=stc.subject)
         stcs.append(stc)
 

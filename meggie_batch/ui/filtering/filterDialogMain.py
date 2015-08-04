@@ -106,7 +106,7 @@ class FilterDialog(QtGui.QDialog):
                 previewRaw.info['highpass'] = paramDict['high_cutoff_freq']
     
             previewRaw.save(fname, overwrite=True)
-            raw = mne.io.RawFIFF(fname, preload=True)
+            raw = mne.io.Raw(fname, preload=True)
             self.caller.update_experiment_working_file(fname, raw)
             
             
@@ -243,9 +243,9 @@ class FilterDialog(QtGui.QDialog):
             raw.info['highpass'] = paramDict['high_cutoff_freq']
         
         raw.save(fname, overwrite=True)
-        raw = mne.io.RawFIFF(fname, preload=True)
+        raw = mne.io.Raw(fname, preload=True)
         self.caller.update_experiment_working_file(fname, raw)
-        
+
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()

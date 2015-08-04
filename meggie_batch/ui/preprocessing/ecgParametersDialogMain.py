@@ -267,6 +267,7 @@ class EcgParametersDialog(QtGui.QDialog):
             self.parent.ui.checkBoxECGComputed.setChecked(True)
             QtGui.QApplication.restoreOverrideCursor()
             self.close()
+            self.parent._initialize_ui()
             return
 
         recently_active_subject = self.caller.experiment._active_subject._subject_name
@@ -307,6 +308,7 @@ class EcgParametersDialog(QtGui.QDialog):
             shortMessageBox(incorrect_ECG_channel)
             self.messageBox.show()
         self.close()
+        self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonRemove_clicked(self, checked=None):

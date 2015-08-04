@@ -54,7 +54,7 @@ class MeasurementInfo(object):
         """
         if isinstance(raw, mne.io.Raw):
             self._raw = raw
-            self._info = dict(raw.info)
+            self._info = raw.info
         else:
             raise TypeError('Not a Raw object.')
     

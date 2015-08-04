@@ -133,7 +133,7 @@ class Epochs(QObject):
         tmax          = End time after the event
         
         Exceptions:
-        Raises TypeError if the raw object isn't of type mne.io.RawFIFF.
+        Raises TypeError if the raw object isn't of type mne.io.Raw.
         Raises Exception if picks are empty.
         
         Returns a set of epochs
@@ -147,7 +147,7 @@ class Epochs(QObject):
             meg = 'grad'
         else:
             meg = False
-        if isinstance(raw, mne.io.RawFIFF):
+        if isinstance(raw, mne.io.Raw):
             # Was mne.fiff.pick types with MNE 0.7
             picks = mne.pick_types(raw.info, meg=meg, eeg=eeg,
                                         stim=stim, eog=eog)

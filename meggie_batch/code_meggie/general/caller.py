@@ -17,14 +17,13 @@ import shutil
 from PyQt4 import QtCore, QtGui
 
 import mne
-from mne.time_frequency import induced_power
 from mne.layouts import read_layout
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
-from mne.time_frequency.tfr import tfr_morlet
+from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
 from mne.time_frequency import compute_raw_psd
 # TODO find these or equivalent in mne 0.8
 # from mne.viz import plot_topo_power, plot_topo_phase_lock
@@ -450,7 +449,7 @@ class Caller(object):
             # TODO: ecg_avg_applied.fif if ssp checked 
             appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
             raw.save(appliedfilename)
-            raw = mne.io.RawFIFF(appliedfilename, preload=True)
+            raw = mne.io.Raw(appliedfilename, preload=True)
         else:
             self.result = Exception('There is more than one ECG projection '+ \
                                     'file to apply. ' + \
@@ -461,8 +460,8 @@ class Caller(object):
             return
         self.update_experiment_working_file(appliedfilename, raw)
         self.e.set()
-        
-        
+
+
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
@@ -515,7 +514,7 @@ class Caller(object):
             # TODO: eog_avg_applied.fif if ssp checked
             appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
             raw.save(appliedfilename)
-            raw = mne.io.RawFIFF(appliedfilename, preload=True)
+            raw = mne.io.Raw(appliedfilename, preload=True)
         else:
             self.result = Exception('There is more than one EOG projection '+ \
                                     'file to apply. ' + \
@@ -528,7 +527,7 @@ class Caller(object):
         self.experiment.save_experiment_settings()
         self.e.set()
  
-    
+
     def average(self, epochs, category):
         """Average epochs.
         
@@ -593,8 +592,17 @@ class Caller(object):
         Saving an evoked dataset. Can save only one dataset at a time.
         """
         #read_evoked.save(prefix + '_audvis_eeg-ave' + suffix)
- 
-                
+
+
+    def save_raw(self):
+        """
+        Aux function for updating the raw file.
+        """
+        raw = self.experiment.active_subject._working_file
+        fname = raw.info['filename']
+        raw.save(fname, overwrite=True)
+
+
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
         Draws a topography representation of the evoked potentials.
@@ -1042,7 +1050,7 @@ class Caller(object):
         frequencies = np.arange(minfreq, maxfreq, interval)
         
         async_result = pool.apply_async(self._TFR, 
-                                        (raw, epochs, ch_index, frequencies, 
+                                        (epochs, ch_index, frequencies,
                                          ncycles, decim))
         while(True):
             sleep(0.2)
@@ -1063,13 +1071,17 @@ class Caller(object):
         #pl.clf()
         pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
         pl.subplot(3, 1, 1)
+        if ch_index in mne.pick_types(evoked.info, meg='grad', ref_meg=False):#str(evoked.ch_names[ch_index]).endswith('1'):
+            pl.ylabel('Magnetic Field (fT/cm)')
+            evoked_data *= 1e13
+        elif ch_index in mne.pick_types(evoked.info, meg='mag', ref_meg=False):
+            pl.ylabel('Magnetic Field (fT)')
+            evoked_data *= 1e15
+
         pl.plot(times, evoked_data.T)
         pl.title('Evoked response (%s)' % evoked.ch_names[ch_index])
         pl.xlabel('time (ms)')
-        if str(evoked.ch_names[ch_index]).endswith('1'):
-            pl.ylabel('Magnetic Field (fT)')
-        else:
-            pl.ylabel('Magnetic Field (fT/cm)')
+
         pl.xlim(times[0], times[-1])
         #pl.ylim(-150, 300)
         
@@ -1094,7 +1106,7 @@ class Caller(object):
         fig.show()
         
         
-    def _TFR(self, raw, epochs, ch_index, frequencies, ncycles, decim):
+    def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
         """
         Perfromed in a worker thread.
         """
@@ -1102,7 +1114,7 @@ class Caller(object):
         evoked = epochs.average()
         data = epochs.get_data()
         times = 1e3 * epochs.times # s to ms
-        evoked_data = evoked.data * 1e13
+        evoked_data = evoked.data
         try:
             data = data[:, ch_index:(ch_index+1), :]
             evoked_data = evoked_data[ch_index:(ch_index+1), :]
@@ -1110,15 +1122,12 @@ class Caller(object):
             self.result = Exception('Could not find epoch data: ' + str(err))
             self.e.set()
             return
-        
-        Fs = raw.info['sfreq']
+
         try:
-            power, phase_lock = induced_power(data, Fs=Fs,
-                                              frequencies=frequencies,
-                                              n_cycles=ncycles, n_jobs=1,
-                                              use_fft=False, decim=decim,
-                                              zero_mean=True)
-        except ValueError, err:
+            power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
+                                            frequencies, n_cycles=ncycles,
+                                            decim=decim, n_jobs=1)
+        except Exception, err:
             self.result = err
             self.e.set()
             return
@@ -1126,7 +1135,7 @@ class Caller(object):
         power /= np.mean(power[:, :, times[::decim] < 0], axis=2)[:, :, None]
         print 'Done'
         self.e.set()
-        return power, phase_lock, times, evoked, evoked_data
+        return power, itc, times, evoked, evoked_data
         
         
     def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  

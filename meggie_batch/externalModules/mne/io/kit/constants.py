@@ -1,6 +1,6 @@
 """KIT constants"""
 
-# Author: Teon Brooks <teon@nyu.edu>
+# Author: Teon Brooks <teon.brooks@gmail.com>
 #
 # License: BSD (3-clause)
 
@@ -19,7 +19,8 @@ KIT.STRING = 128
 KIT.AMPLIFIER_INFO = 112
 KIT.BASIC_INFO = 16
 KIT.CHAN_SENS = 80
-KIT.DATA_OFFSET = 144
+KIT.RAW_OFFSET = 144
+KIT.AVE_OFFSET = 160
 KIT.SAMPLE_INFO = 128
 KIT.MRK_INFO = 192
 KIT.CHAN_LOC_OFFSET = 64
@@ -87,7 +88,7 @@ KIT_AD.GAIN3_BIT = 24  # stored in Bit 24-26
 KIT_AD.GAIN3_MASK = 2 ** 24 + 2 ** 25 + 2 ** 26
 KIT_AD.HPF_BIT = 8  # stored in Bit 8-10
 KIT_AD.HPF_MASK = 2 ** 8 + 2 ** 9 + 2 ** 10
-KIT_AD.LPF_BIT = 18  # stored in Bit 16-18
+KIT_AD.LPF_BIT = 16  # stored in Bit 16-18
 KIT_AD.LPF_MASK = 2 ** 16 + 2 ** 17 + 2 ** 18
 KIT_AD.BEF_BIT = 0  # stored in Bit 0-1
 KIT_AD.BEF_MASK = 2 ** 0 + 2 ** 1

@@ -196,9 +196,8 @@ class EventSelectionDialog(QtGui.QDialog):
         elif grad:
             meg = 'grad'
         else: meg = False
-        
-        picks = mne.fiff.pick_types(self.caller.experiment.active_subject._working_file.info, meg=meg, eeg=eeg,
-                                    stim=stim, eog=eog)
+        info = self.caller.experiment.active_subject._working_file.info
+        picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
             self.messageBox = messageBoxes.shortMessageBox(message)

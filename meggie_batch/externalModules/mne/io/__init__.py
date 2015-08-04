@@ -8,7 +8,7 @@
 from .open import fiff_open, show_fiff, _fiff_get_fid
 from .meas_info import read_fiducials, write_fiducials, read_info, write_info
 
-from .proj import proj_equal, make_eeg_average_ref_proj
+from .proj import make_eeg_average_ref_proj
 from . import array
 from . import base
 from . import brainvision
@@ -25,9 +25,12 @@ from .brainvision import read_raw_brainvision
 from .bti import read_raw_bti
 from .edf import read_raw_edf
 from .egi import read_raw_egi
-from .kit import read_raw_kit
+from .kit import read_raw_kit, read_epochs_kit
+from .fiff import read_raw_fif
 
 # for backward compatibility
-from .fiff import RawFIFF
-from .fiff import RawFIFF as Raw
-from .base import concatenate_raws, get_chpi_positions, set_eeg_reference
+from .fiff import RawFIF
+from .fiff import RawFIF as Raw
+from .base import concatenate_raws
+from .chpi import  get_chpi_positions
+from .reference import set_eeg_reference, set_bipolar_reference, add_reference_channels

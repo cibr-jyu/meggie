@@ -108,7 +108,7 @@ class Subject(QObject):
         Keyword arguments:
         raw_data        -- the raw data file of the measured data
         """
-        if (isinstance(raw_data, mne.io.RawFIFF)):
+        if (isinstance(raw_data, mne.io.Raw)):
             self._raw_data = raw_data
         else:
             raise Exception('Wrong data type')
@@ -156,7 +156,7 @@ class Subject(QObject):
         Keyword arguments:
         raw         -- raw data file.
         """
-        if (isinstance(raw, mne.io.RawFIFF)):
+        if (isinstance(raw, mne.io.Raw)):
             self._working_file = raw
         else:
             raise Exception('Wrong data type')
@@ -235,8 +235,9 @@ class Subject(QObject):
             try:
                 # TODO: Check if the file is saved with .fif suffix,
                 # if not, save the file with .fif suffix.
-                mne.io.RawFIFF.save(self._working_file, os.path.join(path, \
-                                  str(os.path.basename(file_name))))
+                mne.io.Raw.save(self._working_file,
+                                os.path.join(path,
+                                             str(os.path.basename(file_name))))
                 
                 # Save channel names list under subject folder
                 fileManager.pickleObjectToFile(self._working_file.ch_names,
@@ -303,9 +304,9 @@ class Subject(QObject):
         Creates an event set where the first element is the id
         and the second element is the number of the events.
         Raises type error if the working_file attribute is not set or
-        if the data is not of type mne.io.RawFIFF.
+        if the data is not of type mne.io.Raw.
         """
-        if not isinstance(self._working_file, mne.io.RawFIFF):
+        if not isinstance(self._working_file, mne.io.Raw):
             raise TypeError('Nt a raw object')
         if self.stim_channel == None:
             return

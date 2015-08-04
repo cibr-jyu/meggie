@@ -4,6 +4,7 @@
 # License: BSD (3-clause)
 
 import os
+from os import path as op
 import glob
 import numpy as np
 from numpy import sin, cos
@@ -43,15 +44,17 @@ def _coord_frame_name(cframe):
              FIFF.FIFFV_MNE_COORD_FS_TAL_GTZ: 'Talairach (MNI z > 0)',
              FIFF.FIFFV_MNE_COORD_FS_TAL_LTZ: 'Talairach (MNI z < 0)',
              -1: 'unknown'}
-    return types.get(cframe, 'unknown')
+    return types.get(int(cframe), 'unknown')
 
 
 def _print_coord_trans(t, prefix='Coordinate transformation: '):
     logger.info(prefix + '%s -> %s'
                 % (_coord_frame_name(t['from']), _coord_frame_name(t['to'])))
-    for tt in t['trans']:
-        logger.info('    % 8.6f % 8.6f % 8.6f    %7.2f mm' %
-                    (tt[0], tt[1], tt[2], 1000 * tt[3]))
+    for ti, tt in enumerate(t['trans']):
+        scale = 1000. if ti != 3 else 1.
+        text = ' mm' if ti != 3 else ''
+        logger.info('    % 8.6f % 8.6f % 8.6f    %7.2f%s' %
+                    (tt[0], tt[1], tt[2], scale * tt[3], text))
 
 
 def _find_trans(subject, subjects_dir=None):
@@ -226,18 +229,52 @@ def translation(x=0, y=0, z=0):
     return m
 
 
-def _get_mri_head_t_from_trans_file(fname):
-    """Helper to convert "-trans.txt" to "-trans.fif" mri-type equivalent"""
-    # Read a Neuromag -> FreeSurfer transformation matrix
-    t = np.genfromtxt(fname)
-    if t.ndim != 2 or t.shape != (4, 4):
-        raise RuntimeError('File "%s" did not have 4x4 entries' % fname)
-    t = {'from': FIFF.FIFFV_COORD_HEAD, 'to': FIFF.FIFFV_COORD_MRI, 'trans': t}
-    return invert_transform(t)
+def _get_mri_head_t(mri):
+    """Get mri_head_t (from=mri, to=head) from mri filename"""
+    if isinstance(mri, string_types):
+        if not op.isfile(mri):
+            raise IOError('mri file "%s" not found' % mri)
+        if op.splitext(mri)[1] in ['.fif', '.gz']:
+            mri_head_t = read_trans(mri)
+        else:
+            # convert "-trans.txt" to "-trans.fif" mri-type equivalent
+            t = np.genfromtxt(mri)
+            if t.ndim != 2 or t.shape != (4, 4):
+                raise RuntimeError('File "%s" did not have 4x4 entries'
+                                   % mri)
+            mri_head_t = {'from': FIFF.FIFFV_COORD_HEAD,
+                          'to': FIFF.FIFFV_COORD_MRI, 'trans': t}
+    else:  # dict
+        mri_head_t = mri
+        mri = 'dict'
+    # it's usually a head->MRI transform, so we probably need to invert it
+    if mri_head_t['from'] == FIFF.FIFFV_COORD_HEAD:
+        mri_head_t = invert_transform(mri_head_t)
+    if not (mri_head_t['from'] == FIFF.FIFFV_COORD_MRI and
+            mri_head_t['to'] == FIFF.FIFFV_COORD_HEAD):
+        raise RuntimeError('Incorrect MRI transform provided')
+    return mri_head_t, mri
 
 
 def combine_transforms(t_first, t_second, fro, to):
-    """Combine two transforms"""
+    """Combine two transforms
+
+    Parameters
+    ----------
+    t_first : dict
+        First transform.
+    t_second : dict
+        Second transform.
+    fro : int
+        From coordinate frame.
+    to : int
+        To coordinate frame.
+
+    Returns
+    -------
+    trans : dict
+        Combined transformation.
+    """
     if t_first['from'] != fro:
         raise RuntimeError('From mismatch: %s ("%s") != %s ("%s")'
                            % (t_first['from'],
@@ -271,6 +308,10 @@ def read_trans(fname):
     trans : dict
         The transformation dictionary from the fif file.
 
+    See Also
+    --------
+    write_trans
+
     Notes
     -----
     The trans dictionary has the following structure:
@@ -299,9 +340,12 @@ def write_trans(fname, trans):
         The name of the file, which should end in '-trans.fif'.
     trans : dict
         Trans file data, as returned by read_trans.
+
+    See Also
+    --------
+    read_trans
     """
     check_fname(fname, 'trans', ('-trans.fif', '-trans.fif.gz'))
-
     fid = start_file(fname)
     write_coord_trans(fid, trans)
     end_file(fid)
@@ -309,10 +353,19 @@ def write_trans(fname, trans):
 
 def invert_transform(trans):
     """Invert a transformation between coordinate systems
+
+    Parameters
+    ----------
+    trans : dict
+        Transform to invert.
+
+    Returns
+    -------
+    inv_trans : dict
+        Inverse transform.
     """
-    itrans = {'to': trans['from'], 'from': trans['to'],
-              'trans': linalg.inv(trans['trans'])}
-    return itrans
+    return {'to': trans['from'], 'from': trans['to'],
+            'trans': linalg.inv(trans['trans'])}
 
 
 _frame_dict = dict(meg=FIFF.FIFFV_COORD_DEVICE,
@@ -325,9 +378,9 @@ def transform_surface_to(surf, dest, trans):
 
     Parameters
     ----------
-    src : dict
+    surf : dict
         Surface.
-    orig: 'meg' | 'mri' | 'head' | int
+    dest : 'meg' | 'mri' | 'head' | int
         Destination coordinate system. Can be an integer for using
         FIFF types.
     trans : dict
@@ -366,6 +419,7 @@ def transform_coordinates(filename, pos, orig, dest):
     filename: string
         Name of a fif file containing the coordinate transformations
         This file can be conveniently created with mne_collect_transforms
+        or ``collect_transforms``.
     pos: array of shape N x 3
         array of locations to transform (in meters)
     orig: 'meg' | 'mri'
@@ -382,8 +436,8 @@ def transform_coordinates(filename, pos, orig, dest):
     trans_pos: array of shape N x 3
         The transformed locations
 
-    Example
-    -------
+    Examples
+    --------
     transform_coordinates('all-trans.fif', np.eye(3), 'meg', 'fs_tal')
     transform_coordinates('all-trans.fif', np.eye(3), 'mri', 'mni_tal')
     """
@@ -421,9 +475,9 @@ def transform_coordinates(filename, pos, orig, dest):
     #
     #   Check we have everything we need
     #
-    if ((orig == FIFF.FIFFV_COORD_HEAD and T0 is None) or (T1 is None)
-            or (T2 is None) or (dest == FIFF.FIFFV_MNE_COORD_FS_TAL and
-                                ((T3minus is None) or (T3minus is None)))):
+    if ((orig == FIFF.FIFFV_COORD_HEAD and T0 is None) or (T1 is None) or
+            (T2 is None) or (dest == FIFF.FIFFV_MNE_COORD_FS_TAL and
+                             ((T3minus is None) or (T3minus is None)))):
         raise ValueError('All required coordinate transforms not found')
 
     #
@@ -463,77 +517,95 @@ def transform_coordinates(filename, pos, orig, dest):
     return trans_pos
 
 
-# @verbose
-# def transform_meg_chs(chs, trans, verbose=None):
-#     """
-#     %
-#     % [res, count] = fiff_transform_meg_chs(chs,trans)
-#     %
-#     % Move to another coordinate system in MEG channel channel info
-#     % Count gives the number of channels transformed
-#     %
-#     % NOTE: Only the coil_trans field is modified by this routine, not
-#     % loc which remains to reflect the original data read from the fif file
-#     %
-#     %
-#
-#     XXX
-#     """
-#
-#     res = copy.deepcopy(chs)
-#
-#     count = 0
-#     t = trans['trans']
-#     for ch in res:
-#         if (ch['kind'] == FIFF.FIFFV_MEG_CH
-#                                     or ch['kind'] == FIFF.FIFFV_REF_MEG_CH):
-#             if (ch['coord_frame'] == trans['from']
-#                                             and ch['coil_trans'] is not None):
-#                 ch['coil_trans'] = np.dot(t, ch['coil_trans'])
-#                 ch['coord_frame'] = trans['to']
-#                 count += 1
-#
-#     if count > 0:
-#         logger.info('    %d MEG channel locations transformed' % count)
-#
-#     return res, count
+def get_ras_to_neuromag_trans(nasion, lpa, rpa):
+    """Construct a transformation matrix to the MNE head coordinate system
 
-# @verbose
-# def transform_eeg_chs(chs, trans, verbose=None):
-#     """
-#     %
-#     % [res, count] = fiff_transform_eeg_chs(chs,trans)
-#     %
-#     % Move to another coordinate system in EEG channel channel info
-#     % Count gives the number of channels transformed
-#     %
-#     % NOTE: Only the eeg_loc field is modified by this routine, not
-#     % loc which remains to reflect the original data read from the fif file
-#     %
-#
-#     XXX
-#     """
-#     res = copy.deepcopy(chs)
-#
-#     count = 0
-#     #
-#     #   Output unaugmented vectors from the transformation
-#     #
-#     t = trans['trans'][:3,:]
-#     for ch in res:
-#         if ch['kind'] == FIFF.FIFFV_EEG_CH:
-#             if (ch['coord_frame'] == trans['from']
-#                                             and ch['eeg_loc'] is not None):
-#                 #
-#                 # Transform the augmented EEG location vectors
-#                 #
-#                 for p in range(ch['eeg_loc'].shape[1]):
-#                     ch['eeg_loc'][:, p] = np.dot(t,
-#                                                 np.r_[ch['eeg_loc'][:,p], 1])
-#                 count += 1
-#                 ch['coord_frame'] = trans['to']
-#
-#     if count > 0:
-#         logger.info('    %d EEG electrode locations transformed\n' % count)
-#
-#     return res, count
+    Construct a transformation matrix from an arbitrary RAS coordinate system
+    to the MNE head coordinate system, in which the x axis passes through the
+    two preauricular points, and the y axis passes through the nasion and is
+    normal to the x axis. (see mne manual, pg. 97)
+
+    Parameters
+    ----------
+    nasion : array_like, shape (3,)
+        Nasion point coordinate.
+    lpa : array_like, shape (3,)
+        Left peri-auricular point coordinate.
+    rpa : array_like, shape (3,)
+        Right peri-auricular point coordinate.
+
+    Returns
+    -------
+    trans : numpy.array, shape = (4, 4)
+        Transformation matrix to MNE head space.
+    """
+    # check input args
+    nasion = np.asarray(nasion)
+    lpa = np.asarray(lpa)
+    rpa = np.asarray(rpa)
+    for pt in (nasion, lpa, rpa):
+        if pt.ndim != 1 or len(pt) != 3:
+            raise ValueError("Points have to be provided as one dimensional "
+                             "arrays of length 3.")
+
+    right = rpa - lpa
+    right_unit = right / linalg.norm(right)
+
+    origin = lpa + np.dot(nasion - lpa, right_unit) * right_unit
+
+    anterior = nasion - origin
+    anterior_unit = anterior / linalg.norm(anterior)
+
+    superior_unit = np.cross(right_unit, anterior_unit)
+
+    x, y, z = -origin
+    origin_trans = translation(x, y, z)
+
+    trans_l = np.vstack((right_unit, anterior_unit, superior_unit, [0, 0, 0]))
+    trans_r = np.reshape([0, 0, 0, 1], (4, 1))
+    rot_trans = np.hstack((trans_l, trans_r))
+
+    trans = np.dot(rot_trans, origin_trans)
+    return trans
+
+
+def collect_transforms(fname, xforms):
+    """Collect a set of transforms in a single FIFF file
+
+    Parameters
+    ----------
+    fname : str
+        Filename to save to.
+    xforms : list of dict
+        List of transformations.
+    """
+    check_fname(fname, 'trans', ('-trans.fif', '-trans.fif.gz'))
+    with start_file(fname) as fid:
+        for xform in xforms:
+            write_coord_trans(fid, xform)
+        end_file(fid)
+
+
+def _sphere_to_cartesian(theta, phi, r):
+    """Transform spherical coordinates to cartesian"""
+    z = r * np.sin(phi)
+    rcos_phi = r * np.cos(phi)
+    x = rcos_phi * np.cos(theta)
+    y = rcos_phi * np.sin(theta)
+    return x, y, z
+
+
+def _polar_to_cartesian(theta, r):
+    """Transform polar coordinates to cartesian"""
+    x = r * np.cos(theta)
+    y = r * np.sin(theta)
+    return x, y
+
+
+def _cartesian_to_sphere(x, y, z):
+    """Transform cartesian coordinates to spherical"""
+    hypotxy = np.hypot(x, y)
+    r = np.hypot(hypotxy, z)
+    elev = np.arctan2(z, hypotxy)
+    az = np.arctan2(y, x)
+    return az, elev, r

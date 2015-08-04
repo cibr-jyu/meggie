@@ -98,7 +98,8 @@ class AddSubjectDialog(QtGui.QDialog):
                 if self.caller.experiment._active_subject is not None:
                     self.caller.experiment.release_memory()
                 self.caller.experiment.create_subject(subject_name, 
-                                                      self.caller.experiment, raw_path)
+                                                      self.caller.experiment,
+                                                      raw_path)
             except Exception:
                 tb = traceback.format_exc()
                 title = 'Problem creating a new subject'
@@ -107,6 +108,8 @@ class AddSubjectDialog(QtGui.QDialog):
                        str(tb)
                 self.messageBox = messageBoxes.longMessageBox(title, message)
                 self.messageBox.show()
+                QtGui.QApplication.restoreOverrideCursor()
+                return
              
             self.caller.activate_subject(subject_name)
             
@@ -122,7 +125,7 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent.reinitialize_models() 
         
         self.close()
-        QtGui.QApplication.restoreOverrideCursor() 
+        QtGui.QApplication.restoreOverrideCursor()
         
         
     def on_pushButtonBrowse_clicked(self, checked=None):

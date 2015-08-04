@@ -41,7 +41,7 @@ from PyQt4.QtGui import QWhatsThis, QAbstractItemView
 from PyQt4.Qt import QApplication, pyqtSlot
 import sip
 
-from mne import fiff
+from mne.evoked import write_evokeds
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -224,7 +224,7 @@ class MainWindow(QtGui.QMainWindow):
         Closes the program, possibly after a confirmation by the user.
         """
         if checked is None: return
-        
+
         if self.preferencesHandler.confirm_quit == True:
             reply = QtGui.QMessageBox.question(self, 'Close Meggie',
                      'Are you sure you want to quit Meggie?', 
@@ -241,7 +241,7 @@ class MainWindow(QtGui.QMainWindow):
         Create a new CreateExperimentDialog and show it
         """
         if checked is None: return # Standard workaround for file dialog opening twice
-        
+
         if self.preferencesHandler.working_directory != '':
             self.dialog = CreateExperimentDialog(self)
             self.dialog.experimentCreated.connect(self.setExperiment)
@@ -252,8 +252,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.dialog = CreateExperimentDialog(self)
                 self.dialog.experimentCreated.connect(self.setExperiment)
                 self.dialog.show()   
-                
-    
+
+
     @QtCore.pyqtSlot(Experiment)
     def setExperiment(self, newExperiment):
         """
@@ -732,7 +732,7 @@ class MainWindow(QtGui.QMainWindow):
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
-            fiff.write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
+            write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
             print '[done]'
         except IOError:
             message = 'Writing to selected folder is not allowed. You can still' \
@@ -767,7 +767,7 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog.exec_()
 
         
-    def on_pushButtonVisualizeEpochChannels_clicked(self, checked = None):
+    def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel
         """
         if checked is None: return
@@ -775,8 +775,6 @@ class MainWindow(QtGui.QMainWindow):
             message = 'Create epochs before visualizing.' 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-        
-            
             return
         epochs_name = str(self.epochList.ui.listWidgetEpochs.\
                           currentItem().text())
@@ -784,7 +782,30 @@ class MainWindow(QtGui.QMainWindow):
         self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
         self.visualizeEpochChannelsDialog.exec_()
 
-        
+
+    def on_pushButtonEpochsPlot_clicked(self, checked=None):
+        """
+        Call ``epochs.plot``.
+        """
+        if checked is None: return
+        if self.epochList.ui.listWidgetEpochs.count() == 0:
+            message = 'Create epochs before visualizing.' 
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
+                          currentItem().text())
+        epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
+        def handle_close(event):
+            path = self.caller.experiment.active_subject._epochs_directory
+            fpath = os.path.join(path, epochs_name)
+            inst = self.caller.experiment.active_subject._epochs[epochs_name]
+            fileManager.save_epoch(fpath, inst, True)
+            self.epochList.selection_changed()
+        fig = epochs.plot(trellis=False, block=True, show=True)
+        fig.canvas.mpl_connect('close_event', handle_close)
+
+
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """
         Plot the evoked data as a topology
@@ -881,7 +902,8 @@ class MainWindow(QtGui.QMainWindow):
         try:                
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_collection_name + ' ...'
-            fiff.write_evokeds(os.path.join(saveFolder, evoked_collection_name), evokeds)
+            write_evokeds(os.path.join(saveFolder, evoked_collection_name),
+                          evokeds)
             print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
@@ -988,7 +1010,26 @@ class MainWindow(QtGui.QMainWindow):
         else:
             return
 
-                    
+
+    def on_pushButtonRawPlot_clicked(self, checked=None):
+        """
+        Call ``raw.plot``.
+        """
+        if checked is None: return
+        if self.caller.experiment is None: return
+        def handle_close(event):
+            self.caller.save_raw()
+            self._initialize_ui()
+        try:
+            raw = self.caller.experiment.active_subject._working_file
+            fig = raw.plot(block=True, show=True)
+            fig.canvas.mpl_connect('close_event', handle_close)
+        except Exception, err:
+            self.messageBox = messageBoxes.shortMessageBox(str(err))
+            self.messageBox.show()
+            return
+
+
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
         Call mne_browse_raw.
@@ -1047,7 +1088,7 @@ class MainWindow(QtGui.QMainWindow):
         self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
 
-        
+
     def on_pushButtonECG_clicked(self, checked=None):
         """
         Open the dialog for calculating the ECG PCA.
@@ -1420,8 +1461,7 @@ class MainWindow(QtGui.QMainWindow):
     
 
 ### Code for populating and updating various lists and tables in the MainWindow ###       
-    
-    
+
 
 ### Code for UI initialization (when starting the program) and updating when something changes ### 
     
@@ -1617,8 +1657,8 @@ class MainWindow(QtGui.QMainWindow):
             # TODO: implement this functionality, then use existing
             # CovarianceWidgetEpochs
             pass
-    
-    
+
+
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
@@ -1641,7 +1681,6 @@ class MainWindow(QtGui.QMainWindow):
         channel averaging.
         """
         self.ui.comboBoxLobes.clear()
-        
         self.ui.comboBoxLobes.addItem('Vertex')
         self.ui.comboBoxLobes.addItem('Left-temporal')
         self.ui.comboBoxLobes.addItem('Right-temporal')
@@ -1651,8 +1690,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Right-occipital')
         self.ui.comboBoxLobes.addItem('Left-frontal')
         self.ui.comboBoxLobes.addItem('Right-frontal')
-     
-        
+
+
     def add_tabs(self):
         """
         Method for initializing the tabs.
@@ -1670,7 +1709,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator, "Inverse operator")
         self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate, "Source estimate")
         self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis, "Source analysis")
-        
+
 
     def on_currentChanged(self):
             """

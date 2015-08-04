@@ -21,7 +21,7 @@ from .read import (read_int32, read_int16, read_str, read_float, read_double,
                    read_int16_matrix)
 from .transforms import (bti_identity_trans, bti_to_vv_trans,
                          bti_to_vv_coil_trans, inverse_trans, merge_trans)
-from ..meas_info import Info
+from ..meas_info import _empty_info, RAW_INFO_FIELDS
 from ...externals import six
 
 FIFF_INFO_CHS_FIELDS = ('loc', 'ch_name', 'unit_mul', 'coil_trans',
@@ -40,12 +40,6 @@ BTI_WH2500_REF_GRAD = ['GxxA', 'GyyA', 'GyxA', 'GzaA', 'GzyA']
 
 dtypes = zip(list(range(1, 5)), ('>i2', '>i4', '>f4', '>f8'))
 DTYPES = dict((i, np.dtype(t)) for i, t in dtypes)
-
-RAW_INFO_FIELDS = ['dev_head_t', 'nchan', 'bads', 'projs', 'dev_ctf_t',
-                   'meas_date', 'meas_id', 'dig', 'sfreq', 'highpass',
-                   'comps', 'chs', 'ch_names', 'file_id',
-                   'lowpass', 'acq_pars', 'acq_stim', 'filename',
-                   'ctf_head_t']
 
 
 def _rename_channels(names, ecg_ch='E31', eog_ch=('E63', 'E64')):
@@ -70,7 +64,7 @@ def _rename_channels(names, ecg_ch='E31', eog_ch=('E63', 'E64')):
             name = 'STI 013'
         elif name == 'TRIGGER':
             name = 'STI 014'
-        elif any([name == k for k in eog_ch]):
+        elif any(name == k for k in eog_ch):
             name = 'EOG %3.3d' % six.advance_iterator(eog)
         elif name == ecg_ch:
             name = 'ECG 001'
@@ -449,11 +443,11 @@ def _read_config(fname):
                                                    dta['hdr']['n_dsp']),
                                                   dtype='f4')
                         for n in range(dta['hdr']['n_entries']):
-                            dta['anlg_wts'][d] = read_int16_matrix(fid, 1,
-                                                       dta['hdr']['n_anlg'])
+                            dta['anlg_wts'][d] = read_int16_matrix(
+                                fid, 1, dta['hdr']['n_anlg'])
                             read_int16(fid)
-                            dta['dsp_wts'][d] = read_float_matrix(fid, 1,
-                                                        dta['hdr']['n_dsp'])
+                            dta['dsp_wts'][d] = read_float_matrix(
+                                fid, 1, dta['hdr']['n_dsp'])
 
                         _correct_offset(fid)
 
@@ -481,9 +475,9 @@ def _read_config(fname):
         cfg['chs'] = list()
 
         # prepare reading channels
-        dev_header = lambda x: {'size': read_int32(x),
-                                'checksum': read_int32(x),
-                                'reserved': read_str(x, 32)}
+        def dev_header(x):
+            return dict(size=read_int32(x), checksum=read_int32(x),
+                        reserved=read_str(x, 32))
 
         for channel in range(cfg['hdr']['total_chans']):
             ch = {'name': read_str(fid, 16),
@@ -775,28 +769,28 @@ def _read_bti_header(pdf_fname, config_fname):
         # actual header starts here
         info = {'version': read_int16(fid),
                 'file_type': read_str(fid, 5),
-                'hdr_size': start - header_position,  # add to info for convenience
+                'hdr_size': start - header_position,  # add for convenience
                 'start': start}
 
         fid.seek(1, 1)
 
         info.update({'data_format': read_int16(fid),
-                    'acq_mode': read_int16(fid),
-                    'total_epochs': read_int32(fid),
-                    'input_epochs': read_int32(fid),
-                    'total_events': read_int32(fid),
-                    'total_fixed_events': read_int32(fid),
-                    'sample_period': read_float(fid),
-                    'xaxis_label': read_str(fid, 16),
-                    'total_processes': read_int32(fid),
-                    'total_chans': read_int16(fid)})
+                     'acq_mode': read_int16(fid),
+                     'total_epochs': read_int32(fid),
+                     'input_epochs': read_int32(fid),
+                     'total_events': read_int32(fid),
+                     'total_fixed_events': read_int32(fid),
+                     'sample_period': read_float(fid),
+                     'xaxis_label': read_str(fid, 16),
+                     'total_processes': read_int32(fid),
+                     'total_chans': read_int16(fid)})
 
         fid.seek(2, 1)
         info.update({'checksum': read_int32(fid),
-                    'total_ed_classes': read_int32(fid),
-                    'total_associated_files': read_int16(fid),
-                    'last_file_index': read_int16(fid),
-                    'timestamp': read_int32(fid)})
+                     'total_ed_classes': read_int32(fid),
+                     'total_associated_files': read_int16(fid),
+                     'last_file_index': read_int16(fid),
+                     'timestamp': read_int32(fid)})
 
         fid.seek(20, 1)
         _correct_offset(fid)
@@ -902,6 +896,7 @@ def _read_data(info, start=None, stop=None):
     -------
     data : ndarray
         The measurement data, a channels x time slices array.
+        The data will be cast to np.float64 for compatibility.
     """
 
     total_slices = info['total_slices']
@@ -924,7 +919,7 @@ def _read_data(info, start=None, stop=None):
     for ch in info['chs']:
         data[:, ch['index']] *= ch['cal']
 
-    return data[:, info['order']].T
+    return data[:, info['order']].T.astype(np.float64)
 
 
 class RawBTi(_BaseRaw):
@@ -988,19 +983,14 @@ class RawBTi(_BaseRaw):
         logger.info('Reading 4D PDF file %s...' % pdf_fname)
         bti_info = _read_bti_header(pdf_fname, config_fname)
 
-         # XXX indx is informed guess. Normally only one transform is stored.
+        # XXX indx is informed guess. Normally only one transform is stored.
         dev_ctf_t = bti_info['bti_transform'][0].astype('>f8')
         bti_to_nm = bti_to_vv_trans(adjust=rotation_x,
                                     translation=translation, dtype='>f8')
 
         use_hpi = False  # hard coded, but marked as later option.
         logger.info('Creating Neuromag info structure ...')
-        info = Info()
-        info['bads'] = []
-        info['meas_id'] = None
-        info['file_id'] = None
-        info['projs'] = list()
-        info['comps'] = list()
+        info = _empty_info()
         date = bti_info['processes'][0]['timestamp']
         info['meas_date'] = [date, 0]
         info['sfreq'] = 1e3 / bti_info['sample_period'] * 1e-3
@@ -1020,11 +1010,12 @@ class RawBTi(_BaseRaw):
 
         info['highpass'] = hp
         info['lowpass'] = lp
-        info['acq_pars'], info['acq_stim'] = None, None
-        info['filename'] = None
+        info['acq_pars'] = info['acq_stim'] = info['hpi_subsystem'] = None
+        info['events'], info['hpi_results'], info['hpi_meas'] = [], [], []
         chs = []
 
         ch_names = [ch['name'] for ch in bti_info['chs']]
+        self.bti_ch_labels = [c['chan_label'] for c in bti_info['chs']]
         info['ch_names'] = _rename_channels(ch_names)
         ch_mapping = zip(ch_names, info['ch_names'])
         logger.info('... Setting channel info structure.')
@@ -1035,7 +1026,7 @@ class RawBTi(_BaseRaw):
             chan_info['scanno'] = idx + 1
             chan_info['cal'] = bti_info['chs'][idx]['scale']
 
-            if any([chan_vv.startswith(k) for k in ('MEG', 'RFG', 'RFM')]):
+            if any(chan_vv.startswith(k) for k in ('MEG', 'RFG', 'RFM')):
                 t, loc = bti_info['chs'][idx]['coil_trans'], None
                 if t is not None:
                     t, loc = _convert_coil_trans(t.astype('>f8'), dev_ctf_t,
@@ -1100,25 +1091,24 @@ class RawBTi(_BaseRaw):
         dev_head_t = _convert_dev_head_t(dev_ctf_t, bti_to_nm,
                                          ctf_head_t)
 
-        info['dev_head_t'] = dict()
-        info['dev_head_t']['from'] = FIFF.FIFFV_COORD_DEVICE
-        info['dev_head_t']['to'] = FIFF.FIFFV_COORD_HEAD
-        info['dev_head_t']['trans'] = dev_head_t
-        info['dev_ctf_t'] = dict()
-        info['dev_ctf_t']['from'] = FIFF.FIFFV_MNE_COORD_CTF_DEVICE
-        info['dev_ctf_t']['to'] = FIFF.FIFFV_COORD_HEAD
-        info['dev_ctf_t']['trans'] = dev_ctf_t
-        info['ctf_head_t'] = dict()
-        info['ctf_head_t']['from'] = FIFF.FIFFV_MNE_COORD_CTF_HEAD
-        info['ctf_head_t']['to'] = FIFF.FIFFV_COORD_HEAD
-        info['ctf_head_t']['trans'] = ctf_head_t
+        info['dev_head_t'] = {'from': FIFF.FIFFV_COORD_DEVICE,
+                              'to': FIFF.FIFFV_COORD_HEAD,
+                              'trans': dev_head_t}
+        info['dev_ctf_t'] = {'from': FIFF.FIFFV_MNE_COORD_CTF_DEVICE,
+                             'to': FIFF.FIFFV_COORD_HEAD,
+                             'trans': dev_ctf_t}
+        info['ctf_head_t'] = {'from': FIFF.FIFFV_MNE_COORD_CTF_HEAD,
+                              'to': FIFF.FIFFV_COORD_HEAD,
+                              'trans': ctf_head_t}
         logger.info('Done.')
 
         if False:  # XXX : reminds us to support this as we go
             # include digital weights from reference channel
             comps = info['comps'] = list()
             weights = bti_info['weights']
-            by_name = lambda x: x[1]
+
+            def by_name(x):
+                return x[1]
             chn = dict(ch_mapping)
             columns = [chn[k] for k in weights['dsp_ch_names']]
             rows = [chn[k] for k in weights['ch_names']]
@@ -1144,42 +1134,21 @@ class RawBTi(_BaseRaw):
                            'printed out \nby the 4D \'print_table\' routine.')
 
         # check that the info is complete
-        assert not set(RAW_INFO_FIELDS) - set(info.keys())
+        assert set(RAW_INFO_FIELDS) == set(info.keys())
 
         # check nchan is correct
         assert len(info['ch_names']) == info['nchan']
 
-        cals = np.zeros(info['nchan'])
-        for k in range(info['nchan']):
-            cals[k] = info['chs'][k]['range'] * info['chs'][k]['cal']
-
-        self.verbose = verbose
-        self.cals = cals
-        self.rawdir = None
-        self.proj = None
-        self.comp = None
-        self._filenames = list()
-        self.preload = True
-        self._projector_hashes = [None]
-        self.info = info
-
         logger.info('Reading raw data from %s...' % pdf_fname)
-        self._data = _read_data(bti_info)
-        self.first_samp, self.last_samp = 0, self._data.shape[1] - 1
-        self._raw_lengths = np.array([self._data.shape[1]])
-        self._first_samps = np.array([0])
-        self._last_samps = self._raw_lengths - 1
-        self.rawdirs = [[]]
-
-        assert len(self._data) == len(self.info['ch_names'])
-        self._times = np.arange(self.first_samp,
-                                self.last_samp + 1) / info['sfreq']
-        self._projectors = [None]
+        data = _read_data(bti_info)
+        assert len(data) == len(info['ch_names'])
+        self._projector_hashes = [None]
+        super(RawBTi, self).__init__(
+            info, data, filenames=[pdf_fname], verbose=verbose)
         logger.info('    Range : %d ... %d =  %9.3f ... %9.3f secs' % (
                     self.first_samp, self.last_samp,
                     float(self.first_samp) / info['sfreq'],
                     float(self.last_samp) / info['sfreq']))
-
         logger.info('Ready.')
 
 
@@ -1187,7 +1156,7 @@ class RawBTi(_BaseRaw):
 def read_raw_bti(pdf_fname, config_fname='config',
                  head_shape_fname='hs_file', rotation_x=None,
                  translation=(0.0, 0.02, 0.11), ecg_ch='E31',
-                 eog_ch=('E63', 'E64'), verbose=True):
+                 eog_ch=('E63', 'E64'), verbose=None):
     """ Raw object from 4D Neuroimaging MagnesWH3600 data
 
     Note.
@@ -1216,14 +1185,23 @@ def read_raw_bti(pdf_fname, config_fname='config',
     translation : array-like
         The translation to place the origin of coordinate system
         to the center of the head.
-    ecg_ch: str | None
+    ecg_ch : str | None
       The 4D name of the ECG channel. If None, the channel will be treated
       as regular EEG channel.
-    eog_ch: tuple of str | None
+    eog_ch : tuple of str | None
       The 4D names of the EOG channels. If None, the channels will be treated
       as regular EEG channels.
     verbose : bool, str, int, or None
         If not None, override default verbose level (see mne.verbose).
+
+    Returns
+    -------
+    raw : Instance of RawBTi
+        A Raw object containing BTI data.
+
+    See Also
+    --------
+    mne.io.Raw : Documentation of attribute and methods.
     """
     return RawBTi(pdf_fname, config_fname=config_fname,
                   head_shape_fname=head_shape_fname,

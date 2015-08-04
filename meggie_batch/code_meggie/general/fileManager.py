@@ -24,7 +24,6 @@ from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-
 import messageBoxes
 from statistic import Statistic
     
@@ -489,58 +488,58 @@ def load_evoked(folder, fName):
     evokeds = []
     i = 0
     # Couldn't find a way to check how many evoked datasets are in the
-    # .fif file. So, after the setno gets list index out of range we get
+    # .fif file. So, after the condition gets list index out of range we get
     # an exception. This makes it hard to check if the data type is right,
     # since both 'index out of bound' and 'no evoked data found' raise
     # ValueError.
     try:
-            while mne.fiff.Evoked(os.path.join(folder, fName), setno=i) is not None:
-                evoked = mne.fiff.Evoked(os.path.join(folder, fName), setno=i)
-                event_name = evoked.comment  # .split('_', 1)
-                if i < 5:
-                    category[event_name] = i + 1
-                    i += 1
-                    evokeds.append(evoked)
-                    continue
-                if i == 5:
-                    category[event_name] = 8
-                    i += 1
-                    evokeds.append(evoked)
-                    continue
-                if i == 6:
-                    category[event_name] = 16
-                    i += 1
-                    evokeds.append(evoked)
-                    continue
-                if i == 7:    
-                    category[event_name] = 32
-                    i += 1
-                    evokeds.append(evoked)
-                    continue
-                
-                # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
-                # This makes sure that Meggie won't stop working if more
-                # than 8 evoked sets exist.
-                if i >= 8:
-                    message = 'WARNING: There are more than 8 evoked' + \
-                    ' sets in the evoked.fif file. This does not' + \
-                    ' necessarily support all the functionality in' + \
-                    ' Meggie. The evoked.fif files with more than 8' + \
-                    ' datasets could not be loaded.'
-                    messageBox = messageBoxes.shortMessageBox(message)
-                    messageBox._exec()
-                    return
-                    """
-                    # When visualizing evoked datasets the color set
-                    # should be fixed for more than 8 datasets.
-                    category[event_name] = i + 100
-                    i += 1
-                    evokeds.append(evoked)
-                    continue
-                    """
+        while mne.Evoked(os.path.join(folder, fName), condition=i) is not None:
+            evoked = mne.Evoked(os.path.join(folder, fName), condition=i)
+            event_name = evoked.comment  # .split('_', 1)
+            if i < 5:
+                category[event_name] = i + 1
+                i += 1
+                evokeds.append(evoked)
+                continue
+            if i == 5:
+                category[event_name] = 8
+                i += 1
+                evokeds.append(evoked)
+                continue
+            if i == 6:
+                category[event_name] = 16
+                i += 1
+                evokeds.append(evoked)
+                continue
+            if i == 7:    
+                category[event_name] = 32
+                i += 1
+                evokeds.append(evoked)
+                continue
+
+            # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
+            # This makes sure that Meggie won't stop working if more
+            # than 8 evoked sets exist.
+            if i >= 8:
+                message = 'WARNING: There are more than 8 evoked'
+                ' sets in the evoked.fif file. This does not'
+                ' necessarily support all the functionality in'
+                ' Meggie. The evoked.fif files with more than 8'
+                ' datasets could not be loaded.'
+                messageBox = messageBoxes.shortMessageBox(message)
+                messageBox._exec()
+                return
+                """
+                # When visualizing evoked datasets the color set
+                # should be fixed for more than 8 datasets.
+                category[event_name] = i + 100
+                i += 1
+                evokeds.append(evoked)
+                continue
+                """
     except ValueError:
         try:
-            if mne.fiff.Evoked(os.path.join(folder, fName), setno=0) is not None:
+            if mne.Evoked(os.path.join(folder, fName), condition=0) is not None:
         # if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
                 return evokeds, category
         except ValueError:
@@ -548,10 +547,10 @@ def load_evoked(folder, fName):
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox._exec()
             return None, None
-    
+
     return evokeds, category
-    
-        
+
+
 def open_raw(fname, pre_load=True):
     """
     Opens a raw file.
@@ -561,20 +560,16 @@ def open_raw(fname, pre_load=True):
                      in the file.
     Raises an exception if the file cannot be opened.
     """
-    # if os.path.isfile(fname):# and fname.endswith('fif'):
     try:
         return mne.io.Raw(fname, preload=pre_load)
-        # self.raw = mne.io.RawFIFF(str(fname))
-    except IOError:
-        raise IOError('File does not exist or is not a raw-file.')
-    
-    except OSError:
-        raise OSError('You do not have permission to read the file.')
-    
-    except ValueError:
-        raise ValueError('File is not a raw-file.')
-    
-    
+    except IOError as e:
+        raise IOError('File does not exist or is not a raw-file.' + str(e))
+    except OSError as e:
+        raise OSError('You do not have permission to read the file.' + str(e))
+    except ValueError as e:
+        raise ValueError('File is not a raw-file.' + str(e))
+
+
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
     
@@ -650,6 +645,7 @@ def save_epoch(fpath, epoch, overwrite=False):
     parameters['events'] = event_dict
     parameterFileName = str(fpath + '.param')
     pickleObjectToFile(parameters, parameterFileName)
+    parameters['events'] = event_list  # set events back to list
 
 
 def read_surface_names_into_list(subject):

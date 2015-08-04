@@ -94,5 +94,6 @@ class AddECGProjections(QtGui.QDialog):
         if result == 0:
             self.parent.ui.checkBoxECGApplied.setChecked(True)
         QtGui.QApplication.restoreOverrideCursor()
+        self.parent._initialize_ui()
         self.close()
         

@@ -1,3 +1,9 @@
+# Authors: Alexandre Gramfort <alexandre.gramfort@telecom-paristech.fr>
+#          Denis Engemann <denis.engemann@gmail.com>
+#          Eric Larson <larson.eric.d@gmail.com>
+#
+# License: BSD (3-clause)
+
 import numpy as np
 
 from .peak_finder import peak_finder
@@ -19,10 +25,10 @@ def find_eog_events(raw, event_id=998, l_freq=1, h_freq=10,
         The raw data.
     event_id : int
         The index to assign to found events.
-    low_pass : float
-        Low pass frequency.
-    high_pass : float
-        High pass frequency.
+    l_freq : float
+        Low cut-off frequency in Hz.
+    h_freq : float
+        High cut-off frequency in Hz.
     filter_length : str | int | None
         Number of taps to use for filtering.
     ch_name: str | None
@@ -141,8 +147,8 @@ def create_eog_epochs(raw, ch_name=None, event_id=998, picks=None,
     raw : instance of Raw
         The raw data
     ch_name : str
-        The name of the channel to use for ECG peak detection.
-        The argument is mandatory if the dataset contains no ECG channels.
+        The name of the channel to use for EOG peak detection.
+        The argument is mandatory if the dataset contains no EOG channels.
     event_id : int
         The index to assign to found events
     picks : array-like of int | None (default)
@@ -157,17 +163,21 @@ def create_eog_epochs(raw, ch_name=None, event_id=998, picks=None,
     h_freq : float
         High pass frequency.
     reject : dict | None
-        Rejection parameters based on peak to peak amplitude.
+        Rejection parameters based on peak-to-peak amplitude.
         Valid keys are 'grad' | 'mag' | 'eeg' | 'eog' | 'ecg'.
-        If reject is None then no rejection is done. You should
-        use such parameters to reject big measurement artifacts
-        and not ECG for example
+        If reject is None then no rejection is done. Example::
+
+            reject = dict(grad=4000e-13, # T / m (gradiometers)
+                          mag=4e-12, # T (magnetometers)
+                          eeg=40e-6, # uV (EEG channels)
+                          eog=250e-6 # uV (EOG channels)
+                          )
+
     flat : dict | None
-        Rejection parameters based on flatness of signal
-        Valid keys are 'grad' | 'mag' | 'eeg' | 'eog' | 'ecg'
+        Rejection parameters based on flatness of signal.
+        Valid keys are 'grad' | 'mag' | 'eeg' | 'eog' | 'ecg', and values
+        are floats that set the minimum acceptable peak-to-peak amplitude.
         If flat is None then no rejection is done.
-    verbose : bool, str, int, or None
-        If not None, override default verbose level (see mne.verbose).
     baseline : tuple or list of length 2, or None
         The time interval to apply rescaling / baseline correction.
         If None do not apply it. If baseline is (a, b)
@@ -176,11 +186,13 @@ def create_eog_epochs(raw, ch_name=None, event_id=998, picks=None,
         and if b is None then b is set to the end of the interval.
         If baseline is equal ot (None, None) all the time
         interval is used. If None, no correction is applied.
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see mne.verbose).
 
     Returns
     -------
-    ecg_epochs : instance of Epochs
-        Data epoched around ECG r-peaks.
+    eog_epochs : instance of Epochs
+        Data epoched around EOG events.
     """
     events = find_eog_events(raw, ch_name=ch_name, event_id=event_id,
                              l_freq=l_freq, h_freq=h_freq)
