@@ -217,6 +217,8 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         Pick desired events from the raw data.
         """
+        if self.ui.comboBoxEventID.count() == 0:
+            return
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         e = Events(self.caller.experiment.active_subject._working_file, self.caller.experiment.active_subject._stim_channel)
         e.pick(self.event_id)
@@ -388,7 +390,6 @@ class EventSelectionDialog(QtGui.QDialog):
             events[index,1:] = event
         #events = self.create_eventlist()'
         if len(events) > 0:
-            print 'Writing events...'
             try:
                 activeSubject = self.caller._experiment._active_subject
                 fileManager.write_events(events, activeSubject)
@@ -398,7 +399,6 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.messageBox.show()
                 print 'Aborting...'
                 return
-            print 'Done.'
 
     
     def on_pushButtonReadEvents_clicked(self, checked=None):
@@ -407,8 +407,12 @@ class EventSelectionDialog(QtGui.QDialog):
         excel-file.
         """
         if checked is None: return # Standard workaround
-        filename = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                    self.caller.experiment.active_subject.subject_path))
+        title = 'Read events from xls. Format: name|sample|old id|new id.'
+        filename = str(QtGui.QFileDialog.getOpenFileName(self, title,
+                                                         self.caller.\
+                                                         experiment.\
+                                                         active_subject.\
+                                                         subject_path))
         if filename == '':
             return
         self.ui.listWidgetEvents.clear()

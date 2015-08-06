@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Wed Apr  8 08:19:33 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Thu Aug  6 06:52:25 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -296,5 +296,6 @@ class Ui_EventSelectionDialog(object):
         self.checkBoxStim.setText(_translate("EventSelectionDialog", "Include stim channel in collection", None))
         self.groupBoxEventList.setTitle(_translate("EventSelectionDialog", "List of events with given event ID", None))
         self.pushButtonSaveEvents.setText(_translate("EventSelectionDialog", "Save events to file...", None))
+        self.pushButtonReadEvents.setToolTip(_translate("EventSelectionDialog", "You can add events from Excel files that are in form: name, sample, previous event id, current event id.", None))
         self.pushButtonReadEvents.setText(_translate("EventSelectionDialog", "Read events from xls file...", None))
 

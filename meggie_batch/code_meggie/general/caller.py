@@ -17,7 +17,7 @@ import shutil
 from PyQt4 import QtCore, QtGui
 
 import mne
-from mne.layouts import read_layout
+from mne.channels.layout import read_layout
 from mne.layouts.layout import _pair_grad_sensors_from_ch_names
 from mne.layouts.layout import _merge_grad_data
 from mne.viz import plot_topo
@@ -1543,8 +1543,7 @@ class Caller(object):
     def plot_power_spectrum(self, params, colors, channelColors):
         
         try:
-            lout = mne.layouts.read_layout(params['lout'], 
-                                           scale=True)
+            lout = read_layout(params['lout'], scale=True)
         except Exception:
             message = 'Could not read layout information.'
             self.messageBox = messageBoxes.shortMessageBox(message)

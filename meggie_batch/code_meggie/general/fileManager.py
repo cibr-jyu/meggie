@@ -699,20 +699,32 @@ def write_events(events, subject):
         styleNumber.num_format_str = 'general'
         sizex = events.shape[0]
         sizey = events.shape[1]
-                
-        path_to_save = subject._subject_path
-        
+
+        path_to_save = os.path.join(subject._subject_path, 'events')
+        if not os.path.exists(path_to_save):
+            print 'Creating directory %s' % path_to_save
+            os.mkdir(path_to_save)
+        print 'Writing events to %s' % path_to_save
         # Saves events to csv file for easier modification with text editors.
-        csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
-        csv_file_writer = csv.writer(csv_file)
-        csv_file_writer.writerows(events)
-        csv_file.close()
+        try:
+            csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
+            csv_file_writer = csv.writer(csv_file)
+            csv_file_writer.writerows(events)
+        except Exception as err:
+            print str(err)
+            raise err 
+        finally:
+            csv_file.close()
 
         for i in range(sizex):
             for j in range(sizey):
                 ws.write(i, j, events[i][j], styleNumber)
-        wbs.save(os.path.join(path_to_save, 'events.xls'))
-        #TODO: muuta filename kayttajan maarittelyn mukaiseksi
+        try:
+            wbs.save(os.path.join(path_to_save, 'events.xls'))
+            print 'Done.'
+        except Exception as err:
+            print str(err)
+            raise err
 
 
 def read_events(filename):
