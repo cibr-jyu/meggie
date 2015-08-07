@@ -18,8 +18,8 @@ from PyQt4 import QtCore, QtGui
 
 import mne
 from mne.channels.layout import read_layout
-from mne.layouts.layout import _pair_grad_sensors_from_ch_names
-from mne.layouts.layout import _merge_grad_data
+from mne.channels.layout import _pair_grad_sensors_from_ch_names
+from mne.channels.layout import _merge_grad_data
 from mne.viz import plot_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
@@ -417,7 +417,7 @@ class Caller(object):
             return 1
         else:
             return 0
-        
+
     def _apply_ecg(self, raw, directory):
         """
         Performed in a worker thread.
@@ -461,7 +461,6 @@ class Caller(object):
         self.update_experiment_working_file(appliedfilename, raw)
         self.e.set()
 
-
     def apply_eog(self, raw, directory):
         """
         Applies EOG projections for MEG-data.
@@ -484,8 +483,7 @@ class Caller(object):
             return 1
         else:
             return 0
-            
-    
+
     def _apply_eog(self, raw, directory):
         """
         Performed in a worker thread.
@@ -526,7 +524,6 @@ class Caller(object):
         self.update_experiment_working_file(appliedfilename, raw)
         self.experiment.save_experiment_settings()
         self.e.set()
- 
 
     def average(self, epochs, category):
         """Average epochs.
@@ -935,13 +932,21 @@ class Caller(object):
                     evoked = mne.read_evokeds(f, condition=group)
                     evokedTmin = evoked.first / evoked.info['sfreq']
                     evokedInfo = evoked.info
-                except Exception as e:
-                    self.result = e
+                except Exception as err:
+                    self.result = err
                     self.e.set()
                     return
                 info = evoked.info['ch_names']
                 for cidx in xrange(len(info)):
-                    evokeds[group][info[cidx]].append(evoked.data[cidx])
+                    ch_name = info[cidx]
+                    if not ch_name in evokeds[group].keys():
+                        err = KeyError('%s not in channels. Make sure all '
+                                       'data sets contain the same channel '
+                                       'info.' % ch_name)
+                        self.result = err
+                        self.e.set()
+                        return
+                    evokeds[group][ch_name].append(evoked.data[cidx])
                 eweights[group].append(evoked.nave)
         evs = []
         usedChannels = []

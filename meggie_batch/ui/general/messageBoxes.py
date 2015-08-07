@@ -34,7 +34,7 @@ Contains the shortMessageBox class used for simple messageboxes,and the
 longMessageBox for longer messages that need a scrolling content area.
 """
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 from longMessageBoxUi import Ui_LongMessageBoxDialog
 from shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
 

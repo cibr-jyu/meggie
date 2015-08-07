@@ -40,8 +40,6 @@ import mne
 #import pylab as pl
 import numpy as np
 
-import csv
-
 import messageBoxes
 
 class Epochs(QObject):

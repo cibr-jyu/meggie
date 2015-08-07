@@ -855,14 +855,21 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
         """
+        import re
         if checked is None: return
         item = self.evokedList.currentItem()
         if item is None: return
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        
+
         evoked_name = str(item.text())
-        import re
+        if '[' not in evoked_name or ']' not in evoked_name:
+            mBox = messageBoxes.shortMessageBox('Data set name must contain '
+                                                'event names inside brackets '
+                                                'for group averaging.')
+            mBox.exec_()
+            QtGui.QApplication.restoreOverrideCursor()
+            return
         groups = re.split('[\[\]]', evoked_name)[1] # '1-2-3'
         groups = re.split('[-]', groups) # ['1','2','3']
         if self.ui.radioButtonSelectLayout.isChecked():
@@ -881,29 +888,21 @@ class MainWindow(QtGui.QMainWindow):
     
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """
-        TODO: Save the evoked data (for exporting purposes if needed)
-        not working currently (overwrites the same existing raw file)
+        Exports the evoked data set to a user selected location.
         """
         if checked is None: return
-        evoked_collection_name = str(self.evokedList.currentItem().text())
-        evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
-        evoked_raw = evoked._raw
-        """
-        TODO: get evoked from active_subject._evokeds dictionary
-        """
-        
-        saveFolder = os.path.join(self.caller.experiment.active_subject._epochs_directory, 'average')
-        if os.path.exists(saveFolder) is False:
-            try:
-                os.mkdir(saveFolder)
-            except IOError:
-                print 'Writing to selected folder is not allowed.'
-            
-        try:                
-            # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
-            print 'Writing evoked data as ' + evoked_collection_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_collection_name),
-                          evokeds)
+        name = str(self.evokedList.currentItem().text())
+        evokeds = self.caller.experiment.active_subject._evokeds[name].raw
+        title = "Select destination folder."
+        if isinstance(evokeds, list):
+            fname = evokeds[0].info['filename']
+        else:
+            fname = evokeds.info['filename']
+        fname = str(QtGui.QFileDialog.getSaveFileName(self, title, fname,
+                                                      "Fif (*.fif)"))
+        try:
+            print 'Writing evoked data to %s.' % fname
+            write_evokeds(fname, evokeds)
             print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
@@ -911,8 +910,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_pushButtonLoadEvoked_clicked(self, checked=None):
         """
-        TODO: Load evoked data (for importing purposes if needed)
-        not working currently
+        Load evoked data.
         """
         if checked is None: return
         fname = str(QtGui.QFileDialog.\
@@ -923,18 +921,26 @@ class MainWindow(QtGui.QMainWindow):
                                                       'average')))
         if fname == '': return
         if not os.path.isfile(fname): return
-        split = os.path.split(fname)
-        #folder = split[0] + '/'
-        name = os.path.splitext(split[1])[0]
-        # TODO: add path and filename for load_evoked, split fname correctly to do this
-        evoked, category = fileManager.load_evoked(fname + '.fif')
+        path, filename = os.path.split(fname)
+        if len(path) == 0 or len(filename) == 0:
+            msg = 'Failed to load file.'
+            self.messageBox = messageBoxes.shortMessageBox(msg)
+            self.messageBox.show()
+        evoked, category = fileManager.load_evoked(path, filename)
         if evoked is None: return
-        item = QtGui.QListWidgetItem(file)
+        item = QtGui.QListWidgetItem(filename.split('.')[0])
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(item.text(), evoked, category)
-        
-        
+        self.caller.experiment.active_subject.handle_new_evoked(item.text(),
+                                                                evoked,
+                                                                category)
+        saveFolder = self.caller.experiment.active_subject._evokeds_directory
+        fname = os.path.join(saveFolder, filename)
+        print 'Saving evoked data set %s.' % fname
+        write_evokeds(fname, evoked)
+        print 'Done.'
+
+
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
         Opens a dialog for selecting a layout file.

@@ -12,7 +12,6 @@ class Evoked(QObject):
     Class for creating and handling evokeds
     """
 
-
     def __init__(self):
         """
         Constructor
@@ -26,9 +25,6 @@ class Evoked(QObject):
         self._name = ''
         self._raw = None
         self._categories = dict()
-        
-        # Useless?
-        #self._events = []
         
     @property
     def raw(self):
