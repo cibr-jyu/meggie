@@ -610,7 +610,8 @@ class Caller(object):
         """
         if layout == 'Infer from data':
             layout = None  # Tries to guess the locations from the data.
-        layout = read_layout(layout)
+        else:
+            layout = read_layout(layout)
 
         colors = ['y','m','c','r','g','b','w','k']
 
