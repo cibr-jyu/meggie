@@ -1127,8 +1127,8 @@ class Caller(object):
         self.parent.update_ui()
         if lout == 'Infer from data':
             lout = None
-        layout = read_layout(lout)
-        #layout = read_layout('Vectorview-all')
+        else:
+            layout = read_layout(lout)
         baseline = (blstart, blend)  # set the baseline for induced power
         print "Plotting..."
         self.parent.update_ui()
