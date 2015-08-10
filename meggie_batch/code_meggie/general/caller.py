@@ -1126,7 +1126,7 @@ class Caller(object):
         pool.terminate()
         self.parent.update_ui()
         if lout == 'Infer from data':
-            lout = None
+            layout = None
         else:
             layout = read_layout(lout)
         baseline = (blstart, blend)  # set the baseline for induced power
@@ -1143,12 +1143,12 @@ class Caller(object):
                 if scalp is not None:
                     try:
                         fig = power.plot_topomap(tmin=scalp['tmin'],
-                                             tmax=scalp['tmax'],
-                                             fmin=scalp['fmin'],
-                                             fmax=scalp['fmax'], 
-                                             ch_type=ch_type, layout=layout,
-                                             baseline=baseline, mode=mode,
-                                             cmap='Reds', show=False)
+                                                 tmax=scalp['tmax'],
+                                                 fmin=scalp['fmin'],
+                                                 fmax=scalp['fmax'], 
+                                                 ch_type=ch_type, layout=layout,
+                                                 baseline=baseline, mode=mode,
+                                                 cmap='Reds', show=False)
                     except Exception as e:
                         print str(e)
                 print 'Plotting topology. Please be patient...'
