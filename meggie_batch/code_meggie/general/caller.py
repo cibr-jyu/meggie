@@ -981,7 +981,7 @@ class Caller(object):
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
-        
+
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
@@ -998,7 +998,7 @@ class Caller(object):
             self.messageBox.show()
             self.result = None
             return 
-        
+
         power, phase_lock, times, evoked, evoked_data = async_result.get()
         pool.terminate()
 
@@ -1007,7 +1007,7 @@ class Caller(object):
         #pl.clf()
         pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
         pl.subplot(3, 1, 1)
-        if ch_index in mne.pick_types(evoked.info, meg='grad', ref_meg=False):#str(evoked.ch_names[ch_index]).endswith('1'):
+        if ch_index in mne.pick_types(evoked.info, meg='grad', ref_meg=False):
             pl.ylabel('Magnetic Field (fT/cm)')
             evoked_data *= 1e13
         elif ch_index in mne.pick_types(evoked.info, meg='mag', ref_meg=False):
@@ -1020,7 +1020,7 @@ class Caller(object):
 
         pl.xlim(times[0], times[-1])
         #pl.ylim(-150, 300)
-        
+
         pl.subplot(3, 1, 2)
         pl.imshow(20 * np.log10(power[0]), extent=[times[0], times[-1],
                                                    frequencies[0],
@@ -1030,7 +1030,7 @@ class Caller(object):
         pl.ylabel('Frequency (Hz)')
         pl.title('Induced power (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
-        
+
         pl.subplot(3, 1, 3)
         pl.imshow(phase_lock[0], extent=[times[0], times[-1],
                                          frequencies[0], frequencies[-1]],
@@ -1040,8 +1040,7 @@ class Caller(object):
         pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
         pl.colorbar()
         fig.show()
-        
-        
+
     def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
         """
         Perfromed in a worker thread.
@@ -1072,8 +1071,7 @@ class Caller(object):
         print 'Done'
         self.e.set()
         return power, itc, times, evoked, evoked_data
-        
-        
+
     def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp):
         """
@@ -1157,7 +1155,7 @@ class Caller(object):
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout,
                                       title='Average power')
-                #fig.show()
+
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()

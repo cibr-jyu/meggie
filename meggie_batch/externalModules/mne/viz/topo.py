@@ -17,7 +17,7 @@ import numpy as np
 
 from ..io.pick import channel_type, pick_types
 from ..fixes import normalize_colors
-from ..utils import _clean_names
+from ..utils import _clean_names, deprecated
 
 from ..defaults import _handle_default
 from .utils import (_check_delayed_ssp, COLORS, _draw_proj_checkbox,
@@ -182,14 +182,15 @@ def _plot_topo_onpick(event, show_func=None, colorbar=False):
         raise err
 
 
-def _imshow_tfr(ax, ch_idx, tmin, tmax, vmin, vmax, ylim=None, tfr=None,
-                freq=None, vline=None, x_label=None, y_label=None,
+def _imshow_tfr(ax, ch_idx, tmin, tmax, vmin, vmax, onselect, ylim=None,
+                tfr=None, freq=None, vline=None, x_label=None, y_label=None,
                 colorbar=False, picker=True, cmap='RdBu_r', title=None):
     """ Aux function to show time-freq map on topo """
     import matplotlib.pyplot as plt
+    from matplotlib.widgets import RectangleSelector
     extent = (tmin, tmax, freq[0], freq[-1])
-    ax.imshow(tfr[ch_idx], extent=extent, aspect="auto", origin="lower",
-              vmin=vmin, vmax=vmax, picker=picker, cmap=cmap)
+    img = ax.imshow(tfr[ch_idx], extent=extent, aspect="auto", origin="lower",
+                    vmin=vmin, vmax=vmax, picker=picker, cmap=cmap)
     if isinstance(ax, plt.Axes):
         if x_label is not None:
             ax.set_xlabel(x_label)
@@ -201,9 +202,12 @@ def _imshow_tfr(ax, ch_idx, tmin, tmax, vmin, vmax, ylim=None, tfr=None,
         if y_label is not None:
             plt.ylabel(y_label)
     if colorbar:
-        plt.colorbar()
+        plt.colorbar(mappable=img)
     if title:
         plt.title(title)
+    if not isinstance(ax, plt.Axes):
+        ax = plt.gca()
+    ax.RS = RectangleSelector(ax, onselect=onselect)  # reference must be kept
 
 
 def _plot_timeseries(ax, ch_idx, tmin, tmax, vmin, vmax, ylim, data, color,
@@ -234,10 +238,83 @@ def _check_vlim(vlim):
     return not np.isscalar(vlim) and vlim is not None
 
 
+@deprecated("It will be removed in version 0.11. "
+            "Please use evoked.plot_topo or viz.evoked.plot_evoked_topo "
+            "for list of evoked instead.")
 def plot_topo(evoked, layout=None, layout_scale=0.945, color=None,
               border='none', ylim=None, scalings=None, title=None, proj=False,
               vline=[0.0], fig_facecolor='k', fig_background=None,
               axis_facecolor='k', font_color='w', show=True):
+    """Plot 2D topography of evoked responses.
+
+    Clicking on the plot of an individual sensor opens a new figure showing
+    the evoked response for the selected sensor.
+
+    Parameters
+    ----------
+    evoked : list of Evoked | Evoked
+        The evoked response to plot.
+    layout : instance of Layout | None
+        Layout instance specifying sensor positions (does not need to
+        be specified for Neuromag data). If possible, the correct layout is
+        inferred from the data.
+    layout_scale: float
+        Scaling factor for adjusting the relative size of the layout
+        on the canvas
+    color : list of color objects | color object | None
+        Everything matplotlib accepts to specify colors. If not list-like,
+        the color specified will be repeated. If None, colors are
+        automatically drawn.
+    border : str
+        matplotlib borders style to be used for each sensor plot.
+    ylim : dict | None
+        ylim for plots. The value determines the upper and lower subplot
+        limits. e.g. ylim = dict(eeg=[-200e-6, 200e6]). Valid keys are eeg,
+        mag, grad, misc. If None, the ylim parameter for each channel is
+        determined by the maximum absolute peak.
+    scalings : dict | None
+        The scalings of the channel types to be applied for plotting. If None,`
+        defaults to `dict(eeg=1e6, grad=1e13, mag=1e15)`.
+    title : str
+        Title of the figure.
+    proj : bool | 'interactive'
+        If true SSP projections are applied before display. If 'interactive',
+        a check box for reversible selection of SSP projection vectors will
+        be shown.
+    vline : list of floats | None
+        The values at which to show a vertical line.
+    fig_facecolor : str | obj
+        The figure face color. Defaults to black.
+    fig_background : None | numpy ndarray
+        A background image for the figure. This must work with a call to
+        plt.imshow. Defaults to None.
+    axis_facecolor : str | obj
+        The face color to be used for each sensor plot. Defaults to black.
+    font_color : str | obj
+        The color of text in the colorbar and title. Defaults to white.
+    show : bool
+        Show figure if True.
+
+    Returns
+    -------
+    fig : Instance of matplotlib.figure.Figure
+        Images of evoked responses at sensor locations
+    """
+    return _plot_evoked_topo(evoked=evoked, layout=layout,
+                             layout_scale=layout_scale, color=color,
+                             border=border, ylim=ylim, scalings=scalings,
+                             title=title, proj=proj, vline=vline,
+                             fig_facecolor=fig_facecolor,
+                             fig_background=fig_background,
+                             axis_facecolor=axis_facecolor,
+                             font_color=font_color, show=show)
+
+
+def _plot_evoked_topo(evoked, layout=None, layout_scale=0.945, color=None,
+                      border='none', ylim=None, scalings=None, title=None,
+                      proj=False, vline=[0.0], fig_facecolor='k',
+                      fig_background=None, axis_facecolor='k', font_color='w',
+                      show=True):
     """Plot 2D topography of evoked responses.
 
     Clicking on the plot of an individual sensor opens a new figure showing

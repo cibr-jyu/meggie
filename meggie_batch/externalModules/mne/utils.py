@@ -1025,6 +1025,7 @@ known_config_types = [
     'MNE_DATASETS_SOMATO_PATH',
     'MNE_DATASETS_SPM_FACE_PATH',
     'MNE_DATASETS_EEGBCI_PATH',
+    'MNE_DATASETS_BRAINSTORM_PATH',
     'MNE_DATASETS_TESTING_PATH',
     'MNE_LOGGING_LEVEL',
     'MNE_USE_CUDA',
@@ -1529,7 +1530,7 @@ def _get_stim_channel(stim_channel, info):
         return stim_channel
 
     if 'STI 014' in info['ch_names']:
-        return 'STI 014'
+        return ['STI 014']
 
     from .io.pick import pick_types
     stim_channel = pick_types(info, meg=False, ref_meg=False, stim=True)
