@@ -1132,7 +1132,6 @@ class Caller(object):
         baseline = (blstart, blend)  # set the baseline for induced power
         print "Plotting..."
         self.parent.update_ui()
-        #mode = 'ratio'  # set mode for baseline rescaling
     
         if ( reptype == 'induced' ):
             pass #obsolete?
@@ -1146,9 +1145,10 @@ class Caller(object):
                                                  tmax=scalp['tmax'],
                                                  fmin=scalp['fmin'],
                                                  fmax=scalp['fmax'], 
-                                                 ch_type=ch_type, layout=layout,
+                                                 ch_type=ch_type,
+                                                 layout=layout,
                                                  baseline=baseline, mode=mode,
-                                                 cmap='Reds', show=False)
+                                                 show=False)
                     except Exception as e:
                         print str(e)
                 print 'Plotting topology. Please be patient...'
@@ -1156,7 +1156,7 @@ class Caller(object):
                 fig = power.plot_topo(baseline=baseline, mode=mode, 
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout,
-                                      title='Average power', cmap='Reds')
+                                      title='Average power')
                 #fig.show()
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
@@ -1172,27 +1172,20 @@ class Caller(object):
                                            fmax=scalp['fmax'], 
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
-                                           cmap='Reds', show=False)
+                                           show=False)
                 fig = itc.plot_topo(baseline=baseline, mode=mode, 
-                                    fmin=minfreq, fmax=maxfreq, vmin=0.,
-                                    vmax=1., layout=layout, 
-                                    title=title, cmap='Reds')
+                                    fmin=minfreq, fmax=maxfreq, layout=layout, 
+                                    title=title)
                 
                 fig.show()
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()
-                return
-        """
-        fig = self._TFR_topology(raw, epochs, reptype, mode, 
-                                         frequencies, blstart, 
-                                         blend, ncycles, decim)
-        """    
+                return  
         def onclick(event):
             pl.show(block=False)
         fig.canvas.mpl_connect('button_press_event', onclick)
-             
-        
+
     def _TFR_topology(self, epochs, reptype, mode, frequencies, blstart, 
                       blend, ncycles, decim):
         """
@@ -1211,10 +1204,6 @@ class Caller(object):
                                     n_cycles=ncycles, use_fft=False,
                                     return_itc=True, decim=decim, n_jobs=3)
 
-        except ValueError as err:
-            self.result = err
-            self.e.set()
-            return
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1222,8 +1211,7 @@ class Caller(object):
 
         self.e.set()
         return power, itc
-        
-        
+
     def TFR_average(self, epochs_name, reptype, mode, minfreq, maxfreq,
                     interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
