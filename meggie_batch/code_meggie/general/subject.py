@@ -307,11 +307,18 @@ class Subject(QObject):
         if the data is not of type mne.io.Raw.
         """
         if not isinstance(self._working_file, mne.io.Raw):
-            raise TypeError('Nt a raw object')
+            raise TypeError('Not a raw object')
         if self.stim_channel == None:
             return
-        events = mne.find_events(self._working_file,
-                                 stim_channel=self._stim_channel)
+        try:
+            events = mne.find_events(self._working_file,
+                                     stim_channel=self._stim_channel)
+        except Exception as e:
+            print 'Warning: %s' % e
+            print 'Reading events with minimum length of 1...'
+            events = mne.find_events(self.working_file,
+                                     stim_channel=self._stim_channel,
+                                     shortest_event=1)
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()
         for i in set(events[:,2]):

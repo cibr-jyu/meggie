@@ -81,7 +81,8 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.caller.experiment.active_subject._event_set is None:
             keys = []
         else:
-            keys = map(str, self.caller.experiment.active_subject._event_set.keys())
+            keys = map(str,
+                       self.caller.experiment.active_subject._event_set.keys())
         self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event')
         self.used_names = []
@@ -220,7 +221,8 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.ui.comboBoxEventID.count() == 0:
             return
         self.event_id = int(self.ui.comboBoxEventID.currentText())
-        e = Events(self.caller.experiment.active_subject._working_file, self.caller.experiment.active_subject._stim_channel)
+        e = Events(self.caller.experiment.active_subject._working_file,
+                   self.caller.experiment.active_subject._stim_channel)
         e.pick(self.event_id)
         print str(e.events)
         return e.events
