@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Thu Apr  9 05:45:31 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Mon Aug 10 05:23:55 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -34,7 +34,7 @@ class Ui_DialogTFRTopology(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 526, 552))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 526, 534))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
@@ -284,6 +284,7 @@ class Ui_DialogTFRTopology(object):
         self.horizontalLayout_35.addWidget(self.radioButtonSelectLayout)
         self.comboBoxLayout = QtGui.QComboBox(DialogTFRTopology)
         self.comboBoxLayout.setObjectName(_fromUtf8("comboBoxLayout"))
+        self.comboBoxLayout.addItem(_fromUtf8(""))
         self.horizontalLayout_35.addWidget(self.comboBoxLayout)
         self.verticalLayout_27.addLayout(self.horizontalLayout_35)
         self.horizontalLayout_36 = QtGui.QHBoxLayout()
@@ -332,7 +333,8 @@ class Ui_DialogTFRTopology(object):
         QtCore.QObject.connect(self.radioButtonLayoutFromFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.pushButtonBrowseLayout.setEnabled)
         QtCore.QObject.connect(self.radioButtonLayoutFromFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.labelLayout.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogTFRTopology)
-        DialogTFRTopology.setTabOrder(self.scrollArea, self.radioButtonAverage)
+        DialogTFRTopology.setTabOrder(self.scrollArea, self.comboBoxChannels)
+        DialogTFRTopology.setTabOrder(self.comboBoxChannels, self.radioButtonAverage)
         DialogTFRTopology.setTabOrder(self.radioButtonAverage, self.radioButtonITC)
         DialogTFRTopology.setTabOrder(self.radioButtonITC, self.radioButtonInduced)
         DialogTFRTopology.setTabOrder(self.radioButtonInduced, self.radioButtonPhase)
@@ -342,8 +344,7 @@ class Ui_DialogTFRTopology(object):
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxFreqInterval, self.spinBoxNcycles)
         DialogTFRTopology.setTabOrder(self.spinBoxNcycles, self.spinBoxDecim)
         DialogTFRTopology.setTabOrder(self.spinBoxDecim, self.groupBoxScalp)
-        DialogTFRTopology.setTabOrder(self.groupBoxScalp, self.comboBoxChannels)
-        DialogTFRTopology.setTabOrder(self.comboBoxChannels, self.doubleSpinBoxScalpFmin)
+        DialogTFRTopology.setTabOrder(self.groupBoxScalp, self.doubleSpinBoxScalpFmin)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxScalpFmin, self.doubleSpinBoxScalpFmax)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxScalpFmax, self.doubleSpinBoxScalpTmin)
         DialogTFRTopology.setTabOrder(self.doubleSpinBoxScalpTmin, self.doubleSpinBoxScalpTmax)
@@ -401,6 +402,7 @@ class Ui_DialogTFRTopology(object):
         self.label.setText(_translate("DialogTFRTopology", "Start time:", None))
         self.label_3.setText(_translate("DialogTFRTopology", "End time:", None))
         self.radioButtonSelectLayout.setText(_translate("DialogTFRTopology", "Select layout", None))
+        self.comboBoxLayout.setItemText(0, _translate("DialogTFRTopology", "Infer from data", None))
         self.radioButtonLayoutFromFile.setText(_translate("DialogTFRTopology", "Layout from file", None))
         self.pushButtonBrowseLayout.setText(_translate("DialogTFRTopology", "Browse...", None))
         self.labelLayout.setText(_translate("DialogTFRTopology", "No layout selected", None))

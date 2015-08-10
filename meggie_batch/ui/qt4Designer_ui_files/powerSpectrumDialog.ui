@@ -173,7 +173,13 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBoxLayout"/>
+             <widget class="QComboBox" name="comboBoxLayout">
+              <item>
+               <property name="text">
+                <string>Infer from data</string>
+               </property>
+              </item>
+             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_36">
@@ -282,7 +288,7 @@
            <x>0</x>
            <y>0</y>
            <width>824</width>
-           <height>221</height>
+           <height>193</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">

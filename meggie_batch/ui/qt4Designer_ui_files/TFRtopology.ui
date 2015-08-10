@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>526</width>
-        <height>552</height>
+        <height>534</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -580,12 +580,18 @@
           <bool>true</bool>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroup</string>
+          <string notr="true">buttonGroup</string>
          </attribute>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBoxLayout"/>
+        <widget class="QComboBox" name="comboBoxLayout">
+         <item>
+          <property name="text">
+           <string>Infer from data</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </item>
@@ -597,7 +603,7 @@
           <string>Layout from file</string>
          </property>
          <attribute name="buttonGroup">
-          <string>buttonGroup</string>
+          <string notr="true">buttonGroup</string>
          </attribute>
         </widget>
        </item>

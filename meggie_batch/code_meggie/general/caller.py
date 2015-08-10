@@ -605,58 +605,17 @@ class Caller(object):
         Draws a topography representation of the evoked potentials.
         
         Keyword arguments:
-        epochs
-        evokeds
-        category
+        evokeds  - Evoked object or list of evokeds.
+        layout   - The desired layout as a string.
         """
+        if layout == 'Infer from data':
+            layout = None  # Tries to guess the locations from the data.
         layout = read_layout(layout)
 
-        #layout = read_layout('Vectorview-all')
-        
-        # Checks if there are whitespaces in evokeds ch_names.
-        # If not, whitespaces in layout.names need to be removed.
-        #if not ' ' in evokeds[0].ch_names[0]:
-            # TODO: add whitespace on evokeds ch_names or remove whitespace
-            # from layout names.
-            #layout.names = _clean_names(layout.names, remove_whitespace=True)
-        #    layout.names = [str(name).replace(' ','') for name in layout.names]
-        """
-        COLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k', '#473C8B', '#458B74',
-          '#CD7F32', '#FF4040', '#ADFF2F', '#8E2323', '#FF1493']
-        """
         colors = ['y','m','c','r','g','b','w','k']
-        """
-        colors_events = []
-        #i = 0
-        for value in category.values():
-            if value == 1:
-                colors_events.append('w')
-                #i += 1
-            elif value == 2:
-                colors_events.append('b')
-                #i += 1
-            elif value == 3:
-                colors_events.append('r')
-                #i += 1
-            elif value == 4:
-                colors_events.append('c')
-                #i += 1
-            elif value == 5:
-                colors_events.append('m')
-                #i += 1
-            elif value == 8:
-                colors_events.append('g')
-                #i += 1
-            elif value == 16:
-                colors_events.append('y')
-                #i += 1
-            elif value == 32:
-                colors_events.append('#CD7F32')
-                #i += 1
-        """
+
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
-        
-        #title = str(self.category.keys())
+
         title = mi.subject_name
         fig = plot_topo(evokeds, layout,
                         color=colors[:len(evokeds)], title=title)
@@ -664,39 +623,8 @@ class Caller(object):
         positions = np.arange(0.025, 0.025+0.04*len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)], positions):#np.arange(0.025, len(evokeds) * 0.02 + 0.025, 0.2)):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
-        #fig = plot_topo(evokeds, layout, color=colors_events, title=title)
-        #fig.canvas.set_window_title(mi.subject_name)
-        
-        # fig.set_rasterized(True) <-- this didn't help with the problem of 
-        # drawing figures everytime figure size changes.
-        
-        # Paint figure background with white color.
-        #fig.set_facecolor('w')
         
         fig.show()
-        
-        # Create a legend to show which color belongs to which event.
-        """
-        items = []
-        for key in category.keys():
-            items.append(key)
-        fontP = FontProperties()
-        fontP.set_size(12)
-        """
-        #l = plt.legend(items, loc=8, bbox_to_anchor=(-15, 19), ncol=4,\
-        #               prop=fontP)
-        
-        #l.set_frame_on(False)
-        # Sets the color of the event names text as white instead of black.
-        #for text in l.get_texts():
-        #    text.set_color('w')
-        # TODO: draggable doesn't work with l.set_frame_on(False)
-        # l.draggable(True)
-        
-        prefix, suffix = os.path.splitext(self.experiment.active_subject.\
-                                          _working_file.info.get('filename'))
-        
         def onclick(event):
             plt.show(block=False)
             
@@ -884,6 +812,8 @@ class Caller(object):
         pool.terminate()
             
         print "Plotting evoked..."
+        if layout == 'Infer from data':
+            layout = None
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
         
@@ -1194,6 +1124,8 @@ class Caller(object):
         power, itc = async_result.get()
         pool.terminate()
         self.parent.update_ui()
+        if lout == 'Infer from data':
+            lout = None
         layout = read_layout(lout)
         #layout = read_layout('Vectorview-all')
         baseline = (blstart, blend)  # set the baseline for induced power
@@ -1299,13 +1231,16 @@ class Caller(object):
         Method for computing average TFR over all subjects in the experiment.
         Creates data and picture files to output folder of the experiment.
         """
-        try:
-            layout = read_layout(layout)
-        except Exception as e:
-            self.messageBox = messageBoxes.shortMessageBox('Could not read ' +
-                                'layout: ' + e)
-            self.messageBox.show()
-            return 
+        if layout == 'Infer from data':
+            layout = None
+        else:
+            try:
+                layout = read_layout(layout)
+            except Exception as e:
+                msg = 'Could not read layout: ' + str(e)
+                self.messageBox = messageBoxes.shortMessageBox(msg)
+                self.messageBox.show()
+                return 
         
         frequencies = np.arange(minfreq, maxfreq, interval)
         
@@ -1470,8 +1405,7 @@ class Caller(object):
         self.e.set()
         print 'Done'
         return power, itc
-        
-        
+
     def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
                            title, save_topo=False, save_plot=False,
                            channels=[], dpi=200, form='png', epoch_name=''):
@@ -1543,19 +1477,20 @@ class Caller(object):
         def onclick(event):
             pl.show(block=False)
         fig.canvas.mpl_connect('button_press_event', onclick)
-        
-    
+
     def plot_power_spectrum(self, params, colors, channelColors):
         
-        try:
-            lout = read_layout(params['lout'], scale=True)
-        except Exception:
-            message = 'Could not read layout information.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
+        if params['lout'] == 'Infer from data':
+            lout = None
+        else:
+            try:
+                lout = read_layout(params['lout'], scale=True)
+            except Exception:
+                message = 'Could not read layout information.'
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                return
         raw = self.experiment.active_subject.working_file
-        #self.computeSpectrum(params)
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -1595,10 +1530,10 @@ class Caller(object):
             plt.show()
            
         # draw topography
-        for ax, idx in iter_topography(raw.info,
-                            fig_facecolor='white', axis_spinecolor='white', 
-                            axis_facecolor='white', layout=lout, 
-                            on_pick=my_callback):
+        for ax, idx in iter_topography(raw.info, fig_facecolor='white',
+                                       axis_spinecolor='white',
+                                       axis_facecolor='white', layout=lout, 
+                                       on_pick=my_callback):
             for i in xrange(len(psds)):
                 channel = raw.info['ch_names'][idx]
                 if (channel in channelColors[i][1]):

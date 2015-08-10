@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Tue Aug  4 05:47:13 2015
+# Created: Mon Aug 10 05:22:16 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -738,6 +738,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_35.addWidget(self.radioButtonSelectLayout)
         self.comboBoxLayout = QtGui.QComboBox(self.groupBox)
         self.comboBoxLayout.setObjectName(_fromUtf8("comboBoxLayout"))
+        self.comboBoxLayout.addItem(_fromUtf8(""))
         self.horizontalLayout_35.addWidget(self.comboBoxLayout)
         self.verticalLayout_27.addLayout(self.horizontalLayout_35)
         self.horizontalLayout_36 = QtGui.QHBoxLayout()
@@ -1648,6 +1649,7 @@ class Ui_MainWindow(object):
         self.pushButtonDeleteEvoked.setText(_translate("MainWindow", "Delete selected dataset", None))
         self.pushButtonLoadEvoked.setText(_translate("MainWindow", "Import dataset...", None))
         self.radioButtonSelectLayout.setText(_translate("MainWindow", "Select layout", None))
+        self.comboBoxLayout.setItemText(0, _translate("MainWindow", "Infer from data", None))
         self.radioButtonLayoutFromFile.setText(_translate("MainWindow", "Layout from file", None))
         self.pushButtonBrowseLayout.setText(_translate("MainWindow", "Browse...", None))
         self.labelLayout.setText(_translate("MainWindow", "No layout selected", None))

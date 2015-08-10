@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'powerSpectrumDialog.ui'
 #
-# Created: Fri Feb 27 06:55:58 2015
+# Created: Mon Aug 10 05:22:53 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -95,6 +95,7 @@ class Ui_PowerSpectrumDialog(object):
         self.horizontalLayout_35.addWidget(self.radioButtonSelectLayout)
         self.comboBoxLayout = QtGui.QComboBox(self.groupBoxConditions)
         self.comboBoxLayout.setObjectName(_fromUtf8("comboBoxLayout"))
+        self.comboBoxLayout.addItem(_fromUtf8(""))
         self.horizontalLayout_35.addWidget(self.comboBoxLayout)
         self.horizontalLayout_36 = QtGui.QHBoxLayout()
         self.horizontalLayout_36.setObjectName(_fromUtf8("horizontalLayout_36"))
@@ -136,7 +137,7 @@ class Ui_PowerSpectrumDialog(object):
         self.scrollAreaConditions.setWidgetResizable(True)
         self.scrollAreaConditions.setObjectName(_fromUtf8("scrollAreaConditions"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 824, 221))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 824, 193))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -233,6 +234,7 @@ class Ui_PowerSpectrumDialog(object):
         self.checkBoxLogarithm.setToolTip(_translate("PowerSpectrumDialog", "Use logarithmic scale.", None))
         self.checkBoxLogarithm.setText(_translate("PowerSpectrumDialog", "Use logarithmic scale", None))
         self.radioButtonSelectLayout.setText(_translate("PowerSpectrumDialog", "Select layout", None))
+        self.comboBoxLayout.setItemText(0, _translate("PowerSpectrumDialog", "Infer from data", None))
         self.radioButtonLayoutFromFile.setText(_translate("PowerSpectrumDialog", "Layout from file", None))
         self.pushButtonBrowseLayout.setText(_translate("PowerSpectrumDialog", "Browse...", None))
         self.labelLayout.setText(_translate("PowerSpectrumDialog", "No layout selected", None))

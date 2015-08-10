@@ -1780,7 +1780,13 @@
                           </widget>
                          </item>
                          <item>
-                          <widget class="QComboBox" name="comboBoxLayout"/>
+                          <widget class="QComboBox" name="comboBoxLayout">
+                           <item>
+                            <property name="text">
+                             <string>Infer from data</string>
+                            </property>
+                           </item>
+                          </widget>
                          </item>
                         </layout>
                        </item>
