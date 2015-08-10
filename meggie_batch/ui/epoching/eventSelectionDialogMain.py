@@ -63,7 +63,6 @@ class EventSelectionDialog(QtGui.QDialog):
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
 
-
     def __init__(self, parent, params = None):
         """Initialize the event selection dialog.
         
@@ -88,8 +87,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.used_names = []
         if params is not None:
             self.fill_parameters(params)
-            
-            
+
     def initialize(self, epochs_name):
         """
         Method for initializing the dialog. Used for modifying existing epoch
@@ -111,29 +109,27 @@ class EventSelectionDialog(QtGui.QDialog):
             events.append([int(event[0]), int(event[1]), int(event[2])])
         self.add_events(events, event_name)
 
-        
     def add_events(self, events, event_name):
         """Add a list of events or a single event to the ui's eventlist.
-        
+
         Keyword arguments:
-        
+
         events     -- Events to add.
         event_name -- The user-defined name of the events. Default is 'event'.
         """
         for event in events:
             item = QtGui.QListWidgetItem(event_name + ' ' + str(event[0]) +
                                          ', ' + str(event[2]))
-                
+
             item.setData(32, event)
             item.setData(33, event_name)
             self.ui.listWidgetEvents.addItem(item)
-        
+
         if self.used_names.count(event_name) < 1:    
             self.used_names.append(event_name)
-        
+
         self.ui.pushButtonRemove.setEnabled(True)
 
-        
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
         
@@ -160,9 +156,6 @@ class EventSelectionDialog(QtGui.QDialog):
                                            QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.No:
                 return None
-            #self.messageBox = messageBoxes.shortMessageBox(message)
-            #self.messageBox.show()
-        
         # QString to string
         collectionName = str(collectionName)
         
@@ -213,7 +206,6 @@ class EventSelectionDialog(QtGui.QDialog):
                       'tmax' : float(tmax), 'collectionName' : collectionName}
         return param_dict
 
-        
     def create_eventlist(self):
         """
         Pick desired events from the raw data.
@@ -222,12 +214,12 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         self.event_id = int(self.ui.comboBoxEventID.currentText())
         e = Events(self.caller.experiment.active_subject._working_file,
-                   self.caller.experiment.active_subject._stim_channel)
+                   self.caller.experiment.active_subject._stim_channel,
+                   self.ui.spinBoxMask.value())
         e.pick(self.event_id)
         print str(e.events)
         return e.events
 
-    
     def fill_parameters(self, params):
         """Fill the fields in the dialog with parameters values from a dict.
         
@@ -294,8 +286,6 @@ class EventSelectionDialog(QtGui.QDialog):
         name = self.set_event_name(self.ui.lineEditName.text())
         events = self.create_eventlist()
         self.add_events(events, name)
-
-
         self.ui.lineEditName.setText('Event')
 
         

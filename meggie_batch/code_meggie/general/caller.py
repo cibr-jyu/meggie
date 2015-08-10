@@ -1167,7 +1167,7 @@ class Caller(object):
                     fig = itc.plot_topomap(tmin=scalp['tmin'],
                                            tmax=scalp['tmax'],
                                            fmin=scalp['fmin'],
-                                           fmax=scalp['fmax'], 
+                                           fmax=scalp['fmax'],
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
                                            show=False)

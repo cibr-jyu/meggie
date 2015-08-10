@@ -58,7 +58,7 @@
         <x>0</x>
         <y>0</y>
         <width>924</width>
-        <height>634</height>
+        <height>630</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -92,7 +92,7 @@
                  <x>10</x>
                  <y>30</y>
                  <width>421</width>
-                 <height>151</height>
+                 <height>191</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -107,6 +107,36 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="comboBoxEventID"/>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <widget class="QLabel" name="labelMask">
+                    <property name="text">
+                     <string>Mask</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="spinBoxMask">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mask bit used for finding events. For example, if mask is set to 1, first bit is ignored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="minimum">
+                     <number>0</number>
+                    </property>
+                    <property name="maximum">
+                     <number>9999</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -173,7 +203,7 @@
                  <x>10</x>
                  <y>30</y>
                  <width>421</width>
-                 <height>141</height>
+                 <height>160</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -597,8 +627,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>550</y>
+     <x>153</x>
+     <y>579</y>
     </hint>
     <hint type="destinationlabel">
      <x>290</x>

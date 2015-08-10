@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Thu Aug  6 06:52:25 2015
+# Created: Mon Aug 10 09:10:03 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,7 +46,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 924, 634))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 924, 630))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 400))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.horizontalLayoutWidget_2 = QtGui.QWidget(self.scrollAreaWidgetContents)
@@ -62,7 +62,7 @@ class Ui_EventSelectionDialog(object):
         self.groupBoxEvent = QtGui.QGroupBox(self.horizontalLayoutWidget_2)
         self.groupBoxEvent.setObjectName(_fromUtf8("groupBoxEvent"))
         self.verticalLayoutWidget_4 = QtGui.QWidget(self.groupBoxEvent)
-        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(10, 30, 421, 151))
+        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(10, 30, 421, 191))
         self.verticalLayoutWidget_4.setObjectName(_fromUtf8("verticalLayoutWidget_4"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_4.setMargin(0)
@@ -76,6 +76,19 @@ class Ui_EventSelectionDialog(object):
         self.comboBoxEventID.setObjectName(_fromUtf8("comboBoxEventID"))
         self.horizontalLayout_7.addWidget(self.comboBoxEventID)
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.labelMask = QtGui.QLabel(self.verticalLayoutWidget_4)
+        self.labelMask.setObjectName(_fromUtf8("labelMask"))
+        self.horizontalLayout_6.addWidget(self.labelMask)
+        self.spinBoxMask = QtGui.QSpinBox(self.verticalLayoutWidget_4)
+        self.spinBoxMask.setEnabled(True)
+        self.spinBoxMask.setMinimum(0)
+        self.spinBoxMask.setMaximum(9999)
+        self.spinBoxMask.setProperty("value", 0)
+        self.spinBoxMask.setObjectName(_fromUtf8("spinBoxMask"))
+        self.horizontalLayout_6.addWidget(self.spinBoxMask)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.labelName = QtGui.QLabel(self.verticalLayoutWidget_4)
@@ -101,7 +114,7 @@ class Ui_EventSelectionDialog(object):
         self.groupBoxRejection = QtGui.QGroupBox(self.horizontalLayoutWidget_2)
         self.groupBoxRejection.setObjectName(_fromUtf8("groupBoxRejection"))
         self.layoutWidget = QtGui.QWidget(self.groupBoxRejection)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 421, 141))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 421, 160))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_7 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_7.setMargin(0)
@@ -269,6 +282,8 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonCreateEpochs.setText(_translate("EventSelectionDialog", "Create epochs", None))
         self.groupBoxEvent.setTitle(_translate("EventSelectionDialog", "Select events to include in epoch collection", None))
         self.labelEventID.setText(_translate("EventSelectionDialog", "Event ID:", None))
+        self.labelMask.setText(_translate("EventSelectionDialog", "Mask", None))
+        self.spinBoxMask.setToolTip(_translate("EventSelectionDialog", "<html><head/><body><p>Mask bit used for finding events. For example, if mask is set to 1, first bit is ignored.</p></body></html>", None))
         self.labelName.setText(_translate("EventSelectionDialog", "Event name:      ", None))
         self.pushButtonAdd.setText(_translate("EventSelectionDialog", "Add to list >>", None))
         self.pushButtonRemove.setText(_translate("EventSelectionDialog", "<< Remove", None))
