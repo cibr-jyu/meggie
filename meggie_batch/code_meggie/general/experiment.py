@@ -600,8 +600,46 @@ class Experiment(QObject):
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
         print '[done]'
-        settingsFile.close()        
-    
+        settingsFile.close()
+
+    def save_parameter_file(self, command, inputfilename, outputfilename,
+                            operation, dic):
+        """
+        Saves the command and parameters related to creation of a certain
+        output file to a separate parameter file in csv-format.
+        
+        An example of the structure of the resulting parameter file:
+        
+        jn_multimodal01_raw_sss.fif
+        jn_multimodal01_raw_sss_ecg_proj.fif 
+        mne.preprocessing.compute_proj_eog
+        tmin,0.2
+        tmax,0.5
+        .
+        .
+        .  
+        
+        Keyword arguments:
+        command          -- command (as string) used.
+        inputfilename    -- name of the file the command with parameters
+                            was executed on
+        outputfilename   -- the resulting output file from the command.
+        operation        -- operation the command represents. Used for
+                            determining the parameter file name.
+        dic              -- dictionary including commands.
+        """
+        paramfilename = self.subject_directory + operation + '.param'
+        
+        with open(paramfilename, 'wb') as paramfullname:
+            print 'writing param file'
+            csvwriter = csv.writer(paramfullname)
+            
+            csvwriter.writerow([inputfilename])
+            csvwriter.writerow([outputfilename])
+            csvwriter.writerow([command])
+            
+            for key, value in dic.items():
+                csvwriter.writerow([key, value])
 
     def __getstate__(self):
         """
@@ -786,42 +824,3 @@ class ExperimentHandler(QObject):
             mBox = messageBoxes.shortMessageBox(message)
             mBox.exec_()
             return
-
-    def save_parameter_file(self, command, inputfilename, outputfilename,
-                            operation, dic):
-        """
-        Saves the command and parameters related to creation of a certain
-        output file to a separate parameter file in csv-format.
-        
-        An example of the structure of the resulting parameter file:
-        
-        jn_multimodal01_raw_sss.fif
-        jn_multimodal01_raw_sss_ecg_proj.fif 
-        mne.preprocessing.compute_proj_eog
-        tmin,0.2
-        tmax,0.5
-        .
-        .
-        .  
-        
-        Keyword arguments:
-        command          -- command (as string) used.
-        inputfilename    -- name of the file the command with parameters
-                            was executed on
-        outputfilename   -- the resulting output file from the command.
-        operation        -- operation the command represents. Used for
-                            determining the parameter file name.
-        dic              -- dictionary including commands.
-        """
-        paramfilename = self.subject_directory + operation + '.param'
-        
-        with open(paramfilename, 'wb') as paramfullname:
-            print 'writing param file'
-            csvwriter = csv.writer(paramfullname)
-            
-            csvwriter.writerow([inputfilename])
-            csvwriter.writerow([outputfilename])
-            csvwriter.writerow([command])
-            
-            for key, value in dic.items():
-                csvwriter.writerow([key, value])
