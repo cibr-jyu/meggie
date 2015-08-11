@@ -221,7 +221,7 @@ class MaxFilterDialog(QtGui.QDialog):
         caller = Caller.Instance()
         
         try:
-            caller.call_maxfilter(dictionary, custom)
+            caller.call_maxfilter(self.raw, dictionary, custom)
         except Exception, err:
             title = 'MaxFilter error:'
             self.messageBox = messageBoxes.longMessageBox(title, str(err))

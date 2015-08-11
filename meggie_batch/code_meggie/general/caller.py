@@ -140,18 +140,19 @@ class Caller(object):
         #print "the program return code was %d" % retval
      
         
-    def call_maxfilter(self, dic, custom):
+    def call_maxfilter(self, raw, params, custom):
         """
         Performs maxfiltering with the given parameters.
         Keyword arguments:
-        dic           -- Dictionary of parameters
-        custom        -- Additional parameters as a string
+        raw    -- Raw object.
+        params -- Dictionary of parameters
+        custom -- Additional parameters as a string
         """
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
-        for i in range(len(dic)):
-            bs += dic.keys()[i] + ' ' + str(dic.values()[i]) + ' '
+        for i in range(len(params)):
+            bs += params.keys()[i] + ' ' + str(params.values()[i]) + ' '
         # Add user defined parameters from the "custom" tab
         bs += custom
         print bs
@@ -163,8 +164,8 @@ class Caller(object):
         
         print "the program return code was %d" % retval
         
-        outputfile = dic.get('-o')
-        self.update_experiment_working_file(outputfile)
+        outputfile = params.get('-o')
+        self.update_experiment_working_file(outputfile, raw)
         
         """ 
         TODO Write parameter file. Implement after the actual MaxFilter
