@@ -561,7 +561,7 @@ def open_raw(fname, pre_load=True):
     Raises an exception if the file cannot be opened.
     """
     try:
-        return mne.io.Raw(fname, preload=pre_load)
+        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
     except IOError as e:
         raise IOError('File does not exist or is not a raw-file.' + str(e))
     except OSError as e:
