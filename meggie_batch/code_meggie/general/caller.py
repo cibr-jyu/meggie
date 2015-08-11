@@ -140,7 +140,7 @@ class Caller(object):
         #print "the program return code was %d" % retval
      
         
-    def call_maxfilter(self, raw, params, custom):
+    def call_maxfilter(self, params, custom):
         """
         Performs maxfiltering with the given parameters.
         Keyword arguments:
@@ -161,12 +161,13 @@ class Caller(object):
         for line in proc.stdout.readlines():
             print line
         retval = proc.wait()      
-        
+
         print "the program return code was %d" % retval
-        
+
         outputfile = params.get('-o')
+        raw = mne.io.Raw(outputfile, preload=True)
         self.update_experiment_working_file(outputfile, raw)
-        
+
         """ 
         TODO Write parameter file. Implement after the actual MaxFilter
         calling has been tested. 
