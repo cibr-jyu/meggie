@@ -144,7 +144,7 @@ class EventSelectionDialog(QtGui.QDialog):
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         #stim_channel = self.caller.experiment.active_subject._stim_channel
-        
+
         collectionName = self.ui.lineEditCollectionName.text()
         if len(self.parent.epochList.ui.listWidgetEpochs.\
             findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
@@ -180,9 +180,9 @@ class EventSelectionDialog(QtGui.QDialog):
             event_name = self.ui.listWidgetEvents.item(i).data(33)
             event_tup = (event, event_name)
             events.append(event_tup)
-            
+
         #Check if any picks are found with current parameter values.
-        
+
         if mag and grad:
             meg = True
         elif mag:
@@ -196,7 +196,7 @@ class EventSelectionDialog(QtGui.QDialog):
             message = 'No picks found with current parameter values' 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-            return  
+            return
 
         #Create a dictionary containing all the parameters
         #Note: Raw is not collected here.
@@ -212,13 +212,14 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if self.ui.comboBoxEventID.count() == 0:
             return
-        self.event_id = int(self.ui.comboBoxEventID.currentText())
+        event_id = int(self.ui.comboBoxEventID.currentText())
+        mask = self.ui.spinBoxMask.value()
         e = Events(self.caller.experiment.active_subject._working_file,
-                   self.caller.experiment.active_subject._stim_channel,
-                   self.ui.spinBoxMask.value())
-        e.pick(self.event_id)
-        print str(e.events)
-        return e.events
+                   self.caller.experiment.active_subject._stim_channel, mask)
+        mask = np.bitwise_not(mask)
+        events = e.pick(np.bitwise_and(event_id, mask))
+        print str(events)
+        return events
 
     def fill_parameters(self, params):
         """Fill the fields in the dialog with parameters values from a dict.

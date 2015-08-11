@@ -65,7 +65,9 @@ class Events(object):
         Keyword arguments:
         event_id      -- Id of the event.
         Raises an exception if the events haven't been initialized.
+        Returns events matching the event_id.
         """
         if self._events is None:
             raise Exception('No events found.')
-        self._events = mne.pick_events(self._events, include=event_id)
+        return [x for x in self._events if x[2] == event_id]
+        #self._events = mne.pick_events(self._events, include=event_id)
