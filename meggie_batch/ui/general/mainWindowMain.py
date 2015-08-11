@@ -1178,7 +1178,7 @@ class MainWindow(QtGui.QMainWindow):
         epochs_name = str(self.epochList.ui.listWidgetEpochs.\
                           currentItem().text())
         #epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
-        if self.ui.radioButtonLobe.isChecked() == True:
+        if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(epochs_name, self.ui.comboBoxLobes.\
                                          currentText(), None)
         else:

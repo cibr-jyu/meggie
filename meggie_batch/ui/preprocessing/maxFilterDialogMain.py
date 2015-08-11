@@ -188,8 +188,14 @@ class MaxFilterDialog(QtGui.QDialog):
         else:
             dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
         
-        if fit: dictionary['-origin fit'] = ''
-        else: dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
+        if fit:
+            dictionary['-origin fit'] = ''
+        else:
+            dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
+            if self.ui.radioButtonDevice.isChecked():
+                dictionary['-frame'] = 'device'
+            elif self.ui.radioButtonHead.isChecked():
+                dictionary['-frame'] = 'head'
         dictionary['-linefreq'] = self.ui.spinBoxLineFreq.value()
         dictionary['-in'] = order_in
         dictionary['-out'] = order_out
