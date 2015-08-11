@@ -250,16 +250,14 @@ class MaxFilterDialog(QtGui.QDialog):
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         self.root = os.environ.get('NEUROMAG_ROOT')
         files = os.listdir(self.root + '/databases/sss/')
-        
-        for file in files:
-            
-            if file.startswith('sss_cal_'):
-                lab = file.split('sss_cal_')[1][:-4]
+
+        for fname in files:
+            if fname.startswith('sss_cal_'):
+                lab = fname.split('sss_cal_')[1][:-4]
                 if os.path.isfile(self.root + '/databases/ctc/' + 
                                   'ct_sparse_' + lab + '.fif'): 
                     self.ui.comboBoxLab.addItem(lab)
-                
-    
+
     def setLab(self):
         """
         Checks if the calibration files for the selected lab exist.

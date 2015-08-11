@@ -628,7 +628,8 @@ class Experiment(QObject):
                             determining the parameter file name.
         dic              -- dictionary including commands.
         """
-        paramfilename = self.subject_directory + operation + '.param'
+        paramfilename = os.path.join(os.path.split(outputfilename)[0],
+                                     operation + '.param')
         
         with open(paramfilename, 'wb') as paramfullname:
             print 'writing param file'
