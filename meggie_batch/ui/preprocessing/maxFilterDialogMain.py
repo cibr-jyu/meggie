@@ -223,9 +223,10 @@ class MaxFilterDialog(QtGui.QDialog):
         try:
             caller.call_maxfilter(dictionary, custom)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            title = 'MaxFilter error:'
+            self.messageBox = messageBoxes.longMessageBox(title, str(err))
             self.messageBox.show()
+            return
         
         """
         Checks the MaxFilter box in the preprocessing tab of the mainWindow.

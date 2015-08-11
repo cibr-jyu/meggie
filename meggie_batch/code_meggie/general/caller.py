@@ -172,8 +172,7 @@ class Caller(object):
         self.experiment.save_parameter_file('maxfilter', raw, , dic)
         """
         self.experiment.save_experiment_settings()
-   
-        
+
     def call_ecg_ssp(self, dic):
         """
         Creates ECG projections using SSP for given data.
