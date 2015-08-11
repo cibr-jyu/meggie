@@ -219,7 +219,7 @@ class MaxFilterDialog(QtGui.QDialog):
         
         # Uses the caller related to mainwindow.
         caller = Caller.Instance()
-        
+
         try:
             caller.call_maxfilter(self.raw, dictionary, custom)
         except Exception, err:
@@ -227,12 +227,11 @@ class MaxFilterDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.longMessageBox(title, str(err))
             self.messageBox.show()
             return
-        
+
         """
         Checks the MaxFilter box in the preprocessing tab of the mainWindow.
         """ 
-        self.parent.ui.checkBoxMaxFilter.setCheckState(2)
-        
+        self.parent.ui.checkBoxMaxFilterComputed.setCheckState(2)
         self.close()
         
     def populateComboboxLab(self):
