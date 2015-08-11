@@ -209,7 +209,7 @@ class MaxFilterDialog(QtGui.QDialog):
         if skips != '':
             dictionary['-skip'] = skips
         
-        dictionary['-format'] = float
+        dictionary['-format'] = 'float'
         
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
