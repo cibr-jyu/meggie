@@ -163,16 +163,16 @@ class Caller(object):
         retval = proc.wait()      
 
         print "the program return code was %d" % retval
+        if retval != 0:
+            print 'Error while maxfiltering data!'
+            return
 
         outputfile = params.get('-o')
         raw = mne.io.Raw(outputfile, preload=True)
         self.update_experiment_working_file(outputfile, raw)
 
-        """ 
-        TODO Write parameter file. Implement after the actual MaxFilter
-        calling has been tested. 
-        self.experiment.save_parameter_file('maxfilter', raw, , dic)
-        """
+        self.experiment.save_parameter_file(bs, params['-f'], outputfile,
+                                            'maxfilter', params)        
         self.experiment.save_experiment_settings()
 
     def call_ecg_ssp(self, dic):
