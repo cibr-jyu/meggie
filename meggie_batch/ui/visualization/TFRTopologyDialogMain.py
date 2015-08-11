@@ -65,6 +65,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
         epochs = self.caller.experiment.active_subject._epochs[epoch_name]._raw
+        self.ui.labelEpochName.setText(epoch_name)
         self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
         self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
         self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
