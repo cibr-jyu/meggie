@@ -58,14 +58,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         widget.removeWidget.connect(self.on_RemoveWidget_clicked)
         widget.channelCopy.connect(self.copyChannels)
         self.ui.verticalLayoutConditions.addWidget(widget)
-        
+        stim_channel = self.caller.experiment.active_subject._stim_channel
         try:
-            triggers = find_events(raw, stim_channel='STI 014')
+            triggers = find_events(raw, stim_channel=stim_channel)
             for trigger in set(triggers[:,2]):
                 self.ui.comboBoxStart.addItem(str(trigger))
                 self.ui.comboBoxEnd.addItem(str(trigger))
         except Exception as e:
-            print 'Could not find triggers from STI 014.'
+            print 'Could not find triggers from %s.' % stim_channel
             print str(e)
 
         self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
@@ -134,10 +134,9 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         
         """
-
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        
+
         colors = []
         times = [] # Array for start and end times.
         channelColors = dict()
@@ -153,7 +152,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 messageBox.exec_()
                 return 
             times.append((start, end))
-            
+
             colors.append(condition.getColor())
             channels = condition.getChannels()
             channelColors[i] = (condition.getChannelColor(), channels)
@@ -200,8 +199,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             return
 
         QtGui.QApplication.restoreOverrideCursor()
-        
-    
+
     @QtCore.pyqtSlot(int)   
     def on_comboBoxStart_currentIndexChanged(self, index):
         """
@@ -212,13 +210,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         if not self.ui.checkBoxTriggers.isChecked(): return
         raw = self.caller.experiment.active_subject.working_file
-        triggers = find_events(raw, stim_channel='STI 014')
+        stim_channel = self.caller.experiment.active_subject._stim_channel
+        triggers = find_events(raw, stim_channel=stim_channel)
         triggerStart = int(self.ui.comboBoxStart.currentText())
         tmin = np.where(triggers[:,2]==triggerStart)[0][0]
         tmin = raw.index_as_time(triggers[tmin][0])
         tmin = int(tmin[0])
         self.conditions[0].setStartTime(tmin)
-        
+
     @QtCore.pyqtSlot(int)   
     def on_comboBoxEnd_currentIndexChanged(self, index):
         """
@@ -229,7 +228,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         if not self.ui.checkBoxTriggers.isChecked(): return
         raw = self.caller.experiment.active_subject.working_file
-        triggers = find_events(raw, stim_channel='STI 014')
+        stim_channel = self.caller.experiment.active_subject._stim_channel
+        triggers = find_events(raw, stim_channel=stim_channel)
         triggerEnd = int(self.ui.comboBoxEnd.currentText())
         tmax = np.where(triggers[:,2]==triggerEnd)[0][0]
         tmax = raw.index_as_time(triggers[tmax][0])
@@ -242,8 +242,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                       ' time window!'
             mBox = shortMessageBox(message)
             mBox.exec_()
-            
-        
+
     @QtCore.pyqtSlot(bool)
     def on_checkBoxTriggers_toggled(self, toggled):
         """
@@ -267,7 +266,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         else:
             self.conditions[0].disableSpinBoxes(False)
             self.ui.pushButtonAddTimeSeries.setEnabled(True)
-                        
+
     def on_pushButtonSeriesFromTriggers_clicked(self, checked=None):
         """
         Opens a TimeSeriesDialog.
@@ -280,7 +279,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         dialog.timeSeriesChanged.connect(self.on_TimeSeriesChanged)
         dialog.exec_()
         """
-        
+
     @QtCore.pyqtSlot(list)    
     def on_TimeSeriesChanged(self, conditions):
         """
@@ -308,10 +307,10 @@ class PowerSpectrumDialog(QtGui.QDialog):
             self.ui.verticalLayoutConditions.addWidget(widget)
             i+=1
         self.ui.scrollAreaConditions.updateGeometry()
-        
+
     def updateUi(self):
         self.parent.updateUi()
-        
+
     def keyPressEvent(self, qKeyEvent):
         """
         Overrided method to prevent enter or return from starting the plotting.
@@ -322,7 +321,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Enter:
             return
         return QtGui.QDialog.keyPressEvent(self, qKeyEvent)
-    
+
     def installEventFilters(self):
         """
         Helper method for disabling wheel events on all widgets.
@@ -330,7 +329,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.spinBoxFmin.installEventFilter(self)
         self.ui.spinBoxFmax.installEventFilter(self)
         self.ui.spinBoxNfft.installEventFilter(self)
-    
+
     def eventFilter(self, source, event):
         """
         Event filter for disabling wheel events on spin boxes and such.
@@ -338,4 +337,3 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if (event.type() == QtCore.QEvent.Wheel):
             return True
         return QtGui.QWidget.eventFilter(self, source, event)
-        

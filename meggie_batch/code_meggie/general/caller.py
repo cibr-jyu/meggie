@@ -1466,7 +1466,13 @@ class Caller(object):
         fig.canvas.mpl_connect('button_press_event', onclick)
 
     def plot_power_spectrum(self, params, colors, channelColors):
-        
+        """
+        Method for plotting power spectrum.
+        Parameters:
+        param         - Dictionary containing the parameters.
+        colors        - 
+        channelColors -
+        """
         if params['lout'] == 'Infer from data':
             lout = None
         else:
