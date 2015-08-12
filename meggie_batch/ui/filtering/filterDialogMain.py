@@ -130,7 +130,7 @@ class FilterDialog(QtGui.QDialog):
                                        doubleSpinBoxLowpassCutoff.value()
             dictionary['low_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
-            length = str(self.ui.doubleSpinBoxLowPassLength.text()) + 's'
+            length = str(self.ui.doubleSpinBoxLowPassLength.value()) + 's'
             dictionary['low_length'] = length
         else:
             dictionary['lowpass'] = False

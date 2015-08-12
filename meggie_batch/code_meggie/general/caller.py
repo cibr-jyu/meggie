@@ -1575,23 +1575,6 @@ class Caller(object):
                 return
             if params['log']:
                 psds = 10 * np.log10(psds)
-            
-            """
-            # reorganization
-            temp = list()
-            try:
-                helper_idx = 0
-                for ch_idx in range(len(raw.info['ch_names'])):
-                    if ch_idx in picks:
-                        temp.append(psds[helper_idx])
-                        helper_idx += 1
-                    else:
-                        temp.append(list())
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
-            """
             psdList.append((psds, freqs))
         self.e.set()
         return psdList
