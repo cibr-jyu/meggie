@@ -1488,8 +1488,8 @@ class Caller(object):
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
-        
-        async_result = pool.apply_async(self._compute_spectrum, 
+
+        async_result = pool.apply_async(self._compute_spectrum,
                                         (raw, params,))
         while(True):
             sleep(0.2)
@@ -1500,14 +1500,14 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
             self.result = None
-            return 
-        
+            return
+
         psds = async_result.get()
         pool.terminate()
         print "Plotting power spectrum..."
         print raw.info['projs']
         self.parent.update_ui()
-        
+
         def my_callback(ax, ch_idx):
             """
             Callback for the interactive plot.
@@ -1522,22 +1522,27 @@ class Caller(object):
             else:
                 plt.ylabel('(uV)')
             plt.show()
-           
-        # draw topography
-        for ax, idx in iter_topography(raw.info, fig_facecolor='white',
+
+        info = deepcopy(raw.info)
+        # Workaround for excluding IAS channels for correct indexing with
+        # iter_topography.
+        while info['ch_names'][0].startswith('IAS'):
+            info['ch_names'].pop(0)
+        for ax, idx in iter_topography(info, fig_facecolor='white',
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout, 
                                        on_pick=my_callback):
             for i in xrange(len(psds)):
                 channel = raw.info['ch_names'][idx]
                 if (channel in channelColors[i][1]):
-                    ax.plot(psds[i][0][idx], 
+                    ax.plot(psds[i][0][idx],
                             color=channelColors[i][0], linewidth=0.2)
                 else:
-                    ax.plot(psds[i][0][idx], color=colors[i],
-                            linewidth=0.2)
+                    ax.plot(psds[i][0][idx],
+                            color=colors[i], linewidth=0.2)
+        print raw.info['ch_names']
         plt.show()
-    
+
     def _compute_spectrum(self, raw, params):
         """
         Performed in a worker thread.
@@ -1551,41 +1556,46 @@ class Caller(object):
                 picks = mne.pick_types(raw.info, meg=True, eeg=False, 
                                        exclude=[])
             elif params['ch'] == 'eeg':
-                picks = mne.pick_types(raw.info, meg=False, eeg=True, 
+                picks = mne.pick_types(raw.info, meg=False, eeg=True,
                                        exclude=[])
         except Exception as e:
             self.result = e
             self.e.set()
             return
-        psdList = []    
+        psdList = []
         for time in times:
             try:
-                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1], 
-                              fmin=fmin, fmax=fmax, n_fft=nfft, 
-                              picks=picks, proj=True, verbose=True)
+                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
+                                              fmin=fmin, fmax=fmax, n_fft=nfft,
+                                              picks=picks, proj=True,
+                                              verbose=True)
             except Exception as e:
                 self.result = e
                 self.e.set()
                 return
             if params['log']:
                 psds = 10 * np.log10(psds)
+            
+            """
+            # reorganization
+            temp = list()
+            try:
+                helper_idx = 0
+                for ch_idx in range(len(raw.info['ch_names'])):
+                    if ch_idx in picks:
+                        temp.append(psds[helper_idx])
+                        helper_idx += 1
+                    else:
+                        temp.append(list())
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return
+            """
             psdList.append((psds, freqs))
         self.e.set()
         return psdList
-        """
-        try:
-            psds = self.computePowerSpectrum(params['times'], params['fmin'],
-                                             params['fmax'], params['nfft'],
-                                             params['log'])
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
-        print "Done"
-        self.e.set()
-        return psds
-        """
-            
+
     def magnitude_spectrum(self, raw, ch_index):
         """
         Replaced by plot_power_spectrum.

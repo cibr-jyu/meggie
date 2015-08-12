@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>686</width>
-    <height>404</height>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,7 +81,7 @@
                <double>1000000000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>1.000000000000000</double>
               </property>
               <property name="value">
                <double>0.500000000000000</double>
@@ -110,7 +110,7 @@
                <double>10000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>0.100000000000000</double>
               </property>
               <property name="value">
                <double>0.500000000000000</double>
@@ -125,12 +125,18 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditHighpassLength">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxHighPassLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -196,7 +202,7 @@
                <double>10000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>1.000000000000000</double>
               </property>
               <property name="value">
                <double>40.000000000000000</double>
@@ -231,7 +237,7 @@
                <double>10000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>0.100000000000000</double>
               </property>
               <property name="value">
                <double>5.000000000000000</double>
@@ -246,12 +252,18 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditLowpassLength">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxLowPassLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -317,7 +329,7 @@
                <double>10000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>1.000000000000000</double>
               </property>
               <property name="value">
                <double>50.000000000000000</double>
@@ -361,12 +373,18 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditBandstopLength">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandStopLength">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -429,7 +447,7 @@
                <double>10000.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>10.000000000000000</double>
+               <double>1.000000000000000</double>
               </property>
               <property name="value">
                <double>100.000000000000000</double>
@@ -473,12 +491,18 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEditBandstopLength2">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBandStopLength2">
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="placeholderText">
-               <string>e.g. 10s, 500ms</string>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -528,19 +552,15 @@
   <tabstop>checkBoxLowpass</tabstop>
   <tabstop>doubleSpinBoxLowpassCutoff</tabstop>
   <tabstop>doubleSpinBoxLowpassTransBandwidth</tabstop>
-  <tabstop>lineEditLowpassLength</tabstop>
   <tabstop>checkBoxHighpass</tabstop>
   <tabstop>doubleSpinBoxHighpassCutoff</tabstop>
   <tabstop>doubleSpinBoxHighpassTransBandwidth</tabstop>
-  <tabstop>lineEditHighpassLength</tabstop>
   <tabstop>checkBoxBandstop</tabstop>
   <tabstop>doubleSpinBoxBandstopFreq</tabstop>
   <tabstop>doubleSpinBoxBandstopWidth</tabstop>
-  <tabstop>lineEditBandstopLength</tabstop>
   <tabstop>checkBoxBandstop2</tabstop>
   <tabstop>doubleSpinBoxBandstopFreq2</tabstop>
   <tabstop>doubleSpinBoxBandstopWidth2</tabstop>
-  <tabstop>lineEditBandstopLength2</tabstop>
   <tabstop>pushButtonPreview</tabstop>
  </tabstops>
  <resources/>

@@ -4,8 +4,6 @@ Created on Aug 20, 2013
 
 @author: kpaliran
 '''
-import os
-
 import mne
 from PyQt4 import QtCore,QtGui
 from filterDialogUi import Ui_DialogFilter
@@ -132,8 +130,8 @@ class FilterDialog(QtGui.QDialog):
                                        doubleSpinBoxLowpassCutoff.value()
             dictionary['low_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxLowpassTransBandwidth.value()
-            dictionary['low_length'] = str(self.ui.lineEditLowpassLength.\
-                                           text())
+            length = str(self.ui.doubleSpinBoxLowPassLength.text()) + 's'
+            dictionary['low_length'] = length
         else:
             dictionary['lowpass'] = False
         
@@ -145,8 +143,8 @@ class FilterDialog(QtGui.QDialog):
                                         doubleSpinBoxHighpassCutoff.value()
             dictionary['high_trans_bandwidth'] = self.ui.\
                         doubleSpinBoxHighpassTransBandwidth.value()
-            dictionary['high_length'] = str(self.ui.lineEditHighpassLength.\
-                                            text())
+            length = str(self.ui.doubleSpinBoxHighPassLength.value()) + 's'
+            dictionary['high_length'] = length
         else:
             dictionary['highpass'] = False
         
@@ -164,9 +162,9 @@ class FilterDialog(QtGui.QDialog):
                         
             dictionary['bandstop1_trans_bandwidth'] = self.ui.\
             doubleSpinBoxBandstopWidth.value()
-            
-            dictionary['bandstop1_length'] = str(self.ui.\
-                                             lineEditBandstopLength.text())
+
+            length = str(self.ui.doubleSpinBoxBandStopLength.value()) + 's'
+            dictionary['bandstop1_length'] = length
         else:
             dictionary['bandstop1'] = False
         
@@ -184,9 +182,8 @@ class FilterDialog(QtGui.QDialog):
             
             dictionary['bandstop2_trans_bandwidth'] = self.ui.\
                 doubleSpinBoxBandstopWidth2.value()
-                                    
-            dictionary['bandstop2_length'] = str(self.ui.\
-                                             lineEditBandstopLength2.text())
+            length = str(self.ui.doubleSpinBoxBandStopLength2.value()) + 's'
+            dictionary['bandstop2_length'] = length
         else:
             dictionary['bandstop2'] = False
             
@@ -213,13 +210,13 @@ class FilterDialog(QtGui.QDialog):
         _working_file.info['sfreq']
         info = self.caller.experiment.active_subject.\
                             _working_file.info
-        
+
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, samplerate) == False) or \
                         (self._validateFilterLength(paramDict) == False):
             QtGui.QApplication.restoreOverrideCursor()
             return
-        
+
         try: 
             filteredData = self.caller.filter(self.dataToFilter, info,
                                               samplerate, paramDict)
@@ -230,18 +227,18 @@ class FilterDialog(QtGui.QDialog):
             self.messageBox.show()
             QtGui.QApplication.restoreOverrideCursor()
             return
-        
+
         raw = self.caller.experiment.active_subject._working_file
         raw._data = filteredData
         fname = raw.info.get('filename')
-        
+
         # Update the data file with new filter values.
         if 'lowpass' in paramDict and paramDict['lowpass'] == True:
             raw.info['lowpass'] = paramDict['low_cutoff_freq']
-    
+
         if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
             raw.info['highpass'] = paramDict['high_cutoff_freq']
-        
+
         raw.save(fname, overwrite=True)
         raw = mne.io.Raw(fname, preload=True)
         self.caller.update_experiment_working_file(fname, raw)
