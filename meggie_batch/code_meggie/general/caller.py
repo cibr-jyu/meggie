@@ -394,18 +394,29 @@ class Caller(object):
                             raw_in.info.get('filename'),
                             eog_proj_fname, 'eogproj', dic)
         """
-        
-        
-    def apply_ecg(self, raw, directory):
+
+    def apply_exg(self, kind, raw, directory, projs, applied):
         """
-        Applies ECG projections for MEG-data.  
+        Applies ECG or EOG projections for MEG-data.  
         Keyword arguments:
+        kind          -- String to indicate type of projectors ('eog, or 'ecg')
         raw           -- Data to apply to
         directory     -- Directory of the projection file
+        projs         -- List of projectors.
+        applied       -- Boolean mask (list) of projectors to add to raw.
+                         Trues are added to the object and Falses are not
         """
+        if len(applied) != len(projs):
+            msg = 'Error while adding projectors. Check selection.'
+            self.messageBox = messageBoxes.shortMessageBox(msg)
+            self.messageBox.show()
+            self.result = None
+            return 1
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._apply_ecg, args=(raw, directory))
+        self.thread = Thread(target = self._apply_exg, args=(kind, raw,
+                                                             directory, projs,
+                                                             applied))
         self.thread.start()
         while True:
             sleep(0.2)
@@ -419,111 +430,40 @@ class Caller(object):
         else:
             return 0
 
-    def _apply_ecg(self, raw, directory):
+    def _apply_exg(self, kind, raw, directory, projs, applied):
         """
         Performed in a worker thread.
         """
-        # If there already is a file with eog projections applied on it, apply
-        # ecg projections on this file instead of current.
-        if len(filter(os.path.isfile, 
+        if kind == 'ecg':
+            if len(filter(os.path.isfile,
                       glob.glob(directory + '/*-eog_applied.fif'))) > 0:
-            fname = glob.glob(directory + '/*-eog_applied.fif')[0]
-        else:
-            fname = raw.info.get('filename')
-        proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '/*_ecg_*proj.fif'))
-        if len(proj_file) == 0:
-            message = 'There is no proj file.'
-            self.result = Exception(message)
-            
-        #Checks if there is exactly one projection file.
-        # TODO: If there is more than one projection file, which one should
-        # be added? The newest perhaps.
-        if len(proj_file) == 1:
-            proj = mne.read_proj(proj_file[0])
-            raw.add_proj(proj)
-            # If the suffix is shorter or longer than 4, this might
-            # create some problems later on when doing checks
-            # using the generated filename.
-            # appliedfilename = fname[:-4] + '-ecg_applied.fif'
-            
-            # TODO: ecg_avg_applied.fif if ssp checked 
-            appliedfilename = fname.split('.')[-2] + '-ecg_applied.fif'
-            raw.save(appliedfilename)
-            raw = mne.io.Raw(appliedfilename, preload=True)
-        else:
-            self.result = Exception('There is more than one ECG projection '+ \
-                                    'file to apply. ' + \
-                    'Remove all others but the one you want to apply.\n' + \
-                    'Projection files are found under subject folder: ' + \
-                    self.experiment.active_subject._subject_path)
-            self.e.set()
-            return
-        self.update_experiment_working_file(appliedfilename, raw)
-        self.e.set()
-
-    def apply_eog(self, raw, directory):
-        """
-        Applies EOG projections for MEG-data.
-        Keyword arguments:
-        raw           -- Data to apply to
-        directory     -- Directory of the projection file
-        """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._apply_eog, args=(raw, directory))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 1
-        else:
-            return 0
-
-    def _apply_eog(self, raw, directory):
-        """
-        Performed in a worker thread.
-        """
-        if len(filter(os.path.isfile, 
+                fname = glob.glob(directory + '/*-eog_applied.fif')[0]
+            else:
+                fname = raw.info.get('filename')
+        elif kind == 'eog':
+            if len(filter(os.path.isfile, 
                       glob.glob(directory + '/*-ecg_applied.fif'))) > 0:
-            fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
-        else:
-            fname = raw.info.get('filename')
-        proj_file = filter(os.path.isfile,
-                           glob.glob(directory + '/*_eog_*proj.fif'))
-        if len(proj_file) == 0:
-            self.result = Exception('There is no proj file.')
-            self.e.set()
-        #Checks if there is exactly one projection file.
-        # TODO: If there is more than one projection file, which one should
-        # be added? The newest?
-        if len(proj_file) == 1:
-            proj = mne.read_proj(proj_file[0])
-            raw.add_proj(proj)
-            # If the suffix is shorter or longer than 4, this might
-            # create some problems later on when doing checks
-            # using the generated filename.
-            #appliedfilename = fname[:-4] + '-eog_applied.fif'
-            
-            # TODO: eog_avg_applied.fif if ssp checked
-            appliedfilename = fname.split('.')[-2] + '-eog_applied.fif'
-            raw.save(appliedfilename)
-            raw = mne.io.Raw(appliedfilename, preload=True)
-        else:
-            self.result = Exception('There is more than one EOG projection '+ \
-                                    'file to apply. ' + \
-                    'Remove all others but the one you want to apply.\n' + \
-                    'Projection files are found under subject folder: ' + \
-                    self.experiment.active_subject._subject_path) 
-            self.e.set()
-            return
-        self.update_experiment_working_file(appliedfilename, raw)
-        self.experiment.save_experiment_settings()
+                fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
+            else:
+                fname = raw.info.get('filename')
+
+        for new_proj in projs:  # first remove projs
+            for idx, proj in enumerate(raw.info['projs']):
+                if str(new_proj) == str(proj):
+                    raw.info['projs'].pop(idx)
+                    break
+        if not isinstance(projs, np.ndarray):
+            projs = np.array(projs)
+        if not isinstance(applied, np.ndarray):
+            applied = np.array(applied)
+        raw.add_proj(projs[applied])  # then add selected
+
+
+        if kind + '_applied' not in fname:
+            fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
+        raw.save(fname, overwrite=True)
+        raw = mne.io.Raw(fname, preload=True)
+        self.update_experiment_working_file(fname, raw)
         self.e.set()
 
     def average(self, epochs, category):

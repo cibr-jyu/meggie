@@ -79,17 +79,16 @@ class AddECGProjections(QtGui.QDialog):
         """       
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        applied = []
+
+        applied = list()
         for index in xrange(self.listWidget.count()):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))
-            if check_box.checkState() == QtCore.Qt.Checked:
-                applied.append(self.projs[index])
+            applied.append(check_box.isChecked())
 
-        # Overwrites the projection file with desired vectors.
-        mne.write_proj(self.proj_file, applied)
-        result = self.caller.apply_ecg(self.caller.experiment.active_subject.\
-                            working_file,
-                            self.caller.experiment.active_subject.subject_path)
+        raw = self.caller.experiment.active_subject.working_file
+        directory = self.caller.experiment.active_subject.subject_path
+        result = self.caller.apply_exg('ecg', raw, directory, self.projs,
+                                       applied)
 
         if result == 0:
             self.parent.ui.checkBoxECGApplied.setChecked(True)
