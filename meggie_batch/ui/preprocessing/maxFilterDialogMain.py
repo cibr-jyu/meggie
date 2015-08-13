@@ -33,17 +33,15 @@ Created on Mar 28, 2013
 @author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
 Contains the MaxFilterDialog-class used for calling MaxFilter.
 """
-from maxFilterDialogUi import Ui_Dialog
 
-import glob
-import sys
 import os
-import subprocess
 from threading import Thread
+
 from PyQt4 import QtCore,QtGui
 
-import messageBoxes
+from maxFilterDialogUi import Ui_Dialog
 from code_meggie.general.caller import Caller
+import messageBoxes
 
 class MaxFilterDialog(QtGui.QDialog):
     """
@@ -74,13 +72,13 @@ class MaxFilterDialog(QtGui.QDialog):
         # Checks which lab-specific calibration files are found and adds those
         # labs to comboBoxLab.
         self.populateComboboxLab()
-        
+
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
         if checked is None: return 
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                        '/home/')     
-    
+
     def accept(self):
         """
         Reads values from the dialog, saves them in a dictionary and initiates
@@ -99,29 +97,22 @@ class MaxFilterDialog(QtGui.QDialog):
         autobad = self.ui.checkBoxAutobad.checkState() == \
         QtCore.Qt.Checked
         bad_limit = self.ui.doubleSpinBoxBadLimit.value()
-        
-        try:
-            bads = self.ui.lineEditBad.text()
-        except InputError, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()           
-        """ 
-        Check for skips and the sanity of their values. Skip periods should
-        not overlap, and later skip periods should come later than earlier
-        regions
-        """
+        bads = self.ui.lineEditBad.text()
+
+        # Check for skips and the sanity of their values. Skip periods should
+        # not overlap, and later skip periods should come later than earlier
+        # regions
         skips = ''
         if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
-            if ( self.ui.spinBoxSkipEnd_1.value() 
+            if ( self.ui.spinBoxSkipEnd_1.value()
             <= self.ui.spinBoxSkipStart_1.value() ):
                 self.showErrorMessage('First skip ends before it starts.')
-                return 
+                return
             skips += str(self.ui.spinBoxSkipStart_1.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_1.value()) + ' '
-            
+
         if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
-            if ( self.ui.spinBoxSkipEnd_2.value() 
+            if ( self.ui.spinBoxSkipEnd_2.value()
                  <= self.ui.spinBoxSkipStart_2.value() ):
                     self.showErrorMessage('Second skip ends ' +
                                            'before it starts.')
@@ -143,42 +134,31 @@ class MaxFilterDialog(QtGui.QDialog):
                                           'second skip ends.')
                     return
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
-            skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '            
-        
-        """ 
-        This code was used for a buttongroup that allowed selection of output
-        format of MaxFilter generated files. The format now defaults to 32-bit
-        float. MaxFilter allows other formats, but there is usually no need to
-        show them in the UI.
-        """
-        # button_text = str(self.ui.buttonGroupFormat.checkedButton().text())
-        # format = button_text.split(' ')[0].lower()
-            
+            skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '
+
         if self.ui.checkBoxMaxMove.checkState() == QtCore.Qt.Checked:
             button_position = \
             str(self.ui.buttonGroupMaxMove.checkedButton().objectName())
-            if button_position == \
-            'radioButtonPositionDefault':
+            if button_position == 'radioButtonPositionDefault':
                 dictionary['-trans'] = 'default'
-            elif button_position == \
-            'radioButtonPositionFile':
+            elif button_position == 'radioButtonPositionFile':
                 if self.fname != '':
                     try:
                         if os.path.isfile(str(self.fname)) and \
-                        str(self.fname).endswith('fif'):
+                                str(self.fname).endswith('fif'):
                             dictionary['-trans'] = self.fname
                         else:
                             raise Exception('Could not open file.')
                     except Exception, err:
                         self.showErrorMessage(err)
-            elif button_position == \
-            'radioButtonPositionAverage':
-                pass
-        
-        # TODO Store the head position in a file 
+            elif button_position == 'radioButtonPositionAverage':
+                raise NotImplementedError('Average head positioning is not '
+                                          'implemented.')
+
+        # TODO Store the head position in a file
         if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
             dictionary['-hp'] = ''
-        
+
         dictionary['-f'] = self.raw.info.get('filename')
         print self.raw.info.get('filename')
         
@@ -222,10 +202,8 @@ class MaxFilterDialog(QtGui.QDialog):
             dictionary['-site'] = lab
             
         custom = self.ui.textEditCustom.toPlainText()
-        
-        # Uses the caller related to mainwindow.
-        caller = Caller.Instance()
 
+        caller = Caller.Instance()
         try:
             caller.call_maxfilter(dictionary, custom)
         except Exception, err:
@@ -234,9 +212,7 @@ class MaxFilterDialog(QtGui.QDialog):
             self.messageBox.show()
             return
 
-        """
-        Checks the MaxFilter box in the preprocessing tab of the mainWindow.
-        """ 
+        # Checks the MaxFilter box in the preprocessing tab of the mainWindow.
         self.parent.ui.checkBoxMaxFilterComputed.setCheckState(2)
         self.close()
         
@@ -263,19 +239,18 @@ class MaxFilterDialog(QtGui.QDialog):
         Checks if the calibration files for the selected lab exist.
         Returns the selected lab or an empty string if no files are found.
         """
-        
         lab = str(self.ui.comboBoxLab.currentText())
-        
+
         if not os.path.isfile(self.root + '/databases/sss/sss_cal_' +
                               lab + '.dat'):
             lab = ''
             return lab
-        
+
         if not os.path.isfile(self.root + '/databases/ctc/ct_sparse_' + 
                               lab + '.fif'):
             lab = ''
             return lab
-        
+
         return lab
             
     def _show_progressbar(self):
@@ -284,12 +259,3 @@ class MaxFilterDialog(QtGui.QDialog):
         """
         self.ui.labelComputeMaxFilter.setVisible(True)
         self.ui.progressBarComputeMaxFilter.setVisible(True)
-            
-    def showErrorMessage(self, message):
-        """
-        Error message to be shown to the user in a message box. 
-        """
-        self.messageBox = messageBox.AppForm()
-        self.messageBox.labelException.setText(str(message))
-        self.messageBox.show()
-        

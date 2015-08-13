@@ -63,8 +63,7 @@ class TFRDialog(QtGui.QDialog):
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
-        
-    
+
     def accept(self):
         """
         Collects parameters and calls the caller class to create a TFR.
@@ -79,8 +78,8 @@ class TFRDialog(QtGui.QDialog):
         decim = self.ui.spinBoxDecim.value()
         try:
             caller = Caller.Instance()
-            caller.TFR(self.raw, self.epochs, ch_index,
-                                   minfreq, maxfreq, interval, ncycles, decim)
+            caller.TFR(self.raw, self.epochs, ch_index, minfreq, maxfreq,
+                       interval, ncycles, decim)
         except Exception, err:
             self.messageBox = shortMessageBox(str(err))
             QtGui.QApplication.restoreOverrideCursor()

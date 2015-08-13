@@ -944,47 +944,55 @@ class Caller(object):
         pool.terminate()
 
         print 'Plotting TFR...'
-        fig = pl.figure()
-        #pl.clf()
-        pl.subplots_adjust(0.1, 0.08, 0.96, 0.94, 0.2, 0.63)
-        pl.subplot(3, 1, 1)
-        if ch_index in mne.pick_types(evoked.info, meg='grad', ref_meg=False):
-            pl.ylabel('Magnetic Field (fT/cm)')
+        fig = plt.figure()
+
+        plt.subplot2grid((3, 15), (0, 0), colspan=14)
+        ch_type = mne.channels.channels.channel_type(evoked.info, ch_index)
+        if ch_type == 'grad':
+            plt.ylabel('Magnetic Field (fT/cm)')
             evoked_data *= 1e13
-        elif ch_index in mne.pick_types(evoked.info, meg='mag', ref_meg=False):
-            pl.ylabel('Magnetic Field (fT)')
+        elif ch_type == 'mag':
+            plt.ylabel('Magnetic Field (fT)')
             evoked_data *= 1e15
+        elif ch_type == 'eeg' or type == 'eog':
+            plt.ylabel('Evoked potential (uV)')
+            evoked_data *= 1e6
+        else:
+            raise TypeError('TFR plotting for %s channels not supported.' %
+                            ch_type)
 
-        pl.plot(times, evoked_data.T)
-        pl.title('Evoked response (%s)' % evoked.ch_names[ch_index])
-        pl.xlabel('time (ms)')
+        plt.plot(times, evoked_data.T)
+        plt.title('Evoked response (%s)' % evoked.ch_names[ch_index])
+        plt.xlabel('time (ms)')
+        plt.xlim(times[0], times[-1])
 
-        pl.xlim(times[0], times[-1])
+        plt.subplot2grid((3, 15), (1, 0), colspan=14)
+        img = plt.imshow(20 * np.log10(power[0]), extent=[times[0], times[-1],
+                                                          frequencies[0],
+                                                          frequencies[-1]],
+                  aspect='auto', origin='lower')
+        plt.xlabel('Time (ms)')
+        plt.ylabel('Frequency (Hz)')
+        plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
+        plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
+
+        plt.subplot2grid((3, 15), (2, 0), colspan=14)
+        img = plt.imshow(phase_lock[0], extent=[times[0], times[-1],
+                                                frequencies[0],
+                                                frequencies[-1]],
+                  aspect='auto', origin='lower')
+        plt.xlabel('Time (ms)')
+        plt.ylabel('Frequency (Hz)')
+        plt.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
+        plt.colorbar(cax=plt.subplot2grid((3, 15), (2, 14)), mappable=img)
+
+        plt.tight_layout()
         #pl.ylim(-150, 300)
-
-        pl.subplot(3, 1, 2)
-        pl.imshow(20 * np.log10(power[0]), extent=[times[0], times[-1],
-                                                   frequencies[0],
-                                                   frequencies[-1]],
-                  aspect='auto', origin='lower')
-        pl.xlabel('Time (ms)')
-        pl.ylabel('Frequency (Hz)')
-        pl.title('Induced power (%s)' % evoked.ch_names[ch_index])
-        pl.colorbar()
-
-        pl.subplot(3, 1, 3)
-        pl.imshow(phase_lock[0], extent=[times[0], times[-1],
-                                         frequencies[0], frequencies[-1]],
-                  aspect='auto', origin='lower')
-        pl.xlabel('Time (ms)')
-        pl.ylabel('Frequency (Hz)')
-        pl.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
-        pl.colorbar()
         fig.show()
 
     def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
         """
-        Perfromed in a worker thread.
+        Performed in a worker thread.
         """
         print 'Computing induced power...'
         evoked = epochs.average()
