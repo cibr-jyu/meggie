@@ -126,7 +126,7 @@ class MainWindow(QtGui.QMainWindow):
         # For handling initialization and switching of experiments.
         # TODO: currently only handles initialization.
         self.experimentHandler = experiment.ExperimentHandler(self)
-       
+
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)

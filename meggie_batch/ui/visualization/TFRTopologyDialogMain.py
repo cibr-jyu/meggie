@@ -70,8 +70,12 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
         self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
         self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
-                
-    
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
         Opens a dialog for selecting a layout file.
@@ -81,7 +85,6 @@ class TFRTopologyDialog(QtGui.QDialog):
                             "Select a layout file", '/home/', 
                             "Layout-files (*.lout *.lay);;All files (*.*)"))
         self.ui.labelLayout.setText(fName)
-
 
     def accept(self):
         """
@@ -149,7 +152,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         averageDialog.channels_selected.connect(self.compute_group_average)
         averageDialog.exec_()
 
-
     @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
     def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
                               saveMax):
@@ -205,4 +207,3 @@ class TFRTopologyDialog(QtGui.QDialog):
             QtGui.QApplication.restoreOverrideCursor()
             return
         QtGui.QApplication.restoreOverrideCursor()
-        

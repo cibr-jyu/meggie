@@ -669,7 +669,7 @@ class Caller(object):
         # need to check and adjust channelsToAve accordingly.
         channelNameString = evokeds[0].info['ch_names'][0]
         if re.match("^MEG[0-9]+", channelNameString):
-            channelsToAve = _clean_names(channelsToAve)
+            channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
         
         gradDataList = []
         for i in range(0, len(evokeds)):

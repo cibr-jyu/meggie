@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Tue Aug 11 03:43:27 2015
+# Created: Thu Aug 13 05:14:56 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -73,6 +73,7 @@ class Ui_DialogTFRTopology(object):
         self.doubleSpinBoxBaselineStart = QtGui.QDoubleSpinBox(self.groupBoxBaseline)
         self.doubleSpinBoxBaselineStart.setEnabled(False)
         self.doubleSpinBoxBaselineStart.setDecimals(3)
+        self.doubleSpinBoxBaselineStart.setSingleStep(0.05)
         self.doubleSpinBoxBaselineStart.setObjectName(_fromUtf8("doubleSpinBoxBaselineStart"))
         self.horizontalLayout_3.addWidget(self.doubleSpinBoxBaselineStart)
         self.checkBoxBaselineStartNone = QtGui.QCheckBox(self.groupBoxBaseline)
@@ -92,6 +93,7 @@ class Ui_DialogTFRTopology(object):
         self.doubleSpinBoxBaselineEnd = QtGui.QDoubleSpinBox(self.groupBoxBaseline)
         self.doubleSpinBoxBaselineEnd.setEnabled(False)
         self.doubleSpinBoxBaselineEnd.setDecimals(3)
+        self.doubleSpinBoxBaselineEnd.setSingleStep(0.05)
         self.doubleSpinBoxBaselineEnd.setObjectName(_fromUtf8("doubleSpinBoxBaselineEnd"))
         self.horizontalLayout_4.addWidget(self.doubleSpinBoxBaselineEnd)
         self.checkBoxBaselineEndNone = QtGui.QCheckBox(self.groupBoxBaseline)

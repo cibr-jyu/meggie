@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Mon Aug 10 05:22:16 2015
+# Created: Thu Aug 13 05:21:02 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -778,10 +778,20 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.groupBoxEpochsTFR = QtGui.QGroupBox(self.tabTFR)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBoxEpochsTFR.sizePolicy().hasHeightForWidth())
+        self.groupBoxEpochsTFR.setSizePolicy(sizePolicy)
         self.groupBoxEpochsTFR.setTitle(_fromUtf8(""))
         self.groupBoxEpochsTFR.setObjectName(_fromUtf8("groupBoxEpochsTFR"))
         self.verticalLayout.addWidget(self.groupBoxEpochsTFR)
         self.groupBoxAvailableTFR = QtGui.QGroupBox(self.tabTFR)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.groupBoxAvailableTFR.sizePolicy().hasHeightForWidth())
+        self.groupBoxAvailableTFR.setSizePolicy(sizePolicy)
         self.groupBoxAvailableTFR.setMaximumSize(QtCore.QSize(500, 180))
         self.groupBoxAvailableTFR.setObjectName(_fromUtf8("groupBoxAvailableTFR"))
         self.gridLayout_27 = QtGui.QGridLayout(self.groupBoxAvailableTFR)
