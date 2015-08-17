@@ -58,11 +58,11 @@ import pickle
 class Experiment(QObject):
     
     """A class that holds experiment info.
-    
+
     Experiment stores path of the experiment file, author, description and
     list of the subjects. It also has methods for saving and parsing parameter
     files and pickling and unpickling itself to and from disk.
-    
+
     Properties:
     experiment_name    -- The name of the experiment
     workspace          -- The path to the experiment folder
@@ -73,9 +73,9 @@ class Experiment(QObject):
     active_subject     -- The subject that is currently processed
     working_file_names -- The complete path of the working file
     """
-    
+
     e = Event()
-    
+
     def __init__(self):
         """
         Constructor sets default values for attributes.
@@ -87,15 +87,13 @@ class Experiment(QObject):
         self._description = 'no description'
         self._subjects = []
         self._active_subject = None
-        
+
         # For pickling purposes to make loading experiments and subjects
         # more simple.
         self._active_subject_name = ''
         self._subject_paths = []
         self._working_file_names = dict()
-        
         self.main_window = None
-        
 
     @property
     def experiment_name(self):
@@ -103,7 +101,6 @@ class Experiment(QObject):
         Returns the name of the experiment.
         """
         return self._experiment_name
-
 
     @experiment_name.setter
     def experiment_name(self, experiment_name):
@@ -115,8 +112,8 @@ class Experiment(QObject):
         if (len(experiment_name) <= 30):
             if re.match("^[A-Za-z0-9_ ]*$", experiment_name):
                 self._experiment_name = str(experiment_name)
-                exp_path = os.path.join(self._workspace,
-                                        self._experiment_name)
+                #exp_path = os.path.join(self._workspace,
+                #                        self._experiment_name)
                 #os.mkdir(exp_path + '/output')
             else:
                 message = 'Use only letters and numbers in experiment name'
@@ -127,15 +124,13 @@ class Experiment(QObject):
         else:
             raise Exception('Too long experiment name')
 
-
     @property
     def workspace(self):
         """
         Returns the path of the current experiment.
         """
         return self._workspace
-    
-    
+
     @workspace.setter
     def workspace(self, workspace):
         """
@@ -149,15 +144,13 @@ class Experiment(QObject):
         else:
             raise Exception('No such workspace path')
 
-
     @property
     def author(self):
         """
         Returns the author of the experiment
         """
         return self._author
-    
-    
+
     @author.setter
     def author(self, author):
         """
@@ -176,14 +169,12 @@ class Experiment(QObject):
         else:
             raise Exception('Too long _author name')
 
-
     @property
     def description(self):
         """
         Returns the _description of the experiment.
         """
         return self._description
-
 
     @description.setter
     def description(self, description):
@@ -207,15 +198,13 @@ class Experiment(QObject):
         else:
             raise Exception("Too long _description")
 
-
     @property
     def active_subject_name(self):
         """
         Method for getting active subject name.
         """
         return self._active_subject_name
-    
-    
+
     @active_subject_name.setter
     def active_subject_name(self, subject_name):
         """
@@ -223,22 +212,19 @@ class Experiment(QObject):
         """
         self._active_subject_name = subject_name
 
-
     @property
     def active_subject(self):
         """
         Method for getting activated subject.
         """
         return self._active_subject
-    
-    
+
     @active_subject.setter
     def active_subject(self, subject):
         """
         Method for setting active subject.
         """
         self._active_subject = subject
-    
 
     def is_ready(self):
         """
@@ -246,7 +232,6 @@ class Experiment(QObject):
         """
         return self.e.is_set()
 
-    
     def add_subject(self, subject):
         """
         Adds subject to the current experiment.
@@ -260,32 +245,30 @@ class Experiment(QObject):
         # list 
         self._subjects.append(subject)
 
-
     def get_subjects(self):
         """
         Returns a list of all subjects.
         """
         return self._subjects
-        
 
     def remove_subject(self, sname, main_window):
         """
         Removes the subject folder and its contents under experiment tree.
         Removes the subject information from experiment properties and updates
         the experiment settings file.
-        
+
         Keyword arguments:
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
         subject_path = os.path.join(self.workspace, self.experiment_name, sname)
-        
+
         if (subject_path in path for path in self.subject_paths):
             # Need to call _subject_paths to be able to remove.
             # Doesn't work if call subject_path without _.
             self._subject_paths.remove(subject_path)
             del self._working_file_names[sname]
-        
+
         # If subject is not created with the chosen subject list item,
         # hence activated using activate -button after opening an existing
         # experiment, only subject_paths list and working_file_names dictionary
@@ -293,14 +276,14 @@ class Experiment(QObject):
         for subject in self._subjects:
             if subject.subject_name == sname:
                 self._subjects.remove(subject)
-        
+
         # If active subject is removed, the active properties have to be
         # reseted to default values.    
         if subject_path == os.path.join(self._workspace, self._experiment_name,
                                         self.active_subject_name):
             self._active_subject_name = ''
             self._active_subject = None
-        
+
         try:
             shutil.rmtree(subject_path)
         except OSError('Could not remove the contents of the subject folder.'):
@@ -308,11 +291,10 @@ class Experiment(QObject):
         self.save_experiment_settings()
         main_window._initialize_ui()
 
-
     def add_subject_path(self, subject_path):
         """
         Adds subject path to the current experiment.
-        
+
         Keyword arguments:
         subject_path    -- the subject path of the subject object
                            created by subject class
@@ -321,12 +303,11 @@ class Experiment(QObject):
         if not subject_path in self._subject_paths:
             self._subject_paths.append(subject_path)
 
-
     def update_working_file(self, fname, subject_name=None):
         """
         Adds working file name to the working_file list.
         Updates to the previously processed file.
-        
+
         Keyword arguments:
         fname         -- Name of the working file.
         subject_name  -- Name of the subject. If None, active subject is used.
@@ -335,13 +316,12 @@ class Experiment(QObject):
             self._working_file_names[subject_name] = fname
         else:
             self._working_file_names[self.active_subject_name] = fname
-      
-        
+
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
         file under the directory of the given subject name and sets it
         to the corresponding Subject.
-        
+
         Keyword arguments:
         subject_name -- name of the subject
         """
@@ -354,7 +334,7 @@ class Experiment(QObject):
             print 'There is no working file in the chosen subject folder.'
             self.e.set()
             return 1
-        
+
         # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
             if subject_name == subject.subject_name:

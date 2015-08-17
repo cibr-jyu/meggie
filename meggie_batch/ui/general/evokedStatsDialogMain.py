@@ -4,14 +4,17 @@ Created on Sep 4, 2013
 @author: atmiraut
 '''
 from PyQt4 import QtCore, QtGui
-
-import mne
+import csv
+import os
 import numpy as np
-
-from evokedStatsDialogUi import Ui_EvokedStatsDialog
-from statistic import Statistic
+import mne
 from externalModules.mne.utils import _clean_names
+
+from code_meggie.general.caller import Caller
+from code_meggie.general.statistic import Statistic
+from evokedStatsDialogUi import Ui_EvokedStatsDialog
 import messageBoxes
+from PyQt4.Qt import QFileDialog
 
 class EvokedStatsDialog(QtGui.QDialog):
 
@@ -144,6 +147,48 @@ class EvokedStatsDialog(QtGui.QDialog):
         #channels, they should be averaged and the result of that should be
         #shown on the info widgets.   
 
+    def on_pushButtonCSV_clicked(self, checked=None):
+        """
+        Saves a csv file of the statistics.
+        """
+        if checked is None: return
+        caller = Caller.Instance()
+        index = self.ui.comboBoxEvoked.currentIndex()
+        exp_path = os.path.join(caller.experiment.workspace,
+                                caller.experiment.experiment_name)
+        path = os.path.join(exp_path, 'output')
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        filename = self.evoked[index].comment + '_stats.csv'
+        path = os.path.join(path, filename)
+        fname = str(QFileDialog.getSaveFileName(parent=self, caption='Save csv'
+                                                ' file.', directory=path))
+        if fname == '':
+            return
+        with open(fname, 'wb') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='|',
+                                quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(['Start', self.ui.doubleSpinBoxStart.value()])
+            writer.writerow(['Stop', self.ui.doubleSpinBoxStop.value()])
+            writer.writerow(['Minimum amplitude',
+                             self.ui.doubleSpinBoxMinAmplitude.value()])
+            writer.writerow(['Time of minimum',
+                             self.ui.doubleSpinBoxMinTime.value()])
+            writer.writerow(['Maximum amplitude',
+                             self.ui.doubleSpinBoxMaxAmplitude.value()])
+            writer.writerow(['Time of maximum',
+                             self.ui.doubleSpinBoxMaxTime.value()])
+            writer.writerow(['Half maximum',
+                             self.ui.doubleSpinBoxHalfMaxAmplitude.value()])
+            writer.writerow(['Time before max',
+                             self.ui.doubleSpinBoxHalfMaxBefore.value()])
+            writer.writerow(['Time after max',
+                             self.ui.doubleSpinBoxHalfMaxAfter.value()])
+            writer.writerow(['Duration',
+                             self.ui.doubleSpinBoxDuration.value()])
+            writer.writerow(['Integral',
+                             self.ui.doubleSpinBoxIntegral.value()])
+
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
         """
@@ -164,8 +209,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.labelSelectedChannel.setText('No Channels selected.')
         self.resetSpinBoxes()
 
-        for key in self.selected_channels.keys():
-            self.selected_channels[key] = []
+        index = self.ui.comboBoxEvoked.currentIndex()
+        self.selected_channels[index] = list()
 
     def resetSpinBoxes(self):
         """Reset the values in the dialog's spinboxes."""
@@ -183,14 +228,13 @@ class EvokedStatsDialog(QtGui.QDialog):
         """Enable pushButtonSetSelected."""
         if len(self.ui.listWidgetChannels.selectedItems()) > 0:
             self.ui.pushButtonSetSelected.setEnabled(True)
-
         else: self.ui.pushButtonSetSelected.setEnabled(False)
 
     def update_info(self, names):
         """Update the info widgets with data based on item.
-        
+
         Keyword arguments:
-        
+
         names -- Name(s) of the channel(s) whose data is to be displayed. 
                 List for many, string for one.
         """

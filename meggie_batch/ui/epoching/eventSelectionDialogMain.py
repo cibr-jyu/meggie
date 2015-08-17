@@ -34,25 +34,18 @@ Created on Mar 19, 2013
 Contains the EventSelectionDialog-class that holds the logic for
 EventSelectionDialog-window.
 """
-from ui.general import messageBoxes
-
-from PyQt4 import QtCore,QtGui
-#from PyQt4.QtCore import QString
-from eventSelectionDialogUi import Ui_EventSelectionDialog
-from code_meggie.general.caller import Caller
-
-from code_meggie.epoching.events import Events
-from code_meggie.general import fileManager
-
-from xlrd import XLRDError
-
-import mne
-
-# TODO: for the currently unused check_channels method. MNE has similar list,
-# however, no need to use our own. 
-#import brainRegions
 
 import numpy as np
+from xlrd import XLRDError
+from PyQt4 import QtCore,QtGui
+import mne
+
+from eventSelectionDialogUi import Ui_EventSelectionDialog
+from code_meggie.general.caller import Caller
+from code_meggie.epoching.events import Events
+from code_meggie.general import fileManager
+from ui.general import messageBoxes
+
 
 class EventSelectionDialog(QtGui.QDialog):
     """
@@ -65,9 +58,9 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def __init__(self, parent, params = None):
         """Initialize the event selection dialog.
-        
+
         Keyword arguments:
-        
+
         parent -- Set the parent of this dialog
         raw    -- Raw data
         params -- A dictionary containing parameter values to fill the
@@ -104,7 +97,7 @@ class EventSelectionDialog(QtGui.QDialog):
         text = str(epochs.event_id.values()[0])
         i = self.ui.comboBoxEventID.findText(text)
         self.ui.comboBoxEventID.setCurrentIndex(i)
-        events = []
+        events = list()
         for event in epochs.events:
             events.append([int(event[0]), int(event[1]), int(event[2])])
         self.add_events(events, event_name)
@@ -132,7 +125,7 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
-        
+
         Collect the parameter values for epoch creation from the ui and return
         them in a dictionary.
         """
@@ -158,7 +151,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 return None
         # QString to string
         collectionName = str(collectionName)
-        
+
         reject = dict()
         if mag:
             reject['mag'] = 1e-12 * self.ui.\
@@ -172,9 +165,8 @@ class EventSelectionDialog(QtGui.QDialog):
         if eog:
             reject['eog'] = eog = 1e-6 * self.ui.\
             doubleSpinBoxEOGReject_3.value()
-            
-        events = []
-        
+
+        events = list()
         for i in xrange(self.ui.listWidgetEvents.count()):
             event = self.ui.listWidgetEvents.item(i).data(32)
             event_name = self.ui.listWidgetEvents.item(i).data(33)
@@ -223,9 +215,9 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def fill_parameters(self, params):
         """Fill the fields in the dialog with parameters values from a dict.
-        
+
         Keyword arguments:
-        
+
         params -- A dict containing the parameter values to be used.
         """
         params_str = dict((str(key), value) for
@@ -235,50 +227,49 @@ class EventSelectionDialog(QtGui.QDialog):
             events.append(item[0])
             event_name = item[1]
             self.add_events(events, event_name)
-            
+
         if params_str['mag'] is True:
             self.ui.checkBoxMag.setChecked(True)
         else:
             self.ui.checkBoxMag.setChecked(False)
-            
+
         if params_str['grad'] is True:
             self.ui.checkBoxGrad.setChecked(True)
         else:
             self.ui.checkBoxGrad.setChecked(False)
-            
+
         if params_str['eeg'] is True:
             self.ui.checkBoxEeg.setChecked(True)
         else:
             self.ui.checkBoxEeg.setChecked(False)
-            
+
         if params_str['stim'] is True:
             self.ui.checkBoxStim.setChecked(True)
         else:
             self.ui.checkBoxStim.setChecked(False)
-        
+
         if params_str['eog'] is True:
             self.ui.checkBoxEog.setChecked(True)
         else:
             self.ui.checkBoxEog.setChecked(False)
-            
+
         reject = params_str['reject']
         if reject.has_key('mag'):
             self.ui.doubleSpinBoxMagReject_3.setValue(reject['mag'])
-        
+
         if reject.has_key('grad'):
             self.ui.doubleSpinBoxGradReject_3.setValue(reject['grad'])
-            
+
         if reject.has_key('eeg'):
             self.ui.doubleSpinBoxEegReject_3.setValue(reject['eeg'])
-            
+
         if reject.has_key('eog'):
             self.ui.doubleSpinBoxEogReject_3.setValue(reject['eog'])
-            
+
         self.ui.doubleSpinBoxTmin.setValue(params_str['tmin'])
         self.ui.doubleSpinBoxTmax.setValue(params_str['tmax'])
         self.ui.lineEditCollectionName.setText(params_str['collectionName'])
 
-                    
     def on_pushButtonAdd_clicked(self, checked=None):
         """
         Method for adding events to the event list.
@@ -289,18 +280,17 @@ class EventSelectionDialog(QtGui.QDialog):
         self.add_events(events, name)
         self.ui.lineEditName.setText('Event')
 
-        
     def on_pushButtonRemove_clicked(self, checked=None):
         """
         Method for removing events from the event list.
         """
         if checked is None: return # Standard workaround
         if len(self.ui.listWidgetEvents.selectedItems()) == 0: return
-        
+
         for item in self.ui.listWidgetEvents.selectedItems():
             row = self.ui.listWidgetEvents.row(item)
             self.ui.listWidgetEvents.takeItem(row)
-            
+
             #If the item was the last one with a certain name, remove the name
             #from the used names -list.
             name = item.data(33)
@@ -308,18 +298,17 @@ class EventSelectionDialog(QtGui.QDialog):
                                                       QtCore.Qt.\
                                                       MatchStartsWith)) == 0:
                 self.used_names.remove(name)
-            
+
         if self.ui.listWidgetEvents.currentRow() < 0:
             self.ui.pushButtonRemove.setEnabled(False)
 
-        
     def accept(self):
         """Save the parameters in a dictionary and send it forward.
-        
+
         Collect all the parameters provided for epoch creations in a
         dictionary and send it forward using a QSignal. Show the user an error
         message if no events are selected for epoching.
-        
+
         Emit an epoch_params_ready signal.
         """
         if self.ui.listWidgetEvents.count() == 0:
@@ -327,46 +316,24 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
-        
+        QtGui.QApplication.setOverrideCursor(QtGui.
+                                             QCursor(QtCore.Qt.WaitCursor))
         param_dict = self.collect_parameter_values()
         if param_dict is None:
+            QtGui.QApplication.restoreOverrideCursor()
             return
-        
+
         if len(param_dict['reject']) == 0:
-            message = 'Picks cannot be empty. Select picks by checking the ' + \
+            QtGui.QApplication.restoreOverrideCursor()
+            message = 'Picks cannot be empty. Select picks by checking the ' +\
                       ' checkboxes.'
             self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
-        
+
         self.epoch_params_ready.emit(param_dict, self.parent.epochList)
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()
-
-        
-    def check_channels(self):
-        """
-        Method for populating the combobox with channel groups of brain
-        regions. Currently not in use.
-        """
-        if self.ui.comboBoxChannelGroup.currentText() == 'Vertex':
-            return ['MEG ' + str(x) for x in brainRegions.vertex]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-temporal':
-            return ['MEG ' + str(x) for x in brainRegions.left_temporal]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-temporal':
-            return ['MEG ' + str(x) for x in brainRegions.right_temporal]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-parietal':
-            return ['MEG ' + str(x) for x in brainRegions.left_parietal]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-parietal':
-            return ['MEG ' + str(x) for x in brainRegions.right_parietal]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-occipital':
-            return ['MEG ' + str(x) for x in brainRegions.left_occipital]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-occipital':
-            return ['MEG ' + str(x) for x in brainRegions.right_occipital]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Left-frontal':
-            return ['MEG ' + str(x) for x in brainRegions.left_frontal]
-        elif self.ui.comboBoxChannelGroup.currentText() == 'Right-frontal':
-            return ['MEG ' + str(x) for x in brainRegions.right_frontal]
-
 
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         """
@@ -393,7 +360,6 @@ class EventSelectionDialog(QtGui.QDialog):
                 print 'Aborting...'
                 return
 
-    
     def on_pushButtonReadEvents_clicked(self, checked=None):
         """
         Called when read events button is clicked. Reads events from an 
@@ -431,35 +397,32 @@ class EventSelectionDialog(QtGui.QDialog):
                 item.setData(32, event)
                 item.setData(33, str(sheet.cell(row_index,0).value))
                 self.ui.listWidgetEvents.addItem(item)
-            
+
         self.ui.listWidgetEvents.setCurrentItem(item)
 
-        
     def set_event_name(self, name, suffix = 1):
         """Set the event name to name. If name exists, add suffix to it
-        
+
         Keyword arguments:
-        
+
         name   -- The name to be set.
         Suffix -- The suffix that is added to the name when greater than 1.
-        
+
         Return the name that was set.
         """
         if suffix == 1 and self.used_names.count(name) == 0:
             return name
-        
+
         elif suffix == 1 and self.used_names.count(name) > 0:
             suffix += 1
             name = self.set_event_name(name, suffix)
             return name
-            
+
         elif suffix > 1 and self.used_names.count(name + str(suffix)) == 0:
             name = name + str(suffix)
             return name
-          
+
         elif suffix > 1 and self.used_names.count(name + str(suffix)) > 0:
             suffix += 1
             name = self.set_event_name(name, suffix)
             return name
-             
-        

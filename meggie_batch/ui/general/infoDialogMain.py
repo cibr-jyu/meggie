@@ -54,7 +54,7 @@ class InfoDialog(QtGui.QDialog):
         raw           -- Raw object.
         targetUi      -- Ui object that receives the info data.
         create_window -- Boolean to determine if a new dialog window 
-        is created.
+                         is created.
         """
         QtGui.QDialog.__init__(self)
         self.raw = raw
@@ -78,6 +78,7 @@ class InfoDialog(QtGui.QDialog):
         self.mi = MeasurementInfo(self.raw)
         
         self.ui.labelDateValue.setText(self.mi.date)
+        self.ui.labelLengthValue.setText('%0.2f' % self.raw.times[-1] + 's')
         self.ui.labelEEGValue.setText(str(self.mi.EEG_channels))
         self.ui.labelGradMEGValue.setText(str(self.mi.grad_channels))
         self.ui.labelHighValue.setText(str(self.mi.high_pass) + ' Hz')

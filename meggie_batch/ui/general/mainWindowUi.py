@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Thu Aug 13 05:21:02 2015
+# Created: Mon Aug 17 03:25:41 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1277,7 +1277,7 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.dockWidgetSubjects = QtGui.QDockWidget(MainWindow)
-        self.dockWidgetSubjects.setMinimumSize(QtCore.QSize(330, 695))
+        self.dockWidgetSubjects.setMinimumSize(QtCore.QSize(330, 720))
         self.dockWidgetSubjects.setFloating(False)
         self.dockWidgetSubjects.setFeatures(QtGui.QDockWidget.DockWidgetFloatable)
         self.dockWidgetSubjects.setObjectName(_fromUtf8("dockWidgetSubjects"))
@@ -1485,6 +1485,23 @@ class Ui_MainWindow(object):
         self.labelDateValue.setObjectName(_fromUtf8("labelDateValue"))
         self.horizontalLayout_24.addWidget(self.labelDateValue)
         self.verticalLayout_9.addLayout(self.horizontalLayout_24)
+        self.horizontalLayout_40 = QtGui.QHBoxLayout()
+        self.horizontalLayout_40.setContentsMargins(10, -1, -1, -1)
+        self.horizontalLayout_40.setObjectName(_fromUtf8("horizontalLayout_40"))
+        self.labelLength = QtGui.QLabel(self.groupBoxSubjectInfo)
+        self.labelLength.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextSelectableByMouse)
+        self.labelLength.setObjectName(_fromUtf8("labelLength"))
+        self.horizontalLayout_40.addWidget(self.labelLength)
+        self.labelLengthValue = QtGui.QLabel(self.groupBoxSubjectInfo)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelLengthValue.sizePolicy().hasHeightForWidth())
+        self.labelLengthValue.setSizePolicy(sizePolicy)
+        self.labelLengthValue.setText(_fromUtf8(""))
+        self.labelLengthValue.setObjectName(_fromUtf8("labelLengthValue"))
+        self.horizontalLayout_40.addWidget(self.labelLengthValue)
+        self.verticalLayout_9.addLayout(self.horizontalLayout_40)
         self.gridLayout_10.addLayout(self.verticalLayout_9, 0, 0, 1, 1)
         self.textBrowserEvents = QtGui.QTextBrowser(self.groupBoxSubjectInfo)
         palette = QtGui.QPalette()
@@ -1761,6 +1778,7 @@ class Ui_MainWindow(object):
         self.labelSubjectGeneral.setText(_translate("MainWindow", "General:", None))
         self.labelSubject.setText(_translate("MainWindow", "Name:", None))
         self.labelDate.setText(_translate("MainWindow", "Date:", None))
+        self.labelLength.setText(_translate("MainWindow", "Length:", None))
         self.groupBoxSubject_2.setTitle(_translate("MainWindow", "Subjects (active in bold):", None))
         self.pushButtonActivateSubject.setText(_translate("MainWindow", "Activate selected", None))
         self.pushButtonAddSubjects.setText(_translate("MainWindow", "Add new...", None))
