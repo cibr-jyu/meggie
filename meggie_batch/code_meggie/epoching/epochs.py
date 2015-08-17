@@ -157,8 +157,8 @@ class Epochs(QObject):
                 
             else:
                 try:
-                    epochs = mne.Epochs(raw, events, category,
-                                tmin, tmax, picks=picks, reject=reject)
+                    epochs = mne.Epochs(raw, events, category, tmin, tmax,
+                                        picks=picks, reject=reject)
                 except Exception as e:
                     print e
                     raise e

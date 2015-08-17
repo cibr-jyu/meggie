@@ -45,7 +45,7 @@ class IntegralImage(object):
     def sum_over_matrix(self, matrix):
         """
         First sums the horizontal and then the vertical rows of the matrix.
-        
+
         Keyword arguments
         matrix    - - matrix to be summed over, type numpy.ndarray.  
         """
@@ -78,7 +78,7 @@ class IntegralImage(object):
                 sum += self.integral_image[i][j]
                 self.integral_image[i][j] = sum
             sum = 0
-        
+
     def sum_over_rectangular_area(self, top_left_corner, bottom_right_corner, matrix):
         """
         top_left_corner and bottom_right_corner are type tuple.
@@ -98,9 +98,9 @@ class IntegralImage(object):
         Blocks make sure that bottom-right corner of the rectangle isn't
         choosen out of bounds.
         """
-        
+
         self.sum_over_matrix(matrix)
-        
+
         if (bottom_right_corner[0] >= self.integral_image.shape[1]):
             return 'Rectangle out of bounds'
         if (bottom_right_corner[1] >= self.integral_image.shape[0]):
@@ -134,4 +134,3 @@ class IntegralImage(object):
             return rectangle_area_sum
         rectangle_area_sum =  C + A - B - D
         return rectangle_area_sum
-        

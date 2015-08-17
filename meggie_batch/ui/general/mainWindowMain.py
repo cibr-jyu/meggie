@@ -755,7 +755,9 @@ class MainWindow(QtGui.QMainWindow):
         #TODO: Pass evokeds in a dictionary
         if checked is None: return
         if self.evokedList.count() == 0: return
-        
+        name = str(self.evokedList.currentItem().text())
+        evokeds = self.caller.experiment.active_subject._evokeds[name]._raw
+        """
         evoked_dict = {}
         for i in range(self.evokedList.count()):
             evoked_name = str(self.evokedList.item(i).text())
@@ -763,7 +765,8 @@ class MainWindow(QtGui.QMainWindow):
             evoked_dict[str(self.evokedList.item(i).text())] = evoked
             #evoked_dict[str(self.evokedList.item(i).text())] = \
             #self.evokedList.item(i).data(32).toPyObject()
-        self.evokedStatsDialog = EvokedStatsDialog(evoked_dict)
+        """
+        self.evokedStatsDialog = EvokedStatsDialog(evokeds)
         self.evokedStatsDialog.exec_()
 
         
