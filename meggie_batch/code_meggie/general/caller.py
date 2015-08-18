@@ -171,8 +171,9 @@ class Caller(object):
         print bs
         proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
-        for line in proc.stdout.readlines():
-            print line
+        while True:
+            line = proc.stdout.readline()
+            if not line: break
         retval = proc.wait()      
 
         print "the program return code was %d" % retval
