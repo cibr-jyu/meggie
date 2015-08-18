@@ -178,6 +178,8 @@ class Caller(object):
 
         print "the program return code was %d" % retval
         if retval != 0:
+            for line in proc.stdout.readlines():
+                print line
             print 'Error while maxfiltering data!'
             self.result = RuntimeError('Error while maxfiltering the data. '
                                        'Check console.')
