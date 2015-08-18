@@ -86,8 +86,7 @@ class Caller(object):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
-        
-    
+
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -101,21 +100,19 @@ class Caller(object):
         async_result = pool.apply_async(self.experiment.activate_subject, 
                                         (name,))
 
-        
         while(True):
             sleep(0.2)
             if self.experiment.is_ready(): break;
             self.parent.update_ui()
-            
+
         return_val = async_result.get()
         pool.terminate()
-        
+
         if not return_val == 0:
             self.messageBox = messageBoxes.shortMessageBox('Could not set ' + \
                                         name + ' as active subject. ' + \
                                         'Check console.')
             self.messageBox.show()
-        
 
     def call_mne_browse_raw(self, filename):
         """

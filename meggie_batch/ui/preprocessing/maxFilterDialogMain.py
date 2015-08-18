@@ -138,26 +138,27 @@ class MaxFilterDialog(QtGui.QDialog):
             skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '
 
         if self.ui.checkBoxMaxMove.isChecked():
-            if  self.ui.radioButtonPositionDefault.isChecked():
-                dictionary['-trans'] = 'default'
-            elif self.ui.radioButtonPositionFile.isChecked():
-                if self.fname != '':
-                    try:
-                        if os.path.isfile(str(self.fname)) and \
-                                str(self.fname).endswith('fif'):
-                            dictionary['-trans'] = self.fname
-                        else:
-                            self._show_progressbar(False)
-                            self.showErrorMessage('Could not open file.')
-                            return
-                    except Exception, err:
+            dictionary['-movecomp'] = 'inter'
+        if  self.ui.radioButtonPositionDefault.isChecked():
+            dictionary['-trans'] = 'default'
+        elif self.ui.radioButtonPositionFile.isChecked():
+            if self.fname != '':
+                try:
+                    if os.path.isfile(str(self.fname)) and \
+                            str(self.fname).endswith('fif'):
+                        dictionary['-trans'] = self.fname
+                    else:
                         self._show_progressbar(False)
-                        self.showErrorMessage(err)
+                        self.showErrorMessage('Could not open file.')
                         return
-            elif self.ui.radioButtonPositionAverage.isChecked():
-                self._show_progressbar(False)
-                raise NotImplementedError('Average head positioning is not '
-                                          'implemented.')
+                except Exception, err:
+                    self._show_progressbar(False)
+                    self.showErrorMessage(err)
+                    return
+        elif self.ui.radioButtonPositionAverage.isChecked():
+            self._show_progressbar(False)
+            raise NotImplementedError('Average head positioning is not '
+                                      'implemented.')
 
         # TODO Store the head position in a file
         if self.ui.checkBoxStorePosition.isChecked():
