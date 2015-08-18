@@ -796,6 +796,8 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         epochs_name = str(self.epochList.ui.listWidgetEpochs.\
                           currentItem().text())
         epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
@@ -807,7 +809,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.selection_changed()
         fig = epochs.plot(trellis=False, block=True, show=True)
         fig.canvas.mpl_connect('close_event', handle_close)
-
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """
