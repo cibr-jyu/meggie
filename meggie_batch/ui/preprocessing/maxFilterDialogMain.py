@@ -223,6 +223,7 @@ class MaxFilterDialog(QtGui.QDialog):
 
         # Checks the MaxFilter box in the preprocessing tab of the mainWindow.
         self.parent.ui.checkBoxMaxFilterComputed.setCheckState(2)
+        self._show_progressbar(False)
         self.close()
 
     def populateComboboxLab(self):
