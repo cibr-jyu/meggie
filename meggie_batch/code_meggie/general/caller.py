@@ -169,20 +169,16 @@ class Caller(object):
         # Add user defined parameters from the "custom" tab
         bs += custom
         print bs
-        try:
-            proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT)
-        except Exception as err:
-            print str(err)
+        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
         while True:
             line = proc.stdout.readline()
             if not line: break
+            print line
         retval = proc.wait()      
 
         print "the program return code was %d" % retval
         if retval != 0:
-            for line in proc.stdout.readlines():
-                print line
             print 'Error while maxfiltering data!'
             self.result = RuntimeError('Error while maxfiltering the data. '
                                        'Check console.')
