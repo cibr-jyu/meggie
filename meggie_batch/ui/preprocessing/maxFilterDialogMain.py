@@ -170,11 +170,17 @@ class MaxFilterDialog(QtGui.QDialog):
         print raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif
-        if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
-            dictionary['-o'] = raw.info.get('filename')[:-4] + '_tsss.fif'
+        if self.ui.checkBoxtSSS.isChecked():
+            if self.ui.checkBoxMaxMove.isChecked():
+                suffix = '_tsss_mc.fif'
+            else:
+                suffix = '_tsss.fif'
         else:
-            dictionary['-o'] = raw.info.get('filename')[:-4] + '_sss.fif'
-        
+            if self.ui.checkBoxMaxMove.isChecked():
+                suffix = '_sss_mc.fif'
+            else:
+                suffix = '_sss.fif'
+        dictionary['-o'] = raw.info.get('filename')[:-4] + suffix
         if fit:
             dictionary['-origin fit'] = ''
         else:
@@ -198,7 +204,7 @@ class MaxFilterDialog(QtGui.QDialog):
 
         dictionary['-format'] = 'float'
 
-        if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
+        if self.ui.checkBoxtSSS.isChecked():
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
             dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
 
