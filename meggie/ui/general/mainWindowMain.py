@@ -140,7 +140,8 @@ class MainWindow(QtGui.QMainWindow):
         self.experiment_value_changed.connect\
         (self.load_evoked_collections)
         self.epochList.item_added.connect(self.epochs_added)
-        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(self.on_pushButtonMNE_Browse_Raw_clicked)
+        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect\
+        (self.on_pushButtonMNE_Browse_Raw_clicked)
                         
         # For output logging.
         self.console = Console()
@@ -196,10 +197,10 @@ class MainWindow(QtGui.QMainWindow):
                                            ' Meggie?', QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
-            
+
         if reply == QtGui.QMessageBox.Yes:
             self.close()
-        
+
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
         Create a new CreateExperimentDialog and show it
@@ -213,7 +214,7 @@ class MainWindow(QtGui.QMainWindow):
             if os.path.isfile('settings.cfg'):
                 self.dialog = CreateExperimentDialog(self)
                 self.dialog.show()   
-        
+
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
         Open an existing _experiment.
@@ -247,20 +248,19 @@ class MainWindow(QtGui.QMainWindow):
                                                              .description)
             self.add_tabs()
             self._initialize_ui()
-            
+
             # Sets the experiment for caller, so it can use its information.
             self.caller.experiment = self.experiment
             self.statusLabel.setText("Current working file: " +
                                           self.experiment.working_file.\
                                           info.get('filename'))
-            
-            
+
         else:
             self.messageBox = messageBox.AppForm()
             self.messageBox.labelException.setText \
             ('Experiment file not found. Please check your directory.')
             self.messageBox.show()  
-    
+
     def on_actionShow_Hide_Console_triggered(self, checked=None):
         """
         Show / Hide console window.
@@ -270,8 +270,7 @@ class MainWindow(QtGui.QMainWindow):
             self.console.hide()
         else:
             self.console.show()
-        
-    
+
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
@@ -279,24 +278,13 @@ class MainWindow(QtGui.QMainWindow):
         """
         #TODO: trigger ---> event, also in the UI
         events = self.experiment.event_set
-        
-        
+
         events_string = ''
         for key, value in events.iteritems():
             events_string += 'Event ' + str(key) + ', ' + str(value) +\
             ' events\n'
         self.ui.textBrowserEvents.setText(events_string)
-        
-        
-        
-        """
-        for key, value in events.iteritems():
-            item = QtGui.QListWidgetItem()
-            item.setText('Trigger ' + str(key) + ', ' + str(value) +
-                        ' events')
-            self.ui.listWidget.addItem(item)
-        """
-        
+
     def show_epoch_collection_parameters(self, item):
         """
         Sets parameters from the currently chosen epochs.
@@ -336,15 +324,7 @@ class MainWindow(QtGui.QMainWindow):
             str(event_counts[str(value)]) + ' events')
             
             self.epochList.ui.listWidgetEvents.addItem(item)
-            """
-            categories += key + ': ID ' + str(value) + ', ' + \
-            str(event_counts[str(value)]) + ' events\n'
-            """
-        
-        
-        
-        
-        
+
         # TODO: create category items to add on the listWidgetEvents widget. 
         #self.epochList.ui.listWidgetEvents.setText(categories)
         

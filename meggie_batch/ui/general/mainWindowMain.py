@@ -1516,11 +1516,15 @@ class MainWindow(QtGui.QMainWindow):
                     self.evokedList.setCurrentItem(item)
             
             # This updates the 'Subject info' section below the subject list.
-            InfoDialog(self.caller.experiment.active_subject.working_file,
-                        self.ui, False)
-            if self.caller.experiment.active_subject._event_set is not None:
-                self.populate_raw_tab_event_list()    
-            
+            try:
+                InfoDialog(self.caller.experiment.active_subject.working_file,
+                           self.ui, False)
+                if self.caller.experiment.active_subject._event_set is not None:
+                    self.populate_raw_tab_event_list()    
+            except Exception as err:
+                self.messageBox = messageBoxes.shortMessageBox(str(err))
+                self.messageBox.show()
+                return
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
         if self.caller.experiment.active_subject is None:
             self.statusLabel.setText("Add or activate" + \
