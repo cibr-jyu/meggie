@@ -49,20 +49,16 @@ class MaxFilterDialog(QtGui.QDialog):
     """
 
 
-    def __init__(self, parent, raw):
+    def __init__(self, parent):
         """
         Initializes the dialog for collecting parameter values for MaxFilter.
-        
+
         Keyword arguments:
-        
         parent     --    The class that created this window.
-        raw        --    The raw data file to be MaxFiltered.
         """
         QtGui.QDialog.__init__(self)
-        """
-        Reference to main dialog window
-        """       
-        self.raw = raw
+
+        # Reference to main dialog window
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
@@ -84,9 +80,8 @@ class MaxFilterDialog(QtGui.QDialog):
         Reads values from the dialog, saves them in a dictionary and initiates
         a caller to actually call the backend.
         """
-        t = Thread(target=self._show_progressbar)
-        t.start()
-        
+        self._show_progressbar(True)
+
         dictionary = {'-v': ''}
         x = self.ui.doubleSpinBoxX0.value()
         y = self.ui.doubleSpinBoxY0.value()
@@ -107,6 +102,7 @@ class MaxFilterDialog(QtGui.QDialog):
             if ( self.ui.spinBoxSkipEnd_1.value()
             <= self.ui.spinBoxSkipStart_1.value() ):
                 self.showErrorMessage('First skip ends before it starts.')
+                self._show_progressbar(False)
                 return
             skips += str(self.ui.spinBoxSkipStart_1.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_1.value()) + ' '
@@ -116,10 +112,13 @@ class MaxFilterDialog(QtGui.QDialog):
                  <= self.ui.spinBoxSkipStart_2.value() ):
                     self.showErrorMessage('Second skip ends ' +
                                            'before it starts.')
+                    self._show_progressbar(False)
+                    return
             if (self.ui.spinBoxSkipStart_2.value() 
                  < self.ui.spinBoxSkipEnd_1.value() ):
                     self.showErrorMessage('Second skip starts before the ' +
                                           'first skip ends.')
+                    self._show_progressbar(False)
                     return
             skips += str(self.ui.spinBoxSkipStart_2.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_2.value()) + ' '
@@ -128,10 +127,13 @@ class MaxFilterDialog(QtGui.QDialog):
             if ( self.ui.spinBoxSkipEnd_3.value() 
                  <= self.ui.spinBoxSkipStart_3.value()):
                     self.showErrorMessage('Third skip ends before it starts.')
+                    self._show_progressbar(False)
+                    return
             if ( self.ui.spinBoxSkipStart_3.value() 
                  < self.ui.spinBoxSkipEnd_2.value() ):
                     self.showErrorMessage('Third skip starts before the ' + 
                                           'second skip ends.')
+                    self._show_progressbar(False)
                     return
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '
@@ -148,10 +150,15 @@ class MaxFilterDialog(QtGui.QDialog):
                                 str(self.fname).endswith('fif'):
                             dictionary['-trans'] = self.fname
                         else:
-                            raise Exception('Could not open file.')
+                            self._show_progressbar(False)
+                            self.showErrorMessage('Could not open file.')
+                            return
                     except Exception, err:
+                        self._show_progressbar(False)
                         self.showErrorMessage(err)
+                        return
             elif button_position == 'radioButtonPositionAverage':
+                self._show_progressbar(False)
                 raise NotImplementedError('Average head positioning is not '
                                           'implemented.')
 
@@ -159,14 +166,16 @@ class MaxFilterDialog(QtGui.QDialog):
         if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
             dictionary['-hp'] = ''
 
-        dictionary['-f'] = self.raw.info.get('filename')
-        print self.raw.info.get('filename')
+        caller = Caller.Instance()
+        raw = caller.experiment.active_subject.working_file
+        dictionary['-f'] = raw.info.get('filename')
+        print raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_tsss.fif'
+            dictionary['-o'] = raw.info.get('filename')[:-4] + '_tsss.fif'
         else:
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
+            dictionary['-o'] = raw.info.get('filename')[:-4] + '_sss.fif'
         
         if fit:
             dictionary['-origin fit'] = ''
@@ -188,34 +197,34 @@ class MaxFilterDialog(QtGui.QDialog):
         
         if skips != '':
             dictionary['-skip'] = skips
-        
+
         dictionary['-format'] = 'float'
-        
+
         if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
             dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
-        
+
         # TODO: check what the extensions of the calibration files are.    
         lab = self.setLab()
-        
+
         if not lab == '':
             dictionary['-site'] = lab
-            
+
         custom = self.ui.textEditCustom.toPlainText()
 
-        caller = Caller.Instance()
         try:
             caller.call_maxfilter(dictionary, custom)
         except Exception, err:
             title = 'MaxFilter error:'
             self.messageBox = messageBoxes.longMessageBox(title, str(err))
             self.messageBox.show()
+            self._show_progressbar(False)
             return
 
         # Checks the MaxFilter box in the preprocessing tab of the mainWindow.
         self.parent.ui.checkBoxMaxFilterComputed.setCheckState(2)
         self.close()
-        
+
     def populateComboboxLab(self):
         """
         Goes through the lab-specific config files in
@@ -252,10 +261,18 @@ class MaxFilterDialog(QtGui.QDialog):
             return lab
 
         return lab
-            
-    def _show_progressbar(self):
+
+    def _show_progressbar(self, visible):
         """
         Shows and starts the progressbar.
+
+        Keyword arguments:
+        visible  -- Whether to show or hide progress bar.
         """
-        self.ui.labelComputeMaxFilter.setVisible(True)
-        self.ui.progressBarComputeMaxFilter.setVisible(True)
+        if visible:
+            QtGui.QApplication.setOverrideCursor(QtGui.\
+                                                 QCursor(QtCore.Qt.WaitCursor))
+        else:
+            QtGui.QApplication.restoreOverrideCursor()
+        self.ui.labelComputeMaxFilter.setVisible(visible)
+        self.ui.progressBarComputeMaxFilter.setVisible(visible)

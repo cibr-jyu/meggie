@@ -1065,8 +1065,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None: return 
         try:
-            self.maxFilterDialog = MaxFilterDialog(self, 
-                                                   self.caller.experiment.active_subject.working_file)
+            self.maxFilterDialog = MaxFilterDialog(self)
         except Exception, err:
             title = 'MaxFilter error:'
             self.messageBox = messageBoxes.longMessageBox(title, str(err))
@@ -1191,23 +1190,21 @@ class MainWindow(QtGui.QMainWindow):
                 channels.append(str(item.text()))
             self.caller.average_channels(epochs_name, None, set(channels))
         QtGui.QApplication.restoreOverrideCursor()
-        
-        
+
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """
         Slot for adding channels to the list for averaging epochs.
         """
         if checked is None: return
-        channels = []
+        channels = list()
         for i in xrange(self.ui.listWidgetChannels.count()):
             item = self.ui.listWidgetChannels.item(i)
             channels.append(str(item.text()))
-                            
+
         channelDialog = ChannelSelectionDialog(channels, 'Select channels')
         channelDialog.channelsChanged.connect(self.channels_modified)
         channelDialog.exec_()
-       
-       
+
     @QtCore.pyqtSlot(list)
     def channels_modified(self, channels):
         """
@@ -1218,31 +1215,28 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.ui.listWidgetChannels.clear()
         self.ui.listWidgetChannels.addItems(channels)
-    
-            
+
     def on_pushButtonFilter_clicked(self, checked=None):
         """
         Show the dialog for filtering.
         """
         if checked is None: return
-    
+
         self.filterDialog = FilterDialog(self)
         self.filterDialog.show()
-    
-    
+
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """
         Activates a subject.
         """
         if checked is None: return
         if self.ui.listViewSubjects.selectedIndexes() == []: return
-        
+
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
-        
-        
+
         # Not much point trying to activate an already active subject.
         if subject_name == self.caller.experiment.active_subject_name:
             QtGui.QApplication.restoreOverrideCursor()
@@ -1252,42 +1246,40 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.caller.activate_subject(subject_name)
         self._initialize_ui()
-        
+
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models() 
         QtGui.QApplication.restoreOverrideCursor()
-
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
         Copies reconstructed mri files from the directory supplied by the user
         to the corresponding directory under the active subject directory
         """
-        
         if checked is None : return
-        
+
         activeSubject = self.caller.experiment._active_subject
-        
+
         # Probably not created yet, because this is the first step of source
         # analysis.
         if not os.path.isdir(activeSubject._source_analysis_directory):
             activeSubject.create_sourceAnalysis_directory()
-        
+
         if activeSubject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',
             "Do you really want to change the reconstructed files? This will " +
             " invalidate all later source analysis work and clear the results "+ 
             "of the later phases",
             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-        
+
             if reply == QtGui.QMessageBox.No:
                 return
-        
+
         path = str(QtGui.QFileDialog.getExistingDirectory(
                self, "Select directory of the reconstructed MRI image"))
         if path == '':
             return
-        
+
         mriDir = os.path.join(path, 'mri')
         surfDir = os.path.join(path, 'surf')  
         if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
@@ -1296,9 +1288,9 @@ class MainWindow(QtGui.QMainWindow):
             messageBox = messageBoxes.shortMessageBox(message)
             messageBox.exec_()
             return  
-        
+
         activeSubject = self.caller.experiment._active_subject
-          
+
         try: 
             fileManager.copy_recon_files(activeSubject, path)
             self.ui.lineEditRecon.setText(path)
@@ -1307,27 +1299,24 @@ class MainWindow(QtGui.QMainWindow):
             ' , you have no rights to read the directory or something weird' + \
             ' happened.'
             messageBox = messageBoxes.shortMessageBox(message)
-            messageBox.exec_()   
-            
+            messageBox.exec_()
+
         self._initialize_ui()
-        
-        
+
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         if checked is None : return
-        
+
         self.caller.convert_mri_to_mne()
         self._initialize_ui()
-            
-        
+
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
         """
         Open up a dialog for creating a new forward model.
         """
         if checked is None: return
-        
+
         self.fmodelDialog = ForwardModelDialog(self)
         self.fmodelDialog.show()
-        
 
     def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
         """
@@ -1341,26 +1330,26 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        
+
         reply = QtGui.QMessageBox.question(self, 'Removing forward model',
                 'Do you really want to ' + \
                 'the selected forward model, including the coregistration ' + \
                 'and forward solution files related to it?',                                            
                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                 QtGui.QMessageBox.No)
-                
+
         if reply == QtGui.QMessageBox.No:
             return
-        
+
         tableView = self.ui.tableViewForwardModels
-        
+
         # Selection for the view is SingleSelection / SelectRows, so this
         # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
         selectedRowNumber = selectedRowIndexes[0].row()
         fmname = selectedRowIndexes[0].data()
         subject = self.caller.experiment.active_subject
-        
+
         try:
             fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
@@ -1370,7 +1359,6 @@ class MainWindow(QtGui.QMainWindow):
             self. messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
 
-
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
         """
         Open a file browser dialog for the user to choose
@@ -1378,75 +1366,71 @@ class MainWindow(QtGui.QMainWindow):
         model.
         """
         if checked is None: return
-        
+
         activeSubject = self._experiment._active_subject
         tableView = self.ui.tableViewFModelsForCoregistration
-        
+
         # Selection for the view is SingleSelection / SelectRows, so this
         # should return indexes for single row.
         selectedRowIndexes = tableView.selectedIndexes()
-        selectedFmodelName = selectedRowIndexes[0].data() 
-        
+        selectedFmodelName = selectedRowIndexes[0].data()
+
         subjectPath = activeSubject._subject_path
         targetName = os.path.join(subjectPath, 'sourceAnalysis', 'forwardModels',
                                   selectedFmodelName, 'reconFiles',
-                                  'reconFiles-trans.fif')   
-    
+                                  'reconFiles-trans.fif')
+
         path = QtGui.QFileDialog.getOpenFileName(
                self, 'Select the existing coordinate file ' +
                '(the file should end with "-trans.fif")' )
         if path == '':
             return
-        else: 
+        else:
             try:
                 shutil.copyfile(path, targetName)
             except IOError:
                 message = 'There was a problem while copying the coordinate file.'
                 messageBox = messageBoxes.shortMessageBox(message)
                 messageBox.exec_()
-        
+
         self.forwardModelModel.initialize_model()
-        
-    
+
     def on_pushButtonMNECoregistration_clicked(self, checked=None):
         """
         Open a dialog for coregistering the currently selected
         forward model in tableViewFModelsForCoregistration.
         """
         if checked is None: return
-        
+
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
             message = 'Please select a forward model to (re-)coregister.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        
+
         self.caller.coregister_with_mne_gui_coregistration()
-        
-        
+
     def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
         """
         Open a dialog for creating a forward solution for the currently selected
         forward model in tableViewFModelsForSolution.
         """
         if checked is None: return
-        
+
         if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
             message = 'Please select a forward model to (re)create a forward ' + \
             'solution for.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        
+
         self.fSolutionDialog = ForwardSolutionDialog(self)
         self.fSolutionDialog.show()
-        
-        
+
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
         if checked is None: return
         # TODO: Implement this last if needed.
         return
-
 
     def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
         """
