@@ -86,11 +86,10 @@ class MaxFilterDialog(QtGui.QDialog):
         x = self.ui.doubleSpinBoxX0.value()
         y = self.ui.doubleSpinBoxY0.value()
         z = self.ui.doubleSpinBoxZ0.value()
-        fit = self.ui.checkBoxFit.checkState() == QtCore.Qt.Checked
+        fit = self.ui.checkBoxFit.isChecked()
         order_in = self.ui.spinBoxOrderIn.value()
         order_out = self.ui.spinBoxOrderOut.value()
-        autobad = self.ui.checkBoxAutobad.checkState() == \
-        QtCore.Qt.Checked
+        autobad = self.ui.checkBoxAutobad.isChecked()
         bad_limit = self.ui.doubleSpinBoxBadLimit.value()
         bads = self.ui.lineEditBad.text()
 
@@ -98,7 +97,7 @@ class MaxFilterDialog(QtGui.QDialog):
         # not overlap, and later skip periods should come later than earlier
         # regions
         skips = ''
-        if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
+        if self.ui.checkBoxSkip_1.isChecked():
             if ( self.ui.spinBoxSkipEnd_1.value()
             <= self.ui.spinBoxSkipStart_1.value() ):
                 self.showErrorMessage('First skip ends before it starts.')
@@ -107,7 +106,7 @@ class MaxFilterDialog(QtGui.QDialog):
             skips += str(self.ui.spinBoxSkipStart_1.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_1.value()) + ' '
 
-        if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
+        if self.ui.checkBoxSkip_2.isChecked():
             if ( self.ui.spinBoxSkipEnd_2.value()
                  <= self.ui.spinBoxSkipStart_2.value() ):
                     self.showErrorMessage('Second skip ends ' +
@@ -123,7 +122,7 @@ class MaxFilterDialog(QtGui.QDialog):
             skips += str(self.ui.spinBoxSkipStart_2.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_2.value()) + ' '
         
-        if self.ui.checkBoxSkip_3.checkState() == QtCore.Qt.Checked:
+        if self.ui.checkBoxSkip_3.isChecked():
             if ( self.ui.spinBoxSkipEnd_3.value() 
                  <= self.ui.spinBoxSkipStart_3.value()):
                     self.showErrorMessage('Third skip ends before it starts.')
@@ -138,12 +137,10 @@ class MaxFilterDialog(QtGui.QDialog):
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '
 
-        if self.ui.checkBoxMaxMove.checkState() == QtCore.Qt.Checked:
-            button_position = \
-            str(self.ui.buttonGroupMaxMove.checkedButton().objectName())
-            if button_position == 'radioButtonPositionDefault':
+        if self.ui.checkBoxMaxMove.isChecked():
+            if  self.ui.radioButtonPositionDefault.isChecked():
                 dictionary['-trans'] = 'default'
-            elif button_position == 'radioButtonPositionFile':
+            elif self.ui.radioButtonPositionFile.isChecked():
                 if self.fname != '':
                     try:
                         if os.path.isfile(str(self.fname)) and \
@@ -157,13 +154,13 @@ class MaxFilterDialog(QtGui.QDialog):
                         self._show_progressbar(False)
                         self.showErrorMessage(err)
                         return
-            elif button_position == 'radioButtonPositionAverage':
+            elif self.ui.radioButtonPositionAverage.isChecked():
                 self._show_progressbar(False)
                 raise NotImplementedError('Average head positioning is not '
                                           'implemented.')
 
         # TODO Store the head position in a file
-        if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
+        if self.ui.checkBoxStorePosition.isChecked():
             dictionary['-hp'] = ''
 
         caller = Caller.Instance()
