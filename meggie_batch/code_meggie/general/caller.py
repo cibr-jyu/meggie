@@ -169,8 +169,11 @@ class Caller(object):
         # Add user defined parameters from the "custom" tab
         bs += custom
         print bs
-        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+        try:
+            proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+        except Exception as err:
+            print str(err)
         while True:
             line = proc.stdout.readline()
             if not line: break
