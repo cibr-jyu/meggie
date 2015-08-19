@@ -170,7 +170,7 @@ class Statistic(QtCore.QObject):
         """
         return [self.find_half_maximum(row) for row in sample_arr]
 
-    def integrate(self, sample_arr, start, stop):
+    def integrate(self, sample_arr, times, start, stop):
         """Calculate the integral in sample_arr from start to stop.
 
         Keyword arguments:
@@ -181,13 +181,14 @@ class Statistic(QtCore.QObject):
 
         return the integral between start and stop.
         """
-        i = start
-        integral = 0
-        while i <= stop and i < len(sample_arr):
-            integral += sample_arr[i]
-            i += 1
- 
-        return integral
+        return np.trapz(sample_arr[start:stop], x=times[start:stop])
+        #i = start
+        #integral = 0.
+        #while i <= stop and i < len(sample_arr):
+        #    integral += sample_arr[i]
+        #    i += 1
+        #
+        #return integral
 
     def find_maximum_intensity(self, mat, w, h):
         """

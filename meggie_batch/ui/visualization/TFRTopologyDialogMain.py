@@ -103,15 +103,13 @@ class TFRTopologyDialog(QtGui.QDialog):
         if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
             blstart = None
         else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
-        
+
         if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
             blend = None
         else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        
-        if self.ui.radioButtonInduced.isChecked(): reptype = 'induced'
-        elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
-        elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
-        elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
+
+        if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
+        elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
         ch_type = str(self.ui.comboBoxChannels.currentText())
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
@@ -142,7 +140,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             return
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
-        
+
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
         Opens a dialog for group average parameters.
@@ -176,16 +174,14 @@ class TFRTopologyDialog(QtGui.QDialog):
             blend = None
         else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
 
-        if self.ui.radioButtonInduced.isChecked(): reptype = 'induced'
-        elif self.ui.radioButtonPhase.isChecked(): reptype = 'phase'
-        elif self.ui.radioButtonAverage.isChecked(): reptype = 'average'
-        elif self.ui.radioButtonITC.isChecked(): reptype = 'itc'
-        
+        if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
+        elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
+
         if saveMax:
             saveMax = reptype
         else:
             saveMax = None
-            
+
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         elif self.ui.radioButtonLayoutFromFile.isChecked():

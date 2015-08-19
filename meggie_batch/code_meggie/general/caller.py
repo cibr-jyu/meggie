@@ -592,13 +592,14 @@ class Caller(object):
         fig.canvas.mpl_connect('button_press_event', onclick)
       
         
-    def average_channels(self, epochs_name, lobeName, channelSet=None):
+    def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
-        if it is provided. Only for gradiometer channels.
+        if it is provided.
         
         Keyword arguments:
-        epochs_name  -- name of the epochs to average.
+        instance     -- name of the epochs to average, evoked object or list of
+                        evoked objects.
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
@@ -607,7 +608,7 @@ class Caller(object):
         pool = ThreadPool(processes=1)
 
         async_result = pool.apply_async(self._average_channels, 
-                                        (epochs_name, lobeName, channelSet,))
+                                        (instance, lobeName, channelSet,))
         while(True):
             sleep(0.2)
             if self.e.is_set(): break;
@@ -620,16 +621,15 @@ class Caller(object):
             return 
         averageTitleString, dataList, evokeds = async_result.get()
         pool.terminate()
-        
+
         # Plotting:
         plt.clf()
         fig = plt.figure()
         mi = MeasurementInfo(self.experiment.active_subject._working_file)
         fig.canvas.set_window_title(mi.subject_name + 
              '-- channel average for ' + averageTitleString)
-        fig.suptitle('Channel average for ' + averageTitleString)
-        #subplots_adjust(hspace=1)
-                
+        fig.suptitle('Channel average for ' + averageTitleString, y=1.0025)
+
         # Draw a separate plot for each event type
         for index, (eventName, data) in enumerate(dataList):
             ca = fig.add_subplot(len(dataList), 1, index+1) 
@@ -651,12 +651,26 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
         
-    
-    def _average_channels(self, epochs_name, lobeName, channelSet=None):
+    def _average_channels(self, instance, lobeName, channelSet=None):
         """
         Performed in a worker thread.
         """
-        epochs = self.experiment.active_subject._epochs[epochs_name].raw
+        if isinstance(instance, str):  # epoch name
+            epochs = self.experiment.active_subject._epochs[instance].raw
+            if epochs is None:
+                self.result = Exception('No epochs found.')
+                self.e.set()
+                return
+            category = epochs.event_id
+    
+            # Creates evoked potentials from the given events (variable 'name' 
+            # refers to different categories).
+            evokeds = [epochs[name].average() for name in category.keys()]
+        elif isinstance(instance, mne.Evoked):
+            evokeds = [instance]
+        elif isinstance(instance, list) or isinstance(instance, np.ndarray):
+            evokeds = instance
+            
         if channelSet is None:
             try:
                 channelsToAve = mne.selection.read_selection(lobeName)
@@ -666,8 +680,8 @@ class Caller(object):
                 return
             averageTitle = lobeName
         else:
-            if not isinstance(channelSet, set) or len(channelSet) < 2 or \
-                   not channelSet.issubset(set(epochs.ch_names)):
+            if not isinstance(channelSet, set) or len(channelSet) < 1 or \
+                    not channelSet.issubset(set(evokeds[0].ch_names)):
                 self.result = ValueError('Please check that you have at least '
                                          'two channels, the channels are '
                                          'actual channels in the epochs data '
@@ -678,17 +692,6 @@ class Caller(object):
             averageTitle = str(channelSet).strip('[]')
 
         averageTitleString = str(averageTitle)
-
-        if epochs is None:
-            self.result = Exception('No epochs found.')
-            self.e.set()
-            return
-        category = epochs.event_id
-
-        # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories).
-        evokeds = [epochs[name].average() for name in category.keys()]
-
         # Channel names in Evoked objects may or may not have whitespaces
         # depending on the measurements settings,
         # need to check and adjust channelsToAve accordingly.
@@ -719,8 +722,7 @@ class Caller(object):
         dataList = list()
         for i in range(len(evokeds)):
             print "Calculating channel averages for " + averageTitleString + \
-                 "\n" + \
-                "Channels in evoked set " + str(i) + ":"
+                  "\nChannels in evoked set " + str(i) + ":"
 
             # Merges the grad channel pairs in evokedToAve
             # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
@@ -733,16 +735,19 @@ class Caller(object):
                 # Links the event name and the corresponding data
                 dataList.append((evokeds[i].comment + '_grad',
                                  averagedGradData))
+            elif len(ch_names) == 1 and re.compile('MEG...[23]').match(ch_names[0]):
+                dataList.append((evokeds[i].comment + '_grad',
+                                 evokedToAve.data[0]))
             if len(magsIdxs) > 0:
                 mag_data = list()
                 for idx in magsIdxs:
-                    mag_data.append(evokeds[i].data[idx])
+                    mag_data.append(evokedToAve.data[idx])
                 averagedMagData = np.mean(mag_data, axis=0)
                 dataList.append((evokeds[i].comment + '_mag', averagedMagData))
             if len(eegIdxs) > 0:
                 eeg_data = list()
                 for idx in eegIdxs:
-                    eeg_data.append(evokeds[i].data[idx])
+                    eeg_data.append(evokedToAve.data[idx])
                 averagedEegData = np.mean(eeg_data, axis=0)
                 dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
                 
@@ -1088,13 +1093,13 @@ class Caller(object):
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
-        
+
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
-        
-        async_result = pool.apply_async(self._TFR_topology, 
-                                        (epochs, reptype, mode, 
-                                         frequencies, blstart, 
+
+        async_result = pool.apply_async(self._TFR_topology,
+                                        (epochs, reptype, mode,
+                                         frequencies, blstart,
                                          blend, ncycles, decim))
         while(True):
             sleep(0.2)
@@ -1106,7 +1111,7 @@ class Caller(object):
             self.messageBox.show()
             self.result = None
             return 
-        
+
         power, itc = async_result.get()
         pool.terminate()
         self.parent.update_ui()
@@ -1114,15 +1119,10 @@ class Caller(object):
             layout = None
         else:
             layout = read_layout(lout)
-        baseline = (blstart, blend)  # set the baseline for induced power
+        baseline = (blstart, blend)
         print "Plotting..."
         self.parent.update_ui()
-    
-        if ( reptype == 'induced' ):
-            pass #obsolete?
-        elif reptype == 'phase':
-            pass #obsolete?
-        elif reptype == 'average':
+        if reptype == 'average':  # induced
             try:
                 if scalp is not None:
                     try:
@@ -1138,16 +1138,15 @@ class Caller(object):
                         print str(e)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
-                fig = power.plot_topo(baseline=baseline, mode=mode, 
+                fig = power.plot_topo(baseline=baseline, mode=mode,
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout,
                                       title='Average power')
-
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()
                 return
-        elif reptype == 'itc':
+        elif reptype == 'itc':  # phase locked
             try:
                 title = 'Inter-Trial coherence'
                 if scalp is not None:

@@ -656,7 +656,7 @@
               <attribute name="title">
                <string>Epoching</string>
               </attribute>
-              <layout class="QFormLayout" name="formLayout_12">
+              <layout class="QGridLayout" name="gridLayout_26">
                <item row="0" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
@@ -668,30 +668,6 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_19">
-                    <item row="0" column="0">
-                     <layout class="QHBoxLayout" name="horizontalLayout_26">
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_11">
-                        <item>
-                         <widget class="QGroupBox" name="groupBoxEpochsEpoching">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="title">
-                           <string/>
-                          </property>
-                          <property name="flat">
-                           <bool>false</bool>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                     </layout>
-                    </item>
                     <item row="1" column="0">
                      <widget class="QGroupBox" name="groupBoxAvailableEpoching">
                       <property name="title">
@@ -744,22 +720,28 @@
                          </item>
                         </layout>
                        </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
-                         <property name="text">
-                          <string>Visualize epochs in selected channels...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="1">
-                        <widget class="QPushButton" name="pushButtonEpochsPlot">
-                         <property name="text">
-                          <string>Epochs plot</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_26">
+                      <item>
+                       <widget class="QGroupBox" name="groupBoxEpochsEpoching">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>1</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="title">
+                         <string/>
+                        </property>
+                        <property name="flat">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </item>
                    </layout>
                    <zorder></zorder>
@@ -1452,6 +1434,144 @@
                  </item>
                 </layout>
                </item>
+               <item row="1" column="0">
+                <widget class="QGroupBox" name="groupBoxAvailableAveraging_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>500</width>
+                   <height>240</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Visualization for epoch collections:</string>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_12">
+                  <property name="fieldGrowthPolicy">
+                   <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </property>
+                  <item row="2" column="0">
+                   <widget class="QGroupBox" name="groupBoxChannelAverages_4">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="title">
+                     <string>Channel Averages</string>
+                    </property>
+                    <layout class="QFormLayout" name="formLayout_21">
+                     <property name="fieldGrowthPolicy">
+                      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                     </property>
+                     <item row="0" column="0">
+                      <layout class="QVBoxLayout" name="verticalLayout_34">
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_42">
+                         <item>
+                          <widget class="QRadioButton" name="radioButtonLobe">
+                           <property name="text">
+                            <string>Lobe:</string>
+                           </property>
+                           <property name="checked">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QComboBox" name="comboBoxLobes"/>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_43">
+                         <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_35">
+                           <item>
+                            <widget class="QRadioButton" name="radioButtonCustomChannels">
+                             <property name="text">
+                              <string>Custom channels:</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QPushButton" name="pushButtonModifyChannels">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
+                             <property name="text">
+                              <string>Modify...</string>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
+                         </item>
+                         <item>
+                          <widget class="QListWidget" name="listWidgetChannels">
+                           <property name="enabled">
+                            <bool>false</bool>
+                           </property>
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="maximumSize">
+                            <size>
+                             <width>16777215</width>
+                             <height>50</height>
+                            </size>
+                           </property>
+                           <property name="toolTip">
+                            <string>Displays the selected bad channels.</string>
+                           </property>
+                           <property name="flow">
+                            <enum>QListView::LeftToRight</enum>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonChannelAverages">
+                         <property name="text">
+                          <string>Show channel averages</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <item>
+                     <widget class="QPushButton" name="pushButtonVisualizeEpochChannels">
+                      <property name="text">
+                       <string>Visualize epochs in selected channels...</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonEpochsPlot">
+                      <property name="text">
+                       <string>Epochs plot</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="tabAveraging">
@@ -1488,129 +1608,6 @@
                      <string/>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_17"/>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QGroupBox" name="groupBoxAvailableAveraging">
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>500</width>
-                      <height>240</height>
-                     </size>
-                    </property>
-                    <property name="title">
-                     <string>Available actions for epoch collections:</string>
-                    </property>
-                    <layout class="QFormLayout" name="formLayout_10">
-                     <item row="0" column="0">
-                      <widget class="QGroupBox" name="groupBoxChannelAverages">
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>50</height>
-                        </size>
-                       </property>
-                       <property name="title">
-                        <string>Channel Averages</string>
-                       </property>
-                       <layout class="QFormLayout" name="formLayout_9">
-                        <property name="fieldGrowthPolicy">
-                         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                        </property>
-                        <item row="0" column="0">
-                         <layout class="QVBoxLayout" name="verticalLayout_22">
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_14">
-                            <item>
-                             <widget class="QRadioButton" name="radioButtonLobe">
-                              <property name="text">
-                               <string>Lobe:</string>
-                              </property>
-                              <property name="checked">
-                               <bool>true</bool>
-                              </property>
-                              <attribute name="buttonGroup">
-                               <string notr="true">buttonGroupChannelAverage</string>
-                              </attribute>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="comboBoxLobes"/>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_15">
-                            <item>
-                             <layout class="QVBoxLayout" name="verticalLayout_26">
-                              <item>
-                               <widget class="QRadioButton" name="radioButtonCustomChannels">
-                                <property name="text">
-                                 <string>Custom channels:</string>
-                                </property>
-                                <attribute name="buttonGroup">
-                                 <string notr="true">buttonGroupChannelAverage</string>
-                                </attribute>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="pushButtonModifyChannels">
-                                <property name="enabled">
-                                 <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                 <string>Modify...</string>
-                                </property>
-                               </widget>
-                              </item>
-                             </layout>
-                            </item>
-                            <item>
-                             <widget class="QListWidget" name="listWidgetChannels">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>50</height>
-                               </size>
-                              </property>
-                              <property name="toolTip">
-                               <string>Displays the selected bad channels.</string>
-                              </property>
-                              <property name="flow">
-                               <enum>QListView::LeftToRight</enum>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButtonChannelAverages">
-                            <property name="text">
-                             <string>Show channel averages</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
                    </widget>
                   </item>
                  </layout>
@@ -3605,54 +3602,6 @@ p, li { white-space: pre-wrap; }
   <include location="../icons/mainWindowIcons.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>radioButtonLobe</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxLobes</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>604</x>
-     <y>583</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>810</x>
-     <y>585</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonCustomChannels</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonModifyChannels</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>462</x>
-     <y>613</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>490</x>
-     <y>651</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonCustomChannels</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>listWidgetChannels</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>538</x>
-     <y>614</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>581</x>
-     <y>614</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>radioButtonLayoutFromFile</sender>
    <signal>toggled(bool)</signal>

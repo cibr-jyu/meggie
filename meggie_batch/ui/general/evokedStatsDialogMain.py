@@ -8,7 +8,9 @@ import csv
 import os
 import numpy as np
 import mne
-from externalModules.mne.utils import _clean_names
+from mne.channels.layout import _pair_grad_sensors_from_ch_names
+from mne.channels.layout import _merge_grad_data
+from mne.utils import _clean_names
 
 from code_meggie.general.caller import Caller
 from code_meggie.general.statistic import Statistic
@@ -62,12 +64,10 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         self.ui.comboBoxEvoked.currentIndexChanged.connect(self.
                                                            evoked_set_changed)
-        self.ui.pushButtonSetSelected.setEnabled(False)
+        #self.ui.pushButtonSetSelected.setEnabled(False)
 
         self.evoked_set_changed()
 
-        self.ui.listWidgetChannels.itemSelectionChanged.\
-        connect(self.selection_changed)
         self.ui.doubleSpinBoxStart.setValue(evoked[0].times[0])
         self.ui.doubleSpinBoxStop.setValue(evoked[0].times[-1])
         #Save CSV: Create a CSV file of the key values displayed on the right side
@@ -121,12 +121,12 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         self.update_start_stop()
 
-        self.ui.pushButtonSetSelected.setEnabled(False)
+        #self.ui.pushButtonSetSelected.setEnabled(False)
 
     def on_pushButtonClearSelections_clicked(self):
         """Reset the values in the dialog's spinboxes."""
         self.reset_data_values()
-        self.ui.pushButtonSetSelected.setEnabled(False)
+        #self.ui.pushButtonSetSelected.setEnabled(False)
 
     def on_pushButtonSetSelected_clicked(self, checked=None):
         """Save selected channels to selected_channels dictionary."""
@@ -139,13 +139,21 @@ class EvokedStatsDialog(QtGui.QDialog):
             if item not in self.selected_channels[index]:
                 self.selected_channels[index].append(str(item.text()))
 
-        self.ui.pushButtonSetSelected.setEnabled(False)
+        #self.ui.pushButtonSetSelected.setEnabled(False)
 
         channels = self.selected_channels[index]
         self.update_info(channels)
         #TODO: Update the info widgets. If item_selection has multiple
         #channels, they should be averaged and the result of that should be
         #shown on the info widgets.   
+
+    def on_pushButtonVisualize_clicked(self, checked=None):
+        """Visualize selected channel(s)."""
+        if checked is None: return
+        index = self.ui.comboBoxEvoked.currentIndex()
+        caller = Caller.Instance()
+        caller.average_channels(self.evoked, None,
+                                set(self.selected_channels[index]))
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """
@@ -224,19 +232,13 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMinAmplitude.setValue(0)
         self.ui.doubleSpinBoxMinTime.setValue(0)
 
-    def selection_changed(self):
-        """Enable pushButtonSetSelected."""
-        if len(self.ui.listWidgetChannels.selectedItems()) > 0:
-            self.ui.pushButtonSetSelected.setEnabled(True)
-        else: self.ui.pushButtonSetSelected.setEnabled(False)
-
     def update_info(self, names):
         """Update the info widgets with data based on item.
 
         Keyword arguments:
 
         names -- Name(s) of the channel(s) whose data is to be displayed. 
-                List for many, string for one.
+                 List for many, string for one.
         """
         evoked = self.evoked[self.ui.comboBoxEvoked.currentIndex()]
         tmin = self.ui.doubleSpinBoxStart.value()
@@ -258,15 +260,25 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                              ch_index)
             elif ch_type != mne.channels.channels.channel_type(evoked.info,
                                                                ch_index):
-                msg = ('Channels are of different type.')
+                msg = 'Channels are of different type.'
                 messageBox = messageBoxes.shortMessageBox(msg)
                 messageBox.exec_()
                 return
             this_data.append(data[ch_index])
-        data = np.mean(this_data, axis=0)
         if ch_type == 'grad':
             suffix = 'fT/cm'
             scaler = 1e13
+            if len(names) > 1:
+                gradsIdxs = _pair_grad_sensors_from_ch_names(names)
+                this_data = np.array(this_data)
+                try:
+                    this_data = _merge_grad_data(this_data[gradsIdxs])
+                except ValueError as err:
+                    msg = 'Please select gradiometers as pairs for RMS.'
+                    messageBox = messageBoxes.shortMessageBox(msg, self,
+                                                              str(err))
+                    messageBox.exec_()
+                    return
         elif ch_type == 'mag':
             suffix = 'fT'
             scaler = 1e15
@@ -278,6 +290,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             messageBox = messageBoxes.shortMessageBox(msg)
             messageBox.exec_()
             return
+        data = np.mean(this_data, axis=0)
         self.ui.doubleSpinBoxMinAmplitude.setSuffix(suffix)
         self.ui.doubleSpinBoxMaxAmplitude.setSuffix(suffix)
         self.ui.doubleSpinBoxHalfMaxAmplitude.setSuffix(suffix)
@@ -296,13 +309,14 @@ class EvokedStatsDialog(QtGui.QDialog):
         time_after = self.evoked[0].times[time_after_i]
 
         duration = time_after - time_before
-        integral = self.statUpdater.integrate(data, time_before_i,
-                                              time_after_i)
+        integral = self.statUpdater.integrate(data,
+                                              evoked.times[min_idx:max_idx],
+                                              time_before_i, time_after_i)
 
         minimum = minimum * scaler
         maximum = maximum * scaler
         half_max = half_max * scaler
-        #integral = integral * scaler
+        integral = integral * scaler
 
         #Then update the appropriate fields in the dialog.
         self.ui.labelSelectedChannel.setText(name)

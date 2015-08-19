@@ -738,53 +738,34 @@ class MainWindow(QtGui.QMainWindow):
             message = 'Writing to selected folder is not allowed. You can still' \
                       + ' process the evoked file (visualize etc.).'
             self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.labelException.setText \
-            ()
+            self.messageBox.labelException.setText()
             self.messageBox.show()
-        
-        
+
         self.evokedList.addItem(item)
         self.caller.experiment.active_subject.handle_new_evoked(evoked_name, evoked, category)
         #self.evokedList.setCurrentItem(item)
 
-        
-    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked = None):
-        """Open the evokedStatsDialog for viewing statistical data.
-        """
-        #Currently a mock code.
-        #TODO: Pass evokeds in a dictionary
+    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
+        """Open the evokedStatsDialog for viewing statistical data."""
         if checked is None: return
         if self.evokedList.count() == 0: return
         name = str(self.evokedList.currentItem().text())
         evokeds = self.caller.experiment.active_subject._evokeds[name]._raw
-        """
-        evoked_dict = {}
-        for i in range(self.evokedList.count()):
-            evoked_name = str(self.evokedList.item(i).text())
-            evoked = self.caller.experiment.active_subject._evokeds[evoked_name]._raw
-            evoked_dict[str(self.evokedList.item(i).text())] = evoked
-            #evoked_dict[str(self.evokedList.item(i).text())] = \
-            #self.evokedList.item(i).data(32).toPyObject()
-        """
         self.evokedStatsDialog = EvokedStatsDialog(evokeds)
-        self.evokedStatsDialog.exec_()
+        self.evokedStatsDialog.show()
 
-        
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
-        """Plot image over epochs channel
-        """
+        """Plot image over epochs channel"""
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             message = 'Create epochs before visualizing.' 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
-                          currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
+        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        epochs = self.caller.experiment.active_subject._epochs[name]._raw
         self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
-        self.visualizeEpochChannelsDialog.exec_()
-
+        self.visualizeEpochChannelsDialog.show()
 
     def on_pushButtonEpochsPlot_clicked(self, checked=None):
         """
@@ -1144,12 +1125,9 @@ class MainWindow(QtGui.QMainWindow):
         self.tfr_dialog = TFRDialog(self, self.caller.experiment.active_subject.\
                                     _working_file, epochs_raw)
         self.tfr_dialog.show()
-    
-    
+
     def on_pushButtonTFRTopology_clicked(self, checked=None):
-        """
-        Opens the dialog for plotting TFR topology.
-        """
+        """Opens the dialog for plotting TFR topology."""
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must select the epochs for TFR.'
@@ -1158,39 +1136,30 @@ class MainWindow(QtGui.QMainWindow):
             return
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
                                      currentItem().text())
-        #epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
-        self.tfrTop_dialog = TFRTopologyDialog(self, epochs_collection_name)# epochs._raw)
-        self.tfrTop_dialog.exec_()
-
+        self.tfrTop_dialog = TFRTopologyDialog(self, epochs_collection_name)
+        self.tfrTop_dialog.show()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
-        """
-        Shows the channels average graph.
-        """
+        """Shows the channels average graph."""
         if checked is None: return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None: 
             message = 'Please select an epoch collection to channel average.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
-        
-        """
-        TODO: get epochs from active_subject._epochs dictionary
-        """
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
-                          currentItem().text())
-        #epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
+        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
-            self.caller.average_channels(epochs_name, self.ui.comboBoxLobes.\
-                                         currentText(), None)
+            self.caller.average_channels(name,
+                                         self.ui.comboBoxLobes.currentText(),
+                                         None)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
-            self.caller.average_channels(epochs_name, None, set(channels))
+            self.caller.average_channels(name, None, set(channels))
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):

@@ -103,9 +103,9 @@ class Statistic(QtCore.QObject):
         
         sample_arr -- An array containing integers or floats
         """        
-        max = np.max(sample_arr)
-        index = np.where(sample_arr==max)[0]
-        return max, index[0]
+        maximum = np.max(sample_arr)
+        index = np.where(sample_arr==maximum)[0]
+        return maximum, index[0]
     
     def find_maximum2d(self, sample_arr):
         """"
