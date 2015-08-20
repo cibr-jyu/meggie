@@ -840,6 +840,9 @@ class MainWindow(QtGui.QMainWindow):
               
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
+        Plots topology view of evoked response group averages. Saves the
+        results as ascii to ``output`` folder. Uses event names for determining
+        which responses to average across subjects.
         """
         import re
         if checked is None: return
@@ -870,12 +873,9 @@ class MainWindow(QtGui.QMainWindow):
             mBox.exec_()
         finally:
             QtGui.QApplication.restoreOverrideCursor()
-        
-    
+
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
-        """
-        Exports the evoked data set to a user selected location.
-        """
+        """Exports the evoked data set to a user selected location."""
         if checked is None: return
         name = str(self.evokedList.currentItem().text())
         evokeds = self.caller.experiment.active_subject._evokeds[name].raw
@@ -893,11 +893,8 @@ class MainWindow(QtGui.QMainWindow):
         except IOError:
             print 'Writing to selected folder is not allowed.'
 
-        
     def on_pushButtonLoadEvoked_clicked(self, checked=None):
-        """
-        Load evoked data.
-        """
+        """Load evoked data."""
         if checked is None: return
         fname = str(QtGui.QFileDialog.\
                     getOpenFileName(self, 'Load evokeds', os.path.join(\
@@ -926,7 +923,6 @@ class MainWindow(QtGui.QMainWindow):
         write_evokeds(fname, evoked)
         print 'Done.'
 
-
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
         Opens a dialog for selecting a layout file.
@@ -937,71 +933,59 @@ class MainWindow(QtGui.QMainWindow):
                             "Layout-files (*.lout *.lay);;All files (*.*)"))
         self.ui.labelLayout.setText(fName)
 
-        
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
-        """Delete the selected epoch item and the files related to it.
-        """
+        """Delete the selected epoch item and the files related to it."""
         if checked is None:
             return
-        
+
         if self.epochList.isEmpty():
             return
-        
+
         elif self.epochList.currentItem() is None:
             self.messageBox = messageBoxes.shortMessageBox('No epochs selected.')
             self.messageBox.show()
-            
+
         item_str = self.epochList.currentItem().text()
-            
-        root = self.caller.experiment.active_subject._epochs_directory
+
         message = 'Permanently remove epochs and the related files?'
-            
         reply = QtGui.QMessageBox.question(self, 'delete epochs',
                                            message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
-            
+
         if reply == QtGui.QMessageBox.Yes:
             self.caller.experiment.active_subject.remove_epochs(item_str)
             self.epochList.remove_item(self.epochList.currentItem())
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
 
-            
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
-        """Delete the selected evoked item and the files related to it.
-        """
-                
+        """Delete the selected evoked item and the files related to it."""
         if checked is None:
             return
-        
+
         if self.evokedList.count() == 0:
             return
-        
+
         elif self.evokedList.currentItem() is None:
             self.messageBox = messageBoxes.shortMessageBox('No evokeds selected.')
             self.messageBox.show()
-            
+
         item_str = self.evokedList.currentItem().text()
-            
-        root = os.path.join(self.caller.experiment.active_subject._epochs_directory, 'average')
+
         message = 'Permanently remove evokeds and the related files?'
-            
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
                                            message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
-            
+
         if reply == QtGui.QMessageBox.Yes:
-            #self.delete_epochs(self.ui.evokedList.currentItem())
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
-            #fileManager.delete_file_at(root, item_str)
             self.caller.experiment.active_subject.remove_evoked(item_str)
         else:
             return
-
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
         """
@@ -1021,26 +1005,20 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
 
-
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """
         Call mne_browse_raw.
         """
         if checked is None: return
         if self.caller.experiment is None: return
-        # TODO: change scales ja muita optioita
+        fname = self.caller.experiment.active_subject.working_file.\
+                info['filename']
         try:
-            self.caller.call_mne_browse_raw(self.caller.experiment.active_subject._working_file.\
-                                            info.get('filename'))
+            self.caller.call_mne_browse_raw(fname)
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
-        """
-        #Another way of viewing the raw:
-        self.experiment.active_subject._working_file.plot()
-        pl.show()
-        """
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
@@ -1056,7 +1034,6 @@ class MainWindow(QtGui.QMainWindow):
             return
         self.maxFilterDialog.show()
 
-        
     def on_pushButtonSpectrum_clicked(self, checked=None):
         """
         Open the magnitude spectrum visualization dialog.
@@ -1068,8 +1045,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         spectrumDialog = PowerSpectrumDialog(self)
         spectrumDialog.exec_()
-                
-        
+
     def on_pushButtonEOG_clicked(self, checked=None):
         """
         Open the dialog for calculating the EOG PCA.
@@ -1079,7 +1055,6 @@ class MainWindow(QtGui.QMainWindow):
         self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
 
-
     def on_pushButtonECG_clicked(self, checked=None):
         """
         Open the dialog for calculating the ECG PCA.
@@ -1088,7 +1063,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
 
-        
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """
         Open the dialog for applying the EOG-projections to the data.
@@ -1097,7 +1071,6 @@ class MainWindow(QtGui.QMainWindow):
         self.addEogProjs = AddEOGProjections(self)
         self.addEogProjs.exec_()
 
-        
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """
         Open the dialog for applying the ECG-projections to the data.
@@ -1106,7 +1079,6 @@ class MainWindow(QtGui.QMainWindow):
         self.addEcgProjs = AddECGProjections(self)
         self.addEcgProjs.exec_()
 
-        
     def on_pushButtonTFR_clicked(self, checked=None):
         """
         Open the dialog for plotting TFR from a single channel.
@@ -1117,7 +1089,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        
+
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
                                      currentItem().text())
         epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
@@ -1446,6 +1418,7 @@ class MainWindow(QtGui.QMainWindow):
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
         self.ui.labelDateValue.clear()
+        self.ui.labelLengthValue.clear()
         self.ui.labelEEGValue.clear()
         self.ui.labelGradMEGValue.clear()
         self.ui.labelHighValue.clear()

@@ -750,15 +750,17 @@ class Caller(object):
                     eeg_data.append(evokedToAve.data[idx])
                 averagedEegData = np.mean(eeg_data, axis=0)
                 dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
-                
+
         self.e.set()
         return averageTitleString, dataList, evokeds
 
     def plot_group_average(self, groups, layout):
         """
-        Plots group average of all subjects in the experiment.
+        Plots group average of all subjects in the experiment. Also saves group
+        average data to ``output`` folder.
         Keyword arguments:
-        groups           -- A list of group names.
+        groups        -- A list of group names.
+        layout        -- Layout used for plotting channels.
         """
         self.e.clear()
         self.result = None
@@ -791,22 +793,19 @@ class Caller(object):
                 self.messageBox.show()
                 self.result = None
                 return
-            
+
         evokeds, groups = async_result.get()
 
         pool.terminate()
-            
+
         print "Plotting evoked..."
         if layout == 'Infer from data':
             layout = None
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
-        
-        
+
     def _group_average(self, groups):
-        """
-        Performed in a worker thread.
-        """
+        """Performed in a worker thread."""
         chs = self.experiment.active_subject.working_file.info['ch_names']
         evokeds = dict()
         eweights = dict()
@@ -829,7 +828,7 @@ class Caller(object):
                 fgroups = re.split('[-]', fgroups[1])  # ['1','2','3']
                 if sorted(fgroups) == sorted(groups):
                     files2ave.append(directory + '/' + f)
-        
+
         print "Found " + str(len(files2ave)) + " subjects with evoked " + \
                         "responses labeled: " + str(groups)
         if len(files2ave) < len(subjects):
@@ -837,7 +836,7 @@ class Caller(object):
                                   " subjects of " + str(len(subjects)) + \
                                   " with evoked responses labeled: " + \
                                   str(groups) + "!\n")
-        
+
         evokedTmin = 0
         evokedInfo = []
         print files2ave
@@ -912,7 +911,7 @@ class Caller(object):
             self.result = e
             self.e.set()
             return
-        
+
         write2file = True
         if write2file: #TODO add option in GUI for this
             exp_path = os.path.join(self.experiment.workspace,
@@ -940,11 +939,10 @@ class Caller(object):
                         f.write(', ')
                     f.write('\n')
             f.close()
-                
+
         self.e.set()
         return averagedEvokeds, groups
-        
-    
+
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim):
         """
@@ -1588,27 +1586,26 @@ class Caller(object):
         pl.show()
        
                             
-    def filter(self, dataToFilter, info, samplerate, dic):
+    def filter(self, dataToFilter, info, dic):
         """
         Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is one or more of
         lowpass, highpass and bandstop (notch) filter.
-        
+
         Keyword arguments:
-        
-        dataToFilter         -- array of data to filter
+
+        dataToFilter         -- array of data to filter or a raw object
         info                 -- info for the data file to filter
-        samplerate           -- intended samplerate of the array
         dic                  -- Dictionary with filtering parameters
-        
+
         Returns the filtered array.
         """
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._filter, 
-                                        (dataToFilter, info, samplerate, dic,))
+        async_result = pool.apply_async(self._filter, (dataToFilter, info,
+                                                       dic,))
         while(True):
             sleep(0.2)
             if self.e.is_set(): break;
@@ -1623,62 +1620,94 @@ class Caller(object):
         pool.terminate()
         return filteredData
         
-    def _filter(self, dataToFilter, info, samplerate, dic):
+    def _filter(self, dataToFilter, info, dic):
         """
         Performed in a working thread.
         """
-        # Exclude non-data and bad channels from filtering with picks.
-        picks = mne.pick_types(info, meg=True, eeg=True, stim=False, eog=False, 
-        ecg=False, emg=False, ref_meg='auto', misc=False, resp=False, 
-        chpi=False, exci=False, ias=False, syst=False, include=[], 
-        exclude='bads', selection=None)
-        
+        sf = info['sfreq']
         # TODO: check if this holds for mne.filter
         # n_jobs is 2 because of the increasing memory requirements for 
         # multicore filtering, see 
         # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html#mne.io.RawFIFF.filter
-        try:
-            if dic.get('lowpass') == True:
-                print "Low-pass filtering..."
-                dataToFilter = mne.filter.low_pass_filter(dataToFilter, samplerate, 
-                            dic.get('low_cutoff_freq'), dic.get('low_length'),
-                            dic.get('low_trans_bandwidth'),'fft', None, picks=picks,
-                            n_jobs=2, copy=True)
-                
-            if dic.get('highpass') == True:
-                print "High-pass filtering..."
-                dataToFilter = mne.filter.high_pass_filter(dataToFilter, samplerate, 
-                            dic.get('high_cutoff_freq'), dic.get('high_length'),
-                            dic.get('high_trans_bandwidth'),'fft', None, 
-                            picks=picks, n_jobs=3, copy=True)
+        if isinstance(dataToFilter, mne.io.Raw):
+            hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
+            lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
+            length = dic['length']
+            trans_bw = dic['trans_bw']
+            try:
+                print "Filtering..."
+                dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
+                                    filter_length=length,
+                                    l_trans_bandwidth=trans_bw,
+                                    h_trans_bandwidth=trans_bw, n_jobs=2,
+                                    method='fft', verbose=True)
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return dataToFilter
             
-            if dic.get('bandstop1') == True:
+            freqs = list()
+            if dic['bandstop1']:
+                freqs.append(dic['bandstop1_freq'])
+            if dic['bandstop2']:
+                freqs.append(dic['bandstop2_freq'])
+            if len(freqs) > 0:
+                length = dic['bandstop_length']
+                trans_bw = dic['bandstop_transbw']
                 print "Band-stop filtering..."
-                dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
-                            dic.get('bandstop1_l_freq'), 
-                            dic.get('bandstop1_h_freq'), 
-                            dic.get('bandstop1_length'), 
-                            dic.get('bandstop1_trans_bandwidth'),
-                            dic.get('bandstop1_trans_bandwidth'),picks=picks,
-                            n_jobs=2, copy=True)
-                
-            if dic.get('bandstop2') == True:
-                print "Band-stop filtering..."
-                dataToFilter = mne.filter.band_stop_filter(dataToFilter, samplerate,
-                            dic.get('bandstop2_l_freq'), 
-                            dic.get('bandstop2_h_freq'), 
-                            dic.get('bandstop2_length'), 
-                            dic.get('bandstop2_trans_bandwidth'),
-                            dic.get('bandstop2_trans_bandwidth'), picks=picks,
-                            n_jobs=2, copy=True)
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return dataToFilter
+                try:
+                    dataToFilter.notch_filter(freqs, picks=None,
+                                              filter_length=length,
+                                              notch_widths=dic['bandstop_bw'],
+                                              trans_bandwidth=trans_bw,
+                                              n_jobs=2, verbose=True)
+                except Exception as e:
+                    self.result = e
+                    self.e.set()
+                    return dataToFilter
+
+        else:
+            try:
+                picks = mne.pick_types(info, meg=True, eeg=True)
+                if dic.get('lowpass'):
+                    print "Low-pass filtering..."
+                    dataToFilter = mne.filter.low_pass_filter(dataToFilter, sf,
+                                dic.get('low_cutoff_freq'), dic.get('length'),
+                                dic.get('trans_bw'),'fft', None, picks=picks,
+                                n_jobs=2, copy=True)
+
+                if dic.get('highpass') == True:
+                    print "High-pass filtering..."
+                    dataToFilter = mne.filter.high_pass_filter(dataToFilter,
+                                sf, dic.get('high_cutoff_freq'),
+                                dic.get('length'), dic.get('trans_bw'), 'fft',
+                                None, picks=picks, n_jobs=2, copy=True)
+
+                trans = dic['bandstop_transbw']
+                if dic.get('bandstop1') == True:
+                    lfreq = dic['bandstop1_freq'] - dic['bandstop_bw'] / 2.
+                    hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
+                    print "Band-stop filtering..."
+                    dataToFilter = mne.filter.band_stop_filter(dataToFilter,
+                                sf, lfreq, hfreq, dic['bandstop_length'],
+                                trans, trans, picks=picks, n_jobs=2, copy=True)
+    
+                if dic.get('bandstop2') == True:
+                    lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
+                    hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
+                    print "Band-stop filtering..."
+                    dataToFilter = mne.filter.band_stop_filter(dataToFilter,
+                                sf, lfreq, hfreq, dic['bandstop_length'],
+                                trans, trans, picks=picks, n_jobs=2, copy=True)
+
+            except Exception as e:
+                self.result = e
+                self.e.set()
+                return dataToFilter
         print "Done"
         self.e.set()
         return dataToFilter
-    
+
 ### Methods needed for source modeling ###    
 
     def convert_mri_to_mne(self):

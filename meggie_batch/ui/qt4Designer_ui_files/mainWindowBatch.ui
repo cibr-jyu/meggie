@@ -593,9 +593,9 @@
               <widget class="QSplitter" name="splitter_2">
                <property name="geometry">
                 <rect>
-                 <x>630</x>
+                 <x>570</x>
                  <y>30</y>
-                 <width>258</width>
+                 <width>481</width>
                  <height>571</height>
                 </rect>
                </property>
@@ -744,8 +744,6 @@
                      </layout>
                     </item>
                    </layout>
-                   <zorder></zorder>
-                   <zorder>groupBoxAvailableEpoching</zorder>
                   </widget>
                  </item>
                  <item>
@@ -3651,7 +3649,4 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroupChannelAverage"/>
- </buttongroups>
 </ui>
