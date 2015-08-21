@@ -224,8 +224,7 @@ class EcgParametersDialog(QtGui.QDialog):
                                            dic.get('average')))
         # TODO: get the selected channel from the combobox
         #self.ui.comboBoxECGChannel.set  dic.get('average')))
-             
-                                           
+
     def accept(self):
         """
         Collects the parameters for calculating PCA projections and pass them
@@ -278,7 +277,6 @@ class EcgParametersDialog(QtGui.QDialog):
             #    continue
             subject_names.append(item.text())
 
-
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
@@ -323,8 +321,7 @@ class EcgParametersDialog(QtGui.QDialog):
             message = 'Select a subject to remove.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-    
-    
+
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's ecg parameters dictionary.
         """
@@ -335,8 +332,7 @@ class EcgParametersDialog(QtGui.QDialog):
             if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                             currentItem().text()):
                 subject._ecg_params = dictionary
-        
-        
+
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' ecg parameters dictionaries.
         """
@@ -361,7 +357,6 @@ class EcgParametersDialog(QtGui.QDialog):
                             'detection channel for the subject/s above!')
             self.messageBox.show()
 
-        
     def channel_name_validator(self, ch_name, ch_list):
         """Checks if the ch_list has the given ch_name by matching it with the
         ch_list spacing style.
@@ -493,7 +488,7 @@ class EcgParametersDialog(QtGui.QDialog):
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         gc.collect()
-        ch_name = subject._ecg_params['ch_name']
+        ch_name = subject.ecg_params['ch_name']
         ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
         if ch_name not in ch_list:
             ch_name = self.channel_name_validator(ch_name, ch_list)
@@ -503,9 +498,9 @@ class EcgParametersDialog(QtGui.QDialog):
                 subject._subject_name
                 QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
-            subject._ecg_params['ch_name'] = ch_name
+            subject.ecg_params['ch_name'] = ch_name
         if subject._subject_name == self.caller.experiment._active_subject_name:
-            subject._ecg_params['i'] = self.caller.experiment._active_subject._working_file
+            subject.ecg_params['i'] = self.caller.experiment._active_subject._working_file
         else:
             subject._ecg_params['i'] = self.caller.experiment.\
             get_subject_working_file(subject._subject_name)

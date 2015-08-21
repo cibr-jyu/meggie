@@ -88,7 +88,7 @@ class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
     """
-    
+
     #custom signals
     #experiment_value_changed was made useless. All the stuff moved to
     #_initialize_ui() method.
@@ -99,30 +99,30 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
         # List of subprocesses, used for terminating MNE-C processes on Meggie
         # quit.
         self.processes = [] 
-        
+
         # Main window represents one _experiment at a time. This _experiment is
         # defined by the CreateExperimentDialog or the by the Open_experiment_
         # triggered action.
         #self._experiment = None
-        
+
         # Direct output to console
         self.directOutput()
         self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
         sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
-        
+
         # One main window (and one _experiment) only needs one caller to do its
         # bidding. 
         self.caller.setParent(self)
-       
+
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
         self.preferencesHandler.set_env_variables()
-       
+
         # For handling initialization and switching of experiments.
         # TODO: currently only handles initialization.
         self.experimentHandler = experiment.ExperimentHandler(self)
@@ -130,36 +130,36 @@ class MainWindow(QtGui.QMainWindow):
         # No tabs in the tabWidget initially
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
-        
+
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtGui.QLabel()
         self.ui.statusbar.addWidget(self.statusLabel)
-        
+
         # Creates a listwidget for epoch analysis.  
         self.epochList = EpochWidget(self)
         self.epochList.hide()
-        
+
         self.evokedList = ListWidget(self.ui.widgetEvokeds)
         self.evokedList.setMinimumWidth(345)
         self.evokedList.setMaximumHeight(120)
         #self.evokedList.setSelectionMode(QtGui.QAbstractItemView.ContiguousSelection)
-        
+
         self.epocher = Epochs()
-        
+
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
-        
+
         # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
         self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(
                               self.on_pushButtonMNE_Browse_Raw_clicked)
-        
+
         # Models for several views in the UI, e.g. in the forward model setup 
         # tab.
         self.forwardModelModel = ForwardModelModel(self)
         self.subjectListModel = SubjectListModel(self)
-        
+
         # Proxymodels for tuning what is actually shown in the views below.
         self.proxyModelTableViewForwardSolutionSource = QtGui.\
             QSortFilterProxyModel(self)
@@ -168,7 +168,7 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutionSource.setFilterRegExp(rx)
         self.proxyModelTableViewForwardSolutionSource.\
             setSourceModel(self.forwardModelModel)
-        
+
         self.proxyModelTableViewForwardSolutions = QtGui.\
             QSortFilterProxyModel(self)
         self.proxyModelTableViewForwardSolutions.setFilterKeyColumn(16)
@@ -176,26 +176,26 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutions.setFilterRegExp(rx2)
         self.proxyModelTableViewForwardSolutions.\
             setSourceModel(self.forwardModelModel)
-        
+
         # Linking corresponding views to models above and tuning them     
-        
+
         self.ui.listViewSubjects.setModel(self.subjectListModel)
-        
+
         self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
         for colnum in range(17, 21):
             self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
-        
+
         self.ui.tableViewFModelsForCoregistration.\
         setModel(self.forwardModelModel)
         for colnum in range(16, 21):
             self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
                                                                       True)
-        
+
         tvfs = self.ui.tableViewFModelsForSolution
         tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)     
         for colnum in range(1, 16):
             tvfs.setColumnHidden(colnum, True)
-        
+
         # TODO: should show empty mainWindow with "loading previous experiment
         # named <name>"-notification to user before starting to load
         # the experiment, currently doesn't.
@@ -203,21 +203,21 @@ class MainWindow(QtGui.QMainWindow):
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
             self.experimentHandler.open_existing_experiment(name)
-        
+
         #Populate layouts combobox.
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)    
-        
+
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
-        
+
     def update_ui(self):
         """
         Method for repainting the ui.
         Used for keeping the ui responsive when threading.
         """
         QApplication.processEvents()
-        
+
 ### Code for catching signals and reacting to them ###
     def on_actionQuit_triggered(self, checked=None):
         """
@@ -230,12 +230,11 @@ class MainWindow(QtGui.QMainWindow):
                      'Are you sure you want to quit Meggie?', 
                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
                      QtGui.QMessageBox.No)
-                
+
             if reply == QtGui.QMessageBox.Yes:
                 self.close()
         else: self.close()
 
-        
     def on_actionCreate_experiment_triggered(self, checked=None):
         """
         Create a new CreateExperimentDialog and show it
@@ -253,7 +252,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.dialog.experimentCreated.connect(self.setExperiment)
                 self.dialog.show()   
 
-
     @QtCore.pyqtSlot(Experiment)
     def setExperiment(self, newExperiment):
         """
@@ -263,8 +261,7 @@ class MainWindow(QtGui.QMainWindow):
         self.add_tabs()
         self._initialize_ui() 
         self.reinitialize_models() 
-        
-        
+
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
         Open an existing _experiment.
@@ -272,19 +269,22 @@ class MainWindow(QtGui.QMainWindow):
         TODO actual experiment opening code should be in ExperimentHandler
         """
         # Standard workaround for file dialog opening twice
-        if checked is None: return        
-        
+        if checked is None: return
+        if self.caller.experiment is not None:
+            directory = self.caller.experiment.workspace
+        else:
+            directory = ''
         path = str(QtGui.QFileDialog.getExistingDirectory(
-                   self, "Select _experiment directory"))
-        if path == '': return
+                   self, "Select _experiment directory", directory))
+        if path == '':
+            return
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         print 'Opening experiment ' + path
         self.experimentHandler.open_existing_experiment(os.path.basename(path))
         print 'Done'
         QtGui.QApplication.restoreOverrideCursor()
-        
-            
+
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """
         Open subject dialog.
@@ -304,13 +304,11 @@ class MainWindow(QtGui.QMainWindow):
 
     
     def on_pushButtonRemoveSubject_clicked(self, checked=None):
-        """Delete the selected subject item and the files related to it.
-        """
+        """Delete the selected subject item and the files related to it."""
         if checked is None:
             return
-        
+
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
-        
         if selIndexes == []:
             message = 'No subject selected for removal.'
             self.messageBox = messageBoxes.shortMessageBox(message)
@@ -335,8 +333,7 @@ class MainWindow(QtGui.QMainWindow):
                             ' folder.'
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
-        
-        
+
     def show_epoch_collection_parameters(self, epochs):
         """
         Shows parameters from the currently chosen epochs.
@@ -630,7 +627,7 @@ class MainWindow(QtGui.QMainWindow):
         Open the experiment info dialog 
         """
         if checked is None: return
-        if self._experiment is None:
+        if self.caller.experiment is None:
             self.messageBox = messageBoxes.shortMessageBox()
             self.messageBox.labelException.setText \
             ('You do not currently have an experiment activated.')
@@ -639,7 +636,6 @@ class MainWindow(QtGui.QMainWindow):
         self.expInfoDialog = experimentInfoDialog()
         self.expInfoDialog.show()
 
-        
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
         if checked is None: return
         if self.ui.dockWidgetSubjects.isVisible():
@@ -1267,7 +1263,7 @@ class MainWindow(QtGui.QMainWindow):
         from the disk.
         """
         if checked is None: return
-        
+
         if self.ui.tableViewForwardModels.selectedIndexes() == []:
             message = 'Please select a forward model to remove.'
             self.messageBox = messageBoxes.shortMessageBox(message)
@@ -1382,19 +1378,17 @@ class MainWindow(QtGui.QMainWindow):
         measurement).
         """
         if checked is None: return
-        
+
         self.covarianceRawDialog = CovarianceRawDialog(self)
         self.covarianceRawDialog.show()    
-          
-    
+
     def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
         """
         Open a dialog for computing noise covariance matrix based on data before
         epochs.
         """
         if checked is None: return
-    
-    
+
 
 ### Code for populating and updating various lists and tables in the MainWindow ###       
 
@@ -1409,12 +1403,11 @@ class MainWindow(QtGui.QMainWindow):
         Checks the existence of a ton of files and sets the GUI fields to
         reflect the state of the experiment and subject according to them. 
         """
-
         # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.evokedList.clear()
-        
+
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
         self.ui.labelDateValue.clear()
@@ -1426,6 +1419,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelMagMEGValue.clear()
         self.ui.labelSamplesValue.clear()
         self.ui.labelSubjectValue.clear()
+        self.ui.listWidgetProjs.clear()
+        self.ui.listWidgetBads.clear()
         self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
         self.ui.checkBoxECGComputed.setChecked(False)
@@ -1434,7 +1429,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxEOGApplied.setChecked(False)
         self.ui.checkBoxConvertedToMNE.setChecked(False)
         self.ui.lineEditRecon.setText('')
-        
+
         # Deactivate various buttons. They will be
         # activated later if prerequisites are met.
         self.ui.pushButtonApplyECG.setEnabled(False)
@@ -1445,11 +1440,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonCheckSurfaces.setEnabled(False)
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
         self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
-        
+
         if self.caller.experiment.active_subject is not None:
             # Populate epoch and evoked lists
-            epochs_items = self.caller.experiment.load_epochs(self.caller.experiment.active_subject)
-            evokeds_items = self.caller.experiment.load_evokeds(self.caller.experiment.active_subject)
+            active_sub = self.caller.experiment.active_subject 
+            epochs_items = self.caller.experiment.load_epochs(active_sub)
+            evokeds_items = self.caller.experiment.load_evokeds(active_sub)
             if epochs_items is not None:
                 for item in epochs_items:
                     self.epochList.addItem(item)
@@ -1458,28 +1454,27 @@ class MainWindow(QtGui.QMainWindow):
                 for item in evokeds_items:
                     self.evokedList.addItem(item)
                     self.evokedList.setCurrentItem(item)
-            
+
             # This updates the 'Subject info' section below the subject list.
             try:
                 InfoDialog(self.caller.experiment.active_subject.working_file,
                            self.ui, False)
-                if self.caller.experiment.active_subject._event_set is not None:
-                    self.populate_raw_tab_event_list()    
+                self.populate_raw_tab_event_list()    
             except Exception as err:
                 self.messageBox = messageBoxes.shortMessageBox(str(err))
                 self.messageBox.show()
                 return
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
         if self.caller.experiment.active_subject is None:
-            self.statusLabel.setText("Add or activate" + \
-                                     " subjects before " + \
-                                     "continuing.")
+            self.statusLabel.setText('Add or activate subjects before '
+                                     'continuing.')
             return
         else:
-            status = "Current working file: " + \
-            os.path.basename(self.caller._experiment._working_file_names[self.caller.experiment._active_subject_name])
+            sub_name = self.caller.experiment._active_subject_name
+            fname = self.caller._experiment._working_file_names[sub_name]
+            status = "Current working file: " + os.path.basename(fname)
             self.statusLabel.setText(status)
-            
+
             try:
                 #Check whether ECG projections are calculated
                 if self.caller.experiment.active_subject.check_ecg_projs():
@@ -1501,7 +1496,7 @@ class MainWindow(QtGui.QMainWindow):
                     self.ui.checkBoxMaxFilterApplied.setChecked(True)
             except AttributeError:
                 print 'No active subject in experiment.'
-                
+
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
         if self.caller._experiment._active_subject.check_reconFiles_copied():
@@ -1512,56 +1507,52 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonSkullStrip.setEnabled(True)
             self.ui.pushButtonCheckSurfaces.setEnabled(True)
             self.ui.pushButtonCheckSegmentations.setEnabled(True)
-        
+
         # Check if MRI image has been setup with mne_setup_forward solution
         if self.caller._experiment._active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
-        
+
         projs = self.caller.experiment._active_subject.working_file.info['projs']
-        self.ui.listWidgetProjs.clear()
         for proj in projs:
             self.ui.listWidgetProjs.addItem(str(proj))
-        
+
         bads = self.caller.experiment._active_subject.working_file.info['bads']
-        self.ui.listWidgetBads.clear()
         for bad in bads:
             self.ui.listWidgetBads.addItem(bad)
-        
+
         self.update_covariance_info_box()
 
-    
     def update_covariance_info_box(self):
         """
         Fills the info box in the covariance tab with info about the
         current covariance matrix info for the active subject, if said info
         exists.
         """
-        
         cvParamFilePath = os.path.join(self.caller.experiment.active_subject.
         _source_analysis_directory, 'covariance.param')
-        
+
         cvdict = None
         if os.path.isfile(cvParamFilePath):
             try:
                 cvdict = fileManager.unpickle(cvParamFilePath)
             except Exception:
                 pass
-        
+
         if self.ui.frameCovarianceInfoWidget.layout() != None:
             sip.delete(self.ui.frameCovarianceInfoWidget.layout())
-        
+
         for child in self.ui.frameCovarianceInfoWidget.children():
             child.setParent(None)
-        
+
         covLayout = QtGui.QGridLayout()
         self.ui.frameCovarianceInfoWidget.setLayout(covLayout)
-        
+
         if cvdict == None:
             covarianceWidgetNone = CovarianceWidgetNone()
             covLayout.addWidget(covarianceWidgetNone)
             return
-        
+
         if cvdict['covarianceSource'] == 'raw':
             covarianceWidgetRaw = CovarianceWidgetRaw()
             cvwui = covarianceWidgetRaw.ui
@@ -1593,12 +1584,11 @@ class MainWindow(QtGui.QMainWindow):
                 cvwui.textBrowserFlatECG.setText(
                 str(cvdict.get('flat').get('ecg', 'Not used')))
             covLayout.addWidget(covarianceWidgetRaw)
-            
+
         if cvdict['covarianceSource'] == 'epochs':
             # TODO: implement this functionality, then use existing
             # CovarianceWidgetEpochs
             pass
-
 
     def populate_raw_tab_event_list(self):
         """
@@ -1607,15 +1597,13 @@ class MainWindow(QtGui.QMainWindow):
         """
         #TODO: trigger ---> event, also in the UI
         events = self.caller.experiment.active_subject._event_set
-        
-        
+        if events is None:
+            return
         events_string = ''
         for key, value in events.iteritems():
-            events_string += 'Event ' + str(key) + ', ' + str(value) +\
-            ' events\n'
+            events_string += 'Event %s, %s events\n' % (str(key), str(value))
         self.ui.textBrowserEvents.setText(events_string)
- 
- 
+
     def populate_comboBoxLobes(self):
         """
         Populate the combo box listing available lobes for to use for
@@ -1632,7 +1620,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Left-frontal')
         self.ui.comboBoxLobes.addItem('Right-frontal')
 
-
     def add_tabs(self):
         """
         Method for initializing the tabs.
@@ -1642,15 +1629,22 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
-        self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation, "Source modelling preparation")
-        self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel, "Forward model creation")
-        self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration, "Coregistration")
-        self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution, "Forward solution creation")
-        self.ui.tabWidget.insertTab(9, self.ui.tabNoiseCovariance, "Noise covariance")
-        self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator, "Inverse operator")
-        self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate, "Source estimate")
-        self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis, "Source analysis")
-
+        self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation,
+                                    "Source modelling preparation")
+        self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel,
+                                    "Forward model creation")
+        self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration,
+                                    "Coregistration")
+        self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution,
+                                    "Forward solution creation")
+        self.ui.tabWidget.insertTab(9, self.ui.tabNoiseCovariance,
+                                    "Noise covariance")
+        self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator,
+                                    "Inverse operator")
+        self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate,
+                                    "Source estimate")
+        self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis,
+                                    "Source analysis")
 
     def on_currentChanged(self):
             """
@@ -1659,39 +1653,28 @@ class MainWindow(QtGui.QMainWindow):
             Show the epoch collection list epochList when in appropriate tabs.
             """
             index = self.ui.tabWidget.currentIndex()
-            #self.tab = self.ui.tabWidget.currentWidget()
-             
             if index == 1:
                 self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
                 self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
                                     QAbstractItemView.SingleSelection)
-                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsEpoching)
                 self.epochList.show()
-                #self.epochParamsList.show()
                 return
-            
+
             if index == 2:
                 self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
                 self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
-                                    QAbstractItemView.MultiSelection)                
-                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsAveraging)
+                                    QAbstractItemView.MultiSelection)
                 self.epochList.show()
-                #self.epochParamsList.show()
                 return
-           
+
             if index == 3:
                 self.epochList.setParent(self.ui.groupBoxEpochsTFR)
                 self.epochList.ui.listWidgetEpochs.setSelectionMode(QtGui.\
                                     QAbstractItemView.SingleSelection)
-                #self.epochParamsList.setParent(self.ui.groupBoxEpochParamsTFR)
                 self.epochList.show()
-                #self.epochParamsList.show()
                 return 
-                
             else:
                 self.epochList.hide()
-                #self.epochParamsList.hide()
-
 
     def reinitialize_models(self):
         """

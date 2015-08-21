@@ -134,15 +134,25 @@ class EvokedStatsDialog(QtGui.QDialog):
         if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
 
         index = self.ui.comboBoxEvoked.currentIndex()
-        self.selected_channels[index] = list()
+        #self.selected_channels[index] = list()
+        evoked = self.evoked[index]
+        selection = list()
         for item in self.ui.listWidgetChannels.selectedItems():
             if item not in self.selected_channels[index]:
-                self.selected_channels[index].append(str(item.text()))
-
+                selection.append(str(item.text()))
+        if self.ui.radioButtonGrad.isChecked():
+            picks = mne.pick_types(evoked.info, meg='grad', ref_meg=False,
+                                   selection=selection)
+        elif self.ui.radioButtonMag.ischecked():
+            picks = mne.pick_types(evoked.info, meg='mag', ref_meg=False,
+                                   selection=selection)
+        elif self.ui.radioButtonEeg.isChecked():
+            picks = mne.pick_types(evoked.info, meg=False, eeg=True,
+                                   ref_meg=False, selection=selection)
+        self.selected_channels[index] = [evoked.ch_names[x] for x in picks]
         #self.ui.pushButtonSetSelected.setEnabled(False)
 
-        channels = self.selected_channels[index]
-        self.update_info(channels)
+        self.update_info()
         #TODO: Update the info widgets. If item_selection has multiple
         #channels, they should be averaged and the result of that should be
         #shown on the info widgets.   
@@ -173,29 +183,75 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                 ' file.', directory=path))
         if fname == '':
             return
+        print 'Saving csv...'
+        tmin = self.ui.doubleSpinBoxStart.value()
+        tmax = self.ui.doubleSpinBoxStop.value()
+        evoked = self.evoked[index]
+        times = evoked.times
+        min_idx = np.searchsorted(times, tmin)
+        max_idx = np.searchsorted(times, tmax)
+        # cropping the data:
+        data = evoked.data[:, min_idx:max_idx]
+        
         with open(fname, 'wb') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='|',
                                 quoting=csv.QUOTE_MINIMAL)
-            writer.writerow(['Start', self.ui.doubleSpinBoxStart.value()])
-            writer.writerow(['Stop', self.ui.doubleSpinBoxStop.value()])
-            writer.writerow(['Minimum amplitude',
-                             self.ui.doubleSpinBoxMinAmplitude.value()])
-            writer.writerow(['Time of minimum',
-                             self.ui.doubleSpinBoxMinTime.value()])
-            writer.writerow(['Maximum amplitude',
-                             self.ui.doubleSpinBoxMaxAmplitude.value()])
-            writer.writerow(['Time of maximum',
-                             self.ui.doubleSpinBoxMaxTime.value()])
-            writer.writerow(['Half maximum',
-                             self.ui.doubleSpinBoxHalfMaxAmplitude.value()])
-            writer.writerow(['Time before max',
-                             self.ui.doubleSpinBoxHalfMaxBefore.value()])
-            writer.writerow(['Time after max',
-                             self.ui.doubleSpinBoxHalfMaxAfter.value()])
-            writer.writerow(['Duration',
-                             self.ui.doubleSpinBoxDuration.value()])
-            writer.writerow(['Integral',
-                             self.ui.doubleSpinBoxIntegral.value()])
+            writer.writerow(['Ch name', 'Start', 'Stop', 'Minimum amplitude',
+                             'Time of minimum', 'Maximum amplitude',
+                             'Time of maximum', 'Half maximum',
+                             'Time before max', 'Time after max', 'Duration',
+                             'Integral'])
+            for ch_name in self.selected_channels[index]:
+                pick = evoked.ch_names.index(ch_name)
+                this_data = data[pick]
+                ch_type = mne.channels.channels.channel_type(evoked.info, pick)
+                if ch_type == 'grad':
+                    scaler = 1e13
+                elif ch_type == 'mag':
+                    scaler = 1e15
+                elif ch_type == 'eeg':
+                    scaler = 1e6
+                else:
+                    print ('Statistics not supported for %s channels. Skipping'
+                           ' channel %s.') % (ch_type, ch_name)
+                    continue
+                self._write_csv_row(writer, ch_name, this_data, times, tmin,
+                                    tmax, min_idx, max_idx, scaler)
+
+                if ch_name.startswith('MEG') and ch_name.endswith('3'):
+                    if (ch_name[:-1] + '2') in self.selected_channels[index]:
+                        # Merge data from pair of grad channels
+                        pick2 = evoked.ch_names.index(ch_name[:-1] + '2')
+                        this_data = _merge_grad_data(np.array([this_data,
+                                                               data[pick2]]))
+                        self._write_csv_row(writer, ch_name[:-1] + 'X',
+                                            this_data[0], times, tmin, tmax,
+                                            min_idx, max_idx, scaler)
+
+    def _write_csv_row(self, writer, ch_name, data, times, tmin, tmax, min_idx,
+                       max_idx, scale_factor):
+        """Helper for writing data row to csv file."""
+        minimum, time_min_i = self.statUpdater.find_minimum(data)
+        maximum, time_max_i = self.statUpdater.find_maximum(data)
+        (half_max, time_before_i,
+        time_after_i) = self.statUpdater.find_half_maximum(data)
+
+        time_min = times[time_min_i]
+        time_max = times[time_max_i]
+        time_before = times[time_before_i]
+        time_after = times[time_after_i]
+        
+        duration = time_after - time_before
+        integral = self.statUpdater.integrate(data, times[min_idx:max_idx],
+                                              time_before_i, time_after_i)
+        
+        minimum = minimum * scale_factor
+        maximum = maximum * scale_factor
+        half_max = half_max * scale_factor
+        integral = integral * scale_factor
+        writer.writerow([ch_name, tmin, tmax, minimum, time_min, maximum,
+                         time_max, half_max, time_before, time_after, duration,
+                         integral])
 
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
@@ -232,15 +288,10 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMinAmplitude.setValue(0)
         self.ui.doubleSpinBoxMinTime.setValue(0)
 
-    def update_info(self, names):
-        """Update the info widgets with data based on item.
-
-        Keyword arguments:
-
-        names -- Name(s) of the channel(s) whose data is to be displayed. 
-                 List for many, string for one.
-        """
+    def update_info(self):
+        """Update the info widgets with data based on item."""
         evoked = self.evoked[self.ui.comboBoxEvoked.currentIndex()]
+        names = self.selected_channels[self.ui.comboBoxEvoked.currentIndex()]
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
         times = evoked.times

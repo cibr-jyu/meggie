@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Wed Aug 19 06:36:04 2015
+# Created: Thu Aug 20 04:45:05 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -256,7 +256,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addLayout(self.horizontalLayout_32, 0, 0, 1, 1)
         self.verticalLayout_21.addWidget(self.groupBoxVisualization_2)
         self.splitter_2 = QtGui.QSplitter(self.tabPreprocessing)
-        self.splitter_2.setGeometry(QtCore.QRect(630, 30, 258, 571))
+        self.splitter_2.setGeometry(QtCore.QRect(570, 30, 481, 571))
         self.splitter_2.setOrientation(QtCore.Qt.Vertical)
         self.splitter_2.setObjectName(_fromUtf8("splitter_2"))
         self.layoutWidget1 = QtGui.QWidget(self.splitter_2)

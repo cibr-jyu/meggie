@@ -32,7 +32,6 @@ from mne.time_frequency import compute_raw_psd
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import subplots_adjust
 from os import listdir
 from os.path import isfile, join
 from subprocess import CalledProcessError

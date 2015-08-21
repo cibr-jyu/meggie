@@ -113,7 +113,8 @@ class EogParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             error_message = self.\
-            calculate_eog(self.caller.experiment._active_subject, error_message)    
+            calculate_eog(self.caller.experiment._active_subject,
+                          error_message)    
         # Free the memory usage from the active subject to the batch process.
         self.caller.experiment._active_subject._working_file = None
         self.caller.experiment._active_subject = None
@@ -147,7 +148,6 @@ class EogParametersDialog(QtGui.QDialog):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
 
-
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
         """
@@ -158,8 +158,7 @@ class EogParametersDialog(QtGui.QDialog):
             if subject._subject_name == str(self.ui.listWidgetSubjects.\
                                             currentItem().text()):
                 subject._eog_params = dictionary
-        
-        
+
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
         """
@@ -169,7 +168,6 @@ class EogParametersDialog(QtGui.QDialog):
             for subject in self.caller.experiment._subjects:
                 if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
                     subject._eog_params = self.collect_parameter_values(batch_checked)
-
 
     def collect_parameter_values(self, batch_checked):
         """Collects parameter values from dialog.
@@ -269,7 +267,6 @@ class EogParametersDialog(QtGui.QDialog):
         self.close()
         """
         return dictionary
-
 
     def selection_changed(self):
         """Unpickles parameter file from subject path and updates the values

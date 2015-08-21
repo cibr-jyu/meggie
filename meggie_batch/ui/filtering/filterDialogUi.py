@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'filterDialog.ui'
 #
-# Created: Thu Aug 20 03:05:21 2015
+# Created: Thu Aug 20 04:44:29 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DialogFilter(object):
     def setupUi(self, DialogFilter):
         DialogFilter.setObjectName(_fromUtf8("DialogFilter"))
-        DialogFilter.resize(475, 478)
+        DialogFilter.resize(475, 525)
         self.gridLayout = QtGui.QGridLayout(DialogFilter)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.frameFilterSelection = QtGui.QFrame(DialogFilter)
