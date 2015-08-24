@@ -328,18 +328,18 @@ class Subject(QObject):
     def add_epochs(self, epochs):
         """
         Adds Epochs object to the epochs dictionary.
-        
+
         Keyword arguments:
         epochs      -- Epochs object including raw.fif, param.fif and
                        collection_name
         """
         self._epochs[epochs._collection_name] = epochs
-        
+
     def handle_new_epochs(self, name, epochs_raw, params):
         """
         Creates Epochs object and adds it to the self._epochs dictionary.
         Does nothing if given collection name exists in epochs dictionary.
-        
+
         Keyword arguments
         name        -- name of the epoch collection
         epochs_raw  -- raw epochs file
@@ -356,16 +356,16 @@ class Subject(QObject):
         epochs._raw = epochs_raw
         epochs._params = params
         self.add_epochs(epochs)
-    
+
     @QtCore.pyqtSlot(dict, QtGui.QListWidget)  
     def modify_epochs(self, epoch_params, epoch_widget):
         """Overwrite the existing epoch_item with new epochs.
         The signal is emitted by epoch_params_ready on eventSelectionDialogMain
         accept method. The signal is connected to this method only on 
         on_pushButtonModifyEpochs_clicked method. 
-        
+
         Returns item including epoch params and raw.
-        
+
         Keyword arguments:
         epoch_params     -- A dict containing the parameter values for the
                             epochs.
@@ -380,8 +380,7 @@ class Subject(QObject):
                                            active_subject.\
                                            working_file)
         epoch_params['raw'] = self._experiment._working_file_names[self._experiment._active_subject_name] #working_file_path
-        
-        
+
         #Create a QListWidgetItem and add the actual epochs to slot 32.
         item = QtGui.QListWidgetItem(epoch_params['collectionName'])
         # TODO: remove setData
@@ -390,18 +389,18 @@ class Subject(QObject):
         self.create_epochs_object_from_item(epoch_params['collectionName'], item)
         epoch_widget.addItem(item)
         epoch_widget.setCurrentItem(item)
-        
+
     def remove_epochs(self, collection_name):
         """
         Removes epochs from epochs dictionary.
         Removes the files with collection_name.
-        
+
         Keyword arguments:
         collection_name    -- name of the epochs collection (QString)
         """
         collection_name = str(collection_name)
         del self._epochs[collection_name]
-        
+
         files_to_delete = filter(os.path.isfile, glob.\
                                  glob(os.path.join(self._epochs_directory, \
                                                    collection_name + '.fif')))
@@ -413,19 +412,19 @@ class Subject(QObject):
                                                     collection_name + '.csv')))
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
-        
-        try: 
+
+        try:
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
             message = 'Epochs could not be deleted from epochs folder.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-        
+
     def handle_new_evoked(self, name, evoked, categories):
         """
         Creates new Evoked object and adds it to the self._evokeds dictionary.
         Does nothing if given evoked name that is in self._evokeds.keys().
-        
+
         Keyword arguments
         name       -- name of the evoked in QString
         evoked     -- raw evoked file
@@ -434,8 +433,7 @@ class Subject(QObject):
         # Checks if evoked with given name exists.
         if self._evokeds.has_key(str(name)):
             return
-        #evoked_object = self.create_evoked_object(name, evoked, categories)
-        
+
         evoked_object = Evoked()
         if evoked is None:
             self.messageBox = messageBoxes.shortMessageBox('Evoked is None.')
@@ -445,20 +443,20 @@ class Subject(QObject):
         evoked_object._name = str(name)
         evoked_object._categories = categories
         self.add_evoked(name, evoked_object)
-    
+
     def add_evoked(self, name, evoked_object):
         """
         Adds Evoked object to the evokeds dictionary.
-        
+
         Keyword arguments:
         evoked_object  -- Evoked object
         """
         self._evokeds[str(name)] = evoked_object
-        
+
     def remove_evoked(self, name):
         """
         Removes evoked object from the evoked dictionary.
-        
+
         Keyword arguments:
         name    -- name of the evoked in QString
         """
@@ -469,10 +467,9 @@ class Subject(QObject):
             message = 'Evoked could not be deleted from average folder.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-        
-      
+
 ### Code related to source modeling ###
-  
+
     def add_forwardModel(self, name, fmodel):
         """
         Adds a ForwardModels object to the forwardModels dictionary.

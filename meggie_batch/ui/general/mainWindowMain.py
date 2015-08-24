@@ -524,7 +524,6 @@ class MainWindow(QtGui.QMainWindow):
         epochs_object = self.caller.experiment.active_subject._epochs[fname]
         fileManager.save_epoch(fpath, epochs_object, True)
 
-        
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
         
@@ -567,19 +566,17 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
-        
     def on_pushButtonModifyEpochs_clicked(self, checked = None):
         """Modify currently selected epochs.
         """
         if checked is None: return
         if self.epochList.currentItem() is None: return
-        
+
         """
         TODO: get ed params from active_subject._evokeds dictionary
         """
-        
+
         collection_name = str(self.epochList.currentItem().text())
-        #params = self.caller.experiment.active_subject._epochs[collection_name]._params
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.initialize(collection_name)
         # modify_epochs removes the previous Epochs object and raw files
@@ -589,7 +586,6 @@ class MainWindow(QtGui.QMainWindow):
         connect(self.create_new_epochs)
         self.epochParameterDialog.show()
 
-                
     def on_pushButtonSaveEpochs_clicked(self, checked=None):
         """Save the epoch collections to a .fif file 
         """
@@ -612,7 +608,6 @@ class MainWindow(QtGui.QMainWindow):
                               str(self.epochList.currentItem().text()) +
                               '.csv'), fname + '.csv')
 
-
     def on_actionAbout_triggered(self, checked=None):
         """
         Open the About-dialog. 
@@ -621,7 +616,6 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogAbout = AboutDialog()
         self.dialogAbout.show()
 
-        
     def on_actionShowExperimentInfo_triggered(self, checked=None):    
         """
         Open the experiment info dialog 
@@ -643,20 +637,17 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.dockWidgetSubjects.show()
 
-            
     def on_actionToggle_whatsthis_mode_triggered(self, checked=None):
         if checked is None: return
         if QWhatsThis.inWhatsThisMode() is True: 
             QWhatsThis.leaveWhatsThisMode()
         else: QWhatsThis.enterWhatsThisMode()   
 
-    
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
         Plot the evoked data as a topology.
         """
-        #TODO: MULTIPLE SELECTION
         if checked is None: return
 
         items = self.epochList.ui.listWidgetEpochs.selectedItems()
@@ -666,8 +657,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()  
             return
-        
-        
+
         prefix = ''
         epochs = []
         category = dict()
@@ -679,25 +669,9 @@ class MainWindow(QtGui.QMainWindow):
             epochs.append(epoch)
             category.update(epoch._raw.event_id)
             prefix = prefix + item.text()
-        #key = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        #epochs = self.caller.experiment.active_subject._epochs[key]
-        
-        #category = epochs._raw.event_id
-        
-        # New dictionary for event categories must be created, if user
-        # manually chooses different event categories to be averaged. 
-        if False:
-        #if len(self.epochList.ui.listWidgetEvents.selectedItems()):
-            category_user_chosen = dict()
-            for event in self.epochList.ui.listWidgetEvents.selectedItems():
-                event_name = (str(event.text())).split(':')
-                for epoch in epochs:
-                    category_user_chosen[event_name[0] + epoch.name] = epoch._raw.event_id.get(event_name[0])
-            evoked = self.caller.average(epochs, category_user_chosen)
-            category = category_user_chosen
-        else:
-            evoked = self.caller.average(epochs, category)
-        
+
+        evoked = self.caller.average(epochs, category)
+
         category_str = ''
         i = 0
         for key in category.keys():
@@ -706,14 +680,10 @@ class MainWindow(QtGui.QMainWindow):
                 i = 1
             else:
                 category_str += '-' + key
-        """
-        epoch_collection = self.epochList.ui.listWidgetEpochs.currentItem()
-        evoked_name = str(epoch_collection.\
-                          text() + '[' + category_str + ']' + '_evoked.fif')
-        """
+
         evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
         item = QtGui.QListWidgetItem(evoked_name)
-        
+
         # TODO: create separate method in fileManager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = self.caller.experiment.active_subject._evokeds_directory
@@ -721,8 +691,8 @@ class MainWindow(QtGui.QMainWindow):
             try:
                 os.mkdir(saveFolder)
             except IOError:
-                message = 'Writing to selected folder is not allowed. ' + \
-                'You can still process the evoked file (visualize etc.).'
+                message = ('Writing to selected folder is not allowed. You can'
+                           ' still process the evoked file (visualize etc.).')
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
         try:                
@@ -731,14 +701,16 @@ class MainWindow(QtGui.QMainWindow):
             write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
             print '[done]'
         except IOError:
-            message = 'Writing to selected folder is not allowed. You can still' \
-                      + ' process the evoked file (visualize etc.).'
+            message = ('Writing to selected folder is not allowed. You can '
+                       'still process the evoked file (visualize etc.).')
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.labelException.setText()
             self.messageBox.show()
 
         self.evokedList.addItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(evoked_name, evoked, category)
+        self.caller.experiment.active_subject.handle_new_evoked(evoked_name,
+                                                                evoked,
+                                                                category)
         #self.evokedList.setCurrentItem(item)
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
@@ -1064,7 +1036,8 @@ class MainWindow(QtGui.QMainWindow):
         Open the dialog for applying the EOG-projections to the data.
         """
         if checked is None: return
-        self.addEogProjs = AddEOGProjections(self)
+        projs = self.caller.experiment.active_subject.working_file.info['projs'] 
+        self.addEogProjs = AddEOGProjections(self, projs)
         self.addEogProjs.exec_()
 
     def on_pushButtonApplyECG_clicked(self, checked=None):
@@ -1072,7 +1045,8 @@ class MainWindow(QtGui.QMainWindow):
         Open the dialog for applying the ECG-projections to the data.
         """
         if checked is None: return
-        self.addEcgProjs = AddECGProjections(self)
+        projs = self.caller.experiment.active_subject.working_file.info['projs'] 
+        self.addEcgProjs = AddECGProjections(self, projs)
         self.addEcgProjs.exec_()
 
     def on_pushButtonTFR_clicked(self, checked=None):

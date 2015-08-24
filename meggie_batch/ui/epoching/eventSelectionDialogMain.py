@@ -121,8 +121,6 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.used_names.count(event_name) < 1:    
             self.used_names.append(event_name)
 
-        self.ui.pushButtonRemove.setEnabled(True)
-
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
 
@@ -182,7 +180,7 @@ class EventSelectionDialog(QtGui.QDialog):
         elif grad:
             meg = 'grad'
         else: meg = False
-        info = self.caller.experiment.active_subject._working_file.info
+        info = self.caller.experiment.active_subject.working_file.info
         picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
@@ -206,8 +204,8 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         event_id = int(self.ui.comboBoxEventID.currentText())
         mask = self.ui.spinBoxMask.value()
-        e = Events(self.caller.experiment.active_subject._working_file,
-                   self.caller.experiment.active_subject._stim_channel, mask)
+        e = Events(self.caller.experiment.active_subject.working_file,
+                   self.caller.experiment.active_subject.stim_channel, mask)
         mask = np.bitwise_not(mask)
         events = e.pick(np.bitwise_and(event_id, mask))
         print str(events)
@@ -279,28 +277,6 @@ class EventSelectionDialog(QtGui.QDialog):
         events = self.create_eventlist()
         self.add_events(events, name)
         self.ui.lineEditName.setText('Event')
-
-    def on_pushButtonRemove_clicked(self, checked=None):
-        """
-        Method for removing events from the event list.
-        """
-        if checked is None: return # Standard workaround
-        if len(self.ui.listWidgetEvents.selectedItems()) == 0: return
-
-        for item in self.ui.listWidgetEvents.selectedItems():
-            row = self.ui.listWidgetEvents.row(item)
-            self.ui.listWidgetEvents.takeItem(row)
-
-            #If the item was the last one with a certain name, remove the name
-            #from the used names -list.
-            name = item.data(33)
-            if len(self.ui.listWidgetEvents.findItems(name + ' ',
-                                                      QtCore.Qt.\
-                                                      MatchStartsWith)) == 0:
-                self.used_names.remove(name)
-
-        if self.ui.listWidgetEvents.currentRow() < 0:
-            self.ui.pushButtonRemove.setEnabled(False)
 
     def accept(self):
         """Save the parameters in a dictionary and send it forward.

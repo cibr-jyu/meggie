@@ -49,11 +49,12 @@ class AddECGProjections(QtGui.QDialog):
     Projections should be created and saved in a file before adding them.
     """
     caller = Caller.Instance()
-    def __init__(self, parent):
+    def __init__(self, parent, added_projs):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
         parent        -- The parent of this object.
+        added_projs   -- Projectors already added to the raw object.
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
@@ -71,8 +72,9 @@ class AddECGProjections(QtGui.QDialog):
             checkBox = QtGui.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
-        
-        
+            if str(proj) in [str(x) for x in added_projs]:
+                checkBox.setChecked(True)
+
     def accept(self):
         """
         Tells the caller to add the selected projections to the working file.

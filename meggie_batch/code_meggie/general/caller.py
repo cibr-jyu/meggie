@@ -482,6 +482,7 @@ class Caller(object):
         raw.save(fname, overwrite=True)
         raw = mne.io.Raw(fname, preload=True)
         self.update_experiment_working_file(fname, raw)
+        self.experiment.save_experiment_settings()
         self.e.set()
 
     def average(self, epochs, category):
@@ -1515,13 +1516,12 @@ class Caller(object):
                                        axis_facecolor='white', layout=lout, 
                                        on_pick=my_callback):
             for i in xrange(len(psds)):
-                channel = raw.info['ch_names'][idx]
+                channel = info['ch_names'][idx]
                 if (channel in channelColors[i][1]):
-                    ax.plot(psds[i][0][idx],
-                            color=channelColors[i][0], linewidth=0.2)
+                    ax.plot(psds[i][0][idx], color=channelColors[i][0],
+                            linewidth=0.2)
                 else:
-                    ax.plot(psds[i][0][idx],
-                            color=colors[i], linewidth=0.2)
+                    ax.plot(psds[i][0][idx], color=colors[i], linewidth=0.2)
         print raw.info['ch_names']
         plt.show()
 
@@ -1737,8 +1737,7 @@ class Caller(object):
             self.messagebox = messageBoxes.longMessageBox(title, message)
             self.messagebox.show()
             return False
-        
-        
+
     def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate directory.
@@ -1881,8 +1880,7 @@ class Caller(object):
                        str(tb)
                 self.messageBox = messageBoxes.longMessageBox('Error', message)
                 self.messageBox.show()
-            
-    
+
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:
             # TODO: this actually has an MNE-Python counterpart, which doesn't
@@ -1910,8 +1908,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
-        
-        
+
     def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
             mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
@@ -1935,8 +1932,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
-        
-        
+
     def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
             mne_setup_forward_modelCommandList = \
@@ -1961,7 +1957,6 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
-
 
     def coregister_with_mne_gui_coregistration(self):
         """
@@ -1993,7 +1988,6 @@ class Caller(object):
                                                          selectedFmodelName) 
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
         self.coregHowtoDialog.show()
-        
 
     def create_forward_solution(self, fsdict):
         """
@@ -2043,7 +2037,6 @@ class Caller(object):
             'MNE-Python message was: \n\n' + str(e)
             self.messageBox = messageBoxes.longMessageBox(title, message)
             self.messageBox.show()
-        
 
     def create_covariance_from_raw(self, cvdict):
         """
@@ -2115,7 +2108,6 @@ class Caller(object):
         
         # Update ui.
         self.parent.update_covariance_info_box()
-
 
     def update_experiment_working_file(self, fname, raw):
         """

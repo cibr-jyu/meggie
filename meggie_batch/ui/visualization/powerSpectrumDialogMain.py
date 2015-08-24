@@ -210,7 +210,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         if not self.ui.checkBoxTriggers.isChecked(): return
         raw = self.caller.experiment.active_subject.working_file
-        stim_channel = self.caller.experiment.active_subject._stim_channel
+        stim_channel = self.caller.experiment.active_subject.stim_channel
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerStart = int(self.ui.comboBoxStart.currentText())
         tmin = np.where(triggers[:,2]==triggerStart)[0][0]

@@ -168,35 +168,35 @@ class Epochs(QObject):
         else:
             raise TypeError('Not a Raw object.')
         
-    def create_epochs_from_dict(self, dict, raw):
+    def create_epochs_from_dict(self, params, raw):
         """Create a set of epochs with parameters stored in a dict.
         
         Keyword arguments:
         
-        dict = A dictionary containing the parameter values for epoching minus
-               the raw data object.
-        raw  = the raw data object
+        params = A dictionary containing the parameter values for epoching minus
+                 the raw data object.
+        raw    = the raw data object
         
         Return a set of epochs.
         """
         #Events are stored as a list of QListWidgetItems. Read them and create
         #a dict for categories.
         category = {}
-        event_list = dict['events']
+        event_list = params['events']
         events = np.ndarray((len(event_list),3), int)
         for i in xrange(len(event_list)):
             event = event_list[i][0]
             events[i] = event
             category[str(event_list[i][1])] = event[2]
         
-        mag = dict['mag']
-        grad = dict['grad']
-        eeg = dict['eeg']
-        stim = dict['stim']
-        eog = dict['eog']
-        reject = dict['reject']
-        tmin = dict['tmin']
-        tmax = dict['tmax']
+        mag = params['mag']
+        grad = params['grad']
+        eeg = params['eeg']
+        stim = params['stim']
+        eog = params['eog']
+        reject = params['reject']
+        tmin = params['tmin']
+        tmax = params['tmax']
         
         epochs = self.create_epochs(raw, events, mag, grad, eeg, stim, eog,
                                     reject, category, tmin, tmax)

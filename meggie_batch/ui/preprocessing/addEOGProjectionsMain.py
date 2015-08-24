@@ -49,11 +49,12 @@ class AddEOGProjections(QtGui.QDialog):
     """
     caller = Caller.Instance()
     
-    def __init__(self, parent):
+    def __init__(self, parent, added_projs):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
         parent        -- The parent of this object.
+        projs         -- Projectors already added to the raw object.
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
@@ -62,7 +63,7 @@ class AddEOGProjections(QtGui.QDialog):
         directory = self.caller.experiment._active_subject._subject_path
         self.proj_file = glob.glob(directory + '/*_eog_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
-        
+
         self.listWidget = QtGui.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
         #add checkboxes
@@ -71,8 +72,9 @@ class AddEOGProjections(QtGui.QDialog):
             checkBox = QtGui.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
-        
-        
+            if str(proj) in [str(x) for x in added_projs]:
+                checkBox.setChecked(True)
+
     def accept(self):
         """
         Adds the projections.

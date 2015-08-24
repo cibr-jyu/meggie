@@ -390,8 +390,7 @@ class Experiment(QObject):
         self._active_subject_name = subject_name
         self.add_subject_path(subject.subject_path)
         self.update_working_file(complete_raw_path)
-        
-        
+
     def create_subjects(self, experiment, subject_paths, workspace):
         """Creates subjects when opening an experiment with subjects.
         Raw file is not set here.
@@ -420,8 +419,7 @@ class Experiment(QObject):
                         self.update_working_file(path + '/' + subject.subject_name + '.fif',
                                                  subject.subject_name)
                         break
-            
-    
+
     def release_memory(self):
         """Releases memory from previously processed subject by removing
         references from raw files.
@@ -434,8 +432,7 @@ class Experiment(QObject):
             if len(self.active_subject._evokeds) > 0:
                 for value in self.active_subject._evokeds.values():
                     value._raw = None
-        
-        
+
     def load_working_file(self, subject):
         """Loads raw file from subject folder and sets it on
         subject._working_file property.
@@ -474,7 +471,6 @@ class Experiment(QObject):
                 #    subject._working_file = raw
         subject.find_stim_channel()
         subject.create_event_set()
-        
 
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
@@ -497,7 +493,7 @@ class Experiment(QObject):
         for f in files:
             if f.endswith('.fif'):
                 fname = os.path.join(path, f)
-                
+
                 name = f[:-4]
                 epochs, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, epochs, params)
@@ -513,7 +509,6 @@ class Experiment(QObject):
                 if subject._epochs[name]._raw is None:
                     subject._epochs[name]._raw = epochs
         return epoch_items
-
 
     def load_evokeds(self, subject):
         """Loads raw evoked files from subject folder and sets them on
@@ -532,7 +527,7 @@ class Experiment(QObject):
         for f in files:
             if f.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                   f)
+                                                             f)
                 subject.handle_new_evoked(f, evoked, categories)
                 item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
@@ -541,8 +536,7 @@ class Experiment(QObject):
                     subject._evokeds[f]._raw = evoked
 
         return evokeds_items
-            
-                
+
     def get_subject_working_file(self, subject_name):
         """Returns working file of a given subject name.
         
@@ -550,8 +544,7 @@ class Experiment(QObject):
         subject_name    -- name of the subject
         """
         return fileManager.open_raw(self._working_file_names[subject_name])
-           
-                
+
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
@@ -667,9 +660,8 @@ class Experiment(QObject):
         self.raw_data = raw
         self.working_file = workingFullPath
         """
-        
-        
-        
+
+
 class ExperimentHandler(QObject):
     """
     Class for handling the creation of a new experiment.
@@ -684,8 +676,7 @@ class ExperimentHandler(QObject):
         parent        -- Parent of this object.
         """
         self.parent = parent
-    
-    
+
     def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
@@ -708,7 +699,7 @@ class ExperimentHandler(QObject):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return None
-        
+
         try:
             workspace = self.parent.preferencesHandler.working_directory
             experiment.workspace = workspace
@@ -716,31 +707,30 @@ class ExperimentHandler(QObject):
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return None
-        
+
         # Give control of the experiment to the main window of the application
         #self.parent.experiment = experiment
-        
+
         try:
             experiment.save_experiment_settings()
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return None
-        
+
         # Tell the preferencesHandler that this is the experiment we've had
         # open last.
         self.parent.preferencesHandler.previous_experiment_name = \
             expDict['name']
         self.parent.preferencesHandler.write_preferences_to_disk()
-        
+
         # Update the main UI to be less empty and allow actions for a new
         # experiment. Also tell the MVC models they can initialize themselves.
         #self.parent.add_tabs()
         #self.parent._initialize_ui() 
         #self.parent.reinitialize_models() 
         return experiment
-        
-        
+
     def open_existing_experiment(self, name):
         """
         Opens an existing experiment, which is assumed to be in the working

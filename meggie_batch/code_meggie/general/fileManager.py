@@ -372,19 +372,18 @@ def create_key_csv_evoked(evoked):
     
     # create the actual rows
     for i in range(len(data)):
-        
         for j in range(len(data[i])):
-            
+
             row = []
-            
+
             row.append(evoked.ch_names[j])
-            
-            min, min_time = stat.find_minimum(data[i][j])
-            row.append(min)
+
+            minimum, min_time = stat.find_minimum(data[i][j])
+            row.append(minimum)
             row.append(evoked.times[min_time])
-            
-            max, max_time = stat.find_maximum(data[i][j])
-            row.append(max)
+
+            maximum, max_time = stat.find_maximum(data[i][j])
+            row.append(maximum)
             row.append(evoked.times[max_time])
             
             half_max, half_max_time_b, half_max_time_a = \
@@ -430,7 +429,7 @@ def delete_file_at(folder, files):
         os.remove(os.path.join(folder, files))
     except OSError: raise
 
-    
+
 def load_epochs(fname):
     """Load epochs from a folder.
     
@@ -440,24 +439,16 @@ def load_epochs(fname):
     # TODO: fix this.
     Return a tuple with an Epochs instance and 
     """
-    split = os.path.split(fname)
-    folder = split[0] + '/'
-    name = os.path.splitext(split[1])[0]
-    if name == '': return
     try:
-        epochs = mne.read_epochs(os.path.join(folder, name))
-    except Exception:
-        try:
-            epochs = mne.read_epochs(os.path.join(folder, name + '.fif'))
-        except IOError:
-            message = 'Reading from selected folder is not allowed.'
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox._exec()
-            return epochs
-    
+        epochs = mne.read_epochs(fname)
+    except IOError:
+        message = 'Reading from selected folder is not allowed.'
+        messageBox = messageBoxes.shortMessageBox(message)
+        messageBox._exec()
+        return epochs
+
     try:
-        parameters = unpickle(os.path.join(folder, name + '.param'))
-        
+        parameters = unpickle(fname[:-4] + '.param')
     except IOError:
         parameters = None
         return epochs, parameters
@@ -468,18 +459,18 @@ def load_epochs(fname):
         for event in event_dict[key]:
             event_tuple = (event, key)
             event_list.append(event_tuple)
-    
+
     parameters['events'] = event_list
     return epochs, parameters
-    
-    
+
+
 def load_evoked(folder, fName):
     """Load evokeds to the list when mainWindow is initialized
-    
+
     Keyword arguments:
     folder  -- the folder for loading evoked
     file -- the name of the fif-file containing evokeds.
-    
+
     """
     split = os.path.split(fName)
     name = os.path.splitext(split[1])[0]
@@ -539,8 +530,8 @@ def load_evoked(folder, fName):
                 """
     except ValueError:
         try:
-            if mne.Evoked(os.path.join(folder, fName), condition=0) is not None:
-        # if isinstance(mne.fiff.Evoked(folder + file, setno=0), mne.fiff.Evoked()):
+            if mne.Evoked(os.path.join(folder, fName),
+                          condition=0) is not None:
                 return evokeds, category
         except ValueError:
             message = 'File is not an evoked.fif file.'
@@ -572,24 +563,24 @@ def open_raw(fname, pre_load=True):
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
-    
+
     Keyword arguments:
-    
+
     picklable -- A picklable object.
     fpath     -- Path to the pickled file
     """
     try:
         pickleFile = open(fpath, 'wb')
-        
+
     except IOError as e:
         return str(e)
-    
+
     # Protocol 2 used because of file object being pickled
     pickle.dump(picklable, pickleFile, 2)
-    
+
     pickleFile.close()
-    
-    
+
+
 def unpickle(fpath):
     """Unpickle an object from a file at fpath.
     
