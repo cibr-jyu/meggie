@@ -47,6 +47,9 @@
          <string>Events in currently selected epoch collection:</string>
         </property>
         <widget class="QListWidget" name="listWidgetEvents">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -55,9 +58,22 @@
            <height>111</height>
           </rect>
          </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>gxxgxg</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>hghch</string>
+          </property>
+         </item>
         </widget>
        </widget>
       </widget>

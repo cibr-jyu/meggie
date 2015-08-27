@@ -177,7 +177,7 @@ class MainWindow(QtGui.QMainWindow):
         self.proxyModelTableViewForwardSolutions.\
             setSourceModel(self.forwardModelModel)
 
-        # Linking corresponding views to models above and tuning them     
+        # Linking corresponding views to models above and tuning them
 
         self.ui.listViewSubjects.setModel(self.subjectListModel)
 
@@ -192,7 +192,7 @@ class MainWindow(QtGui.QMainWindow):
                                                                       True)
 
         tvfs = self.ui.tableViewFModelsForSolution
-        tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)     
+        tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)
         for colnum in range(1, 16):
             tvfs.setColumnHidden(colnum, True)
 
@@ -206,8 +206,9 @@ class MainWindow(QtGui.QMainWindow):
 
         #Populate layouts combobox.
         layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)    
-
+        self.ui.comboBoxLayout.addItems(layouts)
+        if self.epochList.ui.listWidgetEpochs.count() > 1:
+            self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
 

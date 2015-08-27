@@ -48,8 +48,9 @@ class TFRGroupAverageDialog(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_DialogGroupTFR()
         self.ui.setupUi(self)
-        
-    
+        # Topology plotting causes crashes at the moment. Disable option:
+        self.ui.checkBoxSaveTopo.setVisible(False)
+
     def on_pushButtonModify_clicked(self, checked=None):
         """
         Opens a dialog for selecting channels.

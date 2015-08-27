@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>299</height>
+    <height>344</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,6 +47,9 @@
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
             </property>
             <property name="selectionMode">
              <enum>QAbstractItemView::NoSelection</enum>
@@ -182,8 +185,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
-     <y>289</y>
+     <x>266</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -198,12 +201,28 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>325</x>
-     <y>289</y>
+     <x>334</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>groupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetChannels</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>29</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>120</y>
     </hint>
    </hints>
   </connection>

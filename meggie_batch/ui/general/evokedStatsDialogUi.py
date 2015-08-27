@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'evokedStatsDialog.ui'
 #
-# Created: Wed Aug 19 03:22:26 2015
+# Created: Tue Aug 25 00:57:49 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -475,9 +475,6 @@ class Ui_EvokedStatsDialog(object):
         self.pushButtonClearSelections = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.pushButtonClearSelections.setObjectName(_fromUtf8("pushButtonClearSelections"))
         self.horizontalLayout_4.addWidget(self.pushButtonClearSelections)
-        self.pushButtonAverage = QtGui.QPushButton(self.scrollAreaWidgetContents)
-        self.pushButtonAverage.setObjectName(_fromUtf8("pushButtonAverage"))
-        self.horizontalLayout_4.addWidget(self.pushButtonAverage)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
         self.gridLayout_2.addLayout(self.horizontalLayout_4, 13, 0, 1, 3)
@@ -572,8 +569,7 @@ class Ui_EvokedStatsDialog(object):
         EvokedStatsDialog.setTabOrder(self.comboBoxEvoked, self.listWidgetChannels)
         EvokedStatsDialog.setTabOrder(self.listWidgetChannels, self.pushButtonSetSelected)
         EvokedStatsDialog.setTabOrder(self.pushButtonSetSelected, self.pushButtonClearSelections)
-        EvokedStatsDialog.setTabOrder(self.pushButtonClearSelections, self.pushButtonAverage)
-        EvokedStatsDialog.setTabOrder(self.pushButtonAverage, self.checkBoxVertex)
+        EvokedStatsDialog.setTabOrder(self.pushButtonClearSelections, self.checkBoxVertex)
         EvokedStatsDialog.setTabOrder(self.checkBoxVertex, self.checkBoxLTemp)
         EvokedStatsDialog.setTabOrder(self.checkBoxLTemp, self.checkBoxRTemp)
         EvokedStatsDialog.setTabOrder(self.checkBoxRTemp, self.checkBoxLParietal)
@@ -626,7 +622,6 @@ class Ui_EvokedStatsDialog(object):
         self.pushButtonCSV.setText(_translate("EvokedStatsDialog", "Save CSV", None))
         self.pushButtonSetSelected.setText(_translate("EvokedStatsDialog", "Set selections", None))
         self.pushButtonClearSelections.setText(_translate("EvokedStatsDialog", "Clear selections", None))
-        self.pushButtonAverage.setText(_translate("EvokedStatsDialog", "Average selected channels", None))
         self.groupBoxLobes.setTitle(_translate("EvokedStatsDialog", "Lobes", None))
         self.checkBoxRFrontal.setToolTip(_translate("EvokedStatsDialog", "MEG 0813|MEG 0812|MEG 0912|MEG 0913|MEG 0922|\n"
 "MEG 0923|MEG 1212|MEG 1213|MEG 1223|MEG 1222|\n"

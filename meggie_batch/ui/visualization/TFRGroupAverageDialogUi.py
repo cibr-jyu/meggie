@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'groupAverageTFR.ui'
 #
-# Created: Thu Apr  9 03:23:50 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Thu Aug 27 01:21:38 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_DialogGroupTFR(object):
     def setupUi(self, DialogGroupTFR):
         DialogGroupTFR.setObjectName(_fromUtf8("DialogGroupTFR"))
-        DialogGroupTFR.resize(404, 299)
+        DialogGroupTFR.resize(404, 344)
         self.gridLayout = QtGui.QGridLayout(DialogGroupTFR)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.verticalLayout_3 = QtGui.QVBoxLayout()
@@ -46,6 +46,7 @@ class Ui_DialogGroupTFR(object):
         self.listWidgetChannels = QtGui.QListWidget(self.groupBox)
         self.listWidgetChannels.setEnabled(False)
         self.listWidgetChannels.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.listWidgetChannels.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.listWidgetChannels.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.listWidgetChannels.setFlow(QtGui.QListView.TopToBottom)
         self.listWidgetChannels.setObjectName(_fromUtf8("listWidgetChannels"))
@@ -98,6 +99,7 @@ class Ui_DialogGroupTFR(object):
         self.retranslateUi(DialogGroupTFR)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), DialogGroupTFR.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), DialogGroupTFR.reject)
+        QtCore.QObject.connect(self.groupBox, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.listWidgetChannels.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogGroupTFR)
         DialogGroupTFR.setTabOrder(self.comboBoxFormat, self.spinBoxDpi)
         DialogGroupTFR.setTabOrder(self.spinBoxDpi, self.checkBoxSaveTopo)

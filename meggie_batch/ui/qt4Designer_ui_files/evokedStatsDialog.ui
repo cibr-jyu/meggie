@@ -1286,13 +1286,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonAverage">
-           <property name="text">
-            <string>Average selected channels</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer_9">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -1661,7 +1654,6 @@ MEG 2211</string>
   <tabstop>listWidgetChannels</tabstop>
   <tabstop>pushButtonSetSelected</tabstop>
   <tabstop>pushButtonClearSelections</tabstop>
-  <tabstop>pushButtonAverage</tabstop>
   <tabstop>checkBoxVertex</tabstop>
   <tabstop>checkBoxLTemp</tabstop>
   <tabstop>checkBoxRTemp</tabstop>
