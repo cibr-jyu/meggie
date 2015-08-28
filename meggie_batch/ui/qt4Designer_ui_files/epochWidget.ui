@@ -64,16 +64,6 @@
          <property name="selectionMode">
           <enum>QAbstractItemView::NoSelection</enum>
          </property>
-         <item>
-          <property name="text">
-           <string>gxxgxg</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hghch</string>
-          </property>
-         </item>
         </widget>
        </widget>
       </widget>

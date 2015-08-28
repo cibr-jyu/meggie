@@ -76,10 +76,17 @@ class GroupEpochingDialog(QtGui.QDialog):
             mBox = messageBoxes.shortMessageBox(msg)
             mBox.exec_()
             return
-        grad = self.ui.doubleSpinBoxGradReject_3.value() * 1e-13 if self.ui.checkBoxGrad.isChecked() else None
-        mag = self.ui.doubleSpinBoxMagReject_3.value() * 1e-15 if self.ui.checkBoxMag.isChecked() else None
-        eeg = self.ui.doubleSpinBoxEEGReject_3.value() * 1e-6 if self.ui.checkBoxEeg.isChecked() else None
-        eog = self.ui.doubleSpinBoxEOGReject_3.value() * 1e-6 if self.ui.checkBoxEog.isChecked() else None
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        grad = self.ui.doubleSpinBoxGradReject_3.value() * 1e-13 if\
+                self.ui.checkBoxGrad.isChecked() else None
+        mag = self.ui.doubleSpinBoxMagReject_3.value() * 1e-15 if\
+                self.ui.checkBoxMag.isChecked() else None
+        eeg = self.ui.doubleSpinBoxEEGReject_3.value() * 1e-6 if\
+                self.ui.checkBoxEeg.isChecked() else None
+        eog = self.ui.doubleSpinBoxEOGReject_3.value() * 1e-6 if\
+                self.ui.checkBoxEog.isChecked() else None
         self.caller.batchEpoch(subjects, epoch_name, tmin, tmax, stim,
                                event_id, mask, event_name, grad, mag, eeg, eog)
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()

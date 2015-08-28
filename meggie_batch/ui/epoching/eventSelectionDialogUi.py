@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Fri Aug 28 05:43:30 2015
+# Created: Fri Aug 28 06:35:21 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -232,8 +232,13 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
-        self.horizontalLayout_10.setContentsMargins(600, 0, -1, -1)
+        self.horizontalLayout_10.setContentsMargins(0, 0, -1, -1)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        self.pushButtonBatching = QtGui.QPushButton(EventSelectionDialog)
+        self.pushButtonBatching.setObjectName(_fromUtf8("pushButtonBatching"))
+        self.horizontalLayout_10.addWidget(self.pushButtonBatching)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem1)
         self.pushButtonCancel = QtGui.QPushButton(EventSelectionDialog)
         self.pushButtonCancel.setObjectName(_fromUtf8("pushButtonCancel"))
         self.horizontalLayout_10.addWidget(self.pushButtonCancel)
@@ -307,6 +312,7 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonReadEvents.setToolTip(_translate("EventSelectionDialog", "You can add events from Excel files that are in form: name, sample, previous event id, current event id.", None))
         self.pushButtonReadEvents.setText(_translate("EventSelectionDialog", "Read events from xls file...", None))
         self.pushButtonClear.setText(_translate("EventSelectionDialog", "Clear list", None))
+        self.pushButtonBatching.setText(_translate("EventSelectionDialog", "Batching...", None))
         self.pushButtonCancel.setText(_translate("EventSelectionDialog", "Cancel", None))
         self.pushButtonCreateEpochs.setText(_translate("EventSelectionDialog", "Create epochs", None))
 
