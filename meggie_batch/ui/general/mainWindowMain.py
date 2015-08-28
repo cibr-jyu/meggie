@@ -45,7 +45,6 @@ from mne.evoked import write_evokeds
 
 import matplotlib
 matplotlib.use('Qt4Agg')
-from code_meggie.general.caller import Caller
 
 from mainWindowUi import Ui_MainWindow
 from createExperimentDialogMain import CreateExperimentDialog
@@ -82,6 +81,7 @@ from code_meggie.general.prefecences import PreferencesHandler
 from code_meggie.general import fileManager
 from ui.widgets.listWidget import ListWidget
 from code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
+from code_meggie.general.caller import Caller
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -143,8 +143,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedList.setMinimumWidth(345)
         self.evokedList.setMaximumHeight(120)
         #self.evokedList.setSelectionMode(QtGui.QAbstractItemView.ContiguousSelection)
-
-        self.epocher = Epochs()
 
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
@@ -348,8 +346,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         TODO: get epochs from active_subject._epochs dictionary
         """
-        epochs_raw = epochs._raw
-        params = epochs._params
+        epochs_raw = epochs.raw
+        params = epochs.params
         if params is None:
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
@@ -390,12 +388,12 @@ class MainWindow(QtGui.QMainWindow):
                           key, value in params['reject'].iteritems())
         if 'mag' in params_rejections_str:
             self.ui.textBrowserMag.setText(str(params_rejections_str['mag']\
-                                                 / 1e-12) + ' fT')
+                                                 / 1e-15) + ' fT')
         else:
             self.ui.textBrowserMag.setText('-1')
         if 'grad' in params_rejections_str:
             self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']\
-                                                 / 1e-12) + ' fT/cm')
+                                                 / 1e-13) + ' fT/cm')
         else:
             self.ui.textBrowserGrad.setText('-1')
         if 'eeg' in params_rejections_str:
@@ -493,37 +491,22 @@ class MainWindow(QtGui.QMainWindow):
                 event.ignore()
         else:
             event.accept()  
-
-
-    #TODO: Move to caller?  
+  
     @QtCore.pyqtSlot(dict)
     def create_new_epochs(self, epoch_params):
         """A slot for creating new epochs with the given parameter values.
-        
+
         Keyword arguments:
         epoch_params = A dictionary containing the parameter values for
                        creating the epochs minus the raw data.
         """
         #Raw data is not present in the dictionary so get it from the
         #current experiment.active_subject.
-        epochs = self.epocher.create_epochs_from_dict(epoch_params,
-                                                      self.caller.experiment.\
-                                                      active_subject.\
-                                                      _working_file)
-        epoch_params['raw'] = self.caller.experiment.\
-            _working_file_names[self.caller.experiment._active_subject_name]
-        
+        self.caller.create_new_epochs(epoch_params)
         fname = epoch_params['collectionName']
         item = QtGui.QListWidgetItem(fname)
-        self.caller.experiment.active_subject.handle_new_epochs(fname, epochs,
-                                                                epoch_params)
         self.epochList.addItem(item, 1, overwrite=True)
         self.epochList.setCurrentItem(item)
-        
-        fname = str(item.text())
-        fpath = os.path.join(self.caller.experiment.active_subject._epochs_directory, fname)
-        epochs_object = self.caller.experiment.active_subject._epochs[fname]
-        fileManager.save_epoch(fpath, epochs_object, True)
 
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
@@ -563,7 +546,8 @@ class MainWindow(QtGui.QMainWindow):
             brush = QtGui.QBrush()
             brush.setColor(color)
             item.setForeground(brush)
-        self.caller.experiment.active_subject.handle_new_epochs(fname_prefix, epochs, params)
+        self.caller.experiment.active_subject.handle_new_epochs(fname_prefix,
+                                                                epochs, params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
@@ -741,15 +725,15 @@ class MainWindow(QtGui.QMainWindow):
         Call ``epochs.plot``.
         """
         if checked is None: return
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
-            message = 'Create epochs before visualizing.' 
+        item = self.epochList.ui.listWidgetEpochs.currentItem()
+        if item is None:
+            message = 'No epochs collection selected.' 
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-        epochs_name = str(self.epochList.ui.listWidgetEpochs.\
-                          currentItem().text())
+        epochs_name = str(item.text())
         epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
         def handle_close(event):
             path = self.caller.experiment.active_subject._epochs_directory

@@ -41,6 +41,7 @@ from PyQt4 import QtCore,QtGui
 import mne
 
 from eventSelectionDialogUi import Ui_EventSelectionDialog
+from groupEpochingDialogMain import GroupEpochingDialog
 from code_meggie.general.caller import Caller
 from code_meggie.epoching.events import Events
 from code_meggie.general import fileManager
@@ -152,17 +153,13 @@ class EventSelectionDialog(QtGui.QDialog):
 
         reject = dict()
         if mag:
-            reject['mag'] = 1e-12 * self.ui.\
-            doubleSpinBoxMagReject_3.value()
+            reject['mag'] = 1e-15 * self.ui.doubleSpinBoxMagReject_3.value()
         if grad:
-            reject['grad'] = 1e-12 * self.ui.\
-            doubleSpinBoxGradReject_3.value()
+            reject['grad'] = 1e-13 * self.ui.doubleSpinBoxGradReject_3.value()
         if eeg:
-            reject['eeg'] = eeg = 1e-6 * self.ui.\
-            doubleSpinBoxEEGReject_3.value()
+            reject['eeg'] = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value()
         if eog:
-            reject['eog'] = eog = 1e-6 * self.ui.\
-            doubleSpinBoxEOGReject_3.value()
+            reject['eog'] = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value()
 
         events = list()
         for i in xrange(self.ui.listWidgetEvents.count()):
@@ -375,6 +372,14 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.ui.listWidgetEvents.addItem(item)
 
         self.ui.listWidgetEvents.setCurrentItem(item)
+
+    def on_pushButtonBatching_clicked(self, checked=None):
+        """
+        Opens a dialog for batch processing epochs.
+        """
+        if checked is None: return
+        batchDialog = GroupEpochingDialog()
+        batchDialog.exec_()
 
     def set_event_name(self, name, suffix = 1):
         """Set the event name to name. If name exists, add suffix to it

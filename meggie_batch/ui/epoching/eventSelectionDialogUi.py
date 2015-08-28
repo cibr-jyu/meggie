@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Fri Aug 21 04:50:06 2015
+# Created: Fri Aug 28 05:43:30 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -109,6 +109,7 @@ class Ui_EventSelectionDialog(object):
         self.doubleSpinBoxGradReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxGradReject_3.setPrefix(_fromUtf8(""))
         self.doubleSpinBoxGradReject_3.setMaximum(1000000000.0)
+        self.doubleSpinBoxGradReject_3.setSingleStep(100.0)
         self.doubleSpinBoxGradReject_3.setProperty("value", 3000.0)
         self.doubleSpinBoxGradReject_3.setObjectName(_fromUtf8("doubleSpinBoxGradReject_3"))
         self.horizontalLayout_31.addWidget(self.doubleSpinBoxGradReject_3)
@@ -121,6 +122,7 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_33.addWidget(self.checkBoxMag)
         self.doubleSpinBoxMagReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxMagReject_3.setMaximum(1000000000.0)
+        self.doubleSpinBoxMagReject_3.setSingleStep(100.0)
         self.doubleSpinBoxMagReject_3.setProperty("value", 4000.0)
         self.doubleSpinBoxMagReject_3.setObjectName(_fromUtf8("doubleSpinBoxMagReject_3"))
         self.horizontalLayout_33.addWidget(self.doubleSpinBoxMagReject_3)

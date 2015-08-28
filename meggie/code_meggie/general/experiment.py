@@ -436,7 +436,6 @@ class Experiment(QObject):
                     subject._working_file = raw
         subject.find_stim_channel()
         subject.create_event_set()
-        
 
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
@@ -446,12 +445,12 @@ class Experiment(QObject):
             self.active_subject.create_epochs_directory
         epoch_items = []
         files = os.listdir(subject._epochs_directory)
-        for file in files:
-            if file.endswith('.fif'):
+        for filename in files:
+            if filename.endswith('.fif'):
                 fname = os.path.join(subject._epochs_directory,
-                                     file)
-                
-                name = file[:-4]
+                                     filename)
+
+                name = filename[:-4]
                 epochs, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, epochs, params)
                 item = QtGui.QListWidgetItem(name)
@@ -467,27 +466,25 @@ class Experiment(QObject):
                     subject._epochs[name]._raw = epochs
         return epoch_items
 
-
     def load_evokeds(self, subject):
         """Loads raw evoked files from subject folder and sets them on
         subject._evokeds objects.
         """
         evokeds_items = []
         files = os.listdir(subject._evokeds_directory)
-        for file in files:
-            if file.endswith('.fif'):
+        for filename in files:
+            if filename.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                   file)
-                subject.handle_new_evoked(file, evoked, categories)
-                item = QtGui.QListWidgetItem(file)
+                                                   filename)
+                subject.handle_new_evoked(filename, evoked, categories)
+                item = QtGui.QListWidgetItem(filename)
                 evokeds_items.append(item)
                 # Raw needs to be set when activating already created subject.
-                if subject._evokeds[file]._raw is None:
-                    subject._evokeds[file]._raw = evoked
+                if subject._evokeds[filename]._raw is None:
+                    subject._evokeds[filename]._raw = evoked
 
         return evokeds_items
-            
-                
+
     def get_subject_working_file(self, subject_name):
         """Returns working file of a given subject name.
         

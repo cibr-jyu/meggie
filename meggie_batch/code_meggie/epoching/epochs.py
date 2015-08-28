@@ -145,28 +145,26 @@ class Epochs(QObject):
             meg = 'grad'
         else:
             meg = False
-        if isinstance(raw, mne.io.Raw):
-            # Was mne.fiff.pick types with MNE 0.7
-            picks = mne.pick_types(raw.info, meg=meg, eeg=eeg,
-                                        stim=stim, eog=eog)
-            if len(picks) == 0:
-                message = 'Picks cannot be empty. Select picks by' + \
-                'checking the checkboxes.'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()  
-                
-            else:
-                try:
-                    epochs = mne.Epochs(raw, events, category, tmin, tmax,
-                                        picks=picks, reject=reject)
-                except Exception as e:
-                    print e
-                    raise e
-                if len(epochs.get_data()) == 0:
-                    raise Exception('Could not find any data. Check parameters!')
-                return epochs
-        else:
+        if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object.')
+        # Was mne.fiff.pick types with MNE 0.7
+        picks = mne.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
+                               eog=eog)
+        if len(picks) == 0:
+            message = 'Picks cannot be empty. Select picks by' + \
+            'checking the checkboxes.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        try:
+            epochs = mne.Epochs(raw, events, category, tmin, tmax,
+                                picks=picks, reject=reject)
+        except Exception as e:
+            print e
+            raise e
+        if len(epochs.get_data()) == 0:
+            raise Exception('Could not find any data. Check parameters!')
+        return epochs
         
     def create_epochs_from_dict(self, params, raw):
         """Create a set of epochs with parameters stored in a dict.
@@ -209,4 +207,3 @@ class Epochs(QObject):
         csv_file.close()
         """
         return epochs
-    

@@ -43,10 +43,10 @@ from ui.general import messageBoxes
 import fileManager
 from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
+from code_meggie.epoching.epochs import Epochs
 from measurementInfo import MeasurementInfo
 from singleton import Singleton
 from copy import deepcopy
-from orca.chnames import chnames
 
 
 @Singleton
@@ -236,9 +236,9 @@ class Caller(object):
         rej_eog = dic.get('rej-eog')
         
         reject = dict(grad=1e-13 * float(rej_grad),
-                  mag=1e-15 * float(rej_mag),
-                  eeg=1e-6 * float(rej_eeg),
-                  eog=1e-6 * float(rej_eog))
+                      mag=1e-15 * float(rej_mag),
+                      eeg=1e-6 * float(rej_eeg),
+                      eog=1e-6 * float(rej_eog))
         qrs_threshold = dic.get('qrs')
         flat = None
         bads = dic.get('bads')
@@ -560,6 +560,140 @@ class Caller(object):
         fname = raw.info['filename']
         raw.save(fname, overwrite=True)
 
+    def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
+                   mask, event_name, grad, mag, eeg, eog):
+        """
+        Creates epoch collection for all ``subjects`` with the given parameters
+
+        Keyword arguments:
+        subjects      - List of strings. Subjects to create epochs for.
+        epoch_name    - The name of the epoch collection as string.
+        tmin          - Start time for epochs as float.
+        tmax          - End time for epochs as float.
+        stim          - Boolean to indicate whether to include stim channel.
+        event_id      - The event_id as int.
+        mask          - Bit wise mask as int.
+        event_name    - Name for the event as string.
+        grad          - Peak-to-peak rejection limit for gradiometer channels
+                        or None if gradiometer channels are not included.
+        mag           - Peak-to-peak rejection limit for magnetometer channels
+                        or None if magnetometer channels are not included.
+        eeg           - Peak-to-peak rejection limit for EEG channels
+                        or None if EEG channels are not included.
+        eog           - Peak-to-peak rejection limit for EOG channels
+                        or None if EOG channels are not included.
+        """
+        self.e.clear()
+        self.result = ''  # Result as string
+        self.thread = Thread(target = self._batchEpoch,
+                             args=(subjects, epoch_name, tmin, tmax, stim,
+                                   event_id, mask, event_name, grad, mag, eeg,
+                                   eog))
+        self.thread.start()
+        while(True):
+            sleep(0.2)
+            if self.e.is_set(): break
+            self.parent.update_ui()
+
+        self.messageBox = messageBoxes.shortMessageBox(str(self.result),
+                                                       title='Results')
+        print 'Updating ui...'  # To make sure ui is up to date
+        self.parent._initialize_ui()
+        self.messageBox.show()
+        self.result = None
+
+    def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
+                    mask, event_name, grad, mag, eeg, eog):
+        """Performed in a worker thread."""
+        #active_subject = self.experiment.active_subject_name
+        path = self.experiment.workspace
+        working_files = self.experiment._working_file_names.values()
+        reject = dict()
+        if grad is not None:
+            reject['grad'] = grad
+        if mag is not None:
+            reject['mag'] = mag
+        if eeg is not None:
+            reject['eeg'] = eeg
+        if eog is not None:
+            reject['eog'] = eog
+        mag = mag is not None
+        grad = grad is not None
+        eeg = eeg is not None
+        eog = eog is not None
+
+        for subject in subjects:
+            path = os.path.join(path, subject)
+            fname = ''
+            for working_file in working_files:
+                if os.path.split(working_file)[1].startswith(subject):
+                    fname = working_file
+                    break
+            if fname == '':
+                print 'Could not find working file for %s. Skipping.' % subject
+                continue
+            for sub in self.experiment.get_subjects():
+                if sub.subject_name == subject:
+                    this_subject = sub
+                    break
+
+            stim_channel = this_subject.stim_channel
+            try:
+                raw = mne.io.Raw(fname)
+                events = mne.find_events(raw, stim_channel=stim_channel,
+                                         shortest_event=1, mask=mask)
+                #picks = mne.pick_types(raw.info, meg=meg, eeg=eeg is not None,
+                #                   stim=stim, eog=eog is not None)
+
+                epocher = Epochs()
+                epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
+                                               stim, eog, reject,
+                                               {event_name: event_id}, tmin,
+                                               tmax)
+                #epochs = epocher.create_epochs_from_dict(params, raw)
+
+            except Exception as e:
+                self.result += ('Could not create epochs for subject ' +
+                                subject + ':\n' + str(e) + '\n')
+                print str(e)
+                continue
+            path = os.path.join(os.path.split(fname)[0], 'epochs')
+            fname = os.path.join(path, epoch_name)
+            params = {'events': events, 'mag': mag, 'grad': grad,
+                      'eeg': eeg, 'stim': stim, 'eog': eog,
+                      'reject': reject, 'tmin': tmin, 'tmax': tmax,
+                      'collectionName': epoch_name, 'raw': fname}
+            this_subject.handle_new_epochs(epoch_name, epochs, params)
+            epochs_object = this_subject._epochs[epoch_name]
+            fileManager.save_epoch(fname, epochs_object, overwrite=True)
+        if self.result == '':
+            self.result = 'Epochs created successfully!'
+        self.e.set()
+
+    def create_new_epochs(self, epoch_params):
+        """
+        A method for creating new epochs with the given parameter values for
+        the active subject.
+
+        Keyword arguments:
+        epoch_params = A dictionary containing the parameter values for
+                       creating the epochs minus the raw data.
+        """
+        #Raw data is not present in the dictionary so get it from the
+        #current experiment.active_subject.
+        epocher = Epochs()
+        epochs = epocher.create_epochs_from_dict(epoch_params,
+                                self.experiment.active_subject.working_file)
+        epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
+
+        fname = epoch_params['collectionName']
+        self.experiment.active_subject.handle_new_epochs(fname, epochs,
+                                                         epoch_params)
+
+        fpath = os.path.join(self.experiment.active_subject._epochs_directory,
+                             fname)
+        epochs_object = self.experiment.active_subject._epochs[fname]
+        fileManager.save_epoch(fpath, epochs_object, True)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
