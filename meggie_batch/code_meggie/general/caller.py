@@ -1196,7 +1196,7 @@ class Caller(object):
         if epochs.times[0] < 0:
             baseline = (epochs.times[0], 0)
         else:
-            baseline = 0
+            baseline = None
         power = mne.baseline.rescale(power, epochs.times[::decim], baseline,
                                      mode='ratio', copy=True)
         itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
