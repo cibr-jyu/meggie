@@ -133,4 +133,3 @@ class EpochWidget(QtGui.QWidget):
             epoch = caller.experiment.active_subject._epochs[key]
             if not epoch._raw is None:
                 self.parent.show_epoch_collection_parameters(epoch)
- 

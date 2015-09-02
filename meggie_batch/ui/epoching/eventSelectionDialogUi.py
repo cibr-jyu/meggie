@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Fri Aug 28 06:35:21 2015
+# Created: Tue Sep  1 05:25:14 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -254,7 +254,6 @@ class Ui_EventSelectionDialog(object):
         QtCore.QObject.connect(self.checkBoxMag, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxMagReject_3.setEnabled)
         QtCore.QObject.connect(self.checkBoxEeg, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxEEGReject_3.setEnabled)
         QtCore.QObject.connect(self.checkBoxEog, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxEOGReject_3.setEnabled)
-        QtCore.QObject.connect(self.pushButtonClear, QtCore.SIGNAL(_fromUtf8("clicked()")), self.listWidgetEvents.clear)
         QtCore.QMetaObject.connectSlotsByName(EventSelectionDialog)
         EventSelectionDialog.setTabOrder(self.scrollArea, self.lineEditCollectionName)
         EventSelectionDialog.setTabOrder(self.lineEditCollectionName, self.doubleSpinBoxTmin)

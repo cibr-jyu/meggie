@@ -381,6 +381,16 @@ class EventSelectionDialog(QtGui.QDialog):
         batchDialog = GroupEpochingDialog()
         batchDialog.exec_()
 
+    def on_pushButtonClear_clicked(self, checked=None):
+        """
+        Method for clearing the event list.
+        """
+        for row in range(self.ui.listWidgetEvents.count()):
+            item = self.ui.listWidgetEvents.item(row)
+            if item.data(33) in self.used_names:
+                self.used_names.remove(item.data(33))
+        self.ui.listWidgetEvents.clear()
+
     def set_event_name(self, name, suffix = 1):
         """Set the event name to name. If name exists, add suffix to it
 

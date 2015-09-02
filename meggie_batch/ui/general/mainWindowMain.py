@@ -264,7 +264,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionOpen_experiment_triggered(self, checked=None):
         """
         Open an existing _experiment.
-        
+
         TODO actual experiment opening code should be in ExperimentHandler
         """
         # Standard workaround for file dialog opening twice
@@ -289,7 +289,7 @@ class MainWindow(QtGui.QMainWindow):
         Open subject dialog.
         """
         if checked is None: return
-        
+
         # Check that we have an experiment that we can add a subject to 
         if self.caller.experiment is None:
             message = 'No active experiment to add a subject to. ' \
@@ -297,11 +297,10 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        
+
         self.subject_dialog = AddSubjectDialog(self)
         self.subject_dialog.exec_()
 
-    
     def on_pushButtonRemoveSubject_clicked(self, checked=None):
         """Delete the selected subject item and the files related to it."""
         if checked is None:
@@ -342,7 +341,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Set default/empty values for epoch parameters.
         self.clear_epoch_collection_parameters()
-        
+
         """
         TODO: get epochs from active_subject._epochs dictionary
         """
@@ -371,7 +370,7 @@ class MainWindow(QtGui.QMainWindow):
             for key in event_counts.keys():
                 if event[2] == int(key):
                     event_counts[key] += 1
-        categories = ''
+
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
         for key,value in epochs_raw.event_id.items():
@@ -416,7 +415,6 @@ class MainWindow(QtGui.QMainWindow):
         filename = filename_list[len(filename_list) - 1]
         self.ui.textBrowserWorkingFile.setText(filename)
 
-        
     def clear_epoch_collection_parameters(self):
         """
         Clears epoch collection parameters on mainWindow Epoching tab.
@@ -433,7 +431,6 @@ class MainWindow(QtGui.QMainWindow):
         #self.ui.textBrowserEvents.clear()   #setText('')
         self.ui.textBrowserWorkingFile.clear()
 
-        
     def on_actionSet_workspace_triggered(self, checked=None):
         """
         Open the preferences dialog the for specific purpose of initial setting
@@ -450,7 +447,6 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogPreferences = PreferencesDialog(self)
         self.dialogPreferences.show()
 
-        
     def on_pushButtonCreateEpochs_clicked(self, checked=None):
         """
         Open the epoch dialog. 
@@ -458,10 +454,9 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None: return
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.epoch_params_ready.\
-        connect(self.create_new_epochs)
+            connect(self.create_new_epochs)
         self.epochParameterDialog.show()
 
-        
     @QtCore.pyqtSlot(QtGui.QListWidgetItem)
     def epochs_added(self, item):
         """

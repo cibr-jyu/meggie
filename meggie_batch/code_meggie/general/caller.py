@@ -642,16 +642,12 @@ class Caller(object):
                 raw = mne.io.Raw(fname)
                 events = mne.find_events(raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
-                #picks = mne.pick_types(raw.info, meg=meg, eeg=eeg is not None,
-                #                   stim=stim, eog=eog is not None)
 
                 epocher = Epochs()
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
                                                stim, eog, reject,
                                                {event_name: event_id}, tmin,
                                                tmax)
-                #epochs = epocher.create_epochs_from_dict(params, raw)
-
             except Exception as e:
                 self.result += ('Could not create epochs for subject ' +
                                 subject + ':\n' + str(e) + '\n')
@@ -725,8 +721,7 @@ class Caller(object):
             plt.show(block=False)
             
         fig.canvas.mpl_connect('button_press_event', onclick)
-      
-        
+
     def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet

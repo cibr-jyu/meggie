@@ -534,7 +534,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>814</x>
-     <y>730</y>
+     <y>686</y>
     </hint>
     <hint type="destinationlabel">
      <x>513</x>
@@ -550,7 +550,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>693</x>
-     <y>730</y>
+     <y>686</y>
     </hint>
     <hint type="destinationlabel">
      <x>560</x>
@@ -565,12 +565,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>155</x>
-     <y>528</y>
+     <x>156</x>
+     <y>492</y>
     </hint>
     <hint type="destinationlabel">
      <x>327</x>
-     <y>532</y>
+     <y>495</y>
     </hint>
    </hints>
   </connection>
@@ -581,12 +581,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>573</y>
+     <x>164</x>
+     <y>534</y>
     </hint>
     <hint type="destinationlabel">
      <x>327</x>
-     <y>576</y>
+     <y>538</y>
     </hint>
    </hints>
   </connection>
@@ -597,12 +597,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>617</y>
+     <x>154</x>
+     <y>577</y>
     </hint>
     <hint type="destinationlabel">
      <x>327</x>
-     <y>621</y>
+     <y>580</y>
     </hint>
    </hints>
   </connection>
@@ -614,27 +614,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>160</x>
-     <y>662</y>
+     <y>619</y>
     </hint>
     <hint type="destinationlabel">
      <x>327</x>
-     <y>665</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonClear</sender>
-   <signal>clicked()</signal>
-   <receiver>listWidgetEvents</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>794</x>
-     <y>669</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>795</x>
-     <y>510</y>
+     <y>622</y>
     </hint>
    </hints>
   </connection>
