@@ -599,7 +599,7 @@ def unpickle(fpath):
     return unpickledObject
     
     
-def save_epoch(fpath, epoch, overwrite=False):
+def save_epoch(fpath, epoch, params, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -609,23 +609,22 @@ def save_epoch(fpath, epoch, overwrite=False):
     
     fpath     -- The full path and base name of the files without suffix
     epoch     -- Epochs object
+    params    -- Parameter of the epochs.
     overwrite -- A boolean telling whether existing files should be
                  replaced. False by default. 
     """
     if os.path.exists(fpath + '.fif') and overwrite is False:
         return
     # First save the epochs
-    raw = epoch._raw
-    raw.save(fpath + '.fif')
+    epoch.save(fpath + '.fif')
     # Then save the parameters using pickle.
-    parameters = epoch._params
-    if parameters is None: return
+    if params is None: return
     # toPyObject turns the dict keys into QStrings so convert them back to
     # strings.
     # parameters = dict((str(k), v) for k, v in parameters.iteritems())
     
     event_dict = {}
-    event_list = parameters['events']
+    event_list = params['events']
     for item in event_list:
         key = str(item[1])
         event = item[0]
@@ -633,10 +632,10 @@ def save_epoch(fpath, epoch, overwrite=False):
         if key not in event_dict:
             event_dict[key] = []
         event_dict[key].append(event)
-    parameters['events'] = event_dict
+    params['events'] = event_dict
     parameterFileName = str(fpath + '.param')
-    pickleObjectToFile(parameters, parameterFileName)
-    parameters['events'] = event_list  # set events back to list
+    pickleObjectToFile(params, parameterFileName)
+    params['events'] = event_list  # set events back to list
 
 
 def read_surface_names_into_list(subject):

@@ -131,5 +131,5 @@ class EpochWidget(QtGui.QWidget):
         key = str(item.text())
         if epochs.has_key(key):
             epoch = caller.experiment.active_subject._epochs[key]
-            if not epoch._raw is None:
-                self.parent.show_epoch_collection_parameters(epoch)
+            #if not epoch._raw is None:
+            self.parent.show_epoch_collection_parameters(epoch)

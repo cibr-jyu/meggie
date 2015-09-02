@@ -476,7 +476,7 @@ class Experiment(QObject):
         """Loads raw epoch files from subject folder and sets them on
         subject._epochs objects.
         """
-        if os.path.exists(self.active_subject._epochs_directory) is False:
+        if not os.path.exists(self.active_subject._epochs_directory):
             self.active_subject.create_epochs_directory
         epoch_items = []
         path = subject._epochs_directory
@@ -506,8 +506,8 @@ class Experiment(QObject):
                     item.setForeground(brush)
                 epoch_items.append(item)
                 # Raw needs to be set when activating already created subject.
-                if subject._epochs[name]._raw is None:
-                    subject._epochs[name]._raw = epochs
+                #if subject._epochs[name]._raw is None:
+                #    subject._epochs[name]._raw = epochs
         return epoch_items
 
     def load_evokeds(self, subject):

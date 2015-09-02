@@ -120,7 +120,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
-        epochs = self.caller.experiment.active_subject._epochs[self.epoch_name]
+        epochs = self.caller.experiment.active_subject.get_epochs[self.epoch_name]
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
             scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()
@@ -130,7 +130,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         else:
             scalp = None
         try:
-            self.caller.TFR_topology(epochs._raw, reptype, minfreq, maxfreq,
+            self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
                                      decim, mode, blstart, blend, interval,
                                      ncycles, layout, ch_type, scalp)
         except Exception, err:

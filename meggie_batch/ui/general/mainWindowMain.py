@@ -149,7 +149,6 @@ class MainWindow(QtGui.QMainWindow):
 
         # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.epochList.item_added.connect(self.epochs_added)
         self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect(
                               self.on_pushButtonMNE_Browse_Raw_clicked)
 
@@ -209,6 +208,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
+        self.epochList.item_added.connect(self.epochs_added)
 
     def update_ui(self):
         """
@@ -361,8 +361,21 @@ class MainWindow(QtGui.QMainWindow):
             #setText(self.mi.subject_name)
             return
         # Dictionary stores numbers of different events.
-        event_counts = dict()
+        #event_counts = dict()
+        events = params['events']
+        names = [x[1] for x in events]
+        event_counts = [[x, names.count(x)] for x in set(names)]
+        for event_count in event_counts:
+            item = QtGui.QListWidgetItem()
+            name = event_count[0]
+            idx = names.index(name)
+            event_id = str(events[idx][0][2])
+            text = (name + ': ID ' + event_id + ', ' + str(event_count[1]) +
+                   ' events')
+            item.setText(text)
+            self.epochList.ui.listWidgetEvents.addItem(item)
         # Adds items to dictionary for corresponding events.
+        """
         for value in epochs_raw.event_id.values():
             event_counts[str(value)] = 0
         # Adds number of events to corresponding event.
@@ -370,7 +383,7 @@ class MainWindow(QtGui.QMainWindow):
             for key in event_counts.keys():
                 if event[2] == int(key):
                     event_counts[key] += 1
-
+        
         # Adds event names, ids and event counts on mainWindows parameters
         # list.
         for key,value in epochs_raw.event_id.items():
@@ -378,6 +391,7 @@ class MainWindow(QtGui.QMainWindow):
             item.setText(key + ': ID ' + str(value) + ', ' + \
             str(event_counts[str(value)]) + ' events')
             self.epochList.ui.listWidgetEvents.addItem(item)
+        """
         # TODO: create category items to add on the listWidgetEvents widget. 
         #self.epochList.ui.listWidgetEvents.setText(categories)
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
@@ -462,13 +476,16 @@ class MainWindow(QtGui.QMainWindow):
         """
         A slot for saving epochs from the added QListWidgetItem to a file.
         """
+        pass
+        """
         if os.path.exists(self.caller.experiment.active_subject._epochs_directory) is False:
             self.caller.experiment.active_subject.create_epochs_directory()
         fname = str(item.text())
         fpath = os.path.join(self.caller.experiment.active_subject._epochs_directory, fname)
         epochs_object = self.caller.experiment.active_subject._epochs[fname]
-        fileManager.save_epoch(fpath, epochs_object)
-        
+        epochs = self.caller.experiment.active_subject.get_epochs(fname)
+        fileManager.save_epoch(fpath, epochs, epochs_object)
+        """
 
     def closeEvent(self, event):
         """
@@ -580,7 +597,7 @@ class MainWindow(QtGui.QMainWindow):
             TODO: get epochs from active_subject._epochs dictionary
             """
             collection_name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-            epochs = self.caller.experiment.active_subject._epochs[collection_name]._raw
+            epochs = self.caller.experiment.active_subject.get_epochs(collection_name)
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
         shutil.copyfile(os.path.join(self.caller.experiment.active_subject.\
@@ -645,9 +662,9 @@ class MainWindow(QtGui.QMainWindow):
             if not prefix == '':
                 prefix = prefix + '-' 
             key = str(item.text())
-            epoch = self.caller.experiment.active_subject._epochs[key]
+            epoch = self.caller.experiment.active_subject.get_epochs(key)
             epochs.append(epoch)
-            category.update(epoch._raw.event_id)
+            category.update(epoch.event_id)
             prefix = prefix + item.text()
 
         evoked = self.caller.average(epochs, category)
@@ -711,7 +728,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[name]._raw
+        epochs = self.caller.experiment.active_subject.get_epochs(name)
         self.visualizeEpochChannelsDialog = VisualizeEpochChannelDialog(epochs)
         self.visualizeEpochChannelsDialog.show()
 
@@ -729,7 +746,7 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         epochs_name = str(item.text())
-        epochs = self.caller.experiment.active_subject._epochs[epochs_name]._raw
+        epochs = self.caller.experiment.active_subject.get_epochs(epochs_name)
         def handle_close(event):
             path = self.caller.experiment.active_subject._epochs_directory
             fpath = os.path.join(path, epochs_name)
@@ -1040,12 +1057,11 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox.show()
             return
 
-        epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
-                                     currentItem().text())
-        epochs = self.caller.experiment.active_subject._epochs[epochs_collection_name]
-        epochs_raw = epochs._raw
+        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        epochs = self.caller.experiment.active_subject.get_epochs(name)
+        #epochs_raw = epochs._raw
         self.tfr_dialog = TFRDialog(self, self.caller.experiment.active_subject.\
-                                    _working_file, epochs_raw)
+                                    _working_file, epochs)
         self.tfr_dialog.show()
 
     def on_pushButtonTFRTopology_clicked(self, checked=None):

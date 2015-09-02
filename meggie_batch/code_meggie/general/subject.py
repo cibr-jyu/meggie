@@ -91,15 +91,14 @@ class Subject(QObject):
         
         # Models for various types of data stored in subject
         self._forwardModelModel = None
-        
-        
+
     @property
     def raw_data(self):
         """
         Returns the raw data object of the subject.
         """
         return self._raw_data
-    
+
     @raw_data.setter
     def raw_data(self, raw_data):
         """
@@ -112,14 +111,14 @@ class Subject(QObject):
             self._raw_data = raw_data
         else:
             raise Exception('Wrong data type')
-        
+
     @property
     def subject_name(self):
         """
         Returns the subject_name of the subject.
         """
         return self._subject_name
-    
+
     @subject_name.setter
     def subject_name(self, subject_name):
         """
@@ -133,21 +132,21 @@ class Subject(QObject):
         Returns the subject_path of the subject.
         """
         return self._subject_path
-    
+
     @subject_path.setter
     def subject_path(self, subject_path):
         """
         Sets the subject_path for the subject.
         """
         self._subject_path = subject_path
-                
+
     @property
     def working_file(self):
         """
         Returns the current working raw object.
         """
         return self._working_file
-    
+
     @working_file.setter
     def working_file(self, raw):
         """
@@ -191,7 +190,6 @@ class Subject(QObject):
         """
         self._eog_params = eog_params
 
-
     @property
     def stim_channel(self):
         """
@@ -205,8 +203,7 @@ class Subject(QObject):
         Setter for stimulus channel.
         """
         self._stim_channel = stim_ch
-        
-        
+
     def find_stim_channel(self):
         """
         Finds the correct stimulus channel for the data.
@@ -330,10 +327,19 @@ class Subject(QObject):
         Adds Epochs object to the epochs dictionary.
 
         Keyword arguments:
-        epochs      -- Epochs object including raw.fif, param.fif and
-                       collection_name
+        epochs      -- Epochs object including param.fif and collection_name
         """
         self._epochs[epochs._collection_name] = epochs
+
+    def get_epochs(self, name):
+        """
+        Helper for loading mne.Epochs obejct to memory for processing.
+        Keyword arguments:
+        name        -- Collection name for the epochs
+        Returns mne.Epochs object
+        """
+        return mne.read_epochs(os.path.join(self._epochs_directory,
+                                            name + '.fif'))
 
     def handle_new_epochs(self, name, epochs_raw, params):
         """
@@ -344,6 +350,7 @@ class Subject(QObject):
         name        -- name of the epoch collection
         epochs_raw  -- raw epochs file
         params      -- epochs parameters
+        Returns the epochs obejct
         """
         # Checks if epochs with given name exists.
         #if self._epochs.has_key(name):
@@ -353,9 +360,10 @@ class Subject(QObject):
         #params_str = dict((str(k), v) for k, v in parameters.iteritems())
         epochs = Epochs()
         epochs._collection_name = name
-        epochs._raw = epochs_raw
+        #epochs._raw = epochs_raw
         epochs._params = params
         self.add_epochs(epochs)
+        return epochs
 
     @QtCore.pyqtSlot(dict, QtGui.QListWidget)  
     def modify_epochs(self, epoch_params, epoch_widget):

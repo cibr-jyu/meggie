@@ -86,4 +86,6 @@ class TFRDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         QtGui.QApplication.restoreOverrideCursor()
+        self.raw = None
+        self.epochs = None
         self.close()

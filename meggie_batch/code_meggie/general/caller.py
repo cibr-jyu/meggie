@@ -508,16 +508,16 @@ class Caller(object):
         #[epochs._raw[name].average() for name in category.keys()]
         for epoch in epochs: # epoch == single set of epochs
             for name in category.keys():
-                if name in epoch._raw.event_id:
-                    evokeds.append(epoch._raw[name].average()) #self.category.keys()
+                if name in epoch.event_id:
+                    evokeds.append(epoch[name].average()) #self.category.keys()
         
-        saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
+        #saveFolder = os.path.join(self.experiment.active_subject._epochs_directory, 'average')
         
         #Get the name of the raw-data file from the current experiment.
         #rawFileName = os.path.splitext(os.path.split(self.parent.experiment.\
         #                                             raw_data_path)[1])[0]                      
-        rawFileName = os.path.splitext(os.path.split(self.experiment.\
-                                                     _working_file_names[self.experiment._active_subject_name])[1])[0]
+        #rawFileName = os.path.splitext(os.path.split(self.experiment.\
+        #                                             _working_file_names[self.experiment._active_subject_name])[1])[0]
         
         return evokeds
         """
@@ -659,9 +659,9 @@ class Caller(object):
                       'eeg': eeg, 'stim': stim, 'eog': eog,
                       'reject': reject, 'tmin': tmin, 'tmax': tmax,
                       'collectionName': epoch_name, 'raw': fname}
-            this_subject.handle_new_epochs(epoch_name, epochs, params)
-            epochs_object = this_subject._epochs[epoch_name]
-            fileManager.save_epoch(fname, epochs_object, overwrite=True)
+            epochs_object = this_subject.handle_new_epochs(epoch_name, epochs, params)
+            #epochs_object = this_subject._epochs[epoch_name]
+            fileManager.save_epoch(fname, epochs, params, overwrite=True)
         if self.result == '':
             self.result = 'Epochs created successfully!'
         self.e.set()
@@ -688,8 +688,8 @@ class Caller(object):
 
         fpath = os.path.join(self.experiment.active_subject._epochs_directory,
                              fname)
-        epochs_object = self.experiment.active_subject._epochs[fname]
-        fileManager.save_epoch(fpath, epochs_object, True)
+        #epochs_object = self.experiment.active_subject._epochs[fname]
+        fileManager.save_epoch(fpath, epochs, epoch_params, True)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
@@ -786,7 +786,7 @@ class Caller(object):
         Performed in a worker thread.
         """
         if isinstance(instance, str):  # epoch name
-            epochs = self.experiment.active_subject._epochs[instance].raw
+            epochs = self.experiment.active_subject.get_epochs(instance)
             if epochs is None:
                 self.result = Exception('No epochs found.')
                 self.e.set()
