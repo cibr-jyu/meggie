@@ -64,7 +64,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
-        epochs = self.caller.experiment.active_subject._epochs[epoch_name]._raw
+        epochs = self.caller.experiment.active_subject.get_epochs(epoch_name)
         self.ui.labelEpochName.setText(epoch_name)
         self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
         self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
@@ -120,7 +120,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
-        epochs = self.caller.experiment.active_subject.get_epochs[self.epoch_name]
+        epochs = self.caller.experiment.active_subject.get_epochs(self.epoch_name)
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
             scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()

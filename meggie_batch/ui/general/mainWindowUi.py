@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Thu Aug 20 04:45:05 2015
+# Created: Thu Sep  3 03:34:16 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,7 +80,7 @@ class Ui_MainWindow(object):
         self.tabPreprocessing.setFont(font)
         self.tabPreprocessing.setObjectName(_fromUtf8("tabPreprocessing"))
         self.layoutWidget = QtGui.QWidget(self.tabPreprocessing)
-        self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 425, 596))
+        self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 439, 596))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_21 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_21.setMargin(0)
@@ -242,17 +242,26 @@ class Ui_MainWindow(object):
         self.groupBoxVisualization_2.setObjectName(_fromUtf8("groupBoxVisualization_2"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBoxVisualization_2)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
+        self.horizontalLayout_11 = QtGui.QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
+        self.pushButtonSpectrum = QtGui.QPushButton(self.groupBoxVisualization_2)
+        self.pushButtonSpectrum.setObjectName(_fromUtf8("pushButtonSpectrum"))
+        self.horizontalLayout_11.addWidget(self.pushButtonSpectrum)
+        self.pushButtonMNE_Browse_Raw_2 = QtGui.QPushButton(self.groupBoxVisualization_2)
+        self.pushButtonMNE_Browse_Raw_2.setObjectName(_fromUtf8("pushButtonMNE_Browse_Raw_2"))
+        self.horizontalLayout_11.addWidget(self.pushButtonMNE_Browse_Raw_2)
+        self.pushButtonPlotProjections = QtGui.QPushButton(self.groupBoxVisualization_2)
+        self.pushButtonPlotProjections.setObjectName(_fromUtf8("pushButtonPlotProjections"))
+        self.horizontalLayout_11.addWidget(self.pushButtonPlotProjections)
+        self.gridLayout_3.addLayout(self.horizontalLayout_11, 1, 0, 1, 1)
         self.horizontalLayout_32 = QtGui.QHBoxLayout()
         self.horizontalLayout_32.setObjectName(_fromUtf8("horizontalLayout_32"))
         self.pushButtonRawPlot = QtGui.QPushButton(self.groupBoxVisualization_2)
         self.pushButtonRawPlot.setObjectName(_fromUtf8("pushButtonRawPlot"))
         self.horizontalLayout_32.addWidget(self.pushButtonRawPlot)
-        self.pushButtonSpectrum = QtGui.QPushButton(self.groupBoxVisualization_2)
-        self.pushButtonSpectrum.setObjectName(_fromUtf8("pushButtonSpectrum"))
-        self.horizontalLayout_32.addWidget(self.pushButtonSpectrum)
-        self.pushButtonMNE_Browse_Raw_2 = QtGui.QPushButton(self.groupBoxVisualization_2)
-        self.pushButtonMNE_Browse_Raw_2.setObjectName(_fromUtf8("pushButtonMNE_Browse_Raw_2"))
-        self.horizontalLayout_32.addWidget(self.pushButtonMNE_Browse_Raw_2)
+        self.checkBoxShowEvents = QtGui.QCheckBox(self.groupBoxVisualization_2)
+        self.checkBoxShowEvents.setObjectName(_fromUtf8("checkBoxShowEvents"))
+        self.horizontalLayout_32.addWidget(self.checkBoxShowEvents)
         self.gridLayout_3.addLayout(self.horizontalLayout_32, 0, 0, 1, 1)
         self.verticalLayout_21.addWidget(self.groupBoxVisualization_2)
         self.splitter_2 = QtGui.QSplitter(self.tabPreprocessing)
@@ -1625,9 +1634,11 @@ class Ui_MainWindow(object):
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections...", None))
         self.pushButtonApplyEOG.setText(_translate("MainWindow", "Apply EOG projections...", None))
         self.groupBoxVisualization_2.setTitle(_translate("MainWindow", "Visualization:", None))
-        self.pushButtonRawPlot.setText(_translate("MainWindow", "Raw plot", None))
         self.pushButtonSpectrum.setText(_translate("MainWindow", "Power spectrum", None))
         self.pushButtonMNE_Browse_Raw_2.setText(_translate("MainWindow", "MNE_Browse_Raw", None))
+        self.pushButtonPlotProjections.setText(_translate("MainWindow", "Plot projections", None))
+        self.pushButtonRawPlot.setText(_translate("MainWindow", "Raw plot", None))
+        self.checkBoxShowEvents.setText(_translate("MainWindow", "Show events", None))
         self.labelBads.setText(_translate("MainWindow", "Bad channels", None))
         self.listWidgetBads.setSortingEnabled(True)
         self.labelProjs.setText(_translate("MainWindow", "Added projection items", None))

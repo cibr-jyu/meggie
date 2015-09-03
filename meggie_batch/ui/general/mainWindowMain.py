@@ -1,4 +1,5 @@
 # coding: latin1
+from meggie.code_meggie.general.fileManager import load_epochs
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -341,27 +342,17 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Set default/empty values for epoch parameters.
         self.clear_epoch_collection_parameters()
-
         """
         TODO: get epochs from active_subject._epochs dictionary
         """
-        epochs_raw = epochs.raw
         params = epochs.params
         if params is None:
+            print 'Epochs parameters not found!'
+            return
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
-            self.ui.textBrowserWorkingFile.\
-            setText('Unknown source file. ' + epochs_raw.info.get('description'))
-            
-            # TODO: this is too slow. If remove this line remove
-            # measurementInfo from imports also.
-            #self.mi = MeasurementInfo(self._experiment.active_subject._working_file)
-            #self.ui.textBrowserWorkingFile.\
-            #setText(self.mi.subject_name)
-            return
-        # Dictionary stores numbers of different events.
-        #event_counts = dict()
+
         events = params['events']
         names = [x[1] for x in events]
         event_counts = [[x, names.count(x)] for x in set(names)]
@@ -374,26 +365,7 @@ class MainWindow(QtGui.QMainWindow):
                    ' events')
             item.setText(text)
             self.epochList.ui.listWidgetEvents.addItem(item)
-        # Adds items to dictionary for corresponding events.
-        """
-        for value in epochs_raw.event_id.values():
-            event_counts[str(value)] = 0
-        # Adds number of events to corresponding event.
-        for event in epochs_raw.events:
-            for key in event_counts.keys():
-                if event[2] == int(key):
-                    event_counts[key] += 1
-        
-        # Adds event names, ids and event counts on mainWindows parameters
-        # list.
-        for key,value in epochs_raw.event_id.items():
-            item = QtGui.QListWidgetItem()
-            item.setText(key + ': ID ' + str(value) + ', ' + \
-            str(event_counts[str(value)]) + ' events')
-            self.epochList.ui.listWidgetEvents.addItem(item)
-        """
         # TODO: create category items to add on the listWidgetEvents widget. 
-        #self.epochList.ui.listWidgetEvents.setText(categories)
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
         # Creates dictionary of strings instead of qstrings for rejections.
@@ -534,7 +506,7 @@ class MainWindow(QtGui.QMainWindow):
         if fname == '': return
         if not os.path.isfile(fname): return
         
-        epochs, params = fileManager.load_epochs(fname)
+        epochs, params = fileManager.load_epochs(fname, load_object=True)
         # Change color of the item to red if no param file available.
         fname_base = os.path.basename(fname)
         fname_prefix = fname_base.split('.')[0]
@@ -558,8 +530,11 @@ class MainWindow(QtGui.QMainWindow):
             brush = QtGui.QBrush()
             brush.setColor(color)
             item.setForeground(brush)
+        path = self.caller.experiment.active_subject._epochs_directory
+        fileManager.save_epoch(os.path.join(path, fname_prefix + '.fif'),
+                               epochs, params)
         self.caller.experiment.active_subject.handle_new_epochs(fname_prefix,
-                                                                epochs, params)
+                                                                params)
         self.epochList.addItem(item)
         self.epochList.setCurrentItem(item)
 
@@ -961,9 +936,13 @@ class MainWindow(QtGui.QMainWindow):
         def handle_close(event):
             self.caller.save_raw()
             self._initialize_ui()
+        if self.ui.checkBoxShowEvents.isChecked():
+            events = self.caller.experiment.active_subject.get_events()
+        else:
+            events = None
         try:
             raw = self.caller.experiment.active_subject._working_file
-            fig = raw.plot(block=True, show=True)
+            fig = raw.plot(block=True, show=True, events=events)
             fig.canvas.mpl_connect('close_event', handle_close)
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
@@ -984,6 +963,16 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
+
+    def on_pushButtonPlotProjections_clicked(self, checked=None):
+        """Plots added projections as topomaps."""
+        if checked is None: return
+        if self.caller.experiment is None: return
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        raw = self.caller.experiment.active_subject._working_file
+        raw.plot_projs_topomap()
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """

@@ -131,7 +131,7 @@
                 <rect>
                  <x>9</x>
                  <y>9</y>
-                 <width>425</width>
+                 <width>439</width>
                  <height>596</height>
                 </rect>
                </property>
@@ -560,15 +560,8 @@
                    <string>Visualization:</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_3">
-                   <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_32">
-                     <item>
-                      <widget class="QPushButton" name="pushButtonRawPlot">
-                       <property name="text">
-                        <string>Raw plot</string>
-                       </property>
-                      </widget>
-                     </item>
+                   <item row="1" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout_11">
                      <item>
                       <widget class="QPushButton" name="pushButtonSpectrum">
                        <property name="text">
@@ -580,6 +573,31 @@
                       <widget class="QPushButton" name="pushButtonMNE_Browse_Raw_2">
                        <property name="text">
                         <string>MNE_Browse_Raw</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButtonPlotProjections">
+                       <property name="text">
+                        <string>Plot projections</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="0" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout_32">
+                     <item>
+                      <widget class="QPushButton" name="pushButtonRawPlot">
+                       <property name="text">
+                        <string>Raw plot</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="checkBoxShowEvents">
+                       <property name="text">
+                        <string>Show events</string>
                        </property>
                       </widget>
                      </item>

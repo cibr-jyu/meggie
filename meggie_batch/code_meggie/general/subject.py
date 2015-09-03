@@ -307,6 +307,16 @@ class Subject(QObject):
             raise TypeError('Not a raw object')
         if self.stim_channel == None:
             return
+        events = self.get_events()
+        
+        bins = np.bincount(events[:,2]) #number of events stored in an array
+        d = dict()
+        for i in set(events[:,2]):
+            d[i] = bins[i]
+        self._event_set = d
+
+    def get_events(self):
+        """Helper for reading the events."""
         try:
             events = mne.find_events(self._working_file,
                                      stim_channel=self._stim_channel)
@@ -316,11 +326,7 @@ class Subject(QObject):
             events = mne.find_events(self.working_file,
                                      stim_channel=self._stim_channel,
                                      shortest_event=1)
-        bins = np.bincount(events[:,2]) #number of events stored in an array
-        d = dict()
-        for i in set(events[:,2]):
-            d[i] = bins[i]
-        self._event_set = d
+        return events
 
     def add_epochs(self, epochs):
         """
@@ -341,14 +347,13 @@ class Subject(QObject):
         return mne.read_epochs(os.path.join(self._epochs_directory,
                                             name + '.fif'))
 
-    def handle_new_epochs(self, name, epochs_raw, params):
+    def handle_new_epochs(self, name, params):
         """
         Creates Epochs object and adds it to the self._epochs dictionary.
         Does nothing if given collection name exists in epochs dictionary.
 
         Keyword arguments
         name        -- name of the epoch collection
-        epochs_raw  -- raw epochs file
         params      -- epochs parameters
         Returns the epochs obejct
         """

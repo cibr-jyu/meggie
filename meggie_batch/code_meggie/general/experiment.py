@@ -495,8 +495,8 @@ class Experiment(QObject):
                 fname = os.path.join(path, f)
 
                 name = f[:-4]
-                epochs, params = fileManager.load_epochs(fname)
-                subject.handle_new_epochs(name, epochs, params)
+                _, params = fileManager.load_epochs(fname)
+                subject.handle_new_epochs(name, params)
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
                 if params is None:

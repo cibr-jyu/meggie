@@ -430,23 +430,27 @@ def delete_file_at(folder, files):
     except OSError: raise
 
 
-def load_epochs(fname):
+def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
     Keyword arguments:
-    fname -- the name of the fif-file containing epochs.
+    fname         -- the name of the fif-file containing epochs.
+    load_object   -- boolean to indicate whether to load epoch objects to
+                     memory.
     
     # TODO: fix this.
     Return a tuple with an Epochs instance and 
     """
-    try:
-        epochs = mne.read_epochs(fname)
-    except IOError:
-        message = 'Reading from selected folder is not allowed.'
-        messageBox = messageBoxes.shortMessageBox(message)
-        messageBox._exec()
-        return epochs
-
+    if load_object:
+        try:
+            epochs = mne.read_epochs(fname)
+        except IOError:
+            message = 'Reading from selected folder is not allowed.'
+            messageBox = messageBoxes.shortMessageBox(message)
+            messageBox._exec()
+            return epochs
+    else:
+        epochs = None
     try:
         parameters = unpickle(fname[:-4] + '.param')
     except IOError:

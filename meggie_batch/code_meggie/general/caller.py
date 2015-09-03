@@ -253,13 +253,16 @@ class Caller(object):
         comp_ssp = dic.get('average')
         preload = True #TODO File
         ch_name = dic.get('ch_name')
-        
+
+        subject = self.experiment.active_subject
+        prefix = os.path.join(subject.subject_path, subject.subject_name)
+        """
         if raw_in.info.get('filename').endswith('_raw.fif') or \
         raw_in.info.get('filename').endswith('-raw.fif'):
             prefix = raw_in.info.get('filename')[:-8]
         else:
             prefix, _ = os.path.splitext(raw_in.info.get('filename')) 
-        
+        """
         ecg_event_fname = prefix + '_ecg-eve.fif'
         
         if comp_ssp:
@@ -281,15 +284,12 @@ class Caller(object):
         
         if len(events) == 0:
             self.result = Exception('No ECG events found. Change settings.')
-            #message = 'No ECG events found. Change settings.'
-            #self.messageBox = messageBoxes.shortMessageBox(message)
-            #self.messageBox.show()
             self.e.set()
             return -1
         
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
-        
+
         print "Writing ECG projections in %s" % ecg_proj_fname
         try:
             mne.write_proj(ecg_proj_fname, projs)
@@ -371,13 +371,15 @@ class Caller(object):
         preload = True #TODO File
         reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
                       eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
-        
+        """
         if (raw_in.info.get('filename').endswith('_raw.fif') 
         or raw_in.info.get('filename').endswith('-raw.fif')):
-            prefix = raw_in.info.get('filename')[:-8]
+            prefix = raw_in.info.get('fil    ename')[:-8]
         else:
             prefix = raw_in.info.get('filename')[:-4]
-            
+        """
+        subject = self.experiment.active_subject
+        prefix = os.path.join(subject.subject_path, subject.subject_name) 
         eog_event_fname = prefix + '_eog-eve.fif'
         
         if comp_ssp:
@@ -659,7 +661,7 @@ class Caller(object):
                       'eeg': eeg, 'stim': stim, 'eog': eog,
                       'reject': reject, 'tmin': tmin, 'tmax': tmax,
                       'collectionName': epoch_name, 'raw': fname}
-            epochs_object = this_subject.handle_new_epochs(epoch_name, epochs, params)
+            this_subject.handle_new_epochs(epoch_name, params)
             #epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
         if self.result == '':
@@ -683,8 +685,7 @@ class Caller(object):
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
         fname = epoch_params['collectionName']
-        self.experiment.active_subject.handle_new_epochs(fname, epochs,
-                                                         epoch_params)
+        self.experiment.active_subject.handle_new_epochs(fname, epoch_params)
 
         fpath = os.path.join(self.experiment.active_subject._epochs_directory,
                              fname)
@@ -1402,12 +1403,12 @@ class Caller(object):
             if isfile(fName):
                 files2ave.append(fName)
 
-        print 'Found ' + str(len(files2ave)) + ' subjects with epochs ' + \
-                'labeled '+ epochs_name + '.'
+        print ('Found ' + str(len(files2ave)) + ' subjects with epochs ' + 
+               'labeled '+ epochs_name + '.')
         if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) + \
-                                  " subjects of " + str(len(subjects)) + \
-                                  " with epochs labeled: " + \
+            self.result = Warning("Found only " + str(len(files2ave)) +
+                                  " subjects of " + str(len(subjects)) +
+                                  " with epochs labeled: " +
                                   epochs_name + "!\n")
         powers = []
         itcs = []
