@@ -1,5 +1,4 @@
 # coding: latin1
-from meggie.code_meggie.general.fileManager import load_epochs
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.

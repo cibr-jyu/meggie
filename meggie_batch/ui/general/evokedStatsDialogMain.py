@@ -83,8 +83,12 @@ class EvokedStatsDialog(QtGui.QDialog):
         state -- Integer stating whether the checkbox is checked or unchecked.
         """
         channels = mne.selection.read_selection(str(self.sender().text()))
-        has_spaces = ' ' in channels[0]
-        channels = _clean_names(channels, remove_whitespace=has_spaces)
+        if ' ' in channels[0] and (' ' not in
+                                   self.ui.listWidgetChannels.item(0).text()):
+            remove_spaces = True
+        else:
+            remove_spaces = False
+        channels = _clean_names(channels, remove_whitespace=remove_spaces)
         for channel in channels:
             for i in range(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)

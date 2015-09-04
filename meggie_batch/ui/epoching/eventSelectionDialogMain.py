@@ -55,7 +55,7 @@ class EventSelectionDialog(QtGui.QDialog):
     """
     caller = Caller.Instance()
     #custom signals:
-    epoch_params_ready = QtCore.pyqtSignal(dict, QtGui.QListWidget)
+    epoch_params_ready = QtCore.pyqtSignal(dict)
 
     def __init__(self, parent, params = None):
         """Initialize the event selection dialog.
@@ -304,7 +304,7 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage.show()
             return
 
-        self.epoch_params_ready.emit(param_dict, self.parent.epochList)
+        self.epoch_params_ready.emit(param_dict)
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
 

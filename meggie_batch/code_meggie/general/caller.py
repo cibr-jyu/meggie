@@ -714,7 +714,8 @@ class Caller(object):
                         title=title)
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025+0.04*len(evokeds), 0.04)
-        for cond, col, pos in zip(conditions, colors[:len(evokeds)], positions):#np.arange(0.025, len(evokeds) * 0.02 + 0.025, 0.2)):
+        for cond, col, pos in zip(conditions, colors[:len(evokeds)],
+                                  positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
         
         fig.show()
