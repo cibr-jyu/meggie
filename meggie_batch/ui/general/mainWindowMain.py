@@ -567,11 +567,8 @@ class MainWindow(QtGui.QMainWindow):
                                                       _epochs_directory))
         if fname == '': return
         else: 
-            """
-            TODO: get epochs from active_subject._epochs dictionary
-            """
-            collection_name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-            epochs = self.caller.experiment.active_subject.get_epochs(collection_name)
+            name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+            epochs = self.caller.experiment.active_subject.get_epochs(name)
             epochs.save(fname)
         #Also copy the related csv-file to the chosen folder
         shutil.copyfile(os.path.join(self.caller.experiment.active_subject.\
@@ -762,12 +759,12 @@ class MainWindow(QtGui.QMainWindow):
         evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
         
-        print 'Meggie: Visualizing evoked collection ' + evoked_name + ' ...\n'
+        print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
             self.caller.draw_evoked_potentials(evoked_raw, layout)
-            print 'Meggie: Evoked collection ' + evoked_name + ' visualized! \n'
+            print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +\
+            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +
                                                 str(e))
             mBox.exec_()
         finally:
@@ -775,8 +772,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
             self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
             QtGui.QApplication.restoreOverrideCursor()
-              
-              
+
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
         Plots topology view of evoked response group averages. Saves the
@@ -1044,12 +1040,14 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
         #epochs_raw = epochs._raw
         self.tfr_dialog = TFRDialog(self, self.caller.experiment.active_subject.\
                                     _working_file, epochs)
+        QtGui.QApplication.restoreOverrideCursor()
         self.tfr_dialog.show()
 
     def on_pushButtonTFRTopology_clicked(self, checked=None):
@@ -1060,9 +1058,12 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         epochs_collection_name = str(self.epochList.ui.listWidgetEpochs.\
                                      currentItem().text())
         self.tfrTop_dialog = TFRTopologyDialog(self, epochs_collection_name)
+        QtGui.QApplication.restoreOverrideCursor()
         self.tfrTop_dialog.show()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
@@ -1407,11 +1408,11 @@ class MainWindow(QtGui.QMainWindow):
             if epochs_items is not None:
                 for item in epochs_items:
                     self.epochList.addItem(item)
-                    self.epochList.setCurrentItem(item)
+                self.epochList.setCurrentItem(item)
             if evokeds_items is not None:
                 for item in evokeds_items:
                     self.evokedList.addItem(item)
-                    self.evokedList.setCurrentItem(item)
+                self.evokedList.setCurrentItem(item)
 
             # This updates the 'Subject info' section below the subject list.
             try:
@@ -1657,7 +1658,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
-        
+
     def check_workspace(self):
         """
         Open the preferences dialog, in this case for choosing the workspace.
@@ -1665,16 +1666,13 @@ class MainWindow(QtGui.QMainWindow):
         preferencesDialog = PreferencesDialog(self)
         preferencesDialog.exec_()
 
-
     def change_workspace(self, workspace):
         if self.caller.experiment is None:
             return
         self.caller.experiment.workspace = workspace
 
-
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
-        
 
     """
     @atexit.register

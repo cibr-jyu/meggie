@@ -67,6 +67,8 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setFlags(QtCore.Qt.ItemIsEnabled)
             self.ui.listWidgetSubjects.addItem(item)
         # Connect signals and slots
         self.ui.listWidgetSubjects.currentItemChanged.connect(self.selection_changed)
@@ -83,11 +85,12 @@ class EogParametersDialog(QtGui.QDialog):
         
         # If calculation is done for the active subject only, the subject does
         # not need to be activated again and the raw file stays in memory.
-        if self.ui.checkBoxBatch.isChecked() == False:
+        if not self.ui.checkBoxBatch.isChecked():
             self.caller.experiment._active_subject._eog_params = self.\
             collect_parameter_values(False)
             error_message = self.\
-            calculate_eog(self.caller.experiment._active_subject, error_message)
+                calculate_eog(self.caller.experiment._active_subject,
+                              error_message)
             if len(error_message) > 0:
                 #Exception already handled in caller
                 QtGui.QApplication.restoreOverrideCursor()
@@ -104,17 +107,16 @@ class EogParametersDialog(QtGui.QDialog):
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
-            #if item.text() == recently_active_subject:
-            #    continue
-            subject_names.append(item.text())
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
 
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            error_message = self.\
-            calculate_eog(self.caller.experiment._active_subject,
-                          error_message)    
+            error_message += self.\
+                calculate_eog(self.caller.experiment._active_subject,
+                              error_message)    
         # Free the memory usage from the active subject to the batch process.
         self.caller.experiment._active_subject._working_file = None
         self.caller.experiment._active_subject = None
@@ -136,42 +138,42 @@ class EogParametersDialog(QtGui.QDialog):
         self.close()
 
     def on_pushButtonRemove_clicked(self, checked=None):
-        """Removes subject from the list of subjects to be processed.
-        """
+        """Removes subject from the list of subjects to be processed."""
         if checked is None: return
         item = self.ui.listWidgetSubjects.currentItem()
-        if self.ui.listWidgetSubjects.currentItem() is not None:
-            row = self.ui.listWidgetSubjects.row(item)
-            self.ui.listWidgetSubjects.takeItem(row)
-        else:
+        if item is None:
             message = 'Select a subject to remove.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
+        item.setCheckState(QtCore.Qt.Unchecked)
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
         """
         if checked is None: return
-        batch_checked = True
-        dictionary = self.collect_parameter_values(batch_checked)
+        item = self.ui.listWidgetSubjects.currentItem()
+        if item is None:
+            return
+        item.setCheckState(QtCore.Qt.Checked)
+        dictionary = self.collect_parameter_values(True)
         for subject in self.caller.experiment._subjects:
-            if subject._subject_name == str(self.ui.listWidgetSubjects.\
-                                            currentItem().text()):
+            if subject._subject_name == str(item.text()):
                 subject._eog_params = dictionary
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
         """
         if checked is None: return
-        batch_checked = True
         for i in range(self.ui.listWidgetSubjects.count()):
+            item = self.ui.listWidgetSubjects.item(i)
+            item.setCheckState(QtCore.Qt.Checked)
             for subject in self.caller.experiment._subjects:
-                if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
-                    subject._eog_params = self.collect_parameter_values(batch_checked)
+                if str(item.text()) == subject._subject_name:
+                    subject._eog_params = self.collect_parameter_values(True)
 
     def collect_parameter_values(self, batch_checked):
         """Collects parameter values from dialog.
-        
+
         Keyword arguments:
         batch_checked    -- True if batch processing is enabled
         """
@@ -185,87 +187,70 @@ class EogParametersDialog(QtGui.QDialog):
         if batch_checked is False:
             raw = self.caller.experiment.active_subject.working_file
             dictionary = {'i': raw}
-        
-        
+
         tmin = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmin'] = tmin
-        
+
         tmax = self.ui.doubleSpinBoxTmax.value()
         dictionary['tmax'] = tmax
-        
+
         event_id = self.ui.spinBoxEventsID.value()
         dictionary['event-id'] = event_id
-        
+
         low_freq = self.ui.spinBoxLowPass.value()
         dictionary['eog-l-freq'] = low_freq
-        
+
         high_freq = self.ui.spinBoxHighPass.value()
         dictionary['eog-h-freq'] = high_freq
-        
+    
         grad = self.ui.spinBoxGrad.value()
         dictionary['n-grad'] = grad
-        
+
         mag = self.ui.spinBoxMag.value()
         dictionary['n-mag'] = mag
-        
+
         eeg = self.ui.spinBoxEeg.value()
         dictionary['n-eeg'] = eeg
-        
+
         filter_low = self.ui.spinBoxLow.value()
         dictionary['l-freq'] = filter_low
-        
+
         filter_high = self.ui.spinBoxHigh.value()
         dictionary['h-freq'] = filter_high
-        
+
         rej_grad = self.ui.doubleSpinBoxGradReject.value()
         dictionary['rej-grad'] = rej_grad
-        
+
         rej_mag = self.ui.doubleSpinBoxMagReject.value()
         dictionary['rej-mag'] = rej_mag
-        
+
         rej_eeg = self.ui.doubleSpinBoxEEGReject.value()
         dictionary['rej-eeg'] = rej_eeg
-        
+
         rej_eog = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['rej-eog'] = rej_eog
-        
+
         bads = map(str.strip, str(self.ui.lineEditBad.text()).split(','))
         dictionary['bads'] = bads
-        
+
         start = self.ui.spinBoxStart.value()
         dictionary['tstart'] = start
-        
+
         taps = self.ui.spinBoxTaps.value()
         dictionary['filtersize'] = taps
-        
+
         njobs = self.ui.spinBoxJobs.value()
         dictionary['n-jobs'] = njobs
-        
+
         eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
         dictionary['avg-ref'] = eeg_proj
-        
+
         excl_ssp = self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked
         dictionary['no-proj'] = excl_ssp
-        
+
         comp_ssp = self.ui.checkBoxSSPCompute.checkState()==QtCore.Qt.Checked
         dictionary['average'] = comp_ssp
-                        
-        # Uses the caller related to mainwindow
-        """
-        try:
-            self.parent.caller.call_eog_ssp(dictionary)
-        except Exception, err:
-            message = 'Cannot calculate projections: ' + str(err)
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
-        
-        #self.parent._initialize_ui()
-        # No need to initialize the whole mainwindow again.
-        self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-        self.parent.ui.checkBoxEOGComputed.setChecked(True)
-        self.close()
-        """
+
         return dictionary
 
     def selection_changed(self):
@@ -276,7 +261,7 @@ class EogParametersDialog(QtGui.QDialog):
         # TODO: if experiment had subjects dictionary instead of list,
         # we could set:
         # subject = self.parent.experiment._subjects[subject_name]
-        
+
         for subject in self.caller.experiment._subjects:
             if subject_name == subject._subject_name:
                 try:
@@ -311,14 +296,12 @@ class EogParametersDialog(QtGui.QDialog):
                     self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
                 except IOError:
                     print '.param file not found.'
-                    
+
                     # TODO:
                     self.set_default_values()
 
-
     def set_default_values(self):
-        """Sets default values for dialog.
-        """
+        """Sets default values for dialog."""
         self.ui.doubleSpinBoxTmin.setProperty("value", -0.200)
         self.ui.doubleSpinBoxTmax.setProperty("value", 0.200)
         self.ui.spinBoxEventsID.setProperty("value", 998)
@@ -340,20 +323,19 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.checkBoxEEGProj.setChecked(False)
         self.ui.checkBoxSSPProj.setChecked(True)
         self.ui.checkBoxSSPCompute.setChecked(False)
-        
-        
+
     def set_previous_values(self, dic):
         """
         Sets the initial values of the dialog widgets to those used when the
         dialog was used (OK button was clicked) the previous time.
-        
+
         Keyword arguments:
         dic    -- the dictionary with previous values of fields, checkboxes, 
                   etc.
         """
         # If no parameter file exists, return
         if ( dic == None ): return
-        
+
         """
         Sets the values in the newly created dialog to those in the dictionary
         given. See the *** for the specifics about the dictionary.
@@ -388,12 +370,10 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.checkBoxSSPCompute.setChecked(ast.literal_eval(
                                            dic.get('average')))
 
-
-        
     def calculate_eog(self, subject, error_message):
         """Calls caller class for calculating the projections for the given
         subject and passes errors to accept method.
-        
+
         Keyword arguments:
         subject               -- Subject object
         error_message         -- string to store unsuccessful subject
@@ -404,11 +384,12 @@ class EogParametersDialog(QtGui.QDialog):
             subject._eog_params['i'] = self.caller.experiment._active_subject._working_file
         else:
             subject._eog_params['i'] = self.caller.experiment.\
-            get_subject_working_file(subject._subject_name)
+                get_subject_working_file(subject._subject_name)
         try:
-            result = self.caller.call_eog_ssp(subject._eog_params)
+            result = self.caller.call_eog_ssp(subject._eog_params, subject)
             if not result == 0:
-                return "Error"
+                return ("Error while computing projections for %s.\n" %
+                        subject.subject_name)
         except Exception:
             tb = traceback.format_exc()
             #error_message += '\n' + subject._subject_name + ': ' + str(err)
@@ -427,5 +408,3 @@ class EogParametersDialog(QtGui.QDialog):
         if self.ui.checkBoxBatch.isChecked() == True:
             subject._working_file = None
         return error_message
-
-        

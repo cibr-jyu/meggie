@@ -194,15 +194,16 @@ class Caller(object):
         self.experiment.save_experiment_settings()
         self.e.set()
 
-    def call_ecg_ssp(self, dic):
+    def call_ecg_ssp(self, dic, subject):
         """
         Creates ECG projections using SSP for given data.
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
+        subject       -- The subject to perform the action on.
         """
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._call_ecg_ssp, args=(dic,))
+        self.thread = Thread(target = self._call_ecg_ssp, args=(dic, subject))
         self.thread.start()
         while True:
             sleep(0.2)
@@ -214,7 +215,7 @@ class Caller(object):
             return -1
         return 0
         
-    def _call_ecg_ssp(self, dic):
+    def _call_ecg_ssp(self, dic, subject):
         """
         Performed in a worker thread.
         """
@@ -254,7 +255,7 @@ class Caller(object):
         preload = True #TODO File
         ch_name = dic.get('ch_name')
 
-        subject = self.experiment.active_subject
+        #subject = self.experiment.active_subject
         prefix = os.path.join(subject.subject_path, subject.subject_name)
         """
         if raw_in.info.get('filename').endswith('_raw.fif') or \
@@ -317,15 +318,16 @@ class Caller(object):
         """
      
         
-    def call_eog_ssp(self, dic):
+    def call_eog_ssp(self, dic, subject):
         """
         Creates EOG projections using SSP for given data.
         Keyword arguments:
         dic           -- dictionary of parameters including the MEG-data.
+        subject       -- The subject to perform action on.
         """
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._call_eog_ssp, args=(dic,))
+        self.thread = Thread(target = self._call_eog_ssp, args=(dic, subject))
         self.thread.start()
         while True:
             sleep(0.2)
@@ -337,7 +339,7 @@ class Caller(object):
             return -1
         return 0
         
-    def _call_eog_ssp(self, dic):
+    def _call_eog_ssp(self, dic, subject):
         """
         Performed in a worker thread.
         """
@@ -378,7 +380,7 @@ class Caller(object):
         else:
             prefix = raw_in.info.get('filename')[:-4]
         """
-        subject = self.experiment.active_subject
+        #subject = self.experiment.active_subject
         prefix = os.path.join(subject.subject_path, subject.subject_name) 
         eog_event_fname = prefix + '_eog-eve.fif'
         

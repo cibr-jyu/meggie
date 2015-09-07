@@ -248,7 +248,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         duration = time_after - time_before
         integral = self.statUpdater.integrate(data, times[min_idx:max_idx],
                                               time_before_i, time_after_i)
-        
+
         minimum = minimum * scale_factor
         maximum = maximum * scale_factor
         half_max = half_max * scale_factor
@@ -315,11 +315,6 @@ class EvokedStatsDialog(QtGui.QDialog):
                 ch_type = mne.channels.channels.channel_type(evoked.info,
                                                              ch_index)
             this_data.append(data[ch_index])
-        if len(this_data) == 0:
-            msg = ('Could not find data.')
-            messageBox = messageBoxes.shortMessageBox(msg)
-            messageBox.exec_()
-            return
 
         if ch_type == 'grad':
             suffix = 'fT/cm'
@@ -342,7 +337,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             suffix = 'uV'
             scaler = 1e6
         else:
-            msg = ('Statistics not supported for %s channels.' % ch_type)
+            msg = ('Could not find data.')
             messageBox = messageBoxes.shortMessageBox(msg)
             messageBox.exec_()
             return

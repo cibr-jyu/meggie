@@ -503,16 +503,6 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>Choose subjects to use in EOG/ECG calculation:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QListWidget" name="listWidgetSubjects_2"/>
-                </item>
-                <item>
                  <layout class="QHBoxLayout" name="horizontalLayout">
                   <item>
                    <widget class="QPushButton" name="pushButtonECG">
@@ -2790,7 +2780,7 @@
                 </item>
                </layout>
               </widget>
-              <widget class="QPushButton" name="pushButton_11">
+              <widget class="QPushButton" name="pushButtonMakeSourceEstimate">
                <property name="geometry">
                 <rect>
                  <x>480</x>

@@ -66,6 +66,8 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
         for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject._subject_name)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setFlags(QtCore.Qt.ItemIsEnabled)
             self.ui.listWidgetSubjects.addItem(item)
             
         # Connect signals and slots
@@ -239,7 +241,7 @@ class EcgParametersDialog(QtGui.QDialog):
         
         # If calculation is done for the active subject only, the subject does
         # not need to be activated again and the raw file stays in memory.
-        if self.ui.checkBoxBatch.isChecked() == False:
+        if not self.ui.checkBoxBatch.isChecked():
             self.caller.experiment._active_subject._ecg_params = self.\
             collect_parameter_values(False)
             incorrect_ECG_channel, error_message = \
@@ -251,8 +253,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 self.messageBox.show()
                 self.close()
                 return
-                #self.parent.ui.pushButtonApplyECG.setEnabled(False)
-                #self.parent.ui.checkBoxECGComputed.setChecked(False)
+
             if len(incorrect_ECG_channel) > 0:
                 self.messageBox = messageBoxes.\
                 shortMessageBox(incorrect_ECG_channel)
@@ -260,8 +261,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 self.messageBox.show()
                 self.close()
                 return
-                #self.parent.ui.pushButtonApplyECG.setEnabled(False)
-                #self.parent.ui.checkBoxECGComputed.setChecked(False)
+
             self.parent.ui.pushButtonApplyECG.setEnabled(True)
             self.parent.ui.checkBoxECGComputed.setChecked(True)
             QtGui.QApplication.restoreOverrideCursor()
@@ -273,9 +273,8 @@ class EcgParametersDialog(QtGui.QDialog):
         subject_names = []
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
-            #if item.text() == recently_active_subject:
-            #    continue
-            subject_names.append(item.text())
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
 
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
@@ -303,46 +302,46 @@ class EcgParametersDialog(QtGui.QDialog):
             self.messageBox.show()
         if len(incorrect_ECG_channel) > 0:
             self.messageBox = messageBoxes.\
-            shortMessageBox(incorrect_ECG_channel)
+                shortMessageBox(incorrect_ECG_channel)
             self.messageBox.show()
         self.close()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonRemove_clicked(self, checked=None):
-        """Removes subject from the list of subjects to be processed.
-        """
+        """Removes subject from the list of subjects to be processed."""
         if checked is None: return
         item = self.ui.listWidgetSubjects.currentItem()
-        if self.ui.listWidgetSubjects.currentItem() is not None:
-            row = self.ui.listWidgetSubjects.row(item)
-            self.ui.listWidgetSubjects.takeItem(row)
-        else:
+        if item is None:
             message = 'Select a subject to remove.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
+        item.setCheckState(QtCore.Qt.Unchecked)
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's ecg parameters dictionary.
         """
         if checked is None: return
-        batch_checked = True
-        dictionary = self.collect_parameter_values(batch_checked)
+        item = self.ui.listWidgetSubjects.currentItem()
+        if item is None:
+            return
+        dictionary = self.collect_parameter_values(True)
+        item.setCheckState(QtCore.Qt.Checked)
         for subject in self.caller.experiment._subjects:
-            if subject._subject_name == str(self.ui.listWidgetSubjects.\
-                                            currentItem().text()):
+            if subject._subject_name == str(item.text()):
                 subject._ecg_params = dictionary
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' ecg parameters dictionaries.
         """
         if checked is None: return
-        batch_checked = True
         error_message = ''
         for i in range(self.ui.listWidgetSubjects.count()):
+            item = self.ui.listWidgetSubjects.item(i)
             for subject in self.caller.experiment._subjects:
-                if str(self.ui.listWidgetSubjects.item(i).text()) == subject._subject_name:
-                    subject._ecg_params = self.collect_parameter_values(batch_checked)
+                if str(item.text()) == subject._subject_name:
+                    subject._ecg_params = self.collect_parameter_values(True)
+                    item.setCheckState(QtCore.Qt.Checked)
                     ch_name = subject._ecg_params['ch_name']
                     ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
                     if ch_name not in ch_list:
@@ -499,13 +498,13 @@ class EcgParametersDialog(QtGui.QDialog):
                 QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
             subject.ecg_params['ch_name'] = ch_name
-        if subject._subject_name == self.caller.experiment._active_subject_name:
+        if subject.subject_name == self.caller.experiment._active_subject_name:
             subject.ecg_params['i'] = self.caller.experiment._active_subject._working_file
         else:
             subject._ecg_params['i'] = self.caller.experiment.\
-            get_subject_working_file(subject._subject_name)
+                                get_subject_working_file(subject.subject_name)
         try:
-            result = self.caller.call_ecg_ssp(subject._ecg_params)
+            result = self.caller.call_ecg_ssp(subject._ecg_params, subject)
             if not result == 0:
                 QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, 'Error while computing ECG projections.'
@@ -513,8 +512,8 @@ class EcgParametersDialog(QtGui.QDialog):
             tb = traceback.format_exc()
             #error_message += '\n' + subject._subject_name + ': ' + str(err)
             error_message += '\nAn error occurred during calculation for subject: ' + \
-            subject._subject_name + '. Proceed with care and check parameters!\n\n' + \
-            str(tb)
+                subject.subject_name + '. Proceed with care and check parameters!\n\n' + \
+                str(tb)
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._ecg_params['i']
@@ -524,7 +523,9 @@ class EcgParametersDialog(QtGui.QDialog):
             del subject._ecg_params['i']
         except Exception:
             pass
-        fileManager.pickleObjectToFile(subject._ecg_params, os.path.join(subject._subject_path, 'ecg_proj.param'))
+        fileManager.pickleObjectToFile(subject._ecg_params,
+                                       os.path.join(subject._subject_path,
+                                                    'ecg_proj.param'))
         if self.ui.checkBoxBatch.isChecked() == True:
             subject._working_file = None
         QtGui.QApplication.restoreOverrideCursor()
