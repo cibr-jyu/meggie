@@ -147,7 +147,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         if self.ui.radioButtonGrad.isChecked():
             picks = mne.pick_types(evoked.info, meg='grad', ref_meg=False,
                                    selection=selection)
-        elif self.ui.radioButtonMag.ischecked():
+        elif self.ui.radioButtonMag.isChecked():
             picks = mne.pick_types(evoked.info, meg='mag', ref_meg=False,
                                    selection=selection)
         elif self.ui.radioButtonEeg.isChecked():
@@ -303,6 +303,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         min_idx = np.searchsorted(times, tmin)
         max_idx = np.searchsorted(times, tmax)
         data = evoked.data[:, min_idx:max_idx]
+        times = evoked.times[min_idx:max_idx]
         this_data = list()
         ch_type = ''
         if isinstance(names, str):
@@ -313,13 +314,13 @@ class EvokedStatsDialog(QtGui.QDialog):
             if ch_type == '':
                 ch_type = mne.channels.channels.channel_type(evoked.info,
                                                              ch_index)
-            elif ch_type != mne.channels.channels.channel_type(evoked.info,
-                                                               ch_index):
-                msg = 'Channels are of different type.'
-                messageBox = messageBoxes.shortMessageBox(msg)
-                messageBox.exec_()
-                return
             this_data.append(data[ch_index])
+        if len(this_data) == 0:
+            msg = ('Could not find data.')
+            messageBox = messageBoxes.shortMessageBox(msg)
+            messageBox.exec_()
+            return
+
         if ch_type == 'grad':
             suffix = 'fT/cm'
             scaler = 1e13
@@ -358,10 +359,10 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         #time_min_i, time_max_i, time_before_i and time_after_i are actually
         #index values fetch the actual times from evoked.times.
-        time_min = self.evoked[0].times[time_min_i]
-        time_max = self.evoked[0].times[time_max_i]
-        time_before = self.evoked[0].times[time_before_i]
-        time_after = self.evoked[0].times[time_after_i]
+        time_min = times[time_min_i]
+        time_max = times[time_max_i]
+        time_before = times[time_before_i]
+        time_after = times[time_after_i]
 
         duration = time_after - time_before
         integral = self.statUpdater.integrate(data,
