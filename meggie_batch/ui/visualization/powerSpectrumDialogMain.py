@@ -39,7 +39,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         lout       - A layout file name.
         """
         QtGui.QDialog.__init__(self)
-        
+
         self.conditions = []
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
@@ -68,13 +68,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
         self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
         self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)
-        
+
         #Populate layouts combobox.
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)   
-        
-    
-        
+
     @QtCore.pyqtSlot(int)
     def on_RemoveWidget_clicked(self, index):
         """
@@ -284,9 +282,10 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if conditions == []: return
         for widget in self.conditions:
             self.on_RemoveWidget_clicked(widget.index)
-        i = 0
-        tmax = np.floor(self.caller.raw.index_as_time(self.caller.raw.n_times))
-        for condition in conditions:
+
+        raw = self.caller.experiment.active_subject.working_file
+        tmax = np.floor(raw.index_as_time(raw.n_times))
+        for idx, condition in enumerate(conditions):
             widget = PowerSpectrumWidget(tmax, self)
             widget.setStartTime(condition.getStartTime())
             widget.setEndTime(condition.getEndTime())
@@ -294,11 +293,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
             widget.setChannelColor(condition.getChannelColor())
             widget.on_ChannelsChanged(condition.getChannels())
             self.conditions.append(widget)
-            widget.index = i
+            widget.index = idx
             widget.removeWidget.connect(self.on_RemoveWidget_clicked)
             widget.channelCopy.connect(self.copyChannels)
             self.ui.verticalLayoutConditions.addWidget(widget)
-            i+=1
+
         self.ui.scrollAreaConditions.updateGeometry()
 
     def updateUi(self):

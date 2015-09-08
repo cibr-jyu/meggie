@@ -19,8 +19,6 @@ class EpochWidget(QtGui.QWidget):
     
     #Custom signals:
     on_selection_changed = pyqtSignal()
-    item_added = pyqtSignal(QtGui.QListWidgetItem)
-    #last_epoch_item_removed = pyqtSignal()
 
     def __init__(self, parent):
         """
@@ -44,7 +42,6 @@ class EpochWidget(QtGui.QWidget):
         If item is a list, add all the items in it. Item text is converted to
         start with an uppercase letter and the list is also sorted in ascending
         order.
-        Emit an item_added signal
         
         Keyword arguments:
         item   = a single QListWidgetItem or a list of QListWidgetItems
@@ -66,7 +63,6 @@ class EpochWidget(QtGui.QWidget):
                                                           MatchFixedString):
                     self.ui.listWidgetEpochs.addItem(item)
                     self.ui.listWidgetEpochs.sortItems()
-                    self.item_added.emit(item)
                 else:
                     if overwrite: return
                     suffix += 1
@@ -80,7 +76,6 @@ class EpochWidget(QtGui.QWidget):
                     item.setText(str(item.text()) + str(suffix))
                     self.ui.listWidgetEpochs.addItem(item)
                     self.ui.listWidgetEpochs.sortItems()
-                    self.item_added.emit(item) 
                 else:
                     suffix += 1
                     self.addItem(item, suffix)
