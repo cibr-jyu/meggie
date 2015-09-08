@@ -4,28 +4,26 @@ Created on 26.2.2015
 @author: Jaakko Leppakangas
 '''
 from PyQt4 import QtGui, QtCore
-#from PyQt4.Qt import QSettings
+from PyQt4.Qt import pyqtSlot
 
 import numpy as np
 from mne import find_events
 
 from code_meggie.general.caller import Caller
 from powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from timeSeriesDialogMain import TimeSeriesDialog
 from ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
 from ui.general.messageBoxes import shortMessageBox
 from code_meggie.general import fileManager
-from PyQt4.Qt import pyqtSlot
-#from timeSeriesDialog import TimeSeriesDialog
+
 
 class PowerSpectrumDialog(QtGui.QDialog):
     fileChanged = QtCore.pyqtSignal()
     caller = Caller.Instance()
     conditions = []
     tmax = 1000
-    #settings = QSettings("CIBR", "Eggie")
     
-    def __init__(self, parent): #, conditions, fmin, fmax, nfft, logarithm, lout, 
-        #tmax):
+    def __init__(self, parent):
         """
         Init method for the dialog.
         Constructs a set of time series from the given parameters.
@@ -110,9 +108,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                             '/home/', 
                             "Layout-files (*.lout *.lay);;All files (*.*)"))
         self.ui.labelLayout.setText(fname)
-        #self.settings.setValue("Layout", fname)
-        
-        
+
     def on_pushButtonAddTimeSeries_clicked(self, checked=None):
         """
         Called when the add condition button is clicked.
@@ -128,8 +124,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.verticalLayoutConditions.addWidget(widget)
         widget.removeWidget.connect(self.on_RemoveWidget_clicked)
         widget.channelCopy.connect(self.copyChannels)
-    
-    
+
     def accept(self, *args, **kwargs):
         """
         
@@ -272,13 +267,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
         Opens a TimeSeriesDialog.
         Called when construct time series from triggers -button is clicked.
         """
-        pass
-        """
-        if checked is None or self.caller.raw is None: return
+        if checked is None:
+            return
         dialog = TimeSeriesDialog()
         dialog.timeSeriesChanged.connect(self.on_TimeSeriesChanged)
         dialog.exec_()
-        """
 
     @QtCore.pyqtSlot(list)    
     def on_TimeSeriesChanged(self, conditions):

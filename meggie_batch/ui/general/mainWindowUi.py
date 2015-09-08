@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Thu Sep  3 03:34:16 2015
+# Created: Tue Sep  8 03:24:59 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -212,12 +212,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_18.addWidget(self.pushButtonFilter)
         self.gridLayout_13.addLayout(self.horizontalLayout_18, 0, 0, 1, 1)
         self.verticalLayout_21.addWidget(self.groupBoxAvailablePreprocessing)
-        self.label_2 = QtGui.QLabel(self.layoutWidget)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.verticalLayout_21.addWidget(self.label_2)
-        self.listWidgetSubjects_2 = QtGui.QListWidget(self.layoutWidget)
-        self.listWidgetSubjects_2.setObjectName(_fromUtf8("listWidgetSubjects_2"))
-        self.verticalLayout_21.addWidget(self.listWidgetSubjects_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.pushButtonECG = QtGui.QPushButton(self.layoutWidget)
@@ -1223,9 +1217,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_19.addWidget(self.listView_2)
         self.verticalLayout_25.addLayout(self.verticalLayout_19)
         self.formLayout_15.setLayout(0, QtGui.QFormLayout.SpanningRole, self.verticalLayout_25)
-        self.pushButton_11 = QtGui.QPushButton(self.tabSourceEstimate)
-        self.pushButton_11.setGeometry(QtCore.QRect(480, 40, 121, 491))
-        self.pushButton_11.setObjectName(_fromUtf8("pushButton_11"))
+        self.pushButtonMakeSourceEstimate = QtGui.QPushButton(self.tabSourceEstimate)
+        self.pushButtonMakeSourceEstimate.setGeometry(QtCore.QRect(480, 40, 121, 491))
+        self.pushButtonMakeSourceEstimate.setObjectName(_fromUtf8("pushButtonMakeSourceEstimate"))
         self.label_35 = QtGui.QLabel(self.tabSourceEstimate)
         self.label_35.setGeometry(QtCore.QRect(460, 280, 16, 16))
         self.label_35.setObjectName(_fromUtf8("label_35"))
@@ -1628,7 +1622,6 @@ class Ui_MainWindow(object):
         self.groupBoxAvailablePreprocessing.setTitle(_translate("MainWindow", "Available actions:", None))
         self.pushButtonMaxFilter.setText(_translate("MainWindow", "MaxFilter...", None))
         self.pushButtonFilter.setText(_translate("MainWindow", "Filter...", None))
-        self.label_2.setText(_translate("MainWindow", "Choose subjects to use in EOG/ECG calculation:", None))
         self.pushButtonECG.setText(_translate("MainWindow", "Calculate ECG projections...", None))
         self.pushButtonApplyECG.setText(_translate("MainWindow", "Apply ECG projections...", None))
         self.pushButtonEOG.setText(_translate("MainWindow", "Calculate EOG projections...", None))
@@ -1744,7 +1737,7 @@ class Ui_MainWindow(object):
         self.radioButton.setText(_translate("MainWindow", "Raw file", None))
         self.radioButton_2.setText(_translate("MainWindow", "Epoch collection", None))
         self.radioButton_3.setText(_translate("MainWindow", "Evoked dataset", None))
-        self.pushButton_11.setText(_translate("MainWindow", "Make \n"
+        self.pushButtonMakeSourceEstimate.setText(_translate("MainWindow", "Make \n"
 " source estimate...\n"
 "HUOM! Tämän takaa \n"
 "voisi valita \n"

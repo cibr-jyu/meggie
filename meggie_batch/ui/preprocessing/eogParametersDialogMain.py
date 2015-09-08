@@ -42,37 +42,30 @@ import traceback
 
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import pyqtSignal
+
+from projectorDialog import ProjectorDialog
 from eogParametersDialogUi import Ui_Dialog
-from code_meggie.general.caller import Caller
 
 import fileManager
 
 import messageBoxes
 
-class EogParametersDialog(QtGui.QDialog):
+
+class EogParametersDialog(ProjectorDialog):
     """
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
     """
-    caller = Caller.Instance()
     computed = pyqtSignal(bool)
 
     def __init__(self, parent):
         """
         Constructor. Initializes the dialog.
         """
-        QtGui.QDialog.__init__(self)
-        self.parent = parent
-        self.ui = Ui_Dialog() # Refers to class in module eogParametersDialog
-        self.ui.setupUi(self)
-        for subject in self.caller.experiment._subjects:
-            item = QtGui.QListWidgetItem(subject._subject_name)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            item.setFlags(QtCore.Qt.ItemIsEnabled)
-            self.ui.listWidgetSubjects.addItem(item)
+        ProjectorDialog.__init__(self, parent, Ui_Dialog)
         # Connect signals and slots
         self.ui.listWidgetSubjects.currentItemChanged.connect(self.selection_changed)
-        
+
     def accept(self):
         """
         Collects the parameters for calculating PCA projections and passes 
@@ -87,7 +80,7 @@ class EogParametersDialog(QtGui.QDialog):
         # not need to be activated again and the raw file stays in memory.
         if not self.ui.checkBoxBatch.isChecked():
             self.caller.experiment._active_subject._eog_params = self.\
-            collect_parameter_values(False)
+                collect_parameter_values(False)
             error_message = self.\
                 calculate_eog(self.caller.experiment._active_subject,
                               error_message)
@@ -136,16 +129,6 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
-
-    def on_pushButtonRemove_clicked(self, checked=None):
-        """Removes subject from the list of subjects to be processed."""
-        if checked is None: return
-        item = self.ui.listWidgetSubjects.currentItem()
-        if item is None:
-            message = 'Select a subject to remove.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-        item.setCheckState(QtCore.Qt.Unchecked)
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.

@@ -84,45 +84,45 @@ class EpochWidget(QtGui.QWidget):
                 else:
                     suffix += 1
                     self.addItem(item, suffix)
-                    
+
     def clearItems(self):
         """Remove all the items from the widget's list.
         """
         while self.ui.listWidgetEpochs.count() > 0:
             self.ui.listWidgetEpochs.takeItem(0)
-            
+
     def currentItem(self):
         """return The currently selected item from the widget's list."""
         if self.ui.listWidgetEpochs.count() == 0: return None
         else:
             return self.ui.listWidgetEpochs.currentItem() 
-            
+
     def isEmpty(self):
         """Return True if the widget is empty, otherwise return False."""
         if self.ui.listWidgetEpochs.count() > 0:
             return False
         else:
             return True
-        
+
     def remove_item(self, item):
         """Remove an item from the list.
-        
+
         Keyword arguments:
-        
+
         item -- The item to be removed
         """
         row = self.ui.listWidgetEpochs.row(item)
         self.ui.listWidgetEpochs.takeItem(row)
-            
+
     def setCurrentItem(self, item):
         """
         sets the current item of the widget's list.
-        
+
         Keyword arguments:
         item = item to be set as the current item.
         """
         self.ui.listWidgetEpochs.setCurrentItem(item)
-        
+
     def selection_changed(self):
         item = self.ui.listWidgetEpochs.currentItem()
         if item is None: return
