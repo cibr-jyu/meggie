@@ -2134,130 +2134,127 @@ class Caller(object):
                                raw=rawPath, subject=subject,
                                subjects_dir=subjects_dir)
         QtCore.QCoreApplication.processEvents()
-        
+
         # Needed for copying the resulting trans file to the right location.
         self.coregHowtoDialog = holdCoregistrationDialog(self, activeSubject,
                                                          selectedFmodelName) 
-        self.coregHowtoDialog.ui.labelTransFileWarning.hide()   
+        self.coregHowtoDialog.ui.labelTransFileWarning.hide()
         self.coregHowtoDialog.show()
 
     def create_forward_solution(self, fsdict):
         """
         Creates a forward solution based on parameters given in fsdict.
-        
+
         Keyword arguments:
-        
+
         fsdict    -- dictionary of parameters for forward solution creation.
         """
-        
-        activeSubject = self.parent._experiment._active_subject 
+        activeSubject = self.parent._experiment._active_subject
         rawInfo = activeSubject._working_file.info
-        
+
         tableView = self.parent.ui.tableViewFModelsForSolution
         selectedRowIndexes = tableView.selectedIndexes()
         selectedFmodelName = selectedRowIndexes[0].data()
-        
+
         fmdir = os.path.join(activeSubject._forwardModels_directory,
-                               selectedFmodelName) 
+                             selectedFmodelName)
         transFilePath = os.path.join(fmdir, 'reconFiles',
                                      'reconFiles-trans.fif')
-        
+
         srcFileDir = os.path.join(fmdir, 'reconFiles', 'bem')
         srcFilePath = None
         for f in os.listdir(srcFileDir):
             if fnmatch.fnmatch(f, 'reconFiles*src.fif'):
                 srcFilePath = os.path.join(srcFileDir, f)
-        
+
         bemSolFilePath = None
         for f in os.listdir(srcFileDir):
             if fnmatch.fnmatch(f, 'reconFiles*bem-sol.fif'):
                 bemSolFilePath = os.path.join(srcFileDir, f)
-        
-        targetFileName = os.path.join(fmdir, 'reconFiles', 'reconFiles-fwd.fif')
-    
+
+        targetFileName = os.path.join(fmdir, 'reconFiles',
+                                      'reconFiles-fwd.fif')
+
         try:
-            mne.make_forward_solution(rawInfo, transFilePath, srcFilePath, 
-                                  bemSolFilePath, targetFileName,
-                                  fsdict['includeMEG'], fsdict['includeEEG'],
-                                  fsdict['mindist'], fsdict ['ignoreref'], True,
-                                  fsdict['njobs'])
+            mne.make_forward_solution(rawInfo, transFilePath, srcFilePath,
+                                      bemSolFilePath, targetFileName,
+                                      fsdict['includeMEG'],
+                                      fsdict['includeEEG'], fsdict['mindist'],
+                                      fsdict['ignoreref'], True,
+                                      fsdict['njobs'])
             fileManager.write_forward_solution_parameters(fmdir, fsdict)
             self.parent.forwardModelModel.initialize_model()
         except Exception as e:
             title = 'Error'
-            message = 'There was a problem with forward solution. The ' + \
-            'MNE-Python message was: \n\n' + str(e)
-            self.messageBox = messageBoxes.longMessageBox(title, message)
+            msg = ('There was a problem with forward solution. The MNE-Python '
+                   'message was: \n\n' + str(e))
+            self.messageBox = messageBoxes.longMessageBox(title, msg)
             self.messageBox.show()
 
     def create_covariance_from_raw(self, cvdict):
         """
-        Computes a covariance matrix based on raw file and saves it to the 
+        Computes a covariance matrix based on raw file and saves it to the
         approriate location under the subject.
-        
+
         Keyword arguments:
-        
+
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
         subjectName = cvdict['rawsubjectname']
         fileNameToWrite = ''
         try:
-            if subjectName != None:
+            if subjectName is not None:
                 if subjectName == self.experiment.active_subject_name:
                     fileNameToWrite = subjectName + '-cov.fif'
                     raw = self.experiment.active_subject.working_file
                 else:
                     fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.get_subject_working_file(
-                                                        subjectName) 
+                    raw = self.experiment.get_subject_working_file(subjectName)
             else:
                 raw = fileManager.open_raw(cvdict['rawfilepath'], True)
                 basename = os.path.basename(cvdict['rawfilepath'])
                 fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
         except Exception:
             raise
-        
+
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
         tstep = cvdict['tstep']
-        
+
         reject = cvdict['reject']
         flat = cvdict['flat']
         picks = cvdict['picks']
-        
+
         try:
             cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
-                  reject, flat, picks)
+                                                  reject, flat, picks)
         except ValueError:
             raise
-        
-        sourceAnalysisDir = self.experiment.active_subject. \
-                            _source_analysis_directory
-        
+
+        path = self.experiment.active_subject._source_analysis_directory
+
         # Remove previous covariance file before creating a new one.
-        fileManager.remove_files_with_regex(sourceAnalysisDir,'.*-cov.fif')
-        
-        filePathToWrite = os.path.join(sourceAnalysisDir, fileNameToWrite)
+        fileManager.remove_files_with_regex(path, '.*-cov.fif')
+
+        filePathToWrite = os.path.join(path, fileNameToWrite)
         try:
             mne.write_cov(filePathToWrite, cov)
         except IOError as err:
-            err.message = 'Could not write covariance file. ' + \
-            'The error message was: \n\n' + err.message 
+            err.message = ('Could not write covariance file. The error '
+                           'message was: \n\n' + err.message)
             raise
-        
+
         # Delete previous and write a new parameter file.
         try:
-            fileManager.remove_files_with_regex(sourceAnalysisDir,
-                                                'covariance.param')
-            cvparamFile = os.path.join(sourceAnalysisDir, 'covariance.param')
-            fileManager.pickleObjectToFile(cvdict,cvparamFile)
-            
+            fileManager.remove_files_with_regex(path, 'covariance.param')
+            cvparamFile = os.path.join(path, 'covariance.param')
+            fileManager.pickleObjectToFile(cvdict, cvparamFile)
+
         except Exception:
-            fileManager.remove_files_with_regex(sourceAnalysisDir,
-                                                '*-cov.fif')
+            fileManager.remove_files_with_regex(path, '*-cov.fif')
             raise
-        
+
         # Update ui.
         self.parent.update_covariance_info_box()
 
@@ -2271,6 +2268,6 @@ class Caller(object):
         self.experiment.update_working_file(fname)
         self.experiment.active_subject_raw_path = fname
         self.experiment.active_subject.working_file = raw
-        status = "Current working file: " + \
-        os.path.basename(self.experiment.active_subject_raw_path)
+        status = "Current working file: " + os.path.basename
+        (self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)
