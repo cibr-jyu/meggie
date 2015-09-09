@@ -148,8 +148,6 @@ class MainWindow(QtGui.QMainWindow):
 
         # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.ui.pushButtonMNE_Browse_Raw_2.clicked.connect
-        (self.on_pushButtonMNE_Browse_Raw_clicked)
 
         # Models for several views in the UI, e.g. in the forward model setup
         # tab.
@@ -940,6 +938,10 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
+
+    def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
+        """Call mne_browse_raw."""
+        self.on_pushButtonMNE_Browse_Raw_clicked(checked)
 
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""

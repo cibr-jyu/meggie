@@ -4,7 +4,6 @@ Created on 26.2.2015
 @author: Jaakko Leppakangas
 '''
 from PyQt4 import QtGui, QtCore
-from PyQt4.Qt import pyqtSlot
 
 import numpy as np
 from mne import find_events
@@ -22,18 +21,18 @@ class PowerSpectrumDialog(QtGui.QDialog):
     caller = Caller.Instance()
     conditions = []
     tmax = 1000
-    
+
     def __init__(self, parent):
         """
         Init method for the dialog.
         Constructs a set of time series from the given parameters.
         Parameters:
         parent     - The parent window for this dialog.
-        conditions - A list of PowerSpectrumWidgets. The data from these 
+        conditions - A list of PowerSpectrumWidgets. The data from these
                      widgets are copied to this dialog.
         fmin       - Starting frequency of interest.
         fmax       - Ending frequency of interest.
-        nfft       - The length of the tapers ie. the windows. 
+        nfft       - The length of the tapers ie. the windows.
                      The smaller it is the smoother are the PSDs.
         logarithm  - A boolean that determines if a logarithmic scale is used.
         lout       - A layout file name.
@@ -59,7 +58,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         stim_channel = self.caller.experiment.active_subject._stim_channel
         try:
             triggers = find_events(raw, stim_channel=stim_channel)
-            for trigger in set(triggers[:,2]):
+            for trigger in set(triggers[:, 2]):
                 self.ui.comboBoxStart.addItem(str(trigger))
                 self.ui.comboBoxEnd.addItem(str(trigger))
         except Exception as e:
@@ -69,9 +68,9 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
         self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)
 
-        #Populate layouts combobox.
+        # Populate layouts combobox.
         layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)   
+        self.ui.comboBoxLayout.addItems(layouts)
 
     @QtCore.pyqtSlot(int)
     def on_RemoveWidget_clicked(self, index):
@@ -86,25 +85,25 @@ class PowerSpectrumDialog(QtGui.QDialog):
         # Restore order of indices:
         for i in xrange(len(self.conditions)):
             self.conditions[i].index = i
-            
+
     @QtCore.pyqtSlot(int)
     def copyChannels(self, index):
-        """
-        """
+        """Copy the channels to all widgets."""
         channels = self.conditions[index].getChannels()
         for widget in self.conditions:
             widget.on_ChannelsChanged(channels)
-            
-            
+
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
         Called when browse layout button is clicked.
         Opens a file dialog for selecting a file.
         """
-        if checked is None: return
+        if checked is None:
+            return
         fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                            '/home/', 
-                            "Layout-files (*.lout *.lay);;All files (*.*)"))
+                                                      '/home/', "Layout-files "
+                                                      "(*.lout *.lay);;All "
+                                                      "files (*.*)"))
         self.ui.labelLayout.setText(fname)
 
     def on_pushButtonAddTimeSeries_clicked(self, checked=None):
@@ -112,7 +111,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         Called when the add condition button is clicked.
         Adds a new condition to the list.
         """
-        if checked is None: return
+        if checked is None:
+            return
         index = len(self.conditions)
         channels = self.conditions[0].getChannels()
         widget = PowerSpectrumWidget(self.tmax, self)
@@ -124,14 +124,12 @@ class PowerSpectrumDialog(QtGui.QDialog):
         widget.channelCopy.connect(self.copyChannels)
 
     def accept(self, *args, **kwargs):
-        """
-        
-        """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
+        """Starts the computation."""
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
+                                             (QtCore.Qt.WaitCursor))
 
         colors = []
-        times = [] # Array for start and end times.
+        times = []  # Array for start and end times.
         channelColors = dict()
         i = 0
         for condition in self.conditions:
@@ -139,11 +137,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
             end = condition.getEndTime()
             if end < start:
                 messageBox = QtGui.QMessageBox()
-                messageBox.setText("End time must be higher than the " + \
+                messageBox.setText("End time must be higher than the "
                                    "start time.")
                 QtGui.QApplication.restoreOverrideCursor()
                 messageBox.exec_()
-                return 
+                return
             times.append((start, end))
 
             colors.append(condition.getColor())
@@ -155,12 +153,12 @@ class PowerSpectrumDialog(QtGui.QDialog):
             messageBox.setText("Could not find data. Check parameters!")
             QtGui.QApplication.restoreOverrideCursor()
             messageBox.exec_()
-            return 
+            return
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
         if fmin >= fmax:
             messageBox = QtGui.QMessageBox()
-            messageBox.setText("End frequency must be higher than the " + \
+            messageBox.setText("End frequency must be higher than the "
                                "starting frequency.")
             QtGui.QApplication.restoreOverrideCursor()
             messageBox.exec_()
@@ -170,7 +168,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['fmin'] = fmin
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
-        params['log']  = self.ui.checkBoxLogarithm.isChecked()
+        params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['ch'] = str(self.ui.comboBoxChannels.currentText()).lower()
         if self.ui.radioButtonSelectLayout.isChecked():
             params['lout'] = str(self.ui.comboBoxLayout.currentText())
@@ -193,25 +191,26 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
         QtGui.QApplication.restoreOverrideCursor()
 
-    @QtCore.pyqtSlot(int)   
+    @QtCore.pyqtSlot(int)
     def on_comboBoxStart_currentIndexChanged(self, index):
         """
-        Method for setting time on the start time spinbox after trigger 
+        Method for setting time on the start time spinbox after trigger
         selection has changed.
         Parameters:
         index - Index of the selection in combobox.
         """
-        if not self.ui.checkBoxTriggers.isChecked(): return
+        if not self.ui.checkBoxTriggers.isChecked():
+            return
         raw = self.caller.experiment.active_subject.working_file
         stim_channel = self.caller.experiment.active_subject.stim_channel
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerStart = int(self.ui.comboBoxStart.currentText())
-        tmin = np.where(triggers[:,2]==triggerStart)[0][0]
+        tmin = np.where(triggers[:, 2] == triggerStart)[0][0]
         tmin = raw.index_as_time(triggers[tmin][0])
         tmin = int(tmin[0])
         self.conditions[0].setStartTime(tmin)
 
-    @QtCore.pyqtSlot(int)   
+    @QtCore.pyqtSlot(int)
     def on_comboBoxEnd_currentIndexChanged(self, index):
         """
         Method for setting time on the end time spinbox after trigger selection
@@ -219,27 +218,28 @@ class PowerSpectrumDialog(QtGui.QDialog):
         Parameters:
         index - Index of the selection in combobox.
         """
-        if not self.ui.checkBoxTriggers.isChecked(): return
+        if not self.ui.checkBoxTriggers.isChecked():
+            return
         raw = self.caller.experiment.active_subject.working_file
         stim_channel = self.caller.experiment.active_subject._stim_channel
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerEnd = int(self.ui.comboBoxEnd.currentText())
-        tmax = np.where(triggers[:,2]==triggerEnd)[0][0]
+        tmax = np.where(triggers[:, 2] == triggerEnd)[0][0]
         tmax = raw.index_as_time(triggers[tmax][0])
         tmax = int(tmax[0])
         self.conditions[0].setEndTime(tmax)
-        if not len(triggers) == len(set(triggers[:,2])):
-            message = 'Data contains more than one of each trigger value. ' +\
-                      'By selecting a trigger that appears in the data more '+\
-                      'than once, there is ambiguity in the selection of the'+\
-                      ' time window!'
-            mBox = shortMessageBox(message)
+        if not len(triggers) == len(set(triggers[:, 2])):
+            msg = ('Data contains more than one of each trigger value. By '
+                   'selecting a trigger that appears in the data more than '
+                   'once, there is ambiguity in the selection of the time '
+                   'window!')
+            mBox = shortMessageBox(msg)
             mBox.exec_()
 
     @QtCore.pyqtSlot(bool)
     def on_checkBoxTriggers_toggled(self, toggled):
         """
-        A slot for setting the powerspectrumwidgets according to trigger 
+        A slot for setting the powerspectrumwidgets according to trigger
         settings. Called when trigger check box is toggled.
         Parameters:
         toggled - A boolean that determines if check box is ticked.
@@ -271,7 +271,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         dialog.timeSeriesChanged.connect(self.on_TimeSeriesChanged)
         dialog.exec_()
 
-    @QtCore.pyqtSlot(list)    
+    @QtCore.pyqtSlot(list)
     def on_TimeSeriesChanged(self, conditions):
         """
         Slot for adding a set of PowerSpectrumWidgets to this dialog.
@@ -279,7 +279,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         Parameters:
         conditions - A list of PowerSpectrumWidgets.
         """
-        if conditions == []: return
+        if conditions == []:
+            return
         for widget in self.conditions:
             self.on_RemoveWidget_clicked(widget.index)
 

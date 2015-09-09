@@ -131,7 +131,7 @@
                 <rect>
                  <x>9</x>
                  <y>9</y>
-                 <width>439</width>
+                 <width>551</width>
                  <height>596</height>
                 </rect>
                </property>
@@ -659,6 +659,9 @@
                 </layout>
                </widget>
               </widget>
+              <zorder>layoutWidget</zorder>
+              <zorder>splitter_2</zorder>
+              <zorder>groupBoxVisualization_2</zorder>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">

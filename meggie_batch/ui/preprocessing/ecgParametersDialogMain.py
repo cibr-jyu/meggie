@@ -1,5 +1,4 @@
 # coding: latin1
-from meggie_batch.ui.preprocessing import projectorDialog
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
