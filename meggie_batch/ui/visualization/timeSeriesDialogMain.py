@@ -12,17 +12,19 @@ from timeSeriesDialogUi import Ui_TimeSeriesDialog
 from ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
 from code_meggie.general.caller import Caller
 
+
 class TimeSeriesDialog(QtGui.QDialog):
     """
+    Dialog for dynamically creating a set of time series. Time series is
+    created between the found events so that it is possible to divide segments
+    by inserting a trigger to the start of the segment.
     """
     caller = Caller.Instance()
     widgets = []
     timeSeriesChanged = QtCore.pyqtSignal(list)
 
     def __init__(self):
-        """
-        Init method for time series dialog.
-        """
+        """Init method for time series dialog."""
         QtGui.QDialog.__init__(self)
 
         self.ui = Ui_TimeSeriesDialog()
@@ -36,39 +38,39 @@ class TimeSeriesDialog(QtGui.QDialog):
         self.ui.comboBoxChannels.setCurrentIndex(index)
 
     def on_pushButtonFind_clicked(self, checked=None):
-        """
-        Finds events based on triggers on the selected channel.
-        """
-        if checked is None: return
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
+        """Finds events based on triggers on the selected channel."""
+        if checked is None:
+            return
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
+                                             (QtCore.Qt.WaitCursor))
         for widget in reversed(self.widgets):
             index = widget.index
             self.on_RemoveWidget_clicked(index)
         tstart = self.ui.spinBoxTstart.value()
         tend = self.ui.spinBoxTend.value()
         channel = str(self.ui.comboBoxChannels.currentText())
+        mask = self.ui.spinBoxMask.value()
         try:
-            events = mne.find_events(self.raw, stim_channel=channel,
+            events = mne.find_events(self.raw, stim_channel=channel, mask=mask,
                                      verbose=True)
         except:
             QtGui.QApplication.restoreOverrideCursor()
             return
-        tmax = np.floor(self.raw.index_as_time(self.raw.n_times)) # ms to s
+        tceil = np.floor(self.raw.index_as_time(self.raw.n_times))  # ms to s
         for i in xrange(len(events) - 1):
-            widget = PowerSpectrumWidget(tmax, self)
+            widget = PowerSpectrumWidget(tceil, self)
             widget.index = i
             widget.ui.pushButtonRemove.setVisible(True)
-            self.widgets.append(widget)
-            widget.removeWidget.connect(self.on_RemoveWidget_clicked)
-            widget.channelCopy.connect(self.copyChannels)
-            self.ui.verticalLayoutConditions.addWidget(widget)
             tmin = self.raw.index_as_time(events[i][0] -
                                           self.raw.first_samp) + tstart
             tmax = self.raw.index_as_time(events[i+1][0] -
                                           self.raw.first_samp) - tend
-            widget.setStartTime(tmin)
-            widget.setEndTime(tmax)
+            widget.setStartTime(tmin[0])
+            widget.setEndTime(tmax[0])
+            self.widgets.append(widget)
+            widget.removeWidget.connect(self.on_RemoveWidget_clicked)
+            widget.channelCopy.connect(self.copyChannels)
+            self.ui.verticalLayoutConditions.addWidget(widget)
         QtGui.QApplication.restoreOverrideCursor()
 
     @QtCore.pyqtSlot(int)
@@ -90,8 +92,7 @@ class TimeSeriesDialog(QtGui.QDialog):
 
     @QtCore.pyqtSlot(int)
     def copyChannels(self, index):
-        """
-        """
+        """Slot for copying channels of interest to all widgets."""
         channels = self.widgets[index].getChannels()
         for widget in self.conditions:
             widget.on_ChannelsChanged(channels)

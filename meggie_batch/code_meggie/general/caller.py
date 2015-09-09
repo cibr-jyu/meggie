@@ -25,9 +25,6 @@ from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
 from mne.time_frequency import compute_raw_psd
-# TODO find these or equivalent in mne 0.8
-# from mne.viz import plot_topo_power, plot_topo_phase_lock
-#from mne.viz import _clean_names
 
 import numpy as np
 import pylab as pl
