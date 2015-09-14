@@ -108,6 +108,16 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
 
+    def index_as_time(self, sample):
+        """
+        Aux function for converting sample to time.
+        Keyword arguments:
+        sample      -- Sample to convert to time.
+        Returns time as seconds.
+        """
+        raw = self.experiment.active_subject.working_file
+        return raw.index_as_time(sample - raw.first_samp)[0]
+
     def call_mne_browse_raw(self, filename):
         """
         Opens mne_browse_raw with the given file as a parameter
@@ -1530,13 +1540,18 @@ class Caller(object):
             self.messageBox.show()
             return
 
-    def plot_power_spectrum(self, params, colors, channelColors):
+    def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.
         Parameters:
-        param         - Dictionary containing the parameters.
-        colors        - Default colors.
-        channelColors - Channel specific colors.
+        params         - Dictionary containing the parameters.
+        save_data      - Boolean indicating whether to save psd data to files.
+                         Only data from channels of interest is saved.
+        colors         - List of default colors. One for each time series.
+        channelColors  - Dictionary of channel specific colors. Keys are
+                         indices of the time series (starting from zero). The
+                         values are tuple of (color, list of channels of
+                         interest).
         """
         if params['lout'] == 'Infer from data':
             lout = None
@@ -1568,8 +1583,30 @@ class Caller(object):
 
         psds = async_result.get()
         pool.terminate()
+        if save_data:
+            print 'Writing to file...'
+            self.parent.update_ui()
+            exp_path = os.path.join(self.experiment.workspace,
+                                    self.experiment.experiment_name)
+            if not os.path.isdir(exp_path + '/output'):
+                os.mkdir(exp_path + '/output')
+            fname = os.path.join(exp_path + '/output',
+                                 self.experiment.active_subject.subject_name +
+                                 '_spectrum.txt')
+            f = open(fname, 'w')
+            f.write('freqs, ')
+            for freq in psds[0][1]:
+                f.write(str(freq) + ', ')
+            for idx, time in enumerate(params['times']):
+                f.write('\n' + str(time[0]) + 's to ' + str(time[1]) + 's\n')
+                for ch_name in channelColors[idx][1]:
+                    f.write(ch_name + ', ')
+                    ch_idx = raw.ch_names.index(ch_name)
+                    for psd in psds[idx][0][ch_idx]:
+                        f.write(str(psd) + ', ')
+                    f.write('\n')
+            f.close()
         print "Plotting power spectrum..."
-        print raw.info['projs']
         self.parent.update_ui()
 
         def my_callback(ax, ch_idx):
@@ -1612,6 +1649,7 @@ class Caller(object):
         fmin = params['fmin']
         fmax = params['fmax']
         nfft = params['nfft']
+        overlap = params['overlap']
         try:
             if params['ch'] == 'meg':
                 picks = mne.pick_types(raw.info, meg=True, eeg=False,
@@ -1628,8 +1666,8 @@ class Caller(object):
             try:
                 psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
                                               fmin=fmin, fmax=fmax, n_fft=nfft,
-                                              picks=picks, proj=True,
-                                              verbose=True)
+                                              n_overlap=overlap, picks=picks,
+                                              proj=True, verbose=True)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -2177,6 +2215,5 @@ class Caller(object):
         self.experiment.update_working_file(fname)
         self.experiment.active_subject_raw_path = fname
         self.experiment.active_subject.working_file = raw
-        status = "Current working file: " + os.path.basename
-        (self.experiment.active_subject_raw_path)
+        status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)

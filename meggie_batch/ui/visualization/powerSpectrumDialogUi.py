@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'powerSpectrumDialog.ui'
 #
-# Created: Mon Aug 10 05:22:53 2015
+# Created: Mon Sep 14 02:02:47 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -75,12 +75,23 @@ class Ui_PowerSpectrumDialog(object):
         self.spinBoxNfft.setProperty("value", 2048)
         self.spinBoxNfft.setObjectName(_fromUtf8("spinBoxNfft"))
         self.formLayout_6.setWidget(0, QtGui.QFormLayout.FieldRole, self.spinBoxNfft)
+        self.labelOverlap = QtGui.QLabel(self.groupBoxConditions)
+        self.labelOverlap.setObjectName(_fromUtf8("labelOverlap"))
+        self.formLayout_6.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelOverlap)
+        self.spinBoxOverlap = QtGui.QSpinBox(self.groupBoxConditions)
+        self.spinBoxOverlap.setMaximum(10000)
+        self.spinBoxOverlap.setProperty("value", 1024)
+        self.spinBoxOverlap.setObjectName(_fromUtf8("spinBoxOverlap"))
+        self.formLayout_6.setWidget(1, QtGui.QFormLayout.FieldRole, self.spinBoxOverlap)
         self.checkBoxLogarithm = QtGui.QCheckBox(self.groupBoxConditions)
         self.checkBoxLogarithm.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.checkBoxLogarithm.setAutoFillBackground(False)
         self.checkBoxLogarithm.setChecked(True)
         self.checkBoxLogarithm.setObjectName(_fromUtf8("checkBoxLogarithm"))
-        self.formLayout_6.setWidget(1, QtGui.QFormLayout.SpanningRole, self.checkBoxLogarithm)
+        self.formLayout_6.setWidget(2, QtGui.QFormLayout.LabelRole, self.checkBoxLogarithm)
+        self.checkBoxSaveData = QtGui.QCheckBox(self.groupBoxConditions)
+        self.checkBoxSaveData.setObjectName(_fromUtf8("checkBoxSaveData"))
+        self.formLayout_6.setWidget(2, QtGui.QFormLayout.FieldRole, self.checkBoxSaveData)
         self.horizontalLayout_5.addLayout(self.formLayout_6)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 0, 0, 1, 1)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
@@ -228,11 +239,15 @@ class Ui_PowerSpectrumDialog(object):
         self.labelChannels.setText(_translate("PowerSpectrumDialog", "Channels", None))
         self.comboBoxChannels.setItemText(0, _translate("PowerSpectrumDialog", "MEG", None))
         self.comboBoxChannels.setItemText(1, _translate("PowerSpectrumDialog", "EEG", None))
-        self.labelNfft.setToolTip(_translate("PowerSpectrumDialog", "The length of the tapers ie. the windows. The smaller it is the smoother are the PSDs.", None))
+        self.labelNfft.setToolTip(_translate("PowerSpectrumDialog", "<html><head/><body><p>The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.</p></body></html>", None))
         self.labelNfft.setText(_translate("PowerSpectrumDialog", "Length of the tapers (ie. the windows):", None))
-        self.spinBoxNfft.setToolTip(_translate("PowerSpectrumDialog", "The length of the tapers ie. the windows. The smaller it is the smoother are the PSDs.", None))
+        self.spinBoxNfft.setToolTip(_translate("PowerSpectrumDialog", "<html><head/><body><p>The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.</p></body></html>", None))
+        self.labelOverlap.setToolTip(_translate("PowerSpectrumDialog", "<html><head/><body><p>Number of overlapping points between the blocks.</p></body></html>", None))
+        self.labelOverlap.setText(_translate("PowerSpectrumDialog", "Overlap", None))
+        self.spinBoxOverlap.setToolTip(_translate("PowerSpectrumDialog", "<html><head/><body><p>Number of overlapping points between the blocks.</p></body></html>", None))
         self.checkBoxLogarithm.setToolTip(_translate("PowerSpectrumDialog", "Use logarithmic scale.", None))
         self.checkBoxLogarithm.setText(_translate("PowerSpectrumDialog", "Use logarithmic scale", None))
+        self.checkBoxSaveData.setText(_translate("PowerSpectrumDialog", "Save data to file", None))
         self.radioButtonSelectLayout.setText(_translate("PowerSpectrumDialog", "Select layout", None))
         self.comboBoxLayout.setItemText(0, _translate("PowerSpectrumDialog", "Infer from data", None))
         self.radioButtonLayoutFromFile.setText(_translate("PowerSpectrumDialog", "Layout from file", None))

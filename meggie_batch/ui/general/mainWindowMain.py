@@ -1437,11 +1437,10 @@ class MainWindow(QtGui.QMainWindow):
         if epochs_items is not None:
             for item in epochs_items:
                 self.epochList.addItem(item)
-            self.epochList.setCurrentItem(item)
+
         if evokeds_items is not None:
             for item in evokeds_items:
                 self.evokedList.addItem(item)
-            self.evokedList.setCurrentItem(item)
 
         # This updates the 'Subject info' section below the subject list.
         try:

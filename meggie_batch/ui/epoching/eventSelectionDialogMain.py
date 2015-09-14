@@ -42,6 +42,7 @@ import mne
 
 from eventSelectionDialogUi import Ui_EventSelectionDialog
 from groupEpochingDialogMain import GroupEpochingDialog
+from fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from code_meggie.general.caller import Caller
 from code_meggie.epoching.events import Events
 from code_meggie.general import fileManager
@@ -63,7 +64,6 @@ class EventSelectionDialog(QtGui.QDialog):
         Keyword arguments:
 
         parent -- Set the parent of this dialog
-        raw    -- Raw data
         params -- A dictionary containing parameter values to fill the
                   the different fields in the dialog with.
         """
@@ -112,8 +112,11 @@ class EventSelectionDialog(QtGui.QDialog):
         event_name -- The user-defined name of the events. Default is 'event'.
         """
         for event in events:
-            item = QtGui.QListWidgetItem(event_name + ' ' + str(event[0]) +
-                                         ', ' + str(event[2]))
+            time = self.caller.index_as_time(event[0])
+            item = QtGui.QListWidgetItem('%0.3fs, %s %s, %s' % (time, 
+                                                                event_name,
+                                                                event[0],
+                                                                event[2]))
 
             item.setData(32, event)
             item.setData(33, event_name)
@@ -380,6 +383,21 @@ class EventSelectionDialog(QtGui.QDialog):
         if checked is None: return
         batchDialog = GroupEpochingDialog()
         batchDialog.exec_()
+
+    def on_pushButtonFixedLength_clicked(self, checked=None):
+        """Opens a dialog for creating fixed length events."""
+        if checked is None:
+            return
+        fixedLengthDialog = FixedLengthEpochDialog()
+        fixedLengthDialog.fixed_events_ready.connect(self.
+                                                     on_fixedEventsCreated)
+        fixedLengthDialog.exec_()
+
+    @QtCore.pyqtSlot(list, str)
+    def on_fixedEventsCreated(self, events, name):
+        """
+        """
+        self.add_events(events, name)
 
     def on_pushButtonClear_clicked(self, checked=None):
         """

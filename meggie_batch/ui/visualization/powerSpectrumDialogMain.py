@@ -170,6 +170,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['ch'] = str(self.ui.comboBoxChannels.currentText()).lower()
+        params['overlap'] = self.ui.spinBoxOverlap.value()
+        save_data = self.ui.checkBoxSaveData.isChecked()
         if self.ui.radioButtonSelectLayout.isChecked():
             params['lout'] = str(self.ui.comboBoxLayout.currentText())
         elif self.ui.radioButtonLayoutFromFile.isChecked():
@@ -181,7 +183,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 messageBox.exec_()
                 return
         try:
-            self.caller.plot_power_spectrum(params, colors, channelColors)
+            self.caller.plot_power_spectrum(params, save_data, colors,
+                                            channelColors)
         except Exception as e:
             messageBox = QtGui.QMessageBox()
             messageBox.setText(str(e))

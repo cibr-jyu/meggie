@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Tue Sep  1 05:25:14 2015
+# Created: Thu Sep 10 08:35:24 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -237,6 +237,9 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonBatching = QtGui.QPushButton(EventSelectionDialog)
         self.pushButtonBatching.setObjectName(_fromUtf8("pushButtonBatching"))
         self.horizontalLayout_10.addWidget(self.pushButtonBatching)
+        self.pushButtonFixedLength = QtGui.QPushButton(EventSelectionDialog)
+        self.pushButtonFixedLength.setObjectName(_fromUtf8("pushButtonFixedLength"))
+        self.horizontalLayout_10.addWidget(self.pushButtonFixedLength)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem1)
         self.pushButtonCancel = QtGui.QPushButton(EventSelectionDialog)
@@ -312,6 +315,7 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonReadEvents.setText(_translate("EventSelectionDialog", "Read events from xls file...", None))
         self.pushButtonClear.setText(_translate("EventSelectionDialog", "Clear list", None))
         self.pushButtonBatching.setText(_translate("EventSelectionDialog", "Batching...", None))
+        self.pushButtonFixedLength.setText(_translate("EventSelectionDialog", "Fixed length events...", None))
         self.pushButtonCancel.setText(_translate("EventSelectionDialog", "Cancel", None))
         self.pushButtonCreateEpochs.setText(_translate("EventSelectionDialog", "Create epochs", None))
 
