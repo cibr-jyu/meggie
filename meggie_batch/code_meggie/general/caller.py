@@ -622,15 +622,20 @@ class Caller(object):
         # Raw data is not present in the dictionary so get it from the
         # current experiment.active_subject.
         epocher = Epochs()
-        epochs = epocher.create_epochs_from_dict(epoch_params,
-                                self.experiment.active_subject.working_file)
+        subject = self.experiment.active_subject
+        try:
+            epochs = epocher.create_epochs_from_dict(epoch_params,
+                                                     subject.working_file)
+        except Exception as e:
+            self.messageBox = messageBoxes.shortMessageBox(str(e))
+            self.messageBox.show()
+            return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
         fname = epoch_params['collectionName']
         self.experiment.active_subject.handle_new_epochs(fname, epoch_params)
 
-        fpath = os.path.join(self.experiment.active_subject._epochs_directory,
-                             fname)
+        fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
 
@@ -752,6 +757,7 @@ class Caller(object):
                 return
             averageTitle = lobeName
         else:
+            print evokeds[0].ch_names
             if not isinstance(channelSet, set) or len(channelSet) < 1 or \
                     not channelSet.issubset(set(evokeds[0].ch_names)):
                 self.result = ValueError('Please check that you have at least '
@@ -785,12 +791,13 @@ class Caller(object):
         ch_names = evokedToAve.ch_names
         gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
 
-        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG...1')
+        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1')
 
+        #eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
         eeg_picks = mne.pick_types(evokeds[0].info, meg=False, eeg=True,
                                    ref_meg=False)
-        eegIdxs = [idx for idx in eeg_picks if evokeds[0].ch_names[idx] in
-                   ch_names]
+        eegIdxs = [ch_names.index(evokeds[0].ch_names[idx]) for idx in
+                   eeg_picks if evokeds[0].ch_names[idx] in ch_names]
         dataList = list()
         for i in range(len(evokeds)):
             print "Calculating channel averages for " + averageTitleString + \
@@ -1606,6 +1613,7 @@ class Caller(object):
                         f.write(str(psd) + ', ')
                     f.write('\n')
             f.close()
+
         print "Plotting power spectrum..."
         self.parent.update_ui()
 
@@ -1718,7 +1726,8 @@ class Caller(object):
         # TODO: check if this holds for mne.filter
         # n_jobs is 2 because of the increasing memory requirements for 
         # multicore filtering, see 
-        # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html#mne.io.RawFIFF.filter
+        # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html
+        # mne.io.RawFIFF.filter
         if isinstance(dataToFilter, mne.io.Raw):
             hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
             lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
@@ -1839,15 +1848,16 @@ class Caller(object):
 
     def create_forward_model(self, fmdict):
         """
-        Creates a single forward model and saves it to an appropriate directory.
+        Creates a single forward model and saves it to an appropriate
+        directory.
         The steps taken are the following:
-         
+ 
         - Run mne_setup_source_space to handle various steps of source space
         creation
         - Use mne_watershed_bem to create bem model meshes
         - Create BEM model with mne_setup_forward_model
         - Copy the bem files to the directory named according to fmname
-        
+
         Keyword arguments:
         
         fmdict        -- dictionary, including in three dictionaries, the
@@ -1974,10 +1984,10 @@ class Caller(object):
                 self.parent.forwardModelModel.add_fmodel(fmlist)             
             except Exception:
                 tb = traceback.format_exc()
-                message = 'There was a problem creating forward model files. ' + \
-                      'Please copy the following to your bug report:\n\n' + \
-                       str(tb)
-                self.messageBox = messageBoxes.longMessageBox('Error', message)
+                msg = ('There was a problem creating forward model files. '
+                       'Please copy the following to your bug report:\n\n' +
+                       str(tb))
+                self.messageBox = messageBoxes.longMessageBox('Error', msg)
                 self.messageBox.show()
 
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
@@ -1994,9 +2004,9 @@ class Caller(object):
             self.parent.processes.append(setupSSproc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
-            message= 'There was a problem with mne_setup_source_space. ' + \
-                     'Script output: \n' + e.output
-            self.messageBox = messageBoxes.longMessageBox(title, message)
+            msg = ('There was a problem with mne_setup_source_space. Script '
+                   'output: \n' + e.output)
+            self.messageBox = messageBoxes.longMessageBox(title, msg)
             self.messageBox.exec_()
             return
         except Exception as e:

@@ -163,9 +163,10 @@ class Epochs(QObject):
             print e
             raise e
         if len(epochs.get_data()) == 0:
-            raise Exception('Could not find any data. Check parameters!')
+            raise Exception('Could not find any data. Perhaps the rejection '
+                            'thresholds are too strict...')
         return epochs
-        
+
     def create_epochs_from_dict(self, params, raw):
         """Create a set of epochs with parameters stored in a dict.
         

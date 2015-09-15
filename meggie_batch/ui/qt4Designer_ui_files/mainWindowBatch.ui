@@ -659,9 +659,6 @@
                 </layout>
                </widget>
               </widget>
-              <zorder>layoutWidget</zorder>
-              <zorder>splitter_2</zorder>
-              <zorder>groupBoxVisualization_2</zorder>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">
@@ -3607,6 +3604,94 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>pushButtonMaxFilter</tabstop>
+  <tabstop>pushButtonFilter</tabstop>
+  <tabstop>pushButtonECG</tabstop>
+  <tabstop>pushButtonApplyECG</tabstop>
+  <tabstop>pushButtonEOG</tabstop>
+  <tabstop>pushButtonApplyEOG</tabstop>
+  <tabstop>pushButtonRawPlot</tabstop>
+  <tabstop>checkBoxShowEvents</tabstop>
+  <tabstop>pushButtonSpectrum</tabstop>
+  <tabstop>pushButtonMNE_Browse_Raw_2</tabstop>
+  <tabstop>pushButtonPlotProjections</tabstop>
+  <tabstop>listWidgetBads</tabstop>
+  <tabstop>listWidgetProjs</tabstop>
+  <tabstop>pushButtonCreateEpochs</tabstop>
+  <tabstop>pushButtonModifyEpochs</tabstop>
+  <tabstop>pushButtonDeleteEpochs</tabstop>
+  <tabstop>pushButtonSaveEpochs</tabstop>
+  <tabstop>pushButtonLoadEpochs</tabstop>
+  <tabstop>textBrowserTmin</tabstop>
+  <tabstop>textBrowserTmax</tabstop>
+  <tabstop>textBrowserMag</tabstop>
+  <tabstop>textBrowserGrad</tabstop>
+  <tabstop>textBrowserEEG</tabstop>
+  <tabstop>textBrowserEOG</tabstop>
+  <tabstop>textBrowserStim</tabstop>
+  <tabstop>textBrowserWorkingFile</tabstop>
+  <tabstop>pushButtonVisualizeEpochChannels</tabstop>
+  <tabstop>pushButtonEpochsPlot</tabstop>
+  <tabstop>radioButtonLobe</tabstop>
+  <tabstop>comboBoxLobes</tabstop>
+  <tabstop>radioButtonCustomChannels</tabstop>
+  <tabstop>listWidgetChannels</tabstop>
+  <tabstop>pushButtonModifyChannels</tabstop>
+  <tabstop>pushButtonChannelAverages</tabstop>
+  <tabstop>pushButtonCreateEvoked</tabstop>
+  <tabstop>pushButtonSaveEvoked</tabstop>
+  <tabstop>pushButtonLoadEvoked</tabstop>
+  <tabstop>pushButtonDeleteEvoked</tabstop>
+  <tabstop>pushButtonVisualizeEvokedDataset</tabstop>
+  <tabstop>pushButtonOpenEvokedStatsDialog</tabstop>
+  <tabstop>radioButtonSelectLayout</tabstop>
+  <tabstop>comboBoxLayout</tabstop>
+  <tabstop>radioButtonLayoutFromFile</tabstop>
+  <tabstop>pushButtonBrowseLayout</tabstop>
+  <tabstop>pushButtonGroupAverage</tabstop>
+  <tabstop>pushButtonTFR</tabstop>
+  <tabstop>pushButtonTFRTopology</tabstop>
+  <tabstop>lineEditRecon</tabstop>
+  <tabstop>pushButtonBrowseRecon</tabstop>
+  <tabstop>pushButtonCheckTalairach</tabstop>
+  <tabstop>pushButtonSkullStrip</tabstop>
+  <tabstop>pushButtonCheckSurfaces</tabstop>
+  <tabstop>pushButtonCheckSegmentations</tabstop>
+  <tabstop>checkBoxConvertedToMNE</tabstop>
+  <tabstop>pushButtonConvertToMNE</tabstop>
+  <tabstop>tableViewForwardModels</tabstop>
+  <tabstop>pushButtonCreateNewForwardModel</tabstop>
+  <tabstop>pushButtonRemoveSelectedForwardModel</tabstop>
+  <tabstop>tableViewFModelsForCoregistration</tabstop>
+  <tabstop>lineEditCoregistration</tabstop>
+  <tabstop>pushButtonBrowseCoregistration</tabstop>
+  <tabstop>pushButtonMNECoregistration</tabstop>
+  <tabstop>PushButtonMNE_AnalyzeCoregistration</tabstop>
+  <tabstop>tableViewFModelsForSolution</tabstop>
+  <tabstop>pushButtonCreateForwardSolution</tabstop>
+  <tabstop>pushButtonComputeCovarianceRaw</tabstop>
+  <tabstop>pushButtonComputeCovarianceEpochs</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>tableViewFSolutionsToInverse</tabstop>
+  <tabstop>tableViewInverseOperators</tabstop>
+  <tabstop>radioButton</tabstop>
+  <tabstop>radioButton_2</tabstop>
+  <tabstop>listView_3</tabstop>
+  <tabstop>radioButton_3</tabstop>
+  <tabstop>listView_2</tabstop>
+  <tabstop>pushButtonMakeSourceEstimate</tabstop>
+  <tabstop>textEdit</tabstop>
+  <tabstop>textEditConsole</tabstop>
+  <tabstop>textBrowserEvents</tabstop>
+  <tabstop>pushButtonActivateSubject</tabstop>
+  <tabstop>pushButtonAddSubjects</tabstop>
+  <tabstop>pushButtonRemoveSubject</tabstop>
+  <tabstop>pushButtonMNE_Browse_Raw</tabstop>
+  <tabstop>listViewSubjects</tabstop>
+ </tabstops>
  <resources>
   <include location="../icons/mainWindowIcons.qrc"/>
  </resources>
@@ -3618,12 +3703,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1369</x>
-     <y>650</y>
+     <x>466</x>
+     <y>160</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1544</x>
-     <y>653</y>
+     <x>466</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -3634,12 +3719,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1369</x>
-     <y>650</y>
+     <x>466</x>
+     <y>160</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1545</x>
-     <y>677</y>
+     <x>466</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -3650,12 +3735,28 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1369</x>
-     <y>615</y>
+     <x>466</x>
+     <y>160</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1544</x>
-     <y>618</y>
+     <x>466</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonCustomChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonModifyChannels</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>717</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>735</y>
     </hint>
    </hints>
   </connection>
