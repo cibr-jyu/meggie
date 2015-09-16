@@ -629,9 +629,9 @@ class MainWindow(QtGui.QMainWindow):
                 category_str += '-' + key
 
         evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
-        for item_idx in self.evokedList.count():
+        for item_idx in range(self.evokedList.count()):
             if str(self.evokedList.item(item_idx).text()) == evoked_name:
-                message = ('Evoked data set with the name %s already exists!' %
+                message = ('Evoked data set with name %s already exists!' %
                            evoked_name)
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
