@@ -71,6 +71,7 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
+        self.fixedLengthDialog = None
         self.ui.lineEditName.setText('Event')
         self.used_names = []
         if params is not None:
@@ -375,10 +376,11 @@ class EventSelectionDialog(QtGui.QDialog):
         """Opens a dialog for creating fixed length events."""
         if checked is None:
             return
-        fixedLengthDialog = FixedLengthEpochDialog()
-        fixedLengthDialog.fixed_events_ready.connect(self.
-                                                     on_fixedEventsCreated)
-        fixedLengthDialog.exec_()
+        if self.fixedLengthDialog is None:
+            self.fixedLengthDialog = FixedLengthEpochDialog(self)
+        self.fixedLengthDialog.fixed_events_ready.connect(self.
+                                                          on_fixedEventsCreated)
+        self.fixedLengthDialog.show()
 
     @QtCore.pyqtSlot(list, str)
     def on_fixedEventsCreated(self, events, name):

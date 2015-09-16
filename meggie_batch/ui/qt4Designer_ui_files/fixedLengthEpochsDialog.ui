@@ -128,6 +128,8 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>spinBoxId</tabstop>
+  <tabstop>lineEditName</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxEnd</tabstop>
   <tabstop>doubleSpinBoxInterval</tabstop>

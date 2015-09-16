@@ -18,17 +18,14 @@ class FixedLengthEpochDialog(QtGui.QDialog):
     """
     fixed_events_ready = QtCore.pyqtSignal(list, str)
 
-    def __init__(self):
+    def __init__(self, parent):
         """Initialize the event selection dialog.
 
         Keyword arguments:
 
         parent -- Set the parent of this dialog
-        raw    -- Raw data
-        params -- A dictionary containing parameter values to fill the
-                  the different fields in the dialog with.
         """
-        QtGui.QDialog.__init__(self)
+        QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_FixedLengthEpochDialog()
         self.ui.setupUi(self)
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')

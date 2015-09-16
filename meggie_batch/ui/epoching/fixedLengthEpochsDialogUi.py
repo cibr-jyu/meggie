@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'fixedLengthEpochsDialog.ui'
 #
-# Created: Fri Sep 11 04:52:03 2015
+# Created: Wed Sep 16 08:23:48 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,6 +82,8 @@ class Ui_FixedLengthEpochDialog(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), FixedLengthEpochDialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), FixedLengthEpochDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(FixedLengthEpochDialog)
+        FixedLengthEpochDialog.setTabOrder(self.spinBoxId, self.lineEditName)
+        FixedLengthEpochDialog.setTabOrder(self.lineEditName, self.spinBoxStart)
         FixedLengthEpochDialog.setTabOrder(self.spinBoxStart, self.spinBoxEnd)
         FixedLengthEpochDialog.setTabOrder(self.spinBoxEnd, self.doubleSpinBoxInterval)
         FixedLengthEpochDialog.setTabOrder(self.doubleSpinBoxInterval, self.buttonBox)
