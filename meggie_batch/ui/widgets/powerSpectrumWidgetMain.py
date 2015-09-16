@@ -27,8 +27,8 @@ class PowerSpectrumWidget(QtGui.QWidget):
         self.ui.spinBoxTmin.setValue(5)
         self.ui.spinBoxTmax.setValue(tmax-5)
         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.ui.listWidgetChannels.customContextMenuRequested.connect
-        (self.openMenu)
+        self.ui.listWidgetChannels.customContextMenuRequested.connect(self.
+                                                                      openMenu)
 
     @property
     def index(self):

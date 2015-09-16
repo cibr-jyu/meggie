@@ -100,6 +100,12 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        self.spectrumDialog = None
+        self.filterDialog = None
+        self.epochParameterDialog = None
+        self.tfr_dialog = None
+        self.tfrTop_dialog = None
 
         # List of subprocesses, used for terminating MNE-C processes on Meggie
         # quit.
@@ -424,8 +430,9 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epoch_params_ready.\
-            connect(self.create_new_epochs)
+        self.epochParameterDialog.epoch_params_ready.connect(self.
+                                                             create_new_epochs)
+        self.epochParameterDialog.finished.connect(self.on_close)
         self.epochParameterDialog.show()
 
     def closeEvent(self, event):
@@ -596,7 +603,8 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
+                                             (QtCore.Qt.WaitCursor))
         prefix = ''
         epochs = []
         category = dict()
@@ -621,6 +629,14 @@ class MainWindow(QtGui.QMainWindow):
                 category_str += '-' + key
 
         evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
+        for item_idx in self.evokedList.count():
+            if str(self.evokedList.item(item_idx).text()) == evoked_name:
+                message = ('Evoked data set with the name %s already exists!' %
+                           evoked_name)
+                self.messageBox = messageBoxes.shortMessageBox(message)
+                self.messageBox.show()
+                QtGui.QApplication.restoreOverrideCursor()
+                return
         item = QtGui.QListWidgetItem(evoked_name)
 
         # TODO: create separate method in fileManager to save evoked
@@ -634,6 +650,7 @@ class MainWindow(QtGui.QMainWindow):
                            ' still process the evoked file (visualize etc.).')
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
+                QtGui.QApplication.restoreOverrideCursor()
         try:
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
@@ -645,12 +662,14 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.labelException.setText()
             self.messageBox.show()
+            QtGui.QApplication.restoreOverrideCursor()
 
         self.evokedList.addItem(item)
         self.caller.experiment.active_subject.handle_new_evoked(evoked_name,
                                                                 evoked,
                                                                 category)
         self.evokedList.setCurrentItem(item)
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""
@@ -974,8 +993,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the power spectrum visualization dialog."""
         if checked is None:
             return
-        spectrumDialog = PowerSpectrumDialog(self)
-        spectrumDialog.exec_()
+        self.spectrumDialog = PowerSpectrumDialog(self)
+        self.spectrumDialog.finished.connect(self.on_close)
+        self.spectrumDialog.show()
 
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
@@ -1025,6 +1045,7 @@ class MainWindow(QtGui.QMainWindow):
         self.tfr_dialog = TFRDialog(self, self.caller.experiment.
                                     active_subject.working_file, epochs)
         QtGui.QApplication.restoreOverrideCursor()
+        self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
 
     def on_pushButtonTFRTopology_clicked(self, checked=None):
@@ -1041,6 +1062,7 @@ class MainWindow(QtGui.QMainWindow):
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         self.tfrTop_dialog = TFRTopologyDialog(self, name)
         QtGui.QApplication.restoreOverrideCursor()
+        self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
@@ -1101,6 +1123,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.filterDialog = FilterDialog(self)
+        self.filterDialog.finished.connect(self.on_close)
         self.filterDialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
@@ -1693,6 +1716,28 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
+
+    @QtCore.pyqtSlot(int)
+    def on_close(self, result):
+        """
+        Slot to be called on close of dialogs. Frees the memory by setting the
+        dialog as None.
+        Parameters:
+        result - Integer indicating the result from the dialog (accept,
+                                                                reject).
+        """
+        sender = self.sender()
+        if sender is self.spectrumDialog:
+            self.spectrumDialog = None
+        elif sender is self.filterDialog:
+            self.filterDialog = None
+        elif sender is self.epochParameterDialog:
+            self.epochParameterDialog = None
+        elif sender is self.tfr_dialog:
+            self.tfr_dialog = None
+        elif sender is self.tfrTop_dialog:
+            self.tfrTop_dialog = None
+        sender.deleteLater()
 
 
 class EmittingStream(QtCore.QObject):
