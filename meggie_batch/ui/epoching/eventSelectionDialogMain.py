@@ -106,15 +106,14 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         for event in events:
             time = self.caller.index_as_time(event[0])
-            item = QtGui.QListWidgetItem('%0.3fs, %s %s, %s' % (time, 
-                                                                event_name,
-                                                                event[0],
-                                                                event[2]))
+            item = CustomListItem('%0.3fs, %s %s, %s' % (time, event_name,
+                                                         event[0], event[2]))
 
             item.setData(32, event)
             item.setData(33, event_name)
             self.ui.listWidgetEvents.addItem(item)
 
+        self.ui.listWidgetEvents.sortItems()
         if self.used_names.count(event_name) < 1:    
             self.used_names.append(event_name)
 
@@ -352,13 +351,10 @@ class EventSelectionDialog(QtGui.QDialog):
         for row_index in range(sheet.nrows):
             #Check that there are no empty cells in a row
             if not (any([x == '' for x in sheet.row_values(row_index)])):
-                item = QtGui.QListWidgetItem(str(sheet.cell(row_index,0).value)
-                                             + ' ' + str(int(sheet.cell
-                                                             (row_index,1).
-                                                             value))
-                                             + ', ' + str(int(sheet.cell
-                                                              (row_index,3)
-                                                              .value)))
+                item = CustomListItem(str(sheet.cell(row_index,0).value) +
+                                      ' ' + str(int(sheet.cell(row_index, 1).
+                                                    value)) + ', ' +
+                                      str(int(sheet.cell(row_index, 3).value)))
                 event = map(int, sheet.row_values(row_index)[1:4])
                 print event
                 item.setData(32, event)
@@ -426,3 +422,9 @@ class EventSelectionDialog(QtGui.QDialog):
             suffix += 1
             name = self.set_event_name(name, suffix)
             return name
+
+
+class CustomListItem(QtGui.QListWidgetItem):
+    """Custom list widget item for enabling sorting by sample."""
+    def __lt__(self, other):
+        return self.data(32)[0] < other.data(32)[0]  # sample comparison
