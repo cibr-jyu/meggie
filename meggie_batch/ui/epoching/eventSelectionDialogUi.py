@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Thu Sep 10 08:35:24 2015
+# Created: Wed Sep 16 06:59:01 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,9 +58,11 @@ class Ui_EventSelectionDialog(object):
         self.labelEventID = QtGui.QLabel(self.groupBoxEvent)
         self.labelEventID.setObjectName(_fromUtf8("labelEventID"))
         self.horizontalLayout_7.addWidget(self.labelEventID)
-        self.comboBoxEventID = QtGui.QComboBox(self.groupBoxEvent)
-        self.comboBoxEventID.setObjectName(_fromUtf8("comboBoxEventID"))
-        self.horizontalLayout_7.addWidget(self.comboBoxEventID)
+        self.spinBoxEventID = QtGui.QSpinBox(self.groupBoxEvent)
+        self.spinBoxEventID.setMinimum(1)
+        self.spinBoxEventID.setMaximum(999999)
+        self.spinBoxEventID.setObjectName(_fromUtf8("spinBoxEventID"))
+        self.horizontalLayout_7.addWidget(self.spinBoxEventID)
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
@@ -262,8 +264,9 @@ class Ui_EventSelectionDialog(object):
         EventSelectionDialog.setTabOrder(self.lineEditCollectionName, self.doubleSpinBoxTmin)
         EventSelectionDialog.setTabOrder(self.doubleSpinBoxTmin, self.doubleSpinBoxTmax)
         EventSelectionDialog.setTabOrder(self.doubleSpinBoxTmax, self.checkBoxStim)
-        EventSelectionDialog.setTabOrder(self.checkBoxStim, self.comboBoxEventID)
-        EventSelectionDialog.setTabOrder(self.comboBoxEventID, self.lineEditName)
+        EventSelectionDialog.setTabOrder(self.checkBoxStim, self.spinBoxEventID)
+        EventSelectionDialog.setTabOrder(self.spinBoxEventID, self.spinBoxMask)
+        EventSelectionDialog.setTabOrder(self.spinBoxMask, self.lineEditName)
         EventSelectionDialog.setTabOrder(self.lineEditName, self.pushButtonAdd)
         EventSelectionDialog.setTabOrder(self.pushButtonAdd, self.checkBoxGrad)
         EventSelectionDialog.setTabOrder(self.checkBoxGrad, self.doubleSpinBoxGradReject_3)
@@ -276,7 +279,10 @@ class Ui_EventSelectionDialog(object):
         EventSelectionDialog.setTabOrder(self.doubleSpinBoxEOGReject_3, self.listWidgetEvents)
         EventSelectionDialog.setTabOrder(self.listWidgetEvents, self.pushButtonSaveEvents)
         EventSelectionDialog.setTabOrder(self.pushButtonSaveEvents, self.pushButtonReadEvents)
-        EventSelectionDialog.setTabOrder(self.pushButtonReadEvents, self.pushButtonCancel)
+        EventSelectionDialog.setTabOrder(self.pushButtonReadEvents, self.pushButtonClear)
+        EventSelectionDialog.setTabOrder(self.pushButtonClear, self.pushButtonBatching)
+        EventSelectionDialog.setTabOrder(self.pushButtonBatching, self.pushButtonFixedLength)
+        EventSelectionDialog.setTabOrder(self.pushButtonFixedLength, self.pushButtonCancel)
         EventSelectionDialog.setTabOrder(self.pushButtonCancel, self.pushButtonCreateEpochs)
 
     def retranslateUi(self, EventSelectionDialog):

@@ -1096,12 +1096,15 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         channels = list()
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
+                                             (QtCore.Qt.WaitCursor))
         for i in xrange(self.ui.listWidgetChannels.count()):
             item = self.ui.listWidgetChannels.item(i)
             channels.append(str(item.text()))
 
         channelDialog = ChannelSelectionDialog(channels, 'Select channels')
         channelDialog.channelsChanged.connect(self.channels_modified)
+        QtGui.QApplication.restoreOverrideCursor()
         channelDialog.exec_()
 
     @QtCore.pyqtSlot(list)

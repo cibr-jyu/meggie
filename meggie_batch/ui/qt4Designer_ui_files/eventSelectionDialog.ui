@@ -68,7 +68,14 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBoxEventID"/>
+                     <widget class="QSpinBox" name="spinBoxEventID">
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="maximum">
+                       <number>999999</number>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
@@ -514,7 +521,8 @@
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
   <tabstop>checkBoxStim</tabstop>
-  <tabstop>comboBoxEventID</tabstop>
+  <tabstop>spinBoxEventID</tabstop>
+  <tabstop>spinBoxMask</tabstop>
   <tabstop>lineEditName</tabstop>
   <tabstop>pushButtonAdd</tabstop>
   <tabstop>checkBoxGrad</tabstop>
@@ -528,6 +536,9 @@
   <tabstop>listWidgetEvents</tabstop>
   <tabstop>pushButtonSaveEvents</tabstop>
   <tabstop>pushButtonReadEvents</tabstop>
+  <tabstop>pushButtonClear</tabstop>
+  <tabstop>pushButtonBatching</tabstop>
+  <tabstop>pushButtonFixedLength</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCreateEpochs</tabstop>
  </tabstops>

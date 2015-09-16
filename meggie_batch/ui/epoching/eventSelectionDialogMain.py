@@ -71,12 +71,6 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
-        if self.caller.experiment.active_subject._event_set is None:
-            keys = []
-        else:
-            keys = map(str,
-                       self.caller.experiment.active_subject._event_set.keys())
-        self.ui.comboBoxEventID.addItems(keys)
         self.ui.lineEditName.setText('Event')
         self.used_names = []
         if params is not None:
@@ -89,15 +83,14 @@ class EventSelectionDialog(QtGui.QDialog):
         Keyword arguments
         epoch_name -- Name of the epoch collection.
         """
-        epochs = self.caller.experiment.active_subject._epochs[epochs_name].raw
+        epochs = self.caller.experiment.active_subject.get_epochs(epochs_name)
         self.ui.lineEditCollectionName.setText(epochs_name)
         self.ui.doubleSpinBoxTmin.setValue(epochs.tmin)
         self.ui.doubleSpinBoxTmax.setValue(epochs.tmax)
         event_name = epochs.event_id.keys()[0]
         self.ui.lineEditName.setText(event_name)
-        text = str(epochs.event_id.values()[0])
-        i = self.ui.comboBoxEventID.findText(text)
-        self.ui.comboBoxEventID.setCurrentIndex(i)
+        event_id = epochs.event_id.values()[0]
+        self.ui.spinBoxEventID.setValue(event_id)
         events = list()
         for event in epochs.events:
             events.append([int(event[0]), int(event[1]), int(event[2])])
@@ -200,9 +193,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         Pick desired events from the raw data.
         """
-        if self.ui.comboBoxEventID.count() == 0:
-            return
-        event_id = int(self.ui.comboBoxEventID.currentText())
+        event_id = self.ui.spinBoxEventID.value()
         mask = self.ui.spinBoxMask.value()
         e = Events(self.caller.experiment.active_subject.working_file,
                    self.caller.experiment.active_subject.stim_channel, mask)
