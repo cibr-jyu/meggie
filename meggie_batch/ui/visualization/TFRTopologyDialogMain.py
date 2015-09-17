@@ -80,7 +80,8 @@ class TFRTopologyDialog(QtGui.QDialog):
         """
         Opens a dialog for selecting a layout file.
         """
-        if checked is None: return
+        if checked is None:
+            return
         fName = str(QtGui.QFileDialog.getOpenFileName(self,
                             "Select a layout file", '/home/', 
                             "Layout-files (*.lout *.lay);;All files (*.*)"))
@@ -144,9 +145,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))
             self.messageBox.show()
-            return
         QtGui.QApplication.restoreOverrideCursor()
-        self.close()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
