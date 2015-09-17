@@ -51,7 +51,7 @@ from copy import deepcopy
 @Singleton
 class Caller(object):
     """
-    Class for simple of calling third party software. Includes methods that
+    Class for calling third party software. Includes methods that
     require input from single source (usually a dialog) and produce simple
     output (usually a single matplotlib window). 
     More complicated functionality like epoching can be found in separate
@@ -1023,7 +1023,7 @@ class Caller(object):
         return averagedEvokeds, groups
 
     def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
-            decim):
+            decim, color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
@@ -1037,6 +1037,9 @@ class Caller(object):
         interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
         decim         -- Temporal decimation factor.
+        color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
+                         which case ``RdBu_r`` is used or ``Reds`` if only
+                         positive values exist in the data.
         """
         plt.close()
         self.e.clear()
@@ -1087,7 +1090,10 @@ class Caller(object):
         plt.xlim(times[0], times[-1])
 
         plt.subplot2grid((3, 15), (1, 0), colspan=14)
-        cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+        if color_map == 'auto':
+            cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+        else:
+            cmap = color_map
 
         img = plt.imshow(power[0], extent=[times[0], times[-1],
                                            frequencies[0], frequencies[-1]],
@@ -1096,7 +1102,8 @@ class Caller(object):
         plt.ylabel('Frequency (Hz)')
         plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
         plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
-        cmap = 'RdBu_r' if np.min(phase_lock[0] < 0) else 'Reds'
+        if color_map == 'auto':
+            cmap = 'RdBu_r' if np.min(phase_lock[0] < 0) else 'Reds'
         plt.subplot2grid((3, 15), (2, 0), colspan=14)
         img = plt.imshow(phase_lock[0], extent=[times[0], times[-1],
                                                 frequencies[0],
@@ -1275,6 +1282,13 @@ class Caller(object):
             self.e.set()
             return
 
+        tfr_path = os.path.join(self.experiment.active_subject.subject_path,
+                                'TFR')
+        if not os.path.isdir(tfr_path):
+            os.mkdir(tfr_path)
+        print 'Saving files to %s...' % tfr_path
+        power.save(os.path.join(tfr_path, 'power-tfr.h5'), overwrite=True)
+        itc.save(os.path.join(tfr_path, 'itc-tfr.h5'), overwrite=True)
         self.e.set()
         return power, itc
 

@@ -76,16 +76,14 @@ class TFRDialog(QtGui.QDialog):
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
+        cmap = str(self.ui.comboBoxCmap.currentText())
         try:
             caller = Caller.Instance()
             caller.TFR(self.raw, self.epochs, ch_index, minfreq, maxfreq,
-                       interval, ncycles, decim)
+                       interval, ncycles, decim, cmap)
         except Exception, err:
             self.messageBox = shortMessageBox(str(err))
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox.show()
             return
         QtGui.QApplication.restoreOverrideCursor()
-        self.raw = None
-        self.epochs = None
-        self.close()

@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>292</width>
-    <height>346</height>
+    <width>297</width>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Meggie - TFR from epochs</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -27,8 +27,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>274</width>
-        <height>289</height>
+        <width>279</width>
+        <height>334</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -42,8 +42,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>271</width>
-         <height>281</height>
+         <width>291</width>
+         <height>361</height>
         </rect>
        </property>
        <property name="title">
@@ -55,7 +55,7 @@
           <x>10</x>
           <y>30</y>
           <width>251</width>
-          <height>241</height>
+          <height>273</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -182,13 +182,58 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLabel" name="labelCmap">
+             <property name="text">
+              <string>Color map:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxCmap">
+             <item>
+              <property name="text">
+               <string>auto</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RdBu_r</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Reds</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>YlOrRd</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>seismic</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>bwr</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
       </widget>
      </widget>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">

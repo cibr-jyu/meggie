@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'TFRfromEpochs.ui'
 #
-# Created: Mon Sep 16 14:07:04 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Thu Sep 17 03:28:58 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,22 +26,22 @@ except AttributeError:
 class Ui_DialogEpochsTFR(object):
     def setupUi(self, DialogEpochsTFR):
         DialogEpochsTFR.setObjectName(_fromUtf8("DialogEpochsTFR"))
-        DialogEpochsTFR.resize(292, 346)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(DialogEpochsTFR)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        DialogEpochsTFR.resize(297, 391)
+        self.gridLayout = QtGui.QGridLayout(DialogEpochsTFR)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.scrollArea = QtGui.QScrollArea(DialogEpochsTFR)
         self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 274, 289))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 279, 334))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBoxFrequencies.setGeometry(QtCore.QRect(0, 0, 271, 281))
+        self.groupBoxFrequencies.setGeometry(QtCore.QRect(0, 0, 291, 361))
         self.groupBoxFrequencies.setObjectName(_fromUtf8("groupBoxFrequencies"))
         self.layoutWidget = QtGui.QWidget(self.groupBoxFrequencies)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 251, 241))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 251, 273))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_6.setMargin(0)
@@ -106,8 +106,23 @@ class Ui_DialogEpochsTFR(object):
         self.spinBoxDecim.setObjectName(_fromUtf8("spinBoxDecim"))
         self.horizontalLayout_8.addWidget(self.spinBoxDecim)
         self.verticalLayout_6.addLayout(self.horizontalLayout_8)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.labelCmap = QtGui.QLabel(self.layoutWidget)
+        self.labelCmap.setObjectName(_fromUtf8("labelCmap"))
+        self.horizontalLayout_3.addWidget(self.labelCmap)
+        self.comboBoxCmap = QtGui.QComboBox(self.layoutWidget)
+        self.comboBoxCmap.setObjectName(_fromUtf8("comboBoxCmap"))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.comboBoxCmap.addItem(_fromUtf8(""))
+        self.horizontalLayout_3.addWidget(self.comboBoxCmap)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_3)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayout_2.addWidget(self.scrollArea)
+        self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.buttonBox = QtGui.QDialogButtonBox(DialogEpochsTFR)
@@ -115,7 +130,7 @@ class Ui_DialogEpochsTFR(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
-        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(DialogEpochsTFR)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), DialogEpochsTFR.accept)
@@ -140,4 +155,11 @@ class Ui_DialogEpochsTFR(object):
         self.doubleSpinBoxFreqInterval.setSuffix(_translate("DialogEpochsTFR", " Hz", None))
         self.labelNcycles.setText(_translate("DialogEpochsTFR", "Number of cycles:", None))
         self.label_2.setText(_translate("DialogEpochsTFR", "Temporal decim factor:", None))
+        self.labelCmap.setText(_translate("DialogEpochsTFR", "Color map:", None))
+        self.comboBoxCmap.setItemText(0, _translate("DialogEpochsTFR", "auto", None))
+        self.comboBoxCmap.setItemText(1, _translate("DialogEpochsTFR", "RdBu_r", None))
+        self.comboBoxCmap.setItemText(2, _translate("DialogEpochsTFR", "Reds", None))
+        self.comboBoxCmap.setItemText(3, _translate("DialogEpochsTFR", "YlOrRd", None))
+        self.comboBoxCmap.setItemText(4, _translate("DialogEpochsTFR", "seismic", None))
+        self.comboBoxCmap.setItemText(5, _translate("DialogEpochsTFR", "bwr", None))
 
