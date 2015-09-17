@@ -1097,7 +1097,7 @@ class Caller(object):
 
         img = plt.imshow(power[0], extent=[times[0], times[-1],
                                            frequencies[0], frequencies[-1]],
-                         aspect='auto', origin='lower', cmap=cmap)
+                         aspect='auto', origin='lower', cmap=cmap, interpolation='bicubic')
         plt.xlabel('Time (ms)')
         plt.ylabel('Frequency (Hz)')
         plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
@@ -1108,7 +1108,7 @@ class Caller(object):
         img = plt.imshow(phase_lock[0], extent=[times[0], times[-1],
                                                 frequencies[0],
                                                 frequencies[-1]],
-                         aspect='auto', origin='lower', cmap=cmap)
+                         aspect='auto', origin='lower', cmap=cmap, interpolation='bicubic')
         plt.xlabel('Time (ms)')
         plt.ylabel('Frequency (Hz)')
         plt.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
