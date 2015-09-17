@@ -49,6 +49,12 @@
          <property name="title">
           <string>Baseline rescaling and correction</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -543,6 +549,51 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_17">
+            <item>
+             <widget class="QLabel" name="labelCmap">
+              <property name="text">
+               <string>Color map:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxCmap">
+              <item>
+               <property name="text">
+                <string>auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RdBu_r</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Reds</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YlOrRd</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>seismic</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>bwr</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -656,27 +707,29 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>comboBoxChannels</tabstop>
   <tabstop>radioButtonInduced</tabstop>
   <tabstop>radioButtonPhase</tabstop>
+  <tabstop>comboBoxCmap</tabstop>
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
   <tabstop>spinBoxNcycles</tabstop>
   <tabstop>spinBoxDecim</tabstop>
   <tabstop>groupBoxScalp</tabstop>
+  <tabstop>comboBoxChannels</tabstop>
   <tabstop>doubleSpinBoxScalpFmin</tabstop>
   <tabstop>doubleSpinBoxScalpFmax</tabstop>
   <tabstop>doubleSpinBoxScalpTmin</tabstop>
   <tabstop>doubleSpinBoxScalpTmax</tabstop>
+  <tabstop>groupBoxBaseline</tabstop>
   <tabstop>comboBoxMode</tabstop>
   <tabstop>doubleSpinBoxBaselineStart</tabstop>
   <tabstop>checkBoxBaselineStartNone</tabstop>
   <tabstop>doubleSpinBoxBaselineEnd</tabstop>
   <tabstop>checkBoxBaselineEndNone</tabstop>
   <tabstop>radioButtonSelectLayout</tabstop>
-  <tabstop>comboBoxLayout</tabstop>
   <tabstop>radioButtonLayoutFromFile</tabstop>
+  <tabstop>comboBoxLayout</tabstop>
   <tabstop>pushButtonBrowseLayout</tabstop>
   <tabstop>pushButtonGroupAverage</tabstop>
   <tabstop>buttonBox</tabstop>

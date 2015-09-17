@@ -94,19 +94,25 @@ class TFRTopologyDialog(QtGui.QDialog):
         """
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
+        cmap = self.ui.comboBoxCmap.currentText()
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
-        mode = self.ui.comboBoxMode.currentText()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles = self.ui.spinBoxNcycles.value()
-        if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
-            blstart = None
-        else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
+        if self.ui.groupBoxBaseline.isChecked():
+            mode = self.ui.comboBoxMode.currentText()
+            if self.ui.checkBoxBaselineStartNone.isChecked():
+                blstart = None
+            else:
+                blstart = self.ui.doubleSpinBoxBaselineStart.value()
 
-        if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-            blend = None
-        else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
+            if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
+                blend = None
+            else:
+                blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        else:
+            blstart, blend, mode = None, None, None
 
         if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
         elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
@@ -120,7 +126,8 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
-        epochs = self.caller.experiment.active_subject.get_epochs(self.epoch_name)
+        epochs = self.caller.experiment.active_subject.get_epochs(self.
+                                                                  epoch_name)
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
             scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()
@@ -132,7 +139,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         try:
             self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
                                      decim, mode, blstart, blend, interval,
-                                     ncycles, layout, ch_type, scalp)
+                                     ncycles, layout, ch_type, scalp, cmap)
         except Exception, err:
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))
@@ -160,20 +167,25 @@ class TFRTopologyDialog(QtGui.QDialog):
         """
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
+        cmap = self.ui.comboBoxCmap.currentText()
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
-        mode = self.ui.comboBoxMode.currentText()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles = self.ui.spinBoxNcycles.value()
-        if ( self.ui.checkBoxBaselineStartNone.isChecked() ):
-            blstart = None
-        else: blstart = self.ui.doubleSpinBoxBaselineStart.value()
+        if self.ui.groupBoxBaseline.isChecked():
+            mode = self.ui.comboBoxMode.currentText()
+            if self.ui.checkBoxBaselineStartNone.isChecked():
+                blstart = None
+            else:
+                blstart = self.ui.doubleSpinBoxBaselineStart.value()
 
-        if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-            blend = None
-        else: blend = self.ui.doubleSpinBoxBaselineEnd.value()
-
+            if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
+                blend = None
+            else:
+                blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        else:
+            blstart, blend, mode = None, None, None
         if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
         elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
 
@@ -192,7 +204,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.messageBox.show()
             return
         try:
-            self.caller.TFR_average(self.epoch_name, reptype, mode,
+            self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
                                     minfreq, maxfreq, interval, blstart,
                                     blend, ncycles, decim, layout, channels,
                                     form, dpi, saveTopo, savePlot, saveMax)

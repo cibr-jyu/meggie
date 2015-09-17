@@ -1157,7 +1157,8 @@ class Caller(object):
         return power, itc, times, evoked, evoked_data
 
     def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  
-                     blstart, blend, interval, ncycles, lout, ch_type, scalp):
+                     blstart, blend, interval, ncycles, lout, ch_type, scalp,
+                     color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
@@ -1179,6 +1180,9 @@ class Caller(object):
         ch_type       -- Channel type (mag | grad | eeg).
         scalp         -- Parameter dictionary for scalp plot. If None, no scalp
                          plot is drawn.
+        color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
+                         which case ``RdBu_r`` is used or ``Reds`` if only
+                         positive values exist in the data.
         """
         plt.close()
         print "Number of threads active", activeCount()
@@ -1209,10 +1213,18 @@ class Caller(object):
             layout = None
         else:
             layout = read_layout(lout)
-        baseline = (blstart, blend)
+        
+        if blstart is None and blend is None:
+            baseline = None
+        else:
+            baseline = (blstart, blend)
         print "Plotting..."
         self.parent.update_ui()
         if reptype == 'average':  # induced
+            if color_map == 'auto':
+                cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+            else:
+                cmap = color_map
             try:
                 if scalp is not None:
                     try:
@@ -1223,7 +1235,7 @@ class Caller(object):
                                                  ch_type=ch_type,
                                                  layout=layout,
                                                  baseline=baseline, mode=mode,
-                                                 show=False)
+                                                 show=False, cmap=cmap)
                     except Exception as e:
                         print str(e)
                 print 'Plotting topology. Please be patient...'
@@ -1237,6 +1249,10 @@ class Caller(object):
                 self.messageBox.show()
                 return
         elif reptype == 'itc':  # phase locked
+            if color_map == 'auto':
+                cmap = 'RdBu_r' if np.min(itc[0] < 0) else 'Reds'
+            else:
+                cmap = color_map
             try:
                 title = 'Inter-Trial coherence'
                 if scalp is not None:
@@ -1292,8 +1308,8 @@ class Caller(object):
         self.e.set()
         return power, itc
 
-    def TFR_average(self, epochs_name, reptype, mode, minfreq, maxfreq,
-                    interval, blstart, blend, ncycles, decim, layout,
+    def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
+                    maxfreq, interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
                     save_max):
         """
@@ -1342,12 +1358,14 @@ class Caller(object):
             title = 'Average power ' + epochs_name
             self._plot_TFR_topology(power, baseline, mode, minfreq, maxfreq,
                                     layout, title, save_topo, save_plot,
-                                    selected_channels, dpi, form, epochs_name)
+                                    selected_channels, dpi, form, epochs_name,
+                                    color_map)
         elif reptype == 'itc':
             title = 'Inter-trial coherence ' + epochs_name
             self._plot_TFR_topology(itc, baseline, mode, minfreq, maxfreq,
                                     layout, title, save_topo, save_plot,
-                                    selected_channels, dpi, form, epochs_name)
+                                    selected_channels, dpi, form, epochs_name,
+                                    color_map)
 
     def _TFR_average(self, epochs_name, selected_channels, reptype,
                      frequencies, ncycles, decim, save_max=False):
@@ -1490,7 +1508,8 @@ class Caller(object):
 
     def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
                            title, save_topo=False, save_plot=False,
-                           channels=[], dpi=200, form='png', epoch_name=''):
+                           channels=[], dpi=200, form='png', epoch_name='',
+                           color_map='auto'):
         """
         Convenience method for plotting TFR topologies.
         Parameters:
@@ -1507,7 +1526,12 @@ class Caller(object):
         dpi       - Dots per inch for the figures.
         form      - File format for the figures.
         epoch_name- Name of the epochs used for the TFR
+        color_map - 
         """
+        if color_map == 'auto':
+            cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+        else:
+            cmap = color_map
         exp_path = os.path.join(self.experiment.workspace,
                                 self.experiment.experiment_name)
         if not os.path.isdir(exp_path + '/output'):
@@ -1537,7 +1561,7 @@ class Caller(object):
             plt.clf()
             fig = power.plot_topo(baseline=baseline, mode=mode, 
                                   fmin=fmin, fmax=fmax, layout=layout, 
-                                  title=title, show=False)
+                                  title=title, show=False, cmap=cmap)
             if save_topo:
                 print 'Saving topology figure to  '\
                         + exp_path + '/output...'
