@@ -1880,50 +1880,96 @@
                      <property name="title">
                       <string/>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QGroupBox" name="groupBoxAvailableTFR">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>1</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>500</width>
-                       <height>180</height>
-                      </size>
-                     </property>
-                     <property name="title">
-                      <string>Available actions:</string>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_27">
-                      <item row="1" column="0">
-                       <widget class="QPushButton" name="pushButtonTFRTopology">
-                        <property name="text">
-                         <string>TFR topology vizualization</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QPushButton" name="pushButtonTFR">
-                        <property name="text">
-                         <string>TFR visualization</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <widget class="QGroupBox" name="groupBoxAvailableTFR">
+                      <property name="geometry">
+                       <rect>
+                        <x>10</x>
+                        <y>310</y>
+                        <width>500</width>
+                        <height>180</height>
+                       </rect>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>1</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>500</width>
+                        <height>180</height>
+                       </size>
+                      </property>
+                      <property name="title">
+                       <string>Available actions:</string>
+                      </property>
+                      <layout class="QGridLayout" name="gridLayout_27">
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButtonTFRTopology">
+                         <property name="text">
+                          <string>Compute and visualize TFR topology</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButtonTFR">
+                         <property name="text">
+                          <string>Compute and visualize channel TFR</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QGroupBox" name="groupBoxEpochParamsTFR">
                    <property name="title">
                     <string/>
                    </property>
+                   <widget class="QWidget" name="layoutWidget">
+                    <property name="geometry">
+                     <rect>
+                      <x>20</x>
+                      <y>20</y>
+                      <width>501</width>
+                      <height>109</height>
+                     </rect>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_14">
+                     <item>
+                      <widget class="QListWidget" name="listWidgetPowerItems"/>
+                     </item>
+                     <item>
+                      <layout class="QVBoxLayout" name="verticalLayout_22">
+                       <item>
+                        <widget class="QPushButton" name="pushButtonTFRTopology_2">
+                         <property name="text">
+                          <string>TFR topology vizualization</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonDeletePower">
+                         <property name="text">
+                          <string>Delete</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
                   </widget>
                  </item>
                 </layout>

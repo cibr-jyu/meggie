@@ -317,7 +317,7 @@ class MainWindow(QtGui.QMainWindow):
 
         message = 'Permanently remove subject and the related files?'
         reply = QtGui.QMessageBox.question(self, 'delete subject',
-                                           message, QtGui.QMessageBox.Yes |
+                                           message, QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
 
@@ -355,7 +355,7 @@ class MainWindow(QtGui.QMainWindow):
             name = event_count[0]
             idx = names.index(name)
             event_id = str(events[idx][0][2])
-            text = (name + ': ID ' + event_id + ', ' + str(event_count[1]) +
+            text = (name + ': ID ' + event_id + ', ' + str(event_count[1]) + 
                     ' events')
             item.setText(text)
             self.epochList.ui.listWidgetEvents.addItem(item)
@@ -366,17 +366,17 @@ class MainWindow(QtGui.QMainWindow):
         params_rejections_str = dict((str(key), value) for key, value in
                                      params['reject'].iteritems())
         if 'mag' in params_rejections_str:
-            self.ui.textBrowserMag.setText(str(params_rejections_str['mag'] /
+            self.ui.textBrowserMag.setText(str(params_rejections_str['mag'] / 
                                                1e-15) + ' fT')
         else:
             self.ui.textBrowserMag.setText('-1')
         if 'grad' in params_rejections_str:
-            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad'] /
+            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad'] / 
                                                 1e-13) + ' fT/cm')
         else:
             self.ui.textBrowserGrad.setText('-1')
         if 'eeg' in params_rejections_str:
-            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg'] /
+            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg'] / 
                                                1e-6) + 'uV')
         else:
             self.ui.textBrowserEEG.setText('-1')
@@ -385,7 +385,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.textBrowserStim.setText('-1')
         if 'eog' in params_rejections_str:
-            self.ui.textBrowserEOG.setText(str(params_rejections_str['eog'] /
+            self.ui.textBrowserEOG.setText(str(params_rejections_str['eog'] / 
                                                1e-6) + 'uV')
         else:
             self.ui.textBrowserEOG.setText('-1')
@@ -441,7 +441,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.preferencesHandler.confirm_quit:
             reply = QtGui.QMessageBox.question(self, 'Close Meggie',
                                                'Are you sure you want to '
-                                               'quit?', QtGui.QMessageBox.Yes |
+                                               'quit?', QtGui.QMessageBox.Yes | 
                                                QtGui.QMessageBox.No,
                                                QtGui.QMessageBox.No)
 
@@ -549,7 +549,7 @@ class MainWindow(QtGui.QMainWindow):
             epochs.save(fname)
         # Also copy the related csv-file to the chosen folder
         shutil.copyfile(os.path.join(epochs_dir, str(self.epochList.
-                                                     currentItem().text()) +
+                                                     currentItem().text()) + 
                                      '.csv'), fname + '.csv')
 
     def on_actionAbout_triggered(self, checked=None):
@@ -631,7 +631,7 @@ class MainWindow(QtGui.QMainWindow):
         evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
         for item_idx in range(self.evokedList.count()):
             if str(self.evokedList.item(item_idx).text()) == evoked_name:
-                message = ('Evoked data set with name %s already exists!' %
+                message = ('Evoked data set with name %s already exists!' % 
                            evoked_name)
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
@@ -756,7 +756,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.draw_evoked_potentials(evoked_raw, layout)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +
+            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
                                                 str(e))
             mBox.exec_()
         finally:
@@ -797,7 +797,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             self.caller.plot_group_average(groups, layout)
         except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' +
+            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
                                                 str(e))
             mBox.exec_()
         finally:
@@ -882,7 +882,7 @@ class MainWindow(QtGui.QMainWindow):
 
         message = 'Permanently remove epochs and the related files?'
         reply = QtGui.QMessageBox.question(self, 'delete epochs',
-                                           message, QtGui.QMessageBox.Yes |
+                                           message, QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
 
@@ -909,7 +909,7 @@ class MainWindow(QtGui.QMainWindow):
 
         message = 'Permanently remove evokeds and the related files?'
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
-                                           message, QtGui.QMessageBox.Yes |
+                                           message, QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
 
@@ -918,6 +918,35 @@ class MainWindow(QtGui.QMainWindow):
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
             self.caller.experiment.active_subject.remove_evoked(item_str)
+        else:
+            return
+
+    def on_pushButtonDeletePower_clicked(self, checked=None):
+        """Delete the selected power item and the files related to it."""
+        if checked is None:
+            return
+
+        if self.ui.listWidgetPowerItems.count() == 0:
+            return
+
+        elif self.ui.listWidgetPowerItems.currentItem() is None:
+            self.messageBox = messageBoxes.shortMessageBox('No power '
+                                                           'selected.')
+            self.messageBox.show()
+            return
+
+        item_str = self.ui.listWidgetPowerItems.currentItem().text()
+        message = 'Delete power item?'
+        reply = QtGui.QMessageBox.question(self, 'delete power',
+                                           message, QtGui.QMessageBox.Yes | 
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            item = self.ui.listWidgetPowerItems.currentItem()
+            row = self.ui.listWidgetPowerItems.row(item)
+            self.ui.listWidgetPowerItems.takeItem(row)
+            self.caller.experiment.active_subject.remove_power(item_str)
         else:
             return
 
@@ -1042,8 +1071,7 @@ class MainWindow(QtGui.QMainWindow):
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
 
-        self.tfr_dialog = TFRDialog(self, self.caller.experiment.
-                                    active_subject.working_file, epochs)
+        self.tfr_dialog = TFRDialog(self, epochs)
         QtGui.QApplication.restoreOverrideCursor()
         self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
@@ -1064,6 +1092,25 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QApplication.restoreOverrideCursor()
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
+
+    def on_pushButtonTFRTopology_2_clicked(self, checked=None):
+        """Visualize existing AVGPower as topology."""
+        if checked is None:
+            return
+        item = self.ui.listWidgetPowerItems.currentItem()
+        if item is None:
+            return
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
+                                             (QtCore.Qt.WaitCursor))
+        power_name = item.text()
+        subject = self.caller.experiment.active_subject
+        path = os.path.join(subject.subject_path, 'TFR')
+        fname = os.path.join(path, power_name)
+        tfr = fileManager.load_tfr(fname)
+        self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
+        self.tfrTop_dialog.finished.connect(self.on_close)
+        self.tfrTop_dialog.show()
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""
@@ -1180,7 +1227,7 @@ class MainWindow(QtGui.QMainWindow):
                                                "source analysis work and "
                                                "clear the results of the "
                                                "later phases",
-                                               QtGui.QMessageBox.Yes |
+                                               QtGui.QMessageBox.Yes | 
                                                QtGui.QMessageBox.No,
                                                QtGui.QMessageBox.No)
 
@@ -1254,7 +1301,7 @@ class MainWindow(QtGui.QMainWindow):
                                            'selected forward model, including '
                                            'the coregistration and forward '
                                            'solution files related to it?',
-                                           QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
 
@@ -1392,6 +1439,7 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.evokedList.clear()
+        self.update_power_list()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
@@ -1458,6 +1506,7 @@ class MainWindow(QtGui.QMainWindow):
         # Populate epoch and evoked lists
         raw = self.caller.experiment.active_subject.working_file
         active_sub = self.caller.experiment.active_subject
+        print 'Loading evokeds...'
         epochs_items = self.caller.experiment.load_epochs(active_sub)
         evokeds_items = self.caller.experiment.load_evokeds(active_sub)
         if epochs_items is not None:
@@ -1476,7 +1525,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
-        self.setWindowTitle('Meggie - ' +
+        self.setWindowTitle('Meggie - ' + 
                             self.caller.experiment.experiment_name)
 
         # Check whether reconstructed mri files have been copied to the recon
@@ -1504,6 +1553,15 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.listWidgetBads.addItem(bad)
 
         self.update_covariance_info_box()
+
+    def update_power_list(self):
+        """Updates the TFR list."""
+        self.ui.listWidgetPowerItems.clear()
+        active_sub = self.caller.experiment.active_subject
+        power_items = self.caller.experiment.load_powers(active_sub)
+        if len(power_items) > 0:
+            for item in power_items:
+                self.ui.listWidgetPowerItems.addItem(item)
 
     def update_covariance_info_box(self):
         """

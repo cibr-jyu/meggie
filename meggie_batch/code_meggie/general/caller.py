@@ -1022,14 +1022,13 @@ class Caller(object):
         self.e.set()
         return averagedEvokeds, groups
 
-    def TFR(self, raw, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
+    def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
         TODO should use dictionary like most other dialogs.
         Keyword arguments:
-        raw           -- A raw object.
         epochs        -- Epochs extracted from the data.
         ch_index      -- Index of the channel to be used.
         minfreq       -- Starting frequency for the representation.
@@ -1156,16 +1155,15 @@ class Caller(object):
         self.e.set()
         return power, itc, times, evoked, evoked_data
 
-    def TFR_topology(self, epochs, reptype, minfreq, maxfreq, decim, mode,  
+    def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
-        TODO should use dictionary like most other dialogs.
         Keyword arguments:
         raw           -- A raw object.
-        epochs        -- Epochs extracted from the data.
+        inst          -- Epochs extracted from the data or AverageTFR to plot.
         reptype       -- Type of representation (induced or phase).
         minfreq       -- Starting frequency for the representation.
         maxfreq       -- Ending frequency for the representation.
@@ -1185,30 +1183,38 @@ class Caller(object):
                          positive values exist in the data.
         """
         plt.close()
-        print "Number of threads active", activeCount()
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
-
-        # Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, interval)
-
-        async_result = pool.apply_async(self._TFR_topology,
-                                        (epochs, frequencies, ncycles, decim))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
+        if isinstance(inst, mne.epochs._BaseEpochs):
+    
+            print "Number of threads active", activeCount()
+            self.e.clear()
             self.result = None
-            return 
-
-        power, itc = async_result.get()
-        pool.terminate()
-        self.parent.update_ui()
+            pool = ThreadPool(processes=1)
+    
+            # Find intervals for given frequency band
+            frequencies = np.arange(minfreq, maxfreq, interval)
+    
+            async_result = pool.apply_async(self._TFR_topology,
+                                            (inst, frequencies, ncycles,
+                                             decim))
+            while(True):
+                sleep(0.2)
+                if self.e.is_set(): break;
+                self.parent.update_ui()
+    
+            if not self.result is None:
+                self.messageBox = messageBoxes.shortMessageBox(str(self.
+                                                                   result))
+                self.messageBox.show()
+                self.result = None
+                return 
+    
+            power, itc = async_result.get()
+            pool.terminate()
+            self.parent.update_ui()
+        elif reptype == 'average':
+            power = inst
+        elif reptype == 'itc':
+            itc = inst
         if lout == 'Infer from data':
             layout = None
         else:
@@ -1222,7 +1228,7 @@ class Caller(object):
         self.parent.update_ui()
         if reptype == 'average':  # induced
             if color_map == 'auto':
-                cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+                cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
             else:
                 cmap = color_map
             try:
@@ -1242,7 +1248,7 @@ class Caller(object):
                 self.parent.update_ui()
                 fig = power.plot_topo(baseline=baseline, mode=mode,
                                       fmin=minfreq, fmax=maxfreq,
-                                      layout=layout,
+                                      layout=layout, cmap=cmap,
                                       title='Average power')
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
@@ -1250,10 +1256,11 @@ class Caller(object):
                 return
         elif reptype == 'itc':  # phase locked
             if color_map == 'auto':
-                cmap = 'RdBu_r' if np.min(itc[0] < 0) else 'Reds'
+                cmap = 'RdBu_r' if np.min(itc.data < 0) else 'Reds'
             else:
                 cmap = color_map
             try:
+                print 'Plotting topology. Please be patient...'
                 title = 'Inter-Trial coherence'
                 if scalp is not None:
                     fig = itc.plot_topomap(tmin=scalp['tmin'],
@@ -1263,10 +1270,10 @@ class Caller(object):
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
                                            show=False)
-                fig = itc.plot_topo(baseline=baseline, mode=mode, 
-                                    fmin=minfreq, fmax=maxfreq, layout=layout, 
-                                    title=title)
-                
+                fig = itc.plot_topo(baseline=baseline, mode=mode,
+                                    fmin=minfreq, fmax=maxfreq, layout=layout,
+                                    cmap=cmap, title=title)
+
                 fig.show()
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
@@ -1802,8 +1809,9 @@ class Caller(object):
                     self.result = e
                     self.e.set()
                     return dataToFilter
-
-        else:
+            print 'Saving to file...'
+            dataToFilter.save(info['filename'], overwrite=True)
+        else:  # preview
             try:
                 picks = mne.pick_types(info, meg=True, eeg=True)
                 if dic.get('lowpass'):

@@ -537,6 +537,21 @@ class Experiment(QObject):
 
         return evokeds_items
 
+    def load_powers(self, subject):
+        """
+        Loads power files from the subject folder.
+        Returns a list of AverageTFR names.
+        """
+        powers = list()
+        path = os.path.join(subject.subject_path, 'TFR')
+        if not os.path.exists(path):
+            return list()
+        files = os.listdir(path)
+        for fname in files:
+            if fname.endswith('.h5'):
+                powers.append(fname)
+        return powers
+
     def get_subject_working_file(self, subject_name):
         """Returns working file of a given subject name.
         

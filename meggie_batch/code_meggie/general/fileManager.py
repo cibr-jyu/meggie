@@ -745,4 +745,11 @@ def get_layouts():
     except:
         return []
     return files
-    
+
+
+def load_tfr(fname):
+    """
+    Function for loading AverageTFR from a file.
+    Returns AverageTFR object.
+    """
+    return mne.time_frequency.tfr.read_tfrs(fname)[0]

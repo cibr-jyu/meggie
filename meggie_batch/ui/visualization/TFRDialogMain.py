@@ -45,19 +45,17 @@ class TFRDialog(QtGui.QDialog):
     values and passes them to the Caller-class.
     """
     
-    def __init__(self, parent, raw, epochs):
+    def __init__(self, parent, epochs):
         """
         Constructor. Sets up the dialog
         
         Keyword arguments:
         
         parent    --    Parent of the dialog
-        raw       --    raw data file
         epochs    --    a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.raw = raw
         self.epochs = epochs
         ch_names = self.epochs.ch_names
         self.ui = Ui_DialogEpochsTFR()
@@ -79,8 +77,8 @@ class TFRDialog(QtGui.QDialog):
         cmap = str(self.ui.comboBoxCmap.currentText())
         try:
             caller = Caller.Instance()
-            caller.TFR(self.raw, self.epochs, ch_index, minfreq, maxfreq,
-                       interval, ncycles, decim, cmap)
+            caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
+                       ncycles, decim, cmap)
         except Exception, err:
             self.messageBox = shortMessageBox(str(err))
             QtGui.QApplication.restoreOverrideCursor()

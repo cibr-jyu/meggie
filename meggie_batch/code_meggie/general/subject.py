@@ -56,14 +56,13 @@ class Subject(QObject):
         Constructor for the subject class.
         
         Keyword arguments:
-        working_file        -- the raw data file of the subject
+        experiment      -- experiment for the subject
         subject_name    -- the name of the subject
         """
         QObject.__init__(self)
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
-        #TODO: ID-juttuja.
-        #self._subject_ID = ''
+
         self._event_set = None
         self._stim_channel = None
         self._working_file = None
@@ -80,15 +79,15 @@ class Subject(QObject):
                                           self._experiment.experiment_name,
                                           self._subject_name)
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
-        self._evokeds_directory = os.path.join(self._epochs_directory, 'average')
-        self._source_analysis_directory = os.path.join(self._subject_path, \
-                                                     'sourceAnalysis')
+        self._evokeds_directory = os.path.join(self._epochs_directory,
+                                               'average')
+        self._source_analysis_directory = os.path.join(self._subject_path,
+                                                       'sourceAnalysis')
         self._reconFiles_directory = \
             os.path.join(self._source_analysis_directory, 'reconFiles')
         self._forwardModels_directory = \
             os.path.join(self._source_analysis_directory, 'forwardModels')
-        
-        
+
         # Models for various types of data stored in subject
         self._forwardModelModel = None
 
@@ -209,10 +208,14 @@ class Subject(QObject):
         Finds the correct stimulus channel for the data.
         """
         channels = self._working_file.info.get('ch_names')
-        if any('STI101' in channels for x in channels):
+        if 'STI101' in channels:
             self._stim_channel = 'STI101'
-        elif any('STI 014' in channels for x in channels):
+        elif 'STI 101' in channels:
+            self._stim_channel = 'STI 101'
+        elif 'STI 014' in channels:
             self._stim_channel = 'STI 014'
+        elif 'STI014' in channels:
+            self._stim_channel = 'STI014'
     
     def save_raw(self, file_name, path):
         """
@@ -480,6 +483,22 @@ class Subject(QObject):
             message = 'Evoked could not be deleted from average folder.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
+
+    def remove_power(self, name):
+        """
+        Removes AVGPower object from the TFR dictionary.
+
+        Keyword arguments:
+        name    -- Name of the file as string.
+        """
+        path = os.path.join(self.subject_path, 'TFR')
+        try:
+            fileManager.delete_file_at(path, name)
+        except OSError as err:
+            message = 'The file could not be deleted from TFR folder.\n'
+            self.messageBox = messageBoxes.shortMessageBox(message + str(err))
+            self.messageBox.show()
+
 
 ### Code related to source modeling ###
 

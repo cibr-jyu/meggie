@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/talli/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/eogParametersDialogBatch.ui'
+# Form implementation generated from reading ui file 'eogParametersDialogBatch.ui'
 #
-# Created: Thu Dec 18 16:03:01 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Tue Sep 22 02:30:15 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -51,7 +51,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 643, 838))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 643, 834))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(540, 690))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.tabWidgetEOGSettings = QtGui.QTabWidget(self.scrollAreaWidgetContents)
@@ -68,7 +68,7 @@ class Ui_Dialog(object):
         self.frame_7.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_7.setObjectName(_fromUtf8("frame_7"))
         self.horizontalLayoutWidget_19 = QtGui.QWidget(self.frame_7)
-        self.horizontalLayoutWidget_19.setGeometry(QtCore.QRect(10, 10, 244, 41))
+        self.horizontalLayoutWidget_19.setGeometry(QtCore.QRect(10, 10, 246, 41))
         self.horizontalLayoutWidget_19.setObjectName(_fromUtf8("horizontalLayoutWidget_19"))
         self.horizontalLayout_25 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_19)
         self.horizontalLayout_25.setMargin(0)
@@ -138,7 +138,7 @@ class Ui_Dialog(object):
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_2.setObjectName(_fromUtf8("frame_2"))
         self.horizontalLayoutWidget_9 = QtGui.QWidget(self.frame_2)
-        self.horizontalLayoutWidget_9.setGeometry(QtCore.QRect(10, 10, 314, 41))
+        self.horizontalLayoutWidget_9.setGeometry(QtCore.QRect(10, 10, 316, 41))
         self.horizontalLayoutWidget_9.setObjectName(_fromUtf8("horizontalLayoutWidget_9"))
         self.horizontalLayout_9 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_9)
         self.horizontalLayout_9.setMargin(0)
@@ -182,7 +182,7 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayoutWidget_8 = QtGui.QWidget(self.frame)
-        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 494, 41))
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(10, 10, 495, 41))
         self.horizontalLayoutWidget_8.setObjectName(_fromUtf8("horizontalLayoutWidget_8"))
         self.horizontalLayout_8 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_8)
         self.horizontalLayout_8.setMargin(0)
@@ -243,7 +243,7 @@ class Ui_Dialog(object):
         self.labelStart2.setObjectName(_fromUtf8("labelStart2"))
         self.horizontalLayout_21.addWidget(self.labelStart2)
         self.horizontalLayoutWidget = QtGui.QWidget(self.tabEOG2)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 160, 281, 41))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 160, 285, 41))
         self.horizontalLayoutWidget.setObjectName(_fromUtf8("horizontalLayoutWidget"))
         self.horizontalLayout_7 = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout_7.setMargin(0)
@@ -268,7 +268,7 @@ class Ui_Dialog(object):
         self.lineEditBad.setObjectName(_fromUtf8("lineEditBad"))
         self.horizontalLayout_28.addWidget(self.lineEditBad)
         self.layoutWidget_2 = QtGui.QWidget(self.tabEOG2)
-        self.layoutWidget_2.setGeometry(QtCore.QRect(10, 110, 308, 41))
+        self.layoutWidget_2.setGeometry(QtCore.QRect(10, 110, 309, 41))
         self.layoutWidget_2.setObjectName(_fromUtf8("layoutWidget_2"))
         self.horizontalLayout_22 = QtGui.QHBoxLayout(self.layoutWidget_2)
         self.horizontalLayout_22.setMargin(0)
@@ -307,7 +307,7 @@ class Ui_Dialog(object):
         self.frameEpochRejection.setFrameShadow(QtGui.QFrame.Raised)
         self.frameEpochRejection.setObjectName(_fromUtf8("frameEpochRejection"))
         self.horizontalLayoutWidget_4 = QtGui.QWidget(self.frameEpochRejection)
-        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(10, 10, 441, 71))
+        self.horizontalLayoutWidget_4.setGeometry(QtCore.QRect(10, 10, 441, 80))
         self.horizontalLayoutWidget_4.setObjectName(_fromUtf8("horizontalLayoutWidget_4"))
         self.horizontalLayout_12 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_4)
         self.horizontalLayout_12.setMargin(0)
@@ -374,7 +374,7 @@ class Ui_Dialog(object):
         self.groupBoxBatch.setMinimumSize(QtCore.QSize(0, 240))
         self.groupBoxBatch.setObjectName(_fromUtf8("groupBoxBatch"))
         self.verticalLayoutWidget_4 = QtGui.QWidget(self.groupBoxBatch)
-        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(10, 30, 471, 205))
+        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(10, 30, 471, 209))
         self.verticalLayoutWidget_4.setObjectName(_fromUtf8("verticalLayoutWidget_4"))
         self.verticalLayout_9 = QtGui.QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_9.setMargin(0)
@@ -473,7 +473,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.tabWidgetEOGSettings.setCurrentIndex(1)
+        self.tabWidgetEOGSettings.setCurrentIndex(0)
         QtCore.QObject.connect(self.pushButtonCompute, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.accept)
         QtCore.QObject.connect(self.pushButtonCancel, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), Dialog.reject)
         QtCore.QObject.connect(self.checkBoxBatch, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.labelSubjects.setEnabled)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'TFRtopology.ui'
 #
-# Created: Thu Sep 17 05:06:31 2015
+# Created: Mon Sep 21 03:56:26 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -106,6 +106,8 @@ class Ui_DialogTFRTopology(object):
         self.gridLayout_3.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem, 1, 1, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem1, 3, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxBaseline, 3, 0, 1, 2)
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -116,6 +118,8 @@ class Ui_DialogTFRTopology(object):
         self.groupBoxFrequencies.setObjectName(_fromUtf8("groupBoxFrequencies"))
         self.gridLayout_5 = QtGui.QGridLayout(self.groupBoxFrequencies)
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem2, 2, 1, 1, 1)
         self.verticalLayout_6 = QtGui.QVBoxLayout()
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.horizontalLayout_13 = QtGui.QHBoxLayout()
@@ -176,8 +180,6 @@ class Ui_DialogTFRTopology(object):
         self.horizontalLayout_8.addWidget(self.spinBoxDecim)
         self.verticalLayout_6.addLayout(self.horizontalLayout_8)
         self.gridLayout_5.addLayout(self.verticalLayout_6, 1, 1, 1, 1)
-        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem1, 2, 1, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxFrequencies, 2, 0, 1, 1)
         self.groupBoxScalp = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxScalp.setCheckable(True)
@@ -242,8 +244,8 @@ class Ui_DialogTFRTopology(object):
         self.horizontalLayout_11.addWidget(self.doubleSpinBoxScalpTmax)
         self.verticalLayout_2.addLayout(self.horizontalLayout_11)
         self.gridLayout_6.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem2, 1, 0, 1, 1)
+        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem3, 1, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxScalp, 2, 1, 1, 1)
         self.labelEpochName = QtGui.QLabel(self.scrollAreaWidgetContents)
         self.labelEpochName.setText(_fromUtf8(""))
@@ -282,6 +284,8 @@ class Ui_DialogTFRTopology(object):
         self.comboBoxCmap.addItem(_fromUtf8(""))
         self.horizontalLayout_17.addWidget(self.comboBoxCmap)
         self.gridLayout.addLayout(self.horizontalLayout_17, 3, 0, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem4, 4, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxTopogpraphyType, 1, 0, 1, 2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -321,8 +325,8 @@ class Ui_DialogTFRTopology(object):
         self.pushButtonGroupAverage = QtGui.QPushButton(DialogTFRTopology)
         self.pushButtonGroupAverage.setObjectName(_fromUtf8("pushButtonGroupAverage"))
         self.horizontalLayout_9.addWidget(self.pushButtonGroupAverage)
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem3)
+        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem5)
         self.verticalLayout_27.addLayout(self.horizontalLayout_9)
         self.gridLayout_2.addLayout(self.verticalLayout_27, 1, 0, 1, 1)
         self.verticalLayout = QtGui.QVBoxLayout()

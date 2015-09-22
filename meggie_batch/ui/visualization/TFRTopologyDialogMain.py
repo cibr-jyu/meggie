@@ -48,33 +48,48 @@ class TFRTopologyDialog(QtGui.QDialog):
     """
     caller = Caller.Instance()    
     
-    def __init__(self, parent, epoch_name):
+    def __init__(self, parent, epoch_name, tfr=None):
         """
         Initializes the TFR topology dialog.
         
         Keyword arguments:
         
-        parent    --   this dialog's parent
-        epoch_name    --   the name of a collection of epochs
+        parent     --   This dialog's parent.
+        epoch_name --   The name of a collection of epochs.
+        tfr        --   A pre-calculated TFR to plot. Defaults to None.
         """
-        QtGui.QDialog.__init__(self)
+        QtGui.QDialog.__init__(self, parent)
         self.parent = parent
         self.epoch_name = epoch_name
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
-        epochs = self.caller.experiment.active_subject.get_epochs(epoch_name)
-        self.ui.labelEpochName.setText(epoch_name)
-        self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
-        self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
-        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
-        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+        if tfr is None:
+            self.tfr = None
+            subject = self.caller.experiment.active_subject
+            epochs = subject.get_epochs(epoch_name)
+            self.ui.labelEpochName.setText(epoch_name)
+            self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
+            self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
+            self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
+            self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
+            self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
+            self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
+            self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
+            self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
+            self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+        else:
+            self.tfr = tfr
+            if tfr.method == 'morlet-power':
+                self.ui.radioButtonInduced.setChecked(True)
+            elif tfr.method == 'morlet-itc':
+                self.ui.radioButtonPhase.setChecked(True)
+            self.ui.radioButtonInduced.setEnabled(False)
+            self.ui.radioButtonPhase.setEnabled(False)
+            self.ui.groupBoxFrequencies.setVisible(False)
+            self.ui.groupBoxScalp.setVisible(False)
+            self.ui.pushButtonGroupAverage.setVisible(False)
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
@@ -96,11 +111,15 @@ class TFRTopologyDialog(QtGui.QDialog):
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         cmap = self.ui.comboBoxCmap.currentText()
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        decim = self.ui.spinBoxDecim.value()
-        interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles = self.ui.spinBoxNcycles.value()
+        if self.ui.radioButtonSelectLayout.isChecked():
+            layout = self.ui.comboBoxLayout.currentText()
+        elif self.ui.radioButtonLayoutFromFile.isChecked():
+            layout = str(self.ui.labelLayout.text())
+        if layout == 'No layout selected' or layout == '':
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox = shortMessageBox('No layout selected')
+            self.messageBox.show()
+            return
         if self.ui.groupBoxBaseline.isChecked():
             mode = self.ui.comboBoxMode.currentText()
             if self.ui.checkBoxBaselineStartNone.isChecked():
@@ -114,19 +133,25 @@ class TFRTopologyDialog(QtGui.QDialog):
                 blend = self.ui.doubleSpinBoxBaselineEnd.value()
         else:
             blstart, blend, mode = None, None, None
-
-        if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
-        elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
-        ch_type = str(self.ui.comboBoxChannels.currentText())
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == 'No layout selected' or layout == '':
+        if self.ui.radioButtonInduced.isChecked():
+            reptype = 'average'
+        elif self.ui.radioButtonPhase.isChecked():
+            reptype = 'itc'
+        if self.tfr is not None:
+            self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
+                                     blstart, blend, None, None, layout, None,
+                                     None, cmap)
             QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox = shortMessageBox('No layout selected')
-            self.messageBox.show()
             return
+
+        minfreq = self.ui.doubleSpinBoxMinFreq.value()
+        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+        decim = self.ui.spinBoxDecim.value()
+        interval = self.ui.doubleSpinBoxFreqInterval.value()
+        ncycles = self.ui.spinBoxNcycles.value()
+
+        ch_type = str(self.ui.comboBoxChannels.currentText())
+
         epochs = self.caller.experiment.active_subject.get_epochs(self.
                                                                   epoch_name)
         scalp = dict()
@@ -145,6 +170,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox(str(err))
             self.messageBox.show()
+        self.parent.update_power_list()
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
