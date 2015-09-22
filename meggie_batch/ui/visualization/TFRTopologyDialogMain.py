@@ -90,6 +90,11 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.ui.groupBoxFrequencies.setVisible(False)
             self.ui.groupBoxScalp.setVisible(False)
             self.ui.pushButtonGroupAverage.setVisible(False)
+            self.ui.doubleSpinBoxBaselineStart.setMinimum(tfr.times[0])
+            self.ui.doubleSpinBoxBaselineStart.setMaximum(tfr.times[-1])
+            self.ui.doubleSpinBoxBaselineStart.setValue(tfr.times[0])
+            self.ui.doubleSpinBoxBaselineEnd.setMinimum(tfr.times[0])
+            self.ui.doubleSpinBoxBaselineEnd.setMaximum(tfr.times[-1])
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
