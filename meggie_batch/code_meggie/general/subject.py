@@ -373,39 +373,6 @@ class Subject(QObject):
         self.add_epochs(epochs)
         return epochs
 
-    @QtCore.pyqtSlot(dict, QtGui.QListWidget)  
-    def modify_epochs(self, epoch_params, epoch_widget):
-        """Overwrite the existing epoch_item with new epochs.
-        The signal is emitted by epoch_params_ready on eventSelectionDialogMain
-        accept method. The signal is connected to this method only on 
-        on_pushButtonModifyEpochs_clicked method. 
-
-        Returns item including epoch params and raw.
-
-        Keyword arguments:
-        epoch_params     -- A dict containing the parameter values for the
-                            epochs.
-        epoch_widget     -- QListWidget object containing epoch items
-        """
-        current_collection = epoch_widget.currentItem().text()
-        # Removes Epochs object and item.
-        self.remove_epochs(current_collection)
-        epoch_widget.remove_item(epoch_widget.currentItem())
-        e = Epochs()
-        epochs = e.create_epochs_from_dict(epoch_params, self._experiment.\
-                                           active_subject.\
-                                           working_file)
-        epoch_params['raw'] = self._experiment._working_file_names[self._experiment._active_subject_name] #working_file_path
-
-        #Create a QListWidgetItem and add the actual epochs to slot 32.
-        item = QtGui.QListWidgetItem(epoch_params['collectionName'])
-        # TODO: remove setData
-        item.setData(32, epochs)
-        item.setData(33, epoch_params)
-        self.create_epochs_object_from_item(epoch_params['collectionName'], item)
-        epoch_widget.addItem(item)
-        epoch_widget.setCurrentItem(item)
-
     def remove_epochs(self, collection_name):
         """
         Removes epochs from epochs dictionary.

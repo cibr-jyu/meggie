@@ -612,7 +612,7 @@ def save_epoch(fpath, epoch, params, overwrite=False):
     Keyword arguments:
     
     fpath     -- The full path and base name of the files without suffix
-    epoch     -- Epochs object
+    epoch     -- mne.Epochs object
     params    -- Parameter of the epochs.
     overwrite -- A boolean telling whether existing files should be
                  replaced. False by default. 
@@ -622,11 +622,12 @@ def save_epoch(fpath, epoch, params, overwrite=False):
     # First save the epochs
     epoch.save(fpath + '.fif')
     # Then save the parameters using pickle.
-    if params is None: return
+    if params is None:
+        return
     # toPyObject turns the dict keys into QStrings so convert them back to
     # strings.
     # parameters = dict((str(k), v) for k, v in parameters.iteritems())
-    
+
     event_dict = {}
     event_list = params['events']
     for item in event_list:

@@ -76,7 +76,7 @@ class Epochs(QObject):
         Keyword arguments:
         raw    -- the raw .fif of the collection
         """
-        self._raw = raw        
+        self._raw = raw
         
     @property
     def collection_name(self):

@@ -133,19 +133,17 @@ class EventSelectionDialog(QtGui.QDialog):
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         #stim_channel = self.caller.experiment.active_subject._stim_channel
 
-        collectionName = self.ui.lineEditCollectionName.text()
+        collectionName = str(self.ui.lineEditCollectionName.text())
         if len(self.parent.epochList.ui.listWidgetEpochs.\
             findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
-            message = 'Collection name ' + str(collectionName) + ' exists. ' +\
-                        'Overwrite existing epochs?'
-            reply = QtGui.QMessageBox.question(self, 'Collection exists',
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+            msg = ('Collection name %s exists. Overwrite existing epochs?' %
+                   collectionName)
+            reply = QtGui.QMessageBox.question(self, 'Collection exists', msg,
+                                               QtGui.QMessageBox.Yes |
+                                               QtGui.QMessageBox.No,
+                                               QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.No:
                 return None
-        # QString to string
-        collectionName = str(collectionName)
 
         reject = dict()
         if mag:

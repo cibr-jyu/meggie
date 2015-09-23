@@ -530,8 +530,8 @@ class MainWindow(QtGui.QMainWindow):
         # modify_epochs removes the previous Epochs object and raw files
         # created from it and creates new Epochs object and raw files.
         # Also removes the epochWidget item and replaces it with the new one.
-        self.epochParameterDialog.epoch_params_ready.connect
-        (self.create_new_epochs)
+        self.epochParameterDialog.epoch_params_ready.connect(self.
+                                                             create_new_epochs)
         self.epochParameterDialog.show()
 
     def on_pushButtonSaveEpochs_clicked(self, checked=None):

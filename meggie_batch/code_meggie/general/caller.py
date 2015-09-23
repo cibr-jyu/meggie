@@ -1162,9 +1162,9 @@ class Caller(object):
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
         Keyword arguments:
-        raw           -- A raw object.
-        inst          -- Epochs extracted from the data or AverageTFR to plot.
-        reptype       -- Type of representation (induced or phase).
+        inst          -- Epochs extracted from the data or previously computed
+                         AverageTFR object to plot.
+        reptype       -- Type of representation (average or itc).
         minfreq       -- Starting frequency for the representation.
         maxfreq       -- Ending frequency for the representation.
         decim         -- Temporal decimation factor.
@@ -1287,13 +1287,7 @@ class Caller(object):
         """
         Performed in a worker thread.
         """
-        
         # TODO: Let the user define the title of the figure.
-        #data = epochs.get_data()
-        
-        # Find intervals for given frequency band
-        #Fs = raw.info['sfreq']
-        
         try:
             #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
             power, itc = tfr_morlet(epochs, freqs=frequencies,
@@ -1310,8 +1304,10 @@ class Caller(object):
         if not os.path.isdir(tfr_path):
             os.mkdir(tfr_path)
         print 'Saving files to %s...' % tfr_path
-        power.save(os.path.join(tfr_path, 'power-tfr.h5'), overwrite=True)
-        itc.save(os.path.join(tfr_path, 'itc-tfr.h5'), overwrite=True)
+        power.save(os.path.join(tfr_path, 'power-tfr-' + epochs.name + '.h5'),
+                   overwrite=True)
+        itc.save(os.path.join(tfr_path, 'itc-tfr-' + epochs.name + '.h5'),
+                 overwrite=True)
         self.e.set()
         return power, itc
 
