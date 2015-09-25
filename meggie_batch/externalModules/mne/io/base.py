@@ -189,7 +189,8 @@ class ToDataFrameMixin(object):
         assert all(len(mdx) == len(mindex[0]) for mdx in mindex)
 
         df = pd.DataFrame(data, columns=col_names)
-        [df.insert(i, k, v) for i, (k, v) in enumerate(mindex)]
+        for i, (k, v) in enumerate(mindex):
+            df.insert(i, k, v)
         if index is not None:
             if 'time' in index:
                 logger.info('Converting time column to int64...')
@@ -257,6 +258,7 @@ class _BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin,
                 load_from_disk = True
         self._last_samps = np.array(last_samps)
         self._first_samps = np.array(first_samps)
+        info._check_consistency()  # make sure subclass did a good job
         self.info = info
         cals = np.empty(info['nchan'])
         for k in range(info['nchan']):
@@ -639,7 +641,8 @@ class _BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin,
                 self._data[p, :] = data_picks_new[pp]
 
     @verbose
-    def apply_hilbert(self, picks, envelope=False, n_jobs=1, verbose=None):
+    def apply_hilbert(self, picks, envelope=False, n_jobs=1, n_fft=None,
+                      verbose=None):
         """ Compute analytic signal or envelope for a subset of channels.
 
         If envelope=False, the analytic signal for the channels defined in
@@ -671,6 +674,10 @@ class _BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             Compute the envelope signal of each channel.
         n_jobs: int
             Number of jobs to run in parallel.
+        n_fft : int > self.n_times | None
+            Points to use in the FFT for Hilbert transformation. The signal
+            will be padded with zeros before computing Hilbert, then cut back
+            to original length. If None, n == self.n_times.
         verbose : bool, str, int, or None
             If not None, override default verbose level (see mne.verbose).
             Defaults to self.verbose.
@@ -688,12 +695,21 @@ class _BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         MNE inverse solution, the enevlope in source space can be obtained
         by computing the analytic signal in sensor space, applying the MNE
         inverse, and computing the envelope in source space.
+
+        Also note that the n_fft parameter will allow you to pad the signal
+        with zeros before performing the Hilbert transform. This padding
+        is cut off, but it may result in a slightly different result
+        (particularly around the edges). Use at your own risk.
         """
-        if envelope:
-            self.apply_function(_envelope, picks, None, n_jobs)
+        n_fft = self.n_times if n_fft is None else n_fft
+        if n_fft < self.n_times:
+            raise ValueError("n_fft must be greater than n_times")
+        if envelope is True:
+            self.apply_function(_my_hilbert, picks, None, n_jobs, n_fft,
+                                envelope=envelope)
         else:
-            from scipy.signal import hilbert
-            self.apply_function(hilbert, picks, np.complex64, n_jobs)
+            self.apply_function(_my_hilbert, picks, np.complex64, n_jobs,
+                                n_fft, envelope=envelope)
 
     @verbose
     def filter(self, l_freq, h_freq, picks=None, filter_length='10s',
@@ -1959,6 +1975,11 @@ def _start_writing_raw(name, info, sel=None, data_type=FIFF.FIFFT_FLOAT,
         calibration factors.
     """
     #
+    #    Measurement info
+    #
+    info = pick_info(info, sel, copy=True)
+
+    #
     #  Create the file and save the essentials
     #
     fid = start_file(name)
@@ -1966,26 +1987,6 @@ def _start_writing_raw(name, info, sel=None, data_type=FIFF.FIFFT_FLOAT,
     write_id(fid, FIFF.FIFF_BLOCK_ID)
     if info['meas_id'] is not None:
         write_id(fid, FIFF.FIFF_PARENT_BLOCK_ID, info['meas_id'])
-    #
-    #    Measurement info
-    #
-    info = copy.deepcopy(info)
-    if sel is not None:
-        info['chs'] = [info['chs'][k] for k in sel]
-        info['nchan'] = len(sel)
-
-        ch_names = [c['ch_name'] for c in info['chs']]  # name of good channels
-        comps = copy.deepcopy(info['comps'])
-        for c in comps:
-            row_idx = [k for k, n in enumerate(c['data']['row_names'])
-                       if n in ch_names]
-            row_names = [c['data']['row_names'][i] for i in row_idx]
-            rowcals = c['rowcals'][row_idx]
-            c['rowcals'] = rowcals
-            c['data']['nrow'] = len(row_names)
-            c['data']['row_names'] = row_names
-            c['data']['data'] = c['data']['data'][row_idx]
-        info['comps'] = comps
 
     cals = []
     for k in range(info['nchan']):
@@ -2061,10 +2062,32 @@ def _write_raw_buffer(fid, buf, cals, fmt, inv_comp):
     write_function(fid, FIFF.FIFF_DATA_BUFFER, buf)
 
 
-def _envelope(x):
-    """ Compute envelope signal """
+def _my_hilbert(x, n_fft=None, envelope=False):
+    """ Compute Hilbert transform of signals w/ zero padding.
+
+    Parameters
+    ----------
+    x : array, shape (n_times)
+        The signal to convert
+    n_fft : int, length > x.shape[-1] | None
+        How much to pad the signal before Hilbert transform.
+        Note that signal will then be cut back to original length.
+    envelope : bool
+        Whether to compute amplitude of the hilbert transform in order
+        to return the signal envelope.
+
+    Returns
+    -------
+    out : array, shape (n_times)
+        The hilbert transform of the signal, or the envelope.
+    """
     from scipy.signal import hilbert
-    return np.abs(hilbert(x))
+    n_fft = x.shape[-1] if n_fft is None else n_fft
+    n_x = x.shape[-1]
+    out = hilbert(x, N=n_fft)[:n_x]
+    if envelope is True:
+        out = np.abs(out)
+    return out
 
 
 def _check_raw_compatibility(raw):

@@ -4,7 +4,6 @@
 #
 # License: BSD (3-clause)
 
-from copy import deepcopy
 from inspect import getargspec, isfunction
 from collections import namedtuple
 
@@ -413,7 +412,7 @@ class ICA(ContainsMixin):
         if not has_pre_whitener and self.noise_cov is None:
             # use standardization as whitener
             # Scale (z-score) the data by channel type
-            info = pick_info(deepcopy(info), picks)
+            info = pick_info(info, picks)
             pre_whitener = np.empty([len(data), 1])
             for ch_type in ['mag', 'grad', 'eeg']:
                 if _contains_ch_type(info, ch_type):
@@ -1302,11 +1301,17 @@ class ICA(ContainsMixin):
             Title to use.
         show : bool
             Call pyplot.show() at the end.
-        outlines : 'head' | dict | None
-            The outlines to be drawn. If 'head', a head scheme will be drawn.
-            If dict, each key refers to a tuple of x and y positions. The
-            values in 'mask_pos' will serve as image mask. If None,
-            nothing will be drawn. Defaults to 'head'.
+        outlines : 'head' | 'skirt' | dict | None
+            The outlines to be drawn. If 'head', the default head scheme will
+            be drawn. If 'skirt' the head scheme will be drawn, but sensors are
+            allowed to be plotted outside of the head circle. If dict, each key
+            refers to a tuple of x and y positions, the values in 'mask_pos'
+            will serve as image mask, and the 'autoshrink' (bool) field will
+            trigger automated shrinking of the positions due to points outside
+            the outline. Alternatively, a matplotlib patch object can be passed
+            for advanced masking options, either directly or as a function that
+            returns patches (required for multi-axis plots). If None, nothing
+            will be drawn. Defaults to 'head'.
         contours : int | False | None
             The number of contour lines to draw. If 0, no contours will
             be drawn.

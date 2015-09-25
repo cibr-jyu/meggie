@@ -206,6 +206,23 @@ class Info(dict):
         if self.get('subject_info') is not None:
             del self['subject_info']
 
+    def _check_consistency(self):
+        """Do some self-consistency checks and datatype tweaks"""
+        missing = [bad for bad in self['bads'] if bad not in self['ch_names']]
+        if len(missing) > 0:
+            raise RuntimeError('bad channel(s) %s marked do not exist in info'
+                               % (missing,))
+        chs = [ch['ch_name'] for ch in self['chs']]
+        if len(self['ch_names']) != len(chs) or any(
+                ch_1 != ch_2 for ch_1, ch_2 in zip(self['ch_names'], chs)) or \
+                self['nchan'] != len(chs):
+            raise RuntimeError('info channel name inconsistency detected, '
+                               'please notify mne-python developers')
+        # make sure we have the proper datatypes
+        for key in ('sfreq', 'highpass', 'lowpass'):
+            if self.get(key) is not None:
+                self[key] = float(self[key])
+
 
 def read_fiducials(fname):
     """Read fiducials from a fiff file
@@ -489,6 +506,7 @@ def read_meas_info(fid, tree, verbose=None):
     meas : dict
         Node in tree that contains the info.
     """
+
     #   Find the desired blocks
     meas = dir_tree_find(tree, FIFF.FIFFB_MEAS)
     if len(meas) == 0:
@@ -507,6 +525,7 @@ def read_meas_info(fid, tree, verbose=None):
     #   Read measurement info
     dev_head_t = None
     ctf_head_t = None
+    dev_ctf_t = None
     meas_date = None
     highpass = None
     lowpass = None
@@ -545,12 +564,16 @@ def read_meas_info(fid, tree, verbose=None):
         elif kind == FIFF.FIFF_COORD_TRANS:
             tag = read_tag(fid, pos)
             cand = tag.data
+
             if cand['from'] == FIFF.FIFFV_COORD_DEVICE and \
                     cand['to'] == FIFF.FIFFV_COORD_HEAD:
                 dev_head_t = cand
             elif cand['from'] == FIFF.FIFFV_MNE_COORD_CTF_HEAD and \
                     cand['to'] == FIFF.FIFFV_COORD_HEAD:
                 ctf_head_t = cand
+            elif cand['from'] == FIFF.FIFFV_MNE_COORD_CTF_DEVICE and \
+                    cand['to'] == FIFF.FIFFV_MNE_COORD_CTF_HEAD:
+                dev_ctf_t = cand
         elif kind == FIFF.FIFF_EXPERIMENTER:
             tag = read_tag(fid, pos)
             experimenter = tag.data
@@ -848,14 +871,12 @@ def read_meas_info(fid, tree, verbose=None):
     #
     info['dev_head_t'] = dev_head_t
     info['ctf_head_t'] = ctf_head_t
-    if dev_head_t is not None and ctf_head_t is not None:
+    info['dev_ctf_t'] = dev_ctf_t
+    if dev_head_t is not None and ctf_head_t is not None and dev_ctf_t is None:
+        from ..transforms import Transform
         head_ctf_trans = linalg.inv(ctf_head_t['trans'])
         dev_ctf_trans = np.dot(head_ctf_trans, info['dev_head_t']['trans'])
-        info['dev_ctf_t'] = {'from': FIFF.FIFFV_COORD_DEVICE,
-                             'to': FIFF.FIFFV_MNE_COORD_CTF_HEAD,
-                             'trans': dev_ctf_trans}
-    else:
-        info['dev_ctf_t'] = None
+        info['dev_ctf_t'] = Transform('meg', 'ctf_head', dev_ctf_trans)
 
     #   All kinds of auxliary stuff
     info['dig'] = dig
@@ -865,6 +886,7 @@ def read_meas_info(fid, tree, verbose=None):
     info['acq_pars'] = acq_pars
     info['acq_stim'] = acq_stim
     info['custom_ref_applied'] = custom_ref_applied
+    info._check_consistency()
 
     return info, meas
 
@@ -889,6 +911,7 @@ def write_meas_info(fid, info, data_type=None, reset_range=True):
     -----
     Tags are written in a particular order for compatibility with maxfilter.
     """
+    info._check_consistency()
 
     # Measurement info
     start_block(fid, FIFF.FIFFB_MEAS_INFO)
@@ -988,6 +1011,9 @@ def write_meas_info(fid, info, data_type=None, reset_range=True):
 
     if info['ctf_head_t'] is not None:
         write_coord_trans(fid, info['ctf_head_t'])
+
+    if info['dev_ctf_t'] is not None:
+        write_coord_trans(fid, info['dev_ctf_t'])
 
     #   Projectors
     _write_proj(fid, info['projs'])
@@ -1216,6 +1242,8 @@ def _merge_info(infos, verbose=None):
     info : instance of Info
         The merged info object.
     """
+    for info in infos:
+        info._check_consistency()
     info = Info()
     ch_names = _merge_dict_values(infos, 'ch_names')
     duplicates = set([ch for ch in ch_names if ch_names.count(ch) > 1])
@@ -1255,7 +1283,7 @@ def _merge_info(infos, verbose=None):
 
     for k in other_fields:
         info[k] = _merge_dict_values(infos, k)
-
+    info._check_consistency()
     return info
 
 
@@ -1355,6 +1383,7 @@ RAW_INFO_FIELDS = (
 
 def _empty_info():
     """Create an empty info dictionary"""
+    from ..transforms import Transform
     _none_keys = (
         'acq_pars', 'acq_stim', 'buffer_size_sec', 'ctf_head_t', 'description',
         'dev_ctf_t', 'dig', 'experimenter',
@@ -1373,7 +1402,7 @@ def _empty_info():
         info[k] = list()
     info['custom_ref_applied'] = False
     info['nchan'] = info['sfreq'] = 0
-    info['dev_head_t'] = {'from': FIFF.FIFFV_COORD_DEVICE,
-                          'to': FIFF.FIFFV_COORD_HEAD, 'trans': np.eye(4)}
+    info['dev_head_t'] = Transform('meg', 'head', np.eye(4))
     assert set(info.keys()) == set(RAW_INFO_FIELDS)
+    info._check_consistency()
     return info

@@ -20,10 +20,11 @@ from ..parallel import parallel_func
 from ..utils import logger, verbose, _time_mask
 from ..channels.channels import ContainsMixin, UpdateChannelsMixin
 from ..io.pick import pick_info, pick_types
+from ..io.meas_info import Info
 from ..utils import check_fname
 from .multitaper import dpss_windows
-from .._hdf5 import write_hdf5, read_hdf5
 from ..viz.utils import figure_nobar
+from ..externals.h5io import write_hdf5, read_hdf5
 
 
 def _get_data(inst, return_itc):
@@ -688,7 +689,12 @@ class AverageTFR(ContainsMixin, UpdateChannelsMixin):
         from ..viz.topo import _imshow_tfr
         import matplotlib.pyplot as plt
         times, freqs = self.times.copy(), self.freqs.copy()
-        data = self.data[picks]
+        info = self.info
+        data = self.data
+
+        n_picks = len(picks)
+        info, data, picks = _prepare_picks(info, data, picks)
+        data = data[picks]
 
         data, times, freqs, vmin, vmax = \
             _preproc_tfr(data, times, freqs, tmin, tmax, fmin, fmax, mode,
@@ -698,7 +704,7 @@ class AverageTFR(ContainsMixin, UpdateChannelsMixin):
         if isinstance(axes, plt.Axes):
             axes = [axes]
         if isinstance(axes, list) or isinstance(axes, np.ndarray):
-            if len(axes) != len(picks):
+            if len(axes) != n_picks:
                 raise RuntimeError('There must be an axes for each picked '
                                    'channel.')
 
@@ -842,9 +848,8 @@ class AverageTFR(ContainsMixin, UpdateChannelsMixin):
         data = self.data
         info = self.info
 
-        if picks is not None:
-            data = data[picks]
-            info = pick_info(info, picks)
+        info, data, picks = _prepare_picks(info, data, picks)
+        data = data[picks]
 
         data, times, freqs, vmin, vmax = \
             _preproc_tfr(data, times, freqs, tmin, tmax, fmin, fmax,
@@ -1016,15 +1021,17 @@ class AverageTFR(ContainsMixin, UpdateChannelsMixin):
             The axes to plot to. If None the axes is defined automatically.
         show : bool
             Call pyplot.show() at the end.
-        outlines : 'head' | dict | None
-            The outlines to be drawn. If 'head', a head scheme will be drawn.
-            If dict, each key refers to a tuple of x and y positions.
-            The values in 'mask_pos' will serve as image mask. If None, nothing
-            will be drawn. Defaults to 'head'. If dict, the 'autoshrink' (bool)
-            field will trigger automated shrinking of the positions due to
-            points outside the outline. Moreover, a matplotlib patch object can
-            be passed for advanced masking options, either directly or as a
-            function that returns patches (required for multi-axis plots).
+        outlines : 'head' | 'skirt' | dict | None
+            The outlines to be drawn. If 'head', the default head scheme will
+            be drawn. If 'skirt' the head scheme will be drawn, but sensors are
+            allowed to be plotted outside of the head circle. If dict, each key
+            refers to a tuple of x and y positions, the values in 'mask_pos'
+            will serve as image mask, and the 'autoshrink' (bool) field will
+            trigger automated shrinking of the positions due to points outside
+            the outline. Alternatively, a matplotlib patch object can be passed
+            for advanced masking options, either directly or as a function that
+            returns patches (required for multi-axis plots). If None, nothing
+            will be drawn. Defaults to 'head'.
         head_pos : dict | None
             If None (default), the sensors are positioned such that they span
             the head circle. If dict, can have entries 'center' (tuple) and
@@ -1094,7 +1101,7 @@ def write_tfrs(fname, tfr, overwrite=False):
     for ii, tfr_ in enumerate(tfr):
         comment = ii if tfr_.comment is None else tfr_.comment
         out.append(_prepare_write_tfr(tfr_, condition=comment))
-    write_hdf5(fname, out, overwrite=overwrite)
+    write_hdf5(fname, out, overwrite=overwrite, title='mnepython')
 
 
 def read_tfrs(fname, condition=None):
@@ -1127,7 +1134,10 @@ def read_tfrs(fname, condition=None):
     check_fname(fname, 'tfr', ('-tfr.h5',))
 
     logger.info('Reading %s ...' % fname)
-    tfr_data = read_hdf5(fname)
+    tfr_data = read_hdf5(fname, title='mnepython')
+    for k, tfr in tfr_data:
+        tfr['info'] = Info(tfr['info'])
+
     if condition is not None:
         tfr_dict = dict(tfr_data)
         if condition not in tfr_dict:
@@ -1141,8 +1151,9 @@ def read_tfrs(fname, condition=None):
     return out
 
 
+@verbose
 def tfr_morlet(inst, freqs, n_cycles, use_fft=False,
-               return_itc=True, decim=1, n_jobs=1):
+               return_itc=True, decim=1, n_jobs=1, picks=None, verbose=None):
     """Compute Time-Frequency Representation (TFR) using Morlet wavelets
 
     Parameters
@@ -1162,6 +1173,11 @@ def tfr_morlet(inst, freqs, n_cycles, use_fft=False,
         The decimation factor on the time axis. To reduce memory usage.
     n_jobs : int
         The number of jobs to run in parallel.
+    picks : array-like of int | None
+        The indices of the channels to plot. If None all available
+        channels are displayed.
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see mne.verbose).
 
     Returns
     -------
@@ -1176,9 +1192,11 @@ def tfr_morlet(inst, freqs, n_cycles, use_fft=False,
     tfr_multitaper, tfr_stockwell
     """
     data = _get_data(inst, return_itc)
-    picks = pick_types(inst.info, meg=True, eeg=True)
-    info = pick_info(inst.info, picks)
-    data = data[:, picks, :]
+    info = inst.info
+
+    info, data, picks = _prepare_picks(info, data, picks)
+    data = data = data[:, picks, :]
+
     power, itc = _induced_power_cwt(data, sfreq=info['sfreq'],
                                     frequencies=freqs,
                                     n_cycles=n_cycles, n_jobs=n_jobs,
@@ -1191,6 +1209,18 @@ def tfr_morlet(inst, freqs, n_cycles, use_fft=False,
         out = (out, AverageTFR(info, itc, times, freqs, nave,
                                method='morlet-itc'))
     return out
+
+
+def _prepare_picks(info, data, picks):
+    if picks is None:
+        picks = pick_types(info, meg=True, eeg=True, ref_meg=False,
+                           exclude='bads')
+    if np.array_equal(picks, np.arange(len(data))):
+        picks = slice(None)
+    else:
+        info = pick_info(info, picks)
+
+    return info, data, picks
 
 
 @verbose
@@ -1266,8 +1296,10 @@ def _induced_power_mtm(data, sfreq, frequencies, time_bandwidth=4.0,
     return psd, itc
 
 
-def tfr_multitaper(inst, freqs, n_cycles, time_bandwidth=4.0, use_fft=True,
-                   return_itc=True, decim=1, n_jobs=1):
+@verbose
+def tfr_multitaper(inst, freqs, n_cycles, time_bandwidth=4.0,
+                   use_fft=True, return_itc=True, decim=1, n_jobs=1,
+                   picks=None, verbose=None):
     """Compute Time-Frequency Representation (TFR) using DPSS wavelets
 
     Parameters
@@ -1299,6 +1331,11 @@ def tfr_multitaper(inst, freqs, n_cycles, time_bandwidth=4.0, use_fft=True,
         Defaults to 1.
     n_jobs : int
         The number of jobs to run in parallel. Defaults to 1.
+    picks : array-like of int | None
+        The indices of the channels to plot. If None all available
+        channels are displayed.
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see mne.verbose).
 
     Returns
     -------
@@ -1318,9 +1355,11 @@ def tfr_multitaper(inst, freqs, n_cycles, time_bandwidth=4.0, use_fft=True,
     """
 
     data = _get_data(inst, return_itc)
-    picks = pick_types(inst.info, meg=True, eeg=True)
-    info = pick_info(inst.info, picks)
-    data = data[:, picks, :]
+    info = inst.info
+
+    info, data, picks = _prepare_picks(info, data, picks)
+    data = data = data[:, picks, :]
+
     power, itc = _induced_power_mtm(data, sfreq=info['sfreq'],
                                     frequencies=freqs, n_cycles=n_cycles,
                                     time_bandwidth=time_bandwidth,

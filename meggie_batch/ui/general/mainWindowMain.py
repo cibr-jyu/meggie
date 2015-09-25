@@ -1525,7 +1525,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
             return
-        self.setWindowTitle('Meggie - ' + 
+        self.setWindowTitle('Meggie - ' +
                             self.caller.experiment.experiment_name)
 
         # Check whether reconstructed mri files have been copied to the recon
@@ -1641,7 +1641,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         events_string = ''
         for key, value in events.iteritems():
-            events_string += 'Event %s, %s events\n' % (str(key), str(value))
+            events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
         self.ui.textBrowserEvents.setText(events_string)
 
     def populate_comboBoxLobes(self):

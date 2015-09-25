@@ -1183,7 +1183,7 @@ class Caller(object):
                          positive values exist in the data.
         """
         plt.close()
-        if isinstance(inst, mne.epochs._BaseEpochs):
+        if isinstance(inst, mne.epochs._BaseEpochs):  # TFR from epochs
     
             print "Number of threads active", activeCount()
             self.e.clear()
@@ -1211,10 +1211,11 @@ class Caller(object):
             power, itc = async_result.get()
             pool.terminate()
             self.parent.update_ui()
-        elif reptype == 'average':
+        elif reptype == 'average':  # TFR from averageTFR
             power = inst
-        elif reptype == 'itc':
+        elif reptype == 'itc':  # TFR from averageTFR
             itc = inst
+
         if lout == 'Infer from data':
             layout = None
         else:

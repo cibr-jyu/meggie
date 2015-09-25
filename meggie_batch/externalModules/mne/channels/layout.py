@@ -595,7 +595,6 @@ def _auto_topomap_coords(info, picks):
             if ch['kind'] != FIFF.FIFFV_EEG_CH:
                 raise ValueError("Cannot determine location of MEG/EOG/ECG "
                                  "channels using digitization points.")
-                break
 
         eeg_ch_names = [ch['ch_name'] for ch in info['chs']
                         if ch['kind'] == FIFF.FIFFV_EEG_CH]
@@ -742,12 +741,14 @@ def _merge_grad_data(data):
 def generate_2d_layout(xy, w=.07, h=.05, pad=.02, ch_names=None,
                        ch_indices=None, name='ecog', bg_image=None):
     """Generate a custom 2D layout from xy points.
+
     Generates a 2-D layout for plotting with plot_topo methods and
     functions. XY points will be normalized between 0 and 1, where
     normalization extremes will be either the min/max of xy, or
     the width/height of bg_image.
+
     Parameters
-    -------
+    ----------
     xy : ndarray (N x 2)
         The xy coordinates of sensor locations.
     w : float

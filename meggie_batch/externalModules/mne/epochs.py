@@ -8,7 +8,7 @@
 #
 # License: BSD (3-clause)
 
-import copy as cp
+from copy import deepcopy
 import warnings
 import json
 import inspect
@@ -24,10 +24,10 @@ from .io.write import (start_file, start_block, end_file, end_block,
 from .io.meas_info import read_meas_info, write_meas_info, _merge_info
 from .io.open import fiff_open, _get_next_fname
 from .io.tree import dir_tree_find
-from .io.tag import read_tag
+from .io.tag import read_tag, read_tag_info
 from .io.constants import FIFF
 from .io.pick import (pick_types, channel_indices_by_type, channel_type,
-                      pick_channels)
+                      pick_channels, pick_info)
 from .io.proj import setup_proj, ProjMixin, _proj_equal
 from .io.base import _BaseRaw, ToDataFrameMixin
 from .evoked import EvokedArray, _aspect_rev
@@ -37,7 +37,7 @@ from .channels.channels import (ContainsMixin, UpdateChannelsMixin,
 from .filter import resample, detrend, FilterMixin
 from .event import _read_events_fif
 from .fixes import in1d
-from .viz import (plot_epochs, plot_epochs_trellis, _drop_log_stats,
+from .viz import (plot_epochs, _drop_log_stats,
                   plot_epochs_psd, plot_epochs_psd_topomap)
 from .utils import (check_fname, logger, verbose, _check_type_picks,
                     _time_mask, check_random_state, object_hash)
@@ -149,7 +149,8 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
                  picks=None, name='Unknown', reject=None, flat=None,
                  decim=1, reject_tmin=None, reject_tmax=None, detrend=None,
                  add_eeg_ref=True, proj=True, on_missing='error',
-                 preload_at_end=False, verbose=None):
+                 preload_at_end=False, selection=None, drop_log=None,
+                 verbose=None):
 
         self.verbose = verbose
         self.name = name
@@ -178,6 +179,12 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         del event_id
 
         if events is not None:  # RtEpochs can have events=None
+
+            if events.dtype.kind not in ['i', 'u']:
+                raise ValueError('events must be an array of type int')
+            if events.ndim != 2 or events.shape[1] != 3:
+                raise ValueError('events must be 2D with 3 columns')
+
             for key, val in self.event_id.items():
                 if val not in events[:, 2]:
                     msg = ('No matching events found for %s '
@@ -192,9 +199,15 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
 
             values = list(self.event_id.values())
             selected = in1d(events[:, 2], values)
-            self.selection = np.where(selected)[0]
-            self.drop_log = [list() if k in self.selection else ['IGNORED']
-                             for k in range(len(events))]
+            if selection is None:
+                self.selection = np.where(selected)[0]
+            else:
+                self.selection = selection
+            if drop_log is None:
+                self.drop_log = [list() if k in self.selection else ['IGNORED']
+                                 for k in range(len(events))]
+            else:
+                self.drop_log = drop_log
             events = events[selected]
             n_events = len(events)
             if n_events > 1:
@@ -239,8 +252,8 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
                     err = ("Baseline interval (tmax = %s) is outside of epoch "
                            "data (tmax = %s)" % (baseline_tmax, tmax))
                     raise ValueError(err)
-        if tmin >= tmax:
-            raise ValueError('tmin has to be smaller than tmax')
+        if tmin > tmax:
+            raise ValueError('tmin has to be less than or equal to tmax')
 
         self.tmin = tmin
         self.tmax = tmax
@@ -255,9 +268,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         if picks is None:
             picks = list(range(len(self.info['ch_names'])))
         else:
-            self.info['chs'] = [self.info['chs'][k] for k in picks]
-            self.info['ch_names'] = [self.info['ch_names'][k] for k in picks]
-            self.info['nchan'] = len(picks)
+            self.info = pick_info(self.info, picks)
         self.picks = _check_type_picks(picks)
         if len(picks) == 0:
             raise ValueError("Picks cannot be empty.")
@@ -289,24 +300,17 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         self._reject_setup(reject, flat)
 
         # do the rest
-        if proj not in [True, 'delayed', False]:
-            raise ValueError(r"'proj' must either be 'True', 'False' or "
-                             "'delayed'")
-
-        # proj is on when applied in Raw
-        proj = proj or (raw is not None and raw.proj)
+        valid_proj = [True, 'delayed', False]
+        if proj not in valid_proj:
+            raise ValueError('"proj" must be one of %s, not %s'
+                             % (valid_proj, proj))
         if proj == 'delayed':
-            if self.reject is None:
-                raise RuntimeError('The delayed SSP mode was requested '
-                                   'but no rejection parameters are present. '
-                                   'Please add rejection parameters before '
-                                   'using this option.')
-            self._delayed_proj = True
+            self._do_delayed_proj = True
             logger.info('Entering delayed SSP mode.')
         else:
-            self._delayed_proj = False
+            self._do_delayed_proj = False
 
-        activate = False if self._delayed_proj else proj
+        activate = False if self._do_delayed_proj else proj
         self._projector, self.info = setup_proj(self.info, add_eeg_ref,
                                                 activate=activate)
 
@@ -336,6 +340,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         self._decim_slice = slice(None, None, None)
         self._decim = 1
         self._raw_times = self.times
+        assert self._data.shape[-1] == len(self.times)
         return self
 
     def decimate(self, decim, copy=False):
@@ -398,6 +403,44 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             epochs._decim_slice = decim_slice
             epochs.times = epochs._raw_times[epochs._decim_slice]
         return epochs
+
+    @verbose
+    def apply_baseline(self, baseline, verbose=None):
+        """Baseline correct epochs
+
+        Parameters
+        ----------
+        baseline : tuple of length 2
+            The time interval to apply baseline correction. (a, b) is the
+            interval is between "a (s)" and "b (s)". If a is None the beginning
+            of the data is used and if b is None then b is set to the end of
+            the interval. If baseline is equal to (None, None) all the time
+            interval is used.
+        verbose : bool, str, int, or None
+            If not None, override default verbose level (see mne.verbose).
+
+        Returns
+        -------
+        epochs : instance of Epochs
+            The baseline-corrected Epochs object.
+
+        Notes
+        -----
+        Baseline correction can be done multiple times.
+
+        .. versionadded:: 0.10.0
+        """
+        if not isinstance(baseline, tuple) or len(baseline) != 2:
+            raise ValueError('`baseline=%s` is an invalid argument.'
+                             % str(baseline))
+
+        data = self._data
+        picks = pick_types(self.info, meg=True, eeg=True, stim=False,
+                           ref_meg=True, eog=True, ecg=True,
+                           emg=True, exclude=[])
+        data[:, picks, :] = rescale(data[:, picks, :], self.times, baseline,
+                                    'mean', copy=False)
+        self.baseline = baseline
 
     def _reject_setup(self, reject, flat):
         """Sets self._reject_time and self._channel_type_idx"""
@@ -482,11 +525,14 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
                             ignore_chs=self.info['bads'])
 
     @verbose
-    def _preprocess(self, epoch, verbose=None):
+    def _detrend_offset_decim(self, epoch, verbose=None):
         """Aux Function: detrend, baseline correct, offset, decim
 
         Note: operates inplace
         """
+        if epoch is None:
+            return None
+
         # Detrend
         if self.detrend is not None:
             picks = pick_types(self.info, meg=True, eeg=True, stim=False,
@@ -517,7 +563,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         while True:
             data, event_id = self.next(True)
             tmin = self.times[0]
-            info = cp.deepcopy(self.info)
+            info = deepcopy(self.info)
 
             yield EvokedArray(data, info, tmin, comment=str(event_id))
 
@@ -644,6 +690,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
 
         n_channels = len(self.ch_names)
         n_times = len(self.times)
+
         if self.preload:
             n_events = len(self.events)
             fun = np.std if _do_std else np.mean
@@ -664,7 +711,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             # convert to stderr if requested, could do in one pass but do in
             # two (slower) in case there are large numbers
             if _do_std:
-                data_mean = cp.copy(data)
+                data_mean = data.copy()
                 data.fill(0.)
                 for e in self:
                     data += (e - data_mean) ** 2
@@ -677,7 +724,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             data /= np.sqrt(n_events)
         kind = _aspect_rev.get(str(_aspect_kind), 'Unknown')
 
-        info = cp.deepcopy(self.info)
+        info = deepcopy(self.info)
         evoked = EvokedArray(data, info, tmin=self.times[0],
                              comment=self.name, nave=n_events, kind=kind,
                              verbose=self.verbose)
@@ -708,9 +755,9 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         """Channel names"""
         return self.info['ch_names']
 
-    def plot(self, epoch_idx=None, picks=None, scalings=None,
-             title_str='#%003i', show=True, block=False, n_epochs=20,
-             n_channels=20, title=None, trellis=True):
+    def plot(self, picks=None, scalings=None, show=True,
+             block=False, n_epochs=20,
+             n_channels=20, title=None):
         """Visualize epochs.
 
         Bad epochs can be marked with a left click on top of the epoch. Bad
@@ -721,9 +768,6 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
 
         Parameters
         ----------
-        epoch_idx : array-like | int | None
-            The epochs to visualize. If None, the first 20 epochs are shown.
-            Defaults to None.
         picks : array-like of int | None
             Channels to be included. If None only good data channels are used.
             Defaults to None
@@ -731,9 +775,6 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             Scale factors for the traces. If None, defaults to
             ``dict(mag=1e-12, grad=4e-11, eeg=20e-6, eog=150e-6, ecg=5e-4,
             emg=1e-3, ref_meg=1e-12, misc=1e-3, stim=1, resp=1, chpi=1e-4)``.
-        title_str : None | str
-            The string formatting to use for axes titles. If None, no titles
-            will be shown. Defaults expand to ``#001, #002, ...``.
         show : bool
             Whether to show the figure or not.
         block : bool
@@ -749,10 +790,6 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             The title of the window. If None, epochs name will be displayed.
             If trellis is True, this parameter has no effect.
             Defaults to None.
-        trellis : bool
-            Whether to use Trellis plotting. If False, plotting is similar to
-            Raw plot methods, with epochs stacked horizontally.
-            Defaults to True.
 
         Returns
         -------
@@ -761,7 +798,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
 
         Notes
         -----
-        With trellis set to False, the arrow keys (up/down/left/right) can
+        The arrow keys (up/down/left/right) can
         be used to navigate between channels and epochs and the scaling can be
         adjusted with - and + (or =) keys, but this depends on the backend
         matplotlib is configured to use (e.g., mpl.use(``TkAgg``) should work).
@@ -772,15 +809,9 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
 
         .. versionadded:: 0.10.0
         """
-        if trellis is True:
-            return plot_epochs_trellis(self, epoch_idx=epoch_idx, picks=picks,
-                                       scalings=scalings, title_str=title_str,
-                                       show=show, block=block,
-                                       n_epochs=n_epochs)
-        else:
-            return plot_epochs(self, picks=picks, scalings=scalings,
-                               n_epochs=n_epochs, n_channels=n_channels,
-                               title=title, show=show, block=block)
+        return plot_epochs(self, picks=picks, scalings=scalings,
+                           n_epochs=n_epochs, n_channels=n_channels,
+                           title=title, show=show, block=block)
 
     def plot_psd(self, fmin=0, fmax=np.inf, proj=False, n_fft=256,
                  picks=None, ax=None, color='black', area_mode='std',
@@ -894,15 +925,17 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             False.
         cbar_fmt : str
             The colorbar format. Defaults to '%0.3f'.
-        outlines : 'head' | dict | None
-            The outlines to be drawn. If 'head', a head scheme will be drawn.
-            If dict, each key refers to a tuple of x and y positions.
-            The values in 'mask_pos' will serve as image mask. If None, nothing
-            will be drawn. Defaults to 'head'. If dict, the 'autoshrink' (bool)
-            field will trigger automated shrinking of the positions due to
-            points outside the outline. Moreover, a matplotlib patch object can
-            be passed for advanced masking options, either directly or as a
-            function that returns patches (required for multi-axis plots).
+        outlines : 'head' | 'skirt' | dict | None
+            The outlines to be drawn. If 'head', the default head scheme will
+            be drawn. If 'skirt' the head scheme will be drawn, but sensors are
+            allowed to be plotted outside of the head circle. If dict, each key
+            refers to a tuple of x and y positions, the values in 'mask_pos'
+            will serve as image mask, and the 'autoshrink' (bool) field will
+            trigger automated shrinking of the positions due to points outside
+            the outline. Alternatively, a matplotlib patch object can be passed
+            for advanced masking options, either directly or as a function that
+            returns patches (required for multi-axis plots). If None, nothing
+            will be drawn. Defaults to 'head'.
         show : bool
             Show figure if True.
         verbose : bool, str, int, or None
@@ -1072,16 +1105,14 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         """Method to get a given epoch from disk"""
         raise NotImplementedError
 
-    def _process_epoch_raw(self, epoch_raw):
+    def _project_epoch(self, epoch):
         """Helper to process a raw epoch based on the delayed param"""
         # whenever requested, the first epoch is being projected.
-        if epoch_raw is None:  # can happen if t < 0
+        if epoch is None:  # can happen if t < 0
             return None
-        proj = self._delayed_proj or self.proj
+        proj = self._do_delayed_proj or self.proj
         if self._projector is not None and proj is True:
-            epoch = self._preprocess(np.dot(self._projector, epoch_raw))
-        else:
-            epoch = self._preprocess(epoch_raw.copy())
+            epoch = np.dot(self._projector, epoch)
         return epoch
 
     @verbose
@@ -1114,15 +1145,15 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             # we need to load from disk, drop, and return data
             for idx in range(n_events):
                 # faster to pre-allocate memory here
-                epoch_raw = self._get_epoch_from_raw(idx)
-                if self._delayed_proj:
-                    epoch_out = epoch_raw
+                epoch_noproj = self._get_epoch_from_raw(idx)
+                epoch_noproj = self._detrend_offset_decim(epoch_noproj)
+                if self._do_delayed_proj:
+                    epoch_out = epoch_noproj
                 else:
-                    epoch_out = self._process_epoch_raw(epoch_raw)
+                    epoch_out = self._project_epoch(epoch_noproj)
                 if idx == 0:
-                    data = np.empty((n_events, epoch_out.shape[0],
-                                     epoch_out.shape[1]),
-                                    dtype=epoch_raw.dtype)
+                    data = np.empty((n_events, len(self.ch_names),
+                                     len(self.times)), dtype=epoch_out.dtype)
                 data[idx] = epoch_out
         else:
             # bads need to be dropped, this might occur after a preload
@@ -1132,16 +1163,17 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             assert n_events == len(self.selection)
             for idx, sel in enumerate(self.selection):
                 if self.preload:  # from memory
-                    if self._delayed_proj:
-                        epoch_raw = self._data[idx]
-                        epoch = self._process_epoch_raw(epoch_raw)
+                    if self._do_delayed_proj:
+                        epoch_noproj = self._data[idx]
+                        epoch = self._project_epoch(epoch_noproj)
                     else:
-                        epoch_raw = None
+                        epoch_noproj = None
                         epoch = self._data[idx]
                 else:  # from disk
-                    epoch_raw = self._get_epoch_from_raw(idx)
-                    epoch = self._process_epoch_raw(epoch_raw)
-                epoch_out = epoch_raw if self._delayed_proj else epoch
+                    epoch_noproj = self._get_epoch_from_raw(idx)
+                    epoch_noproj = self._detrend_offset_decim(epoch_noproj)
+                    epoch = self._project_epoch(epoch_noproj)
+                epoch_out = epoch_noproj if self._do_delayed_proj else epoch
                 is_good, offenders = self._is_good_epoch(epoch)
                 if not is_good:
                     self.drop_log[sel] += offenders
@@ -1183,14 +1215,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         data : array of shape (n_epochs, n_channels, n_times)
             A copy of the epochs data.
         """
-        data_ = self._get_data()
-        if self._delayed_proj:
-            data = np.zeros_like(data_)
-            for ii, e in enumerate(data_):
-                data[ii] = self._preprocess(e.copy())
-        else:
-            data = data_.copy()
-        return data
+        return self._get_data()
 
     def __len__(self):
         """Number of epochs.
@@ -1229,21 +1254,20 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
             if self._current >= len(self._data):
                 raise StopIteration
             epoch = self._data[self._current]
-            if self._delayed_proj:
-                epoch = self._preprocess(epoch.copy())
             self._current += 1
         else:
             is_good = False
             while not is_good:
                 if self._current >= len(self.events):
                     raise StopIteration
-                epoch_raw = self._get_epoch_from_raw(self._current)
-                epoch = self._process_epoch_raw(epoch_raw)
+                epoch_noproj = self._get_epoch_from_raw(self._current)
+                epoch_noproj = self._detrend_offset_decim(epoch_noproj)
+                epoch = self._project_epoch(epoch_noproj)
                 self._current += 1
                 is_good, _ = self._is_good_epoch(epoch)
             # If delayed-ssp mode, pass 'virgin' data after rejection decision.
-            if self._delayed_proj:
-                epoch = self._preprocess(epoch_raw)
+            if self._do_delayed_proj:
+                epoch = epoch_noproj
 
         if not return_event_id:
             return epoch
@@ -1424,7 +1448,7 @@ class _BaseEpochs(ProjMixin, ContainsMixin, UpdateChannelsMixin,
         """Return copy of Epochs instance"""
         raw = self._raw
         del self._raw
-        new = cp.deepcopy(self)
+        new = deepcopy(self)
         self._raw = raw
         new._raw = raw
         return new
@@ -1546,7 +1570,7 @@ class Epochs(_BaseEpochs):
     ----------
     raw : Raw object
         An instance of Raw.
-    events : array, shape (n_events, 3)
+    events : array of int, shape (n_events, 3)
         The events typically returned by the read_events function.
         If some events don't match the events of interest as specified
         by event_id, they will be marked as 'IGNORED' in the drop log.
@@ -1669,6 +1693,9 @@ class Epochs(_BaseEpochs):
 
     Notes
     -----
+    When accessing data, Epochs are detrended, baseline-corrected, and
+    decimated, then projectors are (optionally) applied.
+
     For indexing and slicing:
 
     epochs[idx] : Epochs
@@ -1710,7 +1737,10 @@ class Epochs(_BaseEpochs):
         if not isinstance(raw, _BaseRaw):
             raise ValueError('The first argument to `Epochs` must be an '
                              'instance of `mne.io.Raw`')
-        info = cp.deepcopy(raw.info)
+        info = deepcopy(raw.info)
+
+        # proj is on when applied in Raw
+        proj = proj or raw.proj
 
         # call _BaseEpochs constructor
         super(Epochs, self).__init__(info, None, events, event_id, tmin, tmax,
@@ -1749,7 +1779,7 @@ class EpochsArray(_BaseEpochs):
     info : instance of Info
         Info dictionary. Consider using ``create_info`` to populate
         this structure.
-    events : array, shape (n_events, 3)
+    events : array of int, shape (n_events, 3)
         The events typically returned by the read_events function.
         If some events don't match the events of interest as specified
         by event_id, they will be marked as 'IGNORED' in the drop log.
@@ -1826,11 +1856,12 @@ class EpochsArray(_BaseEpochs):
                                           flat=flat, reject_tmin=reject_tmin,
                                           reject_tmax=reject_tmax, decim=1)
         if len(events) != in1d(self.events[:, 2],
-                               list(event_id.values())).sum():
+                               list(self.event_id.values())).sum():
             raise ValueError('The events must only contain event numbers from '
                              'event_id')
         for ii, e in enumerate(self._data):
-            self._preprocess(e)
+            # This is safe without assignment b/c there is no decim
+            self._detrend_offset_decim(e)
         self.drop_bad_epochs()
 
 
@@ -1884,7 +1915,8 @@ def combine_event_ids(epochs, old_event_ids, new_event_id, copy=True):
     # replace the event numbers in the events list
     epochs.events[inds, 2] = new_event_num
     # delete old entries
-    [epochs.event_id.pop(key) for key in old_event_ids]
+    for key in old_event_ids:
+        epochs.event_id.pop(key)
     # add the new entry
     epochs.event_id.update(new_event_id)
     return epochs
@@ -1922,7 +1954,9 @@ def equalize_epoch_counts(epochs_list, method='mintime'):
         raise ValueError('All inputs must be Epochs instances')
 
     # make sure bad epochs are dropped
-    [e.drop_bad_epochs() if not e._bad_dropped else None for e in epochs_list]
+    for e in epochs_list:
+        if not e._bad_dropped:
+            e.drop_bad_epochs()
     event_times = [e.events[:, 0] for e in epochs_list]
     indices = _get_drop_indices(event_times, method)
     for e, inds in zip(epochs_list, indices):
@@ -2032,7 +2066,8 @@ def _is_good(e, ch_names, channel_type_idx, reject, flat, full_report=False,
 
 
 @verbose
-def _read_one_epoch_file(f, tree, fname, proj, add_eeg_ref, verbose):
+def _read_one_epoch_file(f, tree, fname, preload):
+    """Helper to read a single FIF file"""
 
     with f as fid:
         #   Read the measurement info
@@ -2055,6 +2090,7 @@ def _read_one_epoch_file(f, tree, fname, proj, add_eeg_ref, verbose):
         # Now find the data in the block
         name = None
         data = None
+        data_tag = None
         bmin, bmax = None, None
         baseline = None
         selection = None
@@ -2072,8 +2108,10 @@ def _read_one_epoch_file(f, tree, fname, proj, add_eeg_ref, verbose):
                 tag = read_tag(fid, pos)
                 name = tag.data
             elif kind == FIFF.FIFF_EPOCH:
-                tag = read_tag(fid, pos)
-                data = tag.data.astype(np.float)
+                # delay reading until later
+                fid.seek(pos, 0)
+                data_tag = read_tag_info(fid)
+                data_tag.pos = pos
             elif kind == FIFF.FIFF_MNE_BASELINE_MIN:
                 tag = read_tag(fid, pos)
                 bmin = float(tag.data)
@@ -2090,7 +2128,7 @@ def _read_one_epoch_file(f, tree, fname, proj, add_eeg_ref, verbose):
         if bmin is not None or bmax is not None:
             baseline = (bmin, bmax)
 
-        nsamp = last - first + 1
+        n_samp = last - first + 1
         logger.info('    Found the data of interest:')
         logger.info('        t = %10.2f ... %10.2f ms (%s)'
                     % (1000 * first / info['sfreq'],
@@ -2099,48 +2137,44 @@ def _read_one_epoch_file(f, tree, fname, proj, add_eeg_ref, verbose):
             logger.info('        %d CTF compensation matrices available'
                         % len(info['comps']))
 
-        # Read the data
-        if data is None:
+        # Inspect the data
+        if data_tag is None:
             raise ValueError('Epochs data not found')
-        if data.shape[2] != nsamp:
+        epoch_shape = (len(info['ch_names']), n_samp)
+        expected = len(events) * np.prod(epoch_shape)
+        if data_tag.size // 4 - 4 != expected:  # 32-bit floats stored
             raise ValueError('Incorrect number of samples (%d instead of %d)'
-                             % (data.shape[2], nsamp))
+                             % (data_tag.size // 4, expected))
 
-        # Calibrate
-        cals = np.array([info['chs'][k]['cal'] *
-                         info['chs'][k].get('scale', 1.0)
-                         for k in range(info['nchan'])])
-        data *= cals[np.newaxis, :, np.newaxis]
+        # Calibration factors
+        cals = np.array([[info['chs'][k]['cal'] *
+                          info['chs'][k].get('scale', 1.0)]
+                         for k in range(info['nchan'])], np.float64)
+
+        # Read the data
+        if preload:
+            data = read_tag(fid, data_tag.pos).data.astype(np.float64)
+            data *= cals[np.newaxis, :, :]
 
         # Put it all together
         tmin = first / info['sfreq']
         tmax = last / info['sfreq']
         event_id = (dict((str(e), e) for e in np.unique(events[:, 2]))
                     if mappings is None else mappings)
-        # here we ignore missing events, since users should already be
-        # aware of missing events if they have saved data that way
-        epochs = _BaseEpochs(info, data, events, event_id, tmin, tmax,
-                             baseline, name=name, on_missing='ignore',
-                             verbose=verbose)
-        activate = False if epochs._delayed_proj else proj
-        epochs._projector, epochs.info = setup_proj(info, add_eeg_ref,
-                                                    activate=activate)
-
         # In case epochs didn't have a FIFF.FIFFB_MNE_EPOCHS_SELECTION tag
         # (version < 0.8):
         if selection is None:
-            selection = np.arange(len(epochs))
+            selection = np.arange(len(events))
         if drop_log is None:
             drop_log = [[] for _ in range(len(epochs))]  # noqa, analysis:ignore
 
-        epochs.selection = selection
-        epochs.drop_log = drop_log
-        epochs._bad_dropped = True
-    return epochs
+    return (info, data, data_tag, events, event_id, tmin, tmax, baseline, name,
+            selection, drop_log, epoch_shape, cals)
 
 
 @verbose
-def read_epochs(fname, proj=True, add_eeg_ref=True, verbose=None):
+def read_epochs(fname, proj=True, add_eeg_ref=True, preload=True,
+                verbose=None):
     """Read epochs from a fif file
 
     Parameters
@@ -2161,6 +2195,9 @@ def read_epochs(fname, proj=True, add_eeg_ref=True, verbose=None):
     add_eeg_ref : bool
         If True, an EEG average reference will be added (unless one
         already exists).
+    preload : bool
+        If True, read all epochs from disk immediately. If False, epochs will
+        be read on demand.
     verbose : bool, str, int, or None
         If not None, override default verbose level (see mne.verbose).
         Defaults to raw.verbose.
@@ -2170,24 +2207,144 @@ def read_epochs(fname, proj=True, add_eeg_ref=True, verbose=None):
     epochs : instance of Epochs
         The epochs
     """
-    check_fname(fname, 'epochs', ('-epo.fif', '-epo.fif.gz'))
+    return EpochsFIF(fname, proj, add_eeg_ref, preload, verbose)
 
-    fnames = [fname]
-    epochs = list()
-    for fname in fnames:
-        logger.info('Reading %s ...' % fname)
-        fid, tree, _ = fiff_open(fname)
-        next_fname = _get_next_fname(fid, fname, tree)
-        epoch = _read_one_epoch_file(fid, tree, fname, proj, add_eeg_ref,
-                                     verbose)
-        epochs.append(epoch)
 
-        if next_fname is not None:
-            fnames.append(next_fname)
+class _RawContainer(object):
+    def __init__(self, fid, data_tag, event_samps, epoch_shape, cals):
+        self.fid = fid
+        self.data_tag = data_tag
+        self.event_samps = event_samps
+        self.epoch_shape = epoch_shape
+        self.cals = cals
+        self.proj = False
 
-    epochs = _concatenate_epochs(epochs, read_file=True)
-    epochs._bad_dropped = True
-    return epochs
+    def __del__(self):
+        self.fid.close()
+
+
+class EpochsFIF(_BaseEpochs):
+    """Epochs read from disk
+
+    Parameters
+    ----------
+    fname : str
+        The name of the file, which should end with -epo.fif or -epo.fif.gz.
+    proj : bool | 'delayed'
+        Apply SSP projection vectors. If proj is 'delayed' and reject is not
+        None the single epochs will be projected before the rejection
+        decision, but used in unprojected state if they are kept.
+        This way deciding which projection vectors are good can be postponed
+        to the evoked stage without resulting in lower epoch counts and
+        without producing results different from early SSP application
+        given comparable parameters. Note that in this case baselining,
+        detrending and temporal decimation will be postponed.
+        If proj is False no projections will be applied which is the
+        recommended value if SSPs are not used for cleaning the data.
+    add_eeg_ref : bool
+        If True, an EEG average reference will be added (unless one
+        already exists).
+    preload : bool
+        If True, read all epochs from disk immediately. If False, epochs will
+        be read on demand.
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see mne.verbose).
+        Defaults to raw.verbose.
+
+    See Also
+    --------
+    mne.Epochs
+    mne.epochs.combine_event_ids
+    mne.Epochs.equalize_event_counts
+    """
+    @verbose
+    def __init__(self, fname, proj=True, add_eeg_ref=True, preload=True,
+                 verbose=None):
+        check_fname(fname, 'epochs', ('-epo.fif', '-epo.fif.gz'))
+
+        fnames = [fname]
+        ep_list = list()
+        raw = list()
+        for fname in fnames:
+            logger.info('Reading %s ...' % fname)
+            fid, tree, _ = fiff_open(fname)
+            next_fname = _get_next_fname(fid, fname, tree)
+            (info, data, data_tag, events, event_id, tmin, tmax, baseline,
+             name, selection, drop_log, epoch_shape, cals) = \
+                _read_one_epoch_file(fid, tree, fname, preload)
+            # here we ignore missing events, since users should already be
+            # aware of missing events if they have saved data that way
+            epoch = _BaseEpochs(
+                info, data, events, event_id, tmin, tmax, baseline,
+                on_missing='ignore', selection=selection, drop_log=drop_log,
+                add_eeg_ref=False, proj=False, verbose=False)
+            ep_list.append(epoch)
+            if not preload:
+                # store everything we need to index back to the original data
+                raw.append(_RawContainer(fiff_open(fname)[0], data_tag,
+                                         events[:, 0].copy(), epoch_shape,
+                                         cals))
+
+            if next_fname is not None:
+                fnames.append(next_fname)
+
+        (info, data, events, event_id, tmin, tmax, baseline, selection,
+         drop_log, _) = _concatenate_epochs(ep_list, with_data=preload)
+        # we need this uniqueness for non-preloaded data to work properly
+        if len(np.unique(events[:, 0])) != len(events):
+            raise RuntimeError('Event time samples were not unique')
+
+        # correct the drop log
+        assert len(drop_log) % len(fnames) == 0
+        step = len(drop_log) // len(fnames)
+        offsets = np.arange(step, len(drop_log) + 1, step)
+        for i1, i2 in zip(offsets[:-1], offsets[1:]):
+            other_log = drop_log[i1:i2]
+            for k, (a, b) in enumerate(zip(drop_log, other_log)):
+                    if a == ['IGNORED'] and b != ['IGNORED']:
+                        drop_log[k] = b
+        drop_log = drop_log[:step]
+
+        # call _BaseEpochs constructor
+        super(EpochsFIF, self).__init__(
+            info, data, events, event_id, tmin, tmax, baseline, raw=raw,
+            name=name, proj=proj, add_eeg_ref=add_eeg_ref,
+            preload_at_end=False, on_missing='ignore', selection=selection,
+            drop_log=drop_log, verbose=verbose)
+        # use the private property instead of drop_bad_epochs so that epochs
+        # are not all read from disk for preload=False
+        self._bad_dropped = True
+
+    @verbose
+    def _get_epoch_from_raw(self, idx, verbose=None):
+        """Load one epoch from disk"""
+        # Find the right file and offset to use
+        event_samp = self.events[idx, 0]
+        for raw in self._raw:
+            idx = np.where(raw.event_samps == event_samp)[0]
+            if len(idx) == 1:
+                idx = idx[0]
+                size = np.prod(raw.epoch_shape) * 4
+                offset = idx * size
+                break
+        else:
+            # read the correct subset of the data
+            raise RuntimeError('Correct epoch could not be found, please '
+                               'contact mne-python developers')
+        # the following is equivalent to this, but faster:
+        #
+        # >>> data = read_tag(raw.fid, raw.data_tag.pos).data.astype(float)
+        # >>> data *= raw.cals[np.newaxis, :, :]
+        # >>> data = data[idx]
+        #
+        # Eventually this could be refactored in io/tag.py if other functions
+        # could make use of it
+
+        raw.fid.seek(raw.data_tag.pos + offset + 16, 0)  # 16 = Tag header
+        data = np.fromstring(raw.fid.read(size), '>f4').astype(np.float64)
+        data.shape = raw.epoch_shape
+        data *= raw.cals
+        return data
 
 
 def bootstrap(epochs, random_state=None):
@@ -2318,64 +2475,64 @@ def add_channels_epochs(epochs_list, name='Unknown', add_eeg_ref=True,
 
 def _compare_epochs_infos(info1, info2, ind):
     """Compare infos"""
-    if not info1['nchan'] == info2['nchan']:
+    info1._check_consistency()
+    info2._check_consistency()
+    if info1['nchan'] != info2['nchan']:
         raise ValueError('epochs[%d][\'info\'][\'nchan\'] must match' % ind)
-    if not info1['bads'] == info2['bads']:
+    if info1['bads'] != info2['bads']:
         raise ValueError('epochs[%d][\'info\'][\'bads\'] must match' % ind)
-    if not info1['sfreq'] == info2['sfreq']:
+    if info1['sfreq'] != info2['sfreq']:
         raise ValueError('epochs[%d][\'info\'][\'sfreq\'] must match' % ind)
-    if not set(info1['ch_names']) == set(info2['ch_names']):
+    if set(info1['ch_names']) != set(info2['ch_names']):
         raise ValueError('epochs[%d][\'info\'][\'ch_names\'] must match' % ind)
     if len(info2['projs']) != len(info1['projs']):
         raise ValueError('SSP projectors in epochs files must be the same')
-    if not all(_proj_equal(p1, p2) for p1, p2 in
-               zip(info2['projs'], info1['projs'])):
+    if any(not _proj_equal(p1, p2) for p1, p2 in
+           zip(info2['projs'], info1['projs'])):
         raise ValueError('SSP projectors in epochs files must be the same')
 
 
-def _concatenate_epochs(epochs_list, read_file=False):
+def _concatenate_epochs(epochs_list, with_data=True):
     """Auxiliary function for concatenating epochs."""
     out = epochs_list[0]
-    data = [out.get_data()]
+    data = [out.get_data()] if with_data else None
     events = [out.events]
-    drop_log = cp.deepcopy(out.drop_log)
-    event_id = cp.deepcopy(out.event_id)
+    baseline, tmin, tmax = out.baseline, out.tmin, out.tmax
+    info = deepcopy(out.info)
+    verbose = out.verbose
+    drop_log = deepcopy(out.drop_log)
+    event_id = deepcopy(out.event_id)
     selection = out.selection
     for ii, epochs in enumerate(epochs_list[1:]):
-        _compare_epochs_infos(epochs.info, epochs_list[0].info, ii)
+        _compare_epochs_infos(epochs.info, info, ii)
         if not np.array_equal(epochs.times, epochs_list[0].times):
             raise ValueError('Epochs must have same times')
 
-        if epochs.baseline != epochs_list[0].baseline:
+        if epochs.baseline != baseline:
             raise ValueError('Baseline must be same for all epochs')
 
-        data.append(epochs.get_data())
+        if with_data:
+            data.append(epochs.get_data())
         events.append(epochs.events)
         selection = np.concatenate((selection, epochs.selection))
-        if read_file:
-            for k, (a, b) in enumerate(zip(drop_log, epochs.drop_log)):
-                if a == ['IGNORED'] and b != ['IGNORED']:
-                    drop_log[k] = b
-        else:
-            drop_log.extend(epochs.drop_log)
+        drop_log.extend(epochs.drop_log)
         event_id.update(epochs.event_id)
     events = np.concatenate(events, axis=0)
-    # do not do this if epochs read from disk are being concatenated
-    if read_file is False:
-        events[:, 0] = np.arange(len(events))  # arbitrary after concat
+    if with_data:
+        data = np.concatenate(data, axis=0)
+    return (info, data, events, event_id, tmin, tmax, baseline, selection,
+            drop_log, verbose)
 
-    baseline = epochs_list[0].baseline
-    out = _BaseEpochs(out.info, np.concatenate(data, axis=0), events, event_id,
-                      out.tmin, out.tmax, baseline=baseline, add_eeg_ref=False,
-                      proj=False, verbose=out.verbose, on_missing='ignore')
-    # We previously only set the drop log here, but we also need to set the
-    # selection, too
-    if read_file is False:
-        selection = np.where([len(d) == 0 for d in drop_log])[0]
 
-    assert len(selection) == len(out.drop_log)
-    out.selection = selection
-    out.drop_log = drop_log
+def _finish_concat(info, data, events, event_id, tmin, tmax, baseline,
+                   selection, drop_log, verbose):
+    """Helper to finish concatenation for epochs not read from disk"""
+    events[:, 0] = np.arange(len(events))  # arbitrary after concat
+    selection = np.where([len(d) == 0 for d in drop_log])[0]
+    out = _BaseEpochs(info, data, events, event_id, tmin, tmax,
+                      baseline=baseline, add_eeg_ref=False,
+                      selection=selection, drop_log=drop_log,
+                      proj=False, on_missing='ignore', verbose=verbose)
     out.drop_bad_epochs()
     return out
 
@@ -2397,4 +2554,4 @@ def concatenate_epochs(epochs_list):
     -----
     .. versionadded:: 0.9.0
     """
-    return _concatenate_epochs(epochs_list)
+    return _finish_concat(*_concatenate_epochs(epochs_list))

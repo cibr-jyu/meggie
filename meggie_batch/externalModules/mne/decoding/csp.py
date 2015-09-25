@@ -5,6 +5,7 @@
 # License: BSD (3-clause)
 
 import copy as cp
+import warnings
 
 import numpy as np
 from scipy import linalg
@@ -56,9 +57,9 @@ class CSP(TransformerMixin):
         """Init of CSP."""
         self.n_components = n_components
         if reg == 'lws':
-            raise DeprecationWarning('`lws` has been deprecated for the `reg`'
-                                     ' argument. It will be removed in 0.11.'
-                                     ' Use `ledoit_wolf` instead.')
+            warnings.warn('`lws` has been deprecated for the `reg`'
+                          ' argument. It will be removed in 0.11.'
+                          ' Use `ledoit_wolf` instead.', DeprecationWarning)
             reg = 'ledoit_wolf'
         self.reg = reg
         self.log = log
@@ -264,16 +265,17 @@ class CSP(TransformerMixin):
                 dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                      linewidth=0, markersize=4)
 
-        outlines : 'head' | dict | None
-            The outlines to be drawn. If 'head', a head scheme will be drawn.
-            If dict, each key refers to a tuple of x and y positions.
-            The values in 'mask_pos' will serve as image mask.
-            If None, nothing will be drawn. Defaults to 'head'.
-            If dict, the 'autoshrink' (bool) field will trigger automated
-            shrinking of the positions due to points outside the outline.
-            Moreover, a matplotlib patch object can be passed for
-            advanced masking options, either directly or as a function that
-            returns patches (required for multi-axis plots).
+        outlines : 'head' | 'skirt' | dict | None
+            The outlines to be drawn. If 'head', the default head scheme will
+            be drawn. If 'skirt' the head scheme will be drawn, but sensors are
+            allowed to be plotted outside of the head circle. If dict, each key
+            refers to a tuple of x and y positions, the values in 'mask_pos'
+            will serve as image mask, and the 'autoshrink' (bool) field will
+            trigger automated shrinking of the positions due to points outside
+            the outline. Alternatively, a matplotlib patch object can be passed
+            for advanced masking options, either directly or as a function that
+            returns patches (required for multi-axis plots). If None, nothing
+            will be drawn. Defaults to 'head'.
         contours : int | False | None
             The number of contour lines to draw.
             If 0, no contours will be drawn.
@@ -407,16 +409,17 @@ class CSP(TransformerMixin):
                 dict(marker='o', markerfacecolor='w', markeredgecolor='k',
                      linewidth=0, markersize=4)
 
-        outlines : 'head' | dict | None
-            The outlines to be drawn. If 'head', a head scheme will be drawn.
-            If dict, each key refers to a tuple of x and y positions.
-            The values in 'mask_pos' will serve as image mask.
-            If None, nothing will be drawn. Defaults to 'head'.
-            If dict, the 'autoshrink' (bool) field will trigger automated
-            shrinking of the positions due to points outside the outline.
-            Moreover, a matplotlib patch object can be passed for
-            advanced masking options, either directly or as a function that
-            returns patches (required for multi-axis plots).
+        outlines : 'head' | 'skirt' | dict | None
+            The outlines to be drawn. If 'head', the default head scheme will
+            be drawn. If 'skirt' the head scheme will be drawn, but sensors are
+            allowed to be plotted outside of the head circle. If dict, each key
+            refers to a tuple of x and y positions, the values in 'mask_pos'
+            will serve as image mask, and the 'autoshrink' (bool) field will
+            trigger automated shrinking of the positions due to points outside
+            the outline. Alternatively, a matplotlib patch object can be passed
+            for advanced masking options, either directly or as a function that
+            returns patches (required for multi-axis plots). If None, nothing
+            will be drawn. Defaults to 'head'.
         contours : int | False | None
             The number of contour lines to draw.
             If 0, no contours will be drawn.

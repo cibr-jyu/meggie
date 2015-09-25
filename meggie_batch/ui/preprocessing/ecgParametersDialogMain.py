@@ -89,7 +89,10 @@ class EcgParametersDialog(ProjectorDialog):
                 else:
                     fname = os.path.join(subject.subject_path,
                                          'ecg_proj.param')
-                    dic = fileManager.unpickle(fname)
+                    if os.path.exists(fname):
+                        dic = fileManager.unpickle(fname)
+                    else:
+                        return
 
                 channel_name = dic.get('ch_name')
                 if channel_name not in channel_list:

@@ -738,8 +738,7 @@ def get_layouts():
     Finds the layout files from MNE_ROOT.
     Returns a list of strings of found files. 
     """
-    root = os.getenv('MNE_ROOT' '')
-    path = root + '/share/mne/mne_analyze/lout'
+    path = './externalModules/mne/channels/data/layouts'
     try:
         files = [ f[:-5] for f in os.listdir(path)\
                         if isfile(join(path,f)) and f.endswith('.lout') ]

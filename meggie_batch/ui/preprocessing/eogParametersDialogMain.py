@@ -247,41 +247,44 @@ class EogParametersDialog(ProjectorDialog):
 
         for subject in self.caller.experiment._subjects:
             if subject_name == subject._subject_name:
-                try:
-                    if len(subject._eog_params) > 0:
-                        dic = subject._eog_params  
+                if len(subject._eog_params) > 0:
+                    dic = subject._eog_params  
+                else:
+                    fname = os.path.join(subject._subject_path,
+                                         'eog_proj.param')
+                    if os.path.exists(fname):
+                        dic = fileManager.unpickle(fname)
                     else:
-                        dic = fileManager.unpickle(os.path.join(subject._subject_path, 'eog_proj.param'))
-                    self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
-                    self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-                    self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
-                    self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))
-                    self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))
-                    self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
-                    self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
-                    self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
-                    self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
-                    self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-                    self.ui.doubleSpinBoxGradReject.setProperty("value",
-                                                                 dic.get('rej-grad'))
-                    self.ui.doubleSpinBoxMagReject.setProperty("value",
-                                                                 dic.get('rej-mag'))
-                    self.ui.doubleSpinBoxEEGReject.setProperty("value", 
-                                                               dic.get('rej-eeg'))
-                    self.ui.doubleSpinBoxEOGReject.setProperty("value", 
-                                                               dic.get('rej-eog'))
-                    self.ui.lineEditBad.setProperty("value", dic.get('bads'))
-                    self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
-                    self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-                    self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
-                    self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
-                    self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
-                    self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
-                except IOError:
-                    print '.param file not found.'
-
-                    # TODO:
-                    self.set_default_values()
+                        self.set_default_values()
+                        return
+                self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+                self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+                self.ui.spinBoxEventsID.setProperty("value",
+                                                    dic.get('event-id'))
+                self.ui.spinBoxLowPass.setProperty("value",
+                                                   dic.get('eog-l-freq'))
+                self.ui.spinBoxHighPass.setProperty("value",
+                                                    dic.get('eog-h-freq'))
+                self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+                self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+                self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+                self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+                self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+                self.ui.doubleSpinBoxGradReject.setProperty("value",
+                                                            dic.get('rej-grad'))
+                self.ui.doubleSpinBoxMagReject.setProperty("value",
+                                                           dic.get('rej-mag'))
+                self.ui.doubleSpinBoxEEGReject.setProperty("value", 
+                                                           dic.get('rej-eeg'))
+                self.ui.doubleSpinBoxEOGReject.setProperty("value", 
+                                                           dic.get('rej-eog'))
+                self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+                self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+                self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+                self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
+                self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+                self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+                self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
     def set_default_values(self):
         """Sets default values for dialog."""
