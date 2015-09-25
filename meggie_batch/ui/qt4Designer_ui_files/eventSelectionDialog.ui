@@ -183,6 +183,9 @@
                       <property name="suffix">
                        <string> fT/cm</string>
                       </property>
+                      <property name="minimum">
+                       <double>-1.000000000000000</double>
+                      </property>
                       <property name="maximum">
                        <double>1000000000.000000000000000</double>
                       </property>
@@ -215,6 +218,9 @@
                      <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject_3">
                       <property name="suffix">
                        <string> fT</string>
+                      </property>
+                      <property name="minimum">
+                       <double>-1.000000000000000</double>
                       </property>
                       <property name="maximum">
                        <double>1000000000.000000000000000</double>
@@ -252,11 +258,14 @@
                       <property name="suffix">
                        <string> uV</string>
                       </property>
+                      <property name="minimum">
+                       <double>-1.000000000000000</double>
+                      </property>
                       <property name="maximum">
                        <double>1000000000.000000000000000</double>
                       </property>
                       <property name="value">
-                       <double>40.000000000000000</double>
+                       <double>70.000000000000000</double>
                       </property>
                      </widget>
                     </item>
@@ -284,6 +293,9 @@
                       </property>
                       <property name="suffix">
                        <string> uV</string>
+                      </property>
+                      <property name="minimum">
+                       <double>-1.000000000000000</double>
                       </property>
                       <property name="maximum">
                        <double>1000000000.000000000000000</double>

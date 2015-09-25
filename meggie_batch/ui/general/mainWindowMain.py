@@ -716,7 +716,7 @@ class MainWindow(QtGui.QMainWindow):
             inst = self.caller.experiment.active_subject._epochs[epochs_name]
             fileManager.save_epoch(fpath, inst, True)
             self.epochList.selection_changed()
-        fig = epochs.plot(trellis=False, block=True, show=True)
+        fig = epochs.plot(block=True, show=True)
         fig.canvas.mpl_connect('close_event', handle_close)
         QtGui.QApplication.restoreOverrideCursor()
 

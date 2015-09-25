@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialog.ui'
 #
-# Created: Wed Sep 16 06:59:01 2015
+# Created: Fri Sep 25 05:29:58 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -110,6 +110,7 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_31.addWidget(self.checkBoxGrad)
         self.doubleSpinBoxGradReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxGradReject_3.setPrefix(_fromUtf8(""))
+        self.doubleSpinBoxGradReject_3.setMinimum(-1.0)
         self.doubleSpinBoxGradReject_3.setMaximum(1000000000.0)
         self.doubleSpinBoxGradReject_3.setSingleStep(100.0)
         self.doubleSpinBoxGradReject_3.setProperty("value", 3000.0)
@@ -123,6 +124,7 @@ class Ui_EventSelectionDialog(object):
         self.checkBoxMag.setObjectName(_fromUtf8("checkBoxMag"))
         self.horizontalLayout_33.addWidget(self.checkBoxMag)
         self.doubleSpinBoxMagReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
+        self.doubleSpinBoxMagReject_3.setMinimum(-1.0)
         self.doubleSpinBoxMagReject_3.setMaximum(1000000000.0)
         self.doubleSpinBoxMagReject_3.setSingleStep(100.0)
         self.doubleSpinBoxMagReject_3.setProperty("value", 4000.0)
@@ -137,8 +139,9 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_32.addWidget(self.checkBoxEeg)
         self.doubleSpinBoxEEGReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxEEGReject_3.setEnabled(False)
+        self.doubleSpinBoxEEGReject_3.setMinimum(-1.0)
         self.doubleSpinBoxEEGReject_3.setMaximum(1000000000.0)
-        self.doubleSpinBoxEEGReject_3.setProperty("value", 40.0)
+        self.doubleSpinBoxEEGReject_3.setProperty("value", 70.0)
         self.doubleSpinBoxEEGReject_3.setObjectName(_fromUtf8("doubleSpinBoxEEGReject_3"))
         self.horizontalLayout_32.addWidget(self.doubleSpinBoxEEGReject_3)
         self.verticalLayout_7.addLayout(self.horizontalLayout_32)
@@ -150,6 +153,7 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_34.addWidget(self.checkBoxEog)
         self.doubleSpinBoxEOGReject_3 = QtGui.QDoubleSpinBox(self.groupBoxRejection)
         self.doubleSpinBoxEOGReject_3.setEnabled(False)
+        self.doubleSpinBoxEOGReject_3.setMinimum(-1.0)
         self.doubleSpinBoxEOGReject_3.setMaximum(1000000000.0)
         self.doubleSpinBoxEOGReject_3.setProperty("value", 250.0)
         self.doubleSpinBoxEOGReject_3.setObjectName(_fromUtf8("doubleSpinBoxEOGReject_3"))

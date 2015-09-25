@@ -171,13 +171,21 @@ class EventSelectionDialog(QtGui.QDialog):
 
         reject = dict()
         if mag:
-            reject['mag'] = 1e-15 * self.ui.doubleSpinBoxMagReject_3.value()
+            value = self.ui.doubleSpinBoxMagReject_3.value()
+            if value != -1:
+                reject['mag'] = 1e-15 * value
         if grad:
-            reject['grad'] = 1e-13 * self.ui.doubleSpinBoxGradReject_3.value()
+            value = self.ui.doubleSpinBoxGradReject_3.value()
+            if value != -1:
+                reject['grad'] = 1e-13 * value
         if eeg:
-            reject['eeg'] = 1e-6 * self.ui.doubleSpinBoxEEGReject_3.value()
+            value = self.ui.doubleSpinBoxEEGReject_3.value()
+            if value != -1:
+                reject['eeg'] = 1e-6 * value
         if eog:
-            reject['eog'] = 1e-6 * self.ui.doubleSpinBoxEOGReject_3.value()
+            value = self.ui.doubleSpinBoxEOGReject_3.value()
+            if value != -1:
+                reject['eog'] = 1e-6 * value
 
         events = list()
         for i in xrange(self.ui.listWidgetEvents.count()):

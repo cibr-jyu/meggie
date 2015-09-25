@@ -553,13 +553,13 @@ class Caller(object):
         path = self.experiment.workspace
         working_files = self.experiment._working_file_names.values()
         reject = dict()
-        if grad is not None:
+        if grad is not None and grad >= 0:
             reject['grad'] = grad
-        if mag is not None:
+        if mag is not None and mag >= 0:
             reject['mag'] = mag
-        if eeg is not None:
+        if eeg is not None and eeg >= 0:
             reject['eeg'] = eeg
-        if eog is not None:
+        if eog is not None and eog >= 0:
             reject['eog'] = eog
         mag = mag is not None
         grad = grad is not None
@@ -599,6 +599,7 @@ class Caller(object):
                 continue
             path = os.path.join(os.path.split(fname)[0], 'epochs')
             fname = os.path.join(path, epoch_name)
+            events = [(event, event_name) for event in events]
             params = {'events': events, 'mag': mag, 'grad': grad,
                       'eeg': eeg, 'stim': stim, 'eog': eog,
                       'reject': reject, 'tmin': tmin, 'tmax': tmax,
