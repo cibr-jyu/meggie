@@ -84,7 +84,31 @@ class EventSelectionDialog(QtGui.QDialog):
         Keyword arguments
         epoch_name -- Name of the epoch collection.
         """
-        epochs = self.caller.experiment.active_subject.get_epochs(epochs_name)
+        subject = self.caller.experiment.active_subject
+        epochs = subject.get_epochs(epochs_name)
+        rejection = subject._epochs[epochs_name].params['reject']
+        if 'grad' in rejection.keys():
+            self.ui.checkBoxGrad.setChecked(True)
+            self.ui.doubleSpinBoxGradReject_3.setValue(rejection['grad'] /
+                                                       1e-13)
+        else:
+            self.ui.checkBoxGrad.setChecked(False)
+        if 'mag' in rejection.keys():
+            self.ui.checkBoxMag.setChecked(True)
+            self.ui.doubleSpinBoxMagReject_3.setValue(rejection['mag'] / 1e-15)
+        else:
+            self.ui.checkBoxMag.setChecked(False)
+        if 'eeg' in rejection.keys():
+            self.ui.checkBoxEeg.setChecked(True)
+            self.ui.doubleSpinBoxEEGReject_3.setValue(rejection['eeg'] / 1e-6)
+        else:
+            self.ui.checkBoxEeg.setChecked(False)
+        if 'eog' in rejection.keys():
+            self.ui.checkBoxEog.setChecked(True)
+            self.ui.doubleSpinBoxEOGReject_3.setValue(rejection['eog'] / 1e-6)
+        else:
+            self.ui.checkBoxEog.setChecked(False)
+
         self.ui.lineEditCollectionName.setText(epochs_name)
         self.ui.doubleSpinBoxTmin.setValue(epochs.tmin)
         self.ui.doubleSpinBoxTmax.setValue(epochs.tmax)

@@ -552,7 +552,7 @@ class Subject(QObject):
         if len(files) > 0:
             return True
         return False
-                
+
     def check_sss_applied(self):
         """
         Checks the subject folder for sss/tsss applied file.
@@ -572,7 +572,7 @@ class Subject(QObject):
             return True
         else: 
             return False
-    
+
     def check_mne_setup_mri_run(self):
         reconDir = self._experiment._active_subject._reconFiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 

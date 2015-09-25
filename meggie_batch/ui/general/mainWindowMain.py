@@ -521,9 +521,6 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.epochList.currentItem() is None:
             return
-
-        # TODO: get ed params from active_subject._evokeds dictionary
-
         collection_name = str(self.epochList.currentItem().text())
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.initialize(collection_name)
