@@ -792,7 +792,7 @@ class Caller(object):
         ch_names = evokedToAve.ch_names
         gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
 
-        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1')
+        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
 
         #eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
         eeg_picks = mne.pick_types(evokeds[0].info, meg=False, eeg=True,
@@ -815,7 +815,7 @@ class Caller(object):
                 # Links the event name and the corresponding data
                 dataList.append((evokeds[i].comment + '_grad',
                                  averagedGradData))
-            elif len(ch_names) == 1 and re.compile('MEG...[23]').match(ch_names[0]):
+            elif len(ch_names) == 1 and re.compile('MEG.{3,4}[23]$').match(ch_names[0]):
                 dataList.append((evokeds[i].comment + '_grad',
                                  evokedToAve.data[0]))
             if len(magsIdxs) > 0:

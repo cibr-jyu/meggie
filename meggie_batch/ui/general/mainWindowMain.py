@@ -711,10 +711,10 @@ class MainWindow(QtGui.QMainWindow):
         epochs = self.caller.experiment.active_subject.get_epochs(epochs_name)
 
         def handle_close(event):
+            params = self.caller.experiment.active_subject._epochs[epochs_name].params
             path = self.caller.experiment.active_subject._epochs_directory
             fpath = os.path.join(path, epochs_name)
-            inst = self.caller.experiment.active_subject._epochs[epochs_name]
-            fileManager.save_epoch(fpath, inst, True)
+            fileManager.save_epoch(fpath, epochs, params, overwrite=True)
             self.epochList.selection_changed()
         fig = epochs.plot(block=True, show=True)
         fig.canvas.mpl_connect('close_event', handle_close)
@@ -1436,7 +1436,6 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.evokedList.clear()
-        self.update_power_list()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
@@ -1475,7 +1474,7 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText('Add or activate subjects before '
                                      'continuing.')
             return
-
+        self.update_power_list()
         sub_name = self.caller.experiment._active_subject_name
         fname = self.caller._experiment._working_file_names[sub_name]
         status = "Current working file: " + os.path.basename(fname)

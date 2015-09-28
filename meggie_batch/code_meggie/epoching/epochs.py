@@ -112,7 +112,6 @@ class Epochs(QObject):
         """
         self._params = params
 
-    
     def create_epochs(self, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.

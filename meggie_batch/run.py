@@ -42,7 +42,8 @@ sip.setapi('QString', 2)
 os.environ['QT_API'] = 'pyqt'
 
 # To make Meggie use static MNE instead of a possible system one
-sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) + "/externalModules/")
+sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) +
+                "/externalModules/")
 
 # Recursively append everything in Meggie to syspath to make running from
 # command line viable
