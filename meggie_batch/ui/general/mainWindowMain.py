@@ -346,7 +346,7 @@ class MainWindow(QtGui.QMainWindow):
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
-
+        drops = params['drops']
         events = params['events']
         names = [x[1] for x in events]
         event_counts = [[x, names.count(x)] for x in set(names)]
@@ -359,6 +359,9 @@ class MainWindow(QtGui.QMainWindow):
                     ' events')
             item.setText(text)
             self.epochList.ui.listWidgetEvents.addItem(item)
+        item = QtGui.QListWidgetItem()
+        item.setText('Dropped epochs: %s' % len(drops))
+        self.epochList.ui.listWidgetEvents.addItem(item)
         # TODO: create category items to add on the listWidgetEvents widget.
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')

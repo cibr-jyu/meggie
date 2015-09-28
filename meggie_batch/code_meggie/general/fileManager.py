@@ -601,8 +601,8 @@ def unpickle(fpath):
         raise
     
     return unpickledObject
-    
-    
+
+
 def save_epoch(fpath, epoch, params, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
@@ -630,22 +630,24 @@ def save_epoch(fpath, epoch, params, overwrite=False):
 
     event_dict = {}
     event_list = params['events']
-    new_event_list = list()  # new list for excluding dropped epochs
+    #new_event_list = list()  # new list for excluding dropped epochs
     drop_log = epoch.drop_log
+    drops = list()
     for i, item in enumerate(event_list):
         if len(drop_log[i]) != 0:  # remove dropped epochs from params
-            continue
+            drops.append(i)# continue
         key = str(item[1])
         event = item[0]
         # Create an empty list for the new key
         if key not in event_dict:
             event_dict[key] = []
         event_dict[key].append(event)
-        new_event_list.append(item)
+        #new_event_list.append(item)
     params['events'] = event_dict
+    params['drops'] = drops
     parameterFileName = str(fpath + '.param')
     pickleObjectToFile(params, parameterFileName)
-    params['events'] = new_event_list  # list without dropped epochs
+    params['events'] = event_list  # list without dropped epochs
 
 
 def read_surface_names_into_list(subject):
