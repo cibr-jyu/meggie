@@ -243,7 +243,7 @@ class Caller(object):
         qrs_threshold = dic.get('qrs')
         flat = None
         bads = dic.get('bads')
-        if bads is None:
+        if bads is None or bads == ['']:
             bads = []
 
         start = dic.get('tstart')
@@ -359,7 +359,7 @@ class Caller(object):
 
         flat = None
         bads = dic.get('bads')
-        if bads is None:
+        if bads is None or bads == ['']:
             bads = []
         start = dic.get('tstart')
         taps = dic.get('filtersize')
