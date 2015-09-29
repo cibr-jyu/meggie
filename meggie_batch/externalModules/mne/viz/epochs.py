@@ -169,9 +169,9 @@ def plot_image_epochs(epochs, picks=None, sigma=0., vmin=None,
                       units=None, scalings=None, cmap='RdBu_r', fig=None):
 
     return plot_epochs_image(epochs=epochs, picks=picks, sigma=sigma,
-                             vmin=vmin, vmax=None, colorbar=True, order=order,
-                             show=show, units=None, scalings=None, cmap=cmap,
-                             fig=fig)
+                             vmin=vmin, vmax=vmax, colorbar=colorbar,
+                             order=order, show=show, units=units,
+                             scalings=scalings, cmap=cmap, fig=fig)
 
 
 def _drop_log_stats(drop_log, ignore=['IGNORED']):

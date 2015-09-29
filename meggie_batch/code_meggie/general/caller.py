@@ -586,7 +586,7 @@ class Caller(object):
                 raw = mne.io.Raw(fname)
                 events = mne.find_events(raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
-
+                events = mne.pick_events(events, include=event_id)
                 epocher = Epochs()
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
                                                stim, eog, reject,
@@ -658,6 +658,7 @@ class Caller(object):
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
 
         title = mi.subject_name
+
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
         conditions = [e.comment for e in evokeds]

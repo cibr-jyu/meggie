@@ -293,8 +293,10 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         Method for adding events to the event list.
         """
-        if checked is None: return
-        name = self.set_event_name(self.ui.lineEditName.text())
+        if checked is None:
+            return
+        # name = self.set_event_name(self.ui.lineEditName.text())
+        name = self.ui.lineEditName.text()
         events = self.create_eventlist()
         self.add_events(events, name)
         self.ui.lineEditName.setText('Event')
@@ -320,7 +322,9 @@ class EventSelectionDialog(QtGui.QDialog):
             QtGui.QApplication.restoreOverrideCursor()
             return
 
-        if len(param_dict['reject']) == 0:
+        if all([not self.ui.checkBoxEeg.isChecked(), 
+                not self.ui.checkBoxGrad.isChecked(),
+                not self.ui.checkBoxMag.isChecked()]):
             QtGui.QApplication.restoreOverrideCursor()
             message = 'Picks cannot be empty. Select picks by checking the ' +\
                       ' checkboxes.'
