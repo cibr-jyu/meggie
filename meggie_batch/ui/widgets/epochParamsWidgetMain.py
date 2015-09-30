@@ -42,20 +42,15 @@ class EpochParamsWidget(QtGui.QWidget):
     Creates a list that shows parameters of chosen epoch collection.
     """
 
-
     def __init__(self, parent):
         """
         Constructor 
         """
         QtGui.QWidget.__init__(self, parent)
-        
+
         self.ui = Ui_Form()
         self.ui.setupUi(self)
-        
 
-        
-        
-        
     def show_parameters(self, item):
         """
         Sets parameters from the currently chosen epochs.
@@ -135,8 +130,7 @@ class EpochParamsWidget(QtGui.QWidget):
         filename = filename_list[len(filename_list) - 1]
         self.ui.textBrowserWorkingFile.setText(filename)
         #self.ui.textBrowserWorkingFile.setText(params[QtCore.QString(u'raw')])
-        
-        
+
     def clear_parameters(self):
         self.ui.labelTmin.setText('Start time:')
         self.ui.labelTmax.setText('End time:')

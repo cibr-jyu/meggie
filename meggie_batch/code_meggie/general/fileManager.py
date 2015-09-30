@@ -587,11 +587,11 @@ def pickleObjectToFile(picklable, fpath):
 
 def unpickle(fpath):
     """Unpickle an object from a file at fpath.
-    
+
     Keyword arguments:
-    
+
     fpath -- the path to the pickled file.
-    
+
     Return the unpickled object. If there is an exception, raise it to
     allow the calling method to decide a what to do.
     """
@@ -599,7 +599,7 @@ def unpickle(fpath):
         unpickledObject = pickle.load(open(fpath, 'rb'))
     except Exception:
         raise
-    
+
     return unpickledObject
 
 
@@ -634,8 +634,8 @@ def save_epoch(fpath, epoch, params, overwrite=False):
     drop_log = epoch.drop_log
     drops = list()
     for i, item in enumerate(event_list):
-        if len(drop_log[i]) != 0:  # remove dropped epochs from params
-            drops.append(i)# continue
+        if len(drop_log[i]) != 0:  # add dropped epochs to params
+            drops.append(i)
         key = str(item[1])
         event = item[0]
         # Create an empty list for the new key
@@ -656,10 +656,10 @@ def read_surface_names_into_list(subject):
     returns their names as list. Meant to be used by populating surface combo-
     box in forwardModelDialog (which in turn allows the user to select the 
     surface to be used by mne_setup_source_space).
-    
+
     No exception checking, the existence of surface files is assumed to be
     checked by the calling method.
-    
+
     Keyword arguments:
     subject     -- subjects whose surface files need listing (almost always the
                    active subject at the current experiment, but doesn't have to
