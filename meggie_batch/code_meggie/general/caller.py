@@ -887,6 +887,7 @@ class Caller(object):
     def _group_average(self, groups):
         """Performed in a worker thread."""
         chs = self.experiment.active_subject.working_file.info['ch_names']
+        chs = _clean_names(chs, remove_whitespace=True)
         evokeds = dict()
         eweights = dict()
         for group in groups:
@@ -931,6 +932,7 @@ class Caller(object):
                     self.e.set()
                     return
                 info = evoked.info['ch_names']
+                info = _clean_names(info, remove_whitespace=True)
                 for cidx in xrange(len(info)):
                     ch_name = info[cidx]
                     if not ch_name in evokeds[group].keys():
