@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'eventSelectionDialog.ui'
+# Form implementation generated from reading ui file 'ui/qt4Designer_ui_files/eventSelectionDialog.ui'
 #
-# Created: Fri Sep 25 05:29:58 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,7 +35,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 807, 640))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 807, 644))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 400))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_7 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
@@ -53,6 +52,15 @@ class Ui_EventSelectionDialog(object):
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
         self.verticalLayout_4 = QtGui.QVBoxLayout()
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.horizontalLayout_11 = QtGui.QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
+        self.labelStimChannel = QtGui.QLabel(self.groupBoxEvent)
+        self.labelStimChannel.setObjectName(_fromUtf8("labelStimChannel"))
+        self.horizontalLayout_11.addWidget(self.labelStimChannel)
+        self.comboBoxStimChannel = QtGui.QComboBox(self.groupBoxEvent)
+        self.comboBoxStimChannel.setObjectName(_fromUtf8("comboBoxStimChannel"))
+        self.horizontalLayout_11.addWidget(self.comboBoxStimChannel)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.labelEventID = QtGui.QLabel(self.groupBoxEvent)
@@ -292,6 +300,7 @@ class Ui_EventSelectionDialog(object):
     def retranslateUi(self, EventSelectionDialog):
         EventSelectionDialog.setWindowTitle(_translate("EventSelectionDialog", "Meggie - Epoch Creation", None))
         self.groupBoxEvent.setTitle(_translate("EventSelectionDialog", "Select events to include in epoch collection", None))
+        self.labelStimChannel.setText(_translate("EventSelectionDialog", "Stimulus channel:", None))
         self.labelEventID.setText(_translate("EventSelectionDialog", "Event ID:", None))
         self.labelMask.setText(_translate("EventSelectionDialog", "Mask", None))
         self.spinBoxMask.setToolTip(_translate("EventSelectionDialog", "<html><head/><body><p>Mask bit used for finding events. For example, if mask is set to 1, first bit is ignored.</p></body></html>", None))

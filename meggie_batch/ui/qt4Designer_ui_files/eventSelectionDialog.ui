@@ -34,7 +34,7 @@
         <x>0</x>
         <y>0</y>
         <width>807</width>
-        <height>640</height>
+        <height>644</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -58,6 +58,20 @@
                <layout class="QGridLayout" name="gridLayout_5">
                 <item row="0" column="0">
                  <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <item>
+                     <widget class="QLabel" name="labelStimChannel">
+                      <property name="text">
+                       <string>Stimulus channel:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="comboBoxStimChannel"/>
+                    </item>
+                   </layout>
+                  </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_7">
                     <item>

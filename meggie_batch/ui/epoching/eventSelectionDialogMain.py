@@ -74,6 +74,14 @@ class EventSelectionDialog(QtGui.QDialog):
         self.fixedLengthDialog = None
         self.ui.lineEditName.setText('Event')
         self.used_names = []
+        ch_names = self.caller.experiment.active_subject.working_file.ch_names
+        stim_channels = [x for x in ch_names if x.startswith('STI')]
+        active = 0
+        for idx, channel in enumerate(stim_channels):
+            self.ui.comboBoxStimChannel.addItem(channel)
+            if channel == self.caller.experiment.active_subject.stim_channel:
+                active = idx
+        self.ui.comboBoxStimChannel.setCurrentIndex(active)
         if params is not None:
             self.fill_parameters(params)
 
@@ -225,8 +233,9 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         event_id = self.ui.spinBoxEventID.value()
         mask = self.ui.spinBoxMask.value()
+        stim_channel = str(self.ui.comboBoxStimChannel.currentText())
         e = Events(self.caller.experiment.active_subject.working_file,
-                   self.caller.experiment.active_subject.stim_channel, mask)
+                   stim_channel, mask)
         mask = np.bitwise_not(mask)
         events = e.pick(np.bitwise_and(event_id, mask))
         print str(events)
