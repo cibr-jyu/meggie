@@ -3,7 +3,6 @@ Created on Sep 22, 2013
 
 @author: atmiraut
 """
-import sys
 
 from PyQt4 import QtGui, QtCore
 
@@ -46,13 +45,11 @@ class ListWidget(QtGui.QListWidget):
                     self.addItem(item, suffix)
                 
             else:
-                qstr_suffix = QtCore.QString('')
-                qstr_suffix.append(QtCore.QString('(%1)').arg(suffix))
-
-                if not self.findItems(item.text() + qstr_suffix,\
+                suffix_brackets = '(' + str(suffix) + ')'
+                if not self.findItems(item.text() + suffix_brackets,\
                                       QtCore.Qt.MatchFixedString):
                     
-                    item.setText(item.text() + qstr_suffix)
+                    item.setText(item.text() + suffix_brackets)
                     QtGui.QListWidget.addItem(self, item)
                     self.sortItems()
                     

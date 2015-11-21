@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ import os
 
 from PyQt4 import QtCore,QtGui
 from maxFilterComputeDialog_Ui import Ui_Dialog
-import messageBox
+import messageBoxes
 from infoDialog_main import InfoDialog
 from infoDialog_Ui import Ui_infoDialog
 

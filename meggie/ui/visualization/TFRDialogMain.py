@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -33,12 +33,11 @@ Created on Apr 26, 2013
 @author: Jaakko Leppakangas
 Contains the TFRDialog-class used for creating TFRs.
 """
-import messageBox
+from PyQt4 import QtCore, QtGui
 
-import mne
-
-from PyQt4 import QtCore,QtGui
 from TFRfromEpochsUi import Ui_DialogEpochsTFR
+from code_meggie.general.caller import Caller
+from ui.general.messageBoxes import shortMessageBox
 
 class TFRDialog(QtGui.QDialog):
     """
@@ -46,41 +45,43 @@ class TFRDialog(QtGui.QDialog):
     values and passes them to the Caller-class.
     """
     
-    def __init__(self, parent, raw, epochs):
+    def __init__(self, parent, epochs):
         """
         Constructor. Sets up the dialog
         
         Keyword arguments:
         
         parent    --    Parent of the dialog
-        raw       --    raw data file
         epochs    --    a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.raw = raw
         self.epochs = epochs
         ch_names = self.epochs.ch_names
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
-    
+
     def accept(self):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
+        cmap = str(self.ui.comboBoxCmap.currentText())
         try:
-            self.parent.caller.TFR(self.raw, self.epochs, ch_index,
-                                   minfreq, maxfreq, interval, ncycles, decim)
+            caller = Caller.Instance()
+            caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
+                       ncycles, decim, cmap)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            self.messageBox = shortMessageBox(str(err))
+            QtGui.QApplication.restoreOverrideCursor()
             self.messageBox.show()
             return
-        self.close()
+        QtGui.QApplication.restoreOverrideCursor()

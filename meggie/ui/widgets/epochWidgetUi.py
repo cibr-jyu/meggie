@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'epochWidget.ui'
 #
-# Created: Thu Sep  5 14:23:15 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Tue Aug 25 01:40:04 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,9 +41,15 @@ class Ui_Form(object):
         self.groupBoxEvents.setGeometry(QtCore.QRect(0, 150, 391, 151))
         self.groupBoxEvents.setObjectName(_fromUtf8("groupBoxEvents"))
         self.listWidgetEvents = QtGui.QListWidget(self.groupBoxEvents)
+        self.listWidgetEvents.setEnabled(True)
         self.listWidgetEvents.setGeometry(QtCore.QRect(10, 30, 361, 111))
-        self.listWidgetEvents.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.listWidgetEvents.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.listWidgetEvents.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.listWidgetEvents.setObjectName(_fromUtf8("listWidgetEvents"))
+        item = QtGui.QListWidgetItem()
+        self.listWidgetEvents.addItem(item)
+        item = QtGui.QListWidgetItem()
+        self.listWidgetEvents.addItem(item)
         self.verticalLayout_14.addWidget(self.groupBoxEpochs)
         self.gridLayout_2.addLayout(self.verticalLayout_14, 0, 0, 1, 1)
 
@@ -54,4 +60,11 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form", None))
         self.groupBoxEpochs.setTitle(_translate("Form", "Epoch collections:", None))
         self.groupBoxEvents.setTitle(_translate("Form", "Events in currently selected epoch collection:", None))
+        __sortingEnabled = self.listWidgetEvents.isSortingEnabled()
+        self.listWidgetEvents.setSortingEnabled(False)
+        item = self.listWidgetEvents.item(0)
+        item.setText(_translate("Form", "gxxgxg", None))
+        item = self.listWidgetEvents.item(1)
+        item.setText(_translate("Form", "hghch", None))
+        self.listWidgetEvents.setSortingEnabled(__sortingEnabled)
 

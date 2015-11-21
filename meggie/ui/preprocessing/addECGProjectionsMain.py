@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -38,27 +38,30 @@ import glob
 import mne
 
 from PyQt4 import QtCore,QtGui
+
+from code_meggie.general.caller import Caller
 from addProjectionsUi import Ui_Dialog
-import messageBox
+import messageBoxes
 
 class AddECGProjections(QtGui.QDialog):
     """
     Class containing the logic for adding ECG projections.
     Projections should be created and saved in a file before adding them.
     """
-    
-    def __init__(self, parent):
+    caller = Caller.Instance()
+    def __init__(self, parent, added_projs):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
         parent        -- The parent of this object.
+        added_projs   -- Projectors already added to the raw object.
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment._subject_directory
-        self.proj_file = glob.glob(directory + '*_ecg_*proj.fif')[0]
+        directory = self.caller.experiment.active_subject.subject_path
+        self.proj_file = glob.glob(directory + '/*_ecg_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
         
         self.listWidget = QtGui.QListWidget()
@@ -69,29 +72,29 @@ class AddECGProjections(QtGui.QDialog):
             checkBox = QtGui.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
-        
-        
+            if str(proj) in [str(x) for x in added_projs]:
+                checkBox.setChecked(True)
+
     def accept(self):
         """
         Tells the caller to add the selected projections to the working file.
         """       
-        applied = []
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+
+        applied = list()
         for index in xrange(self.listWidget.count()):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))
-            if check_box.checkState() == QtCore.Qt.Checked:
-                applied.append(self.projs[index])
-        #try:
-        # Overwrites the projection file with desired vectors.
-        mne.write_proj(self.proj_file, applied)
-        self.parent.caller.apply_ecg(self.parent.experiment.working_file,
-                                self.parent.experiment._subject_directory)
-        """
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()
-            raise
-        """
+            applied.append(check_box.isChecked())
+
+        raw = self.caller.experiment.active_subject.working_file
+        directory = self.caller.experiment.active_subject.subject_path
+        result = self.caller.apply_exg('ecg', raw, directory, self.projs,
+                                       applied)
+
+        if result == 0:
+            self.parent.ui.checkBoxECGApplied.setChecked(True)
+        QtGui.QApplication.restoreOverrideCursor()
         self.parent._initialize_ui()
         self.close()
         

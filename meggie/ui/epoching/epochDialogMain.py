@@ -33,10 +33,11 @@ Created on Apr 30, 2013
 @author: Jaakko Leppakangas
 Contains the EpochDialog class that holds the logic for epochDialog-window.
 """
-import messageBox
+import messageBoxes
 from epochDialogUi import Ui_Dialog
+from code_meggie.general.caller import Caller
 
-from epochs import Epochs
+from mne.epochs import Epochs
 
 from PyQt4 import QtCore,QtGui
 
@@ -76,6 +77,7 @@ class EpochDialog(QtGui.QDialog):
         main window's epoch list.
         
         """
+        caller = Caller.Instance()
         self.tmin = float(self.ui.doubleSpinBoxTmin.value())
         self.tmax = float(self.ui.doubleSpinBoxTmax.value())
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
@@ -83,7 +85,7 @@ class EpochDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        stim_channel = self.parent.parent.experiment.stim_channel
+        #stim_channel = caller.experiment.stim_channel
         
         reject = dict()
         if mag:
@@ -111,13 +113,12 @@ class EpochDialog(QtGui.QDialog):
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
         try:
-            epochs = Epochs(self.parent.parent.experiment.working_file,
+            epochs = Epochs(caller.experiment.working_file,
                             events, mag, grad, eeg, stim, eog, reject,
                             category, float(self.tmin), float(self.tmax))
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText('Could not create epochs: '
-                                                   + str(err))
+            message = 'Could not create epochs: ' + str(err)
+            self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.exec_()
             return
         self.epochs_created.emit(epochs, self.collectionName)

@@ -12,8 +12,6 @@ those parameters is impossible, needlessly compilicated or resource-hungry.
 
 import csv
 import os
-import fileManager
-
     
     
 
@@ -68,21 +66,21 @@ def parse_parameter_file(self, operation):
                     for operation names.
                     
     """
-    
+
     # Reading parameter file.
     paramdirectory = os.path.join(self._workspace, self._experiment_name, 
                                   self._active_subject_name) 
     paramfilefullpath = os.path.join(paramdirectory, operation + '.param')
-    
+
     try:
         with open(paramfilefullpath, 'rb') as paramfile:
             csvreader=csv.reader(paramfile)
-            
+
             # skip the first three lines, as they don't include actual
             # info about parameters
             for i in range(3):
                 next(csvreader)
-            
+
             # Read the rest of the parameter file into a dictionary as
             # key-value pairs
             paramdict = dict(x for x in csvreader)

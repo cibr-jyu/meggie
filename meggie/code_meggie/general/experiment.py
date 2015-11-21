@@ -36,14 +36,17 @@ Classes needed for controlling Meggie experiments.
 """
 import os
 import re
-import csv
 import shutil
+import gc
+import csv
+from threading import Event
 
 import fileManager
 from subject import Subject
-import messageBoxes
+from ui.general import messageBoxes
+from code_meggie.general.caller import Caller
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
 
@@ -55,11 +58,11 @@ import pickle
 class Experiment(QObject):
     
     """A class that holds experiment info.
-    
+
     Experiment stores path of the experiment file, author, description and
     list of the subjects. It also has methods for saving and parsing parameter
     files and pickling and unpickling itself to and from disk.
-    
+
     Properties:
     experiment_name    -- The name of the experiment
     workspace          -- The path to the experiment folder
@@ -70,8 +73,9 @@ class Experiment(QObject):
     active_subject     -- The subject that is currently processed
     working_file_names -- The complete path of the working file
     """
-    
-    
+
+    e = Event()
+
     def __init__(self):
         """
         Constructor sets default values for attributes.
@@ -83,15 +87,13 @@ class Experiment(QObject):
         self._description = 'no description'
         self._subjects = []
         self._active_subject = None
-        
+
         # For pickling purposes to make loading experiments and subjects
         # more simple.
         self._active_subject_name = ''
         self._subject_paths = []
         self._working_file_names = dict()
-        
         self.main_window = None
-        
 
     @property
     def experiment_name(self):
@@ -99,7 +101,6 @@ class Experiment(QObject):
         Returns the name of the experiment.
         """
         return self._experiment_name
-
 
     @experiment_name.setter
     def experiment_name(self, experiment_name):
@@ -109,8 +110,11 @@ class Experiment(QObject):
         experiment_name    -- the name of the experiment
         """
         if (len(experiment_name) <= 30):
-            if re.match("^[A-Za-z0-9 ]*$", experiment_name):
+            if re.match("^[A-Za-z0-9_ ]*$", experiment_name):
                 self._experiment_name = str(experiment_name)
+                #exp_path = os.path.join(self._workspace,
+                #                        self._experiment_name)
+                #os.mkdir(exp_path + '/output')
             else:
                 message = 'Use only letters and numbers in experiment name'
                 self.messageBox = messageBoxes.shortMessageBox(message)
@@ -120,15 +124,13 @@ class Experiment(QObject):
         else:
             raise Exception('Too long experiment name')
 
-
     @property
     def workspace(self):
         """
         Returns the path of the current experiment.
         """
         return self._workspace
-    
-    
+
     @workspace.setter
     def workspace(self, workspace):
         """
@@ -142,15 +144,13 @@ class Experiment(QObject):
         else:
             raise Exception('No such workspace path')
 
-
     @property
     def author(self):
         """
         Returns the author of the experiment
         """
         return self._author
-    
-    
+
     @author.setter
     def author(self, author):
         """
@@ -169,14 +169,12 @@ class Experiment(QObject):
         else:
             raise Exception('Too long _author name')
 
-
     @property
     def description(self):
         """
         Returns the _description of the experiment.
         """
         return self._description
-
 
     @description.setter
     def description(self, description):
@@ -200,15 +198,13 @@ class Experiment(QObject):
         else:
             raise Exception("Too long _description")
 
-
     @property
     def active_subject_name(self):
         """
         Method for getting active subject name.
         """
         return self._active_subject_name
-    
-    
+
     @active_subject_name.setter
     def active_subject_name(self, subject_name):
         """
@@ -216,23 +212,26 @@ class Experiment(QObject):
         """
         self._active_subject_name = subject_name
 
-
     @property
     def active_subject(self):
         """
         Method for getting activated subject.
         """
         return self._active_subject
-    
-    
+
     @active_subject.setter
     def active_subject(self, subject):
         """
         Method for setting active subject.
         """
         self._active_subject = subject
-    
-    
+
+    def is_ready(self):
+        """
+        Method for polling threaded processes.
+        """
+        return self.e.is_set()
+
     def add_subject(self, subject):
         """
         Adds subject to the current experiment.
@@ -246,56 +245,56 @@ class Experiment(QObject):
         # list 
         self._subjects.append(subject)
 
+    def get_subjects(self):
+        """
+        Returns a list of all subjects.
+        """
+        return self._subjects
 
-    def remove_subject(self, item, main_window):
+    def remove_subject(self, sname, main_window):
         """
         Removes the subject folder and its contents under experiment tree.
         Removes the subject information from experiment properties and updates
         the experiment settings file.
-        Removes the item from the listWidgetSubjects.
-        
+
         Keyword arguments:
-        item        -- currently active item on self.ui.listWidgetSubjects
+        sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        subject_name = str(item.text())
-        subject_path = os.path.join(self.workspace, self.experiment_name, subject_name)
-        
+        subject_path = os.path.join(self.workspace, self.experiment_name, sname)
+
         if (subject_path in path for path in self.subject_paths):
             # Need to call _subject_paths to be able to remove.
             # Doesn't work if call subject_path without _.
             self._subject_paths.remove(subject_path)
-            del self._working_file_names[subject_name]
-        
+            del self._working_file_names[sname]
+
         # If subject is not created with the chosen subject list item,
         # hence activated using activate -button after opening an existing
         # experiment, only subject_paths list and working_file_names dictionary
         # needs to be updated.
         for subject in self._subjects:
-            if subject.subject_name == subject_name:
+            if subject.subject_name == sname:
                 self._subjects.remove(subject)
-        
+
         # If active subject is removed, the active properties have to be
         # reseted to default values.    
-        if subject_path == os.path.join(self._workspace, self._experiment_name, self.active_subject_name):
+        if subject_path == os.path.join(self._workspace, self._experiment_name,
+                                        self.active_subject_name):
             self._active_subject_name = ''
             self._active_subject = None
-        
+
         try:
             shutil.rmtree(subject_path)
-        except OSError:
-            raise Exception('Could not remove the contents of the subject' + \
-                            ' folder.')
-        row = main_window.ui.listWidgetSubjects.row(item)
+        except OSError('Could not remove the contents of the subject folder.'):
+            raise
         self.save_experiment_settings()
-        main_window.ui.listWidgetSubjects.takeItem(row)
         main_window._initialize_ui()
-
 
     def add_subject_path(self, subject_path):
         """
         Adds subject path to the current experiment.
-        
+
         Keyword arguments:
         subject_path    -- the subject path of the subject object
                            created by subject class
@@ -304,39 +303,38 @@ class Experiment(QObject):
         if not subject_path in self._subject_paths:
             self._subject_paths.append(subject_path)
 
-
-    def update_working_file(self, working_file_name):
+    def update_working_file(self, fname, subject_name=None):
         """
         Adds working file name to the working_file list.
         Updates to the previously processed file.
-        
+
         Keyword arguments:
-        working_file_name    -- name of the working file
+        fname         -- Name of the working file.
+        subject_name  -- Name of the subject. If None, active subject is used.
         """
-        self._working_file_names[self.active_subject_name] = working_file_name
-      
-        
+        if subject_name:
+            self._working_file_names[subject_name] = fname
+        else:
+            self._working_file_names[self.active_subject_name] = fname
+
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
         file under the directory of the given subject name and sets it
         to the corresponding Subject.
-        
+
         Keyword arguments:
         subject_name -- name of the subject
         """
         # Remove raw files from memory before activating new subject.
+        self.e.clear()
         self.release_memory()
         self._active_subject_name = subject_name
-        if subject_name == '':
-            return
-        working_file_name = ''
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
-            message = 'There is no working file in the chosen subject folder.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()  
-            return
-        
+            print 'There is no working file in the chosen subject folder.'
+            self.e.set()
+            return 1
+
         # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
             if subject_name == subject.subject_name:
@@ -345,9 +343,15 @@ class Experiment(QObject):
                 self._active_subject_name = subject.subject_name
                 # Check if the working file is actually loaded already (in the
                 # case of addSubjectDialogMain accept() method).
-                self.load_working_file(subject)
+                try:
+                    self.load_working_file(subject)
+                except Exception as e:
+                    print str(e)
+                    self.e.set()
+                    return 1
                 self.save_experiment_settings()
-        
+        self.e.set()
+        return 0
  
     def create_subject(self, subject_name, experiment, raw_path):
         """Creates a Subject when adding a new one to the experiment.
@@ -386,9 +390,8 @@ class Experiment(QObject):
         self._active_subject_name = subject_name
         self.add_subject_path(subject.subject_path)
         self.update_working_file(complete_raw_path)
-        
-        
-    def create_subjects(self, experiment, subject_paths):
+
+    def create_subjects(self, experiment, subject_paths, workspace):
         """Creates subjects when opening an experiment with subjects.
         Raw file is not set here.
         
@@ -397,10 +400,26 @@ class Experiment(QObject):
         subject_names -- list of subject names
         """
         for subject_path in subject_paths:
-            subject = Subject(experiment, os.path.basename(subject_path))
-            self._subjects.append(subject)
-            
-    
+            if os.path.exists(subject_path):
+                subject = Subject(experiment, os.path.basename(subject_path))
+                self._subjects.append(subject)
+            else:
+                folders = subject_path.split('/')
+                for i in range(len(folders)):
+                    path = workspace + '/' + '/'.join(folders[i:])
+                    # This here is done because the path might change when
+                    # moving external hard-drive from one computer to another.
+                    if os.path.exists(path):
+                        print 'Could not find ' + subject_path + '.'
+                        print 'Using ' + path + ' instead.'
+                        print 'Changing experiment workspace to ' + workspace
+                        self.workspace = workspace
+                        subject = Subject(experiment, os.path.basename(path))
+                        self._subjects.append(subject)
+                        self.update_working_file(path + '/' + subject.subject_name + '.fif',
+                                                 subject.subject_name)
+                        break
+
     def release_memory(self):
         """Releases memory from previously processed subject by removing
         references from raw files.
@@ -413,8 +432,7 @@ class Experiment(QObject):
             if len(self.active_subject._evokeds) > 0:
                 for value in self.active_subject._evokeds.values():
                     value._raw = None
-        
-        
+
     def load_working_file(self, subject):
         """Loads raw file from subject folder and sets it on
         subject._working_file property.
@@ -425,15 +443,32 @@ class Experiment(QObject):
         #files = os.listdir(self.active_subject_path)
         if subject._working_file is None:
             path = os.path.join(self._workspace, self._experiment_name, subject._subject_name)
+            # This here is done because the path might change when moving
+            # external hard-drive from one computer to another.
+            if not os.path.exists(path):
+                folders = path.split('/')
+                for i in range(len(folders)):
+                    path = self.workspace + '/' + '/'.join(folders[i:])
+                    if os.path.exists(path):
+                        break;
             files = os.listdir(path)
-            for file in files:
-                file_path = os.path.join(path, file)
-                if file_path in self._working_file_names.values():
-                    raw = fileManager.open_raw(os.path.join(path, file_path))
+            for f in files:
+                if not f.endswith('.fif'): continue
+                file_path = os.path.join(path, f)
+                for value in self._working_file_names.values():
+                    if value.endswith(f):
+                        
+                #if file_path in self._working_file_names.values():
+                        raw = fileManager.open_raw(file_path)
                     # TODO: set channel names with whitespaces for the subject.working_file
                     # Not necessarily needed when loading from subject folder because
                     # whitespaces are already added when new subject is added.
-                    subject._working_file = raw
+                        subject._working_file = raw
+                        break
+                #else:
+                #    self._working_file_names[path.split('/')[-1]] = file_path
+                #    raw = fileManager.open_raw(os.path.join(path, file_path))
+                #    subject._working_file = raw
         subject.find_stim_channel()
         subject.create_event_set()
 
@@ -441,18 +476,27 @@ class Experiment(QObject):
         """Loads raw epoch files from subject folder and sets them on
         subject._epochs objects.
         """
-        if os.path.exists(self.active_subject._epochs_directory) is False:
+        if not os.path.exists(self.active_subject._epochs_directory):
             self.active_subject.create_epochs_directory
         epoch_items = []
-        files = os.listdir(subject._epochs_directory)
-        for filename in files:
-            if filename.endswith('.fif'):
-                fname = os.path.join(subject._epochs_directory,
-                                     filename)
+        path = subject._epochs_directory
+        # This here is done because the path might change when moving external
+        # hard-drive from one computer to another.
+        if not os.path.exists(path):
+            folders = path.split('/')
+            for i in range(len(folders)):
+                path = self.workspace + '/' + '/'.join(folders[i:])
+                if os.path.exists(path):
+                    subject._epochs_directory = path
+                    break;
+        files = os.listdir(path)
+        for f in files:
+            if f.endswith('.fif'):
+                fname = os.path.join(path, f)
 
-                name = filename[:-4]
-                epochs, params = fileManager.load_epochs(fname)
-                subject.handle_new_epochs(name, epochs, params)
+                name = f[:-4]
+                _, params = fileManager.load_epochs(fname)
+                subject.handle_new_epochs(name, params)
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
                 if params is None:
@@ -462,8 +506,8 @@ class Experiment(QObject):
                     item.setForeground(brush)
                 epoch_items.append(item)
                 # Raw needs to be set when activating already created subject.
-                if subject._epochs[name]._raw is None:
-                    subject._epochs[name]._raw = epochs
+                #if subject._epochs[name]._raw is None:
+                #    subject._epochs[name]._raw = epochs
         return epoch_items
 
     def load_evokeds(self, subject):
@@ -471,19 +515,42 @@ class Experiment(QObject):
         subject._evokeds objects.
         """
         evokeds_items = []
+        path = subject._evokeds_directory
+        if not os.path.exists(path):
+            folders = path.split('/')
+            for i in range(len(folders)):
+                path = self.workspace + '/' + '/'.join(folders[i:])
+                if os.path.exists(path):
+                    subject._evokeds_directory = path
+                    break;
         files = os.listdir(subject._evokeds_directory)
-        for filename in files:
-            if filename.endswith('.fif'):
+        for f in files:
+            if f.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                   filename)
-                subject.handle_new_evoked(filename, evoked, categories)
-                item = QtGui.QListWidgetItem(filename)
+                                                             f)
+                subject.handle_new_evoked(f, evoked, categories)
+                item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
                 # Raw needs to be set when activating already created subject.
-                if subject._evokeds[filename]._raw is None:
-                    subject._evokeds[filename]._raw = evoked
+                if subject._evokeds[f]._raw is None:
+                    subject._evokeds[f]._raw = evoked
 
         return evokeds_items
+
+    def load_powers(self, subject):
+        """
+        Loads power files from the subject folder.
+        Returns a list of AverageTFR names.
+        """
+        powers = list()
+        path = os.path.join(subject.subject_path, 'TFR')
+        if not os.path.exists(path):
+            return list()
+        files = os.listdir(path)
+        for fname in files:
+            if fname.endswith('.h5'):
+                powers.append(fname)
+        return powers
 
     def get_subject_working_file(self, subject_name):
         """Returns working file of a given subject name.
@@ -492,8 +559,7 @@ class Experiment(QObject):
         subject_name    -- name of the subject
         """
         return fileManager.open_raw(self._working_file_names[subject_name])
-           
-                
+
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
@@ -511,20 +577,58 @@ class Experiment(QObject):
                 raise Exception('No rights to save to the chosen path or' + 
                                 ' experiment name already exists. \n')
                 return
-        else:
         
-            # String conversion, because shutil doesn't accept QStrings
-            settingsFileName = str(self._experiment_name + '.exp')
+        # String conversion, because shutil doesn't accept QStrings
+        settingsFileName = str(self._experiment_name + '.exp')
+        
+        # Actually a file object
+        settingsFile = open(os.path.join(experiment_directory, 
+                            settingsFileName), 'wb')
+        
+        # Protocol 2 used because of file object being pickled
+        pickle.dump(self, settingsFile, 2)
+        print '[done]'
+        settingsFile.close()
+
+    def save_parameter_file(self, command, inputfilename, outputfilename,
+                            operation, dic):
+        """
+        Saves the command and parameters related to creation of a certain
+        output file to a separate parameter file in csv-format.
+        
+        An example of the structure of the resulting parameter file:
+        
+        jn_multimodal01_raw_sss.fif
+        jn_multimodal01_raw_sss_ecg_proj.fif 
+        mne.preprocessing.compute_proj_eog
+        tmin,0.2
+        tmax,0.5
+        .
+        .
+        .  
+        
+        Keyword arguments:
+        command          -- command (as string) used.
+        inputfilename    -- name of the file the command with parameters
+                            was executed on
+        outputfilename   -- the resulting output file from the command.
+        operation        -- operation the command represents. Used for
+                            determining the parameter file name.
+        dic              -- dictionary including commands.
+        """
+        paramfilename = os.path.join(os.path.split(outputfilename)[0],
+                                     operation + '.param')
+        
+        with open(paramfilename, 'wb') as paramfullname:
+            print 'writing param file'
+            csvwriter = csv.writer(paramfullname)
             
-            # Actually a file object
-            settingsFile = open(os.path.join(experiment_directory, 
-                                settingsFileName), 'wb')
+            csvwriter.writerow([inputfilename])
+            csvwriter.writerow([outputfilename])
+            csvwriter.writerow([command])
             
-            # Protocol 2 used because of file object being pickled
-            pickle.dump(self, settingsFile, 2)
-            print '[done]'
-            settingsFile.close()        
-    
+            for key, value in dic.items():
+                csvwriter.writerow([key, value])
 
     def __getstate__(self):
         """
@@ -571,9 +675,8 @@ class Experiment(QObject):
         self.raw_data = raw
         self.working_file = workingFullPath
         """
-        
-        
-        
+
+
 class ExperimentHandler(QObject):
     """
     Class for handling the creation of a new experiment.
@@ -588,8 +691,7 @@ class ExperimentHandler(QObject):
         parent        -- Parent of this object.
         """
         self.parent = parent
-    
-    
+
     def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
@@ -598,7 +700,9 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-               
+        # Releases memory from the previously open experiment
+        #self.parent._experiment = None
+        gc.collect()
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -609,38 +713,39 @@ class ExperimentHandler(QObject):
             message = 'Cannot assign attribute to experiment.'
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
-        
+            return None
+
         try:
             workspace = self.parent.preferencesHandler.working_directory
             experiment.workspace = workspace
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
-            return
-        
+            return None
+
         # Give control of the experiment to the main window of the application
-        self.parent.experiment = experiment
-        
+        #self.parent.experiment = experiment
+
         try:
-            self.parent.experiment.save_experiment_settings()
+            experiment.save_experiment_settings()
         except Exception, err:
             self.messageBox = messageBoxes.shortMessageBox(str(err))
             self.messageBox.show()
-            return
-        
+            return None
+
         # Tell the preferencesHandler that this is the experiment we've had
         # open last.
         self.parent.preferencesHandler.previous_experiment_name = \
             expDict['name']
         self.parent.preferencesHandler.write_preferences_to_disk()
-        
+
         # Update the main UI to be less empty and allow actions for a new
         # experiment. Also tell the MVC models they can initialize themselves.
-        self.parent.add_tabs()
-        self.parent._initialize_ui() 
-        self.parent.reinitialize_models() 
-        
-        
+        #self.parent.add_tabs()
+        #self.parent._initialize_ui() 
+        #self.parent.reinitialize_models() 
+        return experiment
+
     def open_existing_experiment(self, name):
         """
         Opens an existing experiment, which is assumed to be in the working
@@ -650,30 +755,58 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
-        
-        if name is not '':    
+        working_directory = self.parent.preferencesHandler.working_directory
+        if not os.path.exists(working_directory):
+            message = 'Could not find working directory. Check preferences.'
+            mBox = messageBoxes.shortMessageBox(message)
+            mBox.exec_()
+            return
+        if name is not '':
+            print "Opening experiment " + name
             try:
                 path = os.path.join(
                             self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
-                pass
+                message = "Error opening the experiment."
+                mBox = messageBoxes.shortMessageBox(message)
+                mBox.exec_()
+                return
         else:
             return
         
         fname = os.path.join(path, path.split('/')[-1] + '.exp')
         if os.path.exists(path) and os.path.isfile(fname):
-            output = open(fname, 'rb')
-            self.parent._experiment = pickle.load(output)
-            self.parent.experiment.create_subjects(self.parent._experiment, self.parent._experiment._subject_paths)
-            self.parent.experiment.activate_subject(self.parent._experiment._active_subject_name)
+            caller = Caller.Instance()
+            # Releases memory from the previously open experiment
+            caller._experiment = None
+            gc.collect()
+            print "Opening file " + fname
+            try:
+                output = open(fname, 'rb')
+                caller._experiment = pickle.load(output)
+            except Exception as e:
+                print str(e)
+                return
+            finally:
+                print "Closing"
+                output.close()
+            self.parent.update_ui()
+            caller.experiment.create_subjects(caller._experiment,
+                            caller._experiment._subject_paths,
+                            self.parent.preferencesHandler.working_directory)
+            if caller.experiment.workspace != working_directory:
+                caller.experiment.workspace = working_directory
+            self.parent.update_ui()
+            caller.activate_subject(caller._experiment._active_subject_name)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
 
-            # Sets the experiment for caller, so it can use its information.
-            self.parent.caller.experiment = self.parent._experiment
-            self.parent.preferencesHandler.previous_experiment_name = \
-            self.parent.experiment._experiment_name
+            self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
-        
+        else:
+            message = "Experiment configuration file (.exp) not found!"
+            mBox = messageBoxes.shortMessageBox(message)
+            mBox.exec_()
+            return

@@ -37,11 +37,8 @@ the application.
 """
 
 import os
-import ConfigParser
 from PyQt4 import QtCore, QtGui
-
-import prefecences
-
+from PyQt4.QtCore import pyqtSignal
 from preferencesDialogUi import Ui_DialogPreferences
 import messageBoxes
 
@@ -60,15 +57,17 @@ class PreferencesDialog(QtGui.QDialog):
         self.ui = Ui_DialogPreferences() 
         self.ui.setupUi(self)
         
-        self.parent = parent
+        self.parent = parent 
         
-        self._workFilepath = ''
-        self._MNERootPath = ''
-        self._FreeSurferHome = '' 
+        #self._workFilepath = ''
+        #self._MNERootPath = os.environ.get('MNE_ROOT', '')
+        #self._FreeSurferHome = '' 
     
         # Prefill previous values to UI and attributes from config file.
         workDirectory = self.parent.preferencesHandler.working_directory
-        MNERootPath = self.parent.preferencesHandler.MNERoot
+        MNERootPath = os.environ.get('MNE_ROOT', '')
+        if MNERootPath == '':
+            MNERootPath = self.parent.preferencesHandler.MNERoot
         FreeSurferHome = self.parent.preferencesHandler.FreeSurferHome
             
         if self.parent.preferencesHandler.auto_load_last_open_experiment == True:
@@ -118,6 +117,7 @@ class PreferencesDialog(QtGui.QDialog):
         
         if os.path.isdir(self._workFilepath):
             workFilePath = self._workFilepath
+            self.parent.change_workspace(workFilePath)
         else:
             message = 'No file path found for working file'
             messageBox = messageBoxes.shortMessageBox(message)

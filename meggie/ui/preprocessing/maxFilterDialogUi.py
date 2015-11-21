@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'maxFilterDialogNew.ui'
 #
-# Created: Fri May 31 13:55:40 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Tue Aug 11 07:03:56 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setEnabled(True)
-        Dialog.resize(705, 805)
+        Dialog.resize(705, 894)
         self.verticalLayout_5 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
@@ -48,11 +48,11 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 687, 709))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 687, 800))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(626, 669))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
-        self.layoutWidget.setGeometry(QtCore.QRect(0, 7, 595, 714))
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 7, 595, 762))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_2.setMargin(0)
@@ -83,7 +83,7 @@ class Ui_Dialog(object):
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.checkBoxFit = QtGui.QCheckBox(self.frame_6)
         self.checkBoxFit.setObjectName(_fromUtf8("checkBoxFit"))
-        self.gridLayout_2.addWidget(self.checkBoxFit, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.checkBoxFit, 2, 0, 1, 1)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -116,6 +116,19 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.doubleSpinBoxZ0)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
+        self.horizontalLayout_11 = QtGui.QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
+        self.label_2 = QtGui.QLabel(self.frame_6)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.horizontalLayout_11.addWidget(self.label_2)
+        self.radioButtonDevice = QtGui.QRadioButton(self.frame_6)
+        self.radioButtonDevice.setChecked(True)
+        self.radioButtonDevice.setObjectName(_fromUtf8("radioButtonDevice"))
+        self.horizontalLayout_11.addWidget(self.radioButtonDevice)
+        self.radioButtonHead = QtGui.QRadioButton(self.frame_6)
+        self.radioButtonHead.setObjectName(_fromUtf8("radioButtonHead"))
+        self.horizontalLayout_11.addWidget(self.radioButtonHead)
+        self.gridLayout_2.addLayout(self.horizontalLayout_11, 1, 0, 1, 1)
         self.gridLayout_4.addWidget(self.frame_6, 0, 0, 1, 1)
         self.horizontalLayout_7.addWidget(self.groupBoxOrigin)
         self.formLayout_2.setLayout(3, QtGui.QFormLayout.LabelRole, self.horizontalLayout_7)
@@ -266,7 +279,7 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.formLayoutWidget = QtGui.QWidget(self.frame)
-        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 10, 341, 71))
+        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 10, 341, 74))
         self.formLayoutWidget.setObjectName(_fromUtf8("formLayoutWidget"))
         self.formLayout = QtGui.QFormLayout(self.formLayoutWidget)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -443,6 +456,8 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.checkBoxTransform, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.radioButtonPositionAverage.setEnabled)
         QtCore.QObject.connect(self.radioButtonPositionFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.lineEditFile.setEnabled)
         QtCore.QObject.connect(self.radioButtonPositionFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.pushButtonBrowsePositionFile.setEnabled)
+        QtCore.QObject.connect(self.checkBoxFit, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.radioButtonDevice.setDisabled)
+        QtCore.QObject.connect(self.checkBoxFit, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.radioButtonHead.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.checkBoxFit, self.doubleSpinBoxX0)
         Dialog.setTabOrder(self.doubleSpinBoxX0, self.doubleSpinBoxY0)
@@ -480,6 +495,9 @@ class Ui_Dialog(object):
         self.doubleSpinBoxY0.setSuffix(_translate("Dialog", " mm", None))
         self.labelZ0.setText(_translate("Dialog", "z0", None))
         self.doubleSpinBoxZ0.setSuffix(_translate("Dialog", " mm", None))
+        self.label_2.setText(_translate("Dialog", "Coordinate frame:", None))
+        self.radioButtonDevice.setText(_translate("Dialog", "Device", None))
+        self.radioButtonHead.setText(_translate("Dialog", "Head", None))
         self.groupBoxDataSkips.setTitle(_translate("Dialog", "Data skips", None))
         self.checkBoxSkip_1.setText(_translate("Dialog", "S1", None))
         self.checkBoxSkip_2.setText(_translate("Dialog", "S2", None))

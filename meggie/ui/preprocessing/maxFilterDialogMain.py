@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -33,16 +33,15 @@ Created on Mar 28, 2013
 @author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
 Contains the MaxFilterDialog-class used for calling MaxFilter.
 """
-from maxFilterDialogUi import Ui_Dialog
 
-import glob
-import sys
 import os
-import subprocess
 from threading import Thread
+
 from PyQt4 import QtCore,QtGui
 
-import messageBox
+from maxFilterDialogUi import Ui_Dialog
+from code_meggie.general.caller import Caller
+import messageBoxes
 
 class MaxFilterDialog(QtGui.QDialog):
     """
@@ -50,20 +49,16 @@ class MaxFilterDialog(QtGui.QDialog):
     """
 
 
-    def __init__(self, parent, raw):
+    def __init__(self, parent):
         """
         Initializes the dialog for collecting parameter values for MaxFilter.
-        
+
         Keyword arguments:
-        
         parent     --    The class that created this window.
-        raw        --    The raw data file to be MaxFiltered.
         """
         QtGui.QDialog.__init__(self)
-        """
-        Reference to main dialog window
-        """       
-        self.raw = raw
+
+        # Reference to main dialog window
         self.parent = parent
         self.ui = Ui_Dialog() # Refers to class in file MaxFilterDialog
         self.ui.setupUi(self)
@@ -73,122 +68,127 @@ class MaxFilterDialog(QtGui.QDialog):
         # Checks which lab-specific calibration files are found and adds those
         # labs to comboBoxLab.
         self.populateComboboxLab()
-        
+
     def on_pushButtonBrowsePositionFile_clicked(self, checked=None):
         # Standard workaround for file dialog opening twice
         if checked is None: return 
         self.fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file',
                                                        '/home/')     
-    
+
     def accept(self):
         """
         Reads values from the dialog, saves them in a dictionary and initiates
         a caller to actually call the backend.
         """
-        t = Thread(target=self._show_progressbar)
-        t.start()
-        
+        self._show_progressbar(True)
+
         dictionary = {'-v': ''}
         x = self.ui.doubleSpinBoxX0.value()
         y = self.ui.doubleSpinBoxY0.value()
         z = self.ui.doubleSpinBoxZ0.value()
-        fit = self.ui.checkBoxFit.checkState() == QtCore.Qt.Checked
+        fit = self.ui.checkBoxFit.isChecked()
         order_in = self.ui.spinBoxOrderIn.value()
         order_out = self.ui.spinBoxOrderOut.value()
-        autobad = self.ui.checkBoxAutobad.checkState() == \
-        QtCore.Qt.Checked
+        autobad = self.ui.checkBoxAutobad.isChecked()
         bad_limit = self.ui.doubleSpinBoxBadLimit.value()
-        
-        try:
-            bads = self.ui.lineEditBad.text()
-        except InputError, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()           
-        """ 
-        Check for skips and the sanity of their values. Skip periods should
-        not overlap, and later skip periods should come later than earlier
-        regions
-        """
+        bads = self.ui.lineEditBad.text()
+
+        # Check for skips and the sanity of their values. Skip periods should
+        # not overlap, and later skip periods should come later than earlier
+        # regions
         skips = ''
-        if self.ui.checkBoxSkip_1.checkState() == QtCore.Qt.Checked:
-            if ( self.ui.spinBoxSkipEnd_1.value() 
+        if self.ui.checkBoxSkip_1.isChecked():
+            if ( self.ui.spinBoxSkipEnd_1.value()
             <= self.ui.spinBoxSkipStart_1.value() ):
                 self.showErrorMessage('First skip ends before it starts.')
-                return 
+                self._show_progressbar(False)
+                return
             skips += str(self.ui.spinBoxSkipStart_1.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_1.value()) + ' '
-            
-        if self.ui.checkBoxSkip_2.checkState() == QtCore.Qt.Checked:
-            if ( self.ui.spinBoxSkipEnd_2.value() 
+
+        if self.ui.checkBoxSkip_2.isChecked():
+            if ( self.ui.spinBoxSkipEnd_2.value()
                  <= self.ui.spinBoxSkipStart_2.value() ):
                     self.showErrorMessage('Second skip ends ' +
                                            'before it starts.')
+                    self._show_progressbar(False)
+                    return
             if (self.ui.spinBoxSkipStart_2.value() 
                  < self.ui.spinBoxSkipEnd_1.value() ):
                     self.showErrorMessage('Second skip starts before the ' +
                                           'first skip ends.')
+                    self._show_progressbar(False)
                     return
             skips += str(self.ui.spinBoxSkipStart_2.value()) + ' '
             skips += str(self.ui.spinBoxSkipEnd_2.value()) + ' '
         
-        if self.ui.checkBoxSkip_3.checkState() == QtCore.Qt.Checked:
+        if self.ui.checkBoxSkip_3.isChecked():
             if ( self.ui.spinBoxSkipEnd_3.value() 
                  <= self.ui.spinBoxSkipStart_3.value()):
                     self.showErrorMessage('Third skip ends before it starts.')
+                    self._show_progressbar(False)
+                    return
             if ( self.ui.spinBoxSkipStart_3.value() 
                  < self.ui.spinBoxSkipEnd_2.value() ):
                     self.showErrorMessage('Third skip starts before the ' + 
                                           'second skip ends.')
+                    self._show_progressbar(False)
                     return
             skips += str(self.ui.spinBoxSkipStart_3.value()) + ' '
-            skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '            
-        
-        """ 
-        This code was used for a buttongroup that allowed selection of output
-        format of MaxFilter generated files. The format now defaults to 32-bit
-        float. MaxFilter allows other formats, but there is usually no need to
-        show them in the UI.
-        """
-        # button_text = str(self.ui.buttonGroupFormat.checkedButton().text())
-        # format = button_text.split(' ')[0].lower()
-            
-        if self.ui.checkBoxMaxMove.checkState() == QtCore.Qt.Checked:
-            button_position = \
-            str(self.ui.buttonGroupMaxMove.checkedButton().objectName())
-            if button_position == \
-            'radioButtonPositionDefault':
-                dictionary['-trans'] = 'default'
-            elif button_position == \
-            'radioButtonPositionFile':
-                if self.fname != '':
-                    try:
-                        if os.path.isfile(str(self.fname)) and \
-                        str(self.fname).endswith('fif'):
-                            dictionary['-trans'] = self.fname
-                        else:
-                            raise Exception('Could not open file.')
-                    except Exception, err:
-                        self.showErrorMessage(err)
-            elif button_position == \
-            'radioButtonPositionAverage':
-                pass
-        
-        # TODO Store the head position in a file 
-        if self.ui.checkBoxStorePosition.checkState()==QtCore.Qt.Checked:
+            skips += str(self.ui.spinBoxSkipEnd_3.value()) + ' '
+
+        if self.ui.checkBoxMaxMove.isChecked():
+            dictionary['-movecomp'] = 'inter'
+        if  self.ui.radioButtonPositionDefault.isChecked():
+            dictionary['-trans'] = 'default'
+        elif self.ui.radioButtonPositionFile.isChecked():
+            if self.fname != '':
+                try:
+                    if os.path.isfile(str(self.fname)) and \
+                            str(self.fname).endswith('fif'):
+                        dictionary['-trans'] = self.fname
+                    else:
+                        self._show_progressbar(False)
+                        self.showErrorMessage('Could not open file.')
+                        return
+                except Exception, err:
+                    self._show_progressbar(False)
+                    self.showErrorMessage(err)
+                    return
+        elif self.ui.radioButtonPositionAverage.isChecked():
+            self._show_progressbar(False)
+            raise NotImplementedError('Average head positioning is not '
+                                      'implemented.')
+
+        # TODO Store the head position in a file
+        if self.ui.checkBoxStorePosition.isChecked():
             dictionary['-hp'] = ''
-        
-        dictionary['-f'] = self.raw.info.get('filename')
-        print self.raw.info.get('filename')
+
+        caller = Caller.Instance()
+        raw = caller.experiment.active_subject.working_file
+        dictionary['-f'] = raw.info.get('filename')
+        print raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif
-        if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_tsss.fif'
+        if self.ui.checkBoxtSSS.isChecked():
+            if self.ui.checkBoxMaxMove.isChecked():
+                suffix = '_tsss_mc.fif'
+            else:
+                suffix = '_tsss.fif'
         else:
-            dictionary['-o'] = self.raw.info.get('filename')[:-4] + '_sss.fif'
-        
-        if fit: dictionary['-origin fit'] = ''
-        else: dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
+            if self.ui.checkBoxMaxMove.isChecked():
+                suffix = '_sss_mc.fif'
+            else:
+                suffix = '_sss.fif'
+        dictionary['-o'] = raw.info.get('filename')[:-4] + suffix
+        if fit:
+            dictionary['-origin fit'] = ''
+        else:
+            dictionary['-origin'] = str(x) + ' ' + str(y) + ' ' + str(z)
+            if self.ui.radioButtonDevice.isChecked():
+                dictionary['-frame'] = 'device'
+            elif self.ui.radioButtonHead.isChecked():
+                dictionary['-frame'] = 'head'
         dictionary['-linefreq'] = self.ui.spinBoxLineFreq.value()
         dictionary['-in'] = order_in
         dictionary['-out'] = order_out
@@ -201,38 +201,36 @@ class MaxFilterDialog(QtGui.QDialog):
         
         if skips != '':
             dictionary['-skip'] = skips
-        
-        dictionary['-format'] = float
-        
-        if self.ui.checkBoxtSSS.checkState() == QtCore.Qt.Checked:
+
+        dictionary['-format'] = 'float'
+
+        if self.ui.checkBoxtSSS.isChecked():
             dictionary['-st'] = self.ui.spinBoxBufferLength.value()
             dictionary['-corr'] = self.ui.doubleSpinBoxCorr.value()
-        
+
         # TODO: check what the extensions of the calibration files are.    
         lab = self.setLab()
-        
+
         if not lab == '':
             dictionary['-site'] = lab
-            
+
         custom = self.ui.textEditCustom.toPlainText()
-        
-        # Uses the caller related to mainwindow.
-        caller = self.parent.caller
-        
+
         try:
             caller.call_maxfilter(dictionary, custom)
         except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
+            title = 'MaxFilter error:'
+            self.messageBox = messageBoxes.longMessageBox(title, str(err))
             self.messageBox.show()
-        
-        """
-        Checks the MaxFilter box in the preprocessing tab of the mainWindow.
-        """ 
-        self.parent.ui.checkBoxMaxFilter.setCheckState(2)
-        
+            self._show_progressbar(False)
+            return
+
+        # Checks the MaxFilter box in the preprocessing tab of the mainWindow.
+        self.parent.ui.checkBoxMaxFilterComputed.setCheckState(2)
+        self.parent.ui.checkBoxMaxFilterApplied.setCheckState(2)
+        self._show_progressbar(False)
         self.close()
-        
+
     def populateComboboxLab(self):
         """
         Goes through the lab-specific config files in
@@ -243,48 +241,44 @@ class MaxFilterDialog(QtGui.QDialog):
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         self.root = os.environ.get('NEUROMAG_ROOT')
         files = os.listdir(self.root + '/databases/sss/')
-        
-        for file in files:
-            
-            if file.startswith('sss_cal_'):
-                lab = file.split('sss_cal_')[1][:-4]
+
+        for fname in files:
+            if fname.startswith('sss_cal_'):
+                lab = fname.split('sss_cal_')[1][:-4]
                 if os.path.isfile(self.root + '/databases/ctc/' + 
                                   'ct_sparse_' + lab + '.fif'): 
                     self.ui.comboBoxLab.addItem(lab)
-                
-    
+
     def setLab(self):
         """
         Checks if the calibration files for the selected lab exist.
         Returns the selected lab or an empty string if no files are found.
         """
-        
         lab = str(self.ui.comboBoxLab.currentText())
-        
+
         if not os.path.isfile(self.root + '/databases/sss/sss_cal_' +
                               lab + '.dat'):
             lab = ''
             return lab
-        
+
         if not os.path.isfile(self.root + '/databases/ctc/ct_sparse_' + 
                               lab + '.fif'):
             lab = ''
             return lab
-        
+
         return lab
-            
-    def _show_progressbar(self):
+
+    def _show_progressbar(self, visible):
         """
         Shows and starts the progressbar.
+
+        Keyword arguments:
+        visible  -- Whether to show or hide progress bar.
         """
-        self.ui.labelComputeMaxFilter.setVisible(True)
-        self.ui.progressBarComputeMaxFilter.setVisible(True)
-            
-    def showErrorMessage(self, message):
-        """
-        Error message to be shown to the user in a message box. 
-        """
-        self.messageBox = messageBox.AppForm()
-        self.messageBox.labelException.setText(str(message))
-        self.messageBox.show()
-        
+        if visible:
+            QtGui.QApplication.setOverrideCursor(QtGui.\
+                                                 QCursor(QtCore.Qt.WaitCursor))
+        else:
+            QtGui.QApplication.restoreOverrideCursor()
+        self.ui.labelComputeMaxFilter.setVisible(visible)
+        self.ui.progressBarComputeMaxFilter.setVisible(visible)

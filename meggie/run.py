@@ -1,12 +1,12 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met: 
 #
-#1. Redistributions of source code must retain the above copyright notice, this
+#1. Redistributions of source code_meggie must retain the above copyright notice, this
 #   list of conditions and the following disclaimer. 
 #2. Redistributions in binary form must reproduce the above copyright notice,
 #   this list of conditions and the following disclaimer in the documentation
@@ -34,22 +34,24 @@ Boilerplate script to run the application.
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/externalmodules/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/tests/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/epoching/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/preprocessing/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/code/general/")
+import sip
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/widgets/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/epoching/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/general/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/preprocessing/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/visualization/")
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ui/filtering/")
+# For interoperability with Canopy and to remove need to mess with QStrings.
+sip.setapi('QVariant', 2)
+sip.setapi('QString', 2)
+os.environ['QT_API'] = 'pyqt'
 
-import mainWindowMain  
+# To make Meggie use static MNE instead of a possible system one
+sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) +
+                "/externalModules/")
 
+# Recursively append everything in Meggie to syspath to make running from
+# command line viable
+runpath = os.path.dirname(os.path.abspath(__file__))
+for root, dirs, files in os.walk(runpath):
+    if runpath is not root:
+        sys.path.append(root)
+
+from ui.general import mainWindowMain
 if __name__ == '__main__':
     mainWindowMain.main()

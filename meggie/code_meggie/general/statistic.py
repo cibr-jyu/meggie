@@ -34,7 +34,6 @@ Created on Mar 14, 2013
 Contains the Statistic-class used for statistical operations.
 """
 import numpy as np
-import sys
 
 from PyQt4 import QtCore
 
@@ -72,23 +71,23 @@ class Statistic(QtCore.QObject):
     def find_minimum(self, sample_arr):
         """
         Return the minimum value and its index in sample_arr.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- An array containing integers or floats
         """        
-        min = np.min(sample_arr)
-        index = np.where(sample_arr==min)[0]
-        return min, index[0]
-        
+        minimum = np.min(sample_arr)
+        index = np.where(sample_arr==minimum)[0]
+        return minimum, index[0]
+
     def find_minimum2d(self, sample_arr):
         """
         Return minimums and their indexes in a 2d array.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- A 2d array containing integers or floats
-        
+
         return an array of tuples. The array's indexes correspond the first
         indexes of sample_arr. The tuples contain the return values of
         find_minimum(self, sample_arr) for the second indexes of sample_arr. 
@@ -98,9 +97,9 @@ class Statistic(QtCore.QObject):
     def find_maximum(self, sample_arr):
         """
         Return the maximum value and its index in sample_arr.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- An array containing integers or floats
         """        
         maximum = np.max(sample_arr)
@@ -110,33 +109,33 @@ class Statistic(QtCore.QObject):
     def find_maximum2d(self, sample_arr):
         """"
         Return maximums and their indexes in a 2d array.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- A 2d array containing integers or floats
-        
+
         return an array of tuples. The array's indexes correspond the first
         indexes of sample_arr. The tuples contain the return values of
         find_maximum(self, sample_arr) for the second indexes of sample_arr. 
         """
         return [self.find_maximum(row) for row in sample_arr]
-    
+
     def find_half_maximum(self, sample_arr):
         """
         Returns the 2 closest half maximums and their indexes for sample_arr.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- a 1d array containing integers or floats
-        
+
         Return a list containing the half_max value, its index before the max
         and its index after the max.
         """
         half_max_arr = []
-        max, max_index = self.find_maximum(sample_arr)
-        half_max = max/2
+        maximum, max_index = self.find_maximum(sample_arr)
+        half_max = maximum/2
         half_max_arr.append(half_max)
-        
+
         #First find the half_max_index before the max value.
         i = max_index
         while i >= 0 and sample_arr[i] > half_max:
@@ -147,7 +146,7 @@ class Statistic(QtCore.QObject):
             
             else: half_max_index_minus = i
             half_max_arr.append(half_max_index_minus)
-        
+
         #Then find the half_max_index after the max value.
         i = max_index
         while i <= len(sample_arr) - 1 and sample_arr[i] > half_max:
@@ -158,44 +157,45 @@ class Statistic(QtCore.QObject):
             else:
                 half_max_index_plus = i
             half_max_arr.append(half_max_index_plus)                
-        
+
         return half_max_arr
-    
+
     def find_half_maximum2d(self, sample_arr):
         """
         Returns half maximums for sample_arr.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- An array containing integers or floats.
         """
         return [self.find_half_maximum(row) for row in sample_arr]
-    
-    def integrate(self, sample_arr, start, stop):
+
+    def integrate(self, sample_arr, times, start, stop):
         """Calculate the integral in sample_arr from start to stop.
-        
+
         Keyword arguments:
-        
+
         sample_arr -- An array containing ints or floats
         start      -- The start index of the integral
         stop       -- The last index of the integral.
-        
+
         return the integral between start and stop.
         """
-        i = start
-        integral = 0
-        while i <= stop and i < len(sample_arr):
-            integral += sample_arr[i]
-            i += 1
-            
-        return integral
-    
+        return np.trapz(sample_arr[start:stop], x=times[start:stop])
+        #i = start
+        #integral = 0.
+        #while i <= stop and i < len(sample_arr):
+        #    integral += sample_arr[i]
+        #    i += 1
+        #
+        #return integral
+
     def find_maximum_intensity(self, mat, w, h):
         """
         Takes a matrix and finds the coordinates of a 
         window for maximum intensity. In case of many
         equal maximums, the first one is returned.
-        
+
         Keyword arguments:
         mat           -- A matrix
         w             -- Width of the window
@@ -208,10 +208,9 @@ class Statistic(QtCore.QObject):
         xcoord = 0
         ycoord = 0
         i = IntegralImage()
-        """
-        Goes through the original matrix and finds the window with highest
-        intensity.
-        """
+
+        # Goes through the original matrix and finds the window with highest
+        # intensity.
         for y in range(len(mat) - h+1):
             for x in range((len(mat[0]) - w)+1):
                 """create a new matrix with the size of the window"""

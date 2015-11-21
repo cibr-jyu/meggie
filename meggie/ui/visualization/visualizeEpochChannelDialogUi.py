@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'visualizeEpochChannelDialog.ui'
 #
-# Created: Fri Sep 13 11:18:51 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Mon Aug 17 04:52:17 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -80,6 +80,7 @@ class Ui_VisualizeEpochChannelDialog(object):
         self.spinBoxVmax = QtGui.QSpinBox(self.verticalLayoutWidget)
         self.spinBoxVmax.setMinimum(-100000)
         self.spinBoxVmax.setMaximum(100000)
+        self.spinBoxVmax.setSingleStep(10)
         self.spinBoxVmax.setProperty("value", 250)
         self.spinBoxVmax.setObjectName(_fromUtf8("spinBoxVmax"))
         self.horizontalLayout_3.addWidget(self.spinBoxVmax)

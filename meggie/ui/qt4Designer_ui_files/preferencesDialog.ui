@@ -1,37 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>DialogPreferences</class>
+ <widget class="QDialog" name="DialogPreferences">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>219</height>
+    <width>493</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBoxCalibration">
+    <widget class="QGroupBox" name="groupBoxWorkingDirectory">
      <property name="title">
-      <string>Choose calibration file:</string>
+      <string>Working directory:</string>
      </property>
-     <widget class="QListWidget" name="listWidgetCalibration">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>271</width>
-        <height>91</height>
-       </rect>
-      </property>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Select a working directory (compulsory):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLineEdit" name="LineEditFilePath"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ButtonBrowseWorkingDir">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBoxEnv">
+     <property name="title">
+      <string>Environment variables:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="labelMNERoot">
+          <property name="text">
+           <string>Select MNEROOT directory (needed for source analysis):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLineEdit" name="lineEditMNERoot"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonBrowseMNERoot">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="labelFreeSurferHome">
+          <property name="text">
+           <string>Select FREESURFER_HOME directory (needed for source analysis):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="lineEditFreeSurferHome"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonBrowseFreeSurferHome">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Miscellaneous preferences:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxAutomaticOpenPreviousExperiment">
+        <property name="text">
+         <string>Automatically open previous experiment upon application startup</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBoxConfirmQuit">
+        <property name="text">
+         <string>Show confirmation dialog on Meggie quit</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -43,12 +153,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>LineEditFilePath</tabstop>
+  <tabstop>ButtonBrowseWorkingDir</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>DialogPreferences</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -64,7 +178,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>DialogPreferences</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

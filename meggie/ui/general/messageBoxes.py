@@ -34,9 +34,9 @@ Contains the shortMessageBox class used for simple messageboxes,and the
 longMessageBox for longer messages that need a scrolling content area.
 """
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 from longMessageBoxUi import Ui_LongMessageBoxDialog
-
+from shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
 
 
 class shortMessageBox(QtGui.QDialog):
@@ -51,7 +51,31 @@ class shortMessageBox(QtGui.QDialog):
     
         self.setWindowTitle(title)
         self.ui.labelMessage.setText(message)
-    
+
+
+class shortMessageBoxQuestionYesNo(QtGui.QDialog):
+    """
+    A class for simple non-modal question messageBox in the
+    style of QMessageBox.question. 
+    """
+    def __init__(self, message, parent=None, title='title'):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_shortMessageBoxQuestionYesNo()
+        self.ui.setupUi(self)
+        self.setWindowTitle(title)
+        self.ui.labelMessage.setText(message)
+        self.returnValue = 'no'
+        
+    def get_return_value(self):
+        return self.returnValue
+        
+    def accept(self):
+        self.returnValue = 'yes'
+        self.close()
+        
+    def reject(self):
+        self.close()
+
 
 class longMessageBox(QtGui.QDialog):
     """

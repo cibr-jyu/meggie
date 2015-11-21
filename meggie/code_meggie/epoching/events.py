@@ -40,15 +40,17 @@ class Events(object):
     Class for getting events from the raw file, by type if need be.
     """
 
-    def __init__(self, raw, stim_ch = None):
+    def __init__(self, raw, stim_ch=None, mask=0):
         """
         Constructor    
         Keyword arguments:
         raw           -- A raw object
         stim_ch       -- Name of the stimulus channel
+        mask          -- Mask for excluding bits.
         """
         print raw.info.get('filename')
-        self._events = mne.find_events(raw, stim_channel=stim_ch)
+        self._events = mne.find_events(raw, stim_channel=stim_ch,
+                                       shortest_event=1, mask=mask)
         
     @property    
     def events(self):
@@ -63,7 +65,9 @@ class Events(object):
         Keyword arguments:
         event_id      -- Id of the event.
         Raises an exception if the events haven't been initialized.
+        Returns events matching the event_id.
         """
         if self._events is None:
             raise Exception('No events found.')
-        self._events = mne.pick_events(self._events, include=event_id)
+        return [x for x in self._events if x[2] == event_id]
+        #self._events = mne.pick_events(self._events, include=event_id)

@@ -5,10 +5,10 @@ Created on 30.6.2014
 '''
 
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
-from forwardModels import ForwardModels
 from forwardModelDialogUi import Ui_forwardModelDialog
+from code_meggie.general.caller import Caller
 import messageBoxes
 import string
 
@@ -26,6 +26,7 @@ class ForwardModelDialog(QtGui.QDialog):
     TODO Removing forward models from disk and view coordination is handled by
     ***
     """
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -41,14 +42,31 @@ class ForwardModelDialog(QtGui.QDialog):
         and populate the self.ui.comboBoxSurfaceName with them. Set white as
         default, like mne_setup_source_space suggests.
         """
-        activeSubject = self.parent.experiment._active_subject
+        activeSubject = self.caller.experiment._active_subject
         surfaceNames = fileManager.read_surface_names_into_list(activeSubject)
         self.ui.comboBoxSurfaceName.addItems(surfaceNames)
         
         whiteIndex = self.ui.comboBoxSurfaceName.findText('white')
         self.ui.comboBoxSurfaceName.setCurrentIndex(whiteIndex)
         
-        
+    
+    def on_comboBoxSurfaceDecimMethod_currentIndexChanged(self):
+        """
+        To disable and enable input fields for spacing and ico as needed.
+        """
+        if self.ui.comboBoxSurfaceDecimMethod.currentText() == \
+        'traditional (default)':
+            self.ui.spinBoxSurfaceDecimValue.setEnabled(False)
+            self.ui.labelIcoValue.setEnabled(False)
+            self.ui.labelSpacing.setEnabled(True)
+            self.ui.spinBoxSpacing.setEnabled(True)
+        else:
+            self.ui.spinBoxSurfaceDecimValue.setEnabled(True)
+            self.ui.labelIcoValue.setEnabled(True)
+            self.ui.labelSpacing.setEnabled(False)
+            self.ui.spinBoxSpacing.setEnabled(False)
+            
+    
     def collectParametersIntoDictionary(self):
         """
         Collects the parameters from the ui fields of the dialog and returns
@@ -105,7 +123,7 @@ class ForwardModelDialog(QtGui.QDialog):
         fmdict = self.collectParametersIntoDictionary()
         fmname = fmdict['fmname']
         
-        activeSubject = self.parent._experiment._active_subject
+        activeSubject = self.caller._experiment._active_subject
         if fileManager.check_fModel_name(fmname, activeSubject):
             message = 'That forward model name is already in use. Please ' + \
             'select another.'
@@ -137,7 +155,18 @@ class ForwardModelDialog(QtGui.QDialog):
             self.messageBox.exec_()
             return
         
-        if self.parent.caller.create_forward_model(fmdict) == False:
+        # To help the user with the weird ico parameter.
+        if (fmdict['sspaceArgs']['surfaceDecimMethod']) != 'traditional (default)' and \
+        fmdict['sspaceArgs']['surfaceDecimValue'] == '0':
+            message = 'You need to use a nonzero ico parameter if you ' + \
+            'to use a nontraditional cortical surface decimation method.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.exec_()
+            return
+        
+        # FIXME: use try-except here
+        caller = Caller.Instance()
+        if caller.create_forward_model(fmdict) == False:
             return
         
         self.close()

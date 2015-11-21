@@ -47,17 +47,17 @@ class MeasurementInfo(object):
     def __init__(self, raw):
         """
         Constructor
-        
+
         Keyword arguments:
         raw           -- Raw object
         Raises a TypeError if the raw object is not of type mne.io.Raw.
         """
         if isinstance(raw, mne.io.Raw):
             self._raw = raw
-            self._info = dict(raw.info)
+            self._info = raw.info
         else:
             raise TypeError('Not a Raw object.')
-    
+
     @property
     def high_pass(self):
         """
@@ -68,7 +68,7 @@ class MeasurementInfo(object):
             raise Exception('Field highpass does not exist.')
         else:
             return round(self._info.get('highpass'),2)
-    
+
     @property
     def low_pass(self):
         """
@@ -79,7 +79,7 @@ class MeasurementInfo(object):
             raise Exception('Field lowpass does not exist.')
         else:
             return round(self._info.get('lowpass'),2)
-    
+
     @property
     def sampling_freq(self):
         """
@@ -90,8 +90,8 @@ class MeasurementInfo(object):
             raise Exception('Field sfreq does not exist.')
         else:
             return round(self._info.get('sfreq'),2)
-    
-    @property        
+
+    @property
     def mag_channels(self):
         """
         Returns the number of magnetometer channels.
@@ -102,6 +102,7 @@ class MeasurementInfo(object):
         else:
             return len(mne.pick_types(self._info, meg='mag',
                                            exclude=[]))
+
     @property    
     def grad_channels(self):
         """
@@ -113,7 +114,7 @@ class MeasurementInfo(object):
         else:
             return len(mne.pick_types(self._info, meg='grad',
                                            exclude=[]))
-        
+
     @property    
     def EEG_channels(self):
         """
@@ -126,7 +127,8 @@ class MeasurementInfo(object):
         else:
             return len(mne.pick_types(self._info, meg=False,
                                            eeg=True, exclude=[]))
-    @property    
+
+    @property
     def date(self):
         """
         Returns the date of measurement in form yyyy-mm-dd.
@@ -141,7 +143,7 @@ class MeasurementInfo(object):
         else:
             d = datetime.datetime.fromtimestamp(self._info.get('meas_date')[0])
             return d.strftime('%Y-%m-%d')
-    
+
     @property    
     def stim_channel_names(self):
         """
@@ -153,7 +155,7 @@ class MeasurementInfo(object):
         else:
             chNames = self._info.get('ch_names')
             return [s for s in chNames if 'STI' in s]
-        
+
     @property    
     def MEG_channel_names(self):
         """
@@ -165,12 +167,12 @@ class MeasurementInfo(object):
         else:
             chNames = self._info.get('ch_names')
             return [s for s in chNames if not 'STI' in s]
-    
+
     @property    
     def events(self, STIChannel):
         """
         Returns events from a certain stimulus channel.
-        
+
         Keyword arguments:
         STIChannel    -- name of the channel
         Raises an exception if an error occurs while finding events.
@@ -179,7 +181,7 @@ class MeasurementInfo(object):
             raise Exception('No stimulus channel found.')
         else:
             return mne.find_events(self._raw, stim_channel=STIChannel)
-    
+
     @property    
     def subject_name(self):
         """
@@ -194,7 +196,7 @@ class MeasurementInfo(object):
                                         subj_info)
         first_name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', 
                                       subj_info)
-        
+
         # If the file has no name fields set, don't crash
         # TODO: test with empty strings as names
         if ( last_name_result == None or last_name_result.group(1) == None ):
@@ -202,18 +204,18 @@ class MeasurementInfo(object):
         else:  
             last_name_table = last_name_result.group(1).split(' ') 
             last_name = last_name_table[2]
-            
+
         if ( middle_name_result == None or
             middle_name_result.group(1) == None ):
             middle_name = ''
         else: 
             middle_name_table = middle_name_result.group(1).split(' ')
             middle_name = middle_name_table[2]
-        
+
         if ( first_name_result == None or first_name_result.group(1) == None ):
             first_name = ''
         else: 
             first_name_table = first_name_result.group(1).split(' ')
             first_name = first_name_table[2]
-        
+
         return last_name + ' ' + first_name + ' ' + middle_name

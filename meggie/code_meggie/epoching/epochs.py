@@ -40,8 +40,6 @@ import mne
 #import pylab as pl
 import numpy as np
 
-import csv
-
 import messageBoxes
 
 class Epochs(QObject):
@@ -78,7 +76,7 @@ class Epochs(QObject):
         Keyword arguments:
         raw    -- the raw .fif of the collection
         """
-        self._raw = raw        
+        self._raw = raw
         
     @property
     def collection_name(self):
@@ -114,7 +112,6 @@ class Epochs(QObject):
         """
         self._params = params
 
-    
     def create_epochs(self, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.
@@ -133,11 +130,12 @@ class Epochs(QObject):
         tmax          = End time after the event
         
         Exceptions:
-        Raises TypeError if the raw object isn't of type mne.io.RawFIFF.
+        Raises TypeError if the raw object isn't of type mne.io.Raw.
         Raises Exception if picks are empty.
         
         Returns a set of epochs
         """
+        events = np.array(events) # Just to make sure it is a numpy array.
         if mag and grad:
             meg = True
         elif mag:
@@ -146,52 +144,57 @@ class Epochs(QObject):
             meg = 'grad'
         else:
             meg = False
-        if isinstance(raw, mne.io.RawFIFF):
-            # Was mne.fiff.pick types with MNE 0.7
-            picks = mne.pick_types(raw.info, meg=meg, eeg=eeg,
-                                        stim=stim, eog=eog)
-            if len(picks) == 0:
-                message = 'Picks cannot be empty. Select picks by' + \
-                'checking the checkboxes.'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()  
-                
-            else:
-                epochs = mne.Epochs(raw, events, category,
-                                tmin, tmax, picks=picks, reject=reject)
-                return epochs
-        else:
+        if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object.')
-        
-    def create_epochs_from_dict(self, dict, raw):
+        # Was mne.fiff.pick types with MNE 0.7
+        picks = mne.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
+                               eog=eog)
+        if len(picks) == 0:
+            message = 'Picks cannot be empty. Select picks by' + \
+            'checking the checkboxes.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
+        try:
+            epochs = mne.Epochs(raw, events, category, tmin, tmax,
+                                picks=picks, reject=reject)
+        except Exception as e:
+            print e
+            raise e
+        if len(epochs.get_data()) == 0:
+            raise Exception('Could not find any data. Perhaps the rejection '
+                            'thresholds are too strict...')
+        return epochs
+
+    def create_epochs_from_dict(self, params, raw):
         """Create a set of epochs with parameters stored in a dict.
         
         Keyword arguments:
         
-        dict = A dictionary containing the parameter values for epoching minus
-               the raw data object.
-        raw  = the raw data object
+        params = A dictionary containing the parameter values for epoching minus
+                 the raw data object.
+        raw    = the raw data object
         
         Return a set of epochs.
         """
         #Events are stored as a list of QListWidgetItems. Read them and create
         #a dict for categories.
         category = {}
-        event_list = dict['events']
+        event_list = params['events']
         events = np.ndarray((len(event_list),3), int)
         for i in xrange(len(event_list)):
             event = event_list[i][0]
             events[i] = event
             category[str(event_list[i][1])] = event[2]
         
-        mag = dict['mag']
-        grad = dict['grad']
-        eeg = dict['eeg']
-        stim = dict['stim']
-        eog = dict['eog']
-        reject = dict['reject']
-        tmin = dict['tmin']
-        tmax = dict['tmax']
+        mag = params['mag']
+        grad = params['grad']
+        eeg = params['eeg']
+        stim = params['stim']
+        eog = params['eog']
+        reject = params['reject']
+        tmin = params['tmin']
+        tmax = params['tmax']
         
         epochs = self.create_epochs(raw, events, mag, grad, eeg, stim, eog,
                                     reject, category, tmin, tmax)
@@ -204,4 +207,3 @@ class Epochs(QObject):
         csv_file.close()
         """
         return epochs
-    

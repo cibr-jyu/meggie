@@ -45,7 +45,7 @@ class InfoDialog(QtGui.QDialog):
     Dialog to get and show the info from the raw file. Can be used to direct
     the extracted information from the file to the dialog itself or some
     other ui with similar element names. Currently used for setting the
-    parameters in the Raw tab of the mainWindow. 
+    subject info fields below the subject list in the mainWindow. 
     """
     def __init__(self, raw, targetUi, create_window):
         """
@@ -54,7 +54,7 @@ class InfoDialog(QtGui.QDialog):
         raw           -- Raw object.
         targetUi      -- Ui object that receives the info data.
         create_window -- Boolean to determine if a new dialog window 
-        is created.
+                         is created.
         """
         QtGui.QDialog.__init__(self)
         self.raw = raw
@@ -78,6 +78,7 @@ class InfoDialog(QtGui.QDialog):
         self.mi = MeasurementInfo(self.raw)
         
         self.ui.labelDateValue.setText(self.mi.date)
+        self.ui.labelLengthValue.setText('%0.2f' % self.raw.times[-1] + 's')
         self.ui.labelEEGValue.setText(str(self.mi.EEG_channels))
         self.ui.labelGradMEGValue.setText(str(self.mi.grad_channels))
         self.ui.labelHighValue.setText(str(self.mi.high_pass) + ' Hz')
@@ -85,4 +86,3 @@ class InfoDialog(QtGui.QDialog):
         self.ui.labelMagMEGValue.setText(str(self.mi.mag_channels))
         self.ui.labelSamplesValue.setText(str(self.mi.sampling_freq) + ' Hz')
         self.ui.labelSubjectValue.setText(self.mi.subject_name)
-    

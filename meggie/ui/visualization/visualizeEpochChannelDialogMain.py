@@ -31,10 +31,29 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
     def on_pushButtonVisualizeChannel_clicked(self, checked=None):
         
         if checked is None: return
+        
+        # TODO: Add possibility for multiple channel picks if needed
+        # fig -> figs (list of figures), pick -> picks (list of selected items
+        # texts).
+        #
+        # picks = [] # can be list of strings since mne seems to convert
+        # for item in self.ui.listWidgetChannels.selectedItems():
+        #     picks.append(item.text())
+        # for fig in figs:
+        #     fig.canvas.set_window_title(title)
+        
         pick = self.epochs.ch_names.index(self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
         vmin = self.ui.spinBoxVmin.value()
         vmax = self.ui.spinBoxVmax.value()
         # plot_image_epochs averages the epochs before visualizing. 
-        mne.viz.plot_image_epochs(self.epochs, pick, sigma=sigma, vmin=vmin,
-                    vmax=vmax, colorbar=True, order=None, show=True)
+        fig = mne.viz.plot_image_epochs(self.epochs, pick, sigma=sigma,
+                                        vmin=vmin, vmax=vmax, colorbar=True,
+                                        order=None, show=True)
+        title = ''
+        for event_name in self.epochs.event_id.keys():
+            if title == '':
+                title += event_name
+            else:
+                title += ' - ' + event_name
+        fig[0].canvas.set_window_title(title)

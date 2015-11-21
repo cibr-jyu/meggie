@@ -1,6 +1,6 @@
 # coding: latin1
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -35,32 +35,35 @@ Contains the AddEOGProjections-class used for adding EOG projections.
 """
 import glob
 
+
 import mne
 
 from PyQt4 import QtCore,QtGui
 from addProjectionsUi import Ui_Dialog
-import messageBox
+from code_meggie.general.caller import Caller
 
 class AddEOGProjections(QtGui.QDialog):
     """
     Class for adding EOG projections.
     Projections should be created and saved in a file before adding them.
     """
+    caller = Caller.Instance()
     
-    def __init__(self, parent):
+    def __init__(self, parent, added_projs):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
         parent        -- The parent of this object.
+        projs         -- Projectors already added to the raw object.
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment._subject_directory
-        self.proj_file = glob.glob(directory + '*_eog_proj.fif')[0]
+        directory = self.caller.experiment._active_subject._subject_path
+        self.proj_file = glob.glob(directory + '/*_eog_*proj*')[0]
         self.projs = mne.read_proj(self.proj_file)
-        
+
         self.listWidget = QtGui.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
         #add checkboxes
@@ -69,27 +72,28 @@ class AddEOGProjections(QtGui.QDialog):
             checkBox = QtGui.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
-        
-        
+            if str(proj) in [str(x) for x in added_projs]:
+                checkBox.setChecked(True)
+
     def accept(self):
         """
         Adds the projections.
         """
-        applied = []
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                             QCursor(QtCore.Qt.WaitCursor))
+        applied = list()
         for index in xrange(self.listWidget.count()):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))
-            if check_box.checkState() == QtCore.Qt.Checked:
-                applied.append(self.projs[index])
-        try:
-            # Overwrites the projection file with desired vectors.
-            mne.write_proj(self.proj_file, applied)
-            self.parent.caller.apply_eog(self.parent.experiment.working_file,
-                                     self.parent.experiment._subject_directory)
-        except Exception, err:
-            self.messageBox = messageBox.AppForm()
-            self.messageBox.labelException.setText(str(err))
-            self.messageBox.show()
-            return
+            applied.append(check_box.isChecked())
+
+        raw = self.caller.experiment.active_subject.working_file
+        directory = self.caller.experiment._active_subject._subject_path
+        result = self.caller.apply_exg('eog', raw, directory, self.projs,
+                                       applied)
+
+        if result == 0:
+            self.parent.ui.checkBoxEOGApplied.setChecked(True)
+        QtGui.QApplication.restoreOverrideCursor()
         self.parent._initialize_ui()
         self.close()
         

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'createExperimentDialog.ui'
 #
-# Created: Wed Sep 18 12:23:19 2013
+# Created: Tue Oct 22 12:56:14 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,33 +44,6 @@ class Ui_CreateExperimentDialog(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.groupBox = QtGui.QGroupBox(self.layoutWidget)
-        self.groupBox.setObjectName(_fromUtf8("groupBox"))
-        self.gridLayout = QtGui.QGridLayout(self.groupBox)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.splitter = QtGui.QSplitter(self.groupBox)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName(_fromUtf8("splitter"))
-        self.FilePathLineEdit = QtGui.QLineEdit(self.splitter)
-        self.FilePathLineEdit.setObjectName(_fromUtf8("FilePathLineEdit"))
-        self.browseButton = QtGui.QPushButton(self.splitter)
-        self.browseButton.setObjectName(_fromUtf8("browseButton"))
-        self.gridLayout.addWidget(self.splitter, 1, 0, 1, 1)
-        self.horizontalLayout_3 = QtGui.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
-        self.showFileInfoButton = QtGui.QPushButton(self.groupBox)
-        self.showFileInfoButton.setObjectName(_fromUtf8("showFileInfoButton"))
-        self.horizontalLayout_3.addWidget(self.showFileInfoButton)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 2, 0, 1, 1)
-        self.label = QtGui.QLabel(self.groupBox)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.verticalLayout.addWidget(self.groupBox)
-        self.verticalLayout_2.addLayout(self.verticalLayout)
         self.groupBox_2 = QtGui.QGroupBox(self.layoutWidget)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox_2)
@@ -112,20 +85,13 @@ class Ui_CreateExperimentDialog(object):
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), CreateExperimentDialog.accept)
         QtCore.QObject.connect(self.cancelOkButtonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), CreateExperimentDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(CreateExperimentDialog)
-        CreateExperimentDialog.setTabOrder(self.scrollArea, self.FilePathLineEdit)
-        CreateExperimentDialog.setTabOrder(self.FilePathLineEdit, self.browseButton)
-        CreateExperimentDialog.setTabOrder(self.browseButton, self.showFileInfoButton)
-        CreateExperimentDialog.setTabOrder(self.showFileInfoButton, self.lineEditExperimentName)
+        CreateExperimentDialog.setTabOrder(self.scrollArea, self.lineEditExperimentName)
         CreateExperimentDialog.setTabOrder(self.lineEditExperimentName, self.lineEditAuthor)
         CreateExperimentDialog.setTabOrder(self.lineEditAuthor, self.textEditDescription)
         CreateExperimentDialog.setTabOrder(self.textEditDescription, self.cancelOkButtonBox)
 
     def retranslateUi(self, CreateExperimentDialog):
         CreateExperimentDialog.setWindowTitle(_translate("CreateExperimentDialog", "Meggie - Create new experiment", None))
-        self.groupBox.setTitle(_translate("CreateExperimentDialog", "Experiment base file", None))
-        self.browseButton.setText(_translate("CreateExperimentDialog", "Browse...", None))
-        self.showFileInfoButton.setText(_translate("CreateExperimentDialog", "Show file info", None))
-        self.label.setText(_translate("CreateExperimentDialog", "Select raw file for the experiment:", None))
         self.groupBox_2.setTitle(_translate("CreateExperimentDialog", "Experiment information", None))
         self.labelAuthor.setText(_translate("CreateExperimentDialog", "Experiment author:", None))
         self.labelExperimentName.setText(_translate("CreateExperimentDialog", "Experiment name:", None))

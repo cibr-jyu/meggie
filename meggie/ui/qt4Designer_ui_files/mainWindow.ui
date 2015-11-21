@@ -56,7 +56,7 @@
              <bool>true</bool>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tabRaw">
              <attribute name="title">
@@ -143,6 +143,42 @@
                  <width>371</width>
                  <height>111</height>
                 </rect>
+               </property>
+              </widget>
+              <widget class="QListWidget" name="listWidgetSubjects">
+               <property name="geometry">
+                <rect>
+                 <x>440</x>
+                 <y>40</y>
+                 <width>441</width>
+                 <height>161</height>
+                </rect>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="pushButtonAddSubjects">
+               <property name="geometry">
+                <rect>
+                 <x>440</x>
+                 <y>210</y>
+                 <width>191</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Add new subject/subjects...</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="pushButtonActivateSubjects">
+               <property name="geometry">
+                <rect>
+                 <x>690</x>
+                 <y>210</y>
+                 <width>191</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Activate subject/subjects</string>
                </property>
               </widget>
              </widget>

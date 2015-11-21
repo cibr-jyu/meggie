@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>705</width>
-    <height>805</height>
+    <height>894</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,7 +77,7 @@
         <x>0</x>
         <y>0</y>
         <width>687</width>
-        <height>709</height>
+        <height>800</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -92,7 +92,7 @@
          <x>0</x>
          <y>7</y>
          <width>595</width>
-         <height>714</height>
+         <height>762</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -132,7 +132,7 @@
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_2">
-                    <item row="1" column="0">
+                    <item row="2" column="0">
                      <widget class="QCheckBox" name="checkBoxFit">
                       <property name="text">
                        <string>Fit to isotrak points</string>
@@ -200,6 +200,34 @@
                          </widget>
                         </item>
                        </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="1" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_11">
+                      <item>
+                       <widget class="QLabel" name="label_2">
+                        <property name="text">
+                         <string>Coordinate frame:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="radioButtonDevice">
+                        <property name="text">
+                         <string>Device</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="radioButtonHead">
+                        <property name="text">
+                         <string>Head</string>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -557,7 +585,7 @@
                <x>10</x>
                <y>10</y>
                <width>341</width>
-               <height>71</height>
+               <height>74</height>
               </rect>
              </property>
              <layout class="QFormLayout" name="formLayout">
@@ -963,12 +991,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>253</x>
-     <y>388</y>
+     <x>292</x>
+     <y>426</y>
     </hint>
     <hint type="destinationlabel">
-     <x>258</x>
-     <y>355</y>
+     <x>298</x>
+     <y>393</y>
     </hint>
    </hints>
   </connection>
@@ -979,12 +1007,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>507</y>
+     <x>95</x>
+     <y>546</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>510</y>
+     <x>194</x>
+     <y>550</y>
     </hint>
    </hints>
   </connection>
@@ -995,12 +1023,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>581</y>
+     <x>95</x>
+     <y>624</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>584</y>
+     <x>194</x>
+     <y>628</y>
     </hint>
    </hints>
   </connection>
@@ -1011,12 +1039,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>544</y>
+     <x>95</x>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
-     <x>290</x>
-     <y>547</y>
+     <x>293</x>
+     <y>589</y>
     </hint>
    </hints>
   </connection>
@@ -1027,12 +1055,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>507</y>
+     <x>95</x>
+     <y>546</y>
     </hint>
     <hint type="destinationlabel">
-     <x>290</x>
-     <y>510</y>
+     <x>293</x>
+     <y>550</y>
     </hint>
    </hints>
   </connection>
@@ -1043,12 +1071,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>544</y>
+     <x>95</x>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>547</y>
+     <x>194</x>
+     <y>589</y>
     </hint>
    </hints>
   </connection>
@@ -1059,8 +1087,8 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>216</x>
-     <y>220</y>
+     <x>255</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>166</x>
@@ -1075,8 +1103,8 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>306</x>
-     <y>220</y>
+     <x>345</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>289</x>
@@ -1091,8 +1119,8 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>220</y>
+     <x>396</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>413</x>
@@ -1107,12 +1135,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>279</x>
-     <y>388</y>
+     <x>318</x>
+     <y>426</y>
     </hint>
     <hint type="destinationlabel">
-     <x>498</x>
-     <y>355</y>
+     <x>499</x>
+     <y>393</y>
     </hint>
    </hints>
   </connection>
@@ -1123,12 +1151,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>581</y>
+     <x>95</x>
+     <y>624</y>
     </hint>
     <hint type="destinationlabel">
-     <x>290</x>
-     <y>584</y>
+     <x>293</x>
+     <y>628</y>
     </hint>
    </hints>
   </connection>
@@ -1140,7 +1168,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>603</x>
-     <y>794</y>
+     <y>853</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>
@@ -1155,8 +1183,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>53</x>
-     <y>126</y>
+     <x>64</x>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>41</x>
@@ -1172,7 +1200,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>694</x>
-     <y>794</y>
+     <y>853</y>
     </hint>
     <hint type="destinationlabel">
      <x>538</x>
@@ -1257,6 +1285,38 @@
     <hint type="destinationlabel">
      <x>276</x>
      <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioButtonDevice</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>246</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioButtonHead</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>

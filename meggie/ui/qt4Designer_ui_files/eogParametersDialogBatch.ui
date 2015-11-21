@@ -68,7 +68,7 @@
         <x>0</x>
         <y>0</y>
         <width>643</width>
-        <height>838</height>
+        <height>834</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -125,7 +125,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>244</width>
+             <width>246</width>
              <height>41</height>
             </rect>
            </property>
@@ -297,7 +297,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>314</width>
+             <width>316</width>
              <height>41</height>
             </rect>
            </property>
@@ -392,7 +392,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>494</width>
+             <width>495</width>
              <height>41</height>
             </rect>
            </property>
@@ -521,7 +521,7 @@
           <rect>
            <x>10</x>
            <y>160</y>
-           <width>281</width>
+           <width>285</width>
            <height>41</height>
           </rect>
          </property>
@@ -569,7 +569,7 @@
           <rect>
            <x>10</x>
            <y>110</y>
-           <width>308</width>
+           <width>309</width>
            <height>41</height>
           </rect>
          </property>
@@ -665,7 +665,7 @@
              <x>10</x>
              <y>10</y>
              <width>441</width>
-             <height>71</height>
+             <height>80</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_12">
@@ -812,12 +812,12 @@
           <x>10</x>
           <y>30</y>
           <width>471</width>
-          <height>205</height>
+          <height>209</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <widget class="QCheckBox" name="checkBoxBatch_2">
+          <widget class="QCheckBox" name="checkBoxBatch">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -830,7 +830,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="labelSubjects_2">
+          <widget class="QLabel" name="labelSubjects">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -848,7 +848,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_17">
            <item>
-            <widget class="QListWidget" name="listWidgetSubjects_2">
+            <widget class="QListWidget" name="listWidgetSubjects">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -878,7 +878,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_5">
+                <widget class="QLabel" name="label">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
@@ -890,7 +890,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_30">
                  <item>
-                  <widget class="QPushButton" name="pushButtonApply_2">
+                  <widget class="QPushButton" name="pushButtonApply">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
@@ -945,7 +945,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_31">
                  <item>
-                  <widget class="QPushButton" name="pushButtonApplyAll_2">
+                  <widget class="QPushButton" name="pushButtonApplyAll">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
@@ -1004,7 +1004,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonRemove_2">
+          <widget class="QPushButton" name="pushButtonRemove">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -1022,9 +1022,6 @@
         </layout>
        </widget>
       </widget>
-      <zorder>tabWidgetEOGSettings</zorder>
-      <zorder>verticalLayoutWidget_4</zorder>
-      <zorder>groupBoxBatch</zorder>
      </widget>
     </widget>
    </item>
@@ -1062,8 +1059,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>396</x>
-     <y>753</y>
+     <x>650</x>
+     <y>880</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -1078,12 +1075,140 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>205</x>
-     <y>748</y>
+     <x>559</x>
+     <y>880</y>
     </hint>
     <hint type="destinationlabel">
      <x>248</x>
      <y>8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSubjects</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetSubjects</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>40</x>
+     <y>629</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>123</x>
+     <y>697</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>329</x>
+     <y>705</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonApply</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>34</x>
+     <y>626</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>729</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_6</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>624</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>730</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonApplyAll</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>627</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>768</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_7</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>54</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>764</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBatch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonRemove</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>29</x>
+     <y>627</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>39</x>
+     <y>812</y>
     </hint>
    </hints>
   </connection>

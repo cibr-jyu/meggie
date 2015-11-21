@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>393</width>
-    <height>559</height>
+    <width>392</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,8 +33,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>375</width>
-        <height>512</height>
+        <width>374</width>
+        <height>525</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -66,7 +66,7 @@
                <x>26</x>
                <y>35</y>
                <width>271</width>
-               <height>54</height>
+               <height>89</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -113,6 +113,30 @@
                   </property>
                   <property name="text">
                    <string>TextLabel</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QLabel" name="labelLength">
+                  <property name="text">
+                   <string>Length:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="labelLengthValue">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string/>
                   </property>
                  </widget>
                 </item>

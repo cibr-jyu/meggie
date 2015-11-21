@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'infoDialog.ui'
 #
-# Created: Mon Apr  8 13:13:43 2013
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Mon Aug 17 03:33:31 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,14 +26,24 @@ except AttributeError:
 class Ui_infoDialog(object):
     def setupUi(self, infoDialog):
         infoDialog.setObjectName(_fromUtf8("infoDialog"))
-        infoDialog.resize(389, 524)
+        infoDialog.resize(392, 580)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(infoDialog.sizePolicy().hasHeightForWidth())
         infoDialog.setSizePolicy(sizePolicy)
-        self.layoutWidget = QtGui.QWidget(infoDialog)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 23, 361, 491))
+        self.verticalLayout_6 = QtGui.QVBoxLayout(infoDialog)
+        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
+        self.scrollArea = QtGui.QScrollArea(infoDialog)
+        self.scrollArea.setFrameShape(QtGui.QFrame.NoFrame)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
+        self.scrollAreaWidgetContents = QtGui.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 374, 525))
+        self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(369, 504))
+        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
+        self.layoutWidget = QtGui.QWidget(self.scrollAreaWidgetContents)
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 3, 371, 501))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_5.setMargin(0)
@@ -43,7 +53,7 @@ class Ui_infoDialog(object):
         self.metaBox = QtGui.QGroupBox(self.layoutWidget)
         self.metaBox.setObjectName(_fromUtf8("metaBox"))
         self.layoutWidget1 = QtGui.QWidget(self.metaBox)
-        self.layoutWidget1.setGeometry(QtCore.QRect(26, 35, 271, 54))
+        self.layoutWidget1.setGeometry(QtCore.QRect(26, 35, 271, 89))
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget1)
         self.verticalLayout_2.setMargin(0)
@@ -76,6 +86,21 @@ class Ui_infoDialog(object):
         self.labelSubjectValue.setObjectName(_fromUtf8("labelSubjectValue"))
         self.horizontalLayout.addWidget(self.labelSubjectValue)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
+        self.labelLength = QtGui.QLabel(self.layoutWidget1)
+        self.labelLength.setObjectName(_fromUtf8("labelLength"))
+        self.horizontalLayout_8.addWidget(self.labelLength)
+        self.labelLengthValue = QtGui.QLabel(self.layoutWidget1)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelLengthValue.sizePolicy().hasHeightForWidth())
+        self.labelLengthValue.setSizePolicy(sizePolicy)
+        self.labelLengthValue.setText(_fromUtf8(""))
+        self.labelLengthValue.setObjectName(_fromUtf8("labelLengthValue"))
+        self.horizontalLayout_8.addWidget(self.labelLengthValue)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         self.verticalLayout.addWidget(self.metaBox)
         self.filtersBox = QtGui.QGroupBox(self.layoutWidget)
         self.filtersBox.setObjectName(_fromUtf8("filtersBox"))
@@ -182,9 +207,11 @@ class Ui_infoDialog(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_7)
         self.verticalLayout.addWidget(self.channelsBox)
         self.verticalLayout_5.addLayout(self.verticalLayout)
-        self.ButtonClose = QtGui.QPushButton(self.layoutWidget)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout_6.addWidget(self.scrollArea)
+        self.ButtonClose = QtGui.QPushButton(infoDialog)
         self.ButtonClose.setObjectName(_fromUtf8("ButtonClose"))
-        self.verticalLayout_5.addWidget(self.ButtonClose)
+        self.verticalLayout_6.addWidget(self.ButtonClose)
 
         self.retranslateUi(infoDialog)
         QtCore.QMetaObject.connectSlotsByName(infoDialog)
@@ -196,6 +223,7 @@ class Ui_infoDialog(object):
         self.labelDateValue.setText(_translate("infoDialog", "DateValue", None))
         self.labelSubject.setText(_translate("infoDialog", "Subject:", None))
         self.labelSubjectValue.setText(_translate("infoDialog", "TextLabel", None))
+        self.labelLength.setText(_translate("infoDialog", "Length:", None))
         self.filtersBox.setTitle(_translate("infoDialog", "Filters", None))
         self.labelLow.setText(_translate("infoDialog", "Low-pass:", None))
         self.labelLowValue.setText(_translate("infoDialog", "Low-pass value", None))
