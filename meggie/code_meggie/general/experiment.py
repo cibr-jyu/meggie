@@ -42,11 +42,11 @@ import csv
 
 from threading import Event
 
-from code_meggie.general import fileManager
-from code_meggie.general.subject import Subject
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.subject import Subject
+from meggie.code_meggie.general.caller import Caller
 
-from ui.general import messageBoxes
+from meggie.ui.general import messageBoxes
 
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui

@@ -34,8 +34,8 @@ Created on Wed Apr  1 08:20:59 2015
 """
 from PyQt4 import QtGui, QtCore
 
-from ui.visualization.TFRGroupAverageDialogUi import Ui_DialogGroupTFR
-from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
+from meggie.ui.visualization.TFRGroupAverageDialogUi import Ui_DialogGroupTFR
+from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 
 class TFRGroupAverageDialog(QtGui.QDialog):
     """

@@ -6,9 +6,9 @@ Created on 10.11.2014
 
 from PyQt4 import QtCore, QtGui
 
-from ui.sourceModeling.holdCoregistrationDialogUi import Ui_DialogHoldCoregistration
+from meggie.ui.sourceModeling.holdCoregistrationDialogUi import Ui_DialogHoldCoregistration
 
-from code_meggie.general import fileManager
+from meggie.code_meggie.general import fileManager
 
 import os
 

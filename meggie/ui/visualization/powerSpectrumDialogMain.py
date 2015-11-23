@@ -8,13 +8,13 @@ from PyQt4 import QtGui, QtCore
 import numpy as np
 from mne import find_events
 
-from code_meggie.general.caller import Caller
-from code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 
-from ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
-from ui.visualization.timeSeriesDialogMain import TimeSeriesDialog
-from ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
-from ui.general.messageBoxes import shortMessageBox
+from meggie.ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from meggie.ui.visualization.timeSeriesDialogMain import TimeSeriesDialog
+from meggie.ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
+from meggie.ui.general.messageBoxes import shortMessageBox
 
 
 class PowerSpectrumDialog(QtGui.QDialog):

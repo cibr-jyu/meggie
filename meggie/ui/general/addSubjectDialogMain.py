@@ -37,13 +37,13 @@ Created on Oct 31, 2013
 '''
 from PyQt4 import QtCore, QtGui
 
-from ui.general.addSubjectDialogUi import Ui_AddSubject
-from ui.general.infoDialogUi import Ui_infoDialog
-from ui.general.infoDialogMain import InfoDialog
-from ui.general import messageBoxes
+from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
+from meggie.ui.general.infoDialogUi import Ui_infoDialog
+from meggie.ui.general.infoDialogMain import InfoDialog
+from meggie.ui.general import messageBoxes
 
-from code_meggie.general.caller import Caller
-from code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 
 import traceback
 import os

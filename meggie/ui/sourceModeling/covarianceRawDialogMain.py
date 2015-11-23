@@ -7,13 +7,13 @@ Created on 7.1.2015
 from PyQt4 import QtGui
 from PyQt4.QtGui import QApplication
 
-from ui.sourceModeling.covarianceRawDialogUi import Ui_covarianceRawDialog
-from ui.general import messageBoxes
-from ui.general.infoDialogUi import Ui_infoDialog
-from ui.general.infoDialogMain import InfoDialog
+from meggie.ui.sourceModeling.covarianceRawDialogUi import Ui_covarianceRawDialog
+from meggie.ui.general import messageBoxes
+from meggie.ui.general.infoDialogUi import Ui_infoDialog
+from meggie.ui.general.infoDialogMain import InfoDialog
 
-from code_meggie.general.caller import Caller
-from code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 
 import os
 from pickle import PickleError

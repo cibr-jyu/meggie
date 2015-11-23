@@ -35,7 +35,7 @@ Contains the EpochParamsWidget-class used for listing epoch parameters.
 """
 from PyQt4 import QtCore,QtGui
 
-from ui.widgets.epochParamsWidgetUi import Ui_Form
+from meggie.ui.widgets.epochParamsWidgetUi import Ui_Form
 
 class EpochParamsWidget(QtGui.QWidget):
     """

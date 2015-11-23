@@ -8,8 +8,8 @@ from PyQt4.QtGui import QDialogButtonBox
 
 from mne import make_fixed_length_events
 
-from code_meggie.general.caller import Caller
-from ui.epoching.fixedLengthEpochsDialogUi import Ui_FixedLengthEpochDialog
+from meggie.code_meggie.general.caller import Caller
+from meggie.ui.epoching.fixedLengthEpochsDialogUi import Ui_FixedLengthEpochDialog
 
 class FixedLengthEpochDialog(QtGui.QDialog):
     """

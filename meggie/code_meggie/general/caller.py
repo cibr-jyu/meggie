@@ -40,14 +40,14 @@ from multiprocessing.pool import ThreadPool
 from time import sleep
 from copy import deepcopy
 
-from ui.general import messageBoxes
-from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
-from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
+from meggie.ui.general import messageBoxes
+from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
+from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
-from code_meggie.general import fileManager
-from code_meggie.epoching.epochs import Epochs
-from code_meggie.general.measurementInfo import MeasurementInfo
-from code_meggie.general.singleton import Singleton
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.epoching.epochs import Epochs
+from meggie.code_meggie.general.measurementInfo import MeasurementInfo
+from meggie.code_meggie.general.singleton import Singleton
 
 
 @Singleton

@@ -5,7 +5,7 @@ Created on 27.1.2015
 """
 
 from PyQt4 import QtCore, QtGui
-from ui.widgets.covarianceWidgetRawUi import Ui_covarianceRawWidget
+from meggie.ui.widgets.covarianceWidgetRawUi import Ui_covarianceRawWidget
 
 
 class CovarianceWidgetRaw(QtGui.QWidget):

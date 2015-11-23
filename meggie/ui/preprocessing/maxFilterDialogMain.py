@@ -39,10 +39,10 @@ from threading import Thread
 
 from PyQt4 import QtCore,QtGui
 
-from ui.preprocessing.maxFilterDialogUi import Ui_Dialog
-from ui.general import messageBoxes
+from meggie.ui.preprocessing.maxFilterDialogUi import Ui_Dialog
+from meggie.ui.general import messageBoxes
 
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general.caller import Caller
 
 
 class MaxFilterDialog(QtGui.QDialog):

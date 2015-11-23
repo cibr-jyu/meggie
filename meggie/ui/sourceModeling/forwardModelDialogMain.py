@@ -7,11 +7,11 @@ Created on 30.6.2014
 
 from PyQt4 import QtGui
 
-from ui.sourceModeling.forwardModelDialogUi import Ui_forwardModelDialog
-from ui.general import messageBoxes
+from meggie.ui.sourceModeling.forwardModelDialogUi import Ui_forwardModelDialog
+from meggie.ui.general import messageBoxes
 
-from code_meggie.general.caller import Caller
-from code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 
 import string
 import re

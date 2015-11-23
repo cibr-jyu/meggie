@@ -41,12 +41,12 @@ import traceback
 
 from PyQt4 import QtCore,QtGui
 
-from ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
-from ui.preprocessing.projectorDialog import ProjectorDialog
-from ui.general import messageBoxes
+from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
+from meggie.ui.preprocessing.projectorDialog import ProjectorDialog
+from meggie.ui.general import messageBoxes
 
-from code_meggie.general import fileManager
-from code_meggie.general.measurementInfo import MeasurementInfo
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
 
 class EcgParametersDialog(ProjectorDialog):

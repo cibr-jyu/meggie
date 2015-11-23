@@ -7,11 +7,11 @@ Created on Aug 20, 2013
 import mne
 from PyQt4 import QtCore,QtGui
 
-from ui.filtering.filterDialogUi import Ui_DialogFilter
-from ui.general import messageBoxes
+from meggie.ui.filtering.filterDialogUi import Ui_DialogFilter
+from meggie.ui.general import messageBoxes
 
-from code_meggie.general.caller import Caller
-from code_meggie.general.measurementInfo import MeasurementInfo
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
 from copy import deepcopy
 

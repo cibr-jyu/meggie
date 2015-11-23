@@ -37,9 +37,9 @@ CreateExperimentDialog-window.
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
 
-from code_meggie.general.experiment import Experiment
-from ui.general import messageBoxes
-from ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
+from meggie.code_meggie.general.experiment import Experiment
+from meggie.ui.general import messageBoxes
+from meggie.ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
 
  
 class CreateExperimentDialog(QtGui.QDialog):

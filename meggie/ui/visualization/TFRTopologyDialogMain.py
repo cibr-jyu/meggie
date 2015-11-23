@@ -35,12 +35,12 @@ Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 """
 from PyQt4 import QtCore, QtGui
 
-from code_meggie.general import fileManager
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
 
-from ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
-from ui.visualization.TFRGroupAverageDialogMain import TFRGroupAverageDialog
-from ui.general.messageBoxes import shortMessageBox
+from meggie.ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
+from meggie.ui.visualization.TFRGroupAverageDialogMain import TFRGroupAverageDialog
+from meggie.ui.general.messageBoxes import shortMessageBox
 
 
 class TFRTopologyDialog(QtGui.QDialog):

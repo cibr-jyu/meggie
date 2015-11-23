@@ -39,7 +39,7 @@ import mne
 
 import numpy as np
 
-from ui.general import messageBoxes
+from meggie.ui.general import messageBoxes
 
 class Epochs(QObject):
     

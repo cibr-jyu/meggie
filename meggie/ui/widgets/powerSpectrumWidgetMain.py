@@ -8,8 +8,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import QPoint, QMenu
 
-from ui.widgets.powerSpectrumWidgetUi import Ui_PowerSpectrumWidget
-from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
+from meggie.ui.widgets.powerSpectrumWidgetUi import Ui_PowerSpectrumWidget
+from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 
 
 class PowerSpectrumWidget(QtGui.QWidget):

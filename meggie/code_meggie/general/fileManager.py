@@ -25,8 +25,8 @@ from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-from ui.general import messageBoxes
-from code_meggie.general.statistic import Statistic
+from meggie.ui.general import messageBoxes
+from meggie.code_meggie.general.statistic import Statistic
     
     
 def copy_recon_files(aSubject, sourceDirectory):

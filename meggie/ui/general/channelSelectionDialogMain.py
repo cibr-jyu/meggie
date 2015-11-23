@@ -8,8 +8,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QListWidgetItem
 
-from code_meggie.general.caller import Caller
-from ui.general.channelSelectionDialogUi import Ui_ChannelSelectionDialog
+from meggie.code_meggie.general.caller import Caller
+from meggie.ui.general.channelSelectionDialogUi import Ui_ChannelSelectionDialog
 
 class ChannelSelectionDialog(QtGui.QDialog):
     channelsChanged = pyqtSignal(list)

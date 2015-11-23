@@ -52,41 +52,41 @@ from mne.evoked import write_evokeds
 import matplotlib
 matplotlib.use('Qt4Agg')
 
-from ui.general.mainWindowUi import Ui_MainWindow
-from ui.general.createExperimentDialogMain import CreateExperimentDialog
-from ui.general.addSubjectDialogMain import AddSubjectDialog
-from ui.general.infoDialogMain import InfoDialog
-from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
-from ui.epoching.eventSelectionDialogMain import EventSelectionDialog
-from ui.visualization import visualizeEpochChannelDialogMain
-from ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
-from ui.preprocessing.eogParametersDialogMain import EogParametersDialog
-from ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
-from ui.general.preferencesDialogMain import PreferencesDialog
-from ui.general.evokedStatsDialogMain import EvokedStatsDialog
-from ui.preprocessing.addECGProjectionsMain import AddECGProjections
-from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
-from ui.visualization.TFRDialogMain import TFRDialog
-from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
-from ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
-from ui.widgets.epochWidgetMain import EpochWidget
-from ui.general.aboutDialogMain import AboutDialog
-from ui.filtering.filterDialogMain import FilterDialog
-from ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
-from ui.general.experimentInfoDialogMain import experimentInfoDialog
-from ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
-from ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
-from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
-from ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-from ui.general import messageBoxes
-from ui.widgets.listWidget import ListWidget
+from meggie.ui.general.mainWindowUi import Ui_MainWindow
+from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
+from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
+from meggie.ui.general.infoDialogMain import InfoDialog
+from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
+from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
+from meggie.ui.visualization import visualizeEpochChannelDialogMain
+from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
+from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
+from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
+from meggie.ui.general.preferencesDialogMain import PreferencesDialog
+from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
+from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
+from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
+from meggie.ui.visualization.TFRDialogMain import TFRDialog
+from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
+from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.ui.widgets.epochWidgetMain import EpochWidget
+from meggie.ui.general.aboutDialogMain import AboutDialog
+from meggie.ui.filtering.filterDialogMain import FilterDialog
+from meggie.ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
+from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
+from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
+from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
+from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
+from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
+from meggie.ui.general import messageBoxes
+from meggie.ui.widgets.listWidget import ListWidget
 
-from code_meggie.general import experiment
-from code_meggie.general.experiment import Experiment
-from code_meggie.general.prefecences import PreferencesHandler
-from code_meggie.general import fileManager
-from code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general import experiment
+from meggie.code_meggie.general.experiment import Experiment
+from meggie.code_meggie.general.prefecences import PreferencesHandler
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
+from meggie.code_meggie.general.caller import Caller
 
 
 class MainWindow(QtGui.QMainWindow):

@@ -12,8 +12,8 @@ from PyQt4 import QtCore
 from PyQt4.QtGui import QFont
 import os
 
-from code_meggie.general.caller import Caller
-from code_meggie.general import fileManager
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 
 
 class ForwardModelModel(QtCore.QAbstractTableModel):

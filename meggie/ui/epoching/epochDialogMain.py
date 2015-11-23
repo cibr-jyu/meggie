@@ -33,9 +33,9 @@ Created on Apr 30, 2013
 @author: Jaakko Leppakangas
 Contains the EpochDialog class that holds the logic for epochDialog-window.
 """
-from ui.general import messageBoxes
-from ui.epoching.epochDialogUi import Ui_Dialog
-from code_meggie.general.caller import Caller
+from meggie.ui.general import messageBoxes
+from meggie.ui.epoching.epochDialogUi import Ui_Dialog
+from meggie.code_meggie.general.caller import Caller
 
 from mne.epochs import Epochs
 

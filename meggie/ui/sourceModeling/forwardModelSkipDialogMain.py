@@ -6,7 +6,7 @@ Created on 30.1.2015
 
 from PyQt4 import QtGui
 
-from ui.sourceModeling.forwardModelSkipDialogUi import Ui_DialogForwardModelSkip
+from meggie.ui.sourceModeling.forwardModelSkipDialogUi import Ui_DialogForwardModelSkip
 
 
 class ForwardModelSkipDialog(QtGui.QDialog):

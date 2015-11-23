@@ -6,7 +6,7 @@ Created on 27.1.2015
 
 from PyQt4 import QtCore, QtGui
 
-from ui.widgets.covarianceWidgetNoneUi import Ui_Form
+from meggie.ui.widgets.covarianceWidgetNoneUi import Ui_Form
 
 
 class CovarianceWidgetNone(QtGui.QWidget):

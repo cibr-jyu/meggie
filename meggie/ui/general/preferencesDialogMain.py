@@ -41,8 +41,8 @@ import os
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
-from ui.general.preferencesDialogUi import Ui_DialogPreferences
-from ui.general import messageBoxes
+from meggie.ui.general.preferencesDialogUi import Ui_DialogPreferences
+from meggie.ui.general import messageBoxes
 
 
 class PreferencesDialog(QtGui.QDialog):

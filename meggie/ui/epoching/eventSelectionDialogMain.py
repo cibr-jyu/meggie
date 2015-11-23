@@ -40,13 +40,13 @@ from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
 
-from ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
-from ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
-from ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
-from code_meggie.general.caller import Caller
-from code_meggie.epoching.events import Events
-from code_meggie.general import fileManager
-from ui.general import messageBoxes
+from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
+from meggie.ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
+from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.general import fileManager
+from meggie.ui.general import messageBoxes
 
 
 class EventSelectionDialog(QtGui.QDialog):

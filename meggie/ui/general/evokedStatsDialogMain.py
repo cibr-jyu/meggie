@@ -15,10 +15,10 @@ from mne.channels.layout import _pair_grad_sensors_from_ch_names
 from mne.channels.layout import _merge_grad_data
 from mne.utils import _clean_names
 
-from code_meggie.general.caller import Caller
-from code_meggie.general.statistic import Statistic
-from ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
-from ui.general import messageBoxes
+from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.statistic import Statistic
+from meggie.ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
+from meggie.ui.general import messageBoxes
 
 class EvokedStatsDialog(QtGui.QDialog):
 

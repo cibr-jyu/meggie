@@ -39,8 +39,8 @@ import mne
 
 from PyQt4 import QtCore,QtGui
 
-from ui.preprocessing.addProjectionsUi import Ui_Dialog
-from code_meggie.general.caller import Caller
+from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
+from meggie.code_meggie.general.caller import Caller
 
 class AddEOGProjections(QtGui.QDialog):
     """

@@ -34,9 +34,9 @@ longMessageBox for longer messages that need a scrolling content area.
 """
 
 from PyQt4 import QtCore, QtGui
-from ui.general.longMessageBoxUi import Ui_LongMessageBoxDialog
-from ui.general.shortMessageBoxUi import Ui_shortMessageBox
-from ui.general.shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
+from meggie.ui.general.longMessageBoxUi import Ui_LongMessageBoxDialog
+from meggie.ui.general.shortMessageBoxUi import Ui_shortMessageBox
+from meggie.ui.general.shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
 
 
 class shortMessageBox(QtGui.QDialog):

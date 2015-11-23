@@ -34,10 +34,10 @@ Created on 27.8.2015
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QDialogButtonBox, QListWidgetItem
 
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general.caller import Caller
 
-from ui.epoching.groupEpochingDialogUi import Ui_GroupEpochDialog
-from ui.general import messageBoxes
+from meggie.ui.epoching.groupEpochingDialogUi import Ui_GroupEpochDialog
+from meggie.ui.general import messageBoxes
 
 class GroupEpochingDialog(QtGui.QDialog):
     """

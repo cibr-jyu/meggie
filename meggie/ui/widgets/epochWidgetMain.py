@@ -9,9 +9,9 @@ Contains the EpochWidget-class used for listing epoch collections.
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general.caller import Caller
 
-from ui.widgets.epochWidgetUi import Ui_Form
+from meggie.ui.widgets.epochWidgetUi import Ui_Form
 
 class EpochWidget(QtGui.QWidget):
     """

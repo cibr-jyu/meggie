@@ -5,9 +5,9 @@ Created on 8.9.2015
 '''
 from PyQt4 import QtGui, QtCore
 
-from code_meggie.general.caller import Caller
+from meggie.code_meggie.general.caller import Caller
 
-from ui.general import messageBoxes
+from meggie.ui.general import messageBoxes
 
 
 class ProjectorDialog(QtGui.QDialog):

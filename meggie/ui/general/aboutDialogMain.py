@@ -37,7 +37,7 @@ the application.
 """
 
 from PyQt4 import QtCore, QtGui
-from ui.general.aboutDialogUi import Ui_Dialog
+from meggie.ui.general.aboutDialogUi import Ui_Dialog
 
 
 class AboutDialog(QtGui.QDialog):
