@@ -1,0 +1,2 @@
+recursive-include meggie *
+global-exclude *.pyc
