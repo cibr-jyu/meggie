@@ -33,13 +33,13 @@ Created on Apr 25, 2013
 @author: Jaakko Leppakangas
 Contains the AddEOGProjections-class used for adding EOG projections.
 """
+
 import glob
-
-
 import mne
 
 from PyQt4 import QtCore,QtGui
-from addProjectionsUi import Ui_Dialog
+
+from ui.preprocessing.addProjectionsUi import Ui_Dialog
 from code_meggie.general.caller import Caller
 
 class AddEOGProjections(QtGui.QDialog):

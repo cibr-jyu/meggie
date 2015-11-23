@@ -38,8 +38,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
 
 from code_meggie.general.experiment import Experiment
-import messageBoxes
-from createExperimentDialogUi import Ui_CreateExperimentDialog
+from ui.general import messageBoxes
+from ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
 
  
 class CreateExperimentDialog(QtGui.QDialog):

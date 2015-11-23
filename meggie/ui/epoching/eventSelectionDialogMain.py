@@ -40,9 +40,9 @@ from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
 
-from eventSelectionDialogUi import Ui_EventSelectionDialog
-from groupEpochingDialogMain import GroupEpochingDialog
-from fixedLengthEpochDialogMain import FixedLengthEpochDialog
+from ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
+from ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
+from ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from code_meggie.general.caller import Caller
 from code_meggie.epoching.events import Events
 from code_meggie.general import fileManager

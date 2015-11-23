@@ -6,10 +6,10 @@ Created on 26.2.2015
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import pyqtSignal
-
-from powerSpectrumWidgetUi import Ui_PowerSpectrumWidget
-from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 from PyQt4.Qt import QPoint, QMenu
+
+from ui.widgets.powerSpectrumWidgetUi import Ui_PowerSpectrumWidget
+from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 
 
 class PowerSpectrumWidget(QtGui.QWidget):

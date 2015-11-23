@@ -4,10 +4,9 @@ Created on 30.1.2015
 @author: Kari Aliranta
 '''
 
-
-
 from PyQt4 import QtGui
-from forwardModelSkipDialogUi import Ui_DialogForwardModelSkip
+
+from ui.sourceModeling.forwardModelSkipDialogUi import Ui_DialogForwardModelSkip
 
 
 class ForwardModelSkipDialog(QtGui.QDialog):

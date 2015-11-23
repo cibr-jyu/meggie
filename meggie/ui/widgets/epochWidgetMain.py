@@ -10,7 +10,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
 from code_meggie.general.caller import Caller
-from epochWidgetUi import Ui_Form
+
+from ui.widgets.epochWidgetUi import Ui_Form
 
 class EpochWidget(QtGui.QWidget):
     """

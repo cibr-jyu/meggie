@@ -5,9 +5,13 @@ Created on 10.11.2014
 '''
 
 from PyQt4 import QtCore, QtGui
-from holdCoregistrationDialogUi import Ui_DialogHoldCoregistration
-import fileManager
+
+from ui.sourceMoeling.holdCoregistrationDialogUi import Ui_DialogHoldCoregistration
+
+from code_meggie.general import fileManager
+
 import os
+
 
 class holdCoregistrationDialog(QtGui.QDialog):
     

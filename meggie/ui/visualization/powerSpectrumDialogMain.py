@@ -9,11 +9,12 @@ import numpy as np
 from mne import find_events
 
 from code_meggie.general.caller import Caller
-from powerSpectrumDialogUi import Ui_PowerSpectrumDialog
-from timeSeriesDialogMain import TimeSeriesDialog
+from code_meggie.general import fileManager
+
+from ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from ui.visualization.timeSeriesDialogMain import TimeSeriesDialog
 from ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
 from ui.general.messageBoxes import shortMessageBox
-from code_meggie.general import fileManager
 
 
 class PowerSpectrumDialog(QtGui.QDialog):

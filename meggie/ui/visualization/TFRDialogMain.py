@@ -35,7 +35,7 @@ Contains the TFRDialog-class used for creating TFRs.
 """
 from PyQt4 import QtCore, QtGui
 
-from TFRfromEpochsUi import Ui_DialogEpochsTFR
+from ui.visualization.TFRfromEpochsUi import Ui_DialogEpochsTFR
 from code_meggie.general.caller import Caller
 from ui.general.messageBoxes import shortMessageBox
 

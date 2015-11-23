@@ -8,7 +8,7 @@ from PyQt4 import QtCore, QtGui
 
 import mne
 
-from visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
+from ui.visualization.visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
 
 
 class VisualizeEpochChannelDialog(QtGui.QDialog):

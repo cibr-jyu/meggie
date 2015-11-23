@@ -37,10 +37,12 @@ the application.
 """
 
 import os
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
-from preferencesDialogUi import Ui_DialogPreferences
-import messageBoxes
+
+from ui.general.preferencesDialogUi import Ui_DialogPreferences
+from ui.general import messageBoxes
 
 
 class PreferencesDialog(QtGui.QDialog):

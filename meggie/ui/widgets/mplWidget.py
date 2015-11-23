@@ -5,9 +5,8 @@ Created on Aug 8, 2013
 '''
 
 from PyQt4 import QtGui
-#from IPython.external.qt_for_kernel import matplotlib
-from matplotlib.backends.backend_qt4agg \
-    import FigureCanvasQTAgg as FigureCanvas
+
+import  matplotlib.backends.backend_qt4agg.FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 

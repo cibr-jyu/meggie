@@ -45,13 +45,6 @@ os.environ['QT_API'] = 'pyqt'
 sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) +
                 "/externalModules/")
 
-# Recursively append everything in Meggie to syspath to make running from
-# command line viable
-runpath = os.path.dirname(os.path.abspath(__file__))
-for root, dirs, files in os.walk(runpath):
-    if runpath is not root:
-        sys.path.append(root)
-
 from ui.general import mainWindowMain
 if __name__ == '__main__':
     mainWindowMain.main()

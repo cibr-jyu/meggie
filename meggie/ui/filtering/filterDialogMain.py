@@ -6,12 +6,13 @@ Created on Aug 20, 2013
 '''
 import mne
 from PyQt4 import QtCore,QtGui
-from filterDialogUi import Ui_DialogFilter
+
+from ui.filtering.filterDialogUi import Ui_DialogFilter
+from ui.general import messageBoxes
 
 from code_meggie.general.caller import Caller
-from measurementInfo import MeasurementInfo
+from code_meggie.general.measurementInfo import MeasurementInfo
 
-import messageBoxes
 from copy import deepcopy
 
 class FilterDialog(QtGui.QDialog):

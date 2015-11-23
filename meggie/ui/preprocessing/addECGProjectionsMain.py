@@ -33,15 +33,16 @@ Created on Apr 25, 2013
 @author: Jaakko Leppakangas
 Contains the AddECGProjections-class used for adding ECG projections.
 """
-import glob
 
+import glob
 import mne
 
 from PyQt4 import QtCore,QtGui
 
 from code_meggie.general.caller import Caller
-from addProjectionsUi import Ui_Dialog
-import messageBoxes
+
+from ui.preprocessing.addProjectionsUi import Ui_Dialog
+from ui.general import messageBoxes
 
 class AddECGProjections(QtGui.QDialog):
     """

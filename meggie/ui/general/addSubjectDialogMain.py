@@ -37,16 +37,16 @@ Created on Oct 31, 2013
 '''
 from PyQt4 import QtCore, QtGui
 
-from addSubjectDialogUi import Ui_AddSubject
+from ui.general.addSubjectDialogUi import Ui_AddSubject
+from ui.general.infoDialogUi import Ui_infoDialog
+from ui.general.infoDialogMain import InfoDialog
+from ui.general import messageBoxes
+
 from code_meggie.general.caller import Caller
-import fileManager
-from infoDialogMain import InfoDialog
-import messageBoxes
+from code_meggie.general import fileManager
+
 import traceback
-
 import os
-
-from infoDialogUi import Ui_infoDialog
 
 
 class AddSubjectDialog(QtGui.QDialog):

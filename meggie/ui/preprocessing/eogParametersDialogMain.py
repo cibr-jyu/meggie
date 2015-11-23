@@ -43,12 +43,11 @@ import traceback
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import pyqtSignal
 
-from projectorDialog import ProjectorDialog
-from eogParametersDialogUi import Ui_Dialog
+from ui.preprocessing.projectorDialog import ProjectorDialog
+from ui.preprocessing.eogParametersDialogUi import Ui_Dialog
+from ui.general import messageBoxes
 
-import fileManager
-
-import messageBoxes
+from code_meggie.general import fileManager
 
 
 class EogParametersDialog(ProjectorDialog):

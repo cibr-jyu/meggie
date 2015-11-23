@@ -8,8 +8,9 @@ from PyQt4 import QtGui, QtCore
 import mne
 import numpy as np
 
-from timeSeriesDialogUi import Ui_TimeSeriesDialog
+from ui.visualization.timeSeriesDialogUi import Ui_TimeSeriesDialog
 from ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
+
 from code_meggie.general.caller import Caller
 
 

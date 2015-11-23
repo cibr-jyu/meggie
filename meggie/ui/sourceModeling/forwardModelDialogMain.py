@@ -7,11 +7,12 @@ Created on 30.6.2014
 
 from PyQt4 import QtGui
 
-from forwardModelDialogUi import Ui_forwardModelDialog
-from code_meggie.general.caller import Caller
-import messageBoxes
-import string
+from ui.sourceModeling.forwardModelDialogUi import Ui_forwardModelDialog
+from ui.general import messageBoxes
 
+from code_meggie.general.caller import Caller
+
+import string
 import fileManager
 import re
 

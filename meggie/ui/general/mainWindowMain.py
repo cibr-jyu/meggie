@@ -41,50 +41,50 @@ import os
 import sys
 import traceback
 import shutil
+import sip
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QAbstractItemView
 from PyQt4.Qt import QApplication
-import sip
 
 from mne.evoked import write_evokeds
 
 import matplotlib
 matplotlib.use('Qt4Agg')
 
-from mainWindowUi import Ui_MainWindow
-from createExperimentDialogMain import CreateExperimentDialog
-from addSubjectDialogMain import AddSubjectDialog
-from infoDialogMain import InfoDialog
-from channelSelectionDialogMain import ChannelSelectionDialog
+from ui.general.mainWindowUi import Ui_MainWindow
+from ui.general.createExperimentDialogMain import CreateExperimentDialog
+from ui.general.addSubjectDialogMain import AddSubjectDialog
+from ui.general.infoDialogMain import InfoDialog
+from ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 from ui.epoching.eventSelectionDialogMain import EventSelectionDialog
 from ui.visualization import visualizeEpochChannelDialogMain
 from ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
 from ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
-from preferencesDialogMain import PreferencesDialog
-from evokedStatsDialogMain import EvokedStatsDialog
+from ui.general.preferencesDialogMain import PreferencesDialog
+from ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from ui.visualization.TFRDialogMain import TFRDialog
 from ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
 from ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
 from ui.widgets.epochWidgetMain import EpochWidget
-from aboutDialogMain import AboutDialog
+from ui.general.aboutDialogMain import AboutDialog
 from ui.filtering.filterDialogMain import FilterDialog
 from ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
-from experimentInfoDialogMain import experimentInfoDialog
+from ui.experimentInfoDialogMain import experimentInfoDialog
 from ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
 from ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-import messageBoxes
+from ui.general import messageBoxes
+from ui.widgets.listWidget import ListWidget
 
 from code_meggie.general import experiment
 from code_meggie.general.experiment import Experiment
 from code_meggie.general.prefecences import PreferencesHandler
 from code_meggie.general import fileManager
-from ui.widgets.listWidget import ListWidget
 from code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from code_meggie.general.caller import Caller
 

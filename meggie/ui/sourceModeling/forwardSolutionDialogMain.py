@@ -7,11 +7,12 @@ Created on 19.12.2014
 
 from PyQt4 import QtGui
 
-from forwardSolutionDialogUi import Ui_DialogCreateFSolution
-import messageBoxes
+from code_meggie.general.caller import Caller
+
+from ui.sourceModeling.forwardSolutionDialogUi import Ui_DialogCreateFSolution
+from ui.general import messageBoxes
 
 import multiprocessing
-from code_meggie.general.caller import Caller
 
 
 class ForwardSolutionDialog(QtGui.QDialog):

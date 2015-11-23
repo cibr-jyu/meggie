@@ -1,5 +1,4 @@
 # coding: latin1
-from shortMessageBoxUi import Ui_shortMessageBox
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -35,8 +34,9 @@ longMessageBox for longer messages that need a scrolling content area.
 """
 
 from PyQt4 import QtCore, QtGui
-from longMessageBoxUi import Ui_LongMessageBoxDialog
-from shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
+from ui.general.longMessageBoxUi import Ui_LongMessageBoxDialog
+from ui.general.shortMessageBoxUi import Ui_shortMessageBox
+from ui.general.shortMessageBoxQuestionYesNoUi import Ui_shortMessageBoxQuestionYesNo
 
 
 class shortMessageBox(QtGui.QDialog):

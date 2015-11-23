@@ -5,7 +5,8 @@ Created on 27.1.2015
 """
 
 from PyQt4 import QtCore, QtGui
-from covarianceWidgetNoneUi import Ui_Form
+
+from ui.widgets.covarianceWidgetNoneUi import Ui_Form
 
 
 class CovarianceWidgetNone(QtGui.QWidget):

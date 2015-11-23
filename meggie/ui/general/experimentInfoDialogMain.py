@@ -5,7 +5,7 @@ Created on 9.4.2014
 '''
 
 from PyQt4 import QtCore, QtGui
-from experimentInfoDialogUi import Ui_experimentInfoDialog
+from ui.general.experimentInfoDialogUi import Ui_experimentInfoDialog
 from code_meggie.general.caller import Caller
 
 class experimentInfoDialog(QtGui.QDialog):

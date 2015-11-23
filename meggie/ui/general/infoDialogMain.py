@@ -34,10 +34,12 @@ a raw data file.
 """
 
 import sys
-from PyQt4 import QtCore, QtGui
-from infoDialogUi import Ui_infoDialog
-from measurementInfo import MeasurementInfo
 import mne
+
+from PyQt4 import QtCore, QtGui
+
+from ui.general.infoDialogUi import Ui_infoDialog
+from code_meggeie.general.measurementInfo import MeasurementInfo
 
 
 class InfoDialog(QtGui.QDialog):
