@@ -11,9 +11,9 @@ from ui.sourceModeling.forwardModelDialogUi import Ui_forwardModelDialog
 from ui.general import messageBoxes
 
 from code_meggie.general.caller import Caller
+from code_meggie.general import fileManager
 
 import string
-import fileManager
 import re
 
 class ForwardModelDialog(QtGui.QDialog):

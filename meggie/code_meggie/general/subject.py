@@ -43,11 +43,13 @@ import glob
 import numpy as np
 import mne
 
-import fileManager
+from code_meggie.general import fileManager
 from code_meggie.epoching.epochs import Epochs
 from code_meggie.epoching.evoked import Evoked
 from code_meggie.sourceModeling.forwardModels import ForwardModels
+
 from ui.general import messageBoxes
+
 
 class Subject(QObject):
     

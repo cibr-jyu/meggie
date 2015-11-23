@@ -39,16 +39,17 @@ import re
 import shutil
 import gc
 import csv
+
 from threading import Event
 
-import fileManager
-from subject import Subject
-from ui.general import messageBoxes
+from code_meggie.general import fileManager
+from code_meggie.general.subject import Subject
 from code_meggie.general.caller import Caller
+
+from ui.general import messageBoxes
 
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
-
 
 
 # Better to use pickle rather than cpickle, as experiment paths may

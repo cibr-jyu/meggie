@@ -1907,4 +1907,4 @@ class Ui_MainWindow(object):
         self.actionToggle_whatsthis_mode.setToolTip(_translate("MainWindow", "Click this, then click something in the user interface to get more info about it", None))
         self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
 
-import mainWindowIcons_rc
+from ui.icons import mainWindowIcons_rc

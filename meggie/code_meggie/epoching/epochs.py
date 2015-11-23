@@ -37,10 +37,9 @@ from PyQt4.QtCore import QObject
 
 import mne
 
-#import pylab as pl
 import numpy as np
 
-import messageBoxes
+from ui.general import messageBoxes
 
 class Epochs(QObject):
     

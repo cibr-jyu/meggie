@@ -13,7 +13,7 @@ from PyQt4.QtGui import QFont
 import os
 
 from code_meggie.general.caller import Caller
-import fileManager
+from code_meggie.general import fileManager
 
 
 class ForwardModelModel(QtCore.QAbstractTableModel):

@@ -31,21 +31,23 @@ from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
+
 from os import listdir
 from os.path import isfile, join
 from subprocess import CalledProcessError
 from threading import Thread, Event, activeCount
 from multiprocessing.pool import ThreadPool
 from time import sleep
+from copy import deepcopy
 
 from ui.general import messageBoxes
-import fileManager
 from ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
+
+from code_meggie.general import fileManager
 from code_meggie.epoching.epochs import Epochs
-from measurementInfo import MeasurementInfo
-from singleton import Singleton
-from copy import deepcopy
+from code_meggie.general.measurementInfo import MeasurementInfo
+from code_meggie.general.singleton import Singleton
 
 
 @Singleton

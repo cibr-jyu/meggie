@@ -35,7 +35,7 @@ Contains unit tests for the Statistic class.
 """
 import unittest
 
-from statistic import Statistic
+from code_meggie.general.statistic import Statistic
 
 class TestStatistic(unittest.TestCase):
     """

@@ -73,7 +73,7 @@ from ui.widgets.epochWidgetMain import EpochWidget
 from ui.general.aboutDialogMain import AboutDialog
 from ui.filtering.filterDialogMain import FilterDialog
 from ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
-from ui.experimentInfoDialogMain import experimentInfoDialog
+from ui.general.experimentInfoDialogMain import experimentInfoDialog
 from ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
 from ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone

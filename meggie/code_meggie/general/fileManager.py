@@ -10,11 +10,12 @@ A module for various file operations needed by Meggie.
 import mne
 
 import os
-from os.path import isfile, join
 import pickle
 import shutil
 import glob
 import re
+
+from os.path import isfile, join
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
@@ -24,8 +25,8 @@ from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-import messageBoxes
-from statistic import Statistic
+from ui.general import messageBoxes
+from code_meggie.general.statistic import Statistic
     
     
 def copy_recon_files(aSubject, sourceDirectory):

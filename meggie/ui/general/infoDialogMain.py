@@ -39,7 +39,7 @@ import mne
 from PyQt4 import QtCore, QtGui
 
 from ui.general.infoDialogUi import Ui_infoDialog
-from code_meggeie.general.measurementInfo import MeasurementInfo
+from code_meggie.general.measurementInfo import MeasurementInfo
 
 
 class InfoDialog(QtGui.QDialog):

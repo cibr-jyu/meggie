@@ -33,13 +33,8 @@ Created on Mar 28, 2013
 @author: Jaakko Leppakangas
 Contains the Validator-class for validating different types.
 """
+
 import re
-
-
-
-"""
-Contains validators and parsers for different types.
-"""
 
 
 def __init__(self):

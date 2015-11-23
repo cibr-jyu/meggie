@@ -13,7 +13,6 @@ those parameters is impossible, needlessly compilicated or resource-hungry.
 import csv
 import os
     
-    
 
 def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):
