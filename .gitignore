@@ -1,6 +1,7 @@
 *.pyc
 *.swp
 *~
+meggie.egg-info
 preferences.cfg
 *.~lock.*
 *.orig
