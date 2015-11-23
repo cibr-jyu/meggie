@@ -1,6 +1,8 @@
 *.pyc
 *.swp
 *~
+build
+dist
 meggie.egg-info
 preferences.cfg
 *.~lock.*
