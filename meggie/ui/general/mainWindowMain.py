@@ -1,4 +1,5 @@
 # coding: latin1
+from mne.utils import set_log_level
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
 # Atte Rautio>
@@ -48,6 +49,7 @@ from PyQt4.QtGui import QWhatsThis, QAbstractItemView
 from PyQt4.Qt import QApplication
 
 from mne.evoked import write_evokeds
+import mne
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -1831,5 +1833,12 @@ def main():
     window = MainWindow(app)
 
     window.showMaximized()
+    a = mne.get_config_path()
+    
+    print a
+
+    mne.set_log_level('DEBUG')
+    
+    mne.set_log_file('logs', '%(asctime)s - %(levelname)s - %(message)', None)     
 
     sys.exit(app.exec_())
