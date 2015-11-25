@@ -43,6 +43,8 @@ import sys
 import traceback
 import shutil
 import sip
+import logging
+from mne.utils import logger
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QAbstractItemView
@@ -1833,12 +1835,15 @@ def main():
     window = MainWindow(app)
 
     window.showMaximized()
-    a = mne.get_config_path()
-    
-    print a
 
-    mne.set_log_level('DEBUG')
+    #logger = logging.getLogger('mne')
+    #mne.utils.set_log_file('reallogs.log', '%(message)', None)  
+    #mne.utils.set_log_level('INFO')
     
-    mne.set_log_file('logs', '%(asctime)s - %(levelname)s - %(message)', None)     
+    # TODO: new logging system for Meggie
+    logger = logging.getLogger('meggie')  # one selection here used across mne-python
+    logger.propagate = False  # don't propagate (in case of multiple imports)
+    logging.basicConfig(filename='reallogs.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.info('Config file in path: ' + mne.get_config_path())
 
     sys.exit(app.exec_())
