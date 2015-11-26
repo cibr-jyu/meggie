@@ -46,6 +46,10 @@ class WorkFlowLogger(object):
         """Initializes the logger and adds a handler to it that handles writing and formatting
         the logs to a file.         
         """
+        #TODO: try JSON or YAML
+        #TODO: If you use FileHandler for writing logs, the size of log file will grow with time.
+        #Someday, it will occupy all of your disk. In order to avoid that situation, you should
+        #use RotatingFileHandler instead of FileHandler in production environment.
         handler = logging.FileHandler('log.log')
         handler.setLevel(logging.INFO)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
