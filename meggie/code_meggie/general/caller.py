@@ -64,6 +64,8 @@ class Caller(object):
     _experiment = None
     e = Event()
     result = None #Used for storing exceptions from threads.
+    
+    #TODO: not sure yet if this is the right way, just a test so far
     _workFlowLogger = None
 
     def __init__(self):
@@ -124,8 +126,7 @@ class Caller(object):
     def set_logger_for_activated_subject(self, name):
          self.workFlowLogger = WorkFlowLogger(self)
          self.workFlowLogger.initialize_logger(name)
-         self.workFlowLogger.info('Testing the logger')
-         self.workFlowLogger.info
+         self.workFlowLogger.logger.info('Testing the logger')
 
     def index_as_time(self, sample):
         """
@@ -658,6 +659,7 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
+        self.workFlowLogger.log_dictionary(epoch_params)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """

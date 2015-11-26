@@ -31,11 +31,10 @@ class WorkFlowLogger(object):
         """
         Constructor
         """
+        #copied stuff from MNE-Python utils.py
         self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
         self._logger.propagate = False  # don't propagate (in case of multiple imports)
-        #self._caller = Caller.Instance()
         
-
     @property
     def logger(self):
         """
@@ -44,13 +43,21 @@ class WorkFlowLogger(object):
         return self._logger
         
     def initialize_logger(self, path):
-        #handler = logging.FileHandler(os.path.join(path, 'log.log'))
+        """Initializes the logger and adds a handler to it that handles writing and formatting
+        the logs to a file.         
+        """
         handler = logging.FileHandler('log.log')
         handler.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('%(message)s')
         handler.setFormatter(formatter)
         self._logger.addHandler(handler)
-        #self._logger.info('Testing')
-        #handler = logging.FileHandler(os.path.join(self.caller.experiment._active_subject_name, 'log.log'))
+        self._logger.setLevel(logging.INFO)
+        
+        
+    def log_dictionary(self, parameters):
+        for key, value in parameters.items():
+            self._logger.info(str(key) + ' ' + str(value))
+        
         
         
