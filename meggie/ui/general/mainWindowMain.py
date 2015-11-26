@@ -91,6 +91,7 @@ from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListM
 from meggie.code_meggie.general.caller import Caller
 
 
+
 class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
@@ -108,7 +109,7 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog = None
         self.tfr_dialog = None
         self.tfrTop_dialog = None
-
+        
         # List of subprocesses, used for terminating MNE-C processes on Meggie
         # quit.
         self.processes = []

@@ -48,6 +48,7 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
+from meggie.code_meggie.general.workFlowLogger import WorkFlowLogger
 
 
 @Singleton
@@ -63,6 +64,7 @@ class Caller(object):
     _experiment = None
     e = Event()
     result = None #Used for storing exceptions from threads.
+    _workFlowLogger = None
 
     def __init__(self):
         """Constructor"""
@@ -83,6 +85,14 @@ class Caller(object):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
+
+    @property
+    def workFlowLogger(self):
+        return self._workFlowLogger
+    
+    @workFlowLogger.setter
+    def workFlowLogger(self, workFlowLogger):
+        self._workFlowLogger = workFlowLogger
 
     def activate_subject(self, name):
         """
@@ -109,6 +119,13 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
+        self.set_logger_for_activated_subject(name)
+        
+    def set_logger_for_activated_subject(self, name):
+         self.workFlowLogger = WorkFlowLogger(self)
+         self.workFlowLogger.initialize_logger(name)
+         self.workFlowLogger.info('Testing the logger')
+         self.workFlowLogger.info
 
     def index_as_time(self, sample):
         """
