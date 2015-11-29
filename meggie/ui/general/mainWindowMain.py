@@ -83,7 +83,7 @@ from meggie.ui.widgets.listWidget import ListWidget
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
-from meggie.code_meggie.general.prefecences import PreferencesHandler
+from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from meggie.code_meggie.general.caller import Caller
