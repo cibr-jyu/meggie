@@ -48,7 +48,7 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
-from meggie.code_meggie.general.workFlowLogger import WorkFlowLogger
+from meggie.code_meggie.general.actionLogger import ActionLogger
 
 
 @Singleton
@@ -66,7 +66,7 @@ class Caller(object):
     result = None #Used for storing exceptions from threads.
     
     #TODO: not sure yet if this is the right way, just a test so far
-    _workFlowLogger = None
+    _actionLogger = None
 
     def __init__(self):
         """Constructor"""
@@ -89,12 +89,12 @@ class Caller(object):
         self._experiment = experiment
 
     @property
-    def workFlowLogger(self):
-        return self._workFlowLogger
+    def actionLogger(self):
+        return self._actionLogger
     
-    @workFlowLogger.setter
-    def workFlowLogger(self, workFlowLogger):
-        self._workFlowLogger = workFlowLogger
+    @actionLogger.setter
+    def actionLogger(self, actionLogger):
+        self._actionLogger = actionLogger
 
     def activate_subject(self, name):
         """
@@ -124,9 +124,9 @@ class Caller(object):
         self.set_logger_for_activated_subject(name)
         
     def set_logger_for_activated_subject(self, name):
-         self.workFlowLogger = WorkFlowLogger(self)
-         self.workFlowLogger.initialize_logger(name)
-         self.workFlowLogger.logger.info('Testing the logger')
+         self.actionLogger = ActionLogger(self)
+         self.actionLogger.initialize_logger(name)
+         self.actionLogger.logger.info('Testing the logger')
 
     def index_as_time(self, sample):
         """
@@ -650,6 +650,7 @@ class Caller(object):
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
+            self.actionLogger.log_error('Create epoch collection', epoch_params, str(e))
             return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -659,7 +660,7 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
-        self.workFlowLogger.log_dictionary(epoch_params)
+        self.actionLogger.log_success('Create epoch collection', epoch_params)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
@@ -1641,7 +1642,9 @@ class Caller(object):
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
-
+        
+        self._actionLogger.log_dictionary('Power spectrum', params)
+        
         async_result = pool.apply_async(self._compute_spectrum,
                                         (raw, params,))
         while(True):
@@ -1682,6 +1685,7 @@ class Caller(object):
             f.close()
 
         print "Plotting power spectrum..."
+        self._actionLogger.log_dictionary()
         self.parent.update_ui()
 
         def my_callback(ax, ch_idx):

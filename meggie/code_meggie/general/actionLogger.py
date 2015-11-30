@@ -21,7 +21,7 @@ import logging
 
 
 
-class WorkFlowLogger(object):
+class ActionLogger(object):
     """
     classdocs
     """
@@ -34,6 +34,7 @@ class WorkFlowLogger(object):
         #copied stuff from MNE-Python utils.py
         self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
         self._logger.propagate = False  # don't propagate (in case of multiple imports)
+        self._actionCounter = 1;
         
     @property
     def logger(self):
@@ -59,9 +60,29 @@ class WorkFlowLogger(object):
         self._logger.setLevel(logging.INFO)
         
         
-    def log_dictionary(self, parameters):
-        for key, value in parameters.items():
-            self._logger.info(str(key) + ' ' + str(value))
+    def log_params(self, function_name, params, msg):
+        """
+        
+        """
+        self._logger.info('----------')
+        self._logger.info('>' + self._actionCounter)
+        self._logger.info(function_name + ': ' + msg)
+        for key, value in params.items():
+            self._logger.info(str(key) + ',' + str(value))
+        self._actionCounter += 1
+        
+    def log_success(self, function_name, params):
+        msg = 'The action was successful.'
+        self.log_params(function_name, params, msg)
+        
+    def log_error(self, function_name, params, error):
+        msg = 'The action was not successful. It raised the following ERROR: ' + error
+        self.log_params(function_name, params, msg)
+        
+    def log_warning(self, function_name, params, warning):
+        msg = 'The action was successful, but it raised the following WARNING: ' + warning
+        self.log_params(function_name, params, msg)
+        
         
         
         
