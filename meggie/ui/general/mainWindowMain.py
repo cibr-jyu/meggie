@@ -214,7 +214,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
-
+                
     def update_ui(self):
         """
         Method for repainting the ui.

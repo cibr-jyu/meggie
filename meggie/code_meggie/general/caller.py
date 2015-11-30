@@ -71,7 +71,7 @@ class Caller(object):
     def __init__(self):
         """Constructor"""
         print "Caller created"
-
+        
     def setParent(self, parent):
         """
         Keyword arguments:
@@ -79,7 +79,7 @@ class Caller(object):
                          updating the ui and keeping it responsive.
         """
         self.parent = parent
-
+        
     @property
     def experiment(self):
         return self._experiment
@@ -87,7 +87,7 @@ class Caller(object):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
-
+ 
     @property
     def actionLogger(self):
         return self._actionLogger
@@ -121,12 +121,13 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.set_logger_for_activated_subject(name)
+        self.set_logger_for_experiment(os.path.join(self._experiment._workspace, self._experiment._experiment_name))
+        self.actionLogger.log_message('Activated subject: ' + name)
         
-    def set_logger_for_activated_subject(self, name):
+    def set_logger_for_experiment(self, name):
          self.actionLogger = ActionLogger(self)
          self.actionLogger.initialize_logger(name)
-         self.actionLogger.logger.info('Testing the logger')
+         self.actionLogger.logger.info('Created/Opened the experiment: ' + name)
 
     def index_as_time(self, sample):
         """
