@@ -48,7 +48,6 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
-from meggie.code_meggie.general.actionLogger import ActionLogger
 
 
 @Singleton
@@ -111,16 +110,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
         self.parent.action_logger.log_message('Activated subject: ' + name)
-            
-        
-    def set_logger_for_activated_subject(self, path):
-        if self.actionLogger is not None:
-            del(self.actionLogger)
-        self.actionLogger = ActionLogger(self)
-        self.actionLogger.initialize_logger(path)
-        self.actionLogger.logger.info('----------')
-        self.actionLogger.logger.info('Experiment: ' + self._experiment._experiment_name)
-
+    
     def index_as_time(self, sample):
         """
         Aux function for converting sample to time.
@@ -643,7 +633,7 @@ class Caller(object):
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
-            self.actionLogger.log_error('Create epoch collection', epoch_params, str(e))
+            self.parent.action_logger.log_error('Create epoch collection', epoch_params, str(e))
             return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -653,7 +643,7 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
-        self.actionLogger.log_success('Create epoch collection', epoch_params)
+        self.parent.action_logger.log_success('Create epoch collection', epoch_params)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
@@ -1636,7 +1626,6 @@ class Caller(object):
         self.result = None
         pool = ThreadPool(processes=1)
         
-        self._actionLogger.log_dictionary('Power spectrum', params)
         
         async_result = pool.apply_async(self._compute_spectrum,
                                         (raw, params,))
@@ -1678,7 +1667,7 @@ class Caller(object):
             f.close()
 
         print "Plotting power spectrum..."
-        self._actionLogger.log_dictionary()
+        self.parent.action_logger.log_success('Power spectrum', params)
         self.parent.update_ui()
 
         def my_callback(ax, ch_idx):
