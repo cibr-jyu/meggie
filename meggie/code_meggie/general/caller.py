@@ -121,13 +121,16 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.set_logger_for_experiment(os.path.join(self._experiment._workspace, self._experiment._experiment_name))
+        self.set_logger_for_activated_subject(os.path.join(self._experiment._workspace, self._experiment._experiment_name, self._experiment._active_subject_name))
         self.actionLogger.log_message('Activated subject: ' + name)
         
-    def set_logger_for_experiment(self, name):
-         self.actionLogger = ActionLogger(self)
-         self.actionLogger.initialize_logger(name)
-         self.actionLogger.logger.info('Created/Opened the experiment: ' + name)
+    def set_logger_for_activated_subject(self, path):
+        if self.actionLogger is not None:
+            del(self.actionLogger)
+        self.actionLogger = ActionLogger(self)
+        self.actionLogger.initialize_logger(path)
+        self.actionLogger.logger.info('----------')
+        self.actionLogger.logger.info('Experiment: ' + self._experiment._experiment_name)
 
     def index_as_time(self, sample):
         """

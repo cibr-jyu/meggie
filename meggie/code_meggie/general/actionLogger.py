@@ -36,6 +36,7 @@ class ActionLogger(object):
         self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
         self._logger.propagate = False  # don't propagate (in case of multiple imports)
         self._actionCounter = 1;
+        self.initialize_logger()
         
     @property
     def logger(self):
@@ -44,7 +45,7 @@ class ActionLogger(object):
         """
         return self._logger
         
-    def initialize_logger(self, path):
+    def initialize_logger(self):
         """Initializes the logger and adds a handler to it that handles writing and formatting
         the logs to a file.
         
@@ -55,7 +56,7 @@ class ActionLogger(object):
         #TODO: If you use FileHandler for writing logs, the size of log file will grow with time.
         #Someday, it will occupy all of your disk. In order to avoid that situation, you should
         #use RotatingFileHandler instead of FileHandler in production environment.
-        handler = logging.FileHandler(os.path.join(path, 'log.log'))
+        handler = logging.FileHandler('meggie_log.log')
         handler.setLevel(logging.INFO)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         formatter = logging.Formatter('%(asctime)s - %(message)s')

@@ -1,5 +1,4 @@
 # coding: latin1
-from mne.utils import set_log_level
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
 # Atte Rautio>
@@ -89,6 +88,7 @@ from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.actionLogger import ActionLogger
 
 
 
@@ -214,6 +214,8 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
+           
+        self.actionLogger = None
                 
     def update_ui(self):
         """
@@ -1834,5 +1836,7 @@ def main():
     window = MainWindow(app)
 
     window.showMaximized()
+    
+    window.actionLogger = ActionLogger()
 
     sys.exit(app.exec_())
