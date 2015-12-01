@@ -65,9 +65,6 @@ class Caller(object):
     e = Event()
     result = None #Used for storing exceptions from threads.
     
-    #TODO: not sure yet if this is the right way, just a test so far
-    _actionLogger = None
-
     def __init__(self):
         """Constructor"""
         print "Caller created"
@@ -87,14 +84,6 @@ class Caller(object):
     @experiment.setter
     def experiment(self, experiment):
         self._experiment = experiment
- 
-    @property
-    def actionLogger(self):
-        return self._actionLogger
-    
-    @actionLogger.setter
-    def actionLogger(self, actionLogger):
-        self._actionLogger = actionLogger
 
     def activate_subject(self, name):
         """
@@ -121,8 +110,8 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.set_logger_for_activated_subject(os.path.join(self._experiment._workspace, self._experiment._experiment_name, self._experiment._active_subject_name))
-        self.actionLogger.log_message('Activated subject: ' + name)
+        self.parent.action_logger.logger.log_message('Activated subject: ' + name)
+            
         
     def set_logger_for_activated_subject(self, path):
         if self.actionLogger is not None:

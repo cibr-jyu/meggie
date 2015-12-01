@@ -215,8 +215,16 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
            
-        self.actionLogger = None
-                
+        self.action_logger = None
+
+    @property
+    def action_logger(self):
+        return self.actionLogger
+
+    @action_logger.setter
+    def action_logger(self, value):
+        self.actionLogger = value
+
     def update_ui(self):
         """
         Method for repainting the ui.
@@ -1837,6 +1845,7 @@ def main():
 
     window.showMaximized()
     
-    window.actionLogger = ActionLogger()
+    window.action_logger = ActionLogger()
+    #TODO: initialize here
 
     sys.exit(app.exec_())

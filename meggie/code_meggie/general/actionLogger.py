@@ -27,11 +27,10 @@ class ActionLogger(object):
     """
 
 
-    def __init__(self, parent):
+    def __init__(self):
         """
         Constructor
         """
-        self.parent = parent
         #copied stuff from MNE-Python utils.py
         self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
         self._logger.propagate = False  # don't propagate (in case of multiple imports)
