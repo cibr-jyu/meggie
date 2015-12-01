@@ -104,6 +104,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        self.action_logger = ActionLogger()
+        self.action_logger.initialize_logger()
+        
         self.spectrumDialog = None
         self.filterDialog = None
         self.epochParameterDialog = None
@@ -214,9 +217,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
-           
-        self.action_logger = None
-
+        
     @property
     def action_logger(self):
         return self.actionLogger
@@ -1845,7 +1846,8 @@ def main():
 
     window.showMaximized()
     
-    window.action_logger = ActionLogger()
+    #window.action_logger = ActionLogger(window)
+    #window.action_logger.initialize_logger()
     #TODO: initialize here
 
     sys.exit(app.exec_())

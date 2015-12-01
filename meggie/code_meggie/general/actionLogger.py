@@ -35,7 +35,7 @@ class ActionLogger(object):
         self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
         self._logger.propagate = False  # don't propagate (in case of multiple imports)
         self._actionCounter = 1;
-        self.initialize_logger()
+        #self.initialize_logger()
         
     @property
     def logger(self):

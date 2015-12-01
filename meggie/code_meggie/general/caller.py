@@ -110,7 +110,7 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.parent.action_logger.logger.log_message('Activated subject: ' + name)
+        self.parent.action_logger.log_message('Activated subject: ' + name)
             
         
     def set_logger_for_activated_subject(self, path):
