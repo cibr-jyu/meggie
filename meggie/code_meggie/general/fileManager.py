@@ -746,8 +746,9 @@ def get_layouts():
     Finds the layout files from MNE_ROOT.
     Returns a list of strings of found files. 
     """
-    path = './externalModules/mne/channels/data/layouts'
     try:
+        import pkg_resources
+        path = pkg_resources.resource_filename('mne', 'channels/data/layouts')
         files = [ f[:-5] for f in os.listdir(path)\
                         if isfile(join(path,f)) and f.endswith('.lout') ]
     except:
