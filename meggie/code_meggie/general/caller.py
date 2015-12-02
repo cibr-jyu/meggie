@@ -109,7 +109,7 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.parent.action_logger.log_message('Activated subject: ' + name)
+        self.parent.action_logger.log_subject_activation(name)
     
     def index_as_time(self, sample):
         """
@@ -217,7 +217,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            self.parent.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
             return -1
+        self.parent.action_logger.log_success('Calculate ECG projections', dic)
         return 0
 
     def _call_ecg_ssp(self, dic, subject):
@@ -284,6 +286,7 @@ class Caller(object):
         except Exception, err:
             self.result = err
             self.e.set()
+            self.parent.action_logger.log_error('Calculate ECG projections', dic, str(err))
             return -1
 
         if len(events) == 0:
@@ -334,11 +337,14 @@ class Caller(object):
         while True:
             sleep(0.2)
             self.parent.update_ui()
-            if self.e.is_set(): break
+            if self.e.is_set():
+                if self.result == None: break
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            self.parent.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
             return -1
+        self.parent.action_logger.log_success('Calculate EOG projections', dic)
         return 0
 
     def _call_eog_ssp(self, dic, subject):

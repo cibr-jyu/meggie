@@ -58,7 +58,7 @@ class ActionLogger(object):
         handler = logging.FileHandler('meggie_log.log')
         handler.setLevel(logging.INFO)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        formatter = logging.Formatter('%(asctime)s - %(message)s')
+        formatter = logging.Formatter('%(message)s')
         handler.setFormatter(formatter)
         self._logger.addHandler(handler)
         self._logger.setLevel(logging.INFO)
@@ -66,32 +66,38 @@ class ActionLogger(object):
         
     def log_params(self, function_name, params, msg):
         """
-        
         """
-        self._logger.info('----------')
-        self._logger.info('>' + str(self._actionCounter))
-        self._logger.info(function_name + ': ' + msg)
+        self._logger.info('>>>')
+        self._logger.info(function_name)
+        self._logger.info(msg)
+        self._logger.info('>>>')
+        #self._logger.info('>' + str(self._actionCounter))
         if params != None:
             for key, value in params.items():
                 self._logger.info(str(key) + ',' + str(value))
         self._actionCounter += 1
         
     def log_success(self, function_name, params):
-        msg = 'The action was successful.'
+        msg = 'SUCCESS'
         self.log_params(function_name, params, msg)
         
     def log_error(self, function_name, params, error):
-        msg = 'The action was not successful. It raised the following ERROR: ' + error
+        msg = 'FAILURE: ' + error
         self.log_params(function_name, params, msg)
         
     def log_warning(self, function_name, params, warning):
-        msg = 'The action was successful, but it raised the following WARNING: ' + warning
+        msg = 'WARNING: ' + warning
         self.log_params(function_name, params, msg)
         
     def log_message(self, msg):
-        self._logger.info('----------')
-        self._logger.info('>' + str(self._actionCounter))
+        self._logger.info('#')
+        #self._logger.info('>' + str(self._actionCounter))
         self._logger.info(msg)
-        self._actionCounter += 1
+        self._logger.info('#')
+        #self._actionCounter += 1
         
+    def log_subject_activation(self, subject_name):
+        self._logger.info('----------------------------------------------------------------------------------------------------')
+        #self._logger.info('Activated subject: ')
+        self._logger.info(subject_name)
         
