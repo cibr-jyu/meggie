@@ -1774,10 +1774,12 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            self.parent.action_logger.log_error('Filtering', dic, str(self.result))
             self.result = None
             return dataToFilter
         filteredData = async_result.get()
         pool.terminate()
+        self.parent.action_logger.log_success('Filtering', dic)
         return filteredData
 
     def _filter(self, dataToFilter, info, dic):

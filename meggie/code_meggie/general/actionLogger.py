@@ -63,8 +63,7 @@ class ActionLogger(object):
         self._logger.addHandler(handler)
         self._logger.setLevel(logging.INFO)
         
-        
-    def log_params(self, function_name, params, msg):
+    def log_dict(self, function_name, params, msg):
         """
         """
         self._logger.info('>>>')
@@ -77,17 +76,36 @@ class ActionLogger(object):
                 self._logger.info(str(key) + ',' + str(value))
         self._actionCounter += 1
         
+    def log_list(self, function_name, params, msg):
+        self._logger.info('>>>')
+        self._logger.info(function_name)
+        self._logger.info(msg)
+        self._logger.info('>>>')
+        #self._logger.info('>' + str(self._actionCounter))
+        for param in params:
+            self._logger.info(str(param))
+        self._actionCounter += 1
+    
     def log_success(self, function_name, params):
         msg = 'SUCCESS'
-        self.log_params(function_name, params, msg)
+        if isinstance(params, dict):
+            self.log_dict(function_name, params, msg)
+        else:
+            self.log_list(function_name, params, msg)
         
     def log_error(self, function_name, params, error):
         msg = 'FAILURE: ' + error
-        self.log_params(function_name, params, msg)
+        if isinstance(params, dict):
+            self.log_dict(function_name, params, msg)
+        else:
+            self.log_list(function_name, params, msg)
         
     def log_warning(self, function_name, params, warning):
         msg = 'WARNING: ' + warning
-        self.log_params(function_name, params, msg)
+        if isinstance(params, dict):
+            self.log_dict(function_name, params, msg)
+        else:
+            self.log_list(function_name, params, msg)
         
     def log_message(self, msg):
         self._logger.info('#')
@@ -100,4 +118,6 @@ class ActionLogger(object):
         self._logger.info('----------------------------------------------------------------------------------------------------')
         #self._logger.info('Activated subject: ')
         self._logger.info(subject_name)
+        
+        
         

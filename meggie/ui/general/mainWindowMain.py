@@ -974,6 +974,8 @@ class MainWindow(QtGui.QMainWindow):
         def handle_close(event):
             self.caller.save_raw()
             self._initialize_ui()
+            bads = self.caller.experiment.active_subject.working_file.info['bads']
+            self.action_logger.log_success('Raw plot bad channels selected', bads)
         if self.ui.checkBoxShowEvents.isChecked():
             events = self.caller.experiment.active_subject.get_events()
         else:
