@@ -112,6 +112,7 @@ class ActionLogger(object):
         
     def log_error(self, function_name, params, error):
         msg = 'FAILURE: ' + error
+        msg = self.include_notifications_to_msg(msg)
         self.create_header(function_name, msg)
         if isinstance(params, dict):
             self.log_dict(params)
@@ -120,6 +121,7 @@ class ActionLogger(object):
         
     def log_warning(self, function_name, params, warning):
         msg = 'WARNING: ' + warning
+        msg = self.include_notifications_to_msg(msg)
         self.create_header(function_name, msg)
         if isinstance(params, dict):
             self.log_dict(params)

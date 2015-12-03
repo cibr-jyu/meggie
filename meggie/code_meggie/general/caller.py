@@ -433,6 +433,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
             self.result = None
+            self.parent.action_logger.log_error('Apply ' + str(kind), projs, msg)
             return 1
         self.e.clear()
         self.result = None
@@ -447,9 +448,11 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            self.parent.action_logger.log_error('Apply ' + str(kind), projs, str(self.result))
             self.result = None
             return 1
         else:
+            self.parent.action_logger.log_success('Apply ' + str(kind), projs)
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
@@ -481,7 +484,21 @@ class Caller(object):
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
         raw.save(fname, overwrite=True)
-        raw = mne.io.Raw(fname, preload=True)
+        
+        """
+        MNE (raw._read_raw_file) warning (in case not MaxFiltered?):
+        This file contains raw Internal Active
+        Shielding data. It may be distorted. Elekta
+        recommends it be run through MaxFilter to
+        produce reliable results. Consider closing
+        the file and running MaxFilter on the data.
+        Use allow_maxshield=True if you are sure you
+        want to load the data despite this warning.
+        
+        TODO: make Meggie recover from this warning and notify the user
+        about the warning. Return the state as it was before applying exg.
+        """
+        raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
         self.e.set()
