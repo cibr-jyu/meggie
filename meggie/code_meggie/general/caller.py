@@ -1626,6 +1626,7 @@ class Caller(object):
                 message = 'Could not read layout information.'
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
+                self.parent.action_logger.log_error('Plot power spectrum', params, message)
                 return
         raw = self.experiment.active_subject.working_file
         self.e.clear()
@@ -1643,6 +1644,7 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
+            self.parent.action_logger.log_error('Power spectrum', params, str(self.result))
             self.result = None
             return
 
@@ -1673,7 +1675,6 @@ class Caller(object):
             f.close()
 
         print "Plotting power spectrum..."
-        self.parent.action_logger.log_success('Power spectrum', params)
         self.parent.update_ui()
 
         def my_callback(ax, ch_idx):
