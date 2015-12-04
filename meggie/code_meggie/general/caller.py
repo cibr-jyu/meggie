@@ -448,11 +448,11 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
+            self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
             self.result = None
             return 1
         else:
-            #self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
+            self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
