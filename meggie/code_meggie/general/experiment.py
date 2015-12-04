@@ -45,6 +45,7 @@ from threading import Event
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.actionLogger import ActionLogger
 
 from meggie.ui.general import messageBoxes
 
@@ -95,6 +96,8 @@ class Experiment(QObject):
         self._subject_paths = []
         self._working_file_names = dict()
         self.main_window = None
+        
+        self._action_logger = None
 
     @property
     def experiment_name(self):
@@ -227,6 +230,14 @@ class Experiment(QObject):
         """
         self._active_subject = subject
 
+    @property
+    def action_logger(self):
+        return self._action_logger
+
+    @action_logger.setter
+    def action_logger(self, action_logger):
+        self._action_logger = action_logger
+    
     def is_ready(self):
         """
         Method for polling threaded processes.
@@ -744,7 +755,9 @@ class ExperimentHandler(QObject):
         # experiment. Also tell the MVC models they can initialize themselves.
         #self.parent.add_tabs()
         #self.parent._initialize_ui() 
-        #self.parent.reinitialize_models() 
+        #self.parent.reinitialize_models()
+        
+        self.initialize_logger(experiment)
         return experiment
 
     def open_existing_experiment(self, name):
@@ -811,3 +824,8 @@ class ExperimentHandler(QObject):
             mBox = messageBoxes.shortMessageBox(message)
             mBox.exec_()
             return
+
+    def initialize_logger(self, experiment):
+        
+        experiment._action_logger = ActionLogger()
+        experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))

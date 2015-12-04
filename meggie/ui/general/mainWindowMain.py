@@ -88,7 +88,7 @@ from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from meggie.code_meggie.general.caller import Caller
-from meggie.code_meggie.general.actionLogger import ActionLogger
+#from meggie.code_meggie.general.actionLogger import ActionLogger
 
 
 
@@ -104,8 +104,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        self.action_logger = ActionLogger()
-        self.action_logger.initialize_logger()
+        #self.action_logger = ActionLogger()
+        #self.action_logger.initialize_logger()
         
         self.spectrumDialog = None
         self.filterDialog = None
@@ -218,14 +218,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
         
-    @property
-    def action_logger(self):
-        return self.actionLogger
-
-    @action_logger.setter
-    def action_logger(self, value):
-        self.actionLogger = value
-
     def update_ui(self):
         """
         Method for repainting the ui.

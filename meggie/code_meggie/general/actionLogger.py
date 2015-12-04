@@ -32,7 +32,7 @@ class ActionLogger(object):
         return self._logger
     
         
-    def initialize_logger(self):
+    def initialize_logger(self, path):
         """Initializes the logger and adds a handler to it that handles writing and formatting
         the logs to a file.
         
@@ -43,8 +43,8 @@ class ActionLogger(object):
         #TODO: If you use FileHandler for writing logs, the size of log file will grow with time.
         #Someday, it will occupy all of your disk. In order to avoid that situation, you should
         #use RotatingFileHandler instead of FileHandler in production environment.
-        home = expanduser("~")
-        handler = logging.FileHandler(os.path.join(home, 'meggie.log'))
+        #home = expanduser("~")
+        handler = logging.FileHandler(os.path.join(path, 'meggie.log'))
         handler.setLevel(logging.INFO)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         formatter = logging.Formatter('%(message)s')

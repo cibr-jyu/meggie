@@ -99,7 +99,8 @@ class Caller(object):
 
         while(True):
             sleep(0.2)
-            if self.experiment.is_ready(): break;
+            if self.experiment.is_ready(): #async_result.ready()
+                break
             self.parent.update_ui()
 
         return_val = async_result.get()
@@ -109,7 +110,7 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.parent.action_logger.log_subject_activation(name)
+        self.experiment.action_logger.log_subject_activation(name)
     
     def index_as_time(self, sample):
         """
@@ -217,9 +218,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.parent.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
+            self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
             return -1
-        self.parent.action_logger.log_success('Calculate ECG projections', dic)
+        self.experiment.action_logger.log_success('Calculate ECG projections', dic)
         return 0
 
     def _call_ecg_ssp(self, dic, subject):
@@ -286,7 +287,7 @@ class Caller(object):
         except Exception, err:
             self.result = err
             self.e.set()
-            self.parent.action_logger.log_error('Calculate ECG projections', dic, str(err))
+            self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(err))
             return -1
 
         if len(events) == 0:
@@ -342,9 +343,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.parent.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
+            self.experiment.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
             return -1
-        self.parent.action_logger.log_success('Calculate EOG projections', dic)
+        self.experiment.action_logger.log_success('Calculate EOG projections', dic)
         return 0
 
     def _call_eog_ssp(self, dic, subject):
@@ -433,7 +434,7 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
             self.result = None
-            #self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, msg)
+            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, msg)
             return 1
         self.e.clear()
         self.result = None
@@ -448,11 +449,11 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
+            self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
             self.result = None
             return 1
         else:
-            self.parent.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
+            self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
@@ -667,7 +668,7 @@ class Caller(object):
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
-            self.parent.action_logger.log_error('Create epoch collection', epoch_params, str(e))
+            self.experiment.action_logger.log_error('Create epoch collection', epoch_params, str(e))
             return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -677,7 +678,7 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
-        self.parent.action_logger.log_success('Create epoch collection', epoch_params)
+        self.experiment.action_logger.log_success('Create epoch collection', epoch_params)
 
     def draw_evoked_potentials(self, evokeds, layout):#, category):
         """
@@ -1654,7 +1655,7 @@ class Caller(object):
                 message = 'Could not read layout information.'
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
-                self.parent.action_logger.log_error('Plot power spectrum', params, message)
+                self.experiment.action_logger.log_error('Plot power spectrum', params, message)
                 return
         raw = self.experiment.active_subject.working_file
         self.e.clear()
@@ -1672,7 +1673,7 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.parent.action_logger.log_error('Power spectrum', params, str(self.result))
+            self.experiment.action_logger.log_error('Power spectrum', params, str(self.result))
             self.result = None
             return
 
@@ -1803,12 +1804,12 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.parent.action_logger.log_error('Filtering', dic, str(self.result))
+            self.experiment.action_logger.log_error('Filtering', dic, str(self.result))
             self.result = None
             return dataToFilter
         filteredData = async_result.get()
         pool.terminate()
-        self.parent.action_logger.log_success('Filtering', dic)
+        self.experiment.action_logger.log_success('Filtering', dic)
         return filteredData
 
     def _filter(self, dataToFilter, info, dic):
