@@ -2,9 +2,11 @@
 
 from Queue import Queue
 from Queue import Empty
-from multiprocessing.pool import ThreadPool
 from time import sleep
 from sys import exc_info
+from multiprocessing.pool import ThreadPool
+from meggie.ui.general import messageBoxes
+
 
 def threaded(func):
     def decorated(*args, **kwargs):
@@ -23,6 +25,7 @@ def threaded(func):
         while True:
             try:
                 exc = bucket.get(block=False)
+                pool.terminate()
                 raise exc[0], exc[1].message, exc[2]
             except Empty:
                 pass
@@ -31,6 +34,22 @@ def threaded(func):
             if do_meanwhile:
                 do_meanwhile()
             sleep(0.2)
+         
+        result = async_result.get()
+        pool.terminate()
 
-        return async_result.get()
+        return result
+    return decorated
+
+
+def messaged(func):
+    def decorated(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except:
+            exc = exc_info()
+            messageBox = messageBoxes.shortMessageBox(exc[1].message)
+            messageBox.show()
+            raise exc[0], exc[1].message, exc[2]
+        return result
     return decorated
