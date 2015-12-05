@@ -47,17 +47,22 @@ def _setup_caller():
     caller.parent = parent
 
 
-def test_call_ecg_ssp():
-    """Test calling ecg_ssp."""
+def test_call_exg_ssp():
+    """Test calling ecg_ssp and eog_ssp."""
     _setup_caller()
     raw = caller.experiment.get_subjects()[0]._working_file
-    params = {'i': raw, 'tmin': -0.2, 'tmax': 0.5, 'event-id': 1,
-              'ecg-l-freq': 0.6, 'ecg-h-freq': 50, 'n-grad': 2, 'n-mag': 2,
-              'n-eeg': 2, 'l-freq': 0, 'h-freq': 50, 'rej-grad': 2000,
-              'rej-mag': 2000, 'rej-eeg': 60, 'rej-eog': 100, 'qrs': 0.5,
+    params = {'i': raw, 'tmin': -0.1, 'tmax': 0.1, 'event-id': 999,
+              'ecg-l-freq': 1., 'ecg-h-freq': 50., 'n-grad': 1, 'n-mag': 1,
+              'n-eeg': 1, 'l-freq': 0, 'h-freq': 50, 'rej-grad': 2000,
+              'rej-mag': 2000, 'rej-eeg': 60, 'rej-eog': 100, 'qrs': 'auto',
               'bads': '', 'tstart': 0, 'filtersize': 5, 'n-jobs': 1,
               'avg-ref': False, 'no-proj': False, 'average': False,
               'ch_name': None}
     result = caller._call_ecg_ssp(params, caller.experiment.get_subjects()[0])
+    assert_equal(caller.result, None)
+    assert_equal(result, None)
+
+    params.update({'eog-l-freq': 1., 'eog-h-freq': 40.})
+    result = caller._call_eog_ssp(params, caller.experiment.get_subjects()[0])
     assert_equal(caller.result, None)
     assert_equal(result, None)
