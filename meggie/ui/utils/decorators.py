@@ -10,6 +10,8 @@ from meggie.ui.general import messageBoxes
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
+import traceback
+
 
 def threaded(func):
     def decorated(*args, **kwargs):
@@ -53,6 +55,7 @@ def messaged(func):
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
             result = func(*args, **kwargs)
         except Exception as e:
+            traceback.print_exc()
             parent_window.messageBox = messageBoxes.shortMessageBox(e.args[0])
             parent_window.messageBox.show()
             QtGui.QApplication.restoreOverrideCursor()
