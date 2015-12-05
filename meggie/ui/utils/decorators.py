@@ -7,6 +7,9 @@ from sys import exc_info
 from multiprocessing.pool import ThreadPool
 from meggie.ui.general import messageBoxes
 
+from PyQt4 import QtCore
+from PyQt4 import QtGui
+
 
 def threaded(func):
     def decorated(*args, **kwargs):
@@ -26,7 +29,7 @@ def threaded(func):
             try:
                 exc = bucket.get(block=False)
                 pool.terminate()
-                raise exc[0], exc[1].message, exc[2]
+                raise exc[0], exc[1].args[0], exc[2]
             except Empty:
                 pass
             if async_result.ready():
@@ -44,12 +47,16 @@ def threaded(func):
 
 def messaged(func):
     def decorated(*args, **kwargs):
+        parent_window = kwargs.pop('parent_window', None)
         try:
+            QtGui.QApplication.setOverrideCursor(
+                QtGui.QCursor(QtCore.Qt.WaitCursor))
             result = func(*args, **kwargs)
-        except:
-            exc = exc_info()
-            messageBox = messageBoxes.shortMessageBox(exc[1].message)
-            messageBox.show()
-            raise exc[0], exc[1].message, exc[2]
+        except Exception as e:
+            parent_window.messageBox = messageBoxes.shortMessageBox(e.args[0])
+            parent_window.messageBox.show()
+            QtGui.QApplication.restoreOverrideCursor()
+            return
+        QtGui.QApplication.restoreOverrideCursor()
         return result
     return decorated
