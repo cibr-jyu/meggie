@@ -43,6 +43,8 @@ from copy import deepcopy
 from meggie.ui.general import messageBoxes
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
+from meggie.ui.utils.decorators import messaged
+from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
@@ -84,6 +86,8 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
+    @messaged
+    @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -92,24 +96,9 @@ class Caller(object):
         """
         if name == '':
             return
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self.experiment.activate_subject,
-                                        (name,))
-
-        while(True):
-            sleep(0.2)
-            if self.experiment.is_ready(): break;
-            self.parent.update_ui()
-
-        return_val = async_result.get()
-        pool.terminate()
-
-        if not return_val == 0:
-            msg = 'Could not set %s as active subject. Check console.' % name
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
-
+        self.experiment.activate_subject(name)
+    
     def index_as_time(self, sample):
         """
         Aux function for converting sample to time.

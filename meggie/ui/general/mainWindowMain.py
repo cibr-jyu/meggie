@@ -1185,8 +1185,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.listViewSubjects.selectedIndexes() == []:
             return
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
 
@@ -1197,12 +1195,13 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.activate_subject(subject_name)
+        self.caller.activate_subject(subject_name,
+                                     do_meanwhile=self.update_ui,
+                                     parent_window=self)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -1825,7 +1824,7 @@ def exception_hook(exctype, value, tracebackObj):
 
 
 def main():
-    sys.excepthook = exception_hook
+    # sys.excepthook = exception_hook
 
     app = QtGui.QApplication(sys.argv)
     window = MainWindow(app)

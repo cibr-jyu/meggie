@@ -327,14 +327,11 @@ class Experiment(QObject):
         subject_name -- name of the subject
         """
         # Remove raw files from memory before activating new subject.
-        self.e.clear()
         self.release_memory()
         self._active_subject_name = subject_name
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
-            print 'There is no working file in the chosen subject folder.'
-            self.e.set()
-            return 1
+            raise Exception('There is no working file in the chosen subject folder.')
 
         # Checks if the subject with subject_name already exists in subjects list.
         for subject in self._subjects:
@@ -344,15 +341,8 @@ class Experiment(QObject):
                 self._active_subject_name = subject.subject_name
                 # Check if the working file is actually loaded already (in the
                 # case of addSubjectDialogMain accept() method).
-                try:
-                    self.load_working_file(subject)
-                except Exception as e:
-                    print str(e)
-                    self.e.set()
-                    return 1
+                self.load_working_file(subject)
                 self.save_experiment_settings()
-        self.e.set()
-        return 0
  
     def create_subject(self, subject_name, experiment, raw_path):
         """Creates a Subject when adding a new one to the experiment.
@@ -577,7 +567,6 @@ class Experiment(QObject):
             except OSError:
                 raise Exception('No rights to save to the chosen path or' + 
                                 ' experiment name already exists. \n')
-                return
         
         # String conversion, because shutil doesn't accept QStrings
         settingsFileName = str(self._experiment_name + '.exp')
@@ -799,7 +788,9 @@ class ExperimentHandler(QObject):
             if caller.experiment.workspace != working_directory:
                 caller.experiment.workspace = working_directory
             self.parent.update_ui()
-            caller.activate_subject(caller._experiment._active_subject_name)
+            caller.activate_subject(caller._experiment._active_subject_name,
+                                    do_meanwhile=self.parent.update_ui,
+                                    parent_window=self.parent)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
