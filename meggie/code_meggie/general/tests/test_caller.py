@@ -4,7 +4,9 @@ Created on Dec 5, 2015
 @author: Jaakko Leppakangas
 '''
 import sys
+import os
 from PyQt4 import QtGui
+from numpy.testing import assert_equal
 
 from mne.utils import _TempDir
 from mne.datasets import sample
@@ -26,10 +28,14 @@ def _get_experiment():
     """Helper for constructing experiment."""
     exp = experiment.Experiment()
     exp.workspace = tempdir._path
+    os.chmod(tempdir._path, 0777)
     exp.name = 'test'
     sub = subject.Subject(exp, 'test_sub')
-    sub.raw_data = Raw(fname)
+    sub._working_file = Raw(fname, preload=True)
     exp.add_subject(sub)
+    path = os.path.join(tempdir._path, 'experiment')
+    os.mkdir(path)
+    sub.save_raw(fname, sub.subject_path)
     return exp
 
 
@@ -44,11 +50,14 @@ def _setup_caller():
 def test_call_ecg_ssp():
     """Test calling ecg_ssp."""
     _setup_caller()
-    params = {'i': fname, 'tmin': -0.2, 'tmax': 0.5, 'event-id': 1,
-              'ecg-l-freq': 0, 'ecg-h-freq': 50, 'n-grad': 2, 'n-mag': 2,
+    raw = caller.experiment.get_subjects()[0]._working_file
+    params = {'i': raw, 'tmin': -0.2, 'tmax': 0.5, 'event-id': 1,
+              'ecg-l-freq': 0.6, 'ecg-h-freq': 50, 'n-grad': 2, 'n-mag': 2,
               'n-eeg': 2, 'l-freq': 0, 'h-freq': 50, 'rej-grad': 2000,
               'rej-mag': 2000, 'rej-eeg': 60, 'rej-eog': 100, 'qrs': 0.5,
               'bads': '', 'tstart': 0, 'filtersize': 5, 'n-jobs': 1,
               'avg-ref': False, 'no-proj': False, 'average': False,
               'ch_name': None}
-    caller.call_ecg_ssp(params, caller.experiment.get_subjects()[0])
+    result = caller._call_ecg_ssp(params, caller.experiment.get_subjects()[0])
+    assert_equal(caller.result, None)
+    assert_equal(result, None)
