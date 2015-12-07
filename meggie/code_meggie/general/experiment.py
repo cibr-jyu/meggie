@@ -341,6 +341,7 @@ class Experiment(QObject):
         self.e.clear()
         self.release_memory()
         self._active_subject_name = subject_name
+        print 'working file name asetetaan'
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
             print 'There is no working file in the chosen subject folder.'
@@ -653,6 +654,10 @@ class Experiment(QObject):
         odict = self.__dict__.copy()
         del odict['_subjects']
         del odict['_active_subject']
+        
+        #if action_logger is pickled, subject activation thread gets locked at least when adding
+        #a new subject to it 
+        del odict['_action_logger']
         #del odict['_active_subject']
         
         
