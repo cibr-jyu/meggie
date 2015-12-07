@@ -237,7 +237,7 @@ class Experiment(QObject):
     @action_logger.setter
     def action_logger(self, action_logger):
         self._action_logger = action_logger
-    
+        
     def is_ready(self):
         """
         Method for polling threaded processes.
@@ -804,6 +804,7 @@ class ExperimentHandler(QObject):
             try:
                 output = open(fname, 'rb')
                 caller._experiment = pickle.load(output)
+                self.initialize_logger(caller._experiment)
             except Exception as e:
                 print str(e)
                 return
@@ -821,6 +822,7 @@ class ExperimentHandler(QObject):
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
+            
 
             self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
@@ -831,6 +833,8 @@ class ExperimentHandler(QObject):
             return
 
     def initialize_logger(self, experiment):
-        
+
+        print 'Initializing logger'        
         experiment._action_logger = ActionLogger()
         experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
+        print 'Logger initialized'

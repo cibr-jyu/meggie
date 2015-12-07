@@ -6,6 +6,7 @@ Created on 26.11.2015
 import os
 import logging
 from os.path import expanduser
+from logging.handlers import RotatingFileHandler
 
 class ActionLogger(object):
     """
@@ -18,8 +19,8 @@ class ActionLogger(object):
         Constructor
         """
         #copied stuff from MNE-Python utils.py
-        self._logger = logging.getLogger('meggie')  # one selection here used across Meggie
-        self._logger.propagate = False  # don't propagate (in case of multiple imports)
+        self._logger = None  #logging.getLogger('meggie')  # one selection here used across Meggie
+        #self._logger.propagate = False  # don't propagate (in case of multiple imports)
         self._actionCounter = 1;
         self._notifications = []
         #self.initialize_logger()
@@ -30,6 +31,10 @@ class ActionLogger(object):
         Returns the logger.
         """
         return self._logger
+    
+    @logger.setter
+    def logger(self, logger):
+        self._logger = logger
     
         
     def initialize_logger(self, path):
@@ -44,7 +49,9 @@ class ActionLogger(object):
         #Someday, it will occupy all of your disk. In order to avoid that situation, you should
         #use RotatingFileHandler instead of FileHandler in production environment.
         #home = expanduser("~")
+        self._logger = logging.getLogger(path)
         handler = logging.FileHandler(os.path.join(path, 'meggie.log'))
+        #handler = RotatingFileHandler(os.path.join(path, 'meggie.log'))
         handler.setLevel(logging.INFO)
         #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         formatter = logging.Formatter('%(message)s')
