@@ -77,6 +77,24 @@ class ActionLogger(object):
         self._actionCounter += 1
         self._logger.info('*End dict*')
         
+    def log_mne_func_call(self, working_file, mne_function, params):
+        #Logging to single row
+        self._logger.info('>>>')
+        self._logger.info('Raw: ' + working_file)
+        self._logger.info(mne_function + '(' + str(params) + ')')
+        #params_str = str(params)
+        """
+        #Logging to multiple rows
+        self._logger.info('Raw: ' + working_file)
+        self._logger.info(mne_function + '(')
+        if params != None:
+            #for key, value in params.items():
+                #self._logger.info(str(key) + ',' + str(value))
+            for item in params.items():
+                self._logger.info(str(item))
+        self._logger.info(')')
+        """
+             
     def log_list(self, params):
         """
         Logs parameters from list
@@ -181,6 +199,8 @@ class ActionLogger(object):
         msg = self.include_notifications_to_msg(msg)
         self.create_header(function_name, msg)
         self.log_list(merged_list)
+        
+        
         
     def create_header(self, function_name, msg):
         """

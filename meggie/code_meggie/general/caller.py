@@ -13,6 +13,9 @@ import traceback
 import fnmatch
 import re
 import shutil
+import inspect
+from inspect import getcallargs
+import linecache
 
 from PyQt4 import QtCore, QtGui
 
@@ -218,9 +221,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
+            #self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
             return -1
-        self.experiment.action_logger.log_success('Calculate ECG projections', dic)
+        #self.experiment.action_logger.log_success('Calculate ECG projections', dic)
         return 0
 
     def _call_ecg_ssp(self, dic, subject):
@@ -277,17 +280,13 @@ class Caller(object):
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
         try:
-            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, ch_name,
-                                             reject, flat, bads, eeg_proj,
-                                             excl_ssp, event_id, ecg_low_freq,
-                                             ecg_high_freq, start,
-                                             qrs_threshold)
+            working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
+            mne_function = compute_proj_ecg.__name__
+            self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
+            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold)
         except Exception, err:
             self.result = err
             self.e.set()
-            self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(err))
             return -1
 
         if len(events) == 0:
@@ -343,9 +342,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.experiment.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
+            #self.experiment.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
             return -1
-        self.experiment.action_logger.log_success('Calculate EOG projections', dic)
+        #self.experiment.action_logger.log_success('Calculate EOG projections', dic)
         return 0
 
     def _call_eog_ssp(self, dic, subject):
@@ -389,6 +388,15 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
         try:
+            working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
+            mne_function = compute_proj_eog.__name__
+            self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(compute_proj_eog, raw_in, None, tmin, tmax, grad,
+                                             mag, eeg, filter_low, filter_high,
+                                             comp_ssp, taps, njobs, reject,
+                                             flat, bads, eeg_proj, excl_ssp,
+                                             event_id, eog_low_freq,
+                                             eog_high_freq, start))
+
             projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
                                              mag, eeg, filter_low, filter_high,
                                              comp_ssp, taps, njobs, reject,
@@ -449,11 +457,11 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
+            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
             self.result = None
             return 1
         else:
-            self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
+            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
@@ -480,6 +488,10 @@ class Caller(object):
             projs = np.array(projs)
         if not isinstance(applied, np.ndarray):
             applied = np.array(applied)
+        
+        working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
+        mne_function = raw.add_proj.__name__
+        self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(raw.add_proj, projs[applied]))
         raw.add_proj(projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
