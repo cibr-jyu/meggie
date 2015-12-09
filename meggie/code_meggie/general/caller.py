@@ -511,8 +511,8 @@ class Caller(object):
         TODO: make Meggie recover from this warning and notify the user
         about the warning. Return the state as it was before applying exg.
         """
-        raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
-        """TODO: try this code with the erroneous file
+        #raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
+        #TODO: try this code with the erroneous file
         try:
             raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
         except Exception as e:
@@ -521,8 +521,8 @@ class Caller(object):
             self.e.set()
             self.messageBox = messageBoxes.shortMessageBox(str(self.result) + '\nProceed with care.')
             self.messageBox.show()
-            #return
-        """
+            return
+        
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
         self.e.set()
