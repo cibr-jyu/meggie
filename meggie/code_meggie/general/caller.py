@@ -1780,7 +1780,7 @@ class Caller(object):
             plt.show()
 
         info = deepcopy(raw.info)
-        info['ch_names'] = _clean_names(info['ch_names'], remove_whitespace=True)
+        # info['ch_names'] = _clean_names(info['ch_names'], remove_whitespace=True)
         # Workaround for excluding IAS channels in the beginning for correct
         # indexing with iter_topography.
         while info['ch_names'][0].startswith('IAS'):
