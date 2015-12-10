@@ -146,6 +146,7 @@ class Epochs(QObject):
         if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object.')
         # Was mne.fiff.pick types with MNE 0.7
+        #TODO: log mne call
         picks = mne.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
                                eog=eog)
         if len(picks) == 0:
@@ -155,6 +156,7 @@ class Epochs(QObject):
             self.messageBox.show()
             return
         try:
+            #TODO: log mne call
             epochs = mne.Epochs(raw, events, category, tmin, tmax,
                                 picks=picks, reject=reject)
         except Exception as e:
