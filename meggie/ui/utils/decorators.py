@@ -63,3 +63,13 @@ def messaged(func):
         QtGui.QApplication.restoreOverrideCursor()
         return result
     return decorated
+
+
+def logged(func):
+    def decorated(*args):
+        params_str = ''
+        for key, value in args.items():
+            params_str += '{0} = {1}, '.format(str(key), str(value))
+        return '{0}({1})'.format(func.__name__, params_str)
+    return decorated
+

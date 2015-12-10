@@ -44,6 +44,7 @@ from time import sleep
 from copy import deepcopy
 
 from meggie.ui.general import messageBoxes
+from meggie.ui.utils import decorators
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
@@ -289,6 +290,7 @@ class Caller(object):
             self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
             """
             #TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call(self.wrap_mne_call(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
             projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold)
         except Exception, err:
             self.result = err
@@ -2387,3 +2389,8 @@ class Caller(object):
         self.experiment.active_subject.working_file = raw
         status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)
+
+    @decorators.logged
+    def wrap_mne_call(self, mne_func, *args):
+        #self.experiment.action_logger.log_mne_func_call(mne_func, *args)
+        return

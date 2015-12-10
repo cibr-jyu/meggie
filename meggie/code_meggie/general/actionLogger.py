@@ -94,6 +94,11 @@ class ActionLogger(object):
                 self._logger.info(str(item))
         self._logger.info(')')
         """
+
+    def log_mne_func_call_decorated(self, mne_call):
+        self._logger.info('>')
+        self._logger.info(mne_call)
+
              
     def log_list(self, params):
         """
@@ -239,3 +244,5 @@ class ActionLogger(object):
             #Remove notifications to prevent logging them after the next computation
             del self._notifications[:]
         return msg
+    
+    def wrap_mne_call(fun,*args):
