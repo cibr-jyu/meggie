@@ -1584,6 +1584,7 @@ class Caller(object):
             self.messageBox.show()
             return
 
+    @messaged
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.
@@ -1604,32 +1605,14 @@ class Caller(object):
                 lout = read_layout(params['lout'], scale=True)
             except Exception:
                 message = 'Could not read layout information.'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return
+                raise Exception(message)
         raw = self.experiment.active_subject.working_file
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._compute_spectrum,
-                                        (raw, params,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
+        psds = self._compute_spectrum(raw, params,
+                                      do_meanwhile=self.parent.update_ui)
 
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return
-
-        psds = async_result.get()
-        pool.terminate()
         if save_data:
             print 'Writing to file...'
-            self.parent.update_ui()
             exp_path = os.path.join(self.experiment.workspace,
                                     self.experiment.experiment_name)
             if not os.path.isdir(exp_path + '/output'):
@@ -1652,7 +1635,6 @@ class Caller(object):
             f.close()
 
         print "Plotting power spectrum..."
-        self.parent.update_ui()
 
         def my_callback(ax, ch_idx):
             """
@@ -1689,6 +1671,7 @@ class Caller(object):
         print raw.info['ch_names']
         plt.show()
 
+    @threaded
     def _compute_spectrum(self, raw, params):
         """Performed in a worker thread."""
         times = params['times']
@@ -1696,32 +1679,22 @@ class Caller(object):
         fmax = params['fmax']
         nfft = params['nfft']
         overlap = params['overlap']
-        try:
-            if params['ch'] == 'meg':
-                picks = mne.pick_types(raw.info, meg=True, eeg=False,
-                                       exclude=[])
-            elif params['ch'] == 'eeg':
-                picks = mne.pick_types(raw.info, meg=False, eeg=True,
-                                       exclude=[])
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+
+        if params['ch'] == 'meg':
+            picks = mne.pick_types(raw.info, meg=True, eeg=False,
+                                   exclude=[])
+        elif params['ch'] == 'eeg':
+            picks = mne.pick_types(raw.info, meg=False, eeg=True,
+                                   exclude=[])
         psdList = []
         for time in times:
-            try:
-                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
-                                              fmin=fmin, fmax=fmax, n_fft=nfft,
-                                              n_overlap=overlap, picks=picks,
-                                              proj=True, verbose=True)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
+            psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
+                                          fmin=fmin, fmax=fmax, n_fft=nfft,
+                                          n_overlap=overlap, picks=picks,
+                                          proj=True, verbose=True)
             if params['log']:
                 psds = 10 * np.log10(psds)
             psdList.append((psds, freqs))
-        self.e.set()
         return psdList
 
     def filter(self, dataToFilter, info, dic):
