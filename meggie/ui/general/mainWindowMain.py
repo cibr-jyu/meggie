@@ -777,8 +777,6 @@ class MainWindow(QtGui.QMainWindow):
         item = self.evokedList.currentItem()
         if item is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
 
         evoked_name = str(item.text())
         if '[' not in evoked_name or ']' not in evoked_name:
@@ -788,20 +786,16 @@ class MainWindow(QtGui.QMainWindow):
             mBox.exec_()
             QtGui.QApplication.restoreOverrideCursor()
             return
+
         groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
         groups = re.split('[-]', groups)  # ['1','2','3']
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         else:
             layout = str(self.ui.labelLayout.text())
-        try:
-            self.caller.plot_group_average(groups, layout)
-        except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
-                                                str(e))
-            mBox.exec_()
-        finally:
-            QtGui.QApplication.restoreOverrideCursor()
+
+        self.caller.plot_group_average(groups, layout,
+                                       parent_window=self)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """Exports the evoked data set to a user selected location."""

@@ -649,7 +649,6 @@ class Caller(object):
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
 
         title = mi.subject_name
-
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
         conditions = [e.comment for e in evokeds]
@@ -800,6 +799,7 @@ class Caller(object):
 
         return averageTitleString, dataList, evokeds
 
+    @messaged
     def plot_group_average(self, groups, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
@@ -808,48 +808,39 @@ class Caller(object):
         groups        -- A list of group names.
         layout        -- Layout used for plotting channels.
         """
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._group_average, 
-                                        (groups,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            if isinstance(self.result, Warning):
-                QtGui.QApplication.restoreOverrideCursor()
-                reply = QtGui.QMessageBox.question(self.parent, 
-                            "Evoked responses not found from every subject.",
-                            str(self.result) + \
-                            "Draw the evoked potentials anyway?",
-                            QtGui.QMessageBox.Yes,
-                            QtGui.QMessageBox.No)
-                self.result = None
-                if reply == QtGui.QMessageBox.No:
-                    return
-                else:
-                    QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
-            else:
-                self.messageBox = messageBoxes.shortMessageBox(str
-                                                               (self.result))
-                self.messageBox.show()
-                self.result = None
+        try:
+            evokeds, groups = self._group_average(
+                groups,
+                do_meanwhile=self.parent.update_ui
+            )
+        except Warning as e:
+            QtGui.QApplication.restoreOverrideCursor()
+            reply = QtGui.QMessageBox.question(
+                self.parent, 
+                "Evoked responses not found",
+                "Evoked responses not found from every subject. "
+                "Draw the evoked potentials anyway?",
+                QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No
+            )
+            if reply == QtGui.QMessageBox.No:
                 return
-
-        evokeds, groups = async_result.get()
-
-        pool.terminate()
+            else:
+                QtGui.QApplication.setOverrideCursor(
+                    QtGui.QCursor(QtCore.Qt.WaitCursor))
+                evokeds, groups = self._group_average(
+                    groups,
+                    ignore_not_found=True,
+                    do_meanwhile=self.parent.update_ui
+                )
 
         print "Plotting evoked..."
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
 
-    def _group_average(self, groups):
+    @threaded
+    def _group_average(self, groups, ignore_not_found=False):
         """Performed in a worker thread."""
         chs = self.experiment.active_subject.working_file.info['ch_names']
         chs = _clean_names(chs, remove_whitespace=True)
@@ -877,38 +868,34 @@ class Caller(object):
 
         print "Found " + str(len(files2ave)) + " subjects with evoked " + \
                         "responses labeled: " + str(groups)
-        if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) + \
-                                  " subjects of " + str(len(subjects)) + \
-                                  " with evoked responses labeled: " + \
-                                  str(groups) + "!\n")
+        if len(files2ave) < len(subjects) and not ignore_not_found:
+            raise Warning(" ".join([
+                "Found only", str(len(files2ave)),
+                "subjects of", str(len(subjects)),
+                "with evoked responses labeled:",
+                str(groups)
+            ]))
 
         evokedTmin = 0
         evokedInfo = []
-        print files2ave
         for f in files2ave:
             for group in groups:
-                try:
-                    evoked = mne.read_evokeds(f, condition=group)
-                    evokedTmin = evoked.first / evoked.info['sfreq']
-                    evokedInfo = evoked.info
-                except Exception as err:
-                    self.result = err
-                    self.e.set()
-                    return
+                evoked = mne.read_evokeds(f, condition=group)
+                evokedTmin = evoked.first / evoked.info['sfreq']
+                evokedInfo = evoked.info
+
                 info = evoked.info['ch_names']
                 info = _clean_names(info, remove_whitespace=True)
                 for cidx in xrange(len(info)):
                     ch_name = info[cidx]
                     if not ch_name in evokeds[group].keys():
-                        err = KeyError('%s not in channels. Make sure all '
+                        raise KeyError('%s not in channels. Make sure all '
                                        'data sets contain the same channel '
                                        'info.' % ch_name)
-                        self.result = err
-                        self.e.set()
-                        return
+
                     evokeds[group][ch_name].append(evoked.data[cidx])
                 eweights[group].append(evoked.nave)
+
         evs = []
         usedChannels = []
         bads = []
@@ -919,25 +906,20 @@ class Caller(object):
             evokedSet = []
             for ch in chs:
                 if len(evokeds[group][ch]) < length:
-                    if not ch in bads: bads.append(ch)
+                    if not ch in bads: 
+                        bads.append(ch)
                     continue
-                try:
-                    if not ch in usedChannels: usedChannels.append(ch)
-                    data = evokeds[group][ch]
-                    w = eweights[group]
-                    epoch_length = len(data[0])
-                    for d in data:
-                        if not len(d) == epoch_length:
-                            self.result = Exception("Epochs are different " +
-                                                    "in sizes!")
-                            self.e.set()
-                            return
-                    ave = np.average(data, axis=0, weights=w)
-                    evokedSet.append(ave)
-                except Exception as e:
-                    self.result = e
-                    self.e.set()
-                    return 
+                if not ch in usedChannels: 
+                    usedChannels.append(ch)
+                data = evokeds[group][ch]
+                w = eweights[group]
+                epoch_length = len(data[0])
+                for d in data:
+                    if not len(d) == epoch_length:
+                        raise Exception("Epochs are different " +
+                                        "in sizes!")
+                ave = np.average(data, axis=0, weights=w)
+                evokedSet.append(ave)
             evs.append(deepcopy(evokedSet))
 
         print 'Used channels: ' + str(usedChannels)
@@ -947,18 +929,12 @@ class Caller(object):
         evokedInfo['nchan'] = len(usedChannels)
 
         averagedEvokeds = []
-        try:
-            for groupidx in xrange(len(groups)):
-                averagedEvokeds.append(mne.EvokedArray(evs[groupidx],
-                                                       info=evokedInfo,
-                                                       tmin=evokedTmin,
-                                                       comment=groups
-                                                       [groupidx]))
-        except Exception as e:
-            print str(e)
-            self.result = e
-            self.e.set()
-            return
+        for groupidx in xrange(len(groups)):
+            averagedEvokeds.append(mne.EvokedArray(evs[groupidx],
+                                                   info=evokedInfo,
+                                                   tmin=evokedTmin,
+                                                   comment=groups
+                                                   [groupidx]))
 
         write2file = True
         if write2file:  # TODO add option in GUI for this
@@ -988,7 +964,6 @@ class Caller(object):
                     f.write('\n')
             f.close()
 
-        self.e.set()
         return averagedEvokeds, groups
 
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
