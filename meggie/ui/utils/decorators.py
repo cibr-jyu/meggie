@@ -11,6 +11,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import traceback
+from mistune import inspect
 
 
 def threaded(func):
@@ -68,8 +69,11 @@ def messaged(func):
 def logged(func):
     def decorated(*args):
         params_str = ''
-        for key, value in args.items():
+        for key, value in args[1].items():
             params_str += '{0} = {1}, '.format(str(key), str(value))
-        return '{0}({1})'.format(func.__name__, params_str)
+        if inspect.isclass(args[0]):
+            return '{0}({1})'.format(args[0].__class__.__name__, params_str)
+            return
+        return '{0}({1})'.format(args[0].__name__, params_str)
     return decorated
 

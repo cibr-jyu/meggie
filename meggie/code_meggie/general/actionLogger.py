@@ -96,7 +96,7 @@ class ActionLogger(object):
         """
 
     def log_mne_func_call_decorated(self, mne_call):
-        self._logger.info('>')
+        self._logger.info('--------------------')
         self._logger.info(mne_call)
 
              
@@ -164,13 +164,14 @@ class ActionLogger(object):
         """
         Logs given messages.
         TODO: let user write messages in Meggie to log them using this function
+              perhaps better create log_user_message method instead for unique separation
         
         Keyword arguments
         msg
         """
-        self._logger.info('#')
+        self._logger.info('--------------------')
         self._logger.info(msg)
-        self._logger.info('#')
+        #self._logger.info('#')
         #self._actionCounter += 1
         
     def log_subject_activation(self, subject_name):
@@ -245,4 +246,3 @@ class ActionLogger(object):
             del self._notifications[:]
         return msg
     
-    def wrap_mne_call(fun,*args):

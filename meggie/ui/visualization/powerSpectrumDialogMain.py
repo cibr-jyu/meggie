@@ -175,7 +175,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         save_data = self.ui.checkBoxSaveData.isChecked()
         if save_data is True:
             #Let logger know about the saved calculations
-            self.parent.action_logger.add_notification('Power spectrum calculation data saved to file under the experiment root.')
+            #self.parent.action_logger.add_notification('Power spectrum calculation data saved to file under the experiment root.')
+            pass
         if self.ui.radioButtonSelectLayout.isChecked():
             params['lout'] = str(self.ui.comboBoxLayout.currentText())
         elif self.ui.radioButtonLayoutFromFile.isChecked():
@@ -189,15 +190,15 @@ class PowerSpectrumDialog(QtGui.QDialog):
         try:
             self.caller.plot_power_spectrum(params, save_data, colors,
                                             channelColors)
-            self.parent.action_logger.log_success('Power spectrum', params)
+            #self.parent.action_logger.log_success('Power spectrum', params)
         except Exception as e:
             messageBox = QtGui.QMessageBox()
             messageBox.setText(str(e))
             QtGui.QApplication.restoreOverrideCursor()
             messageBox.exec_()
             
-            self.parent.action_logger.add_notification('Computation was successful but something happened during plotting: ' + str(e))
-            self.parent.action_logger.log_success('Power spectrum', params)
+            #self.parent.action_logger.add_notification('Computation was successful but something happened during plotting: ' + str(e))
+            #self.parent.action_logger.log_success('Power spectrum', params)
             return
 
         QtGui.QApplication.restoreOverrideCursor()

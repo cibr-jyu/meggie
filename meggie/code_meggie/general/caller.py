@@ -44,10 +44,10 @@ from time import sleep
 from copy import deepcopy
 
 from meggie.ui.general import messageBoxes
-from meggie.ui.utils import decorators
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
+from meggie.code_meggie.general import wrapper
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
@@ -66,7 +66,7 @@ class Caller(object):
     parent = None
     _experiment = None
     e = Event()
-    result = None #Used for storing exceptions from threads.
+    result = None  # Used for storing exceptions from threads.
     
     def __init__(self):
         """Constructor"""
@@ -103,7 +103,7 @@ class Caller(object):
 
         while(True):
             sleep(0.2)
-            if self.experiment.is_ready(): #async_result.ready()
+            if self.experiment.is_ready():  # async_result.ready()
                 break
             self.parent.update_ui()
 
@@ -114,7 +114,7 @@ class Caller(object):
             msg = 'Could not set %s as active subject. Check console.' % name
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        self.experiment.action_logger.log_subject_activation(name)
+        # self.experiment.action_logger.log_subject_activation(name)
     
     def index_as_time(self, sample):
         """
@@ -125,7 +125,8 @@ class Caller(object):
         """
         raw = self.experiment.active_subject.working_file
         
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.index_as_time, getcallargs(raw.index_as_time, sample - raw.first_samp, 0)))
         return raw.index_as_time(sample - raw.first_samp)[0]
 
     def call_mne_browse_raw(self, filename):
@@ -139,8 +140,8 @@ class Caller(object):
         if os.environ.get('MNE_ROOT') is None:
             raise Exception('Environment variable MNE_ROOT not set.')
 
-        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' +
-                                filename.rsplit('/', 1)[0] + ' --raw ' +
+        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' + 
+                                filename.rsplit('/', 1)[0] + ' --raw ' + 
                                 filename, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT)
         for line in proc.stdout.readlines():
@@ -158,7 +159,7 @@ class Caller(object):
         """
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._call_maxfilter, args=(params,
+        self.thread = Thread(target=self._call_maxfilter, args=(params,
                                                                   custom))
         self.thread.start()
         while True:
@@ -198,7 +199,8 @@ class Caller(object):
             return
 
         outputfile = params.get('-o')
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, getcallargs(mne.io.Raw, outputfile, preload=True)))
         raw = mne.io.Raw(outputfile, preload=True)
         self.update_experiment_working_file(outputfile, raw)
 
@@ -216,7 +218,7 @@ class Caller(object):
         """
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._call_ecg_ssp, args=(dic, subject))
+        self.thread = Thread(target=self._call_ecg_ssp, args=(dic, subject))
         self.thread.start()
         while True:
             sleep(0.2)
@@ -225,9 +227,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
+            # self.experiment.action_logger.log_error('Calculate ECG projections', dic, str(self.result))
             return -1
-        #self.experiment.action_logger.log_success('Calculate ECG projections', dic)
+        # self.experiment.action_logger.log_success('Calculate ECG projections', dic)
         return 0
 
     def _call_ecg_ssp(self, dic, subject):
@@ -287,11 +289,23 @@ class Caller(object):
             """
             working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
             mne_function = compute_proj_ecg.__name__
-            self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
+            self.experiment.action_logger.log_mne_func_call_decorated(working_file, mne_function, getcallargs(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
             """
-            #TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call(self.wrap_mne_call(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
-            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold)
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(compute_proj_ecg, getcallargs(compute_proj_ecg, raw_in, None,
+                                            tmin, tmax, grad, mag, eeg,
+                                            filter_low, filter_high, comp_ssp,
+                                            taps, njobs, ch_name, reject, flat,
+                                            bads, eeg_proj, excl_ssp, event_id,
+                                            ecg_low_freq, ecg_high_freq, start,
+                                            qrs_threshold)))
+            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
+                                             mag, eeg, filter_low, filter_high,
+                                             comp_ssp, taps, njobs, ch_name,
+                                             reject, flat, bads, eeg_proj,
+                                             excl_ssp, event_id, ecg_low_freq,
+                                             ecg_high_freq, start,
+                                             qrs_threshold)
         except Exception, err:
             self.result = err
             self.e.set()
@@ -307,7 +321,8 @@ class Caller(object):
 
         print "Writing ECG projections in %s" % ecg_proj_fname
         try:
-            #TODO: log mne call
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_proj, getcallargs(mne.write_proj, ecg_proj_fname, projs)))
             mne.write_proj(ecg_proj_fname, projs)
         except Exception as e:
             self.result = e
@@ -316,7 +331,8 @@ class Caller(object):
 
         print "Writing ECG events in %s" % ecg_event_fname
         try:
-            #TODO: log mne call
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_events, getcallargs(mne.write_events, ecg_event_fname, events)))
             mne.write_events(ecg_event_fname, events)
         except Exception as e:
             self.result = e
@@ -342,7 +358,7 @@ class Caller(object):
         """
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._call_eog_ssp, args=(dic, subject))
+        self.thread = Thread(target=self._call_eog_ssp, args=(dic, subject))
         self.thread.start()
         while True:
             sleep(0.2)
@@ -352,9 +368,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.experiment.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
+            # self.experiment.action_logger.log_error('Calculate EOG projections', dic, str(self.result))
             return -1
-        #self.experiment.action_logger.log_success('Calculate EOG projections', dic)
+        # self.experiment.action_logger.log_success('Calculate EOG projections', dic)
         return 0
 
     def _call_eog_ssp(self, dic, subject):
@@ -386,7 +402,7 @@ class Caller(object):
         eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
-        preload = True #TODO File
+        preload = True  # TODO File
         reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
                       eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
 
@@ -398,17 +414,13 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
         try:
-            """
-            working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
-            mne_function = compute_proj_eog.__name__
-            self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(compute_proj_eog, raw_in, None, tmin, tmax, grad,
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(compute_proj_eog, getcallargs(compute_proj_eog, raw_in, None, tmin, tmax, grad,
                                              mag, eeg, filter_low, filter_high,
                                              comp_ssp, taps, njobs, reject,
                                              flat, bads, eeg_proj, excl_ssp,
                                              event_id, eog_low_freq,
-                                             eog_high_freq, start))
-            """
-            #TODO: log mne call
+                                             eog_high_freq, start)))
             projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
                                              mag, eeg, filter_low, filter_high,
                                              comp_ssp, taps, njobs, reject,
@@ -425,11 +437,13 @@ class Caller(object):
             os.remove(preload)
 
         print "Writing EOG projections in %s" % eog_proj_fname
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_proj, getcallargs(mne.write_proj, eog_proj_fname, projs)))
         mne.write_proj(eog_proj_fname, projs)
 
         print "Writing EOG events in %s" % eog_event_fname
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_events, getcallargs(mne.write_events, eog_event_fname, events)))
         mne.write_events(eog_event_fname, events)
         self.e.set()
         """
@@ -456,11 +470,11 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
             self.result = None
-            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, msg)
+            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, msg)
             return 1
         self.e.clear()
         self.result = None
-        self.thread = Thread(target = self._apply_exg, args=(kind, raw,
+        self.thread = Thread(target=self._apply_exg, args=(kind, raw,
                                                              directory, projs,
                                                              applied))
         self.thread.start()
@@ -471,11 +485,11 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
+            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
             self.result = None
             return 1
         else:
-            #self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
+            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
@@ -487,7 +501,7 @@ class Caller(object):
             else:
                 fname = raw.info.get('filename')
         elif kind == 'eog':
-            if len(filter(os.path.isfile, 
+            if len(filter(os.path.isfile,
                       glob.glob(directory + '/*-ecg_applied.fif'))) > 0:
                 fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
             else:
@@ -505,14 +519,16 @@ class Caller(object):
         """
         working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
         mne_function = raw.add_proj.__name__
-        self.experiment.action_logger.log_mne_func_call(working_file, mne_function, getcallargs(raw.add_proj, projs[applied]))
+        self.experiment.action_logger.log_mne_func_call_decorated(working_file, mne_function, getcallargs(raw.add_proj, projs[applied]))
         """
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.add_proj, getcallargs(raw.add_proj, projs[applied])))
         raw.add_proj(projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.save, getcallargs(raw.save, fname, overwrite=True)))
         raw.save(fname, overwrite=True)
         
         """
@@ -528,11 +544,11 @@ class Caller(object):
         TODO: make Meggie recover from this warning and notify the user
         about the warning. Return the state as it was before applying exg.
         """
-        #raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
-        #TODO: try this code with the erroneous file
         try:
-            #TODO: log mne call
-            raw = mne.io.Raw(fname, preload=True) #add allow_maxshield=True if needed
+            raw = mne.io.Raw(fname, preload=True)  # add allow_maxshield=True if needed
+            # TODO: log filename of the saved raw?
+            self.experiment.action_logger.log_message('Working file changed to: ' + fname)
+            # self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, vars(raw)))
         except Exception as e:
             print 'Exception while applying ' + str(kind)
             self.result = e
@@ -563,7 +579,9 @@ class Caller(object):
         for epoch in epochs:
             for name in category.keys():
                 if name in epoch.event_id:
-                    #TODO: log mne call
+                    # TODO: log mne call
+                    # TODO: epochs is a list of epoch -> log to single line with a comma separator
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, epochs)))
                     evokeds.append(epoch[name].average())
         return evokeds
 
@@ -571,7 +589,8 @@ class Caller(object):
         """Aux function for updating the raw file."""
         raw = self.experiment.active_subject._working_file
         fname = raw.info['filename']
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.save, getcallargs(raw.save, fname, overwrite=True)))
         raw.save(fname, overwrite=True)
 
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
@@ -599,7 +618,7 @@ class Caller(object):
         """
         self.e.clear()
         self.result = ''  # Result as string
-        self.thread = Thread(target = self._batchEpoch,
+        self.thread = Thread(target=self._batchEpoch,
                              args=(subjects, epoch_name, tmin, tmax, stim,
                                    event_id, mask, event_name, grad, mag, eeg,
                                    eog))
@@ -619,7 +638,7 @@ class Caller(object):
     def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                     mask, event_name, grad, mag, eeg, eog):
         """Performed in a worker thread."""
-        #active_subject = self.experiment.active_subject_name
+        # active_subject = self.experiment.active_subject_name
         path = self.experiment.workspace
         working_files = self.experiment._working_file_names.values()
         reject = dict()
@@ -654,19 +673,22 @@ class Caller(object):
             stim_channel = this_subject.stim_channel
             try:
                 raw = mne.io.Raw(fname)
-                #TODO: log mne call
+                # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.find_events, getcallargs(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)))
                 events = mne.find_events(raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
-                #TODO: log mne call
+                # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_events, getcallargs(mne.pick_events, events, include=event_id)))
                 events = mne.pick_events(events, include=event_id)
                 epocher = Epochs()
-                #TODO: log mne call in Epochs class
+                # TODO: log mne call in Epochs class
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs, getcallargs(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')))
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
                                                stim, eog, reject,
                                                {event_name: event_id}, tmin,
                                                tmax)
             except Exception as e:
-                self.result += ('Could not create epochs for subject ' +
+                self.result += ('Could not create epochs for subject ' + 
                                 subject + ':\n' + str(e) + '\n')
                 print str(e)
                 continue
@@ -678,7 +700,7 @@ class Caller(object):
                       'reject': reject, 'tmin': tmin, 'tmax': tmax,
                       'collectionName': epoch_name, 'raw': fname}
             this_subject.handle_new_epochs(epoch_name, params)
-            #epochs_object = this_subject._epochs[epoch_name]
+            # epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
         if self.result == '':
             self.result = 'Epochs created successfully!'
@@ -698,13 +720,14 @@ class Caller(object):
         epocher = Epochs()
         subject = self.experiment.active_subject
         try:
-            #TODO: log mne call in Epochs class
+            # TODO: log mne call in Epochs class
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs_from_dict, getcallargs(epocher.create_epochs_from_dict, 'Fix to log epoch creation in Epochs class...')))
             epochs = epocher.create_epochs_from_dict(epoch_params,
                                                      subject.working_file)
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
-            #self.experiment.action_logger.log_error('Create epoch collection', epoch_params, str(e))
+            # self.experiment.action_logger.log_error('Create epoch collection', epoch_params, str(e))
             return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -714,9 +737,9 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
-        #self.experiment.action_logger.log_success('Create epoch collection', epoch_params)
+        # self.experiment.action_logger.log_success('Create epoch collection', epoch_params)
 
-    def draw_evoked_potentials(self, evokeds, layout):#, category):
+    def draw_evoked_potentials(self, evokeds, layout):  # , category):
         """
         Draws a topography representation of the evoked potentials.
 
@@ -729,24 +752,25 @@ class Caller(object):
         else:
             layout = read_layout(layout)
 
-        colors = ['y','m','c','r','g','b','w','k']
+        colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
 
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
 
         title = mi.subject_name
         
-        #TODO: log mne call
+        # TODO: log mne call
+        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(plot_topo, getcallargs(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)))
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
         conditions = [e.comment for e in evokeds]
-        positions = np.arange(0.025, 0.025+0.04*len(evokeds), 0.04)
+        positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
                                   positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
         fig.show()
         
-        #TODO: log info about the clicked channels
+        # TODO: log info about the clicked channels
         def onclick(event):
             plt.show(block=False)
 
@@ -767,7 +791,7 @@ class Caller(object):
         self.result = None
         pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._average_channels, 
+        async_result = pool.apply_async(self._average_channels,
                                         (instance, lobeName, channelSet,))
         while(True):
             sleep(0.2)
@@ -792,7 +816,7 @@ class Caller(object):
 
         # Draw a separate plot for each event type
         for index, (eventName, data) in enumerate(dataList):
-            ca = fig.add_subplot(len(dataList), 1, index+1) 
+            ca = fig.add_subplot(len(dataList), 1, index + 1) 
             ca.set_title(eventName)
             # Times information is the same as in original evokeds
             if eventName.endswith('grad'):
@@ -823,7 +847,8 @@ class Caller(object):
 
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
-            #TODO: log mne call
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, category)))
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
@@ -832,7 +857,8 @@ class Caller(object):
 
         if channelSet is None:
             try:
-                #TODO: log mne call
+                # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.selection.read_selection, getcallargs(mne.selection.read_selection, lobeName)))
                 channelsToAve = mne.selection.read_selection(lobeName)
             except Exception as e:
                 self.result = e
@@ -863,7 +889,8 @@ class Caller(object):
         print evokeds[0].info['ch_names']
         # Picks only the desired channels from the evokeds.
         try:
-            #TODO: log mne call
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_channels_evoked, getcallargs(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))))
             evokedToAve = mne.pick_channels_evoked(evokeds[0],
                                                    list(channelsToAve))
         except Exception as e:
@@ -871,14 +898,14 @@ class Caller(object):
             self.e.set()
             return
 
-        #TODO: log something from below?
+        # TODO: log something from below?
         # Returns channel indices for grad channel pairs in evokedToAve.
         ch_names = evokedToAve.ch_names
         gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
 
         magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
 
-        #eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
+        # eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
         eeg_picks = mne.pick_types(evokeds[0].info, meg=False, eeg=True,
                                    ref_meg=False)
         eegIdxs = [ch_names.index(evokeds[0].ch_names[idx]) for idx in
@@ -930,7 +957,7 @@ class Caller(object):
         self.result = None
         pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._group_average, 
+        async_result = pool.apply_async(self._group_average,
                                         (groups,))
         while(True):
             sleep(0.2)
@@ -940,7 +967,7 @@ class Caller(object):
         if not self.result is None:
             if isinstance(self.result, Warning):
                 QtGui.QApplication.restoreOverrideCursor()
-                reply = QtGui.QMessageBox.question(self.parent, 
+                reply = QtGui.QMessageBox.question(self.parent,
                             "Evoked responses not found from every subject.",
                             str(self.result) + \
                             "Draw the evoked potentials anyway?",
@@ -969,7 +996,7 @@ class Caller(object):
 
     def _group_average(self, groups):
         """Performed in a worker thread."""
-        #TODO: log something?
+        # TODO: log something?
         chs = self.experiment.active_subject.working_file.info['ch_names']
         chs = _clean_names(chs, remove_whitespace=True)
         evokeds = dict()
@@ -985,7 +1012,7 @@ class Caller(object):
             directory = subject._evokeds_directory
             print directory
             files = [ f for f in listdir(directory)\
-                      if isfile(join(directory,f)) and f.endswith('.fif') ]
+                      if isfile(join(directory, f)) and f.endswith('.fif') ]
             for f in files:
                 fgroups = re.split('[\[\]]', f)  # '1-2-3'
                 if not len(fgroups) == 3: 
@@ -1033,7 +1060,7 @@ class Caller(object):
         bads = []
         for group in groups:
             max_key = max(evokeds[group],
-                          key= lambda x: len(evokeds[group][x]))
+                          key=lambda x: len(evokeds[group][x]))
             length = len(evokeds[group][max_key])
             evokedSet = []
             for ch in chs:
@@ -1047,7 +1074,7 @@ class Caller(object):
                     epoch_length = len(data[0])
                     for d in data:
                         if not len(d) == epoch_length:
-                            self.result = Exception("Epochs are different " +
+                            self.result = Exception("Epochs are different " + 
                                                     "in sizes!")
                             self.e.set()
                             return
@@ -1136,7 +1163,7 @@ class Caller(object):
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
-        async_result = pool.apply_async(self._TFR, 
+        async_result = pool.apply_async(self._TFR,
                                         (epochs, ch_index, frequencies,
                                          ncycles, decim))
         while(True):
@@ -1168,7 +1195,7 @@ class Caller(object):
             plt.ylabel('Evoked potential (uV)')
             evoked_data *= 1e6
         else:
-            raise TypeError('TFR plotting for %s channels not supported.' %
+            raise TypeError('TFR plotting for %s channels not supported.' % 
                             ch_type)
 
         plt.plot(times, evoked_data.T)
@@ -1211,18 +1238,18 @@ class Caller(object):
         print 'Computing induced power...'
         evoked = epochs.average()
         data = epochs.get_data()
-        times = 1e3 * epochs.times # s to ms
+        times = 1e3 * epochs.times  # s to ms
         evoked_data = evoked.data
         try:
-            data = data[:, ch_index:(ch_index+1), :]
-            evoked_data = evoked_data[ch_index:(ch_index+1), :]
+            data = data[:, ch_index:(ch_index + 1), :]
+            evoked_data = evoked_data[ch_index:(ch_index + 1), :]
         except Exception, err:
             self.result = Exception('Could not find epoch data: ' + str(err))
             self.e.set()
             return
 
         try:
-            #TODO: log mne call
+            # TODO: log mne call
             power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
                                             frequencies, n_cycles=ncycles,
                                             decim=decim, use_fft=False,
@@ -1236,17 +1263,17 @@ class Caller(object):
             baseline = (epochs.times[0], 0)
         else:
             baseline = None
-        #TODO: log mne call
+        # TODO: log mne call
         power = mne.baseline.rescale(power, epochs.times[::decim], baseline,
                                      mode='ratio', copy=True)
-        #TODO: log mne call
+        # TODO: log mne call
         itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
                                    mode='ratio', copy=True)
         print 'Done'
         self.e.set()
         return power, itc, times, evoked, evoked_data
 
-    def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
+    def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
         """
@@ -1326,11 +1353,19 @@ class Caller(object):
             try:
                 if scalp is not None:
                     try:
-                        #TODO: log mne call
+                        # TODO: log mne call
+                        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(power.plot_topomap, getcallargs(power.plot_topomap, tmin=scalp['tmin'],
+                                                 tmax=scalp['tmax'],
+                                                 fmin=scalp['fmin'],
+                                                 fmax=scalp['fmax'],
+                                                 ch_type=ch_type,
+                                                 layout=layout,
+                                                 baseline=baseline, mode=mode,
+                                                 show=False, cmap=cmap)))
                         fig = power.plot_topomap(tmin=scalp['tmin'],
                                                  tmax=scalp['tmax'],
                                                  fmin=scalp['fmin'],
-                                                 fmax=scalp['fmax'], 
+                                                 fmax=scalp['fmax'],
                                                  ch_type=ch_type,
                                                  layout=layout,
                                                  baseline=baseline, mode=mode,
@@ -1339,7 +1374,11 @@ class Caller(object):
                         print str(e)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
-                #TODO: log mne call
+                # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(power.plot_topo, getcallargs(power.plot_topo, baseline=baseline, mode=mode,
+                                      fmin=minfreq, fmax=maxfreq,
+                                      layout=layout, cmap=cmap,
+                                      title='Average power')))
                 fig = power.plot_topo(baseline=baseline, mode=mode,
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout, cmap=cmap,
@@ -1357,7 +1396,14 @@ class Caller(object):
                 print 'Plotting topology. Please be patient...'
                 title = 'Inter-Trial coherence'
                 if scalp is not None:
-                    #TODO: log mne call
+                    # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(itc.plot_topomap, getcallargs(itc.plot_topomap, tmin=scalp['tmin'],
+                                           tmax=scalp['tmax'],
+                                           fmin=scalp['fmin'],
+                                           fmax=scalp['fmax'],
+                                           ch_type=ch_type, layout=layout,
+                                           baseline=baseline, mode=mode,
+                                           show=False)))
                     fig = itc.plot_topomap(tmin=scalp['tmin'],
                                            tmax=scalp['tmax'],
                                            fmin=scalp['fmin'],
@@ -1365,7 +1411,10 @@ class Caller(object):
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
                                            show=False)
-                #TODO: log mne call
+                # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(itc.plot_topo, getcallargs(itc.plot_topo, baseline=baseline, mode=mode,
+                                    fmin=minfreq, fmax=maxfreq, layout=layout,
+                                    cmap=cmap, title=title)))
                 fig = itc.plot_topo(baseline=baseline, mode=mode,
                                     fmin=minfreq, fmax=maxfreq, layout=layout,
                                     cmap=cmap, title=title)
@@ -1375,7 +1424,7 @@ class Caller(object):
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()
                 return  
-        #TODO: log clicks?
+        # TODO: log clicks?
         def onclick(event):
             pl.show(block=False)
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -1386,8 +1435,11 @@ class Caller(object):
         """
         # TODO: Let the user define the title of the figure.
         try:
-            #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
-            #TODO: log mne call
+            # http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
+            # TODO: log mne call
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(tfr_morlet, getcallargs(tfr_morlet, epochs, freqs=frequencies,
+                                    n_cycles=ncycles, use_fft=False,
+                                    return_itc=True, decim=decim, n_jobs=3)))
             power, itc = tfr_morlet(epochs, freqs=frequencies,
                                     n_cycles=ncycles, use_fft=False,
                                     return_itc=True, decim=decim, n_jobs=3)
@@ -1402,10 +1454,10 @@ class Caller(object):
         if not os.path.isdir(tfr_path):
             os.mkdir(tfr_path)
         print 'Saving files to %s...' % tfr_path
-        #TODO: log mne call
+        # TODO: log mne call
         power.save(os.path.join(tfr_path, 'power-tfr-' + epochs.name + '.h5'),
                    overwrite=True)
-        #TODO: log mne call
+        # TODO: log mne call
         itc.save(os.path.join(tfr_path, 'itc-tfr-' + epochs.name + '.h5'),
                  overwrite=True)
         self.e.set()
@@ -1485,11 +1537,11 @@ class Caller(object):
                 files2ave.append(fName)
 
         print ('Found ' + str(len(files2ave)) + ' subjects with epochs ' + 
-               'labeled '+ epochs_name + '.')
+               'labeled ' + epochs_name + '.')
         if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) +
-                                  " subjects of " + str(len(subjects)) +
-                                  " with epochs labeled: " +
+            self.result = Warning("Found only " + str(len(files2ave)) + 
+                                  " subjects of " + str(len(subjects)) + 
+                                  " with epochs labeled: " + 
                                   epochs_name + "!\n")
         powers = []
         itcs = []
@@ -1506,7 +1558,7 @@ class Caller(object):
             try:
                 epochs = mne.read_epochs(join(directory, f))
                 bads = bads + list(set(epochs.info['bads']) - set(bads))
-                #TODO: log mne call
+                # TODO: log mne call
                 power, itc = tfr_morlet(epochs, freqs=frequencies,
                                         n_cycles=ncycles, use_fft=False,
                                         return_itc=True, decim=decim, n_jobs=3)
@@ -1589,7 +1641,7 @@ class Caller(object):
             else:
                 ch_types.append('eeg')
 
-        #TODO: log mne call
+        # TODO: log mne call
         info = mne.create_info(ch_names=ch_names, ch_types=ch_types,
                                sfreq=powers[0].info['sfreq'])
 
@@ -1598,11 +1650,11 @@ class Caller(object):
         averagePower = np.array(averagePower)
         averageItc = np.array(averageItc)
         try:
-            #TODO: log mne call
-            power = mne.time_frequency.AverageTFR(info, averagePower, times, 
+            # TODO: log mne call
+            power = mne.time_frequency.AverageTFR(info, averagePower, times,
                                                   frequencies, nave)
-            #TODO: log mne call
-            itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
+            # TODO: log mne call
+            itc = mne.time_frequency.AverageTFR(info, averageItc, times,
                                                 frequencies, nave)
         except Exception as e:
             self.result = e
@@ -1648,15 +1700,15 @@ class Caller(object):
                 if not channel in power.ch_names:
                     print 'Channel ' + channel + ' not found!'
                     continue
-                print ('Saving channel ' + channel + ' figure to ' + exp_path +
+                print ('Saving channel ' + channel + ' figure to ' + exp_path + 
                        '/output...')
                 self.parent.update_ui()
                 plt.clf()
                 idx = power.ch_names.index(channel)
                 try:
                     power.plot([idx], baseline=baseline, mode=mode, show=False)
-                    plt.savefig(exp_path + '/output/average_tfr_channel_' +
-                                channel  + '_' + epoch_name + '.' + form,
+                    plt.savefig(exp_path + '/output/average_tfr_channel_' + 
+                                channel + '_' + epoch_name + '.' + form,
                                 dpi=dpi, format=form)
                 except Exception as e:
                     print 'Error while saving figure for channel ' + channel
@@ -1666,14 +1718,14 @@ class Caller(object):
 
         try:
             plt.clf()
-            #TODO: log mne call
-            fig = power.plot_topo(baseline=baseline, mode=mode, 
-                                  fmin=fmin, fmax=fmax, layout=layout, 
+            # TODO: log mne call
+            fig = power.plot_topo(baseline=baseline, mode=mode,
+                                  fmin=fmin, fmax=fmax, layout=layout,
                                   title=title, show=False, cmap=cmap)
             if save_topo:
                 print 'Saving topology figure to  '\
                         + exp_path + '/output...'
-                fig_title= ''
+                fig_title = ''
                 if title.startswith('Inter-trial'):
                     fig_title = exp_path + '/output/group_tfr_' + epoch_name\
                             + '_itc.' + form
@@ -1715,7 +1767,7 @@ class Caller(object):
                 message = 'Could not read layout information.'
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
-                #self.experiment.action_logger.log_error('Plot power spectrum', params, message)
+                # self.experiment.action_logger.log_error('Plot power spectrum', params, message)
                 return
         raw = self.experiment.active_subject.working_file
         self.e.clear()
@@ -1733,7 +1785,7 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.experiment.action_logger.log_error('Power spectrum', params, str(self.result))
+            # self.experiment.action_logger.log_error('Power spectrum', params, str(self.result))
             self.result = None
             return
 
@@ -1747,7 +1799,7 @@ class Caller(object):
             if not os.path.isdir(exp_path + '/output'):
                 os.mkdir(exp_path + '/output')
             fname = os.path.join(exp_path + '/output',
-                                 self.experiment.active_subject.subject_name +
+                                 self.experiment.active_subject.subject_name + 
                                  '_spectrum.txt')
             f = open(fname, 'w')
             f.write('freqs, ')
@@ -1787,10 +1839,10 @@ class Caller(object):
         # indexing with iter_topography.
         while info['ch_names'][0].startswith('IAS'):
             info['ch_names'].pop(0)
-        #TODO: log mne call
+        # TODO: log mne call
         for ax, idx in iter_topography(info, fig_facecolor='white',
                                        axis_spinecolor='white',
-                                       axis_facecolor='white', layout=lout, 
+                                       axis_facecolor='white', layout=lout,
                                        on_pick=my_callback):
             for i in xrange(len(psds)):
                 channel = info['ch_names'][idx]
@@ -1823,7 +1875,7 @@ class Caller(object):
         psdList = []
         for time in times:
             try:
-                #TODO: log mne call
+                # TODO: log mne call
                 psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
                                               fmin=fmin, fmax=fmax, n_fft=nfft,
                                               n_overlap=overlap, picks=picks,
@@ -1866,12 +1918,12 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            #self.experiment.action_logger.log_error('Filtering', dic, str(self.result))
+            # self.experiment.action_logger.log_error('Filtering', dic, str(self.result))
             self.result = None
             return dataToFilter
         filteredData = async_result.get()
         pool.terminate()
-        #self.experiment.action_logger.log_success('Filtering', dic)
+        # self.experiment.action_logger.log_success('Filtering', dic)
         return filteredData
 
     def _filter(self, dataToFilter, info, dic):
@@ -1889,7 +1941,7 @@ class Caller(object):
             trans_bw = dic['trans_bw']
             try:
                 print "Filtering..."
-                #TODO: log mne call
+                # TODO: log mne call
                 dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
                                     filter_length=length,
                                     l_trans_bandwidth=trans_bw,
@@ -1910,7 +1962,7 @@ class Caller(object):
                 trans_bw = dic['bandstop_transbw']
                 print "Band-stop filtering..."
                 try:
-                    #TODO: log mne call
+                    # TODO: log mne call
                     dataToFilter.notch_filter(freqs, picks=None,
                                               filter_length=length,
                                               notch_widths=dic['bandstop_bw'],
@@ -1921,14 +1973,14 @@ class Caller(object):
                     self.e.set()
                     return dataToFilter
             print 'Saving to file...'
-            #TODO: log
+            # TODO: log
             dataToFilter.save(info['filename'], overwrite=True)
         else:  # preview
             try:
                 picks = mne.pick_types(info, meg=True, eeg=True)
                 if dic.get('lowpass'):
                     print "Low-pass filtering..."
-                    #TODO: log mne call
+                    # TODO: log mne call
                     dataToFilter = low_pass_filter(dataToFilter, sf,
                                                    dic.get('low_cutoff_freq'),
                                                    dic.get('length'),
@@ -1938,7 +1990,7 @@ class Caller(object):
 
                 if dic.get('highpass') == True:
                     print "High-pass filtering..."
-                    #TODO: log mne call
+                    # TODO: log mne call
                     dataToFilter = high_pass_filter(dataToFilter, sf,
                                                     dic['high_cutoff_freq'],
                                                     dic.get('length'),
@@ -1951,7 +2003,7 @@ class Caller(object):
                     lfreq = dic['bandstop1_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
-                    #TODO: log mne call
+                    # TODO: log mne call
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
@@ -1962,7 +2014,7 @@ class Caller(object):
                     lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
-                    #TODO: log mne call
+                    # TODO: log mne call
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
@@ -1986,7 +2038,7 @@ class Caller(object):
         
         Return True if creation successful, False if there was an error. 
         """
-        #TODO: log created Neuromag files?
+        # TODO: log created Neuromag files?
         sourceAnalDir = self.experiment.active_subject.\
                             _source_analysis_directory
         
@@ -2045,12 +2097,12 @@ class Caller(object):
         sourceSpaceSetupTestList = glob.glob(bemDir + '*src.fif') 
         
         waterShedDir = os.path.join(bemDir, 'watershed/')
-        waterShedSurfaceTestFile = os.path.join(waterShedDir, 
+        waterShedSurfaceTestFile = os.path.join(waterShedDir,
                                                 'reconFiles_brain_surface')
         wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
         
         fmname = fmdict['fmname']
-        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)  = \
+        (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs) = \
         fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
         
         # Check if source space is already setup and watershed calculated, and
@@ -2061,13 +2113,13 @@ class Caller(object):
         os.path.exists(wsCorTestFile):
         
             try: 
-                sSpaceDict = fileManager.unpickle(os.path.join(fmDir, 
+                sSpaceDict = fileManager.unpickle(os.path.join(fmDir,
                                                   'setupSourceSpace.param'))
             except Exception:
                 sSpaceDict = dict()
                 
             try:
-                wshedDict = fileManager.unpickle(os.path.join(fmDir, 
+                wshedDict = fileManager.unpickle(os.path.join(fmDir,
                                                               'wshed.param'))
             except Exception:
                 wshedDict = dict()
@@ -2147,7 +2199,7 @@ class Caller(object):
             except Exception:
                 tb = traceback.format_exc()
                 msg = ('There was a problem creating forward model files. '
-                       'Please copy the following to your bug report:\n\n' +
+                       'Please copy the following to your bug report:\n\n' + 
                        str(tb))
                 self.messageBox = messageBoxes.longMessageBox('Error', msg)
                 self.messageBox.show()
@@ -2190,7 +2242,7 @@ class Caller(object):
             self.parent.processes.append(wsProc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
-            message= 'There was a problem with mne_watershed_bem. ' + \
+            message = 'There was a problem with mne_watershed_bem. ' + \
                      'Script output: \n' + e.output
             self.messageBox = messageBoxes.longMessageBox(title, message)
             self.messageBox.exec_()
@@ -2215,7 +2267,7 @@ class Caller(object):
             self.parent.processes.append(setupFModelProc)
         except CalledProcessError as e:    
             title = 'Problem with forward model creation'
-            message= 'There was a problem with mne_setup_forward_model. ' + \
+            message = 'There was a problem with mne_setup_forward_model. ' + \
                      'Script output: \n' + e.output
             self.messageBox = messageBoxes.longMessageBox(title, message)
             self.messageBox.exec_()
@@ -2249,7 +2301,7 @@ class Caller(object):
                                self.experiment._working_file_names
                                [self.experiment._active_subject_name])
 
-        mne.gui.coregistration(tabbed=True, split=True, scene_width=300, 
+        mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
                                raw=rawPath, subject=subject,
                                subjects_dir=subjects_dir)
         QtCore.QCoreApplication.processEvents()
@@ -2389,8 +2441,3 @@ class Caller(object):
         self.experiment.active_subject.working_file = raw
         status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)
-
-    @decorators.logged
-    def wrap_mne_call(self, mne_func, *args):
-        #self.experiment.action_logger.log_mne_func_call(mne_func, *args)
-        return

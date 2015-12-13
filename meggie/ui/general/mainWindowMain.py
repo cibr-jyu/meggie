@@ -967,7 +967,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.save_raw()
             self._initialize_ui()
             bads = self.caller.experiment.active_subject.working_file.info['bads']
-            self.action_logger.log_success('Raw plot bad channels selected', bads)
+            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected' + str(bads))
         if self.ui.checkBoxShowEvents.isChecked():
             events = self.caller.experiment.active_subject.get_events()
         else:
