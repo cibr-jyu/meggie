@@ -1121,20 +1121,19 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
-                                         None)
+                                         None,
+                                         parent_window=self)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
-            self.caller.average_channels(name, None, set(channels))
-        QtGui.QApplication.restoreOverrideCursor()
+            self.caller.average_channels(name, None, set(channels),
+                                         parent_window=self)
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """

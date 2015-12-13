@@ -165,11 +165,13 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def on_pushButtonVisualize_clicked(self, checked=None):
         """Visualize selected channel(s)."""
-        if checked is None: return
+        if checked is None: 
+            return
         index = self.ui.comboBoxEvoked.currentIndex()
         caller = Caller.Instance()
         caller.average_channels(self.evoked, None,
-                                set(self.selected_channels[index]))
+                                set(self.selected_channels[index]),
+                                parent_window=self)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """

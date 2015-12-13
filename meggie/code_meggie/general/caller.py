@@ -664,6 +664,7 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
+    @messaged
     def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
@@ -675,24 +676,10 @@ class Caller(object):
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._average_channels, 
-                                        (instance, lobeName, channelSet,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 
-        averageTitleString, dataList, evokeds = async_result.get()
-        pool.terminate()
+        result = self._average_channels(instance, lobeName, channelSet,
+                                        do_meanwhile=self.parent.update_ui)
+        averageTitleString, dataList, evokeds = result
 
         # Plotting:
         plt.clf()
@@ -723,14 +710,14 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
 
+    @threaded
     def _average_channels(self, instance, lobeName, channelSet=None):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
             epochs = self.experiment.active_subject.get_epochs(instance)
             if epochs is None:
-                self.result = Exception('No epochs found.')
-                self.e.set()
-                return
+                raise Exception('No epochs found.')
+
             category = epochs.event_id
 
             # Creates evoked potentials from the given events (variable 'name' 
@@ -742,23 +729,18 @@ class Caller(object):
             evokeds = instance
 
         if channelSet is None:
-            try:
-                channelsToAve = mne.selection.read_selection(lobeName)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
+            channelsToAve = mne.selection.read_selection(lobeName)
             averageTitle = lobeName
         else:
-            print evokeds[0].ch_names
-            if not isinstance(channelSet, set) or len(channelSet) < 1 or \
-                    not channelSet.issubset(set(evokeds[0].ch_names)):
-                self.result = ValueError('Please check that you have at least '
-                                         'two channels, the channels are '
-                                         'actual channels in the epochs data '
-                                         'and they are in the right form.')
-                self.e.set()
-                return
+            if any([
+                not isinstance(channelSet, set),
+                len(channelSet) < 1,
+                not channelSet.issubset(set(evokeds[0].ch_names))
+            ]):
+                raise ValueError('Please check that you have at least '
+                                 'one channel, the channels are '
+                                 'actual channels in the epochs data '
+                                 'and they are in the right form.')
             channelsToAve = channelSet
             averageTitle = str(channelSet).strip('[]')
 
@@ -770,15 +752,9 @@ class Caller(object):
         if re.match("^MEG[0-9]+", channelNameString):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
 
-        print evokeds[0].info['ch_names']
         # Picks only the desired channels from the evokeds.
-        try:
-            evokedToAve = mne.pick_channels_evoked(evokeds[0],
-                                                   list(channelsToAve))
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+        evokedToAve = mne.pick_channels_evoked(evokeds[0],
+                                               list(channelsToAve))
 
         # Returns channel indices for grad channel pairs in evokedToAve.
         ch_names = evokedToAve.ch_names
@@ -793,8 +769,7 @@ class Caller(object):
                    eeg_picks if evokeds[0].ch_names[idx] in ch_names]
         dataList = list()
         for i in range(len(evokeds)):
-            print "Calculating channel averages for " + averageTitleString + \
-                  "\nChannels in evoked set " + str(i) + ":"
+            print "Calculating channel averages for " + averageTitleString
 
             # Merges the grad channel pairs in evokedToAve
             # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
@@ -823,7 +798,6 @@ class Caller(object):
                 averagedEegData = np.mean(eeg_data, axis=0)
                 dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
 
-        self.e.set()
         return averageTitleString, dataList, evokeds
 
     def plot_group_average(self, groups, layout):
