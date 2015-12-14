@@ -1943,11 +1943,14 @@ class Caller(object):
             try:
                 print "Filtering..."
                 # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.filter._filter, getcallargs(mne.filter, l_freq=lfreq, h_freq=hfreq,
-                                    filter_length=length,
-                                    l_trans_bandwidth=trans_bw,
-                                    h_trans_bandwidth=trans_bw, n_jobs=2,
-                                    method='fft', verbose=True)))
+                try:
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.base._BaseRaw.filter, getcallargs(mne.io.base._BaseRaw.filter, l_freq=lfreq, h_freq=hfreq,
+                                        filter_length=length,
+                                        l_trans_bandwidth=trans_bw,
+                                        h_trans_bandwidth=trans_bw, n_jobs=2,
+                                        method='fft', verbose=True)))
+                except TypeError as e:
+                    pass
                 dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
                                     filter_length=length,
                                     l_trans_bandwidth=trans_bw,
