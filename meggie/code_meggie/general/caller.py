@@ -29,7 +29,8 @@ from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
 from mne.time_frequency import compute_raw_psd
 from mne.preprocessing import compute_proj_ecg, compute_proj_eog
-from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter
+from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter,\
+    notch_filter
 
 import numpy as np
 import pylab as pl
@@ -1942,6 +1943,11 @@ class Caller(object):
             try:
                 print "Filtering..."
                 # TODO: log mne call
+                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.filter._filter, getcallargs(mne.filter, l_freq=lfreq, h_freq=hfreq,
+                                    filter_length=length,
+                                    l_trans_bandwidth=trans_bw,
+                                    h_trans_bandwidth=trans_bw, n_jobs=2,
+                                    method='fft', verbose=True)))
                 dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
                                     filter_length=length,
                                     l_trans_bandwidth=trans_bw,
@@ -1963,6 +1969,11 @@ class Caller(object):
                 print "Band-stop filtering..."
                 try:
                     # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.filter.notch_filter, getcallargs(mne.filter.notch_filter, freqs, picks=None,
+                                              filter_length=length,
+                                              notch_widths=dic['bandstop_bw'],
+                                              trans_bandwidth=trans_bw,
+                                              n_jobs=2, verbose=True)))
                     dataToFilter.notch_filter(freqs, picks=None,
                                               filter_length=length,
                                               notch_widths=dic['bandstop_bw'],
@@ -1981,6 +1992,12 @@ class Caller(object):
                 if dic.get('lowpass'):
                     print "Low-pass filtering..."
                     # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(low_pass_filter, getcallargs(low_pass_filter, dataToFilter, sf,
+                                                   dic.get('low_cutoff_freq'),
+                                                   dic.get('length'),
+                                                   dic.get('trans_bw'), 'fft',
+                                                   None, picks=picks, n_jobs=2,
+                                                   copy=True)))
                     dataToFilter = low_pass_filter(dataToFilter, sf,
                                                    dic.get('low_cutoff_freq'),
                                                    dic.get('length'),
@@ -1991,6 +2008,12 @@ class Caller(object):
                 if dic.get('highpass') == True:
                     print "High-pass filtering..."
                     # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(high_pass_filter, getcallargs(high_pass_filter, dataToFilter, sf,
+                                                    dic['high_cutoff_freq'],
+                                                    dic.get('length'),
+                                                    dic.get('trans_bw'), 'fft',
+                                                    None, picks=picks,
+                                                    n_jobs=2, copy=True)))
                     dataToFilter = high_pass_filter(dataToFilter, sf,
                                                     dic['high_cutoff_freq'],
                                                     dic.get('length'),
@@ -2004,6 +2027,11 @@ class Caller(object):
                     hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
                     # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(band_stop_filter, getcallargs(band_stop_filter, dataToFilter, sf, lfreq,
+                                                    hfreq,
+                                                    dic['bandstop_length'],
+                                                    trans, trans, picks=picks,
+                                                    n_jobs=2, copy=True)))
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
@@ -2015,6 +2043,11 @@ class Caller(object):
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
                     # TODO: log mne call
+                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(band_stop_filter, getcallargs(band_stop_filter, dataToFilter, sf, lfreq,
+                                                    hfreq,
+                                                    dic['bandstop_length'],
+                                                    trans, trans, picks=picks,
+                                                    n_jobs=2, copy=True)))
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
