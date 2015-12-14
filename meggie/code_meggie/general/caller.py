@@ -1075,6 +1075,7 @@ class Caller(object):
         print 'Done'
         return power, itc, times, evoked, evoked_data
 
+    @messaged
     def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
@@ -1102,35 +1103,18 @@ class Caller(object):
                          which case ``RdBu_r`` is used or ``Reds`` if only
                          positive values exist in the data.
         """
+
         plt.close()
         if isinstance(inst, mne.epochs._BaseEpochs):  # TFR from epochs
-    
-            print "Number of threads active", activeCount()
-            self.e.clear()
-            self.result = None
-            pool = ThreadPool(processes=1)
     
             # Find intervals for given frequency band
             frequencies = np.arange(minfreq, maxfreq, interval)
     
-            async_result = pool.apply_async(self._TFR_topology,
-                                            (inst, frequencies, ncycles,
-                                             decim))
-            while(True):
-                sleep(0.2)
-                if self.e.is_set(): break;
-                self.parent.update_ui()
-    
-            if not self.result is None:
-                self.messageBox = messageBoxes.shortMessageBox(str(self.
-                                                                   result))
-                self.messageBox.show()
-                self.result = None
-                return 
-    
-            power, itc = async_result.get()
-            pool.terminate()
-            self.parent.update_ui()
+            power, itc = self._TFR_topology(
+                inst, frequencies, ncycles,
+                decim, do_meanwhile=self.parent.update_ui
+            )
+
         elif reptype == 'average':  # TFR from averageTFR
             power = inst
         elif reptype == 'itc':  # TFR from averageTFR
@@ -1145,6 +1129,7 @@ class Caller(object):
             baseline = None
         else:
             baseline = (blstart, blend)
+
         print "Plotting..."
         self.parent.update_ui()
         if reptype == 'average':  # induced
@@ -1152,58 +1137,50 @@ class Caller(object):
                 cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
             else:
                 cmap = color_map
-            try:
-                if scalp is not None:
-                    try:
-                        fig = power.plot_topomap(tmin=scalp['tmin'],
-                                                 tmax=scalp['tmax'],
-                                                 fmin=scalp['fmin'],
-                                                 fmax=scalp['fmax'], 
-                                                 ch_type=ch_type,
-                                                 layout=layout,
-                                                 baseline=baseline, mode=mode,
-                                                 show=False, cmap=cmap)
-                    except Exception as e:
-                        print str(e)
-                print 'Plotting topology. Please be patient...'
-                self.parent.update_ui()
-                fig = power.plot_topo(baseline=baseline, mode=mode,
-                                      fmin=minfreq, fmax=maxfreq,
-                                      layout=layout, cmap=cmap,
-                                      title='Average power')
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return
+            if scalp is not None:
+                fig = power.plot_topomap(tmin=scalp['tmin'],
+                                         tmax=scalp['tmax'],
+                                         fmin=scalp['fmin'],
+                                         fmax=scalp['fmax'], 
+                                         ch_type=ch_type,
+                                         layout=layout,
+                                         baseline=baseline, mode=mode,
+                                         show=False, cmap=cmap)
+
+            print 'Plotting topology. Please be patient...'
+            self.parent.update_ui()
+            fig = power.plot_topo(baseline=baseline, mode=mode,
+                                  fmin=minfreq, fmax=maxfreq,
+                                  layout=layout, cmap=cmap,
+                                  title='Average power')
+
         elif reptype == 'itc':  # phase locked
             if color_map == 'auto':
                 cmap = 'RdBu_r' if np.min(itc.data < 0) else 'Reds'
             else:
                 cmap = color_map
-            try:
-                print 'Plotting topology. Please be patient...'
-                title = 'Inter-Trial coherence'
-                if scalp is not None:
-                    fig = itc.plot_topomap(tmin=scalp['tmin'],
-                                           tmax=scalp['tmax'],
-                                           fmin=scalp['fmin'],
-                                           fmax=scalp['fmax'],
-                                           ch_type=ch_type, layout=layout,
-                                           baseline=baseline, mode=mode,
-                                           show=False)
-                fig = itc.plot_topo(baseline=baseline, mode=mode,
-                                    fmin=minfreq, fmax=maxfreq, layout=layout,
-                                    cmap=cmap, title=title)
+            print 'Plotting topology. Please be patient...'
+            title = 'Inter-Trial coherence'
+            if scalp is not None:
+                fig = itc.plot_topomap(tmin=scalp['tmin'],
+                                       tmax=scalp['tmax'],
+                                       fmin=scalp['fmin'],
+                                       fmax=scalp['fmax'],
+                                       ch_type=ch_type, layout=layout,
+                                       baseline=baseline, mode=mode,
+                                       show=False)
+            fig = itc.plot_topo(baseline=baseline, mode=mode,
+                                fmin=minfreq, fmax=maxfreq, layout=layout,
+                                cmap=cmap, title=title)
 
-                fig.show()
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return  
+            fig.show()
+
         def onclick(event):
             pl.show(block=False)
+
         fig.canvas.mpl_connect('button_press_event', onclick)
 
+    @threaded
     def _TFR_topology(self, epochs, frequencies, ncycles, decim):
         """
         Performed in a worker thread.

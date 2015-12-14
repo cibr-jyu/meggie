@@ -115,15 +115,12 @@ class TFRTopologyDialog(QtGui.QDialog):
         to the caller. Also checks for erroneus parameter values and gives 
         feedback to the user.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         cmap = self.ui.comboBoxCmap.currentText()
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == 'No layout selected' or layout == '':
-            QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
@@ -147,8 +144,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         if self.tfr is not None:
             self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
                                      blstart, blend, None, None, layout, None,
-                                     None, cmap)
-            QtGui.QApplication.restoreOverrideCursor()
+                                     None, cmap, parent_window=self.parent)
             return
 
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
@@ -170,16 +166,11 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp['fmax'] = self.ui.doubleSpinBoxScalpFmax.value()
         else:
             scalp = None
-        try:
-            self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
-                                     decim, mode, blstart, blend, interval,
-                                     ncycles, layout, ch_type, scalp, cmap)
-        except Exception, err:
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox = shortMessageBox(str(err))
-            self.messageBox.show()
+        self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
+                                 decim, mode, blstart, blend, interval,
+                                 ncycles, layout, ch_type, scalp, cmap,
+                                 parent_window=self.parent)
         self.parent.update_power_list()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
