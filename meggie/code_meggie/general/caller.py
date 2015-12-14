@@ -1209,6 +1209,7 @@ class Caller(object):
         self.e.set()
         return power, itc
 
+    @messaged
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
                     maxfreq, interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
@@ -1220,40 +1221,19 @@ class Caller(object):
         if layout == 'Infer from data':
             layout = None
         else:
-            try:
-                layout = read_layout(layout)
-            except Exception as e:
-                msg = 'Could not read layout: ' + str(e)
-                self.messageBox = messageBoxes.shortMessageBox(msg)
-                self.messageBox.show()
-                return
+            layout = read_layout(layout)
 
         frequencies = np.arange(minfreq, maxfreq, interval)
 
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
-        async_result = pool.apply_async(self._TFR_average,
-                                        (epochs_name, selected_channels,
-                                         reptype, frequencies, ncycles, decim,
-                                         save_max))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break
-            self.parent.update_ui()
+        power, itc = self._TFR_average(epochs_name, selected_channels, reptype,
+                                       frequencies, ncycles, decim, save_max,
+                                       do_meanwhile=self.parent.update_ui)
 
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return
-
-        power, itc = async_result.get()
-        pool.terminate()
         if blstart is None and blend is None:
             baseline = None
         else:
             baseline = (blstart, blend)
+
         print 'Plotting topology...'
         if reptype == 'average':
             title = 'Average power ' + epochs_name
@@ -1268,6 +1248,7 @@ class Caller(object):
                                     selected_channels, dpi, form, epochs_name,
                                     color_map)
 
+    @threaded
     def _TFR_average(self, epochs_name, selected_channels, reptype,
                      frequencies, ncycles, decim, save_max=False):
         """Performed in a working thread."""
@@ -1285,10 +1266,10 @@ class Caller(object):
         print ('Found ' + str(len(files2ave)) + ' subjects with epochs ' + 
                'labeled '+ epochs_name + '.')
         if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) +
-                                  " subjects of " + str(len(subjects)) +
-                                  " with epochs labeled: " +
-                                  epochs_name + "!\n")
+            raise Warning("Found only " + str(len(files2ave)) +
+                          " subjects of " + str(len(subjects)) +
+                          " with epochs labeled: " +
+                          epochs_name + "!\n")
         powers = []
         itcs = []
         weights = []
@@ -1301,44 +1282,40 @@ class Caller(object):
             max_file = open(exp_path + '/output/' + save_max + '_maxima.txt',
                             'w')
         for f in files2ave:
-            try:
-                epochs = mne.read_epochs(join(directory, f))
-                bads = bads + list(set(epochs.info['bads']) - set(bads))
-                power, itc = tfr_morlet(epochs, freqs=frequencies,
-                                        n_cycles=ncycles, use_fft=False,
-                                        return_itc=True, decim=decim, n_jobs=3)
-                if save_max is not None:
-                    # Write file for maxima
-                    p = None
-                    if save_max == 'itc':
-                        p = itc
-                    elif save_max == 'average':
-                        p = power
-                    max_file.write(f)
-                    max_file.write('\n')
-                    for ch in selected_channels:
-                        max_file.write(ch + '\n')
-                        idx = p.ch_names.index(ch)
-                        ch_data = p.data[idx]
-                        i = np.argmax(ch_data)
-                        f = i / len(ch_data[0])
-                        t = i % len(ch_data[0])
-                        f = p.freqs[f]
-                        t = p.times[t]
-                        string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
-                        max_file.write(string)
-                    max_file.write('\n')
-                powers.append(power)
-                itcs.append(itc)
-                weights.append(len(epochs))
-            except Exception as e:
-                self.result = e
-                max_file.close()
-                self.e.set()
-                return
+            epochs = mne.read_epochs(join(directory, f))
+            bads = bads + list(set(epochs.info['bads']) - set(bads))
+            power, itc = tfr_morlet(epochs, freqs=frequencies,
+                                    n_cycles=ncycles, use_fft=False,
+                                    return_itc=True, decim=decim, n_jobs=3)
+            if save_max is not None:
+                # Write file for maxima
+                p = None
+                if save_max == 'itc':
+                    p = itc
+                elif save_max == 'average':
+                    p = power
+                max_file.write(f)
+                max_file.write('\n')
+                for ch in selected_channels:
+                    max_file.write(ch + '\n')
+                    idx = p.ch_names.index(ch)
+                    ch_data = p.data[idx]
+                    i = np.argmax(ch_data)
+                    f = i / len(ch_data[0])
+                    t = i % len(ch_data[0])
+                    f = p.freqs[f]
+                    t = p.times[t]
+                    string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
+                    max_file.write(string)
+                max_file.write('\n')
+            powers.append(power)
+            itcs.append(itc)
+            weights.append(len(epochs))
+
         if save_max:
             print 'Closing file'
             max_file.close()
+
         bads = set(bads)
         usedPowers = dict()
         usedItcs = dict()
@@ -1356,14 +1333,9 @@ class Caller(object):
                 usedPowers[ch] = []
                 usedItcs[ch] = []
             for i in xrange(len(powers)):
-                try:
-                    cidx = powers[i].ch_names.index(ch)
-                    usedPowers[ch].append(powers[i].data[cidx])
-                    usedItcs[ch].append(itcs[i].data[cidx])
-                except Exception as e:
-                    self.result = e
-                    self.e.set()
-                    return
+                cidx = powers[i].ch_names.index(ch)
+                usedPowers[ch].append(powers[i].data[cidx])
+                usedItcs[ch].append(itcs[i].data[cidx])
         averagePower = []
         averageItc = []
 
@@ -1374,8 +1346,9 @@ class Caller(object):
             averageItc.append(np.average(usedItcs[ch], axis=0,
                                          weights=weights))
 
-        ch_names = [x[:3] + ' ' + x[3:] if ' ' not in x else x for x in
-                    usedChannels]  # pre-set layouts have spaces
+        ch_names = [x[:3] + ' ' + x[3:] 
+                    if ' ' not in x 
+                    else x for x in usedChannels]  # pre-set layouts have spaces
         ch_types = list()
         for name in ch_names:
             if name.startswith('MEG'):
@@ -1393,17 +1366,12 @@ class Caller(object):
         nave = sum(weights)
         averagePower = np.array(averagePower)
         averageItc = np.array(averageItc)
-        try:
-            power = mne.time_frequency.AverageTFR(info, averagePower, times, 
-                                                  frequencies, nave)
-            itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
-                                                frequencies, nave)
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
 
-        self.e.set()
+        power = mne.time_frequency.AverageTFR(info, averagePower, times, 
+                                              frequencies, nave)
+        itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
+                                            frequencies, nave)
+
         print 'Done'
         return power, itc
 
@@ -1430,7 +1398,8 @@ class Caller(object):
         color_map - 
         """
         if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+            print power
+            cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
         else:
             cmap = color_map
         exp_path = os.path.join(self.experiment.workspace,
@@ -1458,33 +1427,29 @@ class Caller(object):
                 finally:
                     plt.close()
 
-        try:
-            plt.clf()
-            fig = power.plot_topo(baseline=baseline, mode=mode, 
-                                  fmin=fmin, fmax=fmax, layout=layout, 
-                                  title=title, show=False, cmap=cmap)
-            if save_topo:
-                print 'Saving topology figure to  '\
-                        + exp_path + '/output...'
-                fig_title= ''
-                if title.startswith('Inter-trial'):
-                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
-                            + '_itc.' + form
-                elif title.startswith('Average'):
-                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
-                            + '_average.' + form
-                plt.savefig(fig_title, dpi=dpi, format=form)
-                plt.close()
-            else:
-                def onclick(event):
-                    plt.show(block=False)
-                fig.canvas.mpl_connect('button_press_event', onclick)
-                plt.show()
-
-        except Exception as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
+        plt.clf()
+        fig = power.plot_topo(baseline=baseline, mode=mode, 
+                              fmin=fmin, fmax=fmax, layout=layout, 
+                              title=title, show=False, cmap=cmap)
+        if save_topo:
+            print 'Saving topology figure to  ' + exp_path + '/output...'
+            fig_title= ''
+            if title.startswith('Inter-trial'):
+                fig_title = "".join([
+                    exp_path, '/output/group_tfr_', epoch_name, '_itc.', form
+                ])
+            elif title.startswith('Average'):
+                fig_title = "".join([
+                    exp_path, '/output/group_tfr_', epoch_name, '_average.', 
+                    form
+                ])
+            plt.savefig(fig_title, dpi=dpi, format=form)
+            plt.close()
+        else:
+            def onclick(event):
+                plt.show(block=False)
+            fig.canvas.mpl_connect('button_press_event', onclick)
+            plt.show()
 
     @messaged
     def plot_power_spectrum(self, params, save_data, colors, channelColors):

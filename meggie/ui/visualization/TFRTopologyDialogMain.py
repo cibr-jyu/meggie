@@ -189,8 +189,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         Parameters:
         channels - Selected channels of interest.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         cmap = self.ui.comboBoxCmap.currentText()
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
@@ -210,8 +208,10 @@ class TFRTopologyDialog(QtGui.QDialog):
                 blend = self.ui.doubleSpinBoxBaselineEnd.value()
         else:
             blstart, blend, mode = None, None, None
-        if self.ui.radioButtonInduced.isChecked(): reptype = 'average'
-        elif self.ui.radioButtonPhase.isChecked(): reptype = 'itc'
+        if self.ui.radioButtonInduced.isChecked(): 
+            reptype = 'average'
+        elif self.ui.radioButtonPhase.isChecked(): 
+            reptype = 'itc'
 
         if saveMax:
             saveMax = reptype
@@ -223,19 +223,12 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == 'No layout selected' or layout == '':
-            QtGui.QApplication.restoreOverrideCursor()
             self.messageBox = shortMessageBox('No layout selected')
             self.messageBox.show()
             return
-        try:
-            self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
-                                    minfreq, maxfreq, interval, blstart,
-                                    blend, ncycles, decim, layout, channels,
-                                    form, dpi, saveTopo, savePlot, saveMax)
-        except Exception, err:
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox = shortMessageBox(str(err))
-            self.messageBox.show()
-            QtGui.QApplication.restoreOverrideCursor()
-            return
-        QtGui.QApplication.restoreOverrideCursor()
+
+        self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
+                                minfreq, maxfreq, interval, blstart,
+                                blend, ncycles, decim, layout, channels,
+                                form, dpi, saveTopo, savePlot, saveMax,
+                                parent_window=self.parent)
