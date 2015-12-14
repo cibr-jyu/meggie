@@ -966,6 +966,7 @@ class Caller(object):
 
         return averagedEvokeds, groups
 
+    @messaged
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
         """
@@ -985,29 +986,13 @@ class Caller(object):
                          positive values exist in the data.
         """
         plt.close()
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
-        async_result = pool.apply_async(self._TFR, 
-                                        (epochs, ch_index, frequencies,
-                                         ncycles, decim))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 
-
-        power, phase_lock, times, evoked, evoked_data = async_result.get()
-        pool.terminate()
+        result = self._TFR(epochs, ch_index, frequencies, ncycles, decim,
+                           do_meanwhile=self.parent.update_ui)
+        power, phase_lock, times, evoked, evoked_data = result
 
         print 'Plotting TFR...'
         fig = plt.figure()
@@ -1060,6 +1045,7 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
 
+    @threaded
     def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
         """
         Performed in a worker thread.
@@ -1069,23 +1055,14 @@ class Caller(object):
         data = epochs.get_data()
         times = 1e3 * epochs.times # s to ms
         evoked_data = evoked.data
-        try:
-            data = data[:, ch_index:(ch_index+1), :]
-            evoked_data = evoked_data[ch_index:(ch_index+1), :]
-        except Exception, err:
-            self.result = Exception('Could not find epoch data: ' + str(err))
-            self.e.set()
-            return
 
-        try:
-            power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
-                                            frequencies, n_cycles=ncycles,
-                                            decim=decim, use_fft=False,
-                                            n_jobs=1, zero_mean=True)
-        except Exception, err:
-            self.result = err
-            self.e.set()
-            return
+        data = data[:, ch_index:(ch_index+1), :]
+        evoked_data = evoked_data[ch_index:(ch_index+1), :]
+
+        power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
+                                        frequencies, n_cycles=ncycles,
+                                        decim=decim, use_fft=False,
+                                        n_jobs=1, zero_mean=True)
 
         if epochs.times[0] < 0:
             baseline = (epochs.times[0], 0)
@@ -1096,7 +1073,6 @@ class Caller(object):
         itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
                                    mode='ratio', copy=True)
         print 'Done'
-        self.e.set()
         return power, itc, times, evoked, evoked_data
 
     def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
