@@ -1541,7 +1541,7 @@ class Caller(object):
         color_map - 
         """
         if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
+            cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
         else:
             cmap = color_map
         exp_path = os.path.join(self.experiment.workspace,
