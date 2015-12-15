@@ -789,8 +789,7 @@ class ExperimentHandler(QObject):
                 caller.experiment.workspace = working_directory
             self.parent.update_ui()
             caller.activate_subject(caller._experiment._active_subject_name,
-                                    do_meanwhile=self.parent.update_ui,
-                                    parent_window=self.parent)
+                                    do_meanwhile=self.parent.update_ui)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 

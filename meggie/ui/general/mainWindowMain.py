@@ -794,8 +794,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             layout = str(self.ui.labelLayout.text())
 
-        self.caller.plot_group_average(groups, layout,
-                                       parent_window=self)
+        self.caller.plot_group_average(groups, layout)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """Exports the evoked data set to a user selected location."""
@@ -1119,15 +1118,13 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
-                                         None,
-                                         parent_window=self)
+                                         None)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
-            self.caller.average_channels(name, None, set(channels),
-                                         parent_window=self)
+            self.caller.average_channels(name, None, set(channels))
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """
@@ -1189,8 +1186,7 @@ class MainWindow(QtGui.QMainWindow):
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
         self.caller.activate_subject(subject_name,
-                                     do_meanwhile=self.update_ui,
-                                     parent_window=self)
+                                     do_meanwhile=self.update_ui)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
