@@ -495,6 +495,7 @@ class Caller(object):
         fname = raw.info['filename']
         raw.save(fname, overwrite=True)
 
+    @messaged
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
         """
@@ -518,25 +519,12 @@ class Caller(object):
         eog           - Peak-to-peak rejection limit for EOG channels
                         or None if EOG channels are not included.
         """
-        self.e.clear()
-        self.result = ''  # Result as string
-        self.thread = Thread(target = self._batchEpoch,
-                             args=(subjects, epoch_name, tmin, tmax, stim,
-                                   event_id, mask, event_name, grad, mag, eeg,
-                                   eog))
-        self.thread.start()
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break
-            self.parent.update_ui()
 
-        self.messageBox = messageBoxes.shortMessageBox(str(self.result),
-                                                       title='Results')
-        print 'Updating ui...'  # To make sure ui is up to date
-        self.parent._initialize_ui()
-        self.messageBox.show()
-        self.result = None
+        self._batchEpoch(subjects, epoch_name, tmin, tmax, stim,
+                         event_id, mask, event_name, grad, mag, eeg,
+                         eog, do_meanwhile=self.parent.update_ui)
 
+    @threaded
     def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                     mask, event_name, grad, mag, eeg, eog):
         """Performed in a worker thread."""
@@ -584,10 +572,9 @@ class Caller(object):
                                                {event_name: event_id}, tmin,
                                                tmax)
             except Exception as e:
-                self.result += ('Could not create epochs for subject ' +
+                raise Exception('Could not create epochs for subject ' +
                                 subject + ':\n' + str(e) + '\n')
-                print str(e)
-                continue
+
             path = os.path.join(os.path.split(fname)[0], 'epochs')
             fname = os.path.join(path, epoch_name)
             events = [(event, event_name) for event in events]
@@ -598,9 +585,6 @@ class Caller(object):
             this_subject.handle_new_epochs(epoch_name, params)
             #epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
-        if self.result == '':
-            self.result = 'Epochs created successfully!'
-        self.e.set()
 
     def create_new_epochs(self, epoch_params):
         """
