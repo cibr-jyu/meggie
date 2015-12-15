@@ -71,9 +71,10 @@ def logged(func):
         params_str = ''
         for key, value in args[1].items():
             params_str += '{0} = {1}, '.format(str(key), str(value))
+        #TODO: remove the last comma and whitespace
+        cleaned_params_str = params_str[0:len(params_str) - 2]
         if inspect.isclass(args[0]):
-            return '{0}({1})'.format(args[0].__class__.__name__, params_str)
-            return
-        return '{0}({1})'.format(args[0].__name__, params_str)
+            return '{0}({1})'.format(args[0].__class__.__name__, cleaned_params_str)
+        return '{0}({1})'.format(args[0].__name__, cleaned_params_str)
     return decorated
 

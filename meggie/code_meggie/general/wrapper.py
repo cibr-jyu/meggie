@@ -7,6 +7,5 @@ Created on 13.12.2015
 from meggie.ui.utils.decorators import logged
 
 @logged
-def wrap_mne_call(mne_func, *args):
-    print 'dog'
+def wrap_mne_call(mne_func, *args, **kwargs):
     return

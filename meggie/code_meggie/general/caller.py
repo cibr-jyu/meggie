@@ -287,19 +287,12 @@ class Caller(object):
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
         try:
-            """
-            working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
-            mne_function = compute_proj_ecg.__name__
-            self.experiment.action_logger.log_mne_func_call_decorated(working_file, mne_function, getcallargs(compute_proj_ecg, raw_in, None, tmin, tmax, grad, mag, eeg, filter_low, filter_high, comp_ssp, taps, njobs, ch_name, reject, flat, bads, eeg_proj, excl_ssp, event_id, ecg_low_freq, ecg_high_freq, start, qrs_threshold))
-            """
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(compute_proj_ecg, getcallargs(compute_proj_ecg, raw_in, None,
-                                            tmin, tmax, grad, mag, eeg,
-                                            filter_low, filter_high, comp_ssp,
-                                            taps, njobs, ch_name, reject, flat,
-                                            bads, eeg_proj, excl_ssp, event_id,
-                                            ecg_low_freq, ecg_high_freq, start,
-                                            qrs_threshold)))
+            #log mne call
+            self.log_action(compute_proj_ecg, raw_in, None, tmin, tmax, grad,
+                            mag, eeg, filter_low, filter_high, comp_ssp, taps,
+                            njobs, ch_name, reject, flat, bads, eeg_proj,
+                            excl_ssp, event_id, ecg_low_freq, ecg_high_freq,
+                            start, qrs_threshold)
             projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
                                              mag, eeg, filter_low, filter_high,
                                              comp_ssp, taps, njobs, ch_name,
@@ -322,8 +315,8 @@ class Caller(object):
 
         print "Writing ECG projections in %s" % ecg_proj_fname
         try:
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_proj, getcallargs(mne.write_proj, ecg_proj_fname, projs)))
+            #log mne call
+            self.log_action(mne.write_proj, ecg_proj_fname, projs)
             mne.write_proj(ecg_proj_fname, projs)
         except Exception as e:
             self.result = e
@@ -332,8 +325,8 @@ class Caller(object):
 
         print "Writing ECG events in %s" % ecg_event_fname
         try:
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_events, getcallargs(mne.write_events, ecg_event_fname, events)))
+            #log mne call
+            self.log_action(mne.write_events, ecg_event_fname, events)
             mne.write_events(ecg_event_fname, events)
         except Exception as e:
             self.result = e
@@ -415,13 +408,11 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
         try:
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(compute_proj_eog, getcallargs(compute_proj_eog, raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, reject,
-                                             flat, bads, eeg_proj, excl_ssp,
-                                             event_id, eog_low_freq,
-                                             eog_high_freq, start)))
+            #log mne call
+            self.log_action(compute_proj_eog, raw_in, None, tmin, tmax, grad,
+                            mag, eeg, filter_low, filter_high, comp_ssp, taps,
+                            njobs, reject, flat, bads, eeg_proj, excl_ssp,
+                            event_id, eog_low_freq, eog_high_freq, start)
             projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
                                              mag, eeg, filter_low, filter_high,
                                              comp_ssp, taps, njobs, reject,
@@ -438,13 +429,13 @@ class Caller(object):
             os.remove(preload)
 
         print "Writing EOG projections in %s" % eog_proj_fname
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_proj, getcallargs(mne.write_proj, eog_proj_fname, projs)))
+        #log mne call
+        self.log_action(mne.write_proj, eog_proj_fname, projs)
         mne.write_proj(eog_proj_fname, projs)
 
         print "Writing EOG events in %s" % eog_event_fname
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.write_events, getcallargs(mne.write_events, eog_event_fname, events)))
+        #log mne call
+        self.log_action(mne.write_events, eog_event_fname, events)
         mne.write_events(eog_event_fname, events)
         self.e.set()
         """
@@ -471,7 +462,6 @@ class Caller(object):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
             self.result = None
-            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, msg)
             return 1
         self.e.clear()
         self.result = None
@@ -486,11 +476,9 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, str(self.result))
             self.result = None
             return 1
         else:
-            # self.experiment.action_logger.log_apply_exg('Apply ' + str(kind), projs, applied, 'SUCCESS')
             return 0
 
     def _apply_exg(self, kind, raw, directory, projs, applied):
@@ -517,19 +505,14 @@ class Caller(object):
             projs = np.array(projs)
         if not isinstance(applied, np.ndarray):
             applied = np.array(applied)
-        """
-        working_file = self.experiment._working_file_names[self.experiment.active_subject_name]
-        mne_function = raw.add_proj.__name__
-        self.experiment.action_logger.log_mne_func_call_decorated(working_file, mne_function, getcallargs(raw.add_proj, projs[applied]))
-        """
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.add_proj, getcallargs(raw.add_proj, projs[applied])))
+        #log mne call
+        self.log_action(raw.add_proj, projs[applied])
         raw.add_proj(projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.save, getcallargs(raw.save, fname, overwrite=True)))
+        #log mne call
+        self.log_action(raw.save, fname, overwrite=True)
         raw.save(fname, overwrite=True)
         
         """
@@ -547,7 +530,7 @@ class Caller(object):
         """
         try:
             raw = mne.io.Raw(fname, preload=True)  # add allow_maxshield=True if needed
-            # TODO: log filename of the saved raw?
+            #log mne call
             self.experiment.action_logger.log_message('Working file changed to: ' + fname)
             # self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, vars(raw)))
         except Exception as e:
@@ -580,19 +563,19 @@ class Caller(object):
         for epoch in epochs:
             for name in category.keys():
                 if name in epoch.event_id:
-                    # TODO: log mne call
-                    # TODO: epochs is a list of epoch -> log to single line with a comma separator
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, epochs)))
                     evokeds.append(epoch[name].average())
+        #log mne call
+        # TODO: epochs is a list of epoch -> log to single line with a comma separator
+        self.log_action(epochs.average, epochs)
         return evokeds
 
     def save_raw(self):
         """Aux function for updating the raw file."""
         raw = self.experiment.active_subject._working_file
         fname = raw.info['filename']
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.save, getcallargs(raw.save, fname, overwrite=True)))
         raw.save(fname, overwrite=True)
+        #log mne call
+        self.log_action(raw.save, fname, overwrite=True)
 
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
@@ -674,16 +657,19 @@ class Caller(object):
             stim_channel = this_subject.stim_channel
             try:
                 raw = mne.io.Raw(fname)
-                # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.find_events, getcallargs(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)))
+                #log mne call
+                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.find_events, getcallargs(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)))
+                self.log_action(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)
                 events = mne.find_events(raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
-                # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_events, getcallargs(mne.pick_events, events, include=event_id)))
+                #log mne call
+                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_events, getcallargs(mne.pick_events, events, include=event_id)))
+                self.log_action(mne.pick_events, events, include=event_id)
                 events = mne.pick_events(events, include=event_id)
                 epocher = Epochs()
                 # TODO: log mne call in Epochs class
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs, getcallargs(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')))
+                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs, getcallargs(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')))
+                #self.log_action(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
                                                stim, eog, reject,
                                                {event_name: event_id}, tmin,
@@ -722,13 +708,12 @@ class Caller(object):
         subject = self.experiment.active_subject
         try:
             # TODO: log mne call in Epochs class
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs_from_dict, getcallargs(epocher.create_epochs_from_dict, 'Fix to log epoch creation in Epochs class...')))
+            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs_from_dict, getcallargs(epocher.create_epochs_from_dict, 'Fix to log epoch creation in Epochs class...')))
             epochs = epocher.create_epochs_from_dict(epoch_params,
                                                      subject.working_file)
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))
             self.messageBox.show()
-            # self.experiment.action_logger.log_error('Create epoch collection', epoch_params, str(e))
             return
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -738,7 +723,6 @@ class Caller(object):
         fpath = os.path.join(subject._epochs_directory, fname)
 
         fileManager.save_epoch(fpath, epochs, epoch_params, True)
-        # self.experiment.action_logger.log_success('Create epoch collection', epoch_params)
 
     def draw_evoked_potentials(self, evokeds, layout):  # , category):
         """
@@ -759,8 +743,10 @@ class Caller(object):
 
         title = mi.subject_name
         
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(plot_topo, getcallargs(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)))
+        #log mne call
+        #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(plot_topo, getcallargs(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)))
+        self.log_action(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)
+        
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
         conditions = [e.comment for e in evokeds]
@@ -848,8 +834,9 @@ class Caller(object):
 
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, category)))
+            #log mne call
+            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, category)))
+            self.log_action(epochs.average, category)
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
@@ -858,8 +845,9 @@ class Caller(object):
 
         if channelSet is None:
             try:
-                # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.selection.read_selection, getcallargs(mne.selection.read_selection, lobeName)))
+                #log mne call
+                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.selection.read_selection, getcallargs(mne.selection.read_selection, lobeName)))
+                self.log_action(mne.selection.read_selection, lobeName)
                 channelsToAve = mne.selection.read_selection(lobeName)
             except Exception as e:
                 self.result = e
@@ -890,8 +878,9 @@ class Caller(object):
         print evokeds[0].info['ch_names']
         # Picks only the desired channels from the evokeds.
         try:
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_channels_evoked, getcallargs(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))))
+            #log mne call
+            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_channels_evoked, getcallargs(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))))
+            self.log_action(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))
             evokedToAve = mne.pick_channels_evoked(evokeds[0],
                                                    list(channelsToAve))
         except Exception as e:
@@ -1354,15 +1343,12 @@ class Caller(object):
             try:
                 if scalp is not None:
                     try:
-                        # TODO: log mne call
-                        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(power.plot_topomap, getcallargs(power.plot_topomap, tmin=scalp['tmin'],
-                                                 tmax=scalp['tmax'],
-                                                 fmin=scalp['fmin'],
-                                                 fmax=scalp['fmax'],
-                                                 ch_type=ch_type,
-                                                 layout=layout,
-                                                 baseline=baseline, mode=mode,
-                                                 show=False, cmap=cmap)))
+                        #log mne call
+                        self.log_action(power.plot_topomap, tmin=scalp['tmin'],
+                                        tmax=scalp['tmax'], fmin=scalp['fmin'],
+                                        fmax=scalp['fmax'], ch_type=ch_type,
+                                        layout=layout, baseline=baseline,
+                                        mode=mode, show=False, cmap=cmap)
                         fig = power.plot_topomap(tmin=scalp['tmin'],
                                                  tmax=scalp['tmax'],
                                                  fmin=scalp['fmin'],
@@ -1375,11 +1361,10 @@ class Caller(object):
                         print str(e)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
-                # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(power.plot_topo, getcallargs(power.plot_topo, baseline=baseline, mode=mode,
-                                      fmin=minfreq, fmax=maxfreq,
-                                      layout=layout, cmap=cmap,
-                                      title='Average power')))
+                #log mne call
+                self.log_action(power.plot_topo, baseline=baseline, mode=mode,
+                                fmin=minfreq, fmax=maxfreq, layout=layout,
+                                cmap=cmap, title='Average power')
                 fig = power.plot_topo(baseline=baseline, mode=mode,
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout, cmap=cmap,
@@ -1397,14 +1382,12 @@ class Caller(object):
                 print 'Plotting topology. Please be patient...'
                 title = 'Inter-Trial coherence'
                 if scalp is not None:
-                    # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(itc.plot_topomap, getcallargs(itc.plot_topomap, tmin=scalp['tmin'],
-                                           tmax=scalp['tmax'],
-                                           fmin=scalp['fmin'],
-                                           fmax=scalp['fmax'],
-                                           ch_type=ch_type, layout=layout,
-                                           baseline=baseline, mode=mode,
-                                           show=False)))
+                    #log mne call
+                    self.log_action(itc.plot_topomap, tmin=scalp['tmin'],
+                                    tmax=scalp['tmax'], fmin=scalp['fmin'],
+                                    fmax=scalp['fmax'], ch_type=ch_type,
+                                    layout=layout, baseline=baseline,
+                                    mode=mode, show=False)
                     fig = itc.plot_topomap(tmin=scalp['tmin'],
                                            tmax=scalp['tmax'],
                                            fmin=scalp['fmin'],
@@ -1412,10 +1395,10 @@ class Caller(object):
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
                                            show=False)
-                # TODO: log mne call
-                self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(itc.plot_topo, getcallargs(itc.plot_topo, baseline=baseline, mode=mode,
-                                    fmin=minfreq, fmax=maxfreq, layout=layout,
-                                    cmap=cmap, title=title)))
+                #log mne call
+                self.log_action(itc.plot_topo, baseline=baseline, mode=mode,
+                                fmin=minfreq, fmax=maxfreq, layout=layout,
+                                cmap=cmap, title=title)
                 fig = itc.plot_topo(baseline=baseline, mode=mode,
                                     fmin=minfreq, fmax=maxfreq, layout=layout,
                                     cmap=cmap, title=title)
@@ -1437,10 +1420,10 @@ class Caller(object):
         # TODO: Let the user define the title of the figure.
         try:
             # http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
-            # TODO: log mne call
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(tfr_morlet, getcallargs(tfr_morlet, epochs, freqs=frequencies,
-                                    n_cycles=ncycles, use_fft=False,
-                                    return_itc=True, decim=decim, n_jobs=3)))
+            #log mne call
+            self.log_action(tfr_morlet, epochs, freqs=frequencies,
+                            n_cycles=ncycles, use_fft=False, return_itc=True,
+                            decim=decim, n_jobs=3)
             power, itc = tfr_morlet(epochs, freqs=frequencies,
                                     n_cycles=ncycles, use_fft=False,
                                     return_itc=True, decim=decim, n_jobs=3)
@@ -1768,7 +1751,6 @@ class Caller(object):
                 message = 'Could not read layout information.'
                 self.messageBox = messageBoxes.shortMessageBox(message)
                 self.messageBox.show()
-                # self.experiment.action_logger.log_error('Plot power spectrum', params, message)
                 return
         raw = self.experiment.active_subject.working_file
         self.e.clear()
@@ -1786,7 +1768,6 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            # self.experiment.action_logger.log_error('Power spectrum', params, str(self.result))
             self.result = None
             return
 
@@ -1919,12 +1900,10 @@ class Caller(object):
         if not self.result is None:
             self.messageBox = messageBoxes.shortMessageBox(str(self.result))
             self.messageBox.show()
-            # self.experiment.action_logger.log_error('Filtering', dic, str(self.result))
             self.result = None
             return dataToFilter
         filteredData = async_result.get()
         pool.terminate()
-        # self.experiment.action_logger.log_success('Filtering', dic)
         return filteredData
 
     def _filter(self, dataToFilter, info, dic):
@@ -1941,16 +1920,23 @@ class Caller(object):
             length = dic['length']
             trans_bw = dic['trans_bw']
             try:
-                print "Filtering..."
-                # TODO: log mne call
+                #safety workaround to prevent logging errors from crashing Meggie
                 try:
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.base._BaseRaw.filter, getcallargs(mne.io.base._BaseRaw.filter, l_freq=lfreq, h_freq=hfreq,
-                                        filter_length=length,
-                                        l_trans_bandwidth=trans_bw,
-                                        h_trans_bandwidth=trans_bw, n_jobs=2,
-                                        method='fft', verbose=True)))
+                    #log mne call
+                    #filter() is a method of mne.io.base._BaseRaw class and takes self as its first argument
+                    #TODO: get rid of self argument
+                    self.log_action(mne.io.base._BaseRaw.filter,
+                                    '***ignore (mne.io.base._BaseRaw class)***',
+                                    l_freq=lfreq, h_freq=hfreq,
+                                    filter_length=length,
+                                    l_trans_bandwidth=trans_bw,
+                                    h_trans_bandwidth=trans_bw, n_jobs=2,
+                                    method='fft', verbose=True)
                 except TypeError as e:
+                    self.experiment.action_logger.log_message('Unable to log filter params.')
                     pass
+
+                print "Filtering..."
                 dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
                                     filter_length=length,
                                     l_trans_bandwidth=trans_bw,
@@ -1971,12 +1957,12 @@ class Caller(object):
                 trans_bw = dic['bandstop_transbw']
                 print "Band-stop filtering..."
                 try:
-                    # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.filter.notch_filter, getcallargs(mne.filter.notch_filter, freqs, picks=None,
-                                              filter_length=length,
-                                              notch_widths=dic['bandstop_bw'],
-                                              trans_bandwidth=trans_bw,
-                                              n_jobs=2, verbose=True)))
+                    #log mne call
+                    self.log_action(mne.filter.notch_filter, freqs, picks=None,
+                                    filter_length=length,
+                                    notch_widths=dic['bandstop_bw'],
+                                    trans_bandwidth=trans_bw, n_jobs=2,
+                                    verbose=True)
                     dataToFilter.notch_filter(freqs, picks=None,
                                               filter_length=length,
                                               notch_widths=dic['bandstop_bw'],
@@ -1994,29 +1980,25 @@ class Caller(object):
                 picks = mne.pick_types(info, meg=True, eeg=True)
                 if dic.get('lowpass'):
                     print "Low-pass filtering..."
-                    # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(low_pass_filter, getcallargs(low_pass_filter, dataToFilter, sf,
-                                                   dic.get('low_cutoff_freq'),
-                                                   dic.get('length'),
-                                                   dic.get('trans_bw'), 'fft',
-                                                   None, picks=picks, n_jobs=2,
-                                                   copy=True)))
+                    #log mne call
+                    self.log_action(low_pass_filter, dataToFilter, sf,
+                                    dic.get('low_cutoff_freq'),
+                                    dic.get('length'), dic.get('trans_bw'),
+                                    'fft', None, picks=picks, n_jobs=2,
+                                    copy=True)
                     dataToFilter = low_pass_filter(dataToFilter, sf,
                                                    dic.get('low_cutoff_freq'),
                                                    dic.get('length'),
                                                    dic.get('trans_bw'), 'fft',
                                                    None, picks=picks, n_jobs=2,
                                                    copy=True)
-
                 if dic.get('highpass') == True:
                     print "High-pass filtering..."
-                    # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(high_pass_filter, getcallargs(high_pass_filter, dataToFilter, sf,
-                                                    dic['high_cutoff_freq'],
-                                                    dic.get('length'),
-                                                    dic.get('trans_bw'), 'fft',
-                                                    None, picks=picks,
-                                                    n_jobs=2, copy=True)))
+                    #log mne call
+                    self.log_action(high_pass_filter, dataToFilter, sf,
+                                    dic['high_cutoff_freq'], dic.get('length'),
+                                    dic.get('trans_bw'), 'fft', None,
+                                    picks=picks, n_jobs=2, copy=True)
                     dataToFilter = high_pass_filter(dataToFilter, sf,
                                                     dic['high_cutoff_freq'],
                                                     dic.get('length'),
@@ -2029,12 +2011,10 @@ class Caller(object):
                     lfreq = dic['bandstop1_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
-                    # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(band_stop_filter, getcallargs(band_stop_filter, dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)))
+                    #log mne call
+                    self.log_action(band_stop_filter, dataToFilter, sf, lfreq,
+                                    hfreq, dic['bandstop_length'], trans,
+                                    trans, picks=picks, n_jobs=2, copy=True)
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
@@ -2046,11 +2026,9 @@ class Caller(object):
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
                     # TODO: log mne call
-                    self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(band_stop_filter, getcallargs(band_stop_filter, dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)))
+                    self.log_action(band_stop_filter, dataToFilter, sf, lfreq,
+                                    hfreq, dic['bandstop_length'], trans,
+                                    trans, picks=picks, n_jobs=2, copy=True)
                     dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
                                                     hfreq,
                                                     dic['bandstop_length'],
@@ -2477,3 +2455,13 @@ class Caller(object):
         self.experiment.active_subject.working_file = raw
         status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)
+        
+    def log_action(self, mne_func, *args, **kwargs):
+        #safety workaround to prevent logging errors from crashing Meggie
+        try:
+            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne_func, getcallargs(mne_func, *args, **kwargs)))
+        except:
+            if inspect.isclass(mne_func):
+                self.experiment.action_logger.log_message('Logging failed: ' + mne_func.__class__.__name__)
+                return
+            self.experiment.action_logger.log_message('Logging failed: ' + mne_func.__name__)
