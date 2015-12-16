@@ -126,8 +126,8 @@ class Caller(object):
         """
         raw = self.experiment.active_subject.working_file
         
-        # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(raw.index_as_time, getcallargs(raw.index_as_time, sample - raw.first_samp, 0)))
+        #log mne call
+        #self.log_action(raw.index_as_time, sample - raw.first_samp, 0)
         return raw.index_as_time(sample - raw.first_samp)[0]
 
     def call_mne_browse_raw(self, filename):
@@ -531,7 +531,7 @@ class Caller(object):
         try:
             raw = mne.io.Raw(fname, preload=True)  # add allow_maxshield=True if needed
             #log mne call
-            self.experiment.action_logger.log_message('Working file changed to: ' + fname)
+            self.log_raw_changed(fname)
             # self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, vars(raw)))
         except Exception as e:
             print 'Exception while applying ' + str(kind)
@@ -1927,7 +1927,7 @@ class Caller(object):
                                 l_trans_bandwidth=trans_bw,
                                 h_trans_bandwidth=trans_bw, n_jobs=2,
                                 method='fft', verbose=True)
-                self.log_raw(self.experiment.active_subject_name)
+                #self.log_raw(self.experiment.active_subject_name)
                 print "Filtering..."
                 dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
                                     filter_length=length,
@@ -2453,25 +2453,12 @@ class Caller(object):
         Helper method for logging
         
         Keyword arguments:
+        TODO: outcome     - string interpreting the successfulness of the action
         mne_func    - reference to mne function (or class in some cases)
-        args       - arguments passed to the mne function (or class)
-        kwargs    - keyword arguments passed to the mne function (or class)
+        args        - arguments passed to the mne function (or class)
+        kwargs      - keyword arguments passed to the mne function (or class)
         """
-        #safety workaround to prevent logging errors from crashing Meggie
-        #mostly TypeErrors
-        try:
-            self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne_func, getcallargs(mne_func, *args, **kwargs)))
-        except TypeError as e:
-            #Catch TypeError to ease logging development (remove afterwards)
-            if inspect.isclass(mne_func):
-                print str(e) + ' ' + mne_func.__class__.__name__
-                return
-            print str(e) + ' ' + mne_func.__name__
-        except:
-            if inspect.isclass(mne_func):
-                self.experiment.action_logger.log_message('Logging failed: ' + mne_func.__class__.__name__)
-                return
-            self.experiment.action_logger.log_message('Logging failed: ' + mne_func.__name__)
-
-    def log_raw_name(self, raw_name):
-        self.experiment.action_logger.log_message(raw_name)
+        wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
+        
+    def log_raw_changed(self, fname):
+        self.experiment.action_logger.log_message(fname)

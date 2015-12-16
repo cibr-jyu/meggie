@@ -12,7 +12,7 @@ from PyQt4 import QtGui
 
 import traceback
 from mistune import inspect
-
+from inspect import getcallargs
 
 def threaded(func):
     def decorated(*args, **kwargs):
@@ -65,16 +65,42 @@ def messaged(func):
         return result
     return decorated
 
-
 def logged(func):
-    def decorated(*args):
+    def decorated(logger, mne_func, *args, **kwargs):
+        
+        """
+        #catch TypeErrors for debugging
+        except TypeError as e:
+            #Catch TypeError to ease debugging
+            if inspect.isclass(mne_func):
+                print str(e) + ' ' + mne_func.__class__.__name__
+                return
+            print str(e) + ' ' + mne_func.__name__
+            return
+        """
+        #safety workaround to prevent logging errors from crashing Meggie
+        #mostly TypeErrors
+        try:
+            callargs = getcallargs(mne_func, *args, **kwargs)
+        except:
+            if inspect.isclass(mne_func):
+                logger.logger.log_message('Logging parameters failed: ' + mne_func.__class__.__name__)
+                return
+            logger.logger.log_message('Logging parameters failed: ' + mne_func.__name__)
+            return
+        
         params_str = ''
-        for key, value in args[1].items():
+        for key, value in callargs.items():
             params_str += '{0} = {1}, '.format(str(key), str(value))
-        #TODO: remove the last comma and whitespace
+        #remove the last comma and whitespace
         cleaned_params_str = params_str[0:len(params_str) - 2]
-        if inspect.isclass(args[0]):
-            return '{0}({1})'.format(args[0].__class__.__name__, cleaned_params_str)
-        return '{0}({1})'.format(args[0].__name__, cleaned_params_str)
+        if inspect.isclass(mne_func):
+            logger.logger.info('----------')
+            #logger.logger.info(outcome)
+            logger.logger.info('{0}({1})'.format(mne_func.__class__.__name__, cleaned_params_str))
+            return
+        logger.logger.info('----------')
+        #logger.logger.info(outcome)
+        logger.logger.info('{0}({1})'.format(mne_func.__name__, cleaned_params_str))
+        return
     return decorated
-
