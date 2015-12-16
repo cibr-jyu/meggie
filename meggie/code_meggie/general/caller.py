@@ -300,6 +300,7 @@ class Caller(object):
                                              excl_ssp, event_id, ecg_low_freq,
                                              ecg_high_freq, start,
                                              qrs_threshold)
+            self.log_outcome('SUCCESS')
         except Exception, err:
             self.result = err
             self.e.set()
@@ -318,6 +319,7 @@ class Caller(object):
             #log mne call
             self.log_action(mne.write_proj, ecg_proj_fname, projs)
             mne.write_proj(ecg_proj_fname, projs)
+            self.log_outcome('SUCCESS')
         except Exception as e:
             self.result = e
             self.e.set()
@@ -328,6 +330,7 @@ class Caller(object):
             #log mne call
             self.log_action(mne.write_events, ecg_event_fname, events)
             mne.write_events(ecg_event_fname, events)
+            self.log_outcome('SUCCESS')
         except Exception as e:
             self.result = e
             print str(e)
@@ -419,6 +422,7 @@ class Caller(object):
                                              flat, bads, eeg_proj, excl_ssp,
                                              event_id, eog_low_freq,
                                              eog_high_freq, start)
+            self.log_outcome('SUCCESS')
         except Exception as e:
             print 'Exception while computing eog projections.'
             self.result = e
@@ -432,11 +436,13 @@ class Caller(object):
         #log mne call
         self.log_action(mne.write_proj, eog_proj_fname, projs)
         mne.write_proj(eog_proj_fname, projs)
+        self.log_outcome('SUCCESS')
 
         print "Writing EOG events in %s" % eog_event_fname
         #log mne call
         self.log_action(mne.write_events, eog_event_fname, events)
         mne.write_events(eog_event_fname, events)
+        self.log_outcome('SUCCESS')
         self.e.set()
         """
         # Write parameter file
@@ -508,12 +514,14 @@ class Caller(object):
         #log mne call
         self.log_action(raw.add_proj, projs[applied])
         raw.add_proj(projs[applied])  # then add selected
+        self.log_outcome('SUCCESS')
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
         #log mne call
         self.log_action(raw.save, fname, overwrite=True)
         raw.save(fname, overwrite=True)
+        self.log_outcome('SUCCESS')
         
         """
         MNE (raw._read_raw_file) warning (in case not MaxFiltered?):
@@ -532,6 +540,7 @@ class Caller(object):
             raw = mne.io.Raw(fname, preload=True)  # add allow_maxshield=True if needed
             #log mne call
             self.log_raw_changed(fname)
+            self.log_outcome('SUCCESS')
             # self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, vars(raw)))
         except Exception as e:
             print 'Exception while applying ' + str(kind)
@@ -576,6 +585,7 @@ class Caller(object):
         raw.save(fname, overwrite=True)
         #log mne call
         self.log_action(raw.save, fname, overwrite=True)
+        self.log_outcome('SUCCESS')
 
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
@@ -658,17 +668,16 @@ class Caller(object):
             try:
                 raw = mne.io.Raw(fname)
                 #log mne call
-                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.find_events, getcallargs(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)))
                 self.log_action(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)
                 events = mne.find_events(raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
+                self.log_outcome('SUCCESS')
                 #log mne call
-                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_events, getcallargs(mne.pick_events, events, include=event_id)))
                 self.log_action(mne.pick_events, events, include=event_id)
                 events = mne.pick_events(events, include=event_id)
+                self.log_outcome('SUCCESS')
                 epocher = Epochs()
                 # TODO: log mne call in Epochs class
-                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs, getcallargs(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')))
                 #self.log_action(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
                                                stim, eog, reject,
@@ -746,9 +755,9 @@ class Caller(object):
         #log mne call
         #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(plot_topo, getcallargs(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)))
         self.log_action(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)
-        
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
+        self.log_outcome('SUCCESS')
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
@@ -838,6 +847,7 @@ class Caller(object):
             #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, category)))
             self.log_action(epochs.average, category)
             evokeds = [epochs[name].average() for name in category.keys()]
+            self.log_outcome('SUCCESS')
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
@@ -849,6 +859,7 @@ class Caller(object):
                 #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.selection.read_selection, getcallargs(mne.selection.read_selection, lobeName)))
                 self.log_action(mne.selection.read_selection, lobeName)
                 channelsToAve = mne.selection.read_selection(lobeName)
+                self.log_outcome('SUCCESS')
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -883,6 +894,7 @@ class Caller(object):
             self.log_action(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))
             evokedToAve = mne.pick_channels_evoked(evokeds[0],
                                                    list(channelsToAve))
+            self.log_outcome('SUCCESS')
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1357,6 +1369,7 @@ class Caller(object):
                                                  layout=layout,
                                                  baseline=baseline, mode=mode,
                                                  show=False, cmap=cmap)
+                        self.log_outcome('SUCCESS')
                     except Exception as e:
                         print str(e)
                 print 'Plotting topology. Please be patient...'
@@ -1369,6 +1382,7 @@ class Caller(object):
                                       fmin=minfreq, fmax=maxfreq,
                                       layout=layout, cmap=cmap,
                                       title='Average power')
+                self.log_outcome('SUCCESS')
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()
@@ -1395,6 +1409,7 @@ class Caller(object):
                                            ch_type=ch_type, layout=layout,
                                            baseline=baseline, mode=mode,
                                            show=False)
+                    self.log_outcome('SUCCESS')
                 #log mne call
                 self.log_action(itc.plot_topo, baseline=baseline, mode=mode,
                                 fmin=minfreq, fmax=maxfreq, layout=layout,
@@ -1402,6 +1417,7 @@ class Caller(object):
                 fig = itc.plot_topo(baseline=baseline, mode=mode,
                                     fmin=minfreq, fmax=maxfreq, layout=layout,
                                     cmap=cmap, title=title)
+                self.log_outcome('SUCCESS')
 
                 fig.show()
             except Exception as e:
@@ -1427,7 +1443,7 @@ class Caller(object):
             power, itc = tfr_morlet(epochs, freqs=frequencies,
                                     n_cycles=ncycles, use_fft=False,
                                     return_itc=True, decim=decim, n_jobs=3)
-
+            self.log_outcome('SUCCESS')
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1934,6 +1950,7 @@ class Caller(object):
                                     l_trans_bandwidth=trans_bw,
                                     h_trans_bandwidth=trans_bw, n_jobs=2,
                                     method='fft', verbose=True)
+                self.log_outcome('SUCCESS')
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -1960,6 +1977,7 @@ class Caller(object):
                                               notch_widths=dic['bandstop_bw'],
                                               trans_bandwidth=trans_bw,
                                               n_jobs=2, verbose=True)
+                    self.log_outcome('SUCCESS')
                 except Exception as e:
                     self.result = e
                     self.e.set()
@@ -1984,6 +2002,7 @@ class Caller(object):
                                                    dic.get('trans_bw'), 'fft',
                                                    None, picks=picks, n_jobs=2,
                                                    copy=True)
+                    self.log_outcome('SUCCESS')
                 if dic.get('highpass') == True:
                     print "High-pass filtering..."
                     #log mne call
@@ -1997,6 +2016,7 @@ class Caller(object):
                                                     dic.get('trans_bw'), 'fft',
                                                     None, picks=picks,
                                                     n_jobs=2, copy=True)
+                    self.log_outcome('SUCCESS')
 
                 trans = dic['bandstop_transbw']
                 if dic.get('bandstop1') == True:
@@ -2012,12 +2032,12 @@ class Caller(object):
                                                     dic['bandstop_length'],
                                                     trans, trans, picks=picks,
                                                     n_jobs=2, copy=True)
-
+                    self.log_outcome('SUCCESS')
                 if dic.get('bandstop2') == True:
                     lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
-                    # TODO: log mne call
+                    #log mne call
                     self.log_action(band_stop_filter, dataToFilter, sf, lfreq,
                                     hfreq, dic['bandstop_length'], trans,
                                     trans, picks=picks, n_jobs=2, copy=True)
@@ -2026,7 +2046,7 @@ class Caller(object):
                                                     dic['bandstop_length'],
                                                     trans, trans, picks=picks,
                                                     n_jobs=2, copy=True)
-
+                    self.log_outcome('SUCCESS')
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -2462,3 +2482,6 @@ class Caller(object):
         
     def log_raw_changed(self, fname):
         self.experiment.action_logger.log_message(fname)
+        
+    def log_outcome(self, outcome):
+        self.experiment.action_logger.log_outcome(outcome)

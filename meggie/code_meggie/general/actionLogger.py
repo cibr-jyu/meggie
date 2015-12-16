@@ -5,7 +5,6 @@ Created on 26.11.2015
 """
 import os
 import logging
-from os.path import expanduser
 from logging.handlers import RotatingFileHandler
 
 class ActionLogger(object):
@@ -70,6 +69,9 @@ class ActionLogger(object):
         """
         self._logger.info('----------')
         self._logger.info(msg)
+        
+    def log_outcome(self, outcome):
+        self._logger.info(outcome)
         
     def add_notification(self, notification):
         """

@@ -96,11 +96,23 @@ def logged(func):
         cleaned_params_str = params_str[0:len(params_str) - 2]
         if inspect.isclass(mne_func):
             logger.logger.info('----------')
-            #logger.logger.info(outcome)
             logger.logger.info('{0}({1})'.format(mne_func.__class__.__name__, cleaned_params_str))
+            #logger.logger.info(outcome)
             return
         logger.logger.info('----------')
-        #logger.logger.info(outcome)
         logger.logger.info('{0}({1})'.format(mne_func.__name__, cleaned_params_str))
+        #logger.logger.info(outcome)
+        return
+    return decorated
+
+
+#TODO: idea: create a queue of mne calls to use them in
+#      the exact order they were put into the queue,
+#      input being the user chosen raw file/files
+def batched(func):
+    def decorated(*args, **kwargs):
+        #TODO: create public Queue and put funcs and args in it here
+        batch = Queue()
+        batch.put(func, args, kwargs)
         return
     return decorated
