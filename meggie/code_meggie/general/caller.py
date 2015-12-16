@@ -129,6 +129,8 @@ class Caller(object):
         retval = proc.wait()
         print "the program return code was %d" % retval
 
+    @messaged
+    @threaded
     def call_maxfilter(self, params, custom):
         """
         Performs maxfiltering with the given parameters.
@@ -137,23 +139,11 @@ class Caller(object):
         params -- Dictionary of parameters
         custom -- Additional parameters as a string
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_maxfilter, args=(params,
-                                                                  custom))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
-        return 0
+        self._call_maxfilter(params, custom)
+        return True
 
     def _call_maxfilter(self, params, custom):
-        """Aux function for maxfiltering data. Performed in worker thread."""
+        """Aux function for maxfiltering data. """
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
@@ -166,17 +156,16 @@ class Caller(object):
                                 stderr=subprocess.STDOUT)
         while True:
             line = proc.stdout.readline()
-            if not line: break
+            if not line: 
+                break
             print line
         retval = proc.wait()      
 
         print "the program return code was %d" % retval
         if retval != 0:
             print 'Error while maxfiltering data!'
-            self.result = RuntimeError('Error while maxfiltering the data. '
-                                       'Check console.')
-            self.e.set()
-            return
+            raise RuntimeError('Error while maxfiltering the data. '
+                               'Check console.')
 
         outputfile = params.get('-o')
         raw = mne.io.Raw(outputfile, preload=True)
@@ -185,7 +174,6 @@ class Caller(object):
         self.experiment.save_parameter_file(bs, params['-f'], outputfile,
                                             'maxfilter', params)        
         self.experiment.save_experiment_settings()
-        self.e.set()
 
     def call_ecg_ssp(self, dic, subject):
         """
