@@ -584,7 +584,7 @@ class Caller(object):
         fname = raw.info['filename']
         raw.save(fname, overwrite=True)
         #log mne call
-        self.log_action(raw.save, fname, overwrite=True)
+        self.log_raw_changed(fname)
         self.log_outcome('SUCCESS')
 
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
@@ -2481,7 +2481,7 @@ class Caller(object):
         wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
         
     def log_raw_changed(self, fname):
-        self.experiment.action_logger.log_message(fname)
+        self.experiment.action_logger.log_message('Raw changed: ' + fname)
         
     def log_outcome(self, outcome):
         self.experiment.action_logger.log_outcome(outcome)
