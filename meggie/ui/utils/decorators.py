@@ -66,7 +66,7 @@ def messaged(func):
     return decorated
 
 def logged(func):
-    def decorated(logger, mne_func, *args, **kwargs):
+    def decorated(experiment, mne_func, *args, **kwargs):
         
         """
         #catch TypeErrors for debugging
@@ -78,16 +78,31 @@ def logged(func):
             print str(e) + ' ' + mne_func.__name__
             return
         """
+        logger = experiment.action_logger
+        
         #safety workaround to prevent logging errors from crashing Meggie
         #mostly TypeErrors
+        
+        print "kissa"
+        
+        try:
+            result = func(mne_func, *args, **kwargs)
+        except:
+            logger.logger.info('FAILURE')
+            exc = exc_info()
+            raise exc[0], exc[1].args[0], exc[2]
+        logger.logger.info('SUCCESS')
+        
+        print "koira"
+        
         try:
             callargs = getcallargs(mne_func, *args, **kwargs)
         except:
             if inspect.isclass(mne_func):
-                logger.logger.log_message('Logging parameters failed: ' + mne_func.__class__.__name__)
-                return
-            logger.logger.log_message('Logging parameters failed: ' + mne_func.__name__)
-            return
+                logger.logger.info('Logging parameters failed: ' + mne_func.__class__.__name__)
+                return result
+            logger.logger.info('Logging parameters failed: ' + mne_func.__name__)
+            return result
         
         params_str = ''
         for key, value in callargs.items():
@@ -101,8 +116,7 @@ def logged(func):
             return
         logger.logger.info('----------')
         logger.logger.info('{0}({1})'.format(mne_func.__name__, cleaned_params_str))
-        #logger.logger.info(outcome)
-        return
+        return result
     return decorated
 
 

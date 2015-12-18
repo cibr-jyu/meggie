@@ -48,7 +48,7 @@ from meggie.ui.general import messageBoxes
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 
-from meggie.code_meggie.general import wrapper
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
@@ -201,7 +201,7 @@ class Caller(object):
 
         outputfile = params.get('-o')
         # TODO: log mne call
-        self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, getcallargs(mne.io.Raw, outputfile, preload=True)))
+        #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
         raw = mne.io.Raw(outputfile, preload=True)
         self.update_experiment_working_file(outputfile, raw)
 
@@ -288,19 +288,15 @@ class Caller(object):
 
         try:
             #log mne call
-            self.log_action(compute_proj_ecg, raw_in, None, tmin, tmax, grad,
-                            mag, eeg, filter_low, filter_high, comp_ssp, taps,
-                            njobs, ch_name, reject, flat, bads, eeg_proj,
-                            excl_ssp, event_id, ecg_low_freq, ecg_high_freq,
-                            start, qrs_threshold)
-            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, ch_name,
-                                             reject, flat, bads, eeg_proj,
-                                             excl_ssp, event_id, ecg_low_freq,
-                                             ecg_high_freq, start,
-                                             qrs_threshold)
-            self.log_outcome('SUCCESS')
+            projs, events = wrap_mne_call(self.experiment, 
+                                          compute_proj_ecg, 
+                                          raw_in, None, tmin, tmax, grad,
+                                          mag, eeg, filter_low, filter_high,
+                                          comp_ssp, taps, njobs, ch_name,
+                                          reject, flat, bads, eeg_proj,
+                                          excl_ssp, event_id, ecg_low_freq,
+                                          ecg_high_freq, start,
+                                          qrs_threshold)
         except Exception, err:
             self.result = err
             self.e.set()
@@ -317,9 +313,7 @@ class Caller(object):
         print "Writing ECG projections in %s" % ecg_proj_fname
         try:
             #log mne call
-            self.log_action(mne.write_proj, ecg_proj_fname, projs)
-            mne.write_proj(ecg_proj_fname, projs)
-            self.log_outcome('SUCCESS')
+            wrap_mne_call(self.experiment, mne.write_proj, ecg_proj_fname, projs)
         except Exception as e:
             self.result = e
             self.e.set()
@@ -328,9 +322,7 @@ class Caller(object):
         print "Writing ECG events in %s" % ecg_event_fname
         try:
             #log mne call
-            self.log_action(mne.write_events, ecg_event_fname, events)
-            mne.write_events(ecg_event_fname, events)
-            self.log_outcome('SUCCESS')
+            wrap_mne_call(self.experiment, mne.write_events, ecg_event_fname, events)
         except Exception as e:
             self.result = e
             print str(e)
@@ -412,17 +404,13 @@ class Caller(object):
             eog_proj_fname = prefix + '_eog_proj.fif'
         try:
             #log mne call
-            self.log_action(compute_proj_eog, raw_in, None, tmin, tmax, grad,
-                            mag, eeg, filter_low, filter_high, comp_ssp, taps,
-                            njobs, reject, flat, bads, eeg_proj, excl_ssp,
-                            event_id, eog_low_freq, eog_high_freq, start)
-            projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, reject,
-                                             flat, bads, eeg_proj, excl_ssp,
-                                             event_id, eog_low_freq,
-                                             eog_high_freq, start)
-            self.log_outcome('SUCCESS')
+            projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
+                                          raw_in, None, tmin, tmax, grad,
+                                          mag, eeg, filter_low, filter_high,
+                                          comp_ssp, taps, njobs, reject,
+                                          flat, bads, eeg_proj, excl_ssp,
+                                          event_id, eog_low_freq,
+                                          eog_high_freq, start)
         except Exception as e:
             print 'Exception while computing eog projections.'
             self.result = e
@@ -434,15 +422,11 @@ class Caller(object):
 
         print "Writing EOG projections in %s" % eog_proj_fname
         #log mne call
-        self.log_action(mne.write_proj, eog_proj_fname, projs)
-        mne.write_proj(eog_proj_fname, projs)
-        self.log_outcome('SUCCESS')
+        wrap_mne_call(self.experiment, mne.write_proj, eog_proj_fname, projs)
 
         print "Writing EOG events in %s" % eog_event_fname
         #log mne call
-        self.log_action(mne.write_events, eog_event_fname, events)
-        mne.write_events(eog_event_fname, events)
-        self.log_outcome('SUCCESS')
+        wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
         self.e.set()
         """
         # Write parameter file
@@ -512,16 +496,12 @@ class Caller(object):
         if not isinstance(applied, np.ndarray):
             applied = np.array(applied)
         #log mne call
-        self.log_action(raw.add_proj, projs[applied])
-        raw.add_proj(projs[applied])  # then add selected
-        self.log_outcome('SUCCESS')
+        wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
         #log mne call
-        self.log_action(raw.save, fname, overwrite=True)
-        raw.save(fname, overwrite=True)
-        self.log_outcome('SUCCESS')
+        wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         
         """
         MNE (raw._read_raw_file) warning (in case not MaxFiltered?):
@@ -537,11 +517,10 @@ class Caller(object):
         about the warning. Return the state as it was before applying exg.
         """
         try:
-            raw = mne.io.Raw(fname, preload=True)  # add allow_maxshield=True if needed
+            
             #log mne call
+            raw = wrap_mne_call(self.experiment, mne.io.Raw, fname, preload=True)  # add allow_maxshield=True if needed
             self.log_raw_changed(fname)
-            self.log_outcome('SUCCESS')
-            # self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.io.Raw, vars(raw)))
         except Exception as e:
             print 'Exception while applying ' + str(kind)
             self.result = e
@@ -574,8 +553,8 @@ class Caller(object):
                 if name in epoch.event_id:
                     evokeds.append(epoch[name].average())
         #log mne call
-        # TODO: epochs is a list of epoch -> log to single line with a comma separator
-        self.log_action(epochs.average, epochs)
+        #TODO: epochs is a list of epoch -> log to single line with a comma separator
+        #self.log_action(epochs.average, epochs)
         return evokeds
 
     def save_raw(self):
@@ -585,7 +564,6 @@ class Caller(object):
         raw.save(fname, overwrite=True)
         #log mne call
         self.log_raw_changed(fname)
-        self.log_outcome('SUCCESS')
 
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
@@ -668,15 +646,12 @@ class Caller(object):
             try:
                 raw = mne.io.Raw(fname)
                 #log mne call
-                self.log_action(mne.find_events, stim_channel=stim_channel, shortest_event=1, mask=mask)
-                events = mne.find_events(raw, stim_channel=stim_channel,
+                events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
                                          shortest_event=1, mask=mask)
-                self.log_outcome('SUCCESS')
                 #log mne call
-                self.log_action(mne.pick_events, events, include=event_id)
-                events = mne.pick_events(events, include=event_id)
-                self.log_outcome('SUCCESS')
+                events = wrap_mne_call(self.experiment, mne.pick_events, events, include=event_id)
                 epocher = Epochs()
+
                 # TODO: log mne call in Epochs class
                 #self.log_action(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')
                 epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
@@ -753,11 +728,8 @@ class Caller(object):
         title = mi.subject_name
         
         #log mne call
-        #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(plot_topo, getcallargs(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)))
-        self.log_action(plot_topo, evokeds, layout, color=colors[:len(evokeds)], title=title)
-        fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
-                        title=title)
-        self.log_outcome('SUCCESS')
+        fig = wrap_mne_call(self.experiment, plot_topo, evokeds, layout,
+                            color=colors[:len(evokeds)], title=title)
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
@@ -844,10 +816,8 @@ class Caller(object):
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
             #log mne call
-            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epochs.average, getcallargs(epochs.average, category)))
-            self.log_action(epochs.average, category)
+            #self.log_action(epochs.average, category)
             evokeds = [epochs[name].average() for name in category.keys()]
-            self.log_outcome('SUCCESS')
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
@@ -856,10 +826,7 @@ class Caller(object):
         if channelSet is None:
             try:
                 #log mne call
-                #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.selection.read_selection, getcallargs(mne.selection.read_selection, lobeName)))
-                self.log_action(mne.selection.read_selection, lobeName)
-                channelsToAve = mne.selection.read_selection(lobeName)
-                self.log_outcome('SUCCESS')
+                channelsToAve = wrap_mne_call(self.experiment, mne.selection.read_selection, lobeName)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -890,11 +857,9 @@ class Caller(object):
         # Picks only the desired channels from the evokeds.
         try:
             #log mne call
-            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(mne.pick_channels_evoked, getcallargs(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))))
-            self.log_action(mne.pick_channels_evoked, evokeds[0], list(channelsToAve))
-            evokedToAve = mne.pick_channels_evoked(evokeds[0],
-                                                   list(channelsToAve))
-            self.log_outcome('SUCCESS')
+            evokedToAve = wrap_mne_call(self.experiment,
+                                        mne.pick_channels_evoked, evokeds[0],
+                                        list(channelsToAve))
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1251,11 +1216,11 @@ class Caller(object):
             return
 
         try:
-            # TODO: log mne call
-            power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
-                                            frequencies, n_cycles=ncycles,
-                                            decim=decim, use_fft=False,
-                                            n_jobs=1, zero_mean=True)
+            #log mne call
+            power, itc = wrap_mne_call(self.experiment, _induced_power_cwt,
+                                       data, epochs.info['sfreq'], frequencies,
+                                       n_cycles=ncycles, decim=decim,
+                                       use_fft=False, n_jobs=1, zero_mean=True)
         except Exception, err:
             self.result = err
             self.e.set()
@@ -1356,33 +1321,24 @@ class Caller(object):
                 if scalp is not None:
                     try:
                         #log mne call
-                        self.log_action(power.plot_topomap, tmin=scalp['tmin'],
-                                        tmax=scalp['tmax'], fmin=scalp['fmin'],
-                                        fmax=scalp['fmax'], ch_type=ch_type,
-                                        layout=layout, baseline=baseline,
-                                        mode=mode, show=False, cmap=cmap)
-                        fig = power.plot_topomap(tmin=scalp['tmin'],
-                                                 tmax=scalp['tmax'],
-                                                 fmin=scalp['fmin'],
-                                                 fmax=scalp['fmax'],
-                                                 ch_type=ch_type,
-                                                 layout=layout,
-                                                 baseline=baseline, mode=mode,
-                                                 show=False, cmap=cmap)
-                        self.log_outcome('SUCCESS')
+                        fig = wrap_mne_call(self.experiment,
+                                            power.plot_topomap,
+                                            tmin=scalp['tmin'],
+                                            tmax=scalp['tmax'],
+                                            fmin=scalp['fmin'],
+                                            fmax=scalp['fmax'],
+                                            ch_type=ch_type, layout=layout,
+                                            baseline=baseline, mode=mode,
+                                            show=False, cmap=cmap)
                     except Exception as e:
                         print str(e)
                 print 'Plotting topology. Please be patient...'
                 self.parent.update_ui()
                 #log mne call
-                self.log_action(power.plot_topo, baseline=baseline, mode=mode,
-                                fmin=minfreq, fmax=maxfreq, layout=layout,
-                                cmap=cmap, title='Average power')
-                fig = power.plot_topo(baseline=baseline, mode=mode,
-                                      fmin=minfreq, fmax=maxfreq,
-                                      layout=layout, cmap=cmap,
-                                      title='Average power')
-                self.log_outcome('SUCCESS')
+                fig = wrap_mne_call(self.experiment, power.plot_topo,
+                                    baseline=baseline, mode=mode, fmin=minfreq,
+                                    fmax=maxfreq, layout=layout, cmap=cmap,
+                                    title='Average power')
             except Exception as e:
                 self.messageBox = messageBoxes.shortMessageBox(str(e))
                 self.messageBox.show()
@@ -1397,27 +1353,17 @@ class Caller(object):
                 title = 'Inter-Trial coherence'
                 if scalp is not None:
                     #log mne call
-                    self.log_action(itc.plot_topomap, tmin=scalp['tmin'],
-                                    tmax=scalp['tmax'], fmin=scalp['fmin'],
-                                    fmax=scalp['fmax'], ch_type=ch_type,
-                                    layout=layout, baseline=baseline,
-                                    mode=mode, show=False)
-                    fig = itc.plot_topomap(tmin=scalp['tmin'],
-                                           tmax=scalp['tmax'],
-                                           fmin=scalp['fmin'],
-                                           fmax=scalp['fmax'],
-                                           ch_type=ch_type, layout=layout,
-                                           baseline=baseline, mode=mode,
-                                           show=False)
-                    self.log_outcome('SUCCESS')
+                    fig = wrap_mne_call(self.experiment, itc.plot_topomap,
+                                        tmin=scalp['tmin'], tmax=scalp['tmax'],
+                                        fmin=scalp['fmin'], fmax=scalp['fmax'],
+                                        ch_type=ch_type, layout=layout,
+                                        baseline=baseline, mode=mode,
+                                        show=False)
                 #log mne call
-                self.log_action(itc.plot_topo, baseline=baseline, mode=mode,
-                                fmin=minfreq, fmax=maxfreq, layout=layout,
-                                cmap=cmap, title=title)
-                fig = itc.plot_topo(baseline=baseline, mode=mode,
-                                    fmin=minfreq, fmax=maxfreq, layout=layout,
-                                    cmap=cmap, title=title)
-                self.log_outcome('SUCCESS')
+                fig = wrap_mne_call(self.experiment, itc.plot_topo,
+                                    baseline=baseline, mode=mode, fmin=minfreq,
+                                    fmax=maxfreq, layout=layout, cmap=cmap,
+                                    title=title)
 
                 fig.show()
             except Exception as e:
@@ -1437,13 +1383,10 @@ class Caller(object):
         try:
             # http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
             #log mne call
-            self.log_action(tfr_morlet, epochs, freqs=frequencies,
-                            n_cycles=ncycles, use_fft=False, return_itc=True,
-                            decim=decim, n_jobs=3)
-            power, itc = tfr_morlet(epochs, freqs=frequencies,
-                                    n_cycles=ncycles, use_fft=False,
-                                    return_itc=True, decim=decim, n_jobs=3)
-            self.log_outcome('SUCCESS')
+            power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
+                                       freqs=frequencies, n_cycles=ncycles,
+                                       use_fft=False, return_itc=True,
+                                       decim=decim, n_jobs=3)
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1558,10 +1501,11 @@ class Caller(object):
             try:
                 epochs = mne.read_epochs(join(directory, f))
                 bads = bads + list(set(epochs.info['bads']) - set(bads))
-                # TODO: log mne call
-                power, itc = tfr_morlet(epochs, freqs=frequencies,
-                                        n_cycles=ncycles, use_fft=False,
-                                        return_itc=True, decim=decim, n_jobs=3)
+                #log mne call
+                power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
+                                           freqs=frequencies, n_cycles=ncycles,
+                                           use_fft=False, return_itc=True,
+                                           decim=decim, n_jobs=3)
                 if save_max is not None:
                     # Write file for maxima
                     p = None
@@ -1641,21 +1585,23 @@ class Caller(object):
             else:
                 ch_types.append('eeg')
 
-        # TODO: log mne call
-        info = mne.create_info(ch_names=ch_names, ch_types=ch_types,
-                               sfreq=powers[0].info['sfreq'])
+        #log mne call
+        info = wrap_mne_call(self.experiment, mne.create_info,
+                             ch_names=ch_names, ch_types=ch_types,
+                             sfreq=powers[0].info['sfreq'])
 
         times = powers[0].times
         nave = sum(weights)
         averagePower = np.array(averagePower)
         averageItc = np.array(averageItc)
         try:
-            # TODO: log mne call
-            power = mne.time_frequency.AverageTFR(info, averagePower, times,
-                                                  frequencies, nave)
-            # TODO: log mne call
-            itc = mne.time_frequency.AverageTFR(info, averageItc, times,
-                                                frequencies, nave)
+            #log mne call
+            power = wrap_mne_call(self.experiment,
+                                  mne.time_frequency.AverageTFR, info,
+                                  averagePower, times, frequencies, nave)
+            #log mne call
+            itc = wrap_mne_call(self.experiment, mne.time_frequency.AverageTFR,
+                                info, averageItc, times, frequencies, nave)
         except Exception as e:
             self.result = e
             self.e.set()
@@ -1718,10 +1664,11 @@ class Caller(object):
 
         try:
             plt.clf()
-            # TODO: log mne call
-            fig = power.plot_topo(baseline=baseline, mode=mode,
-                                  fmin=fmin, fmax=fmax, layout=layout,
-                                  title=title, show=False, cmap=cmap)
+            #log mne call
+            fig = wrap_mne_call(self.experiment, power.plot_topo,
+                                baseline=baseline, mode=mode, fmin=fmin,
+                                fmax=fmax, layout=layout, title=title,
+                                show=False, cmap=cmap)
             if save_topo:
                 print 'Saving topology figure to  '\
                         + exp_path + '/output...'
@@ -1873,11 +1820,12 @@ class Caller(object):
         psdList = []
         for time in times:
             try:
-                # TODO: log mne call
-                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
-                                              fmin=fmin, fmax=fmax, n_fft=nfft,
-                                              n_overlap=overlap, picks=picks,
-                                              proj=True, verbose=True)
+                #log mne call
+                psds, freqs = wrap_mne_call(self.experiment, compute_raw_psd,
+                                            raw, tmin=time[0], tmax=time[1],
+                                            fmin=fmin, fmax=fmax, n_fft=nfft,
+                                            n_overlap=overlap, picks=picks,
+                                            proj=True, verbose=True)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -1936,21 +1884,12 @@ class Caller(object):
             length = dic['length']
             trans_bw = dic['trans_bw']
             try:
-                self.log_action(mne.io.base._BaseRaw.filter,
-                                '***ignore (mne.io.base._BaseRaw class)***',
-                                l_freq=lfreq, h_freq=hfreq,
-                                filter_length=length,
-                                l_trans_bandwidth=trans_bw,
-                                h_trans_bandwidth=trans_bw, n_jobs=2,
-                                method='fft', verbose=True)
-                #self.log_raw(self.experiment.active_subject_name)
                 print "Filtering..."
-                dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
-                                    filter_length=length,
-                                    l_trans_bandwidth=trans_bw,
-                                    h_trans_bandwidth=trans_bw, n_jobs=2,
-                                    method='fft', verbose=True)
-                self.log_outcome('SUCCESS')
+                wrap_mne_call(self.experiment, dataToFilter.filter,
+                              l_freq=lfreq, h_freq=hfreq, filter_length=length,
+                              l_trans_bandwidth=trans_bw,
+                              h_trans_bandwidth=trans_bw, n_jobs=2,
+                              method='fft', verbose=True)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -1967,17 +1906,11 @@ class Caller(object):
                 print "Band-stop filtering..."
                 try:
                     #log mne call
-                    self.log_action(mne.filter.notch_filter, freqs, picks=None,
-                                    filter_length=length,
-                                    notch_widths=dic['bandstop_bw'],
-                                    trans_bandwidth=trans_bw, n_jobs=2,
-                                    verbose=True)
-                    dataToFilter.notch_filter(freqs, picks=None,
-                                              filter_length=length,
-                                              notch_widths=dic['bandstop_bw'],
-                                              trans_bandwidth=trans_bw,
-                                              n_jobs=2, verbose=True)
-                    self.log_outcome('SUCCESS')
+                    wrap_mne_call(self.experiment, dataToFilter.notch_filter,
+                                  freqs, picks=None, filter_length=length,
+                                  notch_widths=dic['bandstop_bw'],
+                                  trans_bandwidth=trans_bw, n_jobs=2,
+                                  verbose=True)
                 except Exception as e:
                     self.result = e
                     self.e.set()
@@ -1991,32 +1924,25 @@ class Caller(object):
                 if dic.get('lowpass'):
                     print "Low-pass filtering..."
                     #log mne call
-                    self.log_action(low_pass_filter, dataToFilter, sf,
-                                    dic.get('low_cutoff_freq'),
-                                    dic.get('length'), dic.get('trans_bw'),
-                                    'fft', None, picks=picks, n_jobs=2,
-                                    copy=True)
-                    dataToFilter = low_pass_filter(dataToFilter, sf,
-                                                   dic.get('low_cutoff_freq'),
-                                                   dic.get('length'),
-                                                   dic.get('trans_bw'), 'fft',
-                                                   None, picks=picks, n_jobs=2,
-                                                   copy=True)
-                    self.log_outcome('SUCCESS')
+                    dataToFilter = wrap_mne_call(self.experiment,
+                                                 low_pass_filter, dataToFilter,
+                                                 sf,
+                                                 dic.get('low_cutoff_freq'),
+                                                 dic.get('length'),
+                                                 dic.get('trans_bw'), 'fft',
+                                                 None, picks=picks, n_jobs=2,
+                                                 copy=True)
                 if dic.get('highpass') == True:
                     print "High-pass filtering..."
                     #log mne call
-                    self.log_action(high_pass_filter, dataToFilter, sf,
-                                    dic['high_cutoff_freq'], dic.get('length'),
-                                    dic.get('trans_bw'), 'fft', None,
-                                    picks=picks, n_jobs=2, copy=True)
-                    dataToFilter = high_pass_filter(dataToFilter, sf,
-                                                    dic['high_cutoff_freq'],
-                                                    dic.get('length'),
-                                                    dic.get('trans_bw'), 'fft',
-                                                    None, picks=picks,
-                                                    n_jobs=2, copy=True)
-                    self.log_outcome('SUCCESS')
+                    dataToFilter = wrap_mne_call(self.experiment,
+                                                 high_pass_filter,
+                                                 dataToFilter, sf,
+                                                 dic['high_cutoff_freq'],
+                                                 dic.get('length'),
+                                                 dic.get('trans_bw'), 'fft',
+                                                 None, picks=picks, n_jobs=2,
+                                                 copy=True)
 
                 trans = dic['bandstop_transbw']
                 if dic.get('bandstop1') == True:
@@ -2024,29 +1950,24 @@ class Caller(object):
                     hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
                     #log mne call
-                    self.log_action(band_stop_filter, dataToFilter, sf, lfreq,
-                                    hfreq, dic['bandstop_length'], trans,
-                                    trans, picks=picks, n_jobs=2, copy=True)
-                    dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)
-                    self.log_outcome('SUCCESS')
+                    dataToFilter = wrap_mne_call(self.experiment,
+                                                 band_stop_filter,
+                                                 dataToFilter, sf,
+                                                 lfreq, hfreq,
+                                                 dic['bandstop_length'], trans,
+                                                 trans, picks=picks, n_jobs=2,
+                                                 copy=True)
                 if dic.get('bandstop2') == True:
                     lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
                     print "Band-stop filtering..."
                     #log mne call
-                    self.log_action(band_stop_filter, dataToFilter, sf, lfreq,
-                                    hfreq, dic['bandstop_length'], trans,
-                                    trans, picks=picks, n_jobs=2, copy=True)
-                    dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)
-                    self.log_outcome('SUCCESS')
+                    dataToFilter = wrap_mne_call(self.experiment,
+                                                 band_stop_filter,
+                                                 dataToFilter, sf, lfreq,
+                                                 hfreq, dic['bandstop_length'],
+                                                 trans, trans, picks=picks,
+                                                 n_jobs=2, copy=True)
             except Exception as e:
                 self.result = e
                 self.e.set()
@@ -2478,7 +2399,7 @@ class Caller(object):
         args        - arguments passed to the mne function (or class)
         kwargs      - keyword arguments passed to the mne function (or class)
         """
-        wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
+        #wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
         
     def log_raw_changed(self, fname):
         self.experiment.action_logger.log_message('Raw changed: ' + fname)
