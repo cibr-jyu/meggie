@@ -68,36 +68,36 @@ def messaged(func):
 def logged(func):
     def decorated(experiment, mne_func, *args, **kwargs):
         logger = experiment.action_logger
+        mne_instance_name = 'unknown_function'
+        if inspect.isclass(mne_func):
+            mne_instance_name = mne_func.__class__.__name__
+        else:
+            try:
+                mne_instance_name = mne_func.__name__
+            except:
+                print 'Logging error: the called mne_func is neither a function nor a class'
+                pass
         try:
             result = func(mne_func, *args, **kwargs)
         except:
-            logger.logger.info('FAILURE')
+            logger.logger.info('----------')
+            logger.logger.info('Calculation ERROR: ' + mne_instance_name)
             exc = exc_info()
+            #TODO: terminate pool also?
             raise exc[0], exc[1].args[0], exc[2]
-        logger.logger.info('SUCCESS')
-        
+        logger.logger.info('----------')
+        logger.logger.info('calculation SUCCESS: ' + mne_instance_name)
         try:
             callargs = getcallargs(mne_func, *args, **kwargs)
         except:
-            if inspect.isclass(mne_func):
-                logger.logger.info('Logging parameters failed: ' + mne_func.__class__.__name__)
-                return result
-            logger.logger.info('Logging parameters failed: ' + mne_func.__name__)
+            logger.logger.info('Logging parameters failed: ' + mne_instance_name)
             return result
-        
         params_str = ''
         for key, value in callargs.items():
-            
             params_str += '{0} = {1}, '.format(str(key), str(value))
         #remove the last comma and whitespace
         cleaned_params_str = params_str[0:len(params_str) - 2]
-        if inspect.isclass(mne_func):
-            logger.logger.info('----------')
-            logger.logger.info('{0}({1})'.format(mne_func.__class__.__name__, cleaned_params_str))
-            #logger.logger.info(outcome)
-            return result
-        logger.logger.info('----------')
-        logger.logger.info('{0}({1})'.format(mne_func.__name__, cleaned_params_str))
+        logger.logger.info('{0}({1})'.format(mne_instance_name, cleaned_params_str))
         return result
     return decorated
 

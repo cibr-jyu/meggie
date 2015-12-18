@@ -518,8 +518,11 @@ class Caller(object):
         """
         try:
             
-            #log mne call
-            raw = wrap_mne_call(self.experiment, mne.io.Raw, fname, preload=True)  # add allow_maxshield=True if needed
+            #TODO: log mne call
+            #      mne.io.Raw.__class__.__name__ gives string 'type' and
+            #      getcallargs raises an error
+            #raw = wrap_mne_call(self.experiment, mne.io.Raw, fname, preload=True)
+            raw = mne.io.Raw(fname, preload=True)
             self.log_raw_changed(fname)
         except Exception as e:
             print 'Exception while applying ' + str(kind)
