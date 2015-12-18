@@ -43,17 +43,16 @@ class ActionLogger(object):
         Keyword arguments
         path     -- path to save the log file
         """
-        #TODO: try JSON or YAML
         #TODO: If you use FileHandler for writing logs, the size of log file will grow with time.
         #Someday, it will occupy all of your disk. In order to avoid that situation, you should
         #use RotatingFileHandler instead of FileHandler in production environment.
-        #home = expanduser("~")
         self._logger = logging.getLogger(path)
         handler = logging.FileHandler(os.path.join(path, 'meggie.log'))
         #handler = RotatingFileHandler(os.path.join(path, 'meggie.log'))
         handler.setLevel(logging.INFO)
-        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        formatter = logging.Formatter('%(asctime)s - %(message)s')
+        
+        #see: https://docs.python.org/2/library/logging.html#logrecord-attributes
+        formatter = logging.Formatter('%(asctime)s - %(message)s', '%Y-%m-%d %H:%M:%S')
         handler.setFormatter(formatter)
         self._logger.addHandler(handler)
         self._logger.setLevel(logging.INFO)
@@ -72,29 +71,3 @@ class ActionLogger(object):
         
     def log_outcome(self, outcome):
         self._logger.info(outcome)
-        
-    def add_notification(self, notification):
-        """
-        Adds the notification to the notifications list.
-        
-        Keyword arguments
-        notification    -- notification message
-        """
-        self._notifications.append(notification)
-        
-    def include_notifications_to_msg(self, msg):
-        """
-        Takes care of the notifications
-        if there are any.
-        
-        Keyword arguments:
-        msg    -- message to include the notifications to (=SUCCESS/WARNING/ERROR)
-        """
-        if len(self._notifications) > 0:
-            msg += '. NOTE:\n'
-            for notification in self._notifications:
-                msg += notification + '\n'
-            #Remove notifications to prevent logging them after the next computation
-            del self._notifications[:]
-        return msg
-    

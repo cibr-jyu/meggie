@@ -834,7 +834,13 @@ class ExperimentHandler(QObject):
 
     def initialize_logger(self, experiment):
 
-        print 'Initializing logger'        
-        experiment._action_logger = ActionLogger()
-        experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
+        print 'Initializing logger' 
+        try:       
+            experiment._action_logger = ActionLogger()
+            experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
+        except:
+            experiment._action_logger.log_message('Could not initialize logger.')
+            print 'Unable to initialize logger'
+            return
+        experiment._action_logger.log_message('Current experiment: '+ experiment.experiment_name)
         print 'Logger initialized'

@@ -67,24 +67,7 @@ def messaged(func):
 
 def logged(func):
     def decorated(experiment, mne_func, *args, **kwargs):
-        
-        """
-        #catch TypeErrors for debugging
-        except TypeError as e:
-            #Catch TypeError to ease debugging
-            if inspect.isclass(mne_func):
-                print str(e) + ' ' + mne_func.__class__.__name__
-                return
-            print str(e) + ' ' + mne_func.__name__
-            return
-        """
         logger = experiment.action_logger
-        
-        #safety workaround to prevent logging errors from crashing Meggie
-        #mostly TypeErrors
-        
-        print "kissa"
-        
         try:
             result = func(mne_func, *args, **kwargs)
         except:
@@ -92,8 +75,6 @@ def logged(func):
             exc = exc_info()
             raise exc[0], exc[1].args[0], exc[2]
         logger.logger.info('SUCCESS')
-        
-        print "koira"
         
         try:
             callargs = getcallargs(mne_func, *args, **kwargs)
@@ -106,6 +87,7 @@ def logged(func):
         
         params_str = ''
         for key, value in callargs.items():
+            
             params_str += '{0} = {1}, '.format(str(key), str(value))
         #remove the last comma and whitespace
         cleaned_params_str = params_str[0:len(params_str) - 2]
@@ -113,7 +95,7 @@ def logged(func):
             logger.logger.info('----------')
             logger.logger.info('{0}({1})'.format(mne_func.__class__.__name__, cleaned_params_str))
             #logger.logger.info(outcome)
-            return
+            return result
         logger.logger.info('----------')
         logger.logger.info('{0}({1})'.format(mne_func.__name__, cleaned_params_str))
         return result
@@ -127,6 +109,6 @@ def batched(func):
     def decorated(*args, **kwargs):
         #TODO: create public Queue and put funcs and args in it here
         batch = Queue()
-        batch.put(func, args, kwargs)
+        batch.put(func, *args, **kwargs)
         return
     return decorated
