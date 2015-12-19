@@ -81,6 +81,7 @@ from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.listWidget import ListWidget
+from meggie.ui.general.logDialogMain import LogDialog
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -104,14 +105,12 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        #self.action_logger = ActionLogger()
-        #self.action_logger.initialize_logger()
-        
         self.spectrumDialog = None
         self.filterDialog = None
         self.epochParameterDialog = None
         self.tfr_dialog = None
         self.tfrTop_dialog = None
+        self.log_dialog = None
         
         # List of subprocesses, used for terminating MNE-C processes on Meggie
         # quit.
@@ -426,6 +425,12 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.check_workspace()
+
+    def on_actionShow_Log_triggered(self, checked=None):
+        if checked in None:
+            return
+        self.log_dialog = LogDialog(self)
+        self.log_dialog.show()
 
     def on_actionPreferences_triggered(self, checked=None):
         """Open the preferences-dialog."""
