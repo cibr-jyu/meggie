@@ -71,7 +71,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1104</width>
+          <width>1102</width>
           <height>750</height>
          </rect>
         </property>
@@ -2944,10 +2944,10 @@ inverse operatorin
                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;Näille paikkeille sitten visualisointia, export-toimintoja yms.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans';&quot;&gt;Näille paikkeille sitten visualisointia, export-toimintoja yms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans';&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </widget>
@@ -3001,6 +3001,7 @@ p, li { white-space: pre-wrap; }
      <string>Tools</string>
     </property>
     <addaction name="actionDirectToConsole"/>
+    <addaction name="actionShow_log"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -3565,7 +3566,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionCreate_experiment">
    <property name="icon">
-    <iconset resource="../icons/mainWindowIcons.qrc">
+    <iconset>
      <normaloff>:/toolBarIcons/images/createExperiment.png</normaloff>:/toolBarIcons/images/createExperiment.png</iconset>
    </property>
    <property name="text">
@@ -3574,7 +3575,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionOpen_experiment">
    <property name="icon">
-    <iconset resource="../icons/mainWindowIcons.qrc">
+    <iconset>
      <normaloff>:/toolBarIcons/images/openExperiment.png</normaloff>:/toolBarIcons/images/openExperiment.png</iconset>
    </property>
    <property name="text">
@@ -3603,7 +3604,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShowExperimentInfo">
    <property name="icon">
-    <iconset resource="../icons/mainWindowIcons.qrc">
+    <iconset>
      <normaloff>:/toolBarIcons/images/showExperimentInfo.png</normaloff>:/toolBarIcons/images/showExperimentInfo.png</iconset>
    </property>
    <property name="text">
@@ -3615,7 +3616,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionHide_Show_subject_list_and_info">
    <property name="icon">
-    <iconset resource="../icons/mainWindowIcons.qrc">
+    <iconset>
      <normaloff>:/toolBarIcons/images/subjectList.png</normaloff>:/toolBarIcons/images/subjectList.png</iconset>
    </property>
    <property name="text">
@@ -3647,6 +3648,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Direct output to console</string>
+   </property>
+  </action>
+  <action name="actionShow_log">
+   <property name="text">
+    <string>Show log</string>
    </property>
   </action>
  </widget>

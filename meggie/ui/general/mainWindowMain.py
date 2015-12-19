@@ -426,8 +426,8 @@ class MainWindow(QtGui.QMainWindow):
             return
         self.check_workspace()
 
-    def on_actionShow_Log_triggered(self, checked=None):
-        if checked in None:
+    def on_actionShow_log_triggered(self, checked=None):
+        if checked is None:
             return
         self.log_dialog = LogDialog(self)
         self.log_dialog.show()
