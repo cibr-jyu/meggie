@@ -97,7 +97,8 @@ def logged(func):
             params_str += '{0} = {1}, '.format(str(key), str(value))
         #remove the last comma and whitespace
         cleaned_params_str = params_str[0:len(params_str) - 2]
-        logger.logger.info('{0}({1})'.format(mne_instance_name, cleaned_params_str))
+        working_file = experiment._working_file_names[experiment.active_subject_name]
+        logger.logger.info('File: {0} - {1}({2})'.format(working_file, mne_instance_name, cleaned_params_str))
         return result
     return decorated
 
