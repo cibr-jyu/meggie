@@ -78,19 +78,19 @@ def logged(func):
                 print 'Logging error: the called mne_func is neither a function nor a class'
                 pass
         try:
+            logger.logger.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
             result = func(mne_func, *args, **kwargs)
         except:
-            logger.logger.info('----------')
             logger.logger.info('Calculation ERROR: ' + mne_instance_name)
             exc = exc_info()
             #TODO: terminate pool also?
             raise exc[0], exc[1].args[0], exc[2]
-        logger.logger.info('----------')
-        logger.logger.info('calculation SUCCESS: ' + mne_instance_name)
+        #logger.logger.info('calculation SUCCESS: ' + mne_instance_name)
+        success_msg = 'Calculation SUCCESS: ' + mne_instance_name
         try:
             callargs = getcallargs(mne_func, *args, **kwargs)
         except:
-            logger.logger.info('Logging parameters failed: ' + mne_instance_name)
+            logger.logger.info(success_msg + '\nLogging parameters failed: ' + mne_instance_name)
             return result
         params_str = ''
         for key, value in callargs.items():
@@ -98,7 +98,7 @@ def logged(func):
         #remove the last comma and whitespace
         cleaned_params_str = params_str[0:len(params_str) - 2]
         working_file = experiment._working_file_names[experiment.active_subject_name]
-        logger.logger.info('File: {0} - {1}({2})'.format(working_file, mne_instance_name, cleaned_params_str))
+        logger.logger.info('{0}\nFile: {1}\n{2}({3})'.format(success_msg, working_file, mne_instance_name, cleaned_params_str))
         return result
     return decorated
 

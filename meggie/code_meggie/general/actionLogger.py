@@ -66,7 +66,7 @@ class ActionLogger(object):
         Keyword arguments
         msg
         """
-        self._logger.info('----------')
+        self._logger.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
         self._logger.info(msg)
         
     def log_outcome(self, outcome):
