@@ -655,9 +655,8 @@ class Caller(object):
                 events = wrap_mne_call(self.experiment, mne.pick_events, events, include=event_id)
                 epocher = Epochs()
 
-                # TODO: log mne call in Epochs class
-                #self.log_action(epocher.create_epochs, 'Fix to log epoch creation in Epochs class...')
-                epochs = epocher.create_epochs(raw, events, mag, grad, eeg,
+                #log mne call in Epochs class
+                epochs = epocher.create_epochs(self.experiment, raw, events, mag, grad, eeg,
                                                stim, eog, reject,
                                                {event_name: event_id}, tmin,
                                                tmax)
@@ -694,9 +693,8 @@ class Caller(object):
         epocher = Epochs()
         subject = self.experiment.active_subject
         try:
-            # TODO: log mne call in Epochs class
-            #self.experiment.action_logger.log_mne_func_call_decorated(wrapper.wrap_mne_call(epocher.create_epochs_from_dict, getcallargs(epocher.create_epochs_from_dict, 'Fix to log epoch creation in Epochs class...')))
-            epochs = epocher.create_epochs_from_dict(epoch_params,
+            #log mne call in Epochs class
+            epochs = epocher.create_epochs_from_dict(self.experiment, epoch_params,
                                                      subject.working_file)
         except Exception as e:
             self.messageBox = messageBoxes.shortMessageBox(str(e))

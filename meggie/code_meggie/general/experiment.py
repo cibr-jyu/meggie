@@ -842,5 +842,5 @@ class ExperimentHandler(QObject):
             experiment._action_logger.log_message('Could not initialize logger.')
             print 'Unable to initialize logger'
             return
-        experiment._action_logger.log_message('Current experiment: '+ experiment.experiment_name)
+        experiment._action_logger.log_message('Opened experiment: '+ experiment.experiment_name)
         print 'Logger initialized'

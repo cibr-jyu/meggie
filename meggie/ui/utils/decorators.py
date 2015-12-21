@@ -6,13 +6,15 @@ from time import sleep
 from sys import exc_info
 from multiprocessing.pool import ThreadPool
 from meggie.ui.general import messageBoxes
+import copy
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import traceback
 from mistune import inspect
-from inspect import getcallargs
+from inspect import getcallargs, getargvalues
+from decorator import getargspec
 
 def threaded(func):
     def decorated(*args, **kwargs):
@@ -69,14 +71,12 @@ def logged(func):
     def decorated(experiment, mne_func, *args, **kwargs):
         logger = experiment.action_logger
         mne_instance_name = 'unknown_function'
-        if inspect.isclass(mne_func):
-            mne_instance_name = mne_func.__class__.__name__
-        else:
-            try:
-                mne_instance_name = mne_func.__name__
-            except:
-                print 'Logging error: the called mne_func is neither a function nor a class'
-                pass
+        try:
+            #works with classes also (mne.Epochs for example)
+            mne_instance_name = mne_func.__name__
+        except:
+            print 'Logging error: the type of the called mne_func is unknown'
+            pass
         try:
             logger.logger.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
             result = func(mne_func, *args, **kwargs)
@@ -88,7 +88,12 @@ def logged(func):
         #logger.logger.info('calculation SUCCESS: ' + mne_instance_name)
         success_msg = 'Calculation SUCCESS: ' + mne_instance_name
         try:
-            callargs = getcallargs(mne_func, *args, **kwargs)
+            if inspect.isclass(mne_func):
+                #deepcopy needed for cleaning the dict
+                callargs = copy.deepcopy(result.__dict__)
+                callargs = clean_callargs(mne_instance_name, callargs)
+            else:
+                callargs = getcallargs(mne_func, *args, **kwargs)
         except:
             logger.logger.info(success_msg + '\nLogging parameters failed: ' + mne_instance_name)
             return result
@@ -113,3 +118,49 @@ def batched(func):
         batch.put(func, *args, **kwargs)
         return
     return decorated
+
+def clean_callargs(mne_instance_name, callargs):
+    """
+    Clean unnecessary call arguments
+    """
+    if (mne_instance_name == 'Epochs'):
+        
+        """
+        TODO:
+        
+        Log Mask? (mne.events.find_events
+        mask : int
+        The value of the digital mask to apply to the stim channel values.
+        The default value is 0.
+        
+        dict _channel_type_idx includes 'stim' key for stim channel selection
+        if it's not empty should it be logged?
+        """
+        del callargs['_channel_type_idx']
+        del callargs['_projector']
+        del callargs['_raw_times']
+        del callargs['events']
+        del callargs['info']
+        del callargs['picks']
+        del callargs['times']
+        del callargs['selection']
+        del callargs['verbose']
+        del callargs['reject_tmax']
+        del callargs['reject_tmin']
+        del callargs['_do_delayed_proj']
+        del callargs['_bad_dropped']
+        del callargs['baseline']
+        del callargs['_decim']
+        del callargs['preload']
+        del callargs['flat']
+        del callargs['_reject_time']
+        del callargs['drop_log']
+        del callargs['detrend']
+        del callargs['_data']
+        del callargs['name']
+        del callargs['_decim_slice']
+        del callargs['_offset']
+        del callargs['_raw']        
+        
+    return callargs
+    

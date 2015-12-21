@@ -1,4 +1,5 @@
 # coding: latin1
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -234,9 +235,19 @@ class EventSelectionDialog(QtGui.QDialog):
         event_id = self.ui.spinBoxEventID.value()
         mask = self.ui.spinBoxMask.value()
         stim_channel = str(self.ui.comboBoxStimChannel.currentText())
+        
+        #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
+        #the MNE Events' __init__ function uses mne.find_events :  -  D
+        #this needs some manual logging or logging from the Events' __ini__
+        #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
+        #                  stim_channel, mask)
         e = Events(self.caller.experiment.active_subject.working_file,
                    stim_channel, mask)
+        
         mask = np.bitwise_not(mask)
+        
+        #TODO: Log events?
+        #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(event_id, mask))
         print str(events)
         return events
