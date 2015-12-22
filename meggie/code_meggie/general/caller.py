@@ -182,20 +182,10 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform the action on.
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_ecg_ssp, args=(dic, subject))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
+        self._call_ecg_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
+    @threaded
     def _call_ecg_ssp(self, dic, subject):
         """Performed in a worker thread."""
         raw_in = dic.get('i')
@@ -235,13 +225,7 @@ class Caller(object):
         ch_name = dic.get('ch_name')
 
         prefix = os.path.join(subject.subject_path, subject.subject_name)
-        """
-        if raw_in.info.get('filename').endswith('_raw.fif') or \
-        raw_in.info.get('filename').endswith('-raw.fif'):
-            prefix = raw_in.info.get('filename')[:-8]
-        else:
-            prefix, _ = os.path.splitext(raw_in.info.get('filename')) 
-        """
+
         ecg_event_fname = prefix + '_ecg-eve.fif'
 
         if comp_ssp:
@@ -249,52 +233,26 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
-        try:
-            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, ch_name,
-                                             reject, flat, bads, eeg_proj,
-                                             excl_ssp, event_id, ecg_low_freq,
-                                             ecg_high_freq, start,
-                                             qrs_threshold)
-        except Exception, err:
-            self.result = err
-            self.e.set()
-            return -1
+        projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
+                                         mag, eeg, filter_low, filter_high,
+                                         comp_ssp, taps, njobs, ch_name,
+                                         reject, flat, bads, eeg_proj,
+                                         excl_ssp, event_id, ecg_low_freq,
+                                         ecg_high_freq, start,
+                                         qrs_threshold)
 
         if len(events) == 0:
-            self.result = Exception('No ECG events found. Change settings.')
-            self.e.set()
-            return -1
+            raise Exception('No ECG events found. Change settings.')
 
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
 
         print "Writing ECG projections in %s" % ecg_proj_fname
-        try:
-            mne.write_proj(ecg_proj_fname, projs)
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return -1
+        mne.write_proj(ecg_proj_fname, projs)
 
         print "Writing ECG events in %s" % ecg_event_fname
-        try:
-            mne.write_events(ecg_event_fname, events)
-        except Exception as e:
-            self.result = e
-            print str(e)
-            self.e.set()
-            return -1
+        mne.write_events(ecg_event_fname, events)
 
-        self.e.set()
-        """
-        # Write parameter file
-        self.parent.experiment.\
-        save_parameter_file('mne.preprocessing.compute_proj_ecg',
-                            raw_in.info.get('filename'), 
-                            ecg_proj_fname, 'ecgproj', dic)
-        """
 
     def call_eog_ssp(self, dic, subject):
         """
@@ -303,20 +261,11 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform action on.
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_eog_ssp, args=(dic, subject))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
+
+        self._call_eog_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
+    @threaded
     def _call_eog_ssp(self, dic, subject):
         """Performed in a worker thread."""
         raw_in = dic.get('i')
@@ -357,18 +306,14 @@ class Caller(object):
             eog_proj_fname = prefix + '_eog_avg_proj.fif'
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
-        try:
-            projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, reject,
-                                             flat, bads, eeg_proj, excl_ssp,
-                                             event_id, eog_low_freq,
-                                             eog_high_freq, start)
-        except Exception as e:
-            print 'Exception while computing eog projections.'
-            self.result = e
-            self.e.set() 
-            return;
+
+        projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
+                                         mag, eeg, filter_low, filter_high,
+                                         comp_ssp, taps, njobs, reject,
+                                         flat, bads, eeg_proj, excl_ssp,
+                                         event_id, eog_low_freq,
+                                         eog_high_freq, start)
+
         # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -378,14 +323,6 @@ class Caller(object):
 
         print "Writing EOG events in %s" % eog_event_fname
         mne.write_events(eog_event_fname, events)
-        self.e.set()
-        """
-        # Write parameter file
-        self.parent.experiment.\
-        save_parameter_file('mne.preprocessing.compute_proj_eog',
-                            raw_in.info.get('filename'),
-                            eog_proj_fname, 'eogproj', dic)
-        """
 
     @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
