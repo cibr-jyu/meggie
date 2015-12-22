@@ -40,8 +40,6 @@ import shutil
 import gc
 import csv
 
-from threading import Event
-
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.caller import Caller
@@ -74,8 +72,6 @@ class Experiment(QObject):
     active_subject     -- The subject that is currently processed
     working_file_names -- The complete path of the working file
     """
-
-    e = Event()
 
     def __init__(self):
         """

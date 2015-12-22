@@ -35,8 +35,6 @@ import matplotlib.pyplot as plt
 from os import listdir
 from os.path import isfile, join
 from subprocess import CalledProcessError
-from threading import Thread, Event, activeCount
-from multiprocessing.pool import ThreadPool
 from time import sleep
 from copy import deepcopy
 
@@ -62,8 +60,6 @@ class Caller(object):
     """
     parent = None
     _experiment = None
-    e = Event()
-    result = None #Used for storing exceptions from threads.
 
     def __init__(self):
         """Constructor"""
@@ -1078,17 +1074,9 @@ class Caller(object):
         """
         Performed in a worker thread.
         """
-        # TODO: Let the user define the title of the figure.
-        try:
-            #http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_sensors.html?highlight=tfr_morlet
-            power, itc = tfr_morlet(epochs, freqs=frequencies,
-                                    n_cycles=ncycles, use_fft=False,
-                                    return_itc=True, decim=decim, n_jobs=3)
-
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+        power, itc = tfr_morlet(epochs, freqs=frequencies,
+                                n_cycles=ncycles, use_fft=False,
+                                return_itc=True, decim=decim, n_jobs=3)
 
         tfr_path = os.path.join(self.experiment.active_subject.subject_path,
                                 'TFR')
@@ -1099,7 +1087,6 @@ class Caller(object):
                    overwrite=True)
         itc.save(os.path.join(tfr_path, 'itc-tfr-' + epochs.name + '.h5'),
                  overwrite=True)
-        self.e.set()
         return power, itc
 
     @messaged
