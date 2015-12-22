@@ -48,8 +48,7 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
 from meggie.code_meggie.sourceModeling.forwardModels import ForwardModels
 
-from meggie.ui.general import messageBoxes
-
+from meggie.ui.utils.decorators import messaged
 
 class Subject(QObject):
     
@@ -375,6 +374,7 @@ class Subject(QObject):
         self.add_epochs(epochs)
         return epochs
 
+    @messaged
     def remove_epochs(self, collection_name):
         """
         Removes epochs from epochs dictionary.
@@ -401,10 +401,9 @@ class Subject(QObject):
         try:
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
-            message = 'Epochs could not be deleted from epochs folder.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            raise Exception('Epochs could not be deleted from epochs folder.')
 
+    @messaged
     def handle_new_evoked(self, name, evoked, categories):
         """
         Creates new Evoked object and adds it to the self._evokeds dictionary.
@@ -421,9 +420,8 @@ class Subject(QObject):
 
         evoked_object = Evoked()
         if evoked is None:
-            self.messageBox = messageBoxes.shortMessageBox('Evoked is None.')
-            self.messageBox.show()
-            return
+            raise Exception('Evoked is None')
+
         evoked_object._raw = evoked
         evoked_object._name = str(name)
         evoked_object._categories = categories
@@ -438,6 +436,7 @@ class Subject(QObject):
         """
         self._evokeds[str(name)] = evoked_object
 
+    @messaged
     def remove_evoked(self, name):
         """
         Removes evoked object from the evoked dictionary.
@@ -449,10 +448,9 @@ class Subject(QObject):
             fileManager.delete_file_at(self._evokeds_directory, name)
             del self._evokeds[str(name)]
         except OSError:
-            message = 'Evoked could not be deleted from average folder.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            raise Exception('Evoked could not be deleted from average folder.')
 
+    @messaged
     def remove_power(self, name):
         """
         Removes AVGPower object from the TFR dictionary.
@@ -464,9 +462,7 @@ class Subject(QObject):
         try:
             fileManager.delete_file_at(path, name)
         except OSError as err:
-            message = 'The file could not be deleted from TFR folder.\n'
-            self.messageBox = messageBoxes.shortMessageBox(message + str(err))
-            self.messageBox.show()
+            raise Exception('The file could not be deleted from TFR folder.')
 
 
 ### Code related to source modeling ###

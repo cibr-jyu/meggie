@@ -39,7 +39,7 @@ import mne
 
 import numpy as np
 
-from meggie.ui.general import messageBoxes
+from meggie.ui.utils.decorators import messaged
 
 class Epochs(QObject):
     
@@ -111,6 +111,7 @@ class Epochs(QObject):
         """
         self._params = params
 
+    @messaged
     def create_epochs(self, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.
@@ -151,15 +152,10 @@ class Epochs(QObject):
         if len(picks) == 0:
             message = 'Picks cannot be empty. Select picks by' + \
             'checking the checkboxes.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return
-        try:
-            epochs = mne.Epochs(raw, events, category, tmin, tmax,
-                                picks=picks, reject=reject)
-        except Exception as e:
-            print e
-            raise e
+            raise Exception(message)
+        epochs = mne.Epochs(raw, events, category, tmin, tmax,
+                            picks=picks, reject=reject)
+
         if len(epochs.get_data()) == 0:
             raise Exception('Could not find any data. Perhaps the rejection '
                             'thresholds are too strict...')

@@ -833,6 +833,7 @@ class MainWindow(QtGui.QMainWindow):
             msg = 'Failed to load file.'
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
+        evoked, category = None, None
         evoked, category = fileManager.load_evoked(path, filename)
         if evoked is None:
             return

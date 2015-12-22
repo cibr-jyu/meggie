@@ -40,7 +40,6 @@ from multiprocessing.pool import ThreadPool
 from time import sleep
 from copy import deepcopy
 
-from meggie.ui.general import messageBoxes
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 from meggie.ui.utils.decorators import messaged
@@ -498,6 +497,7 @@ class Caller(object):
             #epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
 
+    @messaged
     def create_new_epochs(self, epoch_params):
         """
         A method for creating new epochs with the given parameter values for
@@ -511,13 +511,8 @@ class Caller(object):
         # current experiment.active_subject.
         epocher = Epochs()
         subject = self.experiment.active_subject
-        try:
-            epochs = epocher.create_epochs_from_dict(epoch_params,
-                                                     subject.working_file)
-        except Exception as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
+        epochs = epocher.create_epochs_from_dict(epoch_params,
+                                                 subject.working_file)
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
         fname = epoch_params['collectionName']
@@ -1557,6 +1552,7 @@ class Caller(object):
 
 ### Methods needed for source modeling ###    
 
+    @messaged
     def convert_mri_to_mne(self):
         """
         Uses mne_setup_mri to active subject recon directory to create Neuromag
@@ -1575,17 +1571,9 @@ class Caller(object):
         os.environ['SUBJECTS_DIR'] = sourceAnalDir
         os.environ['SUBJECT'] = 'reconFiles'
         
-        try:
-            subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
-            return True
-        except CalledProcessError as e:
-            message = 'mne_setup_mri output: \n' \
-            + str(e.output)
-            title = 'Problem setting mri images'
-            self.messagebox = messageBoxes.longMessageBox(title, message)
-            self.messagebox.show()
-            return False
+        subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
 
+    @messaged
     def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate
@@ -1667,34 +1655,26 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
         
-            try:
-                fileManager.create_fModel_directory(fmname, activeSubject)          
-                fileManager.write_forward_model_parameters(fmname,
-                    activeSubject, None, None, fmdict['sfmodelArgs'])
-                
-                # These should always exist, should be safe to unpickle.
-                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
-                wshedParamFile = os.path.join(fmDir, 'wshed.param')
-                sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
-                wshedArgsDict = fileManager.unpickle(wshedParamFile)
-                     
-                mergedDict = dict([('fmname', fmname)] + \
-                                  sspaceArgsDict.items() + \
-                                  wshedArgsDict.items() + \
-                                  fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')] + \
-                                  [('fsolution', 'no')])
-                
-                fmlist = self.parent.forwardModelModel.\
-                         fmodel_dict_to_list(mergedDict)
-                self.parent.forwardModelModel.add_fmodel(fmlist)
-            except Exception:
-                tb = traceback.format_exc()
-                message = 'There was a problem creating forward model files. ' + \
-                      'Please copy the following to your bug report:\n\n' + \
-                      str(tb)
-                self.messageBox = messageBoxes.longMessageBox('Error', message)
-                self.messageBox.show()
+            fileManager.create_fModel_directory(fmname, activeSubject)          
+            fileManager.write_forward_model_parameters(fmname,
+                activeSubject, None, None, fmdict['sfmodelArgs'])
+            
+            # These should always exist, should be safe to unpickle.
+            sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
+            wshedParamFile = os.path.join(fmDir, 'wshed.param')
+            sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
+            wshedArgsDict = fileManager.unpickle(wshedParamFile)
+                 
+            mergedDict = dict([('fmname', fmname)] + \
+                              sspaceArgsDict.items() + \
+                              wshedArgsDict.items() + \
+                              fmdict['sfmodelArgs'].items() + \
+                              [('coregistered', 'no')] + \
+                              [('fsolution', 'no')])
+            
+            fmlist = self.parent.forwardModelModel.\
+                     fmodel_dict_to_list(mergedDict)
+            self.parent.forwardModelModel.add_fmodel(fmlist)
         
         if reply == 'computeAll':
             # To make overwriting unnecessary
@@ -1707,28 +1687,22 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
-            try:
-                fileManager.create_fModel_directory(fmname, activeSubject)          
-                fileManager.write_forward_model_parameters(fmname, activeSubject,
-                    fmdict['sspaceArgs'], fmdict['wsshedArgs'],
-                    fmdict['sfmodelArgs'])
-                mergedDict = dict([('fmname', fmname)] + \
-                                  fmdict['sspaceArgs'].items() + \
-                                  fmdict['wsshedArgs'].items() + \
-                                  fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')] + \
-                                  [('fsolution', 'no')])
+            fileManager.create_fModel_directory(fmname, activeSubject)          
+            fileManager.write_forward_model_parameters(fmname, activeSubject,
+                fmdict['sspaceArgs'], fmdict['wsshedArgs'],
+                fmdict['sfmodelArgs'])
+            mergedDict = dict([('fmname', fmname)] + \
+                              fmdict['sspaceArgs'].items() + \
+                              fmdict['wsshedArgs'].items() + \
+                              fmdict['sfmodelArgs'].items() + \
+                              [('coregistered', 'no')] + \
+                              [('fsolution', 'no')])
                 
-                fmlist = self.parent.forwardModelModel.\
-                         fmodel_dict_to_list(mergedDict)
-                self.parent.forwardModelModel.add_fmodel(fmlist)             
-            except Exception:
-                tb = traceback.format_exc()
-                msg = ('There was a problem creating forward model files. '
-                       'Please copy the following to your bug report:\n\n' +
-                       str(tb))
-                self.messageBox = messageBoxes.longMessageBox('Error', msg)
-                self.messageBox.show()
+            fmlist = self.parent.forwardModelModel.\
+                     fmodel_dict_to_list(mergedDict)
+            self.parent.forwardModelModel.add_fmodel(fmlist)             
+
+        return True
 
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:
@@ -1743,21 +1717,16 @@ class Caller(object):
                                     shell=True, env=env)
             self.parent.processes.append(setupSSproc)
         except CalledProcessError as e:
-            title = 'Problem with forward model creation'
-            msg = ('There was a problem with mne_setup_source_space. Script '
-                   'output: \n' + e.output)
-            self.messageBox = messageBoxes.longMessageBox(title, msg)
-            self.messageBox.exec_()
-            return
+            raise Exception('There was a problem with mne_setup_source_space. Script '
+                            'output: \n' + e.output)
         except Exception as e:
             message = 'There was a problem with mne_setup_source_space: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
+    @messaged
     def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
             mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
@@ -1768,20 +1737,17 @@ class Caller(object):
             self.parent.processes.append(wsProc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
-            message= 'There was a problem with mne_watershed_bem. ' + \
-                     'Script output: \n' + e.output
-            self.messageBox = messageBoxes.longMessageBox(title, message)
-            self.messageBox.exec_()
-            return
+            message = 'There was a problem with mne_watershed_bem. ' + \
+                      'Script output: \n' + e.output
+            raise Exception(message)
         except Exception as e:
             message = 'There was a problem with mne_watershed_bem: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
+    @messaged
     def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
             mne_setup_forward_modelCommandList = \
@@ -1795,17 +1761,13 @@ class Caller(object):
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_forward_model. ' + \
                      'Script output: \n' + e.output
-            self.messageBox = messageBoxes.longMessageBox(title, message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
         except Exception as e:
             message = 'There was a problem with mne_setup_forward_model: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
     def coregister_with_mne_gui_coregistration(self):
         """
@@ -1838,6 +1800,7 @@ class Caller(object):
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()
         self.coregHowtoDialog.show()
 
+    @messaged
     def create_forward_solution(self, fsdict):
         """
         Creates a forward solution based on parameters given in fsdict.
@@ -1885,8 +1848,7 @@ class Caller(object):
             title = 'Error'
             msg = ('There was a problem with forward solution. The MNE-Python '
                    'message was: \n\n' + str(e))
-            self.messageBox = messageBoxes.longMessageBox(title, msg)
-            self.messageBox.show()
+            raise Exception(msg)
 
     def create_covariance_from_raw(self, cvdict):
         """

@@ -46,7 +46,7 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.caller import Caller
 
-from meggie.ui.general import messageBoxes
+from meggie.ui.utils.decorators import messaged
 
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
@@ -117,9 +117,6 @@ class Experiment(QObject):
                 #                        self._experiment_name)
                 #os.mkdir(exp_path + '/output')
             else:
-                message = 'Use only letters and numbers in experiment name'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
                 raise Exception('Use only letters and numbers in experiment' +
                                 'name')
         else:
@@ -682,6 +679,7 @@ class ExperimentHandler(QObject):
         """
         self.parent = parent
 
+    @messaged
     def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
@@ -700,28 +698,15 @@ class ExperimentHandler(QObject):
             experiment.description = expDict['description']
             experiment.subject_paths = []
         except AttributeError:
-            message = 'Cannot assign attribute to experiment.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            return None
+            raise Exception('Cannot assign attribute to experiment.')
 
-        try:
-            workspace = self.parent.preferencesHandler.working_directory
-            experiment.workspace = workspace
-        except Exception, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
-            return None
+        workspace = self.parent.preferencesHandler.working_directory
+        experiment.workspace = workspace
 
         # Give control of the experiment to the main window of the application
         #self.parent.experiment = experiment
 
-        try:
-            experiment.save_experiment_settings()
-        except Exception, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
-            return None
+        experiment.save_experiment_settings()
 
         # Tell the preferencesHandler that this is the experiment we've had
         # open last.
@@ -736,6 +721,7 @@ class ExperimentHandler(QObject):
         #self.parent.reinitialize_models() 
         return experiment
 
+    @messaged
     def open_existing_experiment(self, name):
         """
         Opens an existing experiment, which is assumed to be in the working
@@ -747,10 +733,7 @@ class ExperimentHandler(QObject):
         """
         working_directory = self.parent.preferencesHandler.working_directory
         if not os.path.exists(working_directory):
-            message = 'Could not find working directory. Check preferences.'
-            mBox = messageBoxes.shortMessageBox(message)
-            mBox.exec_()
-            return
+            raise Exception('Could not find working directory. Check preferences.')
         if name is not '':
             print "Opening experiment " + name
             try:
@@ -758,10 +741,7 @@ class ExperimentHandler(QObject):
                             self.parent.preferencesHandler.working_directory, 
                             name)
             except IOError:
-                message = "Error opening the experiment."
-                mBox = messageBoxes.shortMessageBox(message)
-                mBox.exec_()
-                return
+                raise Exception("Error opening the experiment.")
         else:
             return
         
@@ -797,7 +777,4 @@ class ExperimentHandler(QObject):
             self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
         else:
-            message = "Experiment configuration file (.exp) not found!"
-            mBox = messageBoxes.shortMessageBox(message)
-            mBox.exec_()
-            return
+            raise Exception("Experiment configuration file (.exp) not found!")
