@@ -79,8 +79,6 @@ class AddEOGProjections(QtGui.QDialog):
         """
         Adds the projections.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         applied = list()
         for index in xrange(self.listWidget.count()):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))
@@ -88,12 +86,13 @@ class AddEOGProjections(QtGui.QDialog):
 
         raw = self.caller.experiment.active_subject.working_file
         directory = self.caller.experiment._active_subject._subject_path
+
+        result = None
         result = self.caller.apply_exg('eog', raw, directory, self.projs,
                                        applied)
 
-        if result == 0:
+        if result:
             self.parent.ui.checkBoxEOGApplied.setChecked(True)
-        QtGui.QApplication.restoreOverrideCursor()
         self.parent._initialize_ui()
         self.close()
         

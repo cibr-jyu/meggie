@@ -387,6 +387,7 @@ class Caller(object):
                             eog_proj_fname, 'eogproj', dic)
         """
 
+    @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
         Applies ECG or EOG projections for MEG-data.  
@@ -399,29 +400,13 @@ class Caller(object):
                          Trues are added to the object and Falses are not
         """
         if len(applied) != len(projs):
-            msg = 'Error while adding projectors. Check selection.'
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
-            self.result = None
-            return 1
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._apply_exg, args=(kind, raw,
-                                                             directory, projs,
-                                                             applied))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 1
-        else:
-            return 0
+            raise Exception('Error while adding projectors. Check selection.')
 
+        self._apply_exg(kind, raw, directory, projs, applied,
+                        do_meanwhile=self.parent.update_ui)
+        return True
+
+    @threaded
     def _apply_exg(self, kind, raw, directory, projs, applied):
         """Performed in a worker thread."""
         if kind == 'ecg':
@@ -442,19 +427,21 @@ class Caller(object):
                 if str(new_proj) == str(proj):
                     raw.info['projs'].pop(idx)
                     break
+
         if not isinstance(projs, np.ndarray):
             projs = np.array(projs)
         if not isinstance(applied, np.ndarray):
             applied = np.array(applied)
+
         raw.add_proj(projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
+
         raw.save(fname, overwrite=True)
         raw = mne.io.Raw(fname, preload=True)
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
-        self.e.set()
 
     def average(self, epochs, category):
         """Average epochs.
