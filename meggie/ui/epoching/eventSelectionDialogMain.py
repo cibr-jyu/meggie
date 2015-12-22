@@ -411,9 +411,13 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         Opens a dialog for batch processing epochs.
         """
-        if checked is None: return
-        batchDialog = GroupEpochingDialog()
+        if checked is None: 
+            return
+
+        batchDialog = GroupEpochingDialog(self)
         batchDialog.exec_()
+
+        self.close()
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
         """Opens a dialog for creating fixed length events."""

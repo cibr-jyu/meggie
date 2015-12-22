@@ -40,9 +40,10 @@ from multiprocessing.pool import ThreadPool
 from time import sleep
 from copy import deepcopy
 
-from meggie.ui.general import messageBoxes
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
+from meggie.ui.utils.decorators import messaged
+from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
@@ -84,6 +85,8 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
+    @messaged
+    @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -92,24 +95,9 @@ class Caller(object):
         """
         if name == '':
             return
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self.experiment.activate_subject,
-                                        (name,))
-
-        while(True):
-            sleep(0.2)
-            if self.experiment.is_ready(): break;
-            self.parent.update_ui()
-
-        return_val = async_result.get()
-        pool.terminate()
-
-        if not return_val == 0:
-            msg = 'Could not set %s as active subject. Check console.' % name
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
-
+        self.experiment.activate_subject(name)
+    
     def index_as_time(self, sample):
         """
         Aux function for converting sample to time.
@@ -140,6 +128,8 @@ class Caller(object):
         retval = proc.wait()
         print "the program return code was %d" % retval
 
+    @messaged
+    @threaded
     def call_maxfilter(self, params, custom):
         """
         Performs maxfiltering with the given parameters.
@@ -148,23 +138,11 @@ class Caller(object):
         params -- Dictionary of parameters
         custom -- Additional parameters as a string
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_maxfilter, args=(params,
-                                                                  custom))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
-        return 0
+        self._call_maxfilter(params, custom)
+        return True
 
     def _call_maxfilter(self, params, custom):
-        """Aux function for maxfiltering data. Performed in worker thread."""
+        """Aux function for maxfiltering data. """
         if os.environ.get('NEUROMAG_ROOT') is None:
             os.environ['NEUROMAG_ROOT'] = '/neuro'
         bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
@@ -177,17 +155,16 @@ class Caller(object):
                                 stderr=subprocess.STDOUT)
         while True:
             line = proc.stdout.readline()
-            if not line: break
+            if not line: 
+                break
             print line
         retval = proc.wait()      
 
         print "the program return code was %d" % retval
         if retval != 0:
             print 'Error while maxfiltering data!'
-            self.result = RuntimeError('Error while maxfiltering the data. '
-                                       'Check console.')
-            self.e.set()
-            return
+            raise RuntimeError('Error while maxfiltering the data. '
+                               'Check console.')
 
         outputfile = params.get('-o')
         raw = mne.io.Raw(outputfile, preload=True)
@@ -196,7 +173,6 @@ class Caller(object):
         self.experiment.save_parameter_file(bs, params['-f'], outputfile,
                                             'maxfilter', params)        
         self.experiment.save_experiment_settings()
-        self.e.set()
 
     def call_ecg_ssp(self, dic, subject):
         """
@@ -205,20 +181,10 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform the action on.
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_ecg_ssp, args=(dic, subject))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
+        self._call_ecg_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
+    @threaded
     def _call_ecg_ssp(self, dic, subject):
         """Performed in a worker thread."""
         raw_in = dic.get('i')
@@ -258,13 +224,7 @@ class Caller(object):
         ch_name = dic.get('ch_name')
 
         prefix = os.path.join(subject.subject_path, subject.subject_name)
-        """
-        if raw_in.info.get('filename').endswith('_raw.fif') or \
-        raw_in.info.get('filename').endswith('-raw.fif'):
-            prefix = raw_in.info.get('filename')[:-8]
-        else:
-            prefix, _ = os.path.splitext(raw_in.info.get('filename')) 
-        """
+
         ecg_event_fname = prefix + '_ecg-eve.fif'
 
         if comp_ssp:
@@ -272,52 +232,26 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
-        try:
-            projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, ch_name,
-                                             reject, flat, bads, eeg_proj,
-                                             excl_ssp, event_id, ecg_low_freq,
-                                             ecg_high_freq, start,
-                                             qrs_threshold)
-        except Exception, err:
-            self.result = err
-            self.e.set()
-            return -1
+        projs, events = compute_proj_ecg(raw_in, None, tmin, tmax, grad,
+                                         mag, eeg, filter_low, filter_high,
+                                         comp_ssp, taps, njobs, ch_name,
+                                         reject, flat, bads, eeg_proj,
+                                         excl_ssp, event_id, ecg_low_freq,
+                                         ecg_high_freq, start,
+                                         qrs_threshold)
 
         if len(events) == 0:
-            self.result = Exception('No ECG events found. Change settings.')
-            self.e.set()
-            return -1
+            raise Exception('No ECG events found. Change settings.')
 
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
 
         print "Writing ECG projections in %s" % ecg_proj_fname
-        try:
-            mne.write_proj(ecg_proj_fname, projs)
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return -1
+        mne.write_proj(ecg_proj_fname, projs)
 
         print "Writing ECG events in %s" % ecg_event_fname
-        try:
-            mne.write_events(ecg_event_fname, events)
-        except Exception as e:
-            self.result = e
-            print str(e)
-            self.e.set()
-            return -1
+        mne.write_events(ecg_event_fname, events)
 
-        self.e.set()
-        """
-        # Write parameter file
-        self.parent.experiment.\
-        save_parameter_file('mne.preprocessing.compute_proj_ecg',
-                            raw_in.info.get('filename'), 
-                            ecg_proj_fname, 'ecgproj', dic)
-        """
 
     def call_eog_ssp(self, dic, subject):
         """
@@ -326,20 +260,11 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform action on.
         """
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._call_eog_ssp, args=(dic, subject))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            return -1
+
+        self._call_eog_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
+    @threaded
     def _call_eog_ssp(self, dic, subject):
         """Performed in a worker thread."""
         raw_in = dic.get('i')
@@ -380,18 +305,14 @@ class Caller(object):
             eog_proj_fname = prefix + '_eog_avg_proj.fif'
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
-        try:
-            projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
-                                             mag, eeg, filter_low, filter_high,
-                                             comp_ssp, taps, njobs, reject,
-                                             flat, bads, eeg_proj, excl_ssp,
-                                             event_id, eog_low_freq,
-                                             eog_high_freq, start)
-        except Exception as e:
-            print 'Exception while computing eog projections.'
-            self.result = e
-            self.e.set() 
-            return;
+
+        projs, events = compute_proj_eog(raw_in, None, tmin, tmax, grad,
+                                         mag, eeg, filter_low, filter_high,
+                                         comp_ssp, taps, njobs, reject,
+                                         flat, bads, eeg_proj, excl_ssp,
+                                         event_id, eog_low_freq,
+                                         eog_high_freq, start)
+
         # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
             os.remove(preload)
@@ -401,15 +322,8 @@ class Caller(object):
 
         print "Writing EOG events in %s" % eog_event_fname
         mne.write_events(eog_event_fname, events)
-        self.e.set()
-        """
-        # Write parameter file
-        self.parent.experiment.\
-        save_parameter_file('mne.preprocessing.compute_proj_eog',
-                            raw_in.info.get('filename'),
-                            eog_proj_fname, 'eogproj', dic)
-        """
 
+    @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
         Applies ECG or EOG projections for MEG-data.  
@@ -422,29 +336,13 @@ class Caller(object):
                          Trues are added to the object and Falses are not
         """
         if len(applied) != len(projs):
-            msg = 'Error while adding projectors. Check selection.'
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
-            self.result = None
-            return 1
-        self.e.clear()
-        self.result = None
-        self.thread = Thread(target = self._apply_exg, args=(kind, raw,
-                                                             directory, projs,
-                                                             applied))
-        self.thread.start()
-        while True:
-            sleep(0.2)
-            self.parent.update_ui()
-            if self.e.is_set(): break
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 1
-        else:
-            return 0
+            raise Exception('Error while adding projectors. Check selection.')
 
+        self._apply_exg(kind, raw, directory, projs, applied,
+                        do_meanwhile=self.parent.update_ui)
+        return True
+
+    @threaded
     def _apply_exg(self, kind, raw, directory, projs, applied):
         """Performed in a worker thread."""
         if kind == 'ecg':
@@ -465,19 +363,21 @@ class Caller(object):
                 if str(new_proj) == str(proj):
                     raw.info['projs'].pop(idx)
                     break
+
         if not isinstance(projs, np.ndarray):
             projs = np.array(projs)
         if not isinstance(applied, np.ndarray):
             applied = np.array(applied)
+
         raw.add_proj(projs[applied])  # then add selected
 
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
+
         raw.save(fname, overwrite=True)
         raw = mne.io.Raw(fname, preload=True)
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
-        self.e.set()
 
     def average(self, epochs, category):
         """Average epochs.
@@ -506,6 +406,7 @@ class Caller(object):
         fname = raw.info['filename']
         raw.save(fname, overwrite=True)
 
+    @messaged
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
         """
@@ -529,25 +430,12 @@ class Caller(object):
         eog           - Peak-to-peak rejection limit for EOG channels
                         or None if EOG channels are not included.
         """
-        self.e.clear()
-        self.result = ''  # Result as string
-        self.thread = Thread(target = self._batchEpoch,
-                             args=(subjects, epoch_name, tmin, tmax, stim,
-                                   event_id, mask, event_name, grad, mag, eeg,
-                                   eog))
-        self.thread.start()
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break
-            self.parent.update_ui()
 
-        self.messageBox = messageBoxes.shortMessageBox(str(self.result),
-                                                       title='Results')
-        print 'Updating ui...'  # To make sure ui is up to date
-        self.parent._initialize_ui()
-        self.messageBox.show()
-        self.result = None
+        self._batchEpoch(subjects, epoch_name, tmin, tmax, stim,
+                         event_id, mask, event_name, grad, mag, eeg,
+                         eog, do_meanwhile=self.parent.update_ui)
 
+    @threaded
     def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                     mask, event_name, grad, mag, eeg, eog):
         """Performed in a worker thread."""
@@ -595,10 +483,9 @@ class Caller(object):
                                                {event_name: event_id}, tmin,
                                                tmax)
             except Exception as e:
-                self.result += ('Could not create epochs for subject ' +
+                raise Exception('Could not create epochs for subject ' +
                                 subject + ':\n' + str(e) + '\n')
-                print str(e)
-                continue
+
             path = os.path.join(os.path.split(fname)[0], 'epochs')
             fname = os.path.join(path, epoch_name)
             events = [(event, event_name) for event in events]
@@ -609,10 +496,8 @@ class Caller(object):
             this_subject.handle_new_epochs(epoch_name, params)
             #epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
-        if self.result == '':
-            self.result = 'Epochs created successfully!'
-        self.e.set()
 
+    @messaged
     def create_new_epochs(self, epoch_params):
         """
         A method for creating new epochs with the given parameter values for
@@ -626,13 +511,8 @@ class Caller(object):
         # current experiment.active_subject.
         epocher = Epochs()
         subject = self.experiment.active_subject
-        try:
-            epochs = epocher.create_epochs_from_dict(epoch_params,
-                                                     subject.working_file)
-        except Exception as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
+        epochs = epocher.create_epochs_from_dict(epoch_params,
+                                                 subject.working_file)
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
         fname = epoch_params['collectionName']
@@ -660,7 +540,6 @@ class Caller(object):
         mi = MeasurementInfo(self.experiment.active_subject.working_file)
 
         title = mi.subject_name
-
         fig = plot_topo(evokeds, layout, color=colors[:len(evokeds)],
                         title=title)
         conditions = [e.comment for e in evokeds]
@@ -675,6 +554,7 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
+    @messaged
     def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
@@ -686,24 +566,10 @@ class Caller(object):
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._average_channels, 
-                                        (instance, lobeName, channelSet,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 
-        averageTitleString, dataList, evokeds = async_result.get()
-        pool.terminate()
+        result = self._average_channels(instance, lobeName, channelSet,
+                                        do_meanwhile=self.parent.update_ui)
+        averageTitleString, dataList, evokeds = result
 
         # Plotting:
         plt.clf()
@@ -734,14 +600,14 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
 
+    @threaded
     def _average_channels(self, instance, lobeName, channelSet=None):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
             epochs = self.experiment.active_subject.get_epochs(instance)
             if epochs is None:
-                self.result = Exception('No epochs found.')
-                self.e.set()
-                return
+                raise Exception('No epochs found.')
+
             category = epochs.event_id
 
             # Creates evoked potentials from the given events (variable 'name' 
@@ -753,23 +619,18 @@ class Caller(object):
             evokeds = instance
 
         if channelSet is None:
-            try:
-                channelsToAve = mne.selection.read_selection(lobeName)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
+            channelsToAve = mne.selection.read_selection(lobeName)
             averageTitle = lobeName
         else:
-            print evokeds[0].ch_names
-            if not isinstance(channelSet, set) or len(channelSet) < 1 or \
-                    not channelSet.issubset(set(evokeds[0].ch_names)):
-                self.result = ValueError('Please check that you have at least '
-                                         'two channels, the channels are '
-                                         'actual channels in the epochs data '
-                                         'and they are in the right form.')
-                self.e.set()
-                return
+            if any([
+                not isinstance(channelSet, set),
+                len(channelSet) < 1,
+                not channelSet.issubset(set(evokeds[0].ch_names))
+            ]):
+                raise ValueError('Please check that you have at least '
+                                 'one channel, the channels are '
+                                 'actual channels in the epochs data '
+                                 'and they are in the right form.')
             channelsToAve = channelSet
             averageTitle = str(channelSet).strip('[]')
 
@@ -781,15 +642,9 @@ class Caller(object):
         if re.match("^MEG[0-9]+", channelNameString):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
 
-        print evokeds[0].info['ch_names']
         # Picks only the desired channels from the evokeds.
-        try:
-            evokedToAve = mne.pick_channels_evoked(evokeds[0],
-                                                   list(channelsToAve))
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+        evokedToAve = mne.pick_channels_evoked(evokeds[0],
+                                               list(channelsToAve))
 
         # Returns channel indices for grad channel pairs in evokedToAve.
         ch_names = evokedToAve.ch_names
@@ -804,8 +659,7 @@ class Caller(object):
                    eeg_picks if evokeds[0].ch_names[idx] in ch_names]
         dataList = list()
         for i in range(len(evokeds)):
-            print "Calculating channel averages for " + averageTitleString + \
-                  "\nChannels in evoked set " + str(i) + ":"
+            print "Calculating channel averages for " + averageTitleString
 
             # Merges the grad channel pairs in evokedToAve
             # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
@@ -834,9 +688,9 @@ class Caller(object):
                 averagedEegData = np.mean(eeg_data, axis=0)
                 dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
 
-        self.e.set()
         return averageTitleString, dataList, evokeds
 
+    @messaged
     def plot_group_average(self, groups, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
@@ -845,48 +699,39 @@ class Caller(object):
         groups        -- A list of group names.
         layout        -- Layout used for plotting channels.
         """
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._group_average, 
-                                        (groups,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            if isinstance(self.result, Warning):
-                QtGui.QApplication.restoreOverrideCursor()
-                reply = QtGui.QMessageBox.question(self.parent, 
-                            "Evoked responses not found from every subject.",
-                            str(self.result) + \
-                            "Draw the evoked potentials anyway?",
-                            QtGui.QMessageBox.Yes,
-                            QtGui.QMessageBox.No)
-                self.result = None
-                if reply == QtGui.QMessageBox.No:
-                    return
-                else:
-                    QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
-            else:
-                self.messageBox = messageBoxes.shortMessageBox(str
-                                                               (self.result))
-                self.messageBox.show()
-                self.result = None
+        try:
+            evokeds, groups = self._group_average(
+                groups,
+                do_meanwhile=self.parent.update_ui
+            )
+        except Warning as e:
+            QtGui.QApplication.restoreOverrideCursor()
+            reply = QtGui.QMessageBox.question(
+                self.parent, 
+                "Evoked responses not found",
+                "Evoked responses not found from every subject. "
+                "Draw the evoked potentials anyway?",
+                QtGui.QMessageBox.Yes,
+                QtGui.QMessageBox.No
+            )
+            if reply == QtGui.QMessageBox.No:
                 return
-
-        evokeds, groups = async_result.get()
-
-        pool.terminate()
+            else:
+                QtGui.QApplication.setOverrideCursor(
+                    QtGui.QCursor(QtCore.Qt.WaitCursor))
+                evokeds, groups = self._group_average(
+                    groups,
+                    ignore_not_found=True,
+                    do_meanwhile=self.parent.update_ui
+                )
 
         print "Plotting evoked..."
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
 
-    def _group_average(self, groups):
+    @threaded
+    def _group_average(self, groups, ignore_not_found=False):
         """Performed in a worker thread."""
         chs = self.experiment.active_subject.working_file.info['ch_names']
         chs = _clean_names(chs)
@@ -914,38 +759,34 @@ class Caller(object):
 
         print "Found " + str(len(files2ave)) + " subjects with evoked " + \
                         "responses labeled: " + str(groups)
-        if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) + \
-                                  " subjects of " + str(len(subjects)) + \
-                                  " with evoked responses labeled: " + \
-                                  str(groups) + "!\n")
+        if len(files2ave) < len(subjects) and not ignore_not_found:
+            raise Warning(" ".join([
+                "Found only", str(len(files2ave)),
+                "subjects of", str(len(subjects)),
+                "with evoked responses labeled:",
+                str(groups)
+            ]))
 
         evokedTmin = 0
         evokedInfo = []
-        print files2ave
         for f in files2ave:
             for group in groups:
-                try:
-                    evoked = mne.read_evokeds(f, condition=group)
-                    evokedTmin = evoked.first / evoked.info['sfreq']
-                    evokedInfo = evoked.info
-                except Exception as err:
-                    self.result = err
-                    self.e.set()
-                    return
+                evoked = mne.read_evokeds(f, condition=group)
+                evokedTmin = evoked.first / evoked.info['sfreq']
+                evokedInfo = evoked.info
+
                 info = evoked.info['ch_names']
                 info = _clean_names(info)
                 for cidx in xrange(len(info)):
                     ch_name = info[cidx]
                     if not ch_name in evokeds[group].keys():
-                        err = KeyError('%s not in channels. Make sure all '
+                        raise KeyError('%s not in channels. Make sure all '
                                        'data sets contain the same channel '
                                        'info.' % ch_name)
-                        self.result = err
-                        self.e.set()
-                        return
+
                     evokeds[group][ch_name].append(evoked.data[cidx])
                 eweights[group].append(evoked.nave)
+
         evs = []
         usedChannels = []
         bads = []
@@ -956,25 +797,20 @@ class Caller(object):
             evokedSet = []
             for ch in chs:
                 if len(evokeds[group][ch]) < length:
-                    if not ch in bads: bads.append(ch)
+                    if not ch in bads: 
+                        bads.append(ch)
                     continue
-                try:
-                    if not ch in usedChannels: usedChannels.append(ch)
-                    data = evokeds[group][ch]
-                    w = eweights[group]
-                    epoch_length = len(data[0])
-                    for d in data:
-                        if not len(d) == epoch_length:
-                            self.result = Exception("Epochs are different " +
-                                                    "in sizes!")
-                            self.e.set()
-                            return
-                    ave = np.average(data, axis=0, weights=w)
-                    evokedSet.append(ave)
-                except Exception as e:
-                    self.result = e
-                    self.e.set()
-                    return 
+                if not ch in usedChannels: 
+                    usedChannels.append(ch)
+                data = evokeds[group][ch]
+                w = eweights[group]
+                epoch_length = len(data[0])
+                for d in data:
+                    if not len(d) == epoch_length:
+                        raise Exception("Epochs are different " +
+                                        "in sizes!")
+                ave = np.average(data, axis=0, weights=w)
+                evokedSet.append(ave)
             evs.append(deepcopy(evokedSet))
 
         print 'Used channels: ' + str(usedChannels)
@@ -986,18 +822,12 @@ class Caller(object):
         evokedInfo['nchan'] = len(usedChannels)
 
         averagedEvokeds = []
-        try:
-            for groupidx in xrange(len(groups)):
-                averagedEvokeds.append(mne.EvokedArray(evs[groupidx],
-                                                       info=evokedInfo,
-                                                       tmin=evokedTmin,
-                                                       comment=groups
-                                                       [groupidx]))
-        except Exception as e:
-            print str(e)
-            self.result = e
-            self.e.set()
-            return
+        for groupidx in xrange(len(groups)):
+            averagedEvokeds.append(mne.EvokedArray(evs[groupidx],
+                                                   info=evokedInfo,
+                                                   tmin=evokedTmin,
+                                                   comment=groups
+                                                   [groupidx]))
 
         write2file = True
         if write2file:  # TODO add option in GUI for this
@@ -1027,9 +857,9 @@ class Caller(object):
                     f.write('\n')
             f.close()
 
-        self.e.set()
         return averagedEvokeds, groups
 
+    @messaged
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
         """
@@ -1049,29 +879,13 @@ class Caller(object):
                          positive values exist in the data.
         """
         plt.close()
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
         # Find intervals for given frequency band
         frequencies = np.arange(minfreq, maxfreq, interval)
         
-        async_result = pool.apply_async(self._TFR, 
-                                        (epochs, ch_index, frequencies,
-                                         ncycles, decim))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return 
-
-        power, phase_lock, times, evoked, evoked_data = async_result.get()
-        pool.terminate()
+        result = self._TFR(epochs, ch_index, frequencies, ncycles, decim,
+                           do_meanwhile=self.parent.update_ui)
+        power, phase_lock, times, evoked, evoked_data = result
 
         print 'Plotting TFR...'
         fig = plt.figure()
@@ -1124,6 +938,7 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
 
+    @threaded
     def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
         """
         Performed in a worker thread.
@@ -1133,23 +948,14 @@ class Caller(object):
         data = epochs.get_data()
         times = 1e3 * epochs.times # s to ms
         evoked_data = evoked.data
-        try:
-            data = data[:, ch_index:(ch_index+1), :]
-            evoked_data = evoked_data[ch_index:(ch_index+1), :]
-        except Exception, err:
-            self.result = Exception('Could not find epoch data: ' + str(err))
-            self.e.set()
-            return
 
-        try:
-            power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
-                                            frequencies, n_cycles=ncycles,
-                                            decim=decim, use_fft=False,
-                                            n_jobs=1, zero_mean=True)
-        except Exception, err:
-            self.result = err
-            self.e.set()
-            return
+        data = data[:, ch_index:(ch_index+1), :]
+        evoked_data = evoked_data[ch_index:(ch_index+1), :]
+
+        power, itc = _induced_power_cwt(data, epochs.info['sfreq'],
+                                        frequencies, n_cycles=ncycles,
+                                        decim=decim, use_fft=False,
+                                        n_jobs=1, zero_mean=True)
 
         if epochs.times[0] < 0:
             baseline = (epochs.times[0], 0)
@@ -1160,9 +966,9 @@ class Caller(object):
         itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
                                    mode='ratio', copy=True)
         print 'Done'
-        self.e.set()
         return power, itc, times, evoked, evoked_data
 
+    @messaged
     def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
@@ -1190,35 +996,18 @@ class Caller(object):
                          which case ``RdBu_r`` is used or ``Reds`` if only
                          positive values exist in the data.
         """
+
         plt.close()
         if isinstance(inst, mne.epochs._BaseEpochs):  # TFR from epochs
-    
-            print "Number of threads active", activeCount()
-            self.e.clear()
-            self.result = None
-            pool = ThreadPool(processes=1)
     
             # Find intervals for given frequency band
             frequencies = np.arange(minfreq, maxfreq, interval)
     
-            async_result = pool.apply_async(self._TFR_topology,
-                                            (inst, frequencies, ncycles,
-                                             decim))
-            while(True):
-                sleep(0.2)
-                if self.e.is_set(): break;
-                self.parent.update_ui()
-    
-            if not self.result is None:
-                self.messageBox = messageBoxes.shortMessageBox(str(self.
-                                                                   result))
-                self.messageBox.show()
-                self.result = None
-                return 
-    
-            power, itc = async_result.get()
-            pool.terminate()
-            self.parent.update_ui()
+            power, itc = self._TFR_topology(
+                inst, frequencies, ncycles,
+                decim, do_meanwhile=self.parent.update_ui
+            )
+
         elif reptype == 'average':  # TFR from averageTFR
             power = inst
         elif reptype == 'itc':  # TFR from averageTFR
@@ -1233,6 +1022,7 @@ class Caller(object):
             baseline = None
         else:
             baseline = (blstart, blend)
+
         print "Plotting..."
         self.parent.update_ui()
         if reptype == 'average':  # induced
@@ -1240,58 +1030,50 @@ class Caller(object):
                 cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
             else:
                 cmap = color_map
-            try:
-                if scalp is not None:
-                    try:
-                        fig = power.plot_topomap(tmin=scalp['tmin'],
-                                                 tmax=scalp['tmax'],
-                                                 fmin=scalp['fmin'],
-                                                 fmax=scalp['fmax'], 
-                                                 ch_type=ch_type,
-                                                 layout=layout,
-                                                 baseline=baseline, mode=mode,
-                                                 show=False, cmap=cmap)
-                    except Exception as e:
-                        print str(e)
-                print 'Plotting topology. Please be patient...'
-                self.parent.update_ui()
-                fig = power.plot_topo(baseline=baseline, mode=mode,
-                                      fmin=minfreq, fmax=maxfreq,
-                                      layout=layout, cmap=cmap,
-                                      title='Average power')
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return
+            if scalp is not None:
+                fig = power.plot_topomap(tmin=scalp['tmin'],
+                                         tmax=scalp['tmax'],
+                                         fmin=scalp['fmin'],
+                                         fmax=scalp['fmax'], 
+                                         ch_type=ch_type,
+                                         layout=layout,
+                                         baseline=baseline, mode=mode,
+                                         show=False, cmap=cmap)
+
+            print 'Plotting topology. Please be patient...'
+            self.parent.update_ui()
+            fig = power.plot_topo(baseline=baseline, mode=mode,
+                                  fmin=minfreq, fmax=maxfreq,
+                                  layout=layout, cmap=cmap,
+                                  title='Average power')
+
         elif reptype == 'itc':  # phase locked
             if color_map == 'auto':
                 cmap = 'RdBu_r' if np.min(itc.data < 0) else 'Reds'
             else:
                 cmap = color_map
-            try:
-                print 'Plotting topology. Please be patient...'
-                title = 'Inter-Trial coherence'
-                if scalp is not None:
-                    fig = itc.plot_topomap(tmin=scalp['tmin'],
-                                           tmax=scalp['tmax'],
-                                           fmin=scalp['fmin'],
-                                           fmax=scalp['fmax'],
-                                           ch_type=ch_type, layout=layout,
-                                           baseline=baseline, mode=mode,
-                                           show=False)
-                fig = itc.plot_topo(baseline=baseline, mode=mode,
-                                    fmin=minfreq, fmax=maxfreq, layout=layout,
-                                    cmap=cmap, title=title)
+            print 'Plotting topology. Please be patient...'
+            title = 'Inter-Trial coherence'
+            if scalp is not None:
+                fig = itc.plot_topomap(tmin=scalp['tmin'],
+                                       tmax=scalp['tmax'],
+                                       fmin=scalp['fmin'],
+                                       fmax=scalp['fmax'],
+                                       ch_type=ch_type, layout=layout,
+                                       baseline=baseline, mode=mode,
+                                       show=False)
+            fig = itc.plot_topo(baseline=baseline, mode=mode,
+                                fmin=minfreq, fmax=maxfreq, layout=layout,
+                                cmap=cmap, title=title)
 
-                fig.show()
-            except Exception as e:
-                self.messageBox = messageBoxes.shortMessageBox(str(e))
-                self.messageBox.show()
-                return  
+            fig.show()
+
         def onclick(event):
             pl.show(block=False)
+
         fig.canvas.mpl_connect('button_press_event', onclick)
 
+    @threaded
     def _TFR_topology(self, epochs, frequencies, ncycles, decim):
         """
         Performed in a worker thread.
@@ -1320,6 +1102,7 @@ class Caller(object):
         self.e.set()
         return power, itc
 
+    @messaged
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
                     maxfreq, interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
@@ -1331,40 +1114,19 @@ class Caller(object):
         if layout == 'Infer from data':
             layout = None
         else:
-            try:
-                layout = read_layout(layout)
-            except Exception as e:
-                msg = 'Could not read layout: ' + str(e)
-                self.messageBox = messageBoxes.shortMessageBox(msg)
-                self.messageBox.show()
-                return
+            layout = read_layout(layout)
 
         frequencies = np.arange(minfreq, maxfreq, interval)
 
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
-        async_result = pool.apply_async(self._TFR_average,
-                                        (epochs_name, selected_channels,
-                                         reptype, frequencies, ncycles, decim,
-                                         save_max))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break
-            self.parent.update_ui()
+        power, itc = self._TFR_average(epochs_name, selected_channels, reptype,
+                                       frequencies, ncycles, decim, save_max,
+                                       do_meanwhile=self.parent.update_ui)
 
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return
-
-        power, itc = async_result.get()
-        pool.terminate()
         if blstart is None and blend is None:
             baseline = None
         else:
             baseline = (blstart, blend)
+
         print 'Plotting topology...'
         if reptype == 'average':
             title = 'Average power ' + epochs_name
@@ -1379,6 +1141,7 @@ class Caller(object):
                                     selected_channels, dpi, form, epochs_name,
                                     color_map)
 
+    @threaded
     def _TFR_average(self, epochs_name, selected_channels, reptype,
                      frequencies, ncycles, decim, save_max=False):
         """Performed in a working thread."""
@@ -1396,10 +1159,10 @@ class Caller(object):
         print ('Found ' + str(len(files2ave)) + ' subjects with epochs ' + 
                'labeled '+ epochs_name + '.')
         if len(files2ave) < len(subjects):
-            self.result = Warning("Found only " + str(len(files2ave)) +
-                                  " subjects of " + str(len(subjects)) +
-                                  " with epochs labeled: " +
-                                  epochs_name + "!\n")
+            raise Warning("Found only " + str(len(files2ave)) +
+                          " subjects of " + str(len(subjects)) +
+                          " with epochs labeled: " +
+                          epochs_name + "!\n")
         powers = []
         itcs = []
         weights = []
@@ -1412,44 +1175,40 @@ class Caller(object):
             max_file = open(exp_path + '/output/' + save_max + '_maxima.txt',
                             'w')
         for f in files2ave:
-            try:
-                epochs = mne.read_epochs(join(directory, f))
-                bads = bads + list(set(epochs.info['bads']) - set(bads))
-                power, itc = tfr_morlet(epochs, freqs=frequencies,
-                                        n_cycles=ncycles, use_fft=False,
-                                        return_itc=True, decim=decim, n_jobs=3)
-                if save_max is not None:
-                    # Write file for maxima
-                    p = None
-                    if save_max == 'itc':
-                        p = itc
-                    elif save_max == 'average':
-                        p = power
-                    max_file.write(f)
-                    max_file.write('\n')
-                    for ch in selected_channels:
-                        max_file.write(ch + '\n')
-                        idx = p.ch_names.index(ch)
-                        ch_data = p.data[idx]
-                        i = np.argmax(ch_data)
-                        f = i / len(ch_data[0])
-                        t = i % len(ch_data[0])
-                        f = p.freqs[f]
-                        t = p.times[t]
-                        string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
-                        max_file.write(string)
-                    max_file.write('\n')
-                powers.append(power)
-                itcs.append(itc)
-                weights.append(len(epochs))
-            except Exception as e:
-                self.result = e
-                max_file.close()
-                self.e.set()
-                return
+            epochs = mne.read_epochs(join(directory, f))
+            bads = bads + list(set(epochs.info['bads']) - set(bads))
+            power, itc = tfr_morlet(epochs, freqs=frequencies,
+                                    n_cycles=ncycles, use_fft=False,
+                                    return_itc=True, decim=decim, n_jobs=3)
+            if save_max is not None:
+                # Write file for maxima
+                p = None
+                if save_max == 'itc':
+                    p = itc
+                elif save_max == 'average':
+                    p = power
+                max_file.write(f)
+                max_file.write('\n')
+                for ch in selected_channels:
+                    max_file.write(ch + '\n')
+                    idx = p.ch_names.index(ch)
+                    ch_data = p.data[idx]
+                    i = np.argmax(ch_data)
+                    f = i / len(ch_data[0])
+                    t = i % len(ch_data[0])
+                    f = p.freqs[f]
+                    t = p.times[t]
+                    string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
+                    max_file.write(string)
+                max_file.write('\n')
+            powers.append(power)
+            itcs.append(itc)
+            weights.append(len(epochs))
+
         if save_max:
             print 'Closing file'
             max_file.close()
+
         bads = set(bads)
         usedPowers = dict()
         usedItcs = dict()
@@ -1467,14 +1226,9 @@ class Caller(object):
                 usedPowers[ch] = []
                 usedItcs[ch] = []
             for i in xrange(len(powers)):
-                try:
-                    cidx = powers[i].ch_names.index(ch)
-                    usedPowers[ch].append(powers[i].data[cidx])
-                    usedItcs[ch].append(itcs[i].data[cidx])
-                except Exception as e:
-                    self.result = e
-                    self.e.set()
-                    return
+                cidx = powers[i].ch_names.index(ch)
+                usedPowers[ch].append(powers[i].data[cidx])
+                usedItcs[ch].append(itcs[i].data[cidx])
         averagePower = []
         averageItc = []
 
@@ -1485,8 +1239,9 @@ class Caller(object):
             averageItc.append(np.average(usedItcs[ch], axis=0,
                                          weights=weights))
 
-        ch_names = [x[:3] + ' ' + x[3:] if ' ' not in x else x for x in
-                    usedChannels]  # pre-set layouts have spaces
+        ch_names = [x[:3] + ' ' + x[3:] 
+                    if ' ' not in x 
+                    else x for x in usedChannels]  # pre-set layouts have spaces
         ch_types = list()
         for name in ch_names:
             if name.startswith('MEG'):
@@ -1504,17 +1259,12 @@ class Caller(object):
         nave = sum(weights)
         averagePower = np.array(averagePower)
         averageItc = np.array(averageItc)
-        try:
-            power = mne.time_frequency.AverageTFR(info, averagePower, times, 
-                                                  frequencies, nave)
-            itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
-                                                frequencies, nave)
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
 
-        self.e.set()
+        power = mne.time_frequency.AverageTFR(info, averagePower, times, 
+                                              frequencies, nave)
+        itc = mne.time_frequency.AverageTFR(info, averageItc, times, 
+                                            frequencies, nave)
+
         print 'Done'
         return power, itc
 
@@ -1569,34 +1319,31 @@ class Caller(object):
                 finally:
                     plt.close()
 
-        try:
-            plt.clf()
-            fig = power.plot_topo(baseline=baseline, mode=mode, 
-                                  fmin=fmin, fmax=fmax, layout=layout, 
-                                  title=title, show=False, cmap=cmap)
-            if save_topo:
-                print 'Saving topology figure to  '\
-                        + exp_path + '/output...'
-                fig_title= ''
-                if title.startswith('Inter-trial'):
-                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
-                            + '_itc.' + form
-                elif title.startswith('Average'):
-                    fig_title = exp_path + '/output/group_tfr_' + epoch_name\
-                            + '_average.' + form
-                plt.savefig(fig_title, dpi=dpi, format=form)
-                plt.close()
-            else:
-                def onclick(event):
-                    plt.show(block=False)
-                fig.canvas.mpl_connect('button_press_event', onclick)
-                plt.show()
+        plt.clf()
+        fig = power.plot_topo(baseline=baseline, mode=mode, 
+                              fmin=fmin, fmax=fmax, layout=layout, 
+                              title=title, show=False, cmap=cmap)
+        if save_topo:
+            print 'Saving topology figure to  ' + exp_path + '/output...'
+            fig_title= ''
+            if title.startswith('Inter-trial'):
+                fig_title = "".join([
+                    exp_path, '/output/group_tfr_', epoch_name, '_itc.', form
+                ])
+            elif title.startswith('Average'):
+                fig_title = "".join([
+                    exp_path, '/output/group_tfr_', epoch_name, '_average.', 
+                    form
+                ])
+            plt.savefig(fig_title, dpi=dpi, format=form)
+            plt.close()
+        else:
+            def onclick(event):
+                plt.show(block=False)
+            fig.canvas.mpl_connect('button_press_event', onclick)
+            plt.show()
 
-        except Exception as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
-            return
-
+    @messaged
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.
@@ -1617,32 +1364,14 @@ class Caller(object):
                 lout = read_layout(params['lout'], scale=True)
             except Exception:
                 message = 'Could not read layout information.'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return
+                raise Exception(message)
         raw = self.experiment.active_subject.working_file
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
 
-        async_result = pool.apply_async(self._compute_spectrum,
-                                        (raw, params,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
+        psds = self._compute_spectrum(raw, params,
+                                      do_meanwhile=self.parent.update_ui)
 
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return
-
-        psds = async_result.get()
-        pool.terminate()
         if save_data:
             print 'Writing to file...'
-            self.parent.update_ui()
             exp_path = os.path.join(self.experiment.workspace,
                                     self.experiment.experiment_name)
             if not os.path.isdir(exp_path + '/output'):
@@ -1665,7 +1394,6 @@ class Caller(object):
             f.close()
 
         print "Plotting power spectrum..."
-        self.parent.update_ui()
 
         def my_callback(ax, ch_idx):
             """
@@ -1702,6 +1430,7 @@ class Caller(object):
         print raw.info['ch_names']
         plt.show()
 
+    @threaded
     def _compute_spectrum(self, raw, params):
         """Performed in a worker thread."""
         times = params['times']
@@ -1709,34 +1438,26 @@ class Caller(object):
         fmax = params['fmax']
         nfft = params['nfft']
         overlap = params['overlap']
-        try:
-            if params['ch'] == 'meg':
-                picks = mne.pick_types(raw.info, meg=True, eeg=False,
-                                       exclude=[])
-            elif params['ch'] == 'eeg':
-                picks = mne.pick_types(raw.info, meg=False, eeg=True,
-                                       exclude=[])
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+
+        if params['ch'] == 'meg':
+            picks = mne.pick_types(raw.info, meg=True, eeg=False,
+                                   exclude=[])
+        elif params['ch'] == 'eeg':
+            picks = mne.pick_types(raw.info, meg=False, eeg=True,
+                                   exclude=[])
         psdList = []
         for time in times:
-            try:
-                psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
-                                              fmin=fmin, fmax=fmax, n_fft=nfft,
-                                              n_overlap=overlap, picks=picks,
-                                              proj=True, verbose=True)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return
+            psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
+                                          fmin=fmin, fmax=fmax, n_fft=nfft,
+                                          n_overlap=overlap, picks=picks,
+                                          proj=True, verbose=True)
             if params['log']:
                 psds = 10 * np.log10(psds)
             psdList.append((psds, freqs))
-        self.e.set()
         return psdList
 
+    @messaged
+    @threaded
     def filter(self, dataToFilter, info, dic):
         """
         Filters the data array in place according to parameters in paramDict.
@@ -1751,50 +1472,24 @@ class Caller(object):
 
         Returns the filtered array.
         """
-        self.e.clear()
-        self.result = None
-        pool = ThreadPool(processes=1)
-
-        async_result = pool.apply_async(self._filter, (dataToFilter, info,
-                                                       dic,))
-        while(True):
-            sleep(0.2)
-            if self.e.is_set(): break;
-            self.parent.update_ui()
-
-        if not self.result is None:
-            self.messageBox = messageBoxes.shortMessageBox(str(self.result))
-            self.messageBox.show()
-            self.result = None
-            return dataToFilter
-        filteredData = async_result.get()
-        pool.terminate()
-        return filteredData
+        return self._filter(dataToFilter, info, dic)
 
     def _filter(self, dataToFilter, info, dic):
         """Performed in a working thread."""
         sf = info['sfreq']
-        # TODO: check if this holds for mne.filter
-        # n_jobs is 2 because of the increasing memory requirements for 
-        # multicore filtering, see 
-        # http://martinos.org/mne/stable/generated/mne.io.RawFIFF.html
-        # mne.io.RawFIFF.filter
+
         if isinstance(dataToFilter, mne.io.Raw):
             hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
             lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
             length = dic['length']
             trans_bw = dic['trans_bw']
-            try:
-                print "Filtering..."
-                dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
-                                    filter_length=length,
-                                    l_trans_bandwidth=trans_bw,
-                                    h_trans_bandwidth=trans_bw, n_jobs=2,
-                                    method='fft', verbose=True)
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return dataToFilter
+
+            print "Filtering..."
+            dataToFilter.filter(l_freq=lfreq, h_freq=hfreq,
+                                filter_length=length,
+                                l_trans_bandwidth=trans_bw,
+                                h_trans_bandwidth=trans_bw, n_jobs=1,
+                                method='fft', verbose=True)
 
             freqs = list()
             if dic['bandstop1']:
@@ -1805,70 +1500,60 @@ class Caller(object):
                 length = dic['bandstop_length']
                 trans_bw = dic['bandstop_transbw']
                 print "Band-stop filtering..."
-                try:
-                    dataToFilter.notch_filter(freqs, picks=None,
-                                              filter_length=length,
-                                              notch_widths=dic['bandstop_bw'],
-                                              trans_bandwidth=trans_bw,
-                                              n_jobs=2, verbose=True)
-                except Exception as e:
-                    self.result = e
-                    self.e.set()
-                    return dataToFilter
+                dataToFilter.notch_filter(freqs, picks=None,
+                                          filter_length=length,
+                                          notch_widths=dic['bandstop_bw'],
+                                          trans_bandwidth=trans_bw,
+                                          n_jobs=1, verbose=True)
             print 'Saving to file...'
             dataToFilter.save(info['filename'], overwrite=True)
         else:  # preview
-            try:
-                picks = mne.pick_types(info, meg=True, eeg=True)
-                if dic.get('lowpass'):
-                    print "Low-pass filtering..."
-                    dataToFilter = low_pass_filter(dataToFilter, sf,
-                                                   dic.get('low_cutoff_freq'),
-                                                   dic.get('length'),
-                                                   dic.get('trans_bw'), 'fft',
-                                                   None, picks=picks, n_jobs=2,
-                                                   copy=True)
+            picks = mne.pick_types(info, meg=True, eeg=True)
+            if dic.get('lowpass'):
+                print "Low-pass filtering..."
+                dataToFilter = low_pass_filter(dataToFilter, sf,
+                                               dic.get('low_cutoff_freq'),
+                                               dic.get('length'),
+                                               dic.get('trans_bw'), 'fft',
+                                               None, picks=picks, n_jobs=1,
+                                               copy=True)
 
-                if dic.get('highpass') == True:
-                    print "High-pass filtering..."
-                    dataToFilter = high_pass_filter(dataToFilter, sf,
-                                                    dic['high_cutoff_freq'],
-                                                    dic.get('length'),
-                                                    dic.get('trans_bw'), 'fft',
-                                                    None, picks=picks,
-                                                    n_jobs=2, copy=True)
+            if dic.get('highpass') == True:
+                print "High-pass filtering..."
+                dataToFilter = high_pass_filter(dataToFilter, sf,
+                                                dic['high_cutoff_freq'],
+                                                dic.get('length'),
+                                                dic.get('trans_bw'), 'fft',
+                                                None, picks=picks,
+                                                n_jobs=1, copy=True)
 
-                trans = dic['bandstop_transbw']
-                if dic.get('bandstop1') == True:
-                    lfreq = dic['bandstop1_freq'] - dic['bandstop_bw'] / 2.
-                    hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
-                    print "Band-stop filtering..."
-                    dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)
+            trans = dic['bandstop_transbw']
+            if dic.get('bandstop1') == True:
+                lfreq = dic['bandstop1_freq'] - dic['bandstop_bw'] / 2.
+                hfreq = dic['bandstop1_freq'] + dic['bandstop_bw'] / 2.
+                print "Band-stop filtering..."
+                dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
+                                                hfreq,
+                                                dic['bandstop_length'],
+                                                trans, trans, picks=picks,
+                                                n_jobs=1, copy=True)
 
-                if dic.get('bandstop2') == True:
-                    lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
-                    hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
-                    print "Band-stop filtering..."
-                    dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
-                                                    hfreq,
-                                                    dic['bandstop_length'],
-                                                    trans, trans, picks=picks,
-                                                    n_jobs=2, copy=True)
+            if dic.get('bandstop2') == True:
+                lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
+                hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
+                print "Band-stop filtering..."
+                dataToFilter = band_stop_filter(dataToFilter, sf, lfreq,
+                                                hfreq,
+                                                dic['bandstop_length'],
+                                                trans, trans, picks=picks,
+                                                n_jobs=1, copy=True)
 
-            except Exception as e:
-                self.result = e
-                self.e.set()
-                return dataToFilter
         print "Done"
-        self.e.set()
         return dataToFilter
 
 ### Methods needed for source modeling ###    
 
+    @messaged
     def convert_mri_to_mne(self):
         """
         Uses mne_setup_mri to active subject recon directory to create Neuromag
@@ -1887,17 +1572,9 @@ class Caller(object):
         os.environ['SUBJECTS_DIR'] = sourceAnalDir
         os.environ['SUBJECT'] = 'reconFiles'
         
-        try:
-            subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
-            return True
-        except CalledProcessError as e:
-            message = 'mne_setup_mri output: \n' \
-            + str(e.output)
-            title = 'Problem setting mri images'
-            self.messagebox = messageBoxes.longMessageBox(title, message)
-            self.messagebox.show()
-            return False
+        subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
 
+    @messaged
     def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate
@@ -1979,34 +1656,26 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)
         
-            try:
-                fileManager.create_fModel_directory(fmname, activeSubject)          
-                fileManager.write_forward_model_parameters(fmname,
-                    activeSubject, None, None, fmdict['sfmodelArgs'])
-                
-                # These should always exist, should be safe to unpickle.
-                sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
-                wshedParamFile = os.path.join(fmDir, 'wshed.param')
-                sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
-                wshedArgsDict = fileManager.unpickle(wshedParamFile)
-                     
-                mergedDict = dict([('fmname', fmname)] + \
-                                  sspaceArgsDict.items() + \
-                                  wshedArgsDict.items() + \
-                                  fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')] + \
-                                  [('fsolution', 'no')])
-                
-                fmlist = self.parent.forwardModelModel.\
-                         fmodel_dict_to_list(mergedDict)
-                self.parent.forwardModelModel.add_fmodel(fmlist)
-            except Exception:
-                tb = traceback.format_exc()
-                message = 'There was a problem creating forward model files. ' + \
-                      'Please copy the following to your bug report:\n\n' + \
-                      str(tb)
-                self.messageBox = messageBoxes.longMessageBox('Error', message)
-                self.messageBox.show()
+            fileManager.create_fModel_directory(fmname, activeSubject)          
+            fileManager.write_forward_model_parameters(fmname,
+                activeSubject, None, None, fmdict['sfmodelArgs'])
+            
+            # These should always exist, should be safe to unpickle.
+            sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
+            wshedParamFile = os.path.join(fmDir, 'wshed.param')
+            sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
+            wshedArgsDict = fileManager.unpickle(wshedParamFile)
+                 
+            mergedDict = dict([('fmname', fmname)] + \
+                              sspaceArgsDict.items() + \
+                              wshedArgsDict.items() + \
+                              fmdict['sfmodelArgs'].items() + \
+                              [('coregistered', 'no')] + \
+                              [('fsolution', 'no')])
+            
+            fmlist = self.parent.forwardModelModel.\
+                     fmodel_dict_to_list(mergedDict)
+            self.parent.forwardModelModel.add_fmodel(fmlist)
         
         if reply == 'computeAll':
             # To make overwriting unnecessary
@@ -2019,28 +1688,22 @@ class Caller(object):
             fileManager.link_triang_files(activeSubject)
             self._call_mne_setup_forward_model(setupFModelArgs, env)    
         
-            try:
-                fileManager.create_fModel_directory(fmname, activeSubject)          
-                fileManager.write_forward_model_parameters(fmname, activeSubject,
-                    fmdict['sspaceArgs'], fmdict['wsshedArgs'],
-                    fmdict['sfmodelArgs'])
-                mergedDict = dict([('fmname', fmname)] + \
-                                  fmdict['sspaceArgs'].items() + \
-                                  fmdict['wsshedArgs'].items() + \
-                                  fmdict['sfmodelArgs'].items() + \
-                                  [('coregistered', 'no')] + \
-                                  [('fsolution', 'no')])
+            fileManager.create_fModel_directory(fmname, activeSubject)          
+            fileManager.write_forward_model_parameters(fmname, activeSubject,
+                fmdict['sspaceArgs'], fmdict['wsshedArgs'],
+                fmdict['sfmodelArgs'])
+            mergedDict = dict([('fmname', fmname)] + \
+                              fmdict['sspaceArgs'].items() + \
+                              fmdict['wsshedArgs'].items() + \
+                              fmdict['sfmodelArgs'].items() + \
+                              [('coregistered', 'no')] + \
+                              [('fsolution', 'no')])
                 
-                fmlist = self.parent.forwardModelModel.\
-                         fmodel_dict_to_list(mergedDict)
-                self.parent.forwardModelModel.add_fmodel(fmlist)             
-            except Exception:
-                tb = traceback.format_exc()
-                msg = ('There was a problem creating forward model files. '
-                       'Please copy the following to your bug report:\n\n' +
-                       str(tb))
-                self.messageBox = messageBoxes.longMessageBox('Error', msg)
-                self.messageBox.show()
+            fmlist = self.parent.forwardModelModel.\
+                     fmodel_dict_to_list(mergedDict)
+            self.parent.forwardModelModel.add_fmodel(fmlist)             
+
+        return True
 
     def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
         try:
@@ -2055,21 +1718,16 @@ class Caller(object):
                                     shell=True, env=env)
             self.parent.processes.append(setupSSproc)
         except CalledProcessError as e:
-            title = 'Problem with forward model creation'
-            msg = ('There was a problem with mne_setup_source_space. Script '
-                   'output: \n' + e.output)
-            self.messageBox = messageBoxes.longMessageBox(title, msg)
-            self.messageBox.exec_()
-            return
+            raise Exception('There was a problem with mne_setup_source_space. Script '
+                            'output: \n' + e.output)
         except Exception as e:
             message = 'There was a problem with mne_setup_source_space: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
+    @messaged
     def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
             mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
@@ -2080,20 +1738,17 @@ class Caller(object):
             self.parent.processes.append(wsProc)
         except CalledProcessError as e:
             title = 'Problem with forward model creation'
-            message= 'There was a problem with mne_watershed_bem. ' + \
-                     'Script output: \n' + e.output
-            self.messageBox = messageBoxes.longMessageBox(title, message)
-            self.messageBox.exec_()
-            return
+            message = 'There was a problem with mne_watershed_bem. ' + \
+                      'Script output: \n' + e.output
+            raise Exception(message)
         except Exception as e:
             message = 'There was a problem with mne_watershed_bem: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
+    @messaged
     def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
             mne_setup_forward_modelCommandList = \
@@ -2107,17 +1762,13 @@ class Caller(object):
             title = 'Problem with forward model creation'
             message= 'There was a problem with mne_setup_forward_model. ' + \
                      'Script output: \n' + e.output
-            self.messageBox = messageBoxes.longMessageBox(title, message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
         except Exception as e:
             message = 'There was a problem with mne_setup_forward_model: ' + \
                       str(e) + \
                       ' (Are you sure you have your MNE_ROOT set right ' + \
                       'in Meggie preferences?)'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
-            return
+            raise Exception(message)
 
     def coregister_with_mne_gui_coregistration(self):
         """
@@ -2150,6 +1801,7 @@ class Caller(object):
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()
         self.coregHowtoDialog.show()
 
+    @messaged
     def create_forward_solution(self, fsdict):
         """
         Creates a forward solution based on parameters given in fsdict.
@@ -2197,8 +1849,7 @@ class Caller(object):
             title = 'Error'
             msg = ('There was a problem with forward solution. The MNE-Python '
                    'message was: \n\n' + str(e))
-            self.messageBox = messageBoxes.longMessageBox(title, msg)
-            self.messageBox.show()
+            raise Exception(msg)
 
     def create_covariance_from_raw(self, cvdict):
         """

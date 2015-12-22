@@ -777,8 +777,6 @@ class MainWindow(QtGui.QMainWindow):
         item = self.evokedList.currentItem()
         if item is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
 
         evoked_name = str(item.text())
         if '[' not in evoked_name or ']' not in evoked_name:
@@ -788,20 +786,15 @@ class MainWindow(QtGui.QMainWindow):
             mBox.exec_()
             QtGui.QApplication.restoreOverrideCursor()
             return
+
         groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
         groups = re.split('[-]', groups)  # ['1','2','3']
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         else:
             layout = str(self.ui.labelLayout.text())
-        try:
-            self.caller.plot_group_average(groups, layout)
-        except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
-                                                str(e))
-            mBox.exec_()
-        finally:
-            QtGui.QApplication.restoreOverrideCursor()
+
+        self.caller.plot_group_average(groups, layout)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """Exports the evoked data set to a user selected location."""
@@ -840,6 +833,7 @@ class MainWindow(QtGui.QMainWindow):
             msg = 'Failed to load file.'
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
+        evoked, category = None, None
         evoked, category = fileManager.load_evoked(path, filename)
         if evoked is None:
             return
@@ -1121,8 +1115,6 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(name,
@@ -1134,7 +1126,6 @@ class MainWindow(QtGui.QMainWindow):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
             self.caller.average_channels(name, None, set(channels))
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """
@@ -1185,8 +1176,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.listViewSubjects.selectedIndexes() == []:
             return
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
 
@@ -1197,12 +1186,12 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.activate_subject(subject_name)
+        self.caller.activate_subject(subject_name,
+                                     do_meanwhile=self.update_ui)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -1825,7 +1814,7 @@ def exception_hook(exctype, value, tracebackObj):
 
 
 def main():
-    sys.excepthook = exception_hook
+    # sys.excepthook = exception_hook
 
     app = QtGui.QApplication(sys.argv)
     window = MainWindow(app)

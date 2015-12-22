@@ -44,13 +44,14 @@ class GroupEpochingDialog(QtGui.QDialog):
     Class containing the logic for creating epochs for multiple subjects.
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_GroupEpochDialog()
         self.ui.setupUi(self)
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Start '
                                                               'computation')
         self.caller = Caller.Instance()
+        self.parent = parent
         subjects = self.caller.experiment.get_subjects()
         self.ui.listWidgetSubjects.setSelectionMode(QtGui.\
                                     QAbstractItemView.MultiSelection)
@@ -77,8 +78,6 @@ class GroupEpochingDialog(QtGui.QDialog):
             mBox = messageBoxes.shortMessageBox(msg)
             mBox.exec_()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         grad = self.ui.doubleSpinBoxGradReject_3.value() * 1e-13 if\
                 self.ui.checkBoxGrad.isChecked() else None
         mag = self.ui.doubleSpinBoxMagReject_3.value() * 1e-15 if\
@@ -87,7 +86,11 @@ class GroupEpochingDialog(QtGui.QDialog):
                 self.ui.checkBoxEeg.isChecked() else None
         eog = self.ui.doubleSpinBoxEOGReject_3.value() * 1e-6 if\
                 self.ui.checkBoxEog.isChecked() else None
+
         self.caller.batchEpoch(subjects, epoch_name, tmin, tmax, stim,
-                               event_id, mask, event_name, grad, mag, eeg, eog)
-        QtGui.QApplication.restoreOverrideCursor()
+                               event_id, mask, event_name, grad, mag, 
+                               eeg, eog)
+
+        self.parent.parent._initialize_ui()
+        
         self.close()

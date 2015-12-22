@@ -165,9 +165,10 @@ class ForwardModelDialog(QtGui.QDialog):
             self.messageBox.exec_()
             return
         
-        # FIXME: use try-except here
         caller = Caller.Instance()
-        if caller.create_forward_model(fmdict) == False:
-            return
+
+        result = None
+        result = caller.create_forward_model(fmdict)
+        if result:
+            self.close()
         
-        self.close()

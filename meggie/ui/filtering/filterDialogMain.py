@@ -62,14 +62,10 @@ class FilterDialog(QtGui.QDialog):
         if (self._validateFilterFreq(paramDict, samplerate) == False):
             return
 
-        try: 
-            filteredData = self.caller.filter(dataToFilter, info, samplerate,
-                                              paramDict)
-        except ValueError as e:
-            message = 'There was problem with filtering. MNE-Python error ' + \
-            'message was: \n\n' + str(e)
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+        filteredData = None
+        filteredData = self.caller.filter(dataToFilter, info, paramDict, 
+                                          do_meanwhile=self.parent.update_ui)
+        if filteredData is None:
             return
 
         previewRaw = deepcopy(raw)
@@ -101,7 +97,6 @@ class FilterDialog(QtGui.QDialog):
             self.caller.update_experiment_working_file(fname, raw)
 
             self.parent._initialize_ui()
-        else: return
 
     def get_filter_parameters(self):
         """
@@ -156,30 +151,21 @@ class FilterDialog(QtGui.QDialog):
         Get the parameters dictionary and relay it to caller.filter to
         actually do the filtering.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         paramDict = self.get_filter_parameters()   
         raw = self.caller.experiment.active_subject.working_file
         info = raw.info
 
         # Check if the filter frequency values are sane or not.
         if (self._validateFilterFreq(paramDict, info['sfreq']) == False):
-            QtGui.QApplication.restoreOverrideCursor()
             return
 
-        try: 
-            self.caller.filter(raw, info, paramDict)
-        except ValueError as e:
-            message = 'There was problem with filtering. MNE-Python error ' + \
-            'message was: \n\n' + str(e)
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
-            QtGui.QApplication.restoreOverrideCursor()
-            return
+        result = None
+        result = self.caller.filter(raw, info, paramDict, 
+                                    do_meanwhile=self.parent.update_ui)
 
-        self.parent._initialize_ui()
-        QtGui.QApplication.restoreOverrideCursor()
-        self.close()
+        if result is not None:
+             self.parent._initialize_ui()
+             self.close()
 
     def _validateFilterFreq(self, paramDict, samplerate):
         """
