@@ -49,15 +49,17 @@ def threaded(func):
 
 def messaged(func):
     def decorated(*args, **kwargs):
+        parent_handle = kwargs.pop('parent_handle', None)
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
             result = func(*args, **kwargs)
         except Exception as e:
             traceback.print_exc()
-            messageBox = messageBoxes.shortMessageBox(e.args[0])
             QtGui.QApplication.restoreOverrideCursor()
-            messageBox.exec_()
+            box = messageBoxes.shortMessageBox(e.args[0])
+            box.show()
+            parent_handle.messagebox = box
             return
         QtGui.QApplication.restoreOverrideCursor()
         return result

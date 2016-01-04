@@ -107,7 +107,8 @@ class AddSubjectDialog(QtGui.QDialog):
                 return
 
             self.caller.activate_subject(subject_name,
-                                         do_meanwhile=self.parent.update_ui)
+                                         do_meanwhile=self.parent.update_ui,
+                                         parent_handle=self.parent)
 
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.

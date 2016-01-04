@@ -144,7 +144,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         if self.tfr is not None:
             self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
                                      blstart, blend, None, None, layout, None,
-                                     None, cmap)
+                                     None, cmap, parent_handle=self.parent)
             return
 
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
@@ -168,7 +168,8 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp = None
         self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
                                  decim, mode, blstart, blend, interval,
-                                 ncycles, layout, ch_type, scalp, cmap)
+                                 ncycles, layout, ch_type, scalp, cmap,
+                                 parent_handle=self.parent)
         self.parent.update_power_list()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
@@ -229,4 +230,5 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
                                 minfreq, maxfreq, interval, blstart,
                                 blend, ncycles, decim, layout, channels,
-                                form, dpi, saveTopo, savePlot, saveMax)
+                                form, dpi, saveTopo, savePlot, saveMax,
+                                parent_handle=self.parent)

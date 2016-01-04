@@ -220,7 +220,8 @@ class MaxFilterDialog(QtGui.QDialog):
 
         result = None
         result = caller.call_maxfilter(dictionary, custom, 
-                                       do_meanwhile=self.parent.update_ui)
+                                       do_meanwhile=self.parent.update_ui,
+                                       parent_handle=self.parent)
         if not result:
             self._show_progressbar(False)
             return

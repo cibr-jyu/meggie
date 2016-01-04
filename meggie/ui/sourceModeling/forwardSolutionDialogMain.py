@@ -62,5 +62,5 @@ class ForwardSolutionDialog(QtGui.QDialog):
             
         paramdict['njobs'] = self.ui.spinBoxNJobs.value()
         caller = Caller.Instance()
-        caller.create_forward_solution(paramdict)   
+        caller.create_forward_solution(paramdict, parent_handle=self.parent)   
         self.close()

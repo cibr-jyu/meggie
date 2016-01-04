@@ -170,7 +170,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         index = self.ui.comboBoxEvoked.currentIndex()
         caller = Caller.Instance()
         caller.average_channels(self.evoked, None,
-                                set(self.selected_channels[index]))
+                                set(self.selected_channels[index]),
+                                parent_handle=self)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """

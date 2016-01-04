@@ -168,7 +168,7 @@ class ForwardModelDialog(QtGui.QDialog):
         caller = Caller.Instance()
 
         result = None
-        result = caller.create_forward_model(fmdict)
+        result = caller.create_forward_model(fmdict, parent_handle=self.parent)
         if result:
             self.close()
         
