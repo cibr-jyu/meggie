@@ -383,9 +383,6 @@ class Subject(QObject):
         Keyword arguments:
         collection_name    -- name of the epochs collection (QString)
         """
-        collection_name = str(collection_name)
-        del self._epochs[collection_name]
-
         files_to_delete = filter(os.path.isfile, glob.\
                                  glob(os.path.join(self._epochs_directory, \
                                                    collection_name + '.fif')))
@@ -399,6 +396,9 @@ class Subject(QObject):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
 
         try:
+            collection_name = str(collection_name)
+            del self._epochs[collection_name]
+
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
             raise Exception('Epochs could not be deleted from epochs folder.')
