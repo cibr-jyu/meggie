@@ -36,5 +36,7 @@ class TestDecorators(unittest.TestCase):
 
     def test_messages_success(self):
         app = QtGui.QApplication(sys.argv)
-        self.assertEqual(self._bird(says='tweet'), 'tweet',
+        self.assertEqual(self._bird(says='tweet', 
+                                    parent_handle=self),
+                         'tweet',
                          'messages_success failed')

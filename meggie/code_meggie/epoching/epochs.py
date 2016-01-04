@@ -39,8 +39,6 @@ import mne
 
 import numpy as np
 
-from meggie.ui.utils.decorators import messaged
-
 class Epochs(QObject):
     
     """
@@ -111,7 +109,6 @@ class Epochs(QObject):
         """
         self._params = params
 
-    @messaged
     def create_epochs(self, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.

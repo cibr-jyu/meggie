@@ -1714,7 +1714,6 @@ class Caller(object):
                       'in Meggie preferences?)'
             raise Exception(message)
 
-    @messaged
     def _call_mne_watershed_bem(self, waterShedArgs, env):
         try:
             mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
@@ -1735,7 +1734,6 @@ class Caller(object):
                       'in Meggie preferences?)'
             raise Exception(message)
 
-    @messaged
     def _call_mne_setup_forward_model(self, setupFModelArgs, env):
         try:
             mne_setup_forward_modelCommandList = \

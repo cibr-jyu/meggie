@@ -64,7 +64,8 @@ class FilterDialog(QtGui.QDialog):
 
         filteredData = None
         filteredData = self.caller.filter(dataToFilter, info, paramDict, 
-                                          do_meanwhile=self.parent.update_ui)
+                                          do_meanwhile=self.parent.update_ui,
+                                          parent_handle=self)
         if filteredData is None:
             return
 
@@ -161,7 +162,8 @@ class FilterDialog(QtGui.QDialog):
 
         result = None
         result = self.caller.filter(raw, info, paramDict, 
-                                    do_meanwhile=self.parent.update_ui)
+                                    do_meanwhile=self.parent.update_ui,
+                                    parent_handle=self)
 
         if result is not None:
              self.parent._initialize_ui()

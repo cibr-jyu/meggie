@@ -76,4 +76,5 @@ class TFRDialog(QtGui.QDialog):
 
         caller = Caller.Instance()
         caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
-                   ncycles, decim, cmap)
+                   ncycles, decim, cmap,
+                   parent_handle=self.parent)

@@ -89,7 +89,7 @@ class GroupEpochingDialog(QtGui.QDialog):
 
         self.caller.batchEpoch(subjects, epoch_name, tmin, tmax, stim,
                                event_id, mask, event_name, grad, mag, 
-                               eeg, eog)
+                               eeg, eog, parent_handle=self.parent)
 
         self.parent.parent._initialize_ui()
         

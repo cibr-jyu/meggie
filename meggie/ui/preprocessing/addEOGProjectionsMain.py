@@ -89,7 +89,7 @@ class AddEOGProjections(QtGui.QDialog):
 
         result = None
         result = self.caller.apply_exg('eog', raw, directory, self.projs,
-                                       applied)
+                                       applied, parent_handle=self.parent)
 
         if result:
             self.parent.ui.checkBoxEOGApplied.setChecked(True)

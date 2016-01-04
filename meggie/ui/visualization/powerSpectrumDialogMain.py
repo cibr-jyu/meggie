@@ -179,7 +179,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 return
 
         self.caller.plot_power_spectrum(params, save_data, colors,
-                                        channelColors)
+                                        channelColors, 
+                                        parent_handle=self.parent)
 
     @QtCore.pyqtSlot(int)
     def on_comboBoxStart_currentIndexChanged(self, index):

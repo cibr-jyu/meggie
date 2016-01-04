@@ -479,7 +479,7 @@ class Experiment(QObject):
                 fname = os.path.join(path, f)
 
                 name = f[:-4]
-                _, params = fileManager.load_epochs(fname)
+                _, params = fileManager.load_epochs(fname, parent_handle=self)
                 subject.handle_new_epochs(name, params)
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
@@ -511,7 +511,7 @@ class Experiment(QObject):
         for f in files:
             if f.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                             f)
+                                                             f, parent_handle=self)
                 subject.handle_new_evoked(f, evoked, categories)
                 item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
@@ -765,7 +765,8 @@ class ExperimentHandler(QObject):
                 caller.experiment.workspace = working_directory
             self.parent.update_ui()
             caller.activate_subject(caller._experiment._active_subject_name,
-                                    do_meanwhile=self.parent.update_ui)
+                                    do_meanwhile=self.parent.update_ui,
+                                    parent_handle=self.parent)
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
