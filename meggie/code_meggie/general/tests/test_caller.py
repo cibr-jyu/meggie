@@ -17,8 +17,18 @@ from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import experiment, subject
 
 app = QtGui.QApplication(sys.argv)
-data_path = sample.data_path()
-fname = data_path + '/MEG/sample/sample_audvis_raw.fif'
+try:
+    import pkg_resources
+    path = pkg_resources.resource_filename('meggie', 'data')
+    fname = path + "/sample_audvis_raw.fif"
+    if not os.path.isfile(fname):
+        raise Exception(fname + ' not found.')
+except Exception as e:
+    print e
+    print "Couldn't locate test file using pkg_resources. Trying mne sample data path instead."
+    data_path = sample.data_path()
+    fname = data_path + '/MEG/sample/sample_audvis_raw.fif'
+    fname = "/home/zairex/Code/cibr/sample_data/MEG/sample"
 
 caller = Caller.Instance()
 tempdir = _TempDir()

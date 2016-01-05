@@ -4,6 +4,7 @@
 *.swp
 *~
 build
+meggie/data
 dist
 meggie.egg-info
 preferences.cfg
