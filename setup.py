@@ -7,7 +7,7 @@ setup(
     author='Erkka Heinila',
     author_email='erkka.heinila@jyu.fi',
     url='https://yousource.it.jyu.fi/+hoksotin/hoksotin/lahdekoodit',
-    license='GPL',
+    license='BSD',
     packages=['meggie'],
     include_package_data=True,
     zip_safe=False,

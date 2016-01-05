@@ -70,7 +70,7 @@ class Ui_DialogFilter(object):
         self.doubleSpinBoxHighpassCutoff.setDecimals(3)
         self.doubleSpinBoxHighpassCutoff.setMaximum(1000000000.0)
         self.doubleSpinBoxHighpassCutoff.setSingleStep(1.0)
-        self.doubleSpinBoxHighpassCutoff.setProperty("value", 0.5)
+        self.doubleSpinBoxHighpassCutoff.setProperty("value", 1.0)
         self.doubleSpinBoxHighpassCutoff.setObjectName(_fromUtf8("doubleSpinBoxHighpassCutoff"))
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxHighpassCutoff)
         self.gridLayout_4.addWidget(self.frame_2, 1, 0, 1, 1)

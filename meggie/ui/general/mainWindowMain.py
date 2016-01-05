@@ -202,7 +202,8 @@ class MainWindow(QtGui.QMainWindow):
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
-            self.experimentHandler.open_existing_experiment(name)
+            self.experimentHandler.open_existing_experiment(name, 
+                                                            parent_handle=self)
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -281,7 +282,8 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor
                                              (QtCore.Qt.WaitCursor))
         print 'Opening experiment ' + path
-        self.experimentHandler.open_existing_experiment(os.path.basename(path))
+        self.experimentHandler.open_existing_experiment(os.path.basename(path),
+                                                        parent_handle=self)
         print 'Done'
         QtGui.QApplication.restoreOverrideCursor()
 
@@ -465,7 +467,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Raw data is not present in the dictionary so get it from the
         # current experiment.active_subject.
-        self.caller.create_new_epochs(epoch_params)
+        self.caller.create_new_epochs(epoch_params, parent_handle=self)
         fname = epoch_params['collectionName']
         item = QtGui.QListWidgetItem(fname)
         self.epochList.addItem(item, 1, overwrite=True)
@@ -487,7 +489,9 @@ class MainWindow(QtGui.QMainWindow):
         if not os.path.isfile(fname):
             return
 
-        epochs, params = fileManager.load_epochs(fname, load_object=True)
+        epochs, params = fileManager.load_epochs(fname, 
+                                                 load_object=True,
+                                                 parent_handle=self)
         # Change color of the item to red if no param file available.
         fname_base = os.path.basename(fname)
         fname_prefix = fname_base.split('.')[0]
@@ -665,9 +669,12 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.QApplication.restoreOverrideCursor()
 
         self.evokedList.addItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(evoked_name,
-                                                                evoked,
-                                                                category)
+        self.caller.experiment.active_subject.handle_new_evoked(
+            evoked_name,
+            evoked,
+            category,
+            parent_handle=self
+        )
         self.evokedList.setCurrentItem(item)
         QtGui.QApplication.restoreOverrideCursor()
 
@@ -777,8 +784,6 @@ class MainWindow(QtGui.QMainWindow):
         item = self.evokedList.currentItem()
         if item is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
 
         evoked_name = str(item.text())
         if '[' not in evoked_name or ']' not in evoked_name:
@@ -788,20 +793,15 @@ class MainWindow(QtGui.QMainWindow):
             mBox.exec_()
             QtGui.QApplication.restoreOverrideCursor()
             return
+
         groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
         groups = re.split('[-]', groups)  # ['1','2','3']
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         else:
             layout = str(self.ui.labelLayout.text())
-        try:
-            self.caller.plot_group_average(groups, layout)
-        except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
-                                                str(e))
-            mBox.exec_()
-        finally:
-            QtGui.QApplication.restoreOverrideCursor()
+
+        self.caller.plot_group_average(groups, layout, parent_handle=self)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """Exports the evoked data set to a user selected location."""
@@ -840,15 +840,23 @@ class MainWindow(QtGui.QMainWindow):
             msg = 'Failed to load file.'
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
-        evoked, category = fileManager.load_evoked(path, filename)
+        evoked, category = None, None
+        evoked, category = fileManager.load_evoked(
+            path, 
+            filename,
+            parent_handle=self,
+        )
         if evoked is None:
             return
         item = QtGui.QListWidgetItem(filename.split('.')[0])
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(item.text(),
-                                                                evoked,
-                                                                category)
+        self.caller.experiment.active_subject.handle_new_evoked(
+            item.text(),
+            evoked,
+            category,
+            parent_handle=self,
+        )
         saveFolder = self.caller.experiment.active_subject._evokeds_directory
         fname = os.path.join(saveFolder, filename)
         print 'Saving evoked data set %s.' % fname
@@ -887,7 +895,10 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            self.caller.experiment.active_subject.remove_epochs(item_str)
+            self.caller.experiment.active_subject.remove_epochs(
+                item_str,
+                parent_handle=self,
+            )
             self.epochList.remove_item(self.epochList.currentItem())
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
@@ -917,7 +928,10 @@ class MainWindow(QtGui.QMainWindow):
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
-            self.caller.experiment.active_subject.remove_evoked(item_str)
+            self.caller.experiment.active_subject.remove_evoked(
+                item_str,
+                parent_handle=self,
+            )
         else:
             return
 
@@ -946,7 +960,10 @@ class MainWindow(QtGui.QMainWindow):
             item = self.ui.listWidgetPowerItems.currentItem()
             row = self.ui.listWidgetPowerItems.row(item)
             self.ui.listWidgetPowerItems.takeItem(row)
-            self.caller.experiment.active_subject.remove_power(item_str)
+            self.caller.experiment.active_subject.remove_power(
+                item_str,
+                parent_handle=self,
+            )
         else:
             return
 
@@ -997,11 +1014,9 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.caller.experiment is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         raw = self.caller.experiment.active_subject._working_file
-        raw.plot_projs_topomap()
-        QtGui.QApplication.restoreOverrideCursor()
+        self.caller.plot_projs_topomap(raw, parent_handle=self)
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
@@ -1121,20 +1136,18 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
-                                         None)
+                                         None, parent_handle=self)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
-            self.caller.average_channels(name, None, set(channels))
-        QtGui.QApplication.restoreOverrideCursor()
+            self.caller.average_channels(name, None, set(channels),
+                                         parent_handle=self)
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """
@@ -1185,8 +1198,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.listViewSubjects.selectedIndexes() == []:
             return
 
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         subject_name = selIndexes[0].data()
 
@@ -1197,12 +1208,13 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.activate_subject(subject_name)
+        self.caller.activate_subject(subject_name,
+                                     do_meanwhile=self.update_ui,
+                                     parent_handle=self)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -1269,7 +1281,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        self.caller.convert_mri_to_mne()
+        self.caller.convert_mri_to_mne(parent_handle=self)
         self._initialize_ui()
 
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
@@ -1825,7 +1837,7 @@ def exception_hook(exctype, value, tracebackObj):
 
 
 def main():
-    sys.excepthook = exception_hook
+    # sys.excepthook = exception_hook
 
     app = QtGui.QApplication(sys.argv)
     window = MainWindow(app)

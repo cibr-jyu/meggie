@@ -218,12 +218,11 @@ class MaxFilterDialog(QtGui.QDialog):
 
         custom = self.ui.textEditCustom.toPlainText()
 
-        try:
-            caller.call_maxfilter(dictionary, custom)
-        except Exception, err:
-            title = 'MaxFilter error:'
-            self.messageBox = messageBoxes.longMessageBox(title, str(err))
-            self.messageBox.show()
+        result = None
+        result = caller.call_maxfilter(dictionary, custom, 
+                                       do_meanwhile=self.parent.update_ui,
+                                       parent_handle=self.parent)
+        if not result:
             self._show_progressbar(False)
             return
 

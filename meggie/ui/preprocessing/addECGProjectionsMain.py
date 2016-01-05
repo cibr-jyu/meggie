@@ -80,8 +80,6 @@ class AddECGProjections(QtGui.QDialog):
         """
         Tells the caller to add the selected projections to the working file.
         """       
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
 
         applied = list()
         for index in xrange(self.listWidget.count()):
@@ -91,11 +89,10 @@ class AddECGProjections(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.working_file
         directory = self.caller.experiment.active_subject.subject_path
         result = self.caller.apply_exg('ecg', raw, directory, self.projs,
-                                       applied)
+                                       applied, parent_handle=self.parent)
 
         if result == 0:
             self.parent.ui.checkBoxECGApplied.setChecked(True)
-        QtGui.QApplication.restoreOverrideCursor()
         self.parent._initialize_ui()
         self.close()
         
