@@ -375,6 +375,10 @@ class Caller(object):
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
 
+    @messaged
+    def plot_projs_topomap(self, raw):
+        raw.plot_projs_topomap()
+
     def average(self, epochs, category):
         """Average epochs.
 
@@ -1414,7 +1418,6 @@ class Caller(object):
                             linewidth=0.2)
                 else:
                     ax.plot(psds[i][0][idx], color=colors[i], linewidth=0.2)
-        print raw.info['ch_names']
         plt.show()
 
     @threaded

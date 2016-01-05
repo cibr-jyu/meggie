@@ -669,9 +669,12 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.QApplication.restoreOverrideCursor()
 
         self.evokedList.addItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(evoked_name,
-                                                                evoked,
-                                                                category)
+        self.caller.experiment.active_subject.handle_new_evoked(
+            evoked_name,
+            evoked,
+            category,
+            parent_handle=self
+        )
         self.evokedList.setCurrentItem(item)
         QtGui.QApplication.restoreOverrideCursor()
 
@@ -1011,11 +1014,9 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.caller.experiment is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         raw = self.caller.experiment.active_subject._working_file
-        raw.plot_projs_topomap()
-        QtGui.QApplication.restoreOverrideCursor()
+        self.caller.plot_projs_topomap(raw, parent_handle=self)
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """

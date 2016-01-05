@@ -512,7 +512,8 @@ class Experiment(QObject):
             if f.endswith('.fif'):
                 evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
                                                              f, parent_handle=self)
-                subject.handle_new_evoked(f, evoked, categories)
+                subject.handle_new_evoked(f, evoked, categories, 
+                                          parent_handle=self)
                 item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
                 # Raw needs to be set when activating already created subject.
