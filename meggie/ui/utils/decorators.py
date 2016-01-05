@@ -50,6 +50,11 @@ def threaded(func):
 def messaged(func):
     def decorated(*args, **kwargs):
         parent_handle = kwargs.pop('parent_handle', None)
+        if not parent_handle:
+            raise Exception(
+                "Call to function decorated with messaged-decorator "
+                "must include parent_handle argument"
+            )
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
