@@ -57,6 +57,10 @@ def _setup_caller():
     caller.parent = parent
 
 
+def _update_ui():
+    QtGui.QApplication.processEvents()
+
+
 def test_call_exg_ssp():
     """Test calling ecg_ssp and eog_ssp."""
     _setup_caller()
@@ -68,11 +72,16 @@ def test_call_exg_ssp():
               'bads': '', 'tstart': 0, 'filtersize': 5, 'n-jobs': 1,
               'avg-ref': False, 'no-proj': False, 'average': False,
               'ch_name': None}
-    result = caller._call_ecg_ssp(params, caller.experiment.get_subjects()[0])
-    assert_equal(caller.result, None)
-    assert_equal(result, None)
+
+    caller._call_ecg_ssp(
+        params, 
+        caller.experiment.get_subjects()[0],
+        do_meanwhile=_update_ui,
+    )
 
     params.update({'eog-l-freq': 1., 'eog-h-freq': 40.})
-    result = caller._call_eog_ssp(params, caller.experiment.get_subjects()[0])
-    assert_equal(caller.result, None)
-    assert_equal(result, None)
+    result = caller._call_eog_ssp(
+        params, 
+        caller.experiment.get_subjects()[0],
+        do_meanwhile=_update_ui,
+    )
