@@ -1,4 +1,5 @@
 # coding: latin1
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
 # Atte Rautio>
@@ -89,6 +90,7 @@ from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 #from meggie.code_meggie.general.actionLogger import ActionLogger
 
 
@@ -1013,7 +1015,8 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor
                                              (QtCore.Qt.WaitCursor))
         raw = self.caller.experiment.active_subject._working_file
-        raw.plot_projs_topomap()
+        wrap_mne_call(self.caller.experiment, raw.plot_projs_topomap)
+        #raw.plot_projs_topomap()
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
@@ -1141,12 +1144,20 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
                                          None)
+            #TODO: visualizing actions logged or not?
+            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
+            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
+            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, self.ui.comboBoxLobes.currentText(), None)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
             self.caller.average_channels(name, None, set(channels))
+            #TODO: visualizing actions logged or not?
+            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
+            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
+            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, None, set(channels))
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):

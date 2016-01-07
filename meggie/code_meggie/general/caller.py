@@ -555,9 +555,10 @@ class Caller(object):
             for name in category.keys():
                 if name in epoch.event_id:
                     evokeds.append(epoch[name].average())
+                    #evokeds.append(wrap_mne_call(self.experiment, epoch[name].average()))
         #log mne call
         #TODO: epochs is a list of epoch -> log to single line with a comma separator
-        #self.log_action(epochs.average, epochs)
+        self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
         return evokeds
 
     def save_raw(self):
@@ -1953,11 +1954,10 @@ class Caller(object):
                     #log mne call
                     dataToFilter = wrap_mne_call(self.experiment,
                                                  band_stop_filter,
-                                                 dataToFilter, sf,
-                                                 lfreq, hfreq,
-                                                 dic['bandstop_length'], trans,
-                                                 trans, picks=picks, n_jobs=2,
-                                                 copy=True)
+                                                 dataToFilter, sf, lfreq,
+                                                 hfreq, dic['bandstop_length'],
+                                                 trans, trans, picks=picks,
+                                                 n_jobs=2, copy=True)
                 if dic.get('bandstop2') == True:
                     lfreq = dic['bandstop2_freq'] - dic['bandstop_bw'] / 2.
                     hfreq = dic['bandstop2_freq'] + dic['bandstop_bw'] / 2.
@@ -2404,6 +2404,3 @@ class Caller(object):
         
     def log_raw_changed(self, fname):
         self.experiment.action_logger.log_message('Raw changed: ' + fname)
-        
-    def log_outcome(self, outcome):
-        self.experiment.action_logger.log_outcome(outcome)

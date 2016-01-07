@@ -81,18 +81,21 @@ def logged(func):
             logger.logger.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
             result = func(mne_func, *args, **kwargs)
         except:
-            logger.logger.info('Calculation ERROR: ' + mne_instance_name)
+            logger.logger.info('ERROR: ' + mne_instance_name)
             exc = exc_info()
             #TODO: terminate pool also?
             raise exc[0], exc[1].args[0], exc[2]
         #logger.logger.info('calculation SUCCESS: ' + mne_instance_name)
-        success_msg = 'Calculation SUCCESS: ' + mne_instance_name
+        success_msg = 'SUCCESS: ' + mne_instance_name
         try:
             if inspect.isclass(mne_func):
                 #deepcopy needed for cleaning the dict
                 callargs = copy.deepcopy(result.__dict__)
-                callargs = clean_callargs(mne_instance_name, callargs)
+                callargs = logger.clean_callargs(mne_instance_name, callargs)
             else:
+                #TODO: clean callargs
+                #callargs_copy = copy.deepcopy(getcallargs(mne_func, *args, **kwargs))
+                #callargs = logger.clean_callargs(mne_instance_name, callargs_copy)
                 callargs = getcallargs(mne_func, *args, **kwargs)
         except:
             logger.logger.info(success_msg + '\nLogging parameters failed: ' + mne_instance_name)
@@ -118,49 +121,3 @@ def batched(func):
         batch.put(func, *args, **kwargs)
         return
     return decorated
-
-def clean_callargs(mne_instance_name, callargs):
-    """
-    Clean unnecessary call arguments
-    """
-    if (mne_instance_name == 'Epochs'):
-        
-        """
-        TODO:
-        
-        Log Mask? (mne.events.find_events
-        mask : int
-        The value of the digital mask to apply to the stim channel values.
-        The default value is 0.
-        
-        dict _channel_type_idx includes 'stim' key for stim channel selection
-        if it's not empty should it be logged?
-        """
-        del callargs['_channel_type_idx']
-        del callargs['_projector']
-        del callargs['_raw_times']
-        del callargs['events']
-        del callargs['info']
-        del callargs['picks']
-        del callargs['times']
-        del callargs['selection']
-        del callargs['verbose']
-        del callargs['reject_tmax']
-        del callargs['reject_tmin']
-        del callargs['_do_delayed_proj']
-        del callargs['_bad_dropped']
-        del callargs['baseline']
-        del callargs['_decim']
-        del callargs['preload']
-        del callargs['flat']
-        del callargs['_reject_time']
-        del callargs['drop_log']
-        del callargs['detrend']
-        del callargs['_data']
-        del callargs['name']
-        del callargs['_decim_slice']
-        del callargs['_offset']
-        del callargs['_raw']        
-        
-    return callargs
-    
