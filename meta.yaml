@@ -1,0 +1,23 @@
+package:
+  name: meggie
+  version: "0.1.0"
+
+source:
+  path: .
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - mne ==0.10.0
+
+  run:
+    - python
+    - pyqt
+    - xlwt
+    - xlrd
+    - mne ==0.10.0
+
+about:
+  license: BSD (3-clause)
+  summary: 'MNE graphical user interface for MEG and EEG data analysis.'
