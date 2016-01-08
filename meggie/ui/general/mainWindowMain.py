@@ -1155,7 +1155,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.radioButtonLobe.isChecked():
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
-                                         None, parent_handle=self))
+                                         None, parent_handle=self)
             #TODO: visualizing actions logged or not?
             #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
             #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
