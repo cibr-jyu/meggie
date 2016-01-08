@@ -1718,6 +1718,16 @@ class Caller(object):
                 self.messageBox.show()
                 return
         raw = self.experiment.active_subject.working_file
+        
+        if params['ch'] == 'meg':
+            picks = mne.pick_types(raw.info, meg=True, eeg=False,
+                                   exclude=[])
+        elif params['ch'] == 'eeg':
+            picks = mne.pick_types(raw.info, meg=False, eeg=True,
+                                   exclude=[])
+        
+        params['picks'] = picks
+        
         self.e.clear()
         self.result = None
         pool = ThreadPool(processes=1)
@@ -1784,8 +1794,16 @@ class Caller(object):
         # info['ch_names'] = _clean_names(info['ch_names'], remove_whitespace=True)
         # Workaround for excluding IAS channels in the beginning for correct
         # indexing with iter_topography.
-        while info['ch_names'][0].startswith('IAS'):
-            info['ch_names'].pop(0)
+        
+        # while info['ch_names'][0].startswith('IAS'):
+        #     info['ch_names'].pop(0)
+            
+        # info['ch_names'] = [ch for ch in info['ch_names'] 
+        #                     if not ch.startswith('IAS')]
+        
+        info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
+                            if idx in picks]
+        
         # TODO: log mne call
         for ax, idx in iter_topography(info, fig_facecolor='white',
                                        axis_spinecolor='white',
@@ -1797,7 +1815,11 @@ class Caller(object):
                     ax.plot(psds[i][0][idx], color=channelColors[i][0],
                             linewidth=0.2)
                 else:
-                    ax.plot(psds[i][0][idx], color=colors[i], linewidth=0.2)
+                    try:
+                        ax.plot(psds[i][0][idx], color=colors[i], linewidth=0.2)
+                    except:
+                        import pdb; pdb.set_trace()
+                        print "mm"
         print raw.info['ch_names']
         plt.show()
 
@@ -1808,17 +1830,8 @@ class Caller(object):
         fmax = params['fmax']
         nfft = params['nfft']
         overlap = params['overlap']
-        try:
-            if params['ch'] == 'meg':
-                picks = mne.pick_types(raw.info, meg=True, eeg=False,
-                                       exclude=[])
-            elif params['ch'] == 'eeg':
-                picks = mne.pick_types(raw.info, meg=False, eeg=True,
-                                       exclude=[])
-        except Exception as e:
-            self.result = e
-            self.e.set()
-            return
+        picks = params['picks']
+
         psdList = []
         for time in times:
             try:

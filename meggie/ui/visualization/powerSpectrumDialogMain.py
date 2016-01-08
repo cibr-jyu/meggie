@@ -192,6 +192,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
                                             channelColors)
             #self.parent.action_logger.log_success('Power spectrum', params)
         except Exception as e:
+            import traceback
+            print traceback.format_exc()
             messageBox = QtGui.QMessageBox()
             messageBox.setText(str(e))
             QtGui.QApplication.restoreOverrideCursor()
