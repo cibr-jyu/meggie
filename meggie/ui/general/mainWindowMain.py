@@ -80,6 +80,7 @@ from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.listWidget import ListWidget
+from meggie.ui.utils.decorators import messaged
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -489,9 +490,14 @@ class MainWindow(QtGui.QMainWindow):
         if not os.path.isfile(fname):
             return
 
-        epochs, params = fileManager.load_epochs(fname, 
-                                                 load_object=True,
-                                                 parent_handle=self)
+        @messaged
+        def load_epochs(fname, load_object):
+            return fileManager.load_epochs(fname, load_object)
+
+        epochs, params = load_epochs(fname, 
+                                     load_object=True,
+                                     parent_handle=self)
+
         # Change color of the item to red if no param file available.
         fname_base = os.path.basename(fname)
         fname_prefix = fname_base.split('.')[0]
@@ -669,7 +675,16 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.QApplication.restoreOverrideCursor()
 
         self.evokedList.addItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(
+
+        @messaged
+        def handle_new_evoked(evoked_name, evoked, category):
+            return self.caller.experiment.active_subject.handle_new_evoked(
+                evoked_name,
+                evoked,
+                category
+            )
+
+        handle_new_evoked(
             evoked_name,
             evoked,
             category,
@@ -841,22 +856,34 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(msg)
             self.messageBox.show()
         evoked, category = None, None
-        evoked, category = fileManager.load_evoked(
-            path, 
-            filename,
-            parent_handle=self,
-        )
+
+        @messaged
+        def load_evoked(path, filename):
+            return fileManager.load_evoked(path, filename)
+
+        evoked, category = load_evoked(path, filename, parent_handle=self)
+
         if evoked is None:
             return
         item = QtGui.QListWidgetItem(filename.split('.')[0])
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
-        self.caller.experiment.active_subject.handle_new_evoked(
+
+        @messaged
+        def handle_new_evoked(evoked_name, evoked, category):
+            return self.caller.experiment.active_subject.handle_new_evoked(
+                evoked_name,
+                evoked,
+                category
+            )
+
+        handle_new_evoked(
             item.text(),
             evoked,
             category,
             parent_handle=self,
         )
+
         saveFolder = self.caller.experiment.active_subject._evokeds_directory
         fname = os.path.join(saveFolder, filename)
         print 'Saving evoked data set %s.' % fname
@@ -1518,8 +1545,10 @@ class MainWindow(QtGui.QMainWindow):
         raw = self.caller.experiment.active_subject.working_file
         active_sub = self.caller.experiment.active_subject
         print 'Loading evokeds...'
-        epochs_items = self.caller.experiment.load_epochs(active_sub)
-        evokeds_items = self.caller.experiment.load_evokeds(active_sub)
+        epochs_items = self.caller.experiment.load_epochs(active_sub, 
+                                                          parent_handle=self)
+        evokeds_items = self.caller.experiment.load_evokeds(active_sub,
+                                                            parent_handle=self)
         if epochs_items is not None:
             for item in epochs_items:
                 self.epochList.addItem(item)

@@ -431,7 +431,6 @@ def delete_file_at(folder, files):
         os.remove(os.path.join(folder, files))
     except OSError: raise
 
-@messaged
 def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
@@ -466,7 +465,6 @@ def load_epochs(fname, load_object=False):
     parameters['events'] = event_list
     return epochs, parameters
 
-@messaged
 def load_evoked(folder, fName):
     """Load evokeds to the list when mainWindow is initialized
 

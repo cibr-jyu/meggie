@@ -403,7 +403,6 @@ class Subject(QObject):
         except OSError:
             raise Exception('Epochs could not be deleted from epochs folder.')
 
-    @messaged
     def handle_new_evoked(self, name, evoked, categories):
         """
         Creates new Evoked object and adds it to the self._evokeds dictionary.

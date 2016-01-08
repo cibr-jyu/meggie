@@ -90,7 +90,6 @@ class Experiment(QObject):
         self._active_subject_name = ''
         self._subject_paths = []
         self._working_file_names = dict()
-        self.main_window = None
 
     @property
     def experiment_name(self):
@@ -456,6 +455,7 @@ class Experiment(QObject):
         subject.find_stim_channel()
         subject.create_event_set()
 
+    @messaged
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
         subject._epochs objects.
@@ -479,7 +479,7 @@ class Experiment(QObject):
                 fname = os.path.join(path, f)
 
                 name = f[:-4]
-                _, params = fileManager.load_epochs(fname, parent_handle=self)
+                _, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, params)
                 item = QtGui.QListWidgetItem(name)
                 # Change color of the item to red if no param file available.
@@ -494,6 +494,7 @@ class Experiment(QObject):
                 #    subject._epochs[name]._raw = epochs
         return epoch_items
 
+    @messaged
     def load_evokeds(self, subject):
         """Loads raw evoked files from subject folder and sets them on
         subject._evokeds objects.
@@ -510,10 +511,9 @@ class Experiment(QObject):
         files = os.listdir(subject._evokeds_directory)
         for f in files:
             if f.endswith('.fif'):
-                evoked, categories = fileManager.load_evoked(subject._evokeds_directory,
-                                                             f, parent_handle=self)
-                subject.handle_new_evoked(f, evoked, categories, 
-                                          parent_handle=self)
+                evoked, categories = fileManager.load_evoked(
+                    subject._evokeds_directory, f)
+                subject.handle_new_evoked(f, evoked, categories)
                 item = QtGui.QListWidgetItem(f)
                 evokeds_items.append(item)
                 # Raw needs to be set when activating already created subject.
