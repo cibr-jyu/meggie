@@ -7,7 +7,6 @@
 *~
 build
 dist
-data
 meggie.egg-info
 preferences.cfg
 *.~lock.*
