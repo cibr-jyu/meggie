@@ -126,8 +126,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
     def accept(self, *args, **kwargs):
         """Starts the computation."""
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
 
         colors = []
         times = []  # Array for start and end times.
@@ -140,7 +138,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 messageBox = QtGui.QMessageBox()
                 messageBox.setText("End time must be higher than the "
                                    "start time.")
-                QtGui.QApplication.restoreOverrideCursor()
                 messageBox.exec_()
                 return
             times.append((start, end))
@@ -152,7 +149,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if len(times) == 0:
             messageBox = QtGui.QMessageBox()
             messageBox.setText("Could not find data. Check parameters!")
-            QtGui.QApplication.restoreOverrideCursor()
             messageBox.exec_()
             return
         fmin = self.ui.spinBoxFmin.value()
@@ -161,7 +157,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
             messageBox = QtGui.QMessageBox()
             messageBox.setText("End frequency must be higher than the "
                                "starting frequency.")
-            QtGui.QApplication.restoreOverrideCursor()
             messageBox.exec_()
             return
         params = dict()
@@ -182,28 +177,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             params['lout'] = str(self.ui.labelLayout.text())
             if params['lout'] == 'No layout selected':
-                QtGui.QApplication.restoreOverrideCursor()
                 messageBox = QtGui.QMessageBox()
                 messageBox.setText("No layout selected!")
                 messageBox.exec_()
                 return
-        try:
-            self.caller.plot_power_spectrum(params, save_data, colors,
-                                            channelColors)
-            #self.parent.action_logger.log_success('Power spectrum', params)
-        except Exception as e:
-            import traceback
-            print traceback.format_exc()
-            messageBox = QtGui.QMessageBox()
-            messageBox.setText(str(e))
-            QtGui.QApplication.restoreOverrideCursor()
-            messageBox.exec_()
-            
-            #self.parent.action_logger.add_notification('Computation was successful but something happened during plotting: ' + str(e))
-            #self.parent.action_logger.log_success('Power spectrum', params)
-            return
 
-        QtGui.QApplication.restoreOverrideCursor()
+        self.caller.plot_power_spectrum(params, save_data, colors,
+                                        channelColors, 
+                                        parent_handle=self.parent)
 
     @QtCore.pyqtSlot(int)
     def on_comboBoxStart_currentIndexChanged(self, index):
@@ -314,9 +295,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
             self.ui.verticalLayoutConditions.addWidget(widget)
 
         self.ui.scrollAreaConditions.updateGeometry()
-
-    def updateUi(self):
-        self.parent.updateUi()
 
     def keyPressEvent(self, qKeyEvent):
         """

@@ -66,8 +66,6 @@ class TFRDialog(QtGui.QDialog):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
@@ -75,13 +73,8 @@ class TFRDialog(QtGui.QDialog):
         ncycles =  self.ui.spinBoxNcycles.value()
         decim = self.ui.spinBoxDecim.value()
         cmap = str(self.ui.comboBoxCmap.currentText())
-        try:
-            caller = Caller.Instance()
-            caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
-                       ncycles, decim, cmap)
-        except Exception, err:
-            self.messageBox = shortMessageBox(str(err))
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox.show()
-            return
-        QtGui.QApplication.restoreOverrideCursor()
+
+        caller = Caller.Instance()
+        caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
+                   ncycles, decim, cmap,
+                   parent_handle=self.parent)

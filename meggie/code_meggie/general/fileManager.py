@@ -25,8 +25,9 @@ from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
 import csv
 
-from meggie.ui.general import messageBoxes
 from meggie.code_meggie.general.statistic import Statistic
+
+from meggie.ui.utils.decorators import messaged
     
     
 def copy_recon_files(aSubject, sourceDirectory):
@@ -430,7 +431,7 @@ def delete_file_at(folder, files):
         os.remove(os.path.join(folder, files))
     except OSError: raise
 
-
+@messaged
 def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
@@ -446,10 +447,7 @@ def load_epochs(fname, load_object=False):
         try:
             epochs = mne.read_epochs(fname)
         except IOError:
-            message = 'Reading from selected folder is not allowed.'
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox._exec()
-            return epochs
+            raise Exception('Reading from selected folder is not allowed.')
     else:
         epochs = None
     try:
@@ -468,7 +466,7 @@ def load_epochs(fname, load_object=False):
     parameters['events'] = event_list
     return epochs, parameters
 
-
+@messaged
 def load_evoked(folder, fName):
     """Load evokeds to the list when mainWindow is initialized
 
@@ -517,31 +515,19 @@ def load_evoked(folder, fName):
             # This makes sure that Meggie won't stop working if more
             # than 8 evoked sets exist.
             if i >= 8:
-                message = 'WARNING: There are more than 8 evoked'
-                ' sets in the evoked.fif file. This does not'
-                ' necessarily support all the functionality in'
-                ' Meggie. The evoked.fif files with more than 8'
-                ' datasets could not be loaded.'
-                messageBox = messageBoxes.shortMessageBox(message)
-                messageBox._exec()
-                return
-                """
-                # When visualizing evoked datasets the color set
-                # should be fixed for more than 8 datasets.
-                category[event_name] = i + 100
-                i += 1
-                evokeds.append(evoked)
-                continue
-                """
+                message = ('WARNING: There are more than 8 evoked'
+                           ' sets in the evoked.fif file. This does not'
+                           ' necessarily support all the functionality in'
+                           ' Meggie. The evoked.fif files with more than 8'
+                           ' datasets could not be loaded.')
+                raise Exception(message)
     except ValueError:
         try:
             if mne.Evoked(os.path.join(folder, fName),
                           condition=0) is not None:
                 return evokeds, category
         except ValueError:
-            message = 'File is not an evoked.fif file.'
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox._exec()
+            raise Exception('File is not an evoked.fif file.')
             return None, None
 
     return evokeds, category

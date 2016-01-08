@@ -278,7 +278,9 @@ class EcgParametersDialog(ProjectorDialog):
                 # frees memory from the earlier subject's data calculation.
                 incorrect_ECG_channel, error_message = self.\
                 calculate_ecg(subject, incorrect_ECG_channel, error_message)
-        self.caller.activate_subject(recently_active_subject)
+        self.caller.activate_subject(recently_active_subject, 
+                                     do_meanwhile=self.parent.update_ui,
+                                     parent_handle=self.parent)
         if len(error_message) > 0:
             self.messageBox = messageBoxes.shortMessageBox(error_message)
             self.messageBox.show()

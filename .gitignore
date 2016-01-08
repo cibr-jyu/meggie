@@ -1,9 +1,12 @@
+*.swm
 *.pyc
+*.swm
 *.swo
 *.swn
 *.swp
 *~
 build
+meggie/data
 dist
 data
 meggie.egg-info
