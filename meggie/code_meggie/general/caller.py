@@ -1358,6 +1358,14 @@ class Caller(object):
                 raise Exception(message)
         raw = self.experiment.active_subject.working_file
 
+        if params['ch'] == 'meg':
+            picks = mne.pick_types(raw.info, meg=True, eeg=False,
+                                   exclude=[])
+        elif params['ch'] == 'eeg':
+            picks = mne.pick_types(raw.info, meg=False, eeg=True,
+                                   exclude=[])
+        params['picks'] = picks
+
         psds = self._compute_spectrum(raw, params,
                                       do_meanwhile=self.parent.update_ui)
 
@@ -1402,11 +1410,10 @@ class Caller(object):
             plt.show()
 
         info = deepcopy(raw.info)
-        # info['ch_names'] = _clean_names(info['ch_names'], remove_whitespace=True)
-        # Workaround for excluding IAS channels in the beginning for correct
-        # indexing with iter_topography.
-        while info['ch_names'][0].startswith('IAS'):
-            info['ch_names'].pop(0)
+
+        info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
+                            if idx in picks]
+
         for ax, idx in iter_topography(info, fig_facecolor='white',
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout, 
@@ -1428,13 +1435,8 @@ class Caller(object):
         fmax = params['fmax']
         nfft = params['nfft']
         overlap = params['overlap']
+        picks = params['picks']
 
-        if params['ch'] == 'meg':
-            picks = mne.pick_types(raw.info, meg=True, eeg=False,
-                                   exclude=[])
-        elif params['ch'] == 'eeg':
-            picks = mne.pick_types(raw.info, meg=False, eeg=True,
-                                   exclude=[])
         psdList = []
         for time in times:
             psds, freqs = compute_raw_psd(raw, tmin=time[0], tmax=time[1],
