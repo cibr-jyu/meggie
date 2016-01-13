@@ -39,6 +39,7 @@ import re
 import shutil
 import gc
 import csv
+import sys
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
@@ -749,15 +750,16 @@ class ExperimentHandler(QObject):
             caller._experiment = None
             gc.collect()
             print "Opening file " + fname
-            try:
-                output = open(fname, 'rb')
-                caller._experiment = pickle.load(output)
-            except Exception as e:
-                print str(e)
-                return
-            finally:
-                print "Closing"
-                output.close()
+            with open(fname, 'rb') as output:
+                try:
+                    caller._experiment = pickle.load(output)
+                except ImportError as e:
+                    # for backwards compatibility, add meggie to path and try again
+                    from pkg_resources import resource_filename
+                    sys.path.insert(0, resource_filename('meggie', '/'))
+                    caller._experiment = pickle.load(output)
+                    sys.path.pop(0)
+
             self.parent.update_ui()
             caller.experiment.create_subjects(caller._experiment,
                             caller._experiment._subject_paths,
