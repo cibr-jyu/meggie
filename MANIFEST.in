@@ -1,2 +1,4 @@
 recursive-include meggie *
 global-exclude *.pyc
+prune meggie/data
+exclude meggie/preferences.cfg
