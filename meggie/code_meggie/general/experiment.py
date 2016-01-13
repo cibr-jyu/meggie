@@ -363,24 +363,13 @@ class Experiment(QObject):
         complete_raw_path = os.path.join(subject.subject_path, os.path.basename(raw_path))
         # Check if file already exists.
         if not os.path.isfile(complete_raw_path):
-            try:
-                # Makes the actual subject path on disk and copies raw file there.
-                subject.save_raw(raw_path, subject.subject_path)
-                
-                # Best to create these right away to avoid insane amount of
-                # checking later on.
-                subject.create_epochs_directory()
-                subject.create_evokeds_directory()
-                subject.create_sourceAnalysis_directory()
-                subject.create_reconFiles_directory()
-                subject.create_forwardModels_directory()
-                # When activating subject the working_file filename is the one
-                # where the file was originally found. This changes it to
-                # the location of the subject path.
-                subject._working_file.info['filename'] = complete_raw_path
-            except Exception: 
-                # FIXME: remove whole subject directory as cleanup.
-                raise
+            # Makes the actual subject path on disk and copies raw file there.
+            fileManager.save_subject(subject, raw_path, subject.subject_path)
+            
+            # When activating subject the working_file filename is the one
+            # where the file was originally found. This changes it to
+            # the location of the subject path.
+            subject._working_file.info['filename'] = complete_raw_path
     
         self._subjects.append(subject)
         self._active_subject_name = subject_name
@@ -473,7 +462,7 @@ class Experiment(QObject):
         subject._epochs objects.
         """
         if not os.path.exists(self.active_subject._epochs_directory):
-            self.active_subject.create_epochs_directory
+            fileManager.create_epochs_directory(self.active_subject)
         epoch_items = []
         path = subject._epochs_directory
         # This here is done because the path might change when moving external
@@ -767,16 +756,9 @@ class ExperimentHandler(QObject):
             caller._experiment = None
             gc.collect()
             print "Opening file " + fname
-            try:
-                output = open(fname, 'rb')
-                caller._experiment = pickle.load(output)
-                self.initialize_logger(caller._experiment)
-            except Exception as e:
-                print str(e)
-                return
-            finally:
-                print "Closing"
-                output.close()
+            caller._experiment = fileManager.unpickle(fname)
+            self.initialize_logger(caller._experiment)
+
             self.parent.update_ui()
             caller.experiment.create_subjects(caller._experiment,
                             caller._experiment._subject_paths,

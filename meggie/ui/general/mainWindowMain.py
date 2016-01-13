@@ -1252,7 +1252,7 @@ class MainWindow(QtGui.QMainWindow):
         # Probably not created yet, because this is the first step of source
         # analysis.
         if not os.path.isdir(activeSubject._source_analysis_directory):
-            activeSubject.create_sourceAnalysis_directory()
+            fileManager.create_sourceAnalysis_directory(activeSubject)
 
         if activeSubject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',

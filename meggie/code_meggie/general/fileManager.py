@@ -14,6 +14,7 @@ import pickle
 import shutil
 import glob
 import re
+import sys
 
 from os.path import isfile, join
 
@@ -30,7 +31,7 @@ from meggie.code_meggie.general.statistic import Statistic
 from meggie.ui.utils.decorators import messaged
     
     
-def copy_recon_files(aSubject, sourceDirectory):
+def copy_recon_files(activeSubject, sourceDirectory):
         """
         Copies mri and surf files from the given directory to under the active
         subject's reconFiles directory (after creating the said directory, 
@@ -38,14 +39,12 @@ def copy_recon_files(aSubject, sourceDirectory):
         
         Keyword arguments:
         
-        aSubject            -- currently active subject
+        activeSubject            -- currently active subject
         sourceDirectory     -- directory including the mri and surf file 
         
         Returns True if copying was successful, else returns False.
         
         """         
-        activeSubject = aSubject
-        
         reconDir = activeSubject._reconFiles_directory
         
         # Empty the destination directory first by removing it, then make it
@@ -53,7 +52,7 @@ def copy_recon_files(aSubject, sourceDirectory):
         if os.path.isdir(reconDir):
             dir_util.remove_tree(reconDir)
         
-        activeSubject.create_reconFiles_directory()
+        create_reconFiles_directory(activeSubject)
         
         dst = activeSubject._reconFiles_directory
         
@@ -126,7 +125,7 @@ def create_fModel_directory(fmname, subject):
     # If this is the first forward model, the forwardModels directory doesn't
     # exist yet.
     if not os.path.isdir(subject._forwardModels_directory):
-        subject.create_forwardModels_directory()
+        create_forwardModels_directory(subject)
     
     # Existence actually checked already by check_fModel_name via
     # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
@@ -582,10 +581,14 @@ def unpickle(fpath):
     Return the unpickled object. If there is an exception, raise it to
     allow the calling method to decide a what to do.
     """
-    try:
-        unpickledObject = pickle.load(open(fpath, 'rb'))
-    except Exception:
-        raise
+    with open(fpath, 'rb') as f:
+        try:
+            unpickledObject = pickle.load(f)
+        except ImportError:
+            from pkg_resources import resource_filename
+            sys.path.insert(0, resource_filename('meggie', '/'))
+            unpickledObject = pickle.load(f)
+            sys.path.pop(0)
 
     return unpickledObject
 
@@ -748,3 +751,81 @@ def load_tfr(fname):
     Returns AverageTFR object.
     """
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
+
+
+def save_subject(subject, file_name, path):
+    create_subject_directory(path)
+    if os.path.exists(path):
+        try:
+            # TODO: Check if the file is saved with .fif suffix,
+            # if not, save the file with .fif suffix.
+            # TODO: save_raw method for global raw saves
+            mne.io.Raw.save(subject._working_file,
+                            os.path.join(path,
+                                         str(os.path.basename(file_name))))
+
+            # Save channel names list under subject folder
+            pickleObjectToFile(subject._working_file.ch_names,
+                os.path.join(subject._subject_path, 'channels'))
+        except Exception: raise
+    create_epochs_directory(subject)
+    create_evokeds_directory(subject)
+    create_sourceAnalysis_directory(subject)
+    create_forwardModels_directory(subject)
+    create_reconFiles_directory(subject)
+
+def create_subject_directory(path):
+    try:
+        os.mkdir(path)
+    except OSError:
+        raise Exception('No rights to save to the chosen path or' + 
+                        ' subject/experiment name already exists')
+        return
+
+def create_epochs_directory(subject):
+    """
+    Create a directory for saving epochs under the subject directory.
+    TODO possibly move this and following methods to fileManager.
+    """
+    try:
+        os.mkdir(subject._epochs_directory)
+    except OSError:
+        raise OSError('can\'t create epochs directory to' + \
+                      ' the chosen path')                
+
+
+def create_evokeds_directory(subject):
+    """
+    Create a directory for saving evokeds under the epochs directory.
+    """
+    try:
+        os.mkdir(subject._evokeds_directory)
+    except OSError:
+        raise OSError('can\'t create evokeds directory to' + \
+                      ' the chosen path')                
+
+def create_forwardModels_directory(subject):
+    """
+    Create a directory for saving forward models under the appropriate
+    directory.
+    """
+    try:
+        os.mkdir(subject._forwardModels_directory)
+    except OSError as e:
+        raise OSError('can\'t create forward models directory to' + \
+                      ' the chosen path' + str(e))
+    
+def create_sourceAnalysis_directory(subject):
+    try:
+        os.mkdir(subject._source_analysis_directory)
+    except OSError:
+        raise OSError('can\'t create source analysis directory to' + \
+                      ' the chosen path')
+    
+def create_reconFiles_directory(subject):
+    
+    try:
+        os.mkdir(subject._reconFiles_directory)
+    except OSError:
+        raise OSError('can\'t create reconFiles directory to' + \
+                      ' the chosen path')
