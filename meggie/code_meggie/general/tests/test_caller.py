@@ -46,6 +46,9 @@ def _get_experiment():
     path = os.path.join(tempdir._path, 'experiment')
     os.mkdir(path)
     sub.save_raw(fname, sub.subject_path)
+    exp.active_subject_name = sub.subject_name
+    exp.update_working_file(exp.active_subject_name, sub.subject_name)
+    experiment.ExperimentHandler(caller.parent).initialize_logger(exp)
     return exp
 
 

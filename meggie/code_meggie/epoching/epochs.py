@@ -39,6 +39,8 @@ import mne
 
 import numpy as np
 
+from meggie.code_meggie.general.wrapper import wrap_mne_call
+
 class Epochs(QObject):
     
     """
@@ -109,11 +111,12 @@ class Epochs(QObject):
         """
         self._params = params
 
-    def create_epochs(self, raw, events, mag, grad, eeg, stim,
+    def create_epochs(self, experiment, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
         """Create a new set of epochs.
         
         Keyword arguments:
+        experiment    = Experiment object
         raw           = A raw data object.
         events        = Array of events.
         mag           = Boolean telling if magnetometers will be used.
@@ -144,28 +147,31 @@ class Epochs(QObject):
         if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object.')
         # Was mne.fiff.pick types with MNE 0.7
+        #TODO: log mne call
+        
         picks = mne.pick_types(raw.info, meg=meg, eeg=eeg, stim=stim,
                                eog=eog)
         if len(picks) == 0:
             message = 'Picks cannot be empty. Select picks by' + \
             'checking the checkboxes.'
             raise Exception(message)
-        epochs = mne.Epochs(raw, events, category, tmin, tmax,
-                            picks=picks, reject=reject)
 
+        epochs = wrap_mne_call(experiment, mne.epochs.Epochs, raw, events, category, tmin, tmax,
+                               picks=picks, reject=reject)
+ 
         if len(epochs.get_data()) == 0:
             raise Exception('Could not find any data. Perhaps the rejection '
                             'thresholds are too strict...')
         return epochs
 
-    def create_epochs_from_dict(self, params, raw):
+    def create_epochs_from_dict(self, experiment, params, raw):
         """Create a set of epochs with parameters stored in a dict.
         
         Keyword arguments:
-        
-        params = A dictionary containing the parameter values for epoching minus
-                 the raw data object.
-        raw    = the raw data object
+        experiment = Experiment object
+        params     = A dictionary containing the parameter values for epoching minus
+                     the raw data object.
+        raw        = the raw data object
         
         Return a set of epochs.
         """
@@ -188,7 +194,7 @@ class Epochs(QObject):
         tmin = params['tmin']
         tmax = params['tmax']
         
-        epochs = self.create_epochs(raw, events, mag, grad, eeg, stim, eog,
+        epochs = self.create_epochs(experiment, raw, events, mag, grad, eeg, stim, eog,
                                     reject, category, tmin, tmax)
         
         """

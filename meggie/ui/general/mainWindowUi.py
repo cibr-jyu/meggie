@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainWindowBatch.ui'
 #
-# Created: Tue Sep 22 02:29:28 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,7 +54,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1104, 750))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1102, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -83,7 +82,6 @@ class Ui_MainWindow(object):
         self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 551, 596))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_21 = QtGui.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_21.setMargin(0)
         self.verticalLayout_21.setObjectName(_fromUtf8("verticalLayout_21"))
         self.groupBoxPreprocessingCheckBoxes = QtGui.QGroupBox(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
@@ -265,7 +263,6 @@ class Ui_MainWindow(object):
         self.layoutWidget1 = QtGui.QWidget(self.splitter_2)
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.verticalLayout_29 = QtGui.QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout_29.setMargin(0)
         self.verticalLayout_29.setObjectName(_fromUtf8("verticalLayout_29"))
         self.labelBads = QtGui.QLabel(self.layoutWidget1)
         self.labelBads.setObjectName(_fromUtf8("labelBads"))
@@ -278,7 +275,6 @@ class Ui_MainWindow(object):
         self.layoutWidget2 = QtGui.QWidget(self.splitter_2)
         self.layoutWidget2.setObjectName(_fromUtf8("layoutWidget2"))
         self.verticalLayout_28 = QtGui.QVBoxLayout(self.layoutWidget2)
-        self.verticalLayout_28.setMargin(0)
         self.verticalLayout_28.setObjectName(_fromUtf8("verticalLayout_28"))
         self.labelProjs = QtGui.QLabel(self.layoutWidget2)
         self.labelProjs.setObjectName(_fromUtf8("labelProjs"))
@@ -651,7 +647,6 @@ class Ui_MainWindow(object):
         self.layoutWidget3.setGeometry(QtCore.QRect(9, 9, 1191, 630))
         self.layoutWidget3.setObjectName(_fromUtf8("layoutWidget3"))
         self.gridLayout_15 = QtGui.QGridLayout(self.layoutWidget3)
-        self.gridLayout_15.setMargin(0)
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
         self.verticalLayout_23 = QtGui.QVBoxLayout()
         self.verticalLayout_23.setObjectName(_fromUtf8("verticalLayout_23"))
@@ -816,7 +811,6 @@ class Ui_MainWindow(object):
         self.layoutWidget4.setGeometry(QtCore.QRect(20, 20, 501, 109))
         self.layoutWidget4.setObjectName(_fromUtf8("layoutWidget4"))
         self.horizontalLayout_14 = QtGui.QHBoxLayout(self.layoutWidget4)
-        self.horizontalLayout_14.setMargin(0)
         self.horizontalLayout_14.setObjectName(_fromUtf8("horizontalLayout_14"))
         self.listWidgetPowerItems = QtGui.QListWidget(self.layoutWidget4)
         self.listWidgetPowerItems.setObjectName(_fromUtf8("listWidgetPowerItems"))
@@ -898,7 +892,6 @@ class Ui_MainWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.label_6.setFont(font)
-        self.label_6.setMargin(0)
         self.label_6.setIndent(-1)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.horizontalLayout_5.addWidget(self.label_6)
@@ -1175,7 +1168,6 @@ class Ui_MainWindow(object):
         self.layoutWidget5.setGeometry(QtCore.QRect(21, 11, 381, 262))
         self.layoutWidget5.setObjectName(_fromUtf8("layoutWidget5"))
         self.verticalLayout_15 = QtGui.QVBoxLayout(self.layoutWidget5)
-        self.verticalLayout_15.setMargin(0)
         self.verticalLayout_15.setObjectName(_fromUtf8("verticalLayout_15"))
         self.groupBox_7 = QtGui.QGroupBox(self.layoutWidget5)
         self.groupBox_7.setObjectName(_fromUtf8("groupBox_7"))
@@ -1195,7 +1187,6 @@ class Ui_MainWindow(object):
         self.layoutWidget6.setGeometry(QtCore.QRect(560, 10, 374, 461))
         self.layoutWidget6.setObjectName(_fromUtf8("layoutWidget6"))
         self.formLayout_13 = QtGui.QFormLayout(self.layoutWidget6)
-        self.formLayout_13.setMargin(0)
         self.formLayout_13.setObjectName(_fromUtf8("formLayout_13"))
         self.groupBox_10 = QtGui.QGroupBox(self.layoutWidget6)
         self.groupBox_10.setObjectName(_fromUtf8("groupBox_10"))
@@ -1606,6 +1597,8 @@ class Ui_MainWindow(object):
         self.actionDirectToConsole.setCheckable(True)
         self.actionDirectToConsole.setChecked(True)
         self.actionDirectToConsole.setObjectName(_fromUtf8("actionDirectToConsole"))
+        self.actionShow_log = QtGui.QAction(MainWindow)
+        self.actionShow_log.setObjectName(_fromUtf8("actionShow_log"))
         self.menuFile.addAction(self.actionCreate_experiment)
         self.menuFile.addAction(self.actionOpen_experiment)
         self.menuFile.addSeparator()
@@ -1613,6 +1606,7 @@ class Ui_MainWindow(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menuTools.addAction(self.actionDirectToConsole)
+        self.menuTools.addAction(self.actionShow_log)
         self.menuTools.addAction(self.actionPreferences)
         self.menuHelp.addAction(self.actionAbout)
         self.menuHelp.addAction(self.actionToggle_whatsthis_mode)
@@ -1865,10 +1859,10 @@ class Ui_MainWindow(object):
         self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans\'; font-size:10pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\"><br /></span></p></body></html>", None))
+"</style></head><body style=\" font-family:\'Droid Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\';\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans\';\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\';\"><br /></span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourceAnalysis), _translate("MainWindow", "Source analysis", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
@@ -1906,5 +1900,6 @@ class Ui_MainWindow(object):
         self.actionToggle_whatsthis_mode.setText(_translate("MainWindow", "Toggle whatsthis mode", None))
         self.actionToggle_whatsthis_mode.setToolTip(_translate("MainWindow", "Click this, then click something in the user interface to get more info about it", None))
         self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
+        self.actionShow_log.setText(_translate("MainWindow", "Show log", None))
 
 from meggie.ui.icons import mainWindowIcons_rc

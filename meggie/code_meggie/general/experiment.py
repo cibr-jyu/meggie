@@ -44,6 +44,7 @@ import sys
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.actionLogger import ActionLogger
 
 from meggie.ui.utils.decorators import messaged
 
@@ -91,6 +92,7 @@ class Experiment(QObject):
         self._active_subject_name = ''
         self._subject_paths = []
         self._working_file_names = dict()
+        self._action_logger = None
 
     @property
     def experiment_name(self):
@@ -220,6 +222,14 @@ class Experiment(QObject):
         """
         self._active_subject = subject
 
+    @property
+    def action_logger(self):
+        return self._action_logger
+
+    @action_logger.setter
+    def action_logger(self, action_logger):
+        self._action_logger = action_logger
+        
     def is_ready(self):
         """
         Method for polling threaded processes.
@@ -322,6 +332,7 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         self.release_memory()
         self._active_subject_name = subject_name
+        print 'working file name asetetaan'
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
             raise Exception('There is no working file in the chosen subject folder.')
@@ -351,24 +362,13 @@ class Experiment(QObject):
         complete_raw_path = os.path.join(subject.subject_path, os.path.basename(raw_path))
         # Check if file already exists.
         if not os.path.isfile(complete_raw_path):
-            try:
-                # Makes the actual subject path on disk and copies raw file there.
-                subject.save_raw(raw_path, subject.subject_path)
-                
-                # Best to create these right away to avoid insane amount of
-                # checking later on.
-                subject.create_epochs_directory()
-                subject.create_evokeds_directory()
-                subject.create_sourceAnalysis_directory()
-                subject.create_reconFiles_directory()
-                subject.create_forwardModels_directory()
-                # When activating subject the working_file filename is the one
-                # where the file was originally found. This changes it to
-                # the location of the subject path.
-                subject._working_file.info['filename'] = complete_raw_path
-            except Exception: 
-                # FIXME: remove whole subject directory as cleanup.
-                raise
+            # Makes the actual subject path on disk and copies raw file there.
+            fileManager.save_subject(self, subject, raw_path, subject.subject_path)
+            
+            # When activating subject the working_file filename is the one
+            # where the file was originally found. This changes it to
+            # the location of the subject path.
+            subject._working_file.info['filename'] = complete_raw_path
     
         self._subjects.append(subject)
         self._active_subject_name = subject_name
@@ -462,7 +462,7 @@ class Experiment(QObject):
         subject._epochs objects.
         """
         if not os.path.exists(self.active_subject._epochs_directory):
-            self.active_subject.create_epochs_directory
+            fileManager.create_epochs_directory(self.active_subject)
         epoch_items = []
         path = subject._epochs_directory
         # This here is done because the path might change when moving external
@@ -626,6 +626,10 @@ class Experiment(QObject):
         odict = self.__dict__.copy()
         del odict['_subjects']
         del odict['_active_subject']
+        
+        #if action_logger is pickled, subject activation thread gets locked at least when adding
+        #a new subject to it 
+        del odict['_action_logger']
         #del odict['_active_subject']
         
         
@@ -716,7 +720,9 @@ class ExperimentHandler(QObject):
         # experiment. Also tell the MVC models they can initialize themselves.
         #self.parent.add_tabs()
         #self.parent._initialize_ui() 
-        #self.parent.reinitialize_models() 
+        #self.parent.reinitialize_models()
+        
+        self.initialize_logger(experiment)
         return experiment
 
     @messaged
@@ -750,15 +756,8 @@ class ExperimentHandler(QObject):
             caller._experiment = None
             gc.collect()
             print "Opening file " + fname
-            with open(fname, 'rb') as output:
-                try:
-                    caller._experiment = pickle.load(output)
-                except ImportError as e:
-                    # for backwards compatibility, add meggie to path and try again
-                    from pkg_resources import resource_filename
-                    sys.path.insert(0, resource_filename('meggie', '/'))
-                    caller._experiment = pickle.load(output)
-                    sys.path.pop(0)
+            caller._experiment = fileManager.unpickle(fname)
+            self.initialize_logger(caller._experiment)
 
             self.parent.update_ui()
             caller.experiment.create_subjects(caller._experiment,
@@ -773,8 +772,22 @@ class ExperimentHandler(QObject):
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 
+            
 
             self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
             self.parent.preferencesHandler.write_preferences_to_disk()
         else:
             raise Exception("Experiment configuration file (.exp) not found!")
+
+    def initialize_logger(self, experiment):
+
+        print 'Initializing logger' 
+        try:
+            experiment._action_logger = ActionLogger()
+            experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
+        except:
+            experiment._action_logger.log_message('Could not initialize logger.')
+            print 'Unable to initialize logger'
+            return
+        experiment._action_logger.log_message('Opened experiment: '+ experiment.experiment_name)
+        print 'Logger initialized'

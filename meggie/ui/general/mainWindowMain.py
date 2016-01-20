@@ -1,4 +1,5 @@
 # coding: latin1
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
 # Atte Rautio>
@@ -48,6 +49,7 @@ from PyQt4.QtGui import QWhatsThis, QAbstractItemView
 from PyQt4.Qt import QApplication
 
 from mne.evoked import write_evokeds
+import mne
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -81,6 +83,7 @@ from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.listWidget import ListWidget
 from meggie.ui.utils.decorators import messaged
+from meggie.ui.general.logDialogMain import LogDialog
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -88,6 +91,7 @@ from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -107,7 +111,8 @@ class MainWindow(QtGui.QMainWindow):
         self.epochParameterDialog = None
         self.tfr_dialog = None
         self.tfrTop_dialog = None
-
+        self.log_dialog = None
+        
         # List of subprocesses, used for terminating MNE-C processes on Meggie
         # quit.
         self.processes = []
@@ -213,7 +218,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
-
+        
     def update_ui(self):
         """
         Method for repainting the ui.
@@ -423,6 +428,12 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.check_workspace()
+
+    def on_actionShow_log_triggered(self, checked=None):
+        if checked is None:
+            return
+        self.log_dialog = LogDialog(self)
+        self.log_dialog.show()
 
     def on_actionPreferences_triggered(self, checked=None):
         """Open the preferences-dialog."""
@@ -1002,8 +1013,13 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         def handle_close(event):
-            self.caller.save_raw()
+            raw = self.caller.experiment.active_subject._working_file
+            fname = self.caller.experiment.active_subject._working_file.info['filename']
+            fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
+            
             self._initialize_ui()
+            bads = self.caller.experiment.active_subject.working_file.info['bads']
+            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
         if self.ui.checkBoxShowEvents.isChecked():
             events = self.caller.experiment.active_subject.get_events()
         else:
@@ -1168,6 +1184,10 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.average_channels(name,
                                          self.ui.comboBoxLobes.currentText(),
                                          None, parent_handle=self)
+            #TODO: visualizing actions logged or not?
+            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
+            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
+            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, self.ui.comboBoxLobes.currentText(), None)
         else:
             channels = []
             for i in xrange(self.ui.listWidgetChannels.count()):
@@ -1175,6 +1195,10 @@ class MainWindow(QtGui.QMainWindow):
                 channels.append(str(item.text()))
             self.caller.average_channels(name, None, set(channels),
                                          parent_handle=self)
+            #TODO: visualizing actions logged or not?
+            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
+            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
+            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, None, set(channels))
 
     def on_pushButtonModifyChannels_clicked(self, checked=None):
         """
@@ -1256,7 +1280,7 @@ class MainWindow(QtGui.QMainWindow):
         # Probably not created yet, because this is the first step of source
         # analysis.
         if not os.path.isdir(activeSubject._source_analysis_directory):
-            activeSubject.create_sourceAnalysis_directory()
+            fileManager.create_sourceAnalysis_directory(activeSubject)
 
         if activeSubject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',
@@ -1872,5 +1896,9 @@ def main():
     window = MainWindow(app)
 
     window.showMaximized()
+    
+    #window.action_logger = ActionLogger(window)
+    #window.action_logger.initialize_logger()
+    #TODO: initialize here
 
     sys.exit(app.exec_())

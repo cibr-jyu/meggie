@@ -12,7 +12,6 @@ from PyQt4 import QtGui
 
 import traceback
 
-
 def threaded(func):
     def decorated(*args, **kwargs):
         pool = ThreadPool(processes=1)
