@@ -1,4 +1,4 @@
-# coding: latin1
+# coding: utf-8
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -50,6 +50,12 @@ class shortMessageBox(QtGui.QDialog):
         self.ui.setupUi(self)
     
         self.setWindowTitle(title)
+
+        try:
+            message = unicode(message, 'utf-8')
+        except TypeError:
+            message = unicode(message)
+
         self.ui.labelMessage.setText(message)
 
 

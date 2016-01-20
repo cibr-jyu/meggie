@@ -1,4 +1,4 @@
-# coding: latin1
+# coding: utf-8
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
