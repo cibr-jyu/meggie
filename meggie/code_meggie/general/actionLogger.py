@@ -5,7 +5,6 @@ Created on 26.11.2015
 """
 import os
 import logging
-from logging.handlers import RotatingFileHandler
 
 class ActionLogger(object):
     """
@@ -54,6 +53,8 @@ class ActionLogger(object):
         #see: https://docs.python.org/2/library/logging.html#logrecord-attributes
         formatter = logging.Formatter('%(asctime)s - %(message)s', '%Y-%m-%d %H:%M:%S')
         handler.setFormatter(formatter)
+        for handler in self._logger.handlers:
+            self._logger.removeHandler(handler)
         self._logger.addHandler(handler)
         self._logger.setLevel(logging.INFO)
         
@@ -66,7 +67,7 @@ class ActionLogger(object):
         Keyword arguments
         msg
         """
-        self._logger.info('------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+        self._logger.info('---------------------------------------')
         self._logger.info(msg)
         
     def clean_callargs(self, mne_instance_name, callargs):
@@ -76,6 +77,10 @@ class ActionLogger(object):
         Keyword arguments
         mne_instance_name -- name of the MNE instance (method/class)
         callargs          -- dictionary of args to clean
+        """
+        
+        #TODO: remove unnecessary params
+        
         """
         if (mne_instance_name == 'filter'):
             callargs = self.clean_filter_args(mne_instance_name, callargs)
@@ -108,7 +113,7 @@ class ActionLogger(object):
 
         if (mne_instance_name == 'save'):
             callargs = self.clean_save_args(mne_instance_name, callargs)
-        
+        """
         return callargs
             
     def clean_compute_proj_exg_args(self, mne_instance_name, callargs):

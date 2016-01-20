@@ -385,7 +385,9 @@ class Caller(object):
         if kind + '_applied' not in fname:
             fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
 
-        wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
+        #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
+        fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
+        
         raw = mne.io.Raw(fname, preload=True)
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
@@ -418,14 +420,6 @@ class Caller(object):
         #TODO: epochs is a list of epoch -> log to single line with a comma separator
         self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
         return evokeds
-
-    def save_raw(self):
-        """Aux function for updating the raw file."""
-        raw = self.experiment.active_subject._working_file
-        fname = raw.info['filename']
-        raw.save(fname, overwrite=True)
-        #log mne call
-        self.log_raw_changed(fname)
 
     @messaged
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
@@ -1554,7 +1548,7 @@ class Caller(object):
                               trans_bandwidth=trans_bw, n_jobs=2,
                               verbose=True)
             print 'Saving to file...'
-            dataToFilter.save(info['filename'], overwrite=True)
+            fileManager.save_raw(self.experiment, dataToFilter, info['filename'], overwrite=True)
         else:  # preview
             picks = mne.pick_types(info, meg=True, eeg=True)
             if dic.get('lowpass'):

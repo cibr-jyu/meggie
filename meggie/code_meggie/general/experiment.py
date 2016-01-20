@@ -364,7 +364,7 @@ class Experiment(QObject):
         # Check if file already exists.
         if not os.path.isfile(complete_raw_path):
             # Makes the actual subject path on disk and copies raw file there.
-            fileManager.save_subject(subject, raw_path, subject.subject_path)
+            fileManager.save_subject(self, subject, raw_path, subject.subject_path)
             
             # When activating subject the working_file filename is the one
             # where the file was originally found. This changes it to
@@ -782,7 +782,7 @@ class ExperimentHandler(QObject):
     def initialize_logger(self, experiment):
 
         print 'Initializing logger' 
-        try:       
+        try:
             experiment._action_logger = ActionLogger()
             experiment._action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
         except:

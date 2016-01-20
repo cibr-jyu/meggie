@@ -27,6 +27,7 @@ from xlwt import Workbook, XFStyle
 import csv
 
 from meggie.code_meggie.general.statistic import Statistic
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 from meggie.ui.utils.decorators import messaged
     
@@ -550,6 +551,9 @@ def open_raw(fname, pre_load=True):
     except ValueError as e:
         raise ValueError('File is not a raw-file.' + str(e))
 
+def save_raw(experiment, raw, fname, overwrite=True):
+    wrap_mne_call(experiment, raw.save, fname, overwrite=True)
+    
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
@@ -753,17 +757,16 @@ def load_tfr(fname):
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
 
 
-def save_subject(subject, file_name, path):
+def save_subject(experiment, subject, file_name, path):
     create_subject_directory(path)
     if os.path.exists(path):
         try:
             # TODO: Check if the file is saved with .fif suffix,
             # if not, save the file with .fif suffix.
-            # TODO: save_raw method for global raw saves
             mne.io.Raw.save(subject._working_file,
                             os.path.join(path,
                                          str(os.path.basename(file_name))))
-
+            
             # Save channel names list under subject folder
             pickleObjectToFile(subject._working_file.ch_names,
                 os.path.join(subject._subject_path, 'channels'))

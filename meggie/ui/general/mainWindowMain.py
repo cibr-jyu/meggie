@@ -988,10 +988,13 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         def handle_close(event):
-            self.caller.save_raw()
+            raw = self.caller.experiment.active_subject._working_file
+            fname = self.caller.experiment.active_subject._working_file.info['filename']
+            fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
+            
             self._initialize_ui()
             bads = self.caller.experiment.active_subject.working_file.info['bads']
-            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected: ' + str(bads))
+            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
         if self.ui.checkBoxShowEvents.isChecked():
             events = self.caller.experiment.active_subject.get_events()
         else:
