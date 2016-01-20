@@ -432,6 +432,11 @@ class MainWindow(QtGui.QMainWindow):
     def on_actionShow_log_triggered(self, checked=None):
         if checked is None:
             return
+        if self.caller.experiment is None:
+            message = 'Please open an experiment first.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
         self.log_dialog = LogDialog(self)
         self.log_dialog.show()
 
