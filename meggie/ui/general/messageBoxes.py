@@ -56,7 +56,7 @@ class shortMessageBox(QtGui.QDialog):
         except TypeError:
             message = unicode(message)
 
-        self.ui.labelMessage.setText(message)
+        self.ui.labelMessage.setText(message.encode('utf-8'))
 
 
 class shortMessageBoxQuestionYesNo(QtGui.QDialog):
