@@ -15,6 +15,7 @@ from mne.io import Raw
 from meggie.ui.general import mainWindowMain
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import experiment, subject
+from meggie.code_meggie.general import fileManager
 
 app = QtGui.QApplication(sys.argv)
 try:
@@ -28,7 +29,6 @@ except Exception as e:
     print "Couldn't locate test file using pkg_resources. Trying mne sample data path instead."
     data_path = sample.data_path()
     fname = data_path + '/MEG/sample/sample_audvis_raw.fif'
-    fname = "/home/zairex/Code/cibr/sample_data/MEG/sample"
 
 caller = Caller.Instance()
 tempdir = _TempDir()
@@ -45,7 +45,8 @@ def _get_experiment():
     exp.add_subject(sub)
     path = os.path.join(tempdir._path, 'experiment')
     os.mkdir(path)
-    sub.save_raw(fname, sub.subject_path)
+    #sub.save_raw(fname, sub.subject_path)
+    fileManager.save_subject(experiment, sub, fname, sub.subject_path)
     exp.active_subject_name = sub.subject_name
     exp.update_working_file(exp.active_subject_name, sub.subject_name)
     experiment.ExperimentHandler(caller.parent).initialize_logger(exp)
