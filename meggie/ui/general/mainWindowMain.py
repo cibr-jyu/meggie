@@ -89,7 +89,9 @@ from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.general.mvcModels import ForwardModelModel, SubjectListModel
+from meggie.code_meggie.general.mvcModels import (ForwardModelModel,
+    SubjectListModel, _initializeForwardSolutionList,
+    _initializeInverseOperatorList)
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
@@ -166,6 +168,7 @@ class MainWindow(QtGui.QMainWindow):
         self.forwardModelModel = ForwardModelModel(self)
         self.subjectListModel = SubjectListModel(self)
 
+
         # Proxymodels for tuning what is actually shown in the views below.
         self.proxyModelTableViewForwardSolutionSource = QtGui.\
             QSortFilterProxyModel(self)
@@ -191,8 +194,7 @@ class MainWindow(QtGui.QMainWindow):
         for colnum in range(17, 21):
             self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
 
-        self.ui.tableViewFModelsForCoregistration.setModel
-        (self.forwardModelModel)
+        self.ui.tableViewFModelsForCoregistration.setModel(self.forwardModelModel)
         for colnum in range(16, 21):
             self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
                                                                       True)
@@ -1435,8 +1437,19 @@ class MainWindow(QtGui.QMainWindow):
         Open a dialog for computing noise covariance matrix based on data
         before epochs.
         """
+        # TODO:
         if checked is None:
             return
+
+    def on_pushButtonComputeInverse_clicked(self, checked=None):
+        """Compute inverse operator clicked."""
+        if checked is None:
+            return
+        fwd_name = str(self.ui.listWidgetForwardSolution.currentItem().text())
+        inv = self.caller.compute_inverse(fwd_name, parent_handle=self)
+        _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
+                                       self.caller.experiment.active_subject)
+
 
 # Code for UI initialization (when starting the program) and
 # updating when something changes
@@ -1485,7 +1498,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonSkullStrip.setEnabled(False)
         self.ui.pushButtonCheckSurfaces.setEnabled(False)
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
-        self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
+        #self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
 
         if self.caller.experiment.active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
@@ -1733,7 +1746,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.forwardModelModel.initialize_model()
         self.subjectListModel.initialize_model()
-
+        _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
+                                       self.caller.experiment.active_subject)
 
 # Miscellaneous code:
 

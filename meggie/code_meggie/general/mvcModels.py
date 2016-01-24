@@ -42,9 +42,9 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         # May well be None, if no experiment is loaded.
         if self.caller.experiment == None:
             return
-        
+
         self._fmodels_directory = None
-        
+
         # The experiment may not have an active subject, no need to try to
         # initialize model in that case.
         try:
@@ -52,26 +52,23 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                       _forwardModels_directory
         except AttributeError:
             return
-        
+
         self.initialize_model()
-    
-    
+
     def rowCount(self, parent):
         """
         The associated view should have as many rows as there are 
         forward model names.
         """
         return len(self.fmodelInfoList)
-    
-    
+
     def columnCount(self, parent):
         """
         The associated view should have as many columns as there are 
         header fields, if we want to show all information.
         """
         return len(self.__headers)
-    
-        
+
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """
         Standard data method for the QAbstractTableModel.
@@ -85,8 +82,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             column = index.column()
             value = self.fmodelInfoList[row][column]
             return value
-      
-      
+
     def headerData(self, section, orientation, role):
         
         if role == QtCore.Qt.DisplayRole:
@@ -96,9 +92,8 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
                 if section < len(self.__headers):
                     return self.__headers[section]
                 else:
-                    return "not implemented"  
-      
-    
+                    return "not implemented"
+
     def removeRows(self, position, rows=1, parent= QtCore.QModelIndex()):
         """
         Removal of a single row from the model.
@@ -107,8 +102,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
         singleFMitem = self.fmodelInfoList[position]
         self.fmodelInfoList.remove(singleFMitem)
         self.endRemoveRows()
-            
-        
+
     def initialize_model(self):
         """
         Reads the active subject's forwardModels directory and populates the
@@ -141,12 +135,11 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             self.fmodelInfoList.append(pmlist)
 
         self.layoutChanged.emit()
-        
-        
+
     def create_single_FM_param_list(self, fmdir, fmname):
         """
         Creates a list of parameters corresponding to a single forward model.
-        
+
         Keyword arguments:
         fmdir       -- the directory the forward models are located at.
         fmname      -- the name of the forward model.
@@ -262,22 +255,20 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             fmList.append(fmdict['mindist'])
         except Exception:
             fmList.append('--')
-         
+
         try:   
             fmList.append(fmdict['ignoreref'])
         except Exception:
             fmList.append('--')
-        
+
         return fmList
-       
-        
+
     def add_fmodel(self, fmlist):
         self.layoutAboutToBeChanged.emit()
         self.fmodelInfoList.append(fmlist)
         self.layoutChanged.emit()
-        
-        
-        
+
+
 class SubjectListModel(QtCore.QAbstractListModel):
     """
     Simple model class for storing data for subject lists.
@@ -361,3 +352,32 @@ class SubjectListModel(QtCore.QAbstractListModel):
 
         self.layoutChanged.emit()
         
+def _initializeForwardSolutionList(solution_list, subject):
+    """Helper for populating forward solution list widget.
+
+    Args:
+        solution_list: list widget
+        subject: subject
+    """
+    fm_dir = subject._forwardModels_directory
+    forward_models = list()
+    for fm_name in [name for name in os.listdir(fm_dir)
+                    if os.path.isdir(os.path.join(fm_dir, name))]:
+        fsolFilePath = os.path.join(fm_dir, fm_name, 'reconFiles',
+                                    'reconFiles-fwd.fif')
+        if os.path.isfile(fsolFilePath):
+            forward_models.append(fm_name)
+    solution_list.addItems(forward_models)
+
+
+def _initializeInverseOperatorList(operator_list, subject):
+    """Helper for populating inverse operator list widget.
+
+    Args:
+        operator_list: ListWidget
+        subject: subject
+    """
+    sa_dir = subject._source_analysis_directory
+    inv_names = [name for name in os.listdir(sa_dir)
+                 if name.endswith('inv.fif')]
+    operator_list.addItems(inv_names)

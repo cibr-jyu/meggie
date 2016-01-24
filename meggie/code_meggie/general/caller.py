@@ -23,7 +23,7 @@ import mne
 from mne.channels.layout import read_layout
 from mne.channels.layout import _pair_grad_sensors_from_ch_names
 from mne.channels.layout import _merge_grad_data
-from mne.viz import plot_topo
+from mne.viz import plot_evoked_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
@@ -548,7 +548,7 @@ class Caller(object):
 
         title = mi.subject_name
 
-        fig = wrap_mne_call(self.experiment, plot_topo, evokeds, layout,
+        fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
                             color=colors[:len(evokeds)], title=title)
 
         conditions = [e.comment for e in evokeds]
@@ -1726,8 +1726,8 @@ class Caller(object):
             # TODO: this actually has an MNE-Python counterpart, which doesn't
             # help much, as the others don't (11.10.2014).
             mne_setup_source_space_commandList = \
-            ['$MNE_ROOT/bin/mne_setup_source_space'] + \
-            setupSourceSpaceArgs
+                ['$MNE_ROOT/bin/mne_setup_source_space'] + \
+                setupSourceSpaceArgs
             mne_setup_source_spaceCommand = ' '.join(
                                             mne_setup_source_space_commandList)
             setupSSproc = subprocess.check_output(mne_setup_source_spaceCommand,
@@ -1790,8 +1790,8 @@ class Caller(object):
         """
         Uses mne.gui.coregistration for head coordinate coregistration.
         """
-        
-        activeSubject = self.parent._experiment._active_subject
+
+        activeSubject = self.experiment.active_subject
         tableView = self.parent.ui.tableViewFModelsForCoregistration
         
         # Selection for the view is SingleSelection / SelectRows, so this
@@ -1800,15 +1800,15 @@ class Caller(object):
         selectedFmodelName = selectedRowIndexes[0].data() 
                              
         subjects_dir = os.path.join(activeSubject._forwardModels_directory,
-                               selectedFmodelName)
+                                    selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path,
                                self.experiment._working_file_names
                                [self.experiment._active_subject_name])
 
-        mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
-                               raw=rawPath, subject=subject,
-                               subjects_dir=subjects_dir)
+        gui = mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
+                                     inst=rawPath, subject=subject,
+                                     subjects_dir=subjects_dir)
         QtCore.QCoreApplication.processEvents()
 
         # Needed for copying the resulting trans file to the right location.
@@ -1825,7 +1825,7 @@ class Caller(object):
 
         fsdict    -- dictionary of parameters for forward solution creation.
         """
-        activeSubject = self.parent._experiment._active_subject
+        activeSubject = self.experiment.active_subject
         rawInfo = activeSubject._working_file.info
 
         tableView = self.parent.ui.tableViewFModelsForSolution
@@ -1861,10 +1861,46 @@ class Caller(object):
             fileManager.write_forward_solution_parameters(fmdir, fsdict)
             self.parent.forwardModelModel.initialize_model()
         except Exception as e:
-            title = 'Error'
             msg = ('There was a problem with forward solution. The MNE-Python '
                    'message was: \n\n' + str(e))
             raise Exception(msg)
+
+    @messaged
+    def compute_inverse(self, fwd_name):
+        """Computes an inverse operator for the forward solution and saves it
+        to the source_analysis directory.
+        Keyword arguments:
+            fwd: The forward operator name.
+
+        Returns:
+            The inverse operator
+        """
+        subject = self.experiment.active_subject
+        info = subject.working_file.info
+        sa_dir = subject._source_analysis_directory
+        fwd_file = os.path.join(subject._forwardModels_directory, fwd_name,
+                                'reconFiles', 'reconFiles-fwd.fif')
+        if os.path.isfile(fwd_file):
+            print 'Reading forward solution...'
+        else:
+            raise IOError('Could not find forward solution with name %s.' %
+                          fwd_file)
+        fwd = mne.read_forward_solution(fwd_file)
+        cov_file = os.path.join(sa_dir, subject.subject_name + '-cov.fif')
+        if os.path.isfile(cov_file):
+            print 'Using %s to compute inverse.' % cov_file
+        else:
+            raise IOError('Could not find covariance file with name %s.' %
+                          cov_file)
+        cov = mne.read_cov(cov_file)
+        inv = mne.minimum_norm.make_inverse_operator(info, fwd, cov)
+        inv_fname = os.path.join(sa_dir, subject.subject_name + '-inv.fif')
+        try:
+            mne.minimum_norm.write_inverse_operator(inv_fname, inv)
+        except Exception as e:
+            msg = ('Exception while computing inverse operator:\n\n' + str(e))
+            raise Exception(msg)
+        return inv
 
     def create_covariance_from_raw(self, cvdict):
         """
