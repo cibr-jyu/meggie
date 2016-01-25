@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'timeSeriesDialog.ui'
 #
-# Created: Wed Sep  9 01:24:14 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -60,6 +59,9 @@ class Ui_TimeSeriesDialog(object):
         self.labelMask.setObjectName(_fromUtf8("labelMask"))
         self.gridLayout.addWidget(self.labelMask, 1, 5, 1, 1)
         self.spinBoxMask = QtGui.QSpinBox(TimeSeriesDialog)
+        self.spinBoxMask.setMinimum(0)
+        self.spinBoxMask.setMaximum(9999)
+        self.spinBoxMask.setProperty("value", 0)
         self.spinBoxMask.setObjectName(_fromUtf8("spinBoxMask"))
         self.gridLayout.addWidget(self.spinBoxMask, 1, 6, 1, 1)
         self.pushButtonFind = QtGui.QPushButton(TimeSeriesDialog)
