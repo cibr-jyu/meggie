@@ -6,7 +6,7 @@ Created on 13.12.2015
 
 from sys import exc_info
 import copy
-from mistune import inspect
+from inspect import isclass
 from inspect import getcallargs
 
 def wrap_mne_call(experiment, mne_func, *args, **kwargs):
@@ -28,7 +28,7 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
         raise exc[0], exc[1].args[0], exc[2]
     success_msg = 'SUCCESS: ' + mne_instance_name
     try:
-        if inspect.isclass(mne_func):
+        if isclass(mne_func):
             #deepcopy needed for cleaning the dict
             callargs = copy.deepcopy(result.__dict__)
             callargs = logger.clean_callargs(mne_instance_name, callargs)
