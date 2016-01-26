@@ -15,7 +15,7 @@
   </property>
   <widget class="QGroupBox" name="groupBoxBatch">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
@@ -45,7 +45,7 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>471</width>
+      <width>561</width>
       <height>209</height>
      </rect>
     </property>
@@ -53,7 +53,7 @@
      <item>
       <widget class="QLabel" name="labelSubjects">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -71,7 +71,7 @@
        <item>
         <widget class="QListWidget" name="listWidgetSubjects">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -101,7 +101,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Apply parameters:</string>
@@ -113,7 +113,7 @@
              <item>
               <widget class="QPushButton" name="pushButtonApply">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -141,7 +141,7 @@
              <item>
               <widget class="QLabel" name="label_6">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="text">
                 <string>to selected subject</string>
@@ -168,7 +168,7 @@
              <item>
               <widget class="QPushButton" name="pushButtonApplyAll">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -196,7 +196,7 @@
              <item>
               <widget class="QLabel" name="label_7">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="text">
                 <string>subjects on the list</string>
@@ -227,7 +227,7 @@
      <item>
       <widget class="QPushButton" name="pushButtonRemove">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

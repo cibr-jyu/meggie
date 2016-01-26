@@ -782,29 +782,14 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBoxBatch">
+      <widget class="QWidget" name="widget" native="true">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>580</y>
-         <width>631</width>
+         <width>551</width>
          <height>301</height>
         </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>240</height>
-        </size>
-       </property>
-       <property name="title">
-        <string/>
        </property>
       </widget>
      </widget>

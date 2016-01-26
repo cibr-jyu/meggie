@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -43,27 +43,32 @@ import traceback
 from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import pyqtSignal
 
-from meggie.ui.preprocessing.projectorDialog import ProjectorDialog
 from meggie.ui.preprocessing.eogParametersDialogUi import Ui_Dialog
 from meggie.ui.general import messageBoxes
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
+from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
 
-class EogParametersDialog(ProjectorDialog):
+class EogParametersDialog(QtGui.QDialog):
     """
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
     """
     computed = pyqtSignal(bool)
+    caller = Caller.Instance()
 
     def __init__(self, parent):
         """
         Constructor. Initializes the dialog.
         """
-        ProjectorDialog.__init__(self, parent, Ui_Dialog)
-        # Connect signals and slots
-        self.ui.listWidgetSubjects.currentItemChanged.connect(self.selection_changed)
+        QtGui.QDialog.__init__(self)
+        self.parent = parent
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.ui.widget = BatchingWidget(self, self.ui.widget, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = self.ui.widget
 
     def accept(self):
         """
@@ -97,8 +102,8 @@ class EogParametersDialog(ProjectorDialog):
             return
         recently_active_subject = self.caller.experiment._active_subject._subject_name
         subject_names = []
-        for i in range(self.ui.listWidgetSubjects.count()):
-            item = self.ui.listWidgetSubjects.item(i)
+        for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
+            item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
 
@@ -131,29 +136,6 @@ class EogParametersDialog(ProjectorDialog):
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
-    def on_pushButtonApply_clicked(self, checked=None):
-        """Saves parameters to selected subject's eog parameters dictionary.
-        """
-        if checked is None: return
-        item = self.ui.listWidgetSubjects.currentItem()
-        if item is None:
-            return
-        item.setCheckState(QtCore.Qt.Checked)
-        dictionary = self.collect_parameter_values(True)
-        for subject in self.caller.experiment._subjects:
-            if subject._subject_name == str(item.text()):
-                subject._eog_params = dictionary
-
-    def on_pushButtonApplyAll_clicked(self, checked=None):
-        """Saves parameters to selected subjects' eog parameters dictionaries.
-        """
-        if checked is None: return
-        for i in range(self.ui.listWidgetSubjects.count()):
-            item = self.ui.listWidgetSubjects.item(i)
-            item.setCheckState(QtCore.Qt.Checked)
-            for subject in self.caller.experiment._subjects:
-                if str(item.text()) == subject._subject_name:
-                    subject._eog_params = self.collect_parameter_values(True)
 
     def collect_parameter_values(self, batch_checked):
         """Collects parameter values from dialog.
@@ -241,7 +223,7 @@ class EogParametersDialog(ProjectorDialog):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
+        subject_name = str(self.batching_widget.ui.listWidgetSubjects.currentItem().text())
         # TODO: if experiment had subjects dictionary instead of list,
         # we could set:
         # subject = self.parent.experiment._subjects[subject_name]

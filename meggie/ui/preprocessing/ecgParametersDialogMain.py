@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ from meggie.ui.general import messageBoxes
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
+from meggie.ui.widgets.batchingWidgetUi import Ui_BatchingWidget
 
 class EcgParametersDialog(ProjectorDialog):
     """
