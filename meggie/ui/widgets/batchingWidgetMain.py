@@ -32,15 +32,20 @@ class BatchingWidget(QtGui.QWidget):
         self.setGeometry(widget_margins)
         
         for subject in self.caller.experiment._subjects:
-            item = QtGui.QListWidgetItem(subject._subject_name)
+            item = QtGui.QListWidgetItem(subject.subject_name)
             item.setCheckState(QtCore.Qt.Unchecked)
             item.setFlags(QtCore.Qt.ItemIsEnabled)
             self.ui.listWidgetSubjects.addItem(item)
 
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
-        print str(item.text())
-        #self.parent.selection_changed(item.text())
+        #print str(item.text())
+        subject_name = str(item.text())
+        if subject_name in self.data.keys():
+            data_dict = self.data[subject_name]
+        else:
+            data_dict = {}
+        self.parent.selection_changed(subject_name, data_dict)
     
     def showWidget(self, disabled):
         if disabled:
@@ -61,11 +66,9 @@ class BatchingWidget(QtGui.QWidget):
             return
         item.setCheckState(QtCore.Qt.Checked)
         dictionary = self.parent.collect_parameter_values(True)
-        for subject in self.caller.experiment._subjects:
-            if subject._subject_name == str(item.text()):
-                #subject._eog_params = dictionary
-                #self.params[]
-                pass
+        for subject in self.caller.experiment.get_subjects():
+            if subject.subject_name == str(item.text()):
+                self.data[str(item.text())] = dictionary
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
@@ -74,9 +77,9 @@ class BatchingWidget(QtGui.QWidget):
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
             item.setCheckState(QtCore.Qt.Checked)
-            for subject in self.caller.experiment._subjects:
-                if str(item.text()) == subject._subject_name:
-                    subject._eog_params = self.parent.collect_parameter_values(True)
+            for subject in self.caller.experiment.get_subjects():
+                if str(item.text()) == subject.subject_name:
+                    self.data[str(item.text())] = self.parent.collect_parameter_values(True)
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed."""

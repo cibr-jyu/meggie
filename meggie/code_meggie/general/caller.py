@@ -267,14 +267,13 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform action on.
         """
-
         self._call_eog_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
     @threaded
     def _call_eog_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = dic.get('i')
+        raw_in = subject.working_file
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
@@ -332,7 +331,7 @@ class Caller(object):
 
         print "Writing EOG events in %s" % eog_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
-
+        
     @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
@@ -1914,12 +1913,8 @@ class Caller(object):
         fileNameToWrite = ''
         try:
             if subjectName is not None:
-                if subjectName == self.experiment.active_subject_name:
-                    fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.active_subject.working_file
-                else:
-                    fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.get_subject_working_file(subjectName)
+                fileNameToWrite = subjectName + '-cov.fif'
+                raw = self.experiment.get_subject_working_file(subjectName)
             else:
                 raw = fileManager.open_raw(cvdict['rawfilepath'], True)
                 basename = os.path.basename(cvdict['rawfilepath'])

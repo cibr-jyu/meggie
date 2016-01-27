@@ -40,6 +40,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonComputeBatch">
+       <property name="text">
+        <string>Compute Batch</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonCompute">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -830,7 +837,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>650</x>
-     <y>880</y>
+     <y>937</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -845,8 +852,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>559</x>
-     <y>880</y>
+     <x>434</x>
+     <y>937</y>
     </hint>
     <hint type="destinationlabel">
      <x>248</x>
@@ -854,5 +861,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButtonComputeBatch</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptBatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>926</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>367</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>acceptBatch()</slot>
+ </slots>
 </ui>

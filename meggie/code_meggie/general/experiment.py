@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -158,7 +158,7 @@ class Experiment(QObject):
         author          - - the author of the experiment
         """
         if (len(author) <= 30):
-            if re.match("^[A-Za-zÄäÖöÅå0-9 ]*$", author):
+            if re.match("^[A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0-9 ]*$", author):
                 self._author = author
             else:
                 raise Exception("Use only letters and numbers in _author name")
@@ -185,7 +185,7 @@ class Experiment(QObject):
         """
         if (len(description) <= 1000):
             if (re.match(
-                "^[A-Za-zÄäÖöÅå0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
+                "^[A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
                  description) or len(description) == 0):
                 self._description = description
             else:
@@ -332,6 +332,7 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         self.release_memory()
         self._active_subject_name = subject_name
+        
         print 'working file name asetetaan'
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
@@ -416,6 +417,10 @@ class Experiment(QObject):
             if len(self.active_subject._evokeds) > 0:
                 for value in self.active_subject._evokeds.values():
                     value._raw = None
+            self.active_subject = None
+            
+            # magic call from martjin pieters to garbage collect
+            len(gc.get_objects())
 
     def load_working_file(self, subject):
         """Loads raw file from subject folder and sets it on
@@ -544,7 +549,10 @@ class Experiment(QObject):
         Keyword arguments:
         subject_name    -- name of the subject
         """
-        return fileManager.open_raw(self._working_file_names[subject_name])
+        if subject_name == self._active_subject_name:
+            return self._active_subject._working_file
+        else:
+            return fileManager.open_raw(self._working_file_names[subject_name])
 
     def save_experiment_settings(self):
         """
@@ -620,9 +628,9 @@ class Experiment(QObject):
         Return state values to be pickled. Used to avoid pickling huge
         files two times to disk. Standard pickle method.
         """
-        # TODO: muokkaa sitä mukaa kun tulee tarvetta, esim. subjectien,
-        # epochien, evokedien jne. lisäämisten yhteydessä tarvitsee
-        # päivittää settingsejä
+        # TODO: muokkaa sitï¿½ mukaa kun tulee tarvetta, esim. subjectien,
+        # epochien, evokedien jne. lisï¿½ï¿½misten yhteydessï¿½ tarvitsee
+        # pï¿½ivittï¿½ï¿½ settingsejï¿½
         odict = self.__dict__.copy()
         del odict['_subjects']
         del odict['_active_subject']
@@ -642,9 +650,9 @@ class Experiment(QObject):
         files from the files in the experiment directory. Standard pickle
         method.
         """ 
-        # TODO: muokkaa sitä mukaa kun tulee tarvetta, esim. subjectien,
-        # epochien, evokedien jne. lisäämisten yhteydessä tarvitsee
-        # päivittää settingsejä
+        # TODO: muokkaa sitï¿½ mukaa kun tulee tarvetta, esim. subjectien,
+        # epochien, evokedien jne. lisï¿½ï¿½misten yhteydessï¿½ tarvitsee
+        # pï¿½ivittï¿½ï¿½ settingsejï¿½
         QObject.__init__(self)
         
         # Pickle doesn't save subjects and active_subject so the properties
