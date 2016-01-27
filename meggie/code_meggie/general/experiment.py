@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -158,7 +158,7 @@ class Experiment(QObject):
         author          - - the author of the experiment
         """
         if (len(author) <= 30):
-            if re.match("^[A-Za-z������0-9 ]*$", author):
+            if re.match("^[A-Za-zÄäÖöÅå0-9 ]*$", author):
                 self._author = author
             else:
                 raise Exception("Use only letters and numbers in _author name")
@@ -185,7 +185,7 @@ class Experiment(QObject):
         """
         if (len(description) <= 1000):
             if (re.match(
-                "^[A-Za-z������0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
+                "^[A-Za-zÄäÖöÅå0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
                  description) or len(description) == 0):
                 self._description = description
             else:
@@ -628,9 +628,6 @@ class Experiment(QObject):
         Return state values to be pickled. Used to avoid pickling huge
         files two times to disk. Standard pickle method.
         """
-        # TODO: muokkaa sit� mukaa kun tulee tarvetta, esim. subjectien,
-        # epochien, evokedien jne. lis��misten yhteydess� tarvitsee
-        # p�ivitt�� settingsej�
         odict = self.__dict__.copy()
         del odict['_subjects']
         del odict['_active_subject']
@@ -650,9 +647,6 @@ class Experiment(QObject):
         files from the files in the experiment directory. Standard pickle
         method.
         """ 
-        # TODO: muokkaa sit� mukaa kun tulee tarvetta, esim. subjectien,
-        # epochien, evokedien jne. lis��misten yhteydess� tarvitsee
-        # p�ivitt�� settingsej�
         QObject.__init__(self)
         
         # Pickle doesn't save subjects and active_subject so the properties
