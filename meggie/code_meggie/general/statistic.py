@@ -222,5 +222,4 @@ class Statistic(QtCore.QObject):
                     xcoord = x
                     ycoord = y
                     maximum = a
-        print maximum
         return maximum, xcoord, ycoord

@@ -705,7 +705,6 @@ def write_events(events, subject):
             csv_file_writer = csv.writer(csv_file)
             csv_file_writer.writerows(events)
         except Exception as err:
-            print str(err)
             raise err 
         finally:
             csv_file.close()
@@ -715,9 +714,7 @@ def write_events(events, subject):
                 ws.write(i, j, events[i][j], styleNumber)
         try:
             wbs.save(os.path.join(path_to_save, 'events.xls'))
-            print 'Done.'
         except Exception as err:
-            print str(err)
             raise err
 
 

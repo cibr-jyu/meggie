@@ -64,7 +64,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 self.ui.comboBoxEnd.addItem(str(trigger))
         except Exception as e:
             print 'Could not find triggers from %s.' % stim_channel
-            print str(e)
 
         self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
         self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)

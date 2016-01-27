@@ -65,6 +65,7 @@ def messaged(func):
             box.show()
             parent_handle.messagebox = box
             return
+        print "Done."
         QtGui.QApplication.restoreOverrideCursor()
         return result
     return decorated

@@ -249,7 +249,6 @@ class EventSelectionDialog(QtGui.QDialog):
         #TODO: Log events?
         #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(event_id, mask))
-        print str(events)
         return events
 
     def fill_parameters(self, params):
@@ -411,7 +410,6 @@ class EventSelectionDialog(QtGui.QDialog):
                                                     value)) + ', ' +
                                       str(int(sheet.cell(row_index, 3).value)))
                 event = map(int, sheet.row_values(row_index)[1:4])
-                print event
                 item.setData(32, event)
                 item.setData(33, str(sheet.cell(row_index,0).value))
                 self.ui.listWidgetEvents.addItem(item)

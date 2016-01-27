@@ -66,10 +66,6 @@ class Caller(object):
     parent = None
     _experiment = None
 
-    def __init__(self):
-        """Constructor"""
-        print "Caller created"
-        
     def setParent(self, parent):
         """
         Keyword arguments:
@@ -119,7 +115,6 @@ class Caller(object):
         filename      -- file to open mne_browse_raw with
         Raises an exception if MNE_ROOT is not set.
         """
-        print str(self.parent)
         if os.environ.get('MNE_ROOT') is None:
             raise Exception('Environment variable MNE_ROOT not set.')
 
@@ -775,7 +770,6 @@ class Caller(object):
         files2ave = []
         for subject in subjects:
             directory = subject._evokeds_directory
-            print directory
             files = [ f for f in listdir(directory)\
                       if isfile(join(directory, f)) and f.endswith('.fif') ]
             for f in files:
@@ -998,7 +992,6 @@ class Caller(object):
         # TODO: log mne call
         itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
                                    mode='ratio', copy=True)
-        print 'Done'
         return power, itc, times, evoked, evoked_data
 
     @messaged
@@ -1183,7 +1176,6 @@ class Caller(object):
         files2ave = []
         for subject in subjects:
             directory = subject._epochs_directory
-            print directory
             fName = join(directory, epochs_name + '.fif')
             if isfile(fName):
                 files2ave.append(fName)
@@ -1199,8 +1191,6 @@ class Caller(object):
         itcs = []
         weights = []
         bads = []
-        print directory
-        print files2ave
         if save_max:
             exp_path = os.path.join(self.experiment.workspace,
                                     self.experiment.experiment_name)
@@ -1303,7 +1293,6 @@ class Caller(object):
         itc = wrap_mne_call(self.experiment, mne.time_frequency.AverageTFR,
                             info, averageItc, times, frequencies, nave)
 
-        print 'Done'
         return power, itc
 
     def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
@@ -1353,7 +1342,6 @@ class Caller(object):
                                 dpi=dpi, format=form)
                 except Exception as e:
                     print 'Error while saving figure for channel ' + channel
-                    print str(e)
                 finally:
                     plt.close()
 
@@ -1597,7 +1585,6 @@ class Caller(object):
                                              trans, trans, picks=picks,
                                              n_jobs=2, copy=True)
 
-        print "Done"
         return dataToFilter
 
 ### Methods needed for source modeling ###    

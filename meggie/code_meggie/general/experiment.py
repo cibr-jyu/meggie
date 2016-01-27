@@ -332,7 +332,6 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         self.release_memory()
         self._active_subject_name = subject_name
-        print 'working file name asetetaan'
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
             raise Exception('There is no working file in the chosen subject folder.')
@@ -572,7 +571,6 @@ class Experiment(QObject):
         
         # Protocol 2 used because of file object being pickled
         pickle.dump(self, settingsFile, 2)
-        print '[done]'
         settingsFile.close()
 
     def save_parameter_file(self, command, inputfilename, outputfilename,
@@ -605,7 +603,7 @@ class Experiment(QObject):
                                      operation + '.param')
         
         with open(paramfilename, 'wb') as paramfullname:
-            print 'writing param file'
+            print 'Writing param file.'
             csvwriter = csv.writer(paramfullname)
             
             csvwriter.writerow([inputfilename])

@@ -312,7 +312,6 @@ class SubjectListModel(QtCore.QAbstractListModel):
             activeSubjectName = self.caller._experiment._active_subject.\
             _subject_name
         except Exception as e:
-            print str(e)
             activeSubjectName = None
          
         if role == QtCore.Qt.DisplayRole:

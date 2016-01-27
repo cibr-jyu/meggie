@@ -169,7 +169,6 @@ class MaxFilterDialog(QtGui.QDialog):
         caller = Caller.Instance()
         raw = caller.experiment.active_subject.working_file
         dictionary['-f'] = raw.info.get('filename')
-        print raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif
         if self.ui.checkBoxtSSS.isChecked():

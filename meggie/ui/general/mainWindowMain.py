@@ -290,7 +290,6 @@ class MainWindow(QtGui.QMainWindow):
         print 'Opening experiment ' + path
         self.experimentHandler.open_existing_experiment(os.path.basename(path),
                                                         parent_handle=self)
-        print 'Done'
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
@@ -681,7 +680,6 @@ class MainWindow(QtGui.QMainWindow):
             # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
             write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
-            print '[done]'
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
@@ -850,7 +848,6 @@ class MainWindow(QtGui.QMainWindow):
         try:
             print 'Writing evoked data to %s.' % fname
             write_evokeds(fname, evokeds)
-            print '[done]'
         except IOError:
             print 'Writing to selected folder is not allowed.'
 
@@ -904,7 +901,6 @@ class MainWindow(QtGui.QMainWindow):
         fname = os.path.join(saveFolder, filename)
         print 'Saving evoked data set %s.' % fname
         write_evokeds(fname, evoked)
-        print 'Done.'
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """Opens a dialog for selecting a layout file."""
@@ -1879,23 +1875,8 @@ class EmittingStream(QtCore.QObject):
     def flush(self):
         pass
 
-# Code related to application initialization:
-
-
-def exception_hook(exctype, value, tracebackObj):
-    print str(exctype) + ': ' + str(value)
-    traceback.print_tb(tracebackObj)
-    title = 'Unknown error'
-    message = ('Something unexpected happened. Please copy the following '
-               'to your bug report:\n\nException type: ' + str(exctype) + '\n'
-               '\nException value: ' + str(value) + '\n\n\n' + 'Traceback:\n\n'
-               ''.join(traceback.format_tb(tracebackObj)))
-    messagebox = messageBoxes.longMessageBox(title, message)
-    messagebox.exec_()
-
 
 def main():
-    # sys.excepthook = exception_hook
 
     app = QtGui.QApplication(sys.argv)
     window = MainWindow(app)

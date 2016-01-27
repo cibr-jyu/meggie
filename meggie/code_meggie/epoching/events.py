@@ -48,7 +48,6 @@ class Events(object):
         stim_ch       -- Name of the stimulus channel
         mask          -- Mask for excluding bits.
         """
-        print raw.info.get('filename')
         self._events = mne.find_events(raw, stim_channel=stim_ch,
                                        shortest_event=1, mask=mask)
         
