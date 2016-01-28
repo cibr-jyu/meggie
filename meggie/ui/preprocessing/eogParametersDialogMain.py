@@ -67,8 +67,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.ui.widget = BatchingWidget(self, self.ui.widget, self.ui.scrollAreaWidgetContents)
-        self.batching_widget = self.ui.widget
+        self.batching_widget = BatchingWidget(self, self.ui.widget, self.ui.scrollAreaWidgetContents)
 
     def accept(self):
         """
@@ -78,15 +77,12 @@ class EogParametersDialog(QtGui.QDialog):
 
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
-    
-        #self.caller.experiment._active_subject._eog_params = self.\
-        #    collect_parameter_values(False)
-        parameter_values = self.collect_parameter_values(False)
+        parameter_values = self.collect_parameter_values()
         active_subject_name =  self.caller.experiment.active_subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         
         error_message = self.calculate_eog(
-            self.caller.experiment.active_subject, batch=False)
+            self.caller.experiment.active_subject)
         if len(error_message) > 0:
             #Exception already handled in caller
             QtGui.QApplication.restoreOverrideCursor()
@@ -118,8 +114,7 @@ class EogParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             error_messages.append(
-                self.calculate_eog(self.caller.experiment.active_subject, 
-                                   batch=True)
+                self.calculate_eog(self.caller.experiment.active_subject)
             )
         
         # 2. Calculation is done for the rest of the subjects.
@@ -132,9 +127,7 @@ class EogParametersDialog(QtGui.QDialog):
                     parent_handle=self.parent)
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
-                error_messages.append(
-                    self.calculate_eog(subject, batch=True)
-                )
+                error_messages.append(self.calculate_eog(subject))
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
@@ -148,11 +141,8 @@ class EogParametersDialog(QtGui.QDialog):
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
         
-    def collect_parameter_values(self, batch_checked):
+    def collect_parameter_values(self):
         """Collects parameter values from dialog.
-
-        Keyword arguments:
-        batch_checked    -- True if batch processing is enabled
         """
         
         dictionary = dict()
@@ -171,7 +161,7 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['rej-mag'] = self.ui.doubleSpinBoxMagReject.value()
         dictionary['rej-eeg'] = self.ui.doubleSpinBoxEEGReject.value()
         dictionary['rej-eog'] = self.ui.doubleSpinBoxEOGReject.value()
-        dictionary['bads'] = map(str.strip, str(self.ui.lineEditBad.text()).split(','))
+        dictionary['bads'] = map(str.strip, str(self.ui.lineEditBad.text()).split(','))  # noqa
         dictionary['tstart'] = self.ui.spinBoxStart.value()
         dictionary['filtersize'] = self.ui.spinBoxTaps.value()
         dictionary['n-jobs'] = self.ui.spinBoxJobs.value()
@@ -187,7 +177,7 @@ class EogParametersDialog(QtGui.QDialog):
 
         return dictionary
 
-    def selection_changed(self, subject_name, data_dict):
+    def selection_changed(self, subject_name, params_dict):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
@@ -196,33 +186,26 @@ class EogParametersDialog(QtGui.QDialog):
         # we could set:
         # subject = self.parent.experiment._subjects[subject_name]
 
-        for subject in self.caller.experiment._subjects:
+        for subject in self.caller.experiment.get_subjects():
             if subject_name == subject._subject_name:
-                if len(data_dict) > 0:
-                    dic = data_dict  
+                if len(params_dict) > 0:
+                    dic = params_dict  
                 else:
                     dic = self.get_default_values()
                 self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
                 self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-                self.ui.spinBoxEventsID.setProperty("value",
-                                                    dic.get('event-id'))
-                self.ui.spinBoxLowPass.setProperty("value",
-                                                   dic.get('eog-l-freq'))
-                self.ui.spinBoxHighPass.setProperty("value",
-                                                    dic.get('eog-h-freq'))
+                self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+                self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
+                self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
                 self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
                 self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
                 self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
                 self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
                 self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-                self.ui.doubleSpinBoxGradReject.setProperty("value",
-                                                            dic.get('rej-grad'))
-                self.ui.doubleSpinBoxMagReject.setProperty("value",
-                                                           dic.get('rej-mag'))
-                self.ui.doubleSpinBoxEEGReject.setProperty("value", 
-                                                           dic.get('rej-eeg'))
-                self.ui.doubleSpinBoxEOGReject.setProperty("value", 
-                                                           dic.get('rej-eog'))
+                self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
+                self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
+                self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
+                self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
                 self.ui.lineEditBad.setProperty("value", dic.get('bads'))
                 self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
                 self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
@@ -235,7 +218,7 @@ class EogParametersDialog(QtGui.QDialog):
         """Sets default values for dialog."""
         return {
             'tmin': -0.200,
-            'tmax': -0.200,
+            'tmax': 0.200, 
             'event-id': 998,
             'eog-l-freq': 1,
             'eog-h-freq': 10,
@@ -258,7 +241,7 @@ class EogParametersDialog(QtGui.QDialog):
         }
 
 
-    def calculate_eog(self, subject, batch=False):
+    def calculate_eog(self, subject):
         """Calls caller class for calculating the projections for the given
         subject and passes errors to accept method.
 

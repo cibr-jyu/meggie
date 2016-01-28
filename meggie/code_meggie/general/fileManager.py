@@ -552,6 +552,17 @@ def open_raw(fname, pre_load=True):
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
     
+def open_raw_by_subject_name(experiment, subject_name, pre_load=False):
+    try:
+        
+        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
+    except IOError as e:
+        raise IOError('File does not exist or is not a raw-file.' + str(e))
+    except OSError as e:
+        raise OSError('You do not have permission to read the file.' + str(e))
+    except ValueError as e:
+        raise ValueError('File is not a raw-file.' + str(e))
+    
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath

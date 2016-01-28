@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>948</height>
+    <width>653</width>
+    <height>945</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,8 +74,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>643</width>
-        <height>891</height>
+        <width>635</width>
+        <height>888</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -836,28 +836,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>650</x>
-     <y>937</y>
+     <x>642</x>
+     <y>934</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
      <y>5</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonCancel</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>Dialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>434</x>
-     <y>937</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>248</x>
-     <y>8</y>
     </hint>
    </hints>
   </connection>
@@ -874,6 +858,22 @@
     <hint type="destinationlabel">
      <x>367</x>
      <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>921</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>5</y>
     </hint>
    </hints>
   </connection>

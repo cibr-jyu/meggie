@@ -193,7 +193,7 @@ class Caller(object):
     @threaded
     def _call_ecg_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = dic.get('i')
+        raw_in = subject.working_file
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
