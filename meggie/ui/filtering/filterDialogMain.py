@@ -9,6 +9,7 @@ from PyQt4 import QtCore,QtGui
 
 from meggie.ui.filtering.filterDialogUi import Ui_DialogFilter
 from meggie.ui.general import messageBoxes
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
@@ -26,8 +27,10 @@ class FilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
+        
         self.filterParameterDictionary = None
         self.caller = Caller.Instance()
+        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
 
     def on_pushButtonPreview_clicked(self, checked=None):
         """
@@ -168,6 +171,9 @@ class FilterDialog(QtGui.QDialog):
         if result is not None:
              self.parent._initialize_ui()
              self.close()
+
+    def acceptBatch(self):
+        pass
 
     def _validateFilterFreq(self, paramDict, samplerate):
         """
