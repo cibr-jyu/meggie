@@ -66,9 +66,12 @@ class EcgParametersDialog(ProjectorDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self, self.ui.widget1, self.ui.scrollAreaWidgetContents_2)
+        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents_2)
 
-        raw = self.caller.experiment.active_subject.working_file
+        try:
+            raw = self.caller.experiment.active_subject.working_file
+        except:
+            return
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
         subjects = self.caller.experiment.get_subjects()
@@ -327,8 +330,8 @@ class EcgParametersDialog(ProjectorDialog):
         Keyword arguments:
         subject               -- Subject object
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
+        #QtGui.QApplication.setOverrideCursor(QtGui.\
+        #                                     QCursor(QtCore.Qt.WaitCursor))
         try:
             result = self.caller.call_ecg_ssp(self.batching_widget.data[subject.subject_name], subject)
             if not result == 0:

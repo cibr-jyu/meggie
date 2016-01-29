@@ -13,23 +13,27 @@ from meggie.ui.general import messageBoxes
 
 class BatchingWidget(QtGui.QWidget):
     """Generic widget for handling batching in several dialogs.
-    The parent dialogs need to implement the following methods:
-        - selection_changed
-        - collect_parameter_values 
+    The parent dialogs need to implement the following:
+        - selection_changed          (method)
+        - collect_parameter_values   (method)
+        - pushButtonCompute          (QPushButton)
+        - pushButtonComputeBatch     (QPushButton)
+        - widget                     (QWidget)
     """
     caller = Caller.Instance()
     
-    def __init__(self, parent, replaceable_widget, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         super(BatchingWidget, self).__init__(*args, **kwargs)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
+        self.parent.ui.pushButtonCompute.setEnabled(True)
+        self.parent.ui.pushButtonComputeBatch.setEnabled(False)
         self.ui.groupBoxBatch.hide()
+        self.setGeometry(self.parent.ui.widget.geometry())
         self.adjustSize()
+
         self.data = {}
-        
-        widget_margins = replaceable_widget.geometry()
-        self.setGeometry(widget_margins)
         
         for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject.subject_name)
@@ -51,10 +55,14 @@ class BatchingWidget(QtGui.QWidget):
         if disabled:
             self.ui.groupBoxBatch.show()
             self.adjustSize()
+            self.parent.ui.pushButtonCompute.setEnabled(False)
+            self.parent.ui.pushButtonComputeBatch.setEnabled(True)
             #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
         else:
             self.ui.groupBoxBatch.hide()
             self.adjustSize()
+            self.parent.ui.pushButtonCompute.setEnabled(True)
+            self.parent.ui.pushButtonComputeBatch.setEnabled(False)
             #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
 
     def on_pushButtonApply_clicked(self, checked=None):
@@ -67,7 +75,7 @@ class BatchingWidget(QtGui.QWidget):
         item.setCheckState(QtCore.Qt.Checked)
         for subject in self.caller.experiment.get_subjects():
             if subject.subject_name == str(item.text()):
-                dictionary = self.parent.collect_parameter_values(subject)
+                dictionary = self.parent.collect_parameter_values()
                 self.data[str(item.text())] = dictionary
 
     def on_pushButtonApplyAll_clicked(self, checked=None):

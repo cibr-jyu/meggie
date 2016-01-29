@@ -67,7 +67,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self, self.ui.widget, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
 
     def accept(self):
         """
