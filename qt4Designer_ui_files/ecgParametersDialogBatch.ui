@@ -53,7 +53,7 @@
         <attribute name="title">
          <string>ECG settings</string>
         </attribute>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>9</x>
@@ -785,7 +785,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButtonComputeBatch">
        <property name="text">
         <string>Compute Batch</string>
        </property>
@@ -853,14 +853,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>pushButtonComputeBatch</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>acceptBatch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>469</x>
-     <y>910</y>
+     <x>532</x>
+     <y>957</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -875,8 +875,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>910</y>
+     <x>623</x>
+     <y>957</y>
     </hint>
     <hint type="destinationlabel">
      <x>495</x>
