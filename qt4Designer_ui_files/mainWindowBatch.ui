@@ -2630,7 +2630,7 @@
               <attribute name="title">
                <string>Inverse operator</string>
               </attribute>
-              <widget class="QWidget" name="">
+              <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>21</x>
@@ -2772,7 +2772,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QListView" name="listView_2"/>
+                     <widget class="QListWidget" name="listWidgetInverseEvoked"/>
                     </item>
                    </layout>
                   </item>
@@ -2830,29 +2830,18 @@ inverse operatorin
                 <rect>
                  <x>640</x>
                  <y>40</y>
-                 <width>371</width>
-                 <height>211</height>
+                 <width>282</width>
+                 <height>228</height>
                 </rect>
                </property>
                <property name="title">
                 <string>Source estimates:</string>
                </property>
-               <widget class="QLabel" name="label_37">
-                <property name="geometry">
-                 <rect>
-                  <x>20</x>
-                  <y>50</y>
-                  <width>271</width>
-                  <height>61</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>Tähän lista, jossa: nimi; mihin pohjautuu; muut parametrit (pelkkä nimi voi riittää tähän, kaikki muut ehkä erilliseen lootaan alle)</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
+               <layout class="QGridLayout" name="gridLayout_30">
+                <item row="0" column="0">
+                 <widget class="QListWidget" name="listWidgetSourceEstimate"/>
+                </item>
+               </layout>
               </widget>
              </widget>
              <widget class="QWidget" name="tabSourceAnalysis">
@@ -3687,7 +3676,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>radioButton_2</tabstop>
   <tabstop>listView_3</tabstop>
   <tabstop>radioButton_3</tabstop>
-  <tabstop>listView_2</tabstop>
+  <tabstop>listWidgetInverseEvoked</tabstop>
   <tabstop>pushButtonMakeSourceEstimate</tabstop>
   <tabstop>textEdit</tabstop>
   <tabstop>textEditConsole</tabstop>

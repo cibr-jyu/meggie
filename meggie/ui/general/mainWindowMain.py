@@ -75,6 +75,7 @@ from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.filtering.filterDialogMain import FilterDialog
 from meggie.ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
+from meggie.ui.sourceModeling.sourceEstimateDialogMain import SourceEstimateDialog
 from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
 from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
 from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
@@ -677,6 +678,7 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(message)
 
         self.evokedList.addItem(item)
+        self.ui.listWidgetInverseEvoked.addItem(item.text())
 
         try:
             self.caller.experiment.active_subject.handle_new_evoked(
@@ -754,7 +756,7 @@ class MainWindow(QtGui.QMainWindow):
                                                          '      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
 
-        evoked_name = str(self.evokedList.currentItem().text())
+        evoked_name = str(item.text())
         evoked = self.caller.experiment.active_subject._evokeds[evoked_name]
         evoked_raw = evoked._raw
 
@@ -850,6 +852,7 @@ class MainWindow(QtGui.QMainWindow):
 
         item = QtGui.QListWidgetItem(filename.split('.')[0])
         self.evokedList.addItem(item)
+        self.ui.listWidgetInverseEvoked.addItem(item.text())
         self.evokedList.setCurrentItem(item)
 
         try:
@@ -930,6 +933,7 @@ class MainWindow(QtGui.QMainWindow):
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
+            self.ui.listWidgetInverseEvoked.takeItem(row)
             try:
                 self.caller.experiment.active_subject.remove_evoked(
                     item_str,
@@ -1450,6 +1454,14 @@ class MainWindow(QtGui.QMainWindow):
         _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
                                        self.caller.experiment.active_subject)
 
+    def on_pushButtonMakeSourceEstimate_clicked(self, checked=None):
+        """Make source estimate clicked."""
+        if checked is None:
+            return
+        evoked_name = str(self.ui.listWidgetInverseEvoked.currentItem().text())
+        dir = self.caller.experiment.active_subject._source_analysis_directory
+        self.sourceEstimateDialog = SourceEstimateDialog(self, evoked_name)
+        self.sourceEstimateDialog.show()
 
 # Code for UI initialization (when starting the program) and
 # updating when something changes
@@ -1466,6 +1478,7 @@ class MainWindow(QtGui.QMainWindow):
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.evokedList.clear()
+        self.ui.listWidgetInverseEvoked.clear()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
@@ -1548,6 +1561,7 @@ class MainWindow(QtGui.QMainWindow):
         if evokeds_items is not None:
             for item in evokeds_items:
                 self.evokedList.addItem(item)
+                self.ui.listWidgetInverseEvoked.addItem(item.text())
 
         # This updates the 'Subject info' section below the subject list.
         try:

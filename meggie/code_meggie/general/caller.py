@@ -1938,10 +1938,10 @@ class Caller(object):
         picks = cvdict['picks']
 
         try:
-            cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
-                                                  reject, flat, picks)
-        except ValueError:
-            raise
+            cov = mne.cov.compute_raw_covariance(raw, tmin, tmax, tstep,
+                                                 reject, flat, picks)
+        except ValueError as e:
+            raise ValueError('Error while computing covariance. ' + str(e))
 
         path = self.experiment.active_subject._source_analysis_directory
 
@@ -1969,9 +1969,34 @@ class Caller(object):
         # Update ui.
         self.parent.update_covariance_info_box()
 
+    def make_source_estimate(self, evoked_name, inv_name, method):
+        """
+        Method for computing source estimate.
+        Args:
+            evoked_name: Name of the evoked collection.
+            inv_name: Name of the inverse operator.
+            method: Method to use ('MNE', 'dSPM', 'sLORETA').
+        """
+        evoked = self.experiment.active_subject._evokeds[evoked_name]
+        evoked_raw = evoked._raw
+        if isinstance(evoked_raw, list):
+            print 'Selecting first evoked from the collection...'
+            evoked_raw = evoked_raw[0]
+        source_dir = self.experiment.active_subject._source_analysis_directory
+        inv_file = os.path.join(source_dir, inv_name)
+        try:
+            inv = mne.minimum_norm.read_inverse_operator(inv_file)
+            stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
+                                                 method=method)
+            stc.save(inv_file[:-8])
+        except Exception as err:
+            raise('Exception while computing inverse solution:\n' + str(err))
+        print 'Inverse solution computed succesfully.'
+        return stc
+
     def update_experiment_working_file(self, fname, raw):
         """
-        Changes the current working file for the experiment the caller relates
+        Changes the current working fil e for the experiment the caller relates
         to.
         fname    -- name of the new working file
         raw      -- working file data
