@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@ Contains the MeasurementInfo-class used for collecting information from
 MEG-measurement raw files.
 """
 import mne
+from mne.externals.six import string_types
 
 import datetime
 import re
@@ -189,7 +190,7 @@ class MeasurementInfo(object):
         or empty, substitutes information with emptry strings.
         """
         subj_info = mne.io.show_fiff(self._info.get('filename'))
-        if not isinstance(subj_info, str) or subj_info == '':
+        if not isinstance(subj_info, string_types) or subj_info == '':
             raise TypeError('Personal info not found.')
         last_name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
         middle_name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...',

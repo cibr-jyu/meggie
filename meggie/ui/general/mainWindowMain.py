@@ -79,6 +79,7 @@ from meggie.ui.sourceModeling.sourceEstimateDialogMain import SourceEstimateDial
 from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
 from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
 from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
+from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.widgets.listWidget import ListWidget
@@ -1461,7 +1462,30 @@ class MainWindow(QtGui.QMainWindow):
         evoked_name = str(self.ui.listWidgetInverseEvoked.currentItem().text())
         dir = self.caller.experiment.active_subject._source_analysis_directory
         self.sourceEstimateDialog = SourceEstimateDialog(self, evoked_name)
+        self.sourceEstimateDialog.stc_computed.connect(self.
+            _update_source_estimates)
         self.sourceEstimateDialog.show()
+
+
+    def _update_source_estimates(self):
+        """Helper for updating source estimates to list."""
+        self.ui.listWidgetSourceEstimate.clear()
+        subject = self.caller.experiment.active_subject
+        dir = subject._source_analysis_directory
+        stcs = [f for f in os.listdir(dir) if
+                os.path.isfile(os.path.join(dir, f)) and f.endswith('lh.stc')]
+        for stc in stcs:
+            if os.path.isfile(os.path.join(dir, stc[:-6] + 'rh.stc')):
+                self.ui.listWidgetSourceEstimate.addItem(stc[:-7])
+
+
+    def on_pushButtonVisStc_clicked(self, checked=None):
+        """Visualize source estimates."""
+        if checked is None:
+            return
+        stc = str(self.ui.listWidgetSourceEstimate.currentItem().text())
+        self.plotStcDialog = PlotStcDialog(self, stc)
+        self.plotStcDialog.show()
 
 # Code for UI initialization (when starting the program) and
 # updating when something changes
@@ -1598,6 +1622,8 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.listWidgetBads.addItem(bad)
 
         self.update_covariance_info_box()
+        self._update_source_estimates()
+
 
     def update_power_list(self):
         """Updates the TFR list."""
@@ -1730,26 +1756,32 @@ class MainWindow(QtGui.QMainWindow):
                                     "Source analysis")
 
     def on_currentChanged(self):
-            """
-            TODO: should use a proper mcv system to avoid this crap.
-            Keep track of the active tab.
-            Show the epoch collection list epochList when in appropriate tabs.
-            """
-            index = self.ui.tabWidget.currentIndex()
-            if index == 1:
-                mode = QtGui.QAbstractItemView.SingleSelection
-                self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-            elif index == 2:
-                mode = QtGui.QAbstractItemView.MultiSelection
-                self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
-            elif index == 3:
-                mode = QtGui.QAbstractItemView.SingleSelection
-                self.epochList.setParent(self.ui.groupBoxEpochsTFR)
-            else:
-                self.epochList.hide()
-                return
-            self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
-            self.epochList.show()
+        """
+        TODO: should use a proper mcv system to avoid this crap.
+        Keep track of the active tab.
+        Show the epoch collection list epochList when in appropriate tabs.
+        """
+        index = self.ui.tabWidget.currentIndex()
+        if index == 1:
+            mode = QtGui.QAbstractItemView.SingleSelection
+            self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
+        elif index == 2:
+            mode = QtGui.QAbstractItemView.MultiSelection
+            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
+        elif index == 3:
+            mode = QtGui.QAbstractItemView.SingleSelection
+            self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+        else:
+            self.epochList.hide()
+            return
+        self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
+        self.epochList.show()
+
+        if index == 10:
+            self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_23)
+        elif index == 11:
+            self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_24)
+
 
     def reinitialize_models(self):
         """

@@ -17,6 +17,8 @@ class SourceEstimateDialog(QtGui.QDialog):
         operators: List of available inverse operators.
     """
     caller = Caller.Instance()
+    stc_computed = QtCore.pyqtSignal()
+
     def __init__(self, parent, evoked_name):
         QtGui.QDialog.__init__(self)
         self.parent = parent
@@ -37,5 +39,5 @@ class SourceEstimateDialog(QtGui.QDialog):
         inv_name = str(self.ui.comboBoxInverseOperator.currentText())
         method = str(self.ui.comboBoxMethod.currentText())
         stc = self.caller.make_source_estimate(evoked_name, inv_name, method)
+        self.stc_computed.emit()
         self.close()
-        # TODO: signal

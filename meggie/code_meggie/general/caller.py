@@ -1994,6 +1994,25 @@ class Caller(object):
         print 'Inverse solution computed succesfully.'
         return stc
 
+    def plotStc(self, stc_name, hemi, surface, smoothing_steps, alpha):
+        """Method for plotting source estimate.
+        Args:
+            stc: Stc name.
+            hemi: Hemisphere 'lh', 'rh' or 'both'.
+            surface: Type of surface.
+            smoothing_steps: The amount of smoothing.
+            alpha: Alpha value to use.
+        """
+        source_dir = self.experiment.active_subject._source_analysis_directory
+        fname = os.path.join(source_dir, stc_name)
+        stc = mne.read_source_estimate(fname)
+        try:
+            stc.plot(subject='', surface=surface, hemi=hemi, alpha=alpha,
+                     smoothing_steps=smoothing_steps, time_viewer=True,
+                     subjects_dir=os.path.join(source_dir, 'reconFiles'))
+        except Exception as e:
+            raise Exception('Error while plotting source estimate:\n' + str(e))
+
     def update_experiment_working_file(self, fname, raw):
         """
         Changes the current working fil e for the experiment the caller relates

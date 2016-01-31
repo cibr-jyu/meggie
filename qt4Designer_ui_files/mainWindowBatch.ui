@@ -2742,37 +2742,48 @@
                 <item row="0" column="0" colspan="2">
                  <layout class="QVBoxLayout" name="verticalLayout_25">
                   <item>
-                   <widget class="QRadioButton" name="radioButton">
+                   <widget class="QRadioButton" name="radioButtonRaw">
                     <property name="text">
                      <string>Raw file</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <layout class="QVBoxLayout" name="verticalLayout_24">
                     <item>
-                     <widget class="QRadioButton" name="radioButton_2">
+                     <widget class="QRadioButton" name="radioButtonEpoch">
                       <property name="text">
                        <string>Epoch collection</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QListView" name="listView_3"/>
+                     <widget class="QListWidget" name="listWidgetInverseEpoch">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
                   <item>
                    <layout class="QVBoxLayout" name="verticalLayout_19">
                     <item>
-                     <widget class="QRadioButton" name="radioButton_3">
+                     <widget class="QRadioButton" name="radioButtonEvoked">
                       <property name="text">
                        <string>Evoked dataset</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QListWidget" name="listWidgetInverseEvoked"/>
+                     <widget class="QListWidget" name="listWidgetInverseEvoked">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
@@ -2791,12 +2802,7 @@
                </property>
                <property name="text">
                 <string>Make 
- source estimate...
-HUOM! Tämän takaa 
-voisi valita 
-käytettävän 
-inverse operatorin
- </string>
+ source estimate</string>
                </property>
               </widget>
               <widget class="QLabel" name="label_35">
@@ -2825,21 +2831,34 @@ inverse operatorin
                 <string>--&gt;</string>
                </property>
               </widget>
-              <widget class="QGroupBox" name="groupBox_23">
+              <widget class="QWidget" name="">
                <property name="geometry">
                 <rect>
                  <x>640</x>
                  <y>40</y>
-                 <width>282</width>
-                 <height>228</height>
+                 <width>284</width>
+                 <height>263</height>
                 </rect>
                </property>
-               <property name="title">
-                <string>Source estimates:</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_30">
-                <item row="0" column="0">
-                 <widget class="QListWidget" name="listWidgetSourceEstimate"/>
+               <layout class="QVBoxLayout" name="verticalLayout_26">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_23">
+                  <property name="title">
+                   <string>Source estimates:</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_30">
+                   <item row="0" column="0">
+                    <widget class="QListWidget" name="listWidgetSourceEstimate"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonVisStc">
+                  <property name="text">
+                   <string>Visualize</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -2860,19 +2879,6 @@ inverse operatorin
                <property name="title">
                 <string>Source estimates:</string>
                </property>
-               <widget class="QLabel" name="label_38">
-                <property name="geometry">
-                 <rect>
-                  <x>30</x>
-                  <y>60</y>
-                  <width>211</width>
-                  <height>91</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>Edellisen välilehden lista tähän</string>
-                </property>
-               </widget>
               </widget>
               <widget class="QTextEdit" name="textEdit">
                <property name="geometry">
@@ -3672,10 +3678,10 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonComputeInverse</tabstop>
   <tabstop>tableViewFSolutionsToInverse</tabstop>
   <tabstop>tableViewInverseOperators</tabstop>
-  <tabstop>radioButton</tabstop>
-  <tabstop>radioButton_2</tabstop>
-  <tabstop>listView_3</tabstop>
-  <tabstop>radioButton_3</tabstop>
+  <tabstop>radioButtonRaw</tabstop>
+  <tabstop>radioButtonEpoch</tabstop>
+  <tabstop>listWidgetInverseEpoch</tabstop>
+  <tabstop>radioButtonEvoked</tabstop>
   <tabstop>listWidgetInverseEvoked</tabstop>
   <tabstop>pushButtonMakeSourceEstimate</tabstop>
   <tabstop>textEdit</tabstop>
@@ -3698,12 +3704,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1544</x>
+     <y>658</y>
     </hint>
    </hints>
   </connection>
@@ -3714,12 +3720,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1545</x>
+     <y>682</y>
     </hint>
    </hints>
   </connection>
@@ -3730,12 +3736,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>617</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1544</x>
+     <y>623</y>
     </hint>
    </hints>
   </connection>
@@ -3752,6 +3758,38 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>447</x>
      <y>735</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>456</x>
+     <y>433</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEpoch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetInverseEpoch</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>448</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>250</y>
     </hint>
    </hints>
   </connection>
