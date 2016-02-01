@@ -38,7 +38,11 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
             #callargs = logger.clean_callargs(mne_instance_name, callargs_copy)
             callargs = getcallargs(mne_func, *args, **kwargs)
     except:
-        logger.logger.info(success_msg + '\nLogging parameters failed: ' + mne_instance_name)
+        logger.logger.info(''.join([
+            success_msg,
+            '\nLogging parameters failed: ',
+            mne_instance_name
+        ]))
         return result
     params_str = ''
     for key, value in callargs.items():
@@ -46,7 +50,8 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
     #remove the last comma and whitespace
     cleaned_params_str = params_str[0:len(params_str) - 2]
     working_file = experiment._working_file_names[experiment.active_subject_name]
-    logger.logger.info('{0}\nFile: {1}\n{2}({3})'.format(success_msg, working_file, mne_instance_name, cleaned_params_str))
+    logger.logger.info('{0}\nFile: {1}\n{2}({3})'.format(
+        success_msg, working_file, mne_instance_name, cleaned_params_str))
     return result
 
 """
