@@ -11,7 +11,7 @@ Module for code related to handling program wide preferences.
 import os
 import ConfigParser
 from ConfigParser import NoOptionError
-from meggie.code_meggie.utils.files import filepath
+from meggie.code_meggie.utils.files import home_filepath
 
 
 class PreferencesHandler(object):
@@ -57,7 +57,7 @@ class PreferencesHandler(object):
         else:
             config.set('MiscOptions', 'confirmQuit', 'False')
     
-        with open(filepath('preferences.cfg'), 'wb') as configfile:
+        with open(home_filepath('.meggieprefs'), 'wb') as configfile:
             config.write(configfile)
         
         
@@ -65,7 +65,7 @@ class PreferencesHandler(object):
         """
         Reads the preferences from disk into class attributes.
         """
-        filename = filepath('preferences.cfg')
+        filename = home_filepath('.meggieprefs')
         if os.path.isfile(filename):
             config = ConfigParser.RawConfigParser()
             config.read(filename)
