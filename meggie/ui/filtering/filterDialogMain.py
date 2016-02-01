@@ -149,8 +149,19 @@ class FilterDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            error_messages.append(
-                self.filter(self.caller.experiment.active_subject)
+
+            params = self.batching_widget.data[recently_active_subject]
+            info = self.caller.experiment.active_subject.working_file.info
+            # Check if the filter frequency values are sane or not.
+            if (self._validateFilterFreq(params, info['sfreq']) == False):
+                error_messages.append(''.join([
+                    'Bad filter frequency values for subject ',
+                    recently_active_subject
+                ]))
+                pass
+            else:
+                error_messages.append(
+                    self.filter(self.caller.experiment.active_subject)
             )
         
         # 2. Calculation is done for the rest of the subjects.
@@ -161,9 +172,20 @@ class FilterDialog(QtGui.QDialog):
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
-                # Calculation is done in a separate method so that Python
-                # frees memory from the earlier subject's data calculation.
-                error_messages.append(self.filter(subject))
+
+                params = self.batching_widget.data[subject.subject_name]
+                info = subject.working_file.info
+                # Check if the filter frequency values are sane or not.
+                if (self._validateFilterFreq(params, info['sfreq']) == False):
+                    error_messages.append(''.join([
+                        'Bad filter frequency values for subject ',
+                        subject.subject_name
+                    ]))
+                    continue
+                else:
+                    # Calculation is done in a separate method so that Python
+                    # frees memory from the earlier subject's data calculation.
+                    error_messages.append(self.filter(subject))
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
