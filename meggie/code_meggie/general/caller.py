@@ -1498,7 +1498,7 @@ class Caller(object):
 
     @messaged
     @threaded
-    def filter(self, dataToFilter, info, dic):
+    def filter(self, dic, subject):
         """
         Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is one or more of
@@ -1512,12 +1512,13 @@ class Caller(object):
 
         Returns the filtered array.
         """
-        return self._filter(dataToFilter, info, dic)
-
-    def _filter(self, dataToFilter, info, dic):
+        return self._filter(dic, subject)
+    
+    def _filter(self, dic, subject):
         """Performed in a working thread."""
+        dataToFilter = subject.working_file
+        info = dataToFilter.info
         sf = info['sfreq']
-
         if isinstance(dataToFilter, mne.io.Raw):
             hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
             lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None

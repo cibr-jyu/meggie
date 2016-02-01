@@ -44,7 +44,6 @@ import mne
 from PyQt4 import QtCore,QtGui
 
 from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
-from meggie.ui.preprocessing.projectorDialog import ProjectorDialog
 from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
@@ -53,7 +52,7 @@ from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
-class EcgParametersDialog(ProjectorDialog):
+class EcgParametersDialog(QtGui.QDialog):
     """
     Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
@@ -61,7 +60,6 @@ class EcgParametersDialog(ProjectorDialog):
     caller = Caller.Instance()
 
     def __init__(self, parent):
-        #ProjectorDialog.__init__(self, parent, Ui_Dialog)
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
