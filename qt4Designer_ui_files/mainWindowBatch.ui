@@ -2731,8 +2731,8 @@
                 <rect>
                  <x>30</x>
                  <y>20</y>
-                 <width>431</width>
-                 <height>513</height>
+                 <width>430</width>
+                 <height>511</height>
                 </rect>
                </property>
                <property name="title">
@@ -2761,28 +2761,52 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QListWidget" name="listWidgetInverseEpoch">
+                     <widget class="QFrame" name="frameInverseEpochs">
                       <property name="enabled">
                        <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>400</width>
+                        <height>200</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
                       </property>
                      </widget>
                     </item>
                    </layout>
                   </item>
                   <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_19">
-                    <item>
+                   <layout class="QGridLayout" name="gridLayout_32">
+                    <item row="0" column="0">
                      <widget class="QRadioButton" name="radioButtonEvoked">
                       <property name="text">
                        <string>Evoked dataset</string>
                       </property>
                      </widget>
                     </item>
-                    <item>
-                     <widget class="QListWidget" name="listWidgetInverseEvoked">
+                    <item row="1" column="0">
+                     <widget class="QGroupBox" name="groupBoxInverseEvoked">
                       <property name="enabled">
                        <bool>false</bool>
                       </property>
+                      <property name="title">
+                       <string>Evoked collections</string>
+                      </property>
+                      <layout class="QGridLayout" name="gridLayout_33">
+                       <item row="0" column="0">
+                        <widget class="QListWidget" name="listWidgetInverseEvoked">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                    </layout>
@@ -2831,7 +2855,7 @@
                 <string>--&gt;</string>
                </property>
               </widget>
-              <widget class="QWidget" name="">
+              <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>640</x>
@@ -3680,9 +3704,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>tableViewInverseOperators</tabstop>
   <tabstop>radioButtonRaw</tabstop>
   <tabstop>radioButtonEpoch</tabstop>
-  <tabstop>listWidgetInverseEpoch</tabstop>
   <tabstop>radioButtonEvoked</tabstop>
-  <tabstop>listWidgetInverseEvoked</tabstop>
   <tabstop>pushButtonMakeSourceEstimate</tabstop>
   <tabstop>textEdit</tabstop>
   <tabstop>textEditConsole</tabstop>
@@ -3762,34 +3784,50 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
+   <sender>radioButtonEpoch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameInverseEpochs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>472</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>radioButtonEvoked</sender>
    <signal>toggled(bool)</signal>
    <receiver>listWidgetInverseEvoked</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>456</x>
-     <y>433</y>
+     <x>561</x>
+     <y>441</y>
     </hint>
     <hint type="destinationlabel">
-     <x>462</x>
-     <y>465</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonEpoch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>listWidgetInverseEpoch</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>448</x>
-     <y>205</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>450</x>
-     <y>250</y>
+     <x>553</x>
+     <y>518</y>
     </hint>
    </hints>
   </connection>

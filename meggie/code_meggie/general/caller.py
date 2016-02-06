@@ -1969,28 +1969,79 @@ class Caller(object):
         # Update ui.
         self.parent.update_covariance_info_box()
 
-    def make_source_estimate(self, evoked_name, inv_name, method):
+    def make_source_estimate(self, inst_name, type, inv_name, method):
         """
         Method for computing source estimate.
         Args:
-            evoked_name: Name of the evoked collection.
+            inst_name: Name of the data instance.
+            type: str to indicate type of data.
+                One of ['raw', 'epochs', 'evoked'].
             inv_name: Name of the inverse operator.
             method: Method to use ('MNE', 'dSPM', 'sLORETA').
         """
-        evoked = self.experiment.active_subject._evokeds[evoked_name]
-        evoked_raw = evoked._raw
-        if isinstance(evoked_raw, list):
-            print 'Selecting first evoked from the collection...'
-            evoked_raw = evoked_raw[0]
-        source_dir = self.experiment.active_subject._source_analysis_directory
+        # TODO: refactor
+        subject = self.experiment.active_subject
+        source_dir = subject._source_analysis_directory
         inv_file = os.path.join(source_dir, inv_name)
+        lmbd = 1. / 9.
         try:
             inv = mne.minimum_norm.read_inverse_operator(inv_file)
-            stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
-                                                 method=method)
-            stc.save(inv_file[:-8])
         except Exception as err:
-            raise('Exception while computing inverse solution:\n' + str(err))
+            raise Exception('Error while reading inverse '
+                            'operator:\n' + str(err))
+        if type == 'raw':
+            inst = subject.working_file
+            try:
+                stc = mne.minimum_norm.apply_inverse_raw(inst, inv,
+                                                         lambda2=lmbd,
+                                                         method=method)
+            except Exception as err:
+                raise Exception('Exception while computing inverse '
+                                'solution:\n' + str(err))
+        elif type == 'epochs':
+            inst = subject.get_epochs(inst_name)
+            try:
+                stc = mne.minimum_norm.apply_inverse_epochs(inst, inv,
+                                                            lambda2=lmbd,
+                                                            method=method)
+            except Exception as err:
+                raise Exception('Exception while computing inverse '
+                                'solution:\n' + str(err))
+        elif type == 'evoked':
+            evoked = subject._evokeds[inst_name]
+            evoked_raw = evoked._raw
+
+            if isinstance(evoked_raw, list):
+                stc =list()
+                for inst in evoked_raw:
+                    try:
+                        stc.append(mne.minimum_norm.apply_inverse(inst, inv,
+                            lambda2=lmbd, method=method))
+                    except Exception as err:
+                        raise Exception('Exception while computing inverse '
+                                        'solution:\n' + str(err))
+            else:
+                try:
+                    stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
+                                                         lambda2=lmbd,
+                                                         method=method)
+                except Exception as err:
+                    raise Exception('Exception while computing inverse '
+                                    'solution:\n' + str(err))
+        if isinstance(stc, list):  # epochs and evoked saved individually
+            for i, estimate in enumerate(stc):
+                try:
+                    estimate.save(inv_file[:-8] + '-' + type + str(i))
+                except Exception as err:
+                    raise Exception('Exception while saving inverse '
+                                    'solution:\n' + str(err))
+            print 'Inverse solution computed succesfully.'
+            return stc
+        try:
+            stc.save(inv_file[:-8] + '-' + type)
+        except Exception as err:
+            raise Exception('Exception while saving inverse '
+                            'solution:\n' + str(err))
         print 'Inverse solution computed succesfully.'
         return stc
 

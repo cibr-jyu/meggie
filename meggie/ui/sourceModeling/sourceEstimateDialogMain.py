@@ -13,13 +13,13 @@ class SourceEstimateDialog(QtGui.QDialog):
     Dialog for making a source estimate.
     Args:
         parent: MainWindow.
-        evoked_name: Name of the evoked to use.
-        operators: List of available inverse operators.
+        inst_name: Name of the data instance to use.
+        type: str to indicate type of data. One of ['raw', 'epochs', 'evoked'].
     """
     caller = Caller.Instance()
     stc_computed = QtCore.pyqtSignal()
 
-    def __init__(self, parent, evoked_name):
+    def __init__(self, parent, evoked_name, type):
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_SourceEstimateDialog()
@@ -30,14 +30,16 @@ class SourceEstimateDialog(QtGui.QDialog):
         operators = [f for f in listdir(dir) if
                      isfile(join(dir, f)) and f.endswith('-inv.fif') ]
         self.ui.comboBoxInverseOperator.addItems(operators)
+        self.type = type
 
     def accept(self):
         """
         Method for performing source estimate computation. Called on ok.
         """
-        evoked_name = str(self.ui.labelEvoked.text())
+        inst_name = str(self.ui.labelEvoked.text())  # TODO: change label name
         inv_name = str(self.ui.comboBoxInverseOperator.currentText())
         method = str(self.ui.comboBoxMethod.currentText())
-        stc = self.caller.make_source_estimate(evoked_name, inv_name, method)
+        stc = self.caller.make_source_estimate(inst_name, self.type,
+                                               inv_name, method)
         self.stc_computed.emit()
         self.close()

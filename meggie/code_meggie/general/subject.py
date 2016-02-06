@@ -93,9 +93,9 @@ class Subject(QObject):
     @property
     def raw_data(self):
         """
-        Returns the raw data object of the subject.
+        Returns the raw data object (instance of RawFIF) of the subject.
         """
-        return self._raw_data
+        return self._raw_data  # TODO: what is this?
 
     @raw_data.setter
     def raw_data(self, raw_data):
@@ -103,7 +103,8 @@ class Subject(QObject):
         Sets the raw data object for the subject.
         Raises an exception if the given data type is wrong. 
         Keyword arguments:
-        raw_data        -- the raw data file of the measured data
+        raw_data        -- Instance of RawFIF.
+                           The raw data file of the measured data
         """
         if (isinstance(raw_data, mne.io.Raw)):
             self._raw_data = raw_data
@@ -151,7 +152,7 @@ class Subject(QObject):
         Sets the current working raw object and notifies the main window to
         show it.
         Keyword arguments:
-        raw         -- raw data file.
+        raw         -- Instance of RawFIF.
         """
         if (isinstance(raw, mne.io.Raw)):
             self._working_file = raw
@@ -261,10 +262,10 @@ class Subject(QObject):
 
     def get_epochs(self, name):
         """
-        Helper for loading mne.Epochs obejct to memory for processing.
+        Helper for loading mne.Epochs instance to memory for processing.
         Keyword arguments:
         name        -- Collection name for the epochs
-        Returns mne.Epochs object
+        Returns instance of mne.Epochs.
         """
         return mne.read_epochs(os.path.join(self._epochs_directory,
                                             name + '.fif'))

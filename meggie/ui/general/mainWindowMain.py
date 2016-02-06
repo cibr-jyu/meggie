@@ -1459,9 +1459,18 @@ class MainWindow(QtGui.QMainWindow):
         """Make source estimate clicked."""
         if checked is None:
             return
-        evoked_name = str(self.ui.listWidgetInverseEvoked.currentItem().text())
+        ui = self.ui
+        if ui.radioButtonRaw.isChecked():
+            inst_name = self.caller.experiment.active_subject.subject_name
+            type = 'raw'
+        elif ui.radioButtonEpoch.isChecked():
+            inst_name = str(self.epochList.currentItem().text())
+            type = 'epochs'
+        elif ui.radioButtonEvoked.isChecked():
+            inst_name = str(ui.listWidgetInverseEvoked.currentItem().text())
+            type = 'evoked'
         dir = self.caller.experiment.active_subject._source_analysis_directory
-        self.sourceEstimateDialog = SourceEstimateDialog(self, evoked_name)
+        self.sourceEstimateDialog = SourceEstimateDialog(self, inst_name, type)
         self.sourceEstimateDialog.stc_computed.connect(self.
             _update_source_estimates)
         self.sourceEstimateDialog.show()
@@ -1764,13 +1773,20 @@ class MainWindow(QtGui.QMainWindow):
         index = self.ui.tabWidget.currentIndex()
         if index == 1:
             mode = QtGui.QAbstractItemView.SingleSelection
+            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
         elif index == 2:
             mode = QtGui.QAbstractItemView.MultiSelection
+            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         elif index == 3:
             mode = QtGui.QAbstractItemView.SingleSelection
+            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+        elif index == 10:
+            mode = QtGui.QAbstractItemView.SingleSelection
+            self.epochList.ui.groupBoxEvents.setVisible(False)
+            self.epochList.setParent(self.ui.frameInverseEpochs)
         else:
             self.epochList.hide()
             return
