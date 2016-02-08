@@ -730,6 +730,11 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+            message = 'Please select an epoch collection on the list.'
+            self.messageBox = messageBoxes.shortMessageBox(message)
+            self.messageBox.show()
+            return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
         self.visualizeEpochs = (visualizeEpochChannelDialogMain.

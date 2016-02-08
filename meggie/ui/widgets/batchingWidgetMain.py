@@ -16,8 +16,8 @@ class BatchingWidget(QtGui.QWidget):
     The parent dialogs need to implement the following:
         - selection_changed          (method)
         - collect_parameter_values   (method)
-        - pushButtonCompute          (QPushButton)
-        - pushButtonComputeBatch     (QPushButton)
+        - pushButtonCompute          (QPushButton, signal: clicked() -> accept())
+        - pushButtonComputeBatch     (QPushButton, signal: clicked() -> acceptBatch())
         - widget                     (QWidget)
     """
     caller = Caller.Instance()
