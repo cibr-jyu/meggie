@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.1.4"
+  version: "0.1.5"
 
 source:
   path: .
@@ -16,6 +16,9 @@ requirements:
     - pyqt
     - xlwt
     - xlrd
+    - mayavi
+    - h5py
+    - joblib
     - mne ==0.10.0
 
 about:
