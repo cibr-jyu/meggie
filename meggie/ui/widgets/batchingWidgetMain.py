@@ -17,7 +17,7 @@ class BatchingWidget(QtGui.QWidget):
         - selection_changed          (method)
         - collect_parameter_values   (method)
         - pushButtonCompute          (QPushButton, signal: clicked() -> accept())
-        - pushButtonComputeBatch     (QPushButton, signal: clicked() -> acceptBatch())
+        - pushButtonComputeBatch     (QPushButton, signal: clicked() -> acceptBatch() <--create custom signal)
         - widget                     (QWidget)
     """
     caller = Caller.Instance()
