@@ -1701,7 +1701,7 @@ class MainWindow(QtGui.QMainWindow):
         amount of events with those IDs.
         """
         # TODO: trigger ---> event, also in the UI
-        events = self.caller.experiment.active_subject._event_set
+        events = self.caller.experiment.active_subject.create_event_set()
         if events is None:
             return
         events_string = ''
