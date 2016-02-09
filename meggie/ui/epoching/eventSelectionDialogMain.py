@@ -1,7 +1,7 @@
 # coding: utf-8
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -41,13 +41,15 @@ from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
 
-from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
-from meggie.ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
-from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general import fileManager
+
+from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
+from meggie.ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
+from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.general import messageBoxes
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 
 class EventSelectionDialog(QtGui.QDialog):
@@ -59,7 +61,7 @@ class EventSelectionDialog(QtGui.QDialog):
     #custom signals:
     epoch_params_ready = QtCore.pyqtSignal(dict)
 
-    def __init__(self, parent, params = None):
+    def __init__(self, parent): #, params = None):
         """Initialize the event selection dialog.
 
         Keyword arguments:
@@ -83,8 +85,10 @@ class EventSelectionDialog(QtGui.QDialog):
             if channel == self.caller.experiment.active_subject.stim_channel:
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
-        if params is not None:
-            self.fill_parameters(params)
+        #if params is not None:
+        #    self.fill_parameters(params)
+            
+        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
 
     def initialize(self, epochs_name):
         """
@@ -138,16 +142,24 @@ class EventSelectionDialog(QtGui.QDialog):
         events     -- Events to add.
         event_name -- The user-defined name of the events. Default is 'event'.
         """
+        
+        item = CustomListItem('%s, %s (%s)' % (events[0][2], event_name, str(len(events)) + ' events found'))
+        self.ui.listWidgetEvents.addItem(item)
+        
+        event_list = []
         for event in events:
             time = self.caller.index_as_time(event[0])
-            item = CustomListItem('%0.3fs, %s %s, %s' % (time, event_name,
-                                                         event[0], event[2]))
+            event_list.append('%0.3fs, %s %s, %s' % (time, event_name, event[0], event[2]))
+            
+            #item = CustomListItem('%0.3fs, %s %s, %s' % (time, event_name,
+            #                                             event[0], event[2]))
 
-            item.setData(32, event)
-            item.setData(33, event_name)
-            self.ui.listWidgetEvents.addItem(item)
+            #item.setData(32, event)
+            #item.setData(33, event_name)
+            #self.ui.listWidgetEvents.addItem(item)
+        self.batching_widget.data['events'] = event_list
 
-        self.ui.listWidgetEvents.sortItems()
+        #self.ui.listWidgetEvents.sortItems()
         if self.used_names.count(event_name) < 1:    
             self.used_names.append(event_name)
 
@@ -450,10 +462,11 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         Method for clearing the event list.
         """
-        for row in range(self.ui.listWidgetEvents.count()):
-            item = self.ui.listWidgetEvents.item(row)
-            if item.data(33) in self.used_names:
-                self.used_names.remove(item.data(33))
+        self.batching_widget.data.pop('events', None)
+        #for row in range(self.ui.listWidgetEvents.count()):
+        #    item = self.ui.listWidgetEvents.item(row)
+        #    if item.data(33) in self.used_names:
+        #        self.used_names.remove(item.data(33))
         self.ui.listWidgetEvents.clear()
 
     def set_event_name(self, name, suffix = 1):

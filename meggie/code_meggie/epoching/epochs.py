@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -110,6 +110,11 @@ class Epochs(QObject):
         params    -- dictionary of the parameters of the collection
         """
         self._params = params
+
+
+
+
+
 
     def create_epochs(self, experiment, raw, events, mag, grad, eeg, stim,
                       eog, reject, category, tmin, tmax):
