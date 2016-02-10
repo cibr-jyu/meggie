@@ -498,8 +498,3 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def calculate_epochs(self):
         pass
-
-class CustomListItem(QtGui.QListWidgetItem):
-    """Custom list widget item for enabling sorting by sample."""
-    def __lt__(self, other):
-        return self.data(32)[0] < other.data(32)[0]  # sample comparison
