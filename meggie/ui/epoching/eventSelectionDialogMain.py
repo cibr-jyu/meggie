@@ -496,6 +496,8 @@ class EventSelectionDialog(QtGui.QDialog):
             name = self.set_event_name(name, suffix)
             return name
 
+    def calculate_epochs(self):
+        pass
 
 class CustomListItem(QtGui.QListWidgetItem):
     """Custom list widget item for enabling sorting by sample."""

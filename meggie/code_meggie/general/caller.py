@@ -516,6 +516,38 @@ class Caller(object):
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
 
     @messaged
+    def create_epochs(self, subject, params):
+        events = params['events']
+        events = np.array(events) # Just to make sure it is a numpy array.
+        if params['mag'] and params['grad']:
+            params['meg'] = True
+        elif params['mag']:
+            params['meg'] = 'mag'
+        elif params['grad']:
+            params['meg'] = 'grad'
+        else:
+            params['meg'] = False
+        if not isinstance(subject.working_file, mne.io.Raw):
+            raise TypeError('Not a Raw object')
+        #TODO: log mne call
+        picks = mne.pick_types(subject.working_file.info, meg=params['meg'],
+            eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
+        if len(picks) == 0:
+            raise ValueError(''.join([
+                'Picks cannot be empty. Select picks by checking the ',
+                'checkboxes.'
+                ]))
+        epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
+            subject.working_file, events, params['category'], params['tmin'],
+            params['tmax'], picks=picks, reject=params['reject'])
+        if len(epochs.get_data()) == 0:
+            raise ValueError(''.join([
+                'Could not find any data. Perhaps the rejection thresholds',
+                'are too strict...'
+                ]))
+        return epochs
+
+    @messaged
     def create_new_epochs(self, epoch_params):
         """
         A method for creating new epochs with the given parameter values for
