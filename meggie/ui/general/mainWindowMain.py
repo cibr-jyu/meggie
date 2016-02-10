@@ -452,8 +452,6 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epoch_params_ready.connect(self.
-                                                             create_new_epochs)
         self.epochParameterDialog.finished.connect(self.on_close)
         self.epochParameterDialog.show()
 
@@ -474,21 +472,18 @@ class MainWindow(QtGui.QMainWindow):
         else:
             event.accept()
 
-    @QtCore.pyqtSlot(dict)
-    def create_new_epochs(self, epoch_params):
+    def update_epochs(self):
         """A slot for creating new epochs with the given parameter values.
 
         Keyword arguments:
         epoch_params = A dictionary containing the parameter values for
                        creating the epochs minus the raw data.
         """
-        # Raw data is not present in the dictionary so get it from the
-        # current experiment.active_subject.
-        self.caller.create_new_epochs(epoch_params, parent_handle=self)
-        fname = epoch_params['collectionName']
-        item = QtGui.QListWidgetItem(fname)
-        self.epochList.addItem(item, 1, overwrite=True)
-        self.epochList.setCurrentItem(item)
+        epochs = self.caller.experiment.active_subject.get_epochs()
+        if epochs is not None:
+            for epoch in epochs:
+                item = QtGui.QListWidgetItem(epoch.collection_name)
+                self.epochList.addItem(item)
 
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
@@ -556,8 +551,6 @@ class MainWindow(QtGui.QMainWindow):
         # modify_epochs removes the previous Epochs object and raw files
         # created from it and creates new Epochs object and raw files.
         # Also removes the epochWidget item and replaces it with the new one.
-        self.epochParameterDialog.epoch_params_ready.connect(self.
-                                                             create_new_epochs)
         self.epochParameterDialog.show()
 
     def on_pushButtonSaveEpochs_clicked(self, checked=None):

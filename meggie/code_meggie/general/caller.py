@@ -517,6 +517,11 @@ class Caller(object):
 
     @messaged
     def create_epochs(self, subject, params):
+        
+        #events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
+        #    shortest_event=1, mask=mask)
+                
+        
         events = params['events']
         events = np.array(events) # Just to make sure it is a numpy array.
         if params['mag'] and params['grad']:

@@ -40,6 +40,7 @@ import numpy as np
 from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
+from mne import make_fixed_length_events
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
@@ -85,10 +86,17 @@ class EventSelectionDialog(QtGui.QDialog):
             if channel == self.caller.experiment.active_subject.stim_channel:
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
+        
+        self.events = []
+        self.fixed_length_events = [] # MNE uses different method for fixed length events
+        
+        
         #if params is not None:
         #    self.fill_parameters(params)
             
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        for subject in self.caller.experiment.get_subjects():
+            self.batching_widget.data[subject.subject_name] = {}
 
     def initialize(self, epochs_name):
         """
@@ -134,7 +142,7 @@ class EventSelectionDialog(QtGui.QDialog):
             events.append([int(event[0]), int(event[1]), int(event[2])])
         self.add_events(events, event_name)
 
-    def add_events(self, events, event_name):
+    def add_events(self, event_params, fixed=False):
         """Add a list of events or a single event to the ui's eventlist.
 
         Keyword arguments:
@@ -143,25 +151,67 @@ class EventSelectionDialog(QtGui.QDialog):
         event_name -- The user-defined name of the events. Default is 'event'.
         """
         
-        item = CustomListItem('%s, %s (%s)' % (events[0][2], event_name, str(len(events)) + ' events found'))
-        self.ui.listWidgetEvents.addItem(item)
+        #Checks if any events found with given event_params
+        if fixed:
+            events = make_fixed_length_events(
+                self.caller.experiment.active_subject.working_file,
+                event_params['event_id'], event_params['tmin'],
+                event_params['tmax'], event_params['interval']
+            )
+            if len(events) == 0:
+                return
+            self.events.append(event_params)
+            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['events'] = self.events
+        else:
+            e = Events(self.caller.experiment.active_subject.working_file,
+                event_params['stim_channel'], event_params['mask'])
+            mask = np.bitwise_not(event_params['mask'])
+            events = e.pick(np.bitwise_and(event_params['event_id'], mask))
+            if len(events) == 0:
+                return
+            self.fixed_length_events.append(event_params)
+            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['fixed_length_events'] = self.fixed_length_events
+        self.ui.listWidgetEvents.clear()
         
-        event_list = []
-        for event in events:
-            time = self.caller.index_as_time(event[0])
-            event_list.append('%0.3fs, %s %s, %s' % (time, event_name, event[0], event[2]))
-            
-            #item = CustomListItem('%0.3fs, %s %s, %s' % (time, event_name,
-            #                                             event[0], event[2]))
+        if self.batching_widget.ui.checkBoxBatch.checkState():
+            item = self.batching_widget.ui.listWidgetSubjects.currentItem()
+            if item is not None:
+                subject_name = str(item.text())
+        else:
+            subject_name = self.caller.experiment.active_subject.subject_name
 
-            #item.setData(32, event)
-            #item.setData(33, event_name)
-            #self.ui.listWidgetEvents.addItem(item)
-        self.batching_widget.data['events'] = event_list
+        if 'events' in self.batching_widget.data[subject_name]:
+            events = self.batching_widget.data[subject_name]['events']
+            for event in events:
+                item = QtGui.QListWidgetItem(
+                    '%s, %s (%s, %s)' % (event['event_id'], event['event_name'],
+                    'mask=' + str(event['mask']),
+                    'stim_channel=' + str(event['stim_channel']))
+                ) #str(len(event)) + ' events found'))
+                self.ui.listWidgetEvents.addItem(item)
+        if 'fixed_length_events' in self.batching_widget.data[subject_name]:
+            fixed_length_events = self.batching_widget.data[subject_name]['fixed_length_events']
+            for event in fixed_length_events:
+                item = QtGui.QListWidgetItem(
+                    '%s, %s (%s, %s, %s)' % (event['event_id'], event['event_name'],
+                    'start ' + str(event['tmin']), 'end ' + str(event['tmax']),
+                    'interval ' + str(event['interval']))
+                ) #, str(len(event)) + ' events found'))
+                self.ui.listWidgetEvents.addItem(item)
+            
 
         #self.ui.listWidgetEvents.sortItems()
-        if self.used_names.count(event_name) < 1:    
-            self.used_names.append(event_name)
+        #if self.used_names.count(event_name) < 1:    
+        #    self.used_names.append(event_name)
+
+    def selection_changed(self, subject_name, params_dict):
+        """Unpickles parameter file from subject path and updates the values
+        on dialog.
+        """
+        self.events = None
+        self.fixed_length_events = None
+        
+        pass
 
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
@@ -238,6 +288,8 @@ class EventSelectionDialog(QtGui.QDialog):
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 'collectionName' : collectionName}
+        self.batching_widget.data
+        
         return param_dict
 
     def create_eventlist(self):
@@ -327,11 +379,16 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if checked is None:
             return
-        # name = self.set_event_name(self.ui.lineEditName.text())
-        name = self.ui.lineEditName.text()
-        events = self.create_eventlist()
-        self.add_events(events, name)
-        self.ui.lineEditName.setText('Event')
+        event_params = {
+            'stim_channel': str(self.ui.comboBoxStimChannel.currentText()),
+            'mask': self.ui.spinBoxMask.value(),
+            'event_id': self.ui.spinBoxEventID.value(),
+            'event_name': str(self.ui.lineEditName.text())
+        }
+        #self.events.append(event_params)
+        #self.batching_widget.data['events'] = self.events
+        self.add_events(event_params)
+        
 
     def accept(self):
         """Save the parameters in a dictionary and send it forward.
@@ -364,7 +421,7 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage.show()
             return
 
-        self.epoch_params_ready.emit(param_dict)
+        self.parent.update_epochs()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
@@ -448,15 +505,7 @@ class EventSelectionDialog(QtGui.QDialog):
             return
         if self.fixedLengthDialog is None:
             self.fixedLengthDialog = FixedLengthEpochDialog(self)
-        self.fixedLengthDialog.fixed_events_ready.connect(self.
-                                                          on_fixedEventsCreated)
         self.fixedLengthDialog.show()
-
-    @QtCore.pyqtSlot(list, str)
-    def on_fixedEventsCreated(self, events, name):
-        """
-        """
-        self.add_events(events, name)
 
     def on_pushButtonClear_clicked(self, checked=None):
         """
