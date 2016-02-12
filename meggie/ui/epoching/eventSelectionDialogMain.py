@@ -40,7 +40,6 @@ import numpy as np
 from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
-from mne import make_fixed_length_events
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
@@ -87,16 +86,14 @@ class EventSelectionDialog(QtGui.QDialog):
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
         
-        self.events = []
-        self.fixed_length_events = [] # MNE uses different method for fixed length events
-        
-        
         #if params is not None:
         #    self.fill_parameters(params)
             
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
         for subject in self.caller.experiment.get_subjects():
             self.batching_widget.data[subject.subject_name] = {}
+            self.batching_widget.data[subject.subject_name]['events'] = []
+            self.batching_widget.data[subject.subject_name]['fixed_length_events'] = [] 
 
     def initialize(self, epochs_name):
         """
@@ -142,7 +139,7 @@ class EventSelectionDialog(QtGui.QDialog):
             events.append([int(event[0]), int(event[1]), int(event[2])])
         self.add_events(events, event_name)
 
-    def add_events(self, event_params, fixed=False):
+    def update_events(self):
         """Add a list of events or a single event to the ui's eventlist.
 
         Keyword arguments:
@@ -150,35 +147,9 @@ class EventSelectionDialog(QtGui.QDialog):
         events     -- Events to add.
         event_name -- The user-defined name of the events. Default is 'event'.
         """
-        
-        #Checks if any events found with given event_params
-        if fixed:
-            events = make_fixed_length_events(
-                self.caller.experiment.active_subject.working_file,
-                event_params['event_id'], event_params['tmin'],
-                event_params['tmax'], event_params['interval']
-            )
-            if len(events) == 0:
-                return
-            self.events.append(event_params)
-            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['events'] = self.events
-        else:
-            e = Events(self.caller.experiment.active_subject.working_file,
-                event_params['stim_channel'], event_params['mask'])
-            mask = np.bitwise_not(event_params['mask'])
-            events = e.pick(np.bitwise_and(event_params['event_id'], mask))
-            if len(events) == 0:
-                return
-            self.fixed_length_events.append(event_params)
-            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['fixed_length_events'] = self.fixed_length_events
         self.ui.listWidgetEvents.clear()
-        
-        if self.batching_widget.ui.checkBoxBatch.checkState():
-            item = self.batching_widget.ui.listWidgetSubjects.currentItem()
-            if item is not None:
-                subject_name = str(item.text())
-        else:
-            subject_name = self.caller.experiment.active_subject.subject_name
+        subject = self.get_subject_in_progress()
+        subject_name = subject.subject_name
 
         if 'events' in self.batching_widget.data[subject_name]:
             events = self.batching_widget.data[subject_name]['events']
@@ -186,9 +157,10 @@ class EventSelectionDialog(QtGui.QDialog):
                 item = QtGui.QListWidgetItem(
                     '%s, %s (%s, %s)' % (event['event_id'], event['event_name'],
                     'mask=' + str(event['mask']),
-                    'stim_channel=' + str(event['stim_channel']))
+                    'stim=' + str(event['stim']))
                 ) #str(len(event)) + ' events found'))
                 self.ui.listWidgetEvents.addItem(item)
+
         if 'fixed_length_events' in self.batching_widget.data[subject_name]:
             fixed_length_events = self.batching_widget.data[subject_name]['fixed_length_events']
             for event in fixed_length_events:
@@ -208,10 +180,96 @@ class EventSelectionDialog(QtGui.QDialog):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        self.events = None
-        self.fixed_length_events = None
+        for subject in self.caller.experiment.get_subjects():
+            if subject_name == subject.subject_name:
+                
+                #params_dict includes 'events' and 'fixed_length_events' keys
+                if len(params_dict) > 2:
+                    dic = params_dict
+                else:
+                    dic = self.get_default_values()
+                    
+                rejection = dic['reject']
+                
+                if 'grad' in rejection.keys():
+                    self.ui.checkBoxGrad.setChecked(True)
+                    self.ui.doubleSpinBoxGradReject_3.setValue(
+                        rejection['grad'])
+                else:
+                    self.ui.checkBoxGrad.setChecked(False)
+                if 'mag' in rejection.keys():
+                    self.ui.checkBoxMag.setChecked(True)
+                    self.ui.doubleSpinBoxMagReject_3.setValue(rejection['mag'])
+                else:
+                    self.ui.checkBoxMag.setChecked(False)
+                if 'eeg' in rejection.keys():
+                    self.ui.checkBoxEeg.setChecked(True)
+                    self.ui.doubleSpinBoxEEGReject_3.setValue(rejection['eeg'])
+                else:
+                    self.ui.checkBoxEeg.setChecked(False)
+                if 'eog' in rejection.keys():
+                    self.ui.checkBoxEog.setChecked(True)
+                    self.ui.doubleSpinBoxEOGReject_3.setValue(rejection['eog'])
+                else:
+                    self.ui.checkBoxEog.setChecked(False)
         
-        pass
+                if 'event_name' in dic.keys():
+                    self.ui.lineEditName.setText(dic['event_name'])
+                else:
+                    self.ui.lineEditName.setText('joo')
+                    
+                ch_names = subject.working_file.ch_names
+                stim_channels = [x for x in ch_names if x.startswith('STI')]
+                active = 0
+                for idx, channel in enumerate(stim_channels):
+                    self.ui.comboBoxStimChannel.addItem(channel)
+                    if channel == self.batching_widget.data[subject.subject_name]['events']:#self.caller.experiment.active_subject.stim_channel:
+                        active = idx
+                self.ui.comboBoxStimChannel.setCurrentIndex(active)
+                    
+                if 'event_id' in dic.keys():
+                    self.ui.spinBoxEventID.setValue(dic['event_id'])
+                else:
+                    self.ui.spinBoxEventID.SetValue(1)
+                
+                self.ui.lineEditCollectionName.setText(dic['collection_name'])
+                self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
+                self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
+                self.update_events()
+    
+    def get_subject_in_progress(self):
+        item = None
+        if self.batching_widget.ui.checkBoxBatch.checkState():
+            item = self.batching_widget.ui.listWidgetSubjects.currentItem()
+        if item is None:
+            subject_name = self.caller.experiment.active_subject.subject_name
+        else:
+            subject_name = str(item.text())
+        for subject in self.caller.experiment.get_subjects():
+            if subject.subject_name == subject_name:
+                return subject
+        return None 
+    
+    
+    def get_default_values(self):
+        subject = self.get_subject_in_progress()
+        stim_channel = subject.stim_channel
+        rejections = {
+            'grad': 3000.00,
+            'mag': 4000.00
+        }
+        return {
+            'collection_name': 'Epochs',
+            'tmin': -0.200,
+            'tmax': 0.500,
+            'include_stim': True,
+            'event_id': 1,
+            'stim': stim_channel,
+            'mask': 0,
+            'event_name': 'Event',
+            'reject': rejections
+        }
+        
 
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
@@ -228,11 +286,11 @@ class EventSelectionDialog(QtGui.QDialog):
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
         #stim_channel = self.caller.experiment.active_subject._stim_channel
 
-        collectionName = str(self.ui.lineEditCollectionName.text())
+        collection_name = str(self.ui.lineEditCollectionName.text())
         if len(self.parent.epochList.ui.listWidgetEpochs.\
-            findItems(collectionName, QtCore.Qt.MatchExactly)) > 0:
+            findItems(collection_name, QtCore.Qt.MatchExactly)) > 0:
             msg = ('Collection name %s exists. Overwrite existing epochs?' %
-                   collectionName)
+                   collection_name)
             reply = QtGui.QMessageBox.question(self, 'Collection exists', msg,
                                                QtGui.QMessageBox.Yes |
                                                QtGui.QMessageBox.No,
@@ -258,13 +316,6 @@ class EventSelectionDialog(QtGui.QDialog):
             if value != -1:
                 reject['eog'] = 1e-6 * value
 
-        events = list()
-        for i in xrange(self.ui.listWidgetEvents.count()):
-            event = self.ui.listWidgetEvents.item(i).data(32)
-            event_name = self.ui.listWidgetEvents.item(i).data(33)
-            event_tup = (event, event_name)
-            events.append(event_tup)
-
         #Check if any picks are found with current parameter values.
 
         if mag and grad:
@@ -284,35 +335,29 @@ class EventSelectionDialog(QtGui.QDialog):
 
         #Create a dictionary containing all the parameters
         #Note: Raw is not collected here.
-        param_dict = {'events' : events, 'mag' : mag, 'grad' : grad,
+        param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
-                      'tmax' : float(tmax), 'collectionName' : collectionName}
-        self.batching_widget.data
-        
+                      'tmax' : float(tmax), 'collection_name' : collection_name}
         return param_dict
 
-    def create_eventlist(self):
+    def create_eventlist(self, event_params):
         """
         Pick desired events from the raw data.
         """
-        event_id = self.ui.spinBoxEventID.value()
-        mask = self.ui.spinBoxMask.value()
-        stim_channel = str(self.ui.comboBoxStimChannel.currentText())
-        
         #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
         #the MNE Events' __init__ function uses mne.find_events :  -  D
         #this needs some manual logging or logging from the Events' __ini__
         #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
         #                  stim_channel, mask)
         e = Events(self.caller.experiment.active_subject.working_file,
-                   stim_channel, mask)
+                   event_params['stim'], event_params['mask'])
         
-        mask = np.bitwise_not(mask)
+        mask = np.bitwise_not(event_params['mask'])
         
         #TODO: Log events?
         #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
-        events = e.pick(np.bitwise_and(event_id, mask))
+        events = e.pick(np.bitwise_and(event_params['event_id'], mask))
         print str(events)
         return events
 
@@ -380,14 +425,15 @@ class EventSelectionDialog(QtGui.QDialog):
         if checked is None:
             return
         event_params = {
-            'stim_channel': str(self.ui.comboBoxStimChannel.currentText()),
+            'stim': str(self.ui.comboBoxStimChannel.currentText()),
             'mask': self.ui.spinBoxMask.value(),
             'event_id': self.ui.spinBoxEventID.value(),
             'event_name': str(self.ui.lineEditName.text())
         }
-        #self.events.append(event_params)
-        #self.batching_widget.data['events'] = self.events
-        self.add_events(event_params)
+        events = self.create_eventlist(event_params)
+        if len(events) != 0:
+            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['events'].append(event_params)
+            self.update_events()
         
 
     def accept(self):
