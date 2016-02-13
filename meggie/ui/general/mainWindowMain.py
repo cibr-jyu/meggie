@@ -1480,7 +1480,7 @@ class MainWindow(QtGui.QMainWindow):
         """Helper for updating source estimates to list."""
         self.ui.listWidgetSourceEstimate.clear()
         subject = self.caller.experiment.active_subject
-        dir = subject._source_analysis_directory
+        dir = subject._stc_directory
         stcs = [f for f in os.listdir(dir) if
                 os.path.isfile(os.path.join(dir, f)) and f.endswith('lh.stc')]
         for stc in stcs:

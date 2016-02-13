@@ -50,7 +50,7 @@ def copy_recon_files(activeSubject, sourceDirectory):
         # again.
         if os.path.isdir(reconDir):
             dir_util.remove_tree(reconDir)
-        
+
         create_reconFiles_directory(activeSubject)
         
         dst = activeSubject._reconFiles_directory
@@ -124,7 +124,7 @@ def create_fModel_directory(fmname, subject):
     # If this is the first forward model, the forwardModels directory doesn't
     # exist yet.
     if not os.path.isdir(subject._forwardModels_directory):
-        create_forwardModels_directory(subject)
+        populate_sourceAnalysis_directory(subject)
     
     # Existence actually checked already by check_fModel_name via
     # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
@@ -766,9 +766,11 @@ def save_subject(experiment, subject, file_name, path):
         except Exception: raise
     create_epochs_directory(subject)
     create_evokeds_directory(subject)
-    create_sourceAnalysis_directory(subject)
-    create_forwardModels_directory(subject)
-    create_reconFiles_directory(subject)
+    populate_sourceAnalysis_directory(subject)
+    #create_sourceAnalysis_directory(subject)
+    #create_forwardModels_directory(subject)
+    #create_reconFiles_directory(subject)
+    #create_stc_directory(subject)
 
 def create_subject_directory(path):
     try:
@@ -800,26 +802,20 @@ def create_evokeds_directory(subject):
         raise OSError('can\'t create evokeds directory to' + \
                       ' the chosen path')                
 
-def create_forwardModels_directory(subject):
-    """
-    Create a directory for saving forward models under the appropriate
-    directory.
-    """
-    try:
-        os.mkdir(subject._forwardModels_directory)
-    except OSError as e:
-        raise OSError('can\'t create forward models directory to' + \
-                      ' the chosen path' + str(e))
-    
-def create_sourceAnalysis_directory(subject):
+
+def populate_sourceAnalysis_directory(subject):
     try:
         os.mkdir(subject._source_analysis_directory)
-    except OSError:
-        raise OSError('can\'t create source analysis directory to' + \
-                      ' the chosen path')
-    
+        os.mkdir(subject._forwardModels_directory)
+        os.mkdir(subject._reconFiles_directory)
+        os.mkdir(subject._stc_directory)
+    except OSError as err:
+        raise OSError('Error while constructing source analysis directory '
+                      'structure:\n' + str(err))
+
+
 def create_reconFiles_directory(subject):
-    
+
     try:
         os.mkdir(subject._reconFiles_directory)
     except OSError:

@@ -117,7 +117,7 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             return
         
         if not os.path.isdir(activeSubject._forwardModels_directory):
-            fileManager.create_forwardModels_directory(activeSubject)
+            fileManager.populate_sourceAnalysis_directory(activeSubject)
         
         self._fmodels_directory = activeSubject._forwardModels_directory
         fmsdir = self._fmodels_directory

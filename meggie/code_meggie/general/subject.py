@@ -86,6 +86,8 @@ class Subject(QObject):
             os.path.join(self._source_analysis_directory, 'reconFiles')
         self._forwardModels_directory = \
             os.path.join(self._source_analysis_directory, 'forwardModels')
+        self._stc_directory = os.path.join(self._source_analysis_directory,
+                                           'stc')
 
         # Models for various types of data stored in subject
         self._forwardModelModel = None

@@ -2012,7 +2012,7 @@ class Caller(object):
             evoked_raw = evoked._raw
 
             if isinstance(evoked_raw, list):
-                stc =list()
+                stc = list()
                 for inst in evoked_raw:
                     try:
                         stc.append(mne.minimum_norm.apply_inverse(inst, inv,
@@ -2028,17 +2028,23 @@ class Caller(object):
                 except Exception as err:
                     raise Exception('Exception while computing inverse '
                                     'solution:\n' + str(err))
+        stc_fname = os.path.split(inv_file)[-1]
         if isinstance(stc, list):  # epochs and evoked saved individually
             for i, estimate in enumerate(stc):
+                stc_fname = os.path.join(subject._stc_directory,
+                                         stc_fname[:-8] + '-' + type + str(i))
                 try:
-                    estimate.save(inv_file[:-8] + '-' + type + str(i))
+                    estimate.save(stc_fname)
                 except Exception as err:
                     raise Exception('Exception while saving inverse '
                                     'solution:\n' + str(err))
             print 'Inverse solution computed succesfully.'
             return stc
+
+        stc_fname = os.path.join(subject._stc_directory,
+                                 stc_fname[:-8] + '-' + type)
         try:
-            stc.save(inv_file[:-8] + '-' + type)
+            stc.save(stc_fname)
         except Exception as err:
             raise Exception('Exception while saving inverse '
                             'solution:\n' + str(err))
@@ -2054,13 +2060,14 @@ class Caller(object):
             smoothing_steps: The amount of smoothing.
             alpha: Alpha value to use.
         """
-        source_dir = self.experiment.active_subject._source_analysis_directory
-        fname = os.path.join(source_dir, stc_name)
+        subject = self.experiment.active_subject
+        stc_dir = subject._stc_directory
+        fname = os.path.join(stc_dir, stc_name)
         stc = mne.read_source_estimate(fname)
         try:
             stc.plot(subject='', surface=surface, hemi=hemi, alpha=alpha,
                      smoothing_steps=smoothing_steps, time_viewer=True,
-                     subjects_dir=os.path.join(source_dir, 'reconFiles'))
+                     subjects_dir=subject._reconFiles_directory)
         except Exception as e:
             raise Exception('Error while plotting source estimate:\n' + str(e))
 
