@@ -38,6 +38,7 @@ import os
 import re
 import shutil
 import gc
+import json
 import csv
 import sys
 
@@ -86,6 +87,15 @@ class Experiment(QObject):
         self._subjects = []
         self._active_subject = None
         self._action_logger = None
+        self._workspace = None
+
+    @property
+    def workspace(self):
+        return self._workspace
+    
+    @workspace.setter
+    def workspace(self, workspace):
+        self._workspace = workspace
 
     @property
     def experiment_name(self):
@@ -165,32 +175,18 @@ class Experiment(QObject):
             raise ValueError("Too long _description")
 
     @property
-    def active_subject_name(self):
-        """
-        Method for getting active subject name.
-        """
-        raise NotImplementedError
-
-    @active_subject_name.setter
-    def active_subject_name(self, subject_name):
-        """
-        Method for setting active subject name.
-        """
-        raise NotImplementedError
-
-    @property
     def active_subject(self):
         """
         Method for getting activated subject.
         """
-        raise NotImplementedError
+        return self._active_subject
 
     @active_subject.setter
     def active_subject(self, subject):
         """
         Method for setting active subject.
         """
-        raise NotImplementedError
+        self._active_subject = subject
 
     @property
     def action_logger(self):
@@ -468,7 +464,30 @@ class Experiment(QObject):
         # # Protocol 2 used because of file object being pickled
         # pickle.dump(self, settingsFile, 2)
         # settingsFile.close()
-        raise NotImplementedError
+        
+        # save to file:
+        # construct save dict
+        
+        
+        
+        save_dict = {
+            'subjects': [subject.subject_name for subject in self.get_subjects()],
+            'name': self.experiment_name,
+            'author': self.author,
+            'description': self.description,
+        }
+        
+        if self.active_subject:
+            save_dict['active_subject'] = self.active_subject.subject_name
+        
+        # save to file
+        try:
+            os.makedirs(self.workspace)
+        except OSError:
+            pass
+        
+        with open(os.path.join(self.workspace, self.experiment_name + '.exp'), 'w') as f:
+            json.dump(save_dict, f)
 
     def save_parameter_file(self, command, inputfilename, outputfilename,
                             operation, dic):
@@ -528,7 +547,7 @@ class ExperimentHandler(QObject):
         self.parent = parent
 
     @messaged
-    def initialize_new_experiment(self, expDict):
+    def initialize_new_experiment(self, expDict, prefs):
         """
         Initializes the experiment object with the given data. Assumes that
         Meggie is currently devoid of a current experiment.
@@ -536,41 +555,23 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-        # Releases memory from the previously open experiment
-        #self.parent._experiment = None
-        # gc.collect()
-        # try:
-        #     experiment = Experiment()
-        #     experiment.author = expDict['author']
-        #     experiment.experiment_name = expDict['name']
-        #     experiment.description = expDict['description']
-        #     experiment.subject_paths = []
-        # except AttributeError:
-        #     raise Exception('Cannot assign attribute to experiment.')
-        # 
-        # workspace = self.parent.preferencesHandler.working_directory
-        # experiment.workspace = workspace
-        # 
-        # # Give control of the experiment to the main window of the application
-        # #self.parent.experiment = experiment
-        # 
-        # experiment.save_experiment_settings()
-        # 
-        # # Tell the preferencesHandler that this is the experiment we've had
-        # # open last.
-        # self.parent.preferencesHandler.previous_experiment_name = \
-        #     expDict['name']
-        # self.parent.preferencesHandler.write_preferences_to_disk()
-        # 
-        # # Update the main UI to be less empty and allow actions for a new
-        # # experiment. Also tell the MVC models they can initialize themselves.
-        # #self.parent.add_tabs()
-        # #self.parent._initialize_ui() 
-        # #self.parent.reinitialize_models()
-        # 
-        # self.initialize_logger(experiment)
-        # return experiment
-        raise NotImplemented
+
+        try:
+            experiment = Experiment()
+            experiment.author = expDict['author']
+            experiment.experiment_name = expDict['name']
+            experiment.description = expDict['description']
+        except AttributeError:
+            raise Exception('Cannot assign attribute to experiment.')
+        
+        experiment.workspace = os.path.join(prefs.working_directory, expDict['name'])
+        
+        experiment.save_experiment_settings()
+        
+        self.initialize_logger(experiment)
+        
+        return experiment
+        
 
     @messaged
     def open_existing_experiment(self, name, parent_handle=None):
@@ -647,7 +648,7 @@ class ExperimentHandler(QObject):
         print 'Initializing logger' 
         try:
             experiment.action_logger = ActionLogger()
-            experiment.action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
+            experiment.action_logger.initialize_logger(experiment.workspace)
         except:
             experiment.action_logger.log_message('Could not initialize logger.')
             print 'Unable to initialize logger'

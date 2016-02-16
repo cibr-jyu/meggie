@@ -354,8 +354,11 @@ class SubjectListModel(QtCore.QAbstractListModel):
             self.layoutChanged.emit()
             return
 
-        if (len(self.caller.experiment._subject_paths) > 0):
-            for path in self.caller.experiment._subject_paths:
+        subject_paths = [subject.subject_path for subject 
+                         in self.caller.experiment.get_subjects()]
+
+        if (len(subject_paths) > 0):
+            for path in subject_paths:
                 subjectName = path.split('/')[-1]
                 self.subjectNameList.append(subjectName)
 

@@ -75,8 +75,6 @@ class Subject(QObject):
         self._epochs = dict()
         self._evokeds = dict()
         self._subject_path = os.path.join(self._experiment.workspace,
-                                          self._experiment.experiment_name,
-                                          'subjects',
                                           self._subject_name)
         
         # self._epochs_directory = os.path.join(self._subject_path, 'epochs')

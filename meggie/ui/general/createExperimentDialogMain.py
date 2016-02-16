@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -79,6 +79,7 @@ class CreateExperimentDialog(QtGui.QDialog):
         
         experiment = self.parent.experimentHandler.initialize_new_experiment(
             expDict,
+            self.parent.preferencesHandler,
             parent_handle=self.parent
         )
         

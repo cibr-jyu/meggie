@@ -43,6 +43,7 @@ import sys
 import traceback
 import shutil
 import sip
+import gc
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QAbstractItemView
@@ -264,6 +265,8 @@ class MainWindow(QtGui.QMainWindow):
     def setExperiment(self, newExperiment):
         """Temporary setter for experiment."""
         self.caller.experiment = newExperiment
+        gc.collect()
+        
         self.add_tabs()
         self._initialize_ui()
         self.reinitialize_models()
