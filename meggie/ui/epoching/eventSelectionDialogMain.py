@@ -219,6 +219,13 @@ class EventSelectionDialog(QtGui.QDialog):
                     self.ui.lineEditName.setText('joo')
                     
                 ch_names = subject.working_file.ch_names
+                
+                
+                for subject in self.caller.experiment.get_subjects():
+                    raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+                    raw = fileManager.open_raw(raw_path, pre_load=False)
+                    #self.batching_widget.data[subject.subject_name + ' channels'] = raw.ch_names
+                    ch_names = raw.ch_names
                 stim_channels = [x for x in ch_names if x.startswith('STI')]
                 active = 0
                 for idx, channel in enumerate(stim_channels):
@@ -226,7 +233,7 @@ class EventSelectionDialog(QtGui.QDialog):
                     if channel == self.batching_widget.data[subject.subject_name]['events']:#self.caller.experiment.active_subject.stim_channel:
                         active = idx
                 self.ui.comboBoxStimChannel.setCurrentIndex(active)
-                    
+                
                 if 'event_id' in dic.keys():
                     self.ui.spinBoxEventID.setValue(dic['event_id'])
                 else:
