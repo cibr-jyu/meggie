@@ -45,7 +45,9 @@ from PyQt4.QtCore import pyqtSignal
 
 from meggie.ui.preprocessing.projectorDialog import ProjectorDialog
 from meggie.ui.preprocessing.eogParametersDialogUi import Ui_Dialog
-from meggie.ui.general import messageBoxes
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 from meggie.code_meggie.general import fileManager
 
@@ -70,8 +72,6 @@ class EogParametersDialog(ProjectorDialog):
         Collects the parameters for calculating PCA projections and passes 
         them to the caller class.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of...
         error_message = ''
         
@@ -85,7 +85,6 @@ class EogParametersDialog(ProjectorDialog):
                               error_message)
             if len(error_message) > 0:
                 #Exception already handled in caller
-                QtGui.QApplication.restoreOverrideCursor()
                 self.close()
                 return
             else:
@@ -93,7 +92,6 @@ class EogParametersDialog(ProjectorDialog):
                 self.parent.ui.checkBoxEOGComputed.setChecked(True)
             self.close()
             self.parent._initialize_ui()
-            QtGui.QApplication.restoreOverrideCursor()
             return
         recently_active_subject = self.caller.experiment._active_subject._subject_name
         subject_names = []
@@ -125,10 +123,8 @@ class EogParametersDialog(ProjectorDialog):
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         if len(error_message) > 0:
-            self.messageBox = messageBoxes.shortMessageBox(error_message)
-            self.messageBox.show()
+            messagebox(self.parent, error_message)
         self.parent._initialize_ui()
-        QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
     def on_pushButtonApply_clicked(self, checked=None):

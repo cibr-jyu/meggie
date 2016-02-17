@@ -729,7 +729,6 @@ class Caller(object):
                 do_meanwhile=self.parent.update_ui
             )
         except Warning as e:
-            QtGui.QApplication.restoreOverrideCursor()
             reply = QtGui.QMessageBox.question(
                 self.parent, 
                 "Evoked responses not found",
@@ -741,8 +740,6 @@ class Caller(object):
             if reply == QtGui.QMessageBox.No:
                 return
             else:
-                QtGui.QApplication.setOverrideCursor(
-                    QtGui.QCursor(QtCore.Qt.WaitCursor))
                 evokeds, groups = self._group_average(
                     groups,
                     ignore_not_found=True,

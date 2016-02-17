@@ -40,7 +40,6 @@ from threading import Thread
 from PyQt4 import QtCore,QtGui
 
 from meggie.ui.preprocessing.maxFilterDialogUi import Ui_Dialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
 
@@ -275,10 +274,5 @@ class MaxFilterDialog(QtGui.QDialog):
         Keyword arguments:
         visible  -- Whether to show or hide progress bar.
         """
-        if visible:
-            QtGui.QApplication.setOverrideCursor(QtGui.\
-                                                 QCursor(QtCore.Qt.WaitCursor))
-        else:
-            QtGui.QApplication.restoreOverrideCursor()
         self.ui.labelComputeMaxFilter.setVisible(visible)
         self.ui.progressBarComputeMaxFilter.setVisible(visible)

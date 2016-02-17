@@ -48,8 +48,6 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
 from meggie.code_meggie.sourceModeling.forwardModels import ForwardModels
 
-from meggie.ui.utils.decorators import messaged
-
 class Subject(QObject):
     
     def __init__(self, experiment, subject_name):
@@ -294,7 +292,6 @@ class Subject(QObject):
         self.add_epochs(epochs)
         return epochs
 
-    @messaged
     def remove_epochs(self, collection_name):
         """
         Removes epochs from epochs dictionary.
@@ -355,7 +352,6 @@ class Subject(QObject):
         """
         self._evokeds[str(name)] = evoked_object
 
-    @messaged
     def remove_evoked(self, name):
         """
         Removes evoked object from the evoked dictionary.
@@ -369,7 +365,6 @@ class Subject(QObject):
         except OSError:
             raise Exception('Evoked could not be deleted from average folder.')
 
-    @messaged
     def remove_power(self, name):
         """
         Removes AVGPower object from the TFR dictionary.

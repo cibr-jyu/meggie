@@ -47,7 +47,9 @@ from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general import fileManager
-from meggie.ui.general import messageBoxes
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messagingi import messagebox
 
 
 class EventSelectionDialog(QtGui.QDialog):
@@ -334,25 +336,20 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.
-                                             QCursor(QtCore.Qt.WaitCursor))
+
         param_dict = self.collect_parameter_values()
         if param_dict is None:
-            QtGui.QApplication.restoreOverrideCursor()
             return
 
         if all([not self.ui.checkBoxEeg.isChecked(), 
                 not self.ui.checkBoxGrad.isChecked(),
                 not self.ui.checkBoxMag.isChecked()]):
-            QtGui.QApplication.restoreOverrideCursor()
             message = 'Picks cannot be empty. Select picks by checking the ' +\
                       ' checkboxes.'
-            self.errorMessage = messageBoxes.shortMessageBox(message)
-            self.errorMessage.show()
+            messagebox(self.parent, message)
             return
 
         self.epoch_params_ready.emit(param_dict)
-        QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
     def on_pushButtonSaveEvents_clicked(self, checked=None):
@@ -373,11 +370,8 @@ class EventSelectionDialog(QtGui.QDialog):
             try:
                 activeSubject = self.caller._experiment._active_subject
                 fileManager.write_events(events, activeSubject)
-            except UnicodeDecodeError, err:
-                message = 'Cannot save events: ' + str(err)
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                print 'Aborting...'
+            except Exception as e:
+                exc_messagebox(self.parent, e)
                 return
 
     def on_pushButtonReadEvents_clicked(self, checked=None):
@@ -385,7 +379,9 @@ class EventSelectionDialog(QtGui.QDialog):
         Called when read events button is clicked. Reads events from an 
         excel-file.
         """
-        if checked is None: return # Standard workaround
+        if checked is None: 
+            return
+
         title = 'Read events from xls. Format: name|sample|old id|new id.'
         filename = str(QtGui.QFileDialog.getOpenFileName(self, title,
                                                          self.caller.\
@@ -398,8 +394,7 @@ class EventSelectionDialog(QtGui.QDialog):
         try:
             sheet = fileManager.read_events(filename)
         except XLRDError, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
+            exc_messagebox(self.parent, err)
             return
 
         for row_index in range(sheet.nrows):

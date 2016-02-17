@@ -46,8 +46,6 @@ from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.actionLogger import ActionLogger
 
-from meggie.ui.utils.decorators import messaged
-
 from PyQt4.QtCore import QObject
 from PyQt4 import QtGui
 
@@ -455,7 +453,6 @@ class Experiment(QObject):
         subject.find_stim_channel()
         subject.create_event_set()
 
-    @messaged
     def load_epochs(self, subject):
         """Loads raw epoch files from subject folder and sets them on
         subject._epochs objects.
@@ -494,7 +491,6 @@ class Experiment(QObject):
                 #    subject._epochs[name]._raw = epochs
         return epoch_items
 
-    @messaged
     def load_evokeds(self, subject):
         """Loads raw evoked files from subject folder and sets them on
         subject._evokeds objects.
@@ -679,7 +675,6 @@ class ExperimentHandler(QObject):
         """
         self.parent = parent
 
-    @messaged
     def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
@@ -723,7 +718,6 @@ class ExperimentHandler(QObject):
         self.initialize_logger(experiment)
         return experiment
 
-    @messaged
     def open_existing_experiment(self, name):
         """
         Opens an existing experiment, which is assumed to be in the working

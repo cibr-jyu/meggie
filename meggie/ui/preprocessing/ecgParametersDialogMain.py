@@ -48,6 +48,9 @@ from meggie.ui.general import messageBoxes
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
+
 
 class EcgParametersDialog(ProjectorDialog):
     """
@@ -214,8 +217,6 @@ class EcgParametersDialog(ProjectorDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         # Calculation is prevented because of incorrect ECG channel.        
         incorrect_ECG_channel = ''
         # Calculation is prevented because of...
@@ -230,23 +231,17 @@ class EcgParametersDialog(ProjectorDialog):
             self.calculate_ecg(self.caller.experiment._active_subject,\
                                incorrect_ECG_channel, error_message)
             if len(error_message) > 0:
-                self.messageBox = messageBoxes.shortMessageBox(error_message)
-                QtGui.QApplication.restoreOverrideCursor()
-                self.messageBox.show()
+                messagebox(self.parent, error_message)
                 self.close()
                 return
 
             if len(incorrect_ECG_channel) > 0:
-                self.messageBox = messageBoxes.\
-                shortMessageBox(incorrect_ECG_channel)
-                QtGui.QApplication.restoreOverrideCursor()
-                self.messageBox.show()
+                messagebox(self.parent, incorrect_ECG_channel)
                 self.close()
                 return
 
             self.parent.ui.pushButtonApplyECG.setEnabled(True)
             self.parent.ui.checkBoxECGComputed.setChecked(True)
-            QtGui.QApplication.restoreOverrideCursor()
             self.close()
             self.parent._initialize_ui()
             return
@@ -282,15 +277,13 @@ class EcgParametersDialog(ProjectorDialog):
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         if len(error_message) > 0:
-            self.messageBox = messageBoxes.shortMessageBox(error_message)
-            self.messageBox.show()
+            messagebox(self.parent, error_message)
+
         if len(incorrect_ECG_channel) > 0:
-            self.messageBox = messageBoxes.\
-                shortMessageBox(incorrect_ECG_channel)
-            self.messageBox.show()
+            messagebox(self.parent, error_message)
+
         self.close()
         self.parent._initialize_ui()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's ecg parameters dictionary.
@@ -455,8 +448,6 @@ class EcgParametersDialog(ProjectorDialog):
         error_message         -- string to store unsuccessful subject
                                  calculation
         """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
         gc.collect()
         ch_name = subject.ecg_params['ch_name']
         ch_list = fileManager.unpickle(os.path.join(subject._subject_path, 'channels'))
@@ -466,7 +457,6 @@ class EcgParametersDialog(ProjectorDialog):
                 incorrect_ECG_channel += \
                 '\nCalculation prevented for the subject: ' + \
                 subject._subject_name
-                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, error_message
             subject.ecg_params['ch_name'] = ch_name
         if subject.subject_name == self.caller.experiment._active_subject_name:
@@ -477,27 +467,23 @@ class EcgParametersDialog(ProjectorDialog):
         try:
             result = self.caller.call_ecg_ssp(subject._ecg_params, subject)
             if not result == 0:
-                QtGui.QApplication.restoreOverrideCursor()
                 return incorrect_ECG_channel, 'Error while computing ECG projections.'
-        except Exception:
-            tb = traceback.format_exc()
-            #error_message += '\n' + subject._subject_name + ': ' + str(err)
-            error_message += '\nAn error occurred during calculation for subject: ' + \
-                subject.subject_name + '. Proceed with care and check parameters!\n\n' + \
-                str(tb)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
             if self.ui.checkBoxBatch.isChecked() == True:
                 subject._working_file = None
             del subject._ecg_params['i']
-            QtGui.QApplication.restoreOverrideCursor()
+
             return incorrect_ECG_channel, error_message
         try:
             del subject._ecg_params['i']
         except Exception:
             pass
+
         fileManager.pickleObjectToFile(subject._ecg_params,
                                        os.path.join(subject._subject_path,
                                                     'ecg_proj.param'))
         if self.ui.checkBoxBatch.isChecked() == True:
             subject._working_file = None
-        QtGui.QApplication.restoreOverrideCursor()
         return incorrect_ECG_channel, error_message

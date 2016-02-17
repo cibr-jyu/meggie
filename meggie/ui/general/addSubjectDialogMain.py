@@ -45,6 +45,9 @@ from meggie.ui.general import messageBoxes
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
+
 import traceback
 import os
 
@@ -71,8 +74,6 @@ class AddSubjectDialog(QtGui.QDialog):
 
     def accept(self):
         """ Add the new subject. """
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -81,13 +82,11 @@ class AddSubjectDialog(QtGui.QDialog):
 
             # Check if the subject is already added to the experiment.
             if subject_name in self.parent.subjectListModel.subjectNameList:
-                QtGui.QApplication.restoreOverrideCursor()
                 msg = ('Subject ' + item.text() + ' is already added to the '
                        'experiment. Change the filename of the raw every time '
                        'you want to create a new subject with the same raw '
                        'file.')
-                self.messageBox = messageBoxes.shortMessageBox(msg)
-                self.messageBox.show()
+                messagebox(self.parent, msg)
                 return
 
             try:
@@ -96,14 +95,8 @@ class AddSubjectDialog(QtGui.QDialog):
                 self.caller.experiment.create_subject(subject_name,
                                                       self.caller.experiment,
                                                       raw_path)
-            except Exception:
-                tb = traceback.format_exc()
-                title = 'Problem creating a new subject'
-                msg = ('There was a problem creating a new subject. Please '
-                       'copy the following to your bug report:\n\n' + str(tb))
-                self.messageBox = messageBoxes.longMessageBox(title, msg)
-                self.messageBox.show()
-                QtGui.QApplication.restoreOverrideCursor()
+            except Exception as e:
+                exc_messagebox(self.parent, e)
                 return
 
             self.caller.activate_subject(subject_name,
@@ -120,7 +113,6 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent.reinitialize_models()
 
         self.close()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowse_clicked(self, checked=None):
         """Open file browser for raw data files."""
@@ -147,15 +139,15 @@ class AddSubjectDialog(QtGui.QDialog):
         """Opens the infoDialog for the raw file selected."""
         if checked is None:
             return
+
         try:
             self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.
                                             currentItem().text(),
                                             pre_load=False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
 
-        except (IOError, OSError, ValueError) as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
+        except Exception as e:
+            exc_message(self, e)
             return
 
         info = Ui_infoDialog()

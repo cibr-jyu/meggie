@@ -29,8 +29,6 @@ import csv
 from meggie.code_meggie.general.statistic import Statistic
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
-from meggie.ui.utils.decorators import messaged
-    
     
 def copy_recon_files(activeSubject, sourceDirectory):
         """

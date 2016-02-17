@@ -1,5 +1,4 @@
 # coding: utf-8
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 # Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and
 # Atte Rautio>
@@ -43,15 +42,16 @@ import sys
 import traceback
 import shutil
 import sip
+import matplotlib
+import mne
 
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QWhatsThis, QAbstractItemView
+from PyQt4.QtGui import QWhatsThis
+from PyQt4.QtGui import QAbstractItemView
 from PyQt4.Qt import QApplication
 
 from mne.evoked import write_evokeds
-import mne
 
-import matplotlib
 matplotlib.use('Qt4Agg')
 
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
@@ -82,8 +82,9 @@ from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.listWidget import ListWidget
-from meggie.ui.utils.decorators import messaged
 from meggie.ui.general.logDialogMain import LogDialog
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -208,8 +209,10 @@ class MainWindow(QtGui.QMainWindow):
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
-            self.experimentHandler.open_existing_experiment(name, 
-                                                            parent_handle=self)
+            try:
+                self.experimentHandler.open_existing_experiment(name)
+            except Exception as e:
+                messagebox(self, e)
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -285,12 +288,12 @@ class MainWindow(QtGui.QMainWindow):
                    (self, "Select _experiment directory", directory))
         if path == '':
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         print 'Opening experiment ' + path
-        self.experimentHandler.open_existing_experiment(os.path.basename(path),
-                                                        parent_handle=self)
-        QtGui.QApplication.restoreOverrideCursor()
+        try:
+            self.experimentHandler.open_existing_experiment(os.path.basename(path))
+        except Exception as e:
+            exc_messagebox(self, e)
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """Open subject dialog."""
@@ -505,13 +508,11 @@ class MainWindow(QtGui.QMainWindow):
         if not os.path.isfile(fname):
             return
 
-        @messaged
-        def load_epochs(fname, load_object):
-            return fileManager.load_epochs(fname, load_object)
-
-        epochs, params = load_epochs(fname, 
-                                     load_object=True,
-                                     parent_handle=self)
+        try:
+            epochs, params = fileManager.load_epochs(fname, load_object=True)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         # Change color of the item to red if no param file available.
         fname_base = os.path.basename(fname)
@@ -622,14 +623,12 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         items = self.epochList.ui.listWidgetEpochs.selectedItems()
+
         # If no events are selected, show a message to to the user and return.
         if len(items) == 0:
-            message = 'Please select an epoch collection to average.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox('Please select an epoch collection to average.')
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         prefix = ''
         epochs = []
         category = dict()
@@ -658,13 +657,11 @@ class MainWindow(QtGui.QMainWindow):
             if str(self.evokedList.item(item_idx).text()) == evoked_name:
                 message = ('Evoked data set with name %s already exists!' % 
                            evoked_name)
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                QtGui.QApplication.restoreOverrideCursor()
+                messagebox(message)
                 return
+
         item = QtGui.QListWidgetItem(evoked_name)
 
-        # TODO: create separate method in fileManager to save evoked
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = self.caller.experiment.active_subject._evokeds_directory
         if os.path.exists(saveFolder) is False:
@@ -673,39 +670,26 @@ class MainWindow(QtGui.QMainWindow):
             except IOError:
                 message = ('Writing to selected folder is not allowed. You can'
                            ' still process the evoked file (visualize etc.).')
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                QtGui.QApplication.restoreOverrideCursor()
+                messagebox(message)
+
         try:
-            # TODO: best filename option ? (_auditory_and_visual_eeg-ave)
             print 'Writing evoked data as ' + evoked_name + ' ...'
             write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.labelException.setText()
-            self.messageBox.show()
-            QtGui.QApplication.restoreOverrideCursor()
+            messagebox(message)
 
         self.evokedList.addItem(item)
 
-        @messaged
-        def handle_new_evoked(evoked_name, evoked, category):
-            return self.caller.experiment.active_subject.handle_new_evoked(
-                evoked_name,
-                evoked,
-                category
-            )
+        try:
+            self.caller.experiment.active_subject.handle_new_evoked(
+                evoked_name, evoked, category)
+        except Exception e:
+            exc_messagebox(self, e)
+            return
 
-        handle_new_evoked(
-            evoked_name,
-            evoked,
-            category,
-            parent_handle=self
-        )
         self.evokedList.setCurrentItem(item)
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""
@@ -744,8 +728,7 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         epochs_name = str(item.text())
         epochs = self.caller.experiment.active_subject.get_epochs(epochs_name)
 
@@ -757,7 +740,6 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.selection_changed()
         fig = epochs.plot(block=True, show=True)
         fig.canvas.mpl_connect('close_event', handle_close)
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """Plot the evoked data as a topology."""
@@ -766,15 +748,12 @@ class MainWindow(QtGui.QMainWindow):
         item = self.evokedList.currentItem()
         if item is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         layout = ''
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = str(self.ui.comboBoxLayout.currentText())
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == '':
-            QtGui.QApplication.restoreOverrideCursor()
             mBox = messageBoxes.shortMessageBox('No layout selected!')
             mBox.exec_()
             return
@@ -799,7 +778,6 @@ class MainWindow(QtGui.QMainWindow):
             oldText = 'Visualize selected dataset'
             self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
             self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
-            QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
@@ -820,7 +798,6 @@ class MainWindow(QtGui.QMainWindow):
                                                 'event names inside brackets '
                                                 'for group averaging.')
             mBox.exec_()
-            QtGui.QApplication.restoreOverrideCursor()
             return
 
         groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
@@ -865,37 +842,33 @@ class MainWindow(QtGui.QMainWindow):
             return
         path, filename = os.path.split(fname)
         if len(path) == 0 or len(filename) == 0:
-            msg = 'Failed to load file.'
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
+            messagebox(self, 'Failed to load file.')
+            return
+
         evoked, category = None, None
 
-        @messaged
-        def load_evoked(path, filename):
-            return fileManager.load_evoked(path, filename)
-
-        evoked, category = load_evoked(path, filename, parent_handle=self)
+        try:
+            evoked, category = fileManager.load_evoked(path, filename)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         if evoked is None:
             return
+
         item = QtGui.QListWidgetItem(filename.split('.')[0])
         self.evokedList.addItem(item)
         self.evokedList.setCurrentItem(item)
 
-        @messaged
-        def handle_new_evoked(evoked_name, evoked, category):
-            return self.caller.experiment.active_subject.handle_new_evoked(
-                evoked_name,
+        try:
+            self.caller.experiment.active_subject.handle_new_evoked(
+                item.text(),
                 evoked,
-                category
+                category,
             )
-
-        handle_new_evoked(
-            item.text(),
-            evoked,
-            category,
-            parent_handle=self,
-        )
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         saveFolder = self.caller.experiment.active_subject._evokeds_directory
         fname = os.path.join(saveFolder, filename)
@@ -934,10 +907,12 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            self.caller.experiment.active_subject.remove_epochs(
-                item_str,
-                parent_handle=self,
-            )
+            try:
+                self.caller.experiment.active_subject.remove_epochs(
+                    item_str,
+                )
+            except Exception as e:
+                exc_messagebox(self, e)
             self.epochList.remove_item(self.epochList.currentItem())
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
@@ -967,10 +942,12 @@ class MainWindow(QtGui.QMainWindow):
             item = self.evokedList.currentItem()
             row = self.evokedList.row(item)
             self.evokedList.takeItem(row)
-            self.caller.experiment.active_subject.remove_evoked(
-                item_str,
-                parent_handle=self,
-            )
+            try:
+                self.caller.experiment.active_subject.remove_evoked(
+                    item_str,
+                )
+            except Exception as e:
+                exc_messagebox(self, e)
         else:
             return
 
@@ -999,10 +976,12 @@ class MainWindow(QtGui.QMainWindow):
             item = self.ui.listWidgetPowerItems.currentItem()
             row = self.ui.listWidgetPowerItems.row(item)
             self.ui.listWidgetPowerItems.takeItem(row)
-            self.caller.experiment.active_subject.remove_power(
-                item_str,
-                parent_handle=self,
-            )
+            try:
+                self.caller.experiment.active_subject.remove_power(
+                    item_str,
+                )
+            except Exception as e:
+                exc_messagebox(self, e)
         else:
             return
 
@@ -1125,13 +1104,10 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
 
         self.tfr_dialog = TFRDialog(self, epochs)
-        QtGui.QApplication.restoreOverrideCursor()
         self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
 
@@ -1144,11 +1120,8 @@ class MainWindow(QtGui.QMainWindow):
             self.messageBox = messageBoxes.shortMessageBox(message)
             self.messageBox.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         self.tfrTop_dialog = TFRTopologyDialog(self, name)
-        QtGui.QApplication.restoreOverrideCursor()
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
@@ -1159,8 +1132,6 @@ class MainWindow(QtGui.QMainWindow):
         item = self.ui.listWidgetPowerItems.currentItem()
         if item is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         power_name = item.text()
         subject = self.caller.experiment.active_subject
         path = os.path.join(subject.subject_path, 'TFR')
@@ -1169,7 +1140,6 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""
@@ -1208,15 +1178,12 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         channels = list()
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         for i in xrange(self.ui.listWidgetChannels.count()):
             item = self.ui.listWidgetChannels.item(i)
             channels.append(str(item.text()))
 
         channelDialog = ChannelSelectionDialog(channels, 'Select channels')
         channelDialog.channelsChanged.connect(self.channels_modified)
-        QtGui.QApplication.restoreOverrideCursor()
         channelDialog.exec_()
 
     @QtCore.pyqtSlot(list)
@@ -1255,7 +1222,6 @@ class MainWindow(QtGui.QMainWindow):
 
         # Not much point trying to activate an already active subject.
         if subject_name == self.caller.experiment.active_subject_name:
-            QtGui.QApplication.restoreOverrideCursor()
             return
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
@@ -1569,11 +1535,15 @@ class MainWindow(QtGui.QMainWindow):
         # Populate epoch and evoked lists
         raw = self.caller.experiment.active_subject.working_file
         active_sub = self.caller.experiment.active_subject
+
         print 'Loading evokeds...'
-        epochs_items = self.caller.experiment.load_epochs(active_sub, 
-                                                          parent_handle=self)
-        evokeds_items = self.caller.experiment.load_evokeds(active_sub,
-                                                            parent_handle=self)
+
+        try:
+            epochs_items = self.caller.experiment.load_epochs(active_sub)
+            evokeds_items = self.caller.experiment.load_evokeds(active_sub)
+        except Exception as e:
+            exc_messagebox(self, e)
+
         if epochs_items is not None:
             for item in epochs_items:
                 self.epochList.addItem(item)
@@ -1587,8 +1557,7 @@ class MainWindow(QtGui.QMainWindow):
             InfoDialog(raw, self.ui, False)
             self.populate_raw_tab_event_list()
         except Exception as err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
+            exc_messagebox(self, err)
             return
         self.setWindowTitle('Meggie - ' +
                             self.caller.experiment.experiment_name)

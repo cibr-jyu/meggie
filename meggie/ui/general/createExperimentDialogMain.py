@@ -38,8 +38,10 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
 
 from meggie.code_meggie.general.experiment import Experiment
-from meggie.ui.general import messageBoxes
 from meggie.ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
  
 class CreateExperimentDialog(QtGui.QDialog):
@@ -68,19 +70,19 @@ class CreateExperimentDialog(QtGui.QDialog):
         
         if self.ui.lineEditExperimentName.text() == '':
             message = 'Give experiment a name.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
             return  
         
         expDict = {'name': self.ui.lineEditExperimentName.text(),
                    'author': self.ui.lineEditAuthor.text(),
                    'description': self.ui.textEditDescription.toPlainText()
                   }
-        
-        experiment = self.parent.experimentHandler.initialize_new_experiment(
-            expDict,
-            parent_handle=self.parent
-        )
+        try:
+            experiment = self.parent.experimentHandler.initialize_new_experiment(
+                expDict,
+            )
+        except Exception as e:
+            exc_messagebox(self, e)
         
         self.experimentCreated.emit(experiment)
         self.close()
