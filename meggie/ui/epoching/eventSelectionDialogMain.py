@@ -180,6 +180,8 @@ class EventSelectionDialog(QtGui.QDialog):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
+        
+        self.ui.comboBoxStimChannel.clear()
         for subject in self.caller.experiment.get_subjects():
             if subject_name == subject.subject_name:
                 
@@ -218,19 +220,19 @@ class EventSelectionDialog(QtGui.QDialog):
                 else:
                     self.ui.lineEditName.setText('joo')
                     
-                ch_names = subject.working_file.ch_names
-                
-                
                 for subject in self.caller.experiment.get_subjects():
-                    raw_path = self.caller.experiment._working_file_names[subject.subject_name]
-                    raw = fileManager.open_raw(raw_path, pre_load=False)
-                    #self.batching_widget.data[subject.subject_name + ' channels'] = raw.ch_names
-                    ch_names = raw.ch_names
+                    if subject_name == subject.subject_name:
+                        raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+                        raw = fileManager.open_raw(raw_path, pre_load=False)
+                        #self.batching_widget.data[subject.subject_name + ' channels'] = raw.ch_names
+                        ch_names = raw.ch_names
+                if len(ch_names) == 0:
+                    pass
                 stim_channels = [x for x in ch_names if x.startswith('STI')]
                 active = 0
                 for idx, channel in enumerate(stim_channels):
                     self.ui.comboBoxStimChannel.addItem(channel)
-                    if channel == self.batching_widget.data[subject.subject_name]['events']:#self.caller.experiment.active_subject.stim_channel:
+                    if channel == dic['stim']:#self.caller.experiment.active_subject.stim_channel:
                         active = idx
                 self.ui.comboBoxStimChannel.setCurrentIndex(active)
                 
@@ -255,8 +257,7 @@ class EventSelectionDialog(QtGui.QDialog):
         for subject in self.caller.experiment.get_subjects():
             if subject.subject_name == subject_name:
                 return subject
-        return None 
-    
+        return None
     
     def get_default_values(self):
         subject = self.get_subject_in_progress()
@@ -276,7 +277,6 @@ class EventSelectionDialog(QtGui.QDialog):
             'event_name': 'Event',
             'reject': rejections
         }
-        
 
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
