@@ -18,6 +18,8 @@ import sys
 
 from os.path import isfile, join
 
+from shutil import copyfile
+
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
@@ -46,16 +48,14 @@ def copy_recon_files(activeSubject, sourceDirectory):
         Returns True if copying was successful, else returns False.
         
         """         
-        reconDir = activeSubject._reconFiles_directory
+        reconDir = activeSubject.reconFiles_directory
         
         # Empty the destination directory first by removing it, then make it
         # again.
         if os.path.isdir(reconDir):
             dir_util.remove_tree(reconDir)
         
-        create_reconFiles_directory(activeSubject)
-        
-        dst = activeSubject._reconFiles_directory
+        dst = activeSubject.reconFiles_directory
         
         try:
             print '\n Meggie: Copying recon files... \n'
@@ -123,10 +123,6 @@ def create_fModel_directory(fmname, subject):
     fromCopyDirData = os.path.join(subject._reconFiles_directory, 'bem')
     fromCopyDirParams = subject._reconFiles_directory
     
-    # If this is the first forward model, the forwardModels directory doesn't
-    # exist yet.
-    if not os.path.isdir(subject._forwardModels_directory):
-        create_forwardModels_directory(subject)
     
     # Existence actually checked already by check_fModel_name via
     # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
@@ -752,78 +748,22 @@ def load_tfr(fname):
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
 
 
-def save_subject(experiment, subject, file_name, path):
-    create_subject_directory(path)
-    if os.path.exists(path):
-        try:
-            # TODO: Check if the file is saved with .fif suffix,
-            # if not, save the file with .fif suffix.
-            mne.io.Raw.save(subject._working_file,
-                            os.path.join(path,
-                                         str(os.path.basename(file_name))))
-            
-            # Save channel names list under subject folder
-            pickleObjectToFile(subject._working_file.ch_names,
-                os.path.join(subject._subject_path, 'channels'))
-        except Exception: raise
-    create_epochs_directory(subject)
-    create_evokeds_directory(subject)
-    create_sourceAnalysis_directory(subject)
-    create_forwardModels_directory(subject)
-    create_reconFiles_directory(subject)
+def create_folders(paths):
+    for path in paths:
+        os.makedirs(path)
 
-def create_subject_directory(path):
+def save_subject(subject, path):
     try:
-        os.mkdir(path)
-    except OSError:
-        raise Exception('No rights to save to the chosen path or' + 
-                        ' subject/experiment name already exists')
-        return
-
-def create_epochs_directory(subject):
-    """
-    Create a directory for saving epochs under the subject directory.
-    TODO possibly move this and following methods to fileManager.
-    """
-    try:
-        os.mkdir(subject._epochs_directory)
-    except OSError:
-        raise OSError('can\'t create epochs directory to' + \
-                      ' the chosen path')                
-
-
-def create_evokeds_directory(subject):
-    """
-    Create a directory for saving evokeds under the epochs directory.
-    """
-    try:
-        os.mkdir(subject._evokeds_directory)
-    except OSError:
-        raise OSError('can\'t create evokeds directory to' + \
-                      ' the chosen path')                
-
-def create_forwardModels_directory(subject):
-    """
-    Create a directory for saving forward models under the appropriate
-    directory.
-    """
-    try:
-        os.mkdir(subject._forwardModels_directory)
+        create_folders([
+            subject.subject_path,
+            subject.epochs_directory,
+            subject.evokeds_directory,
+            subject.source_analysis_directory,
+            subject.forwardModels_directory,
+            subject.reconFiles_directory,
+        ])
     except OSError as e:
-        raise OSError('can\'t create forward models directory to' + \
-                      ' the chosen path' + str(e))
+        raise OSError("Couldn't create all the necessary folders. "
+                      "Do you have the necessary permissions?")
     
-def create_sourceAnalysis_directory(subject):
-    try:
-        os.mkdir(subject._source_analysis_directory)
-    except OSError:
-        raise OSError('can\'t create source analysis directory to' + \
-                      ' the chosen path')
-    
-def create_reconFiles_directory(subject):
-    
-    try:
-        os.mkdir(subject._reconFiles_directory)
-    except OSError:
-        raise OSError('can\'t create reconFiles directory to' + \
-                      ' the chosen path')
+    copyfile(path, subject.working_file_path)

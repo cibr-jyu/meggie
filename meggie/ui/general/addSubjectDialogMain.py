@@ -76,11 +76,13 @@ class AddSubjectDialog(QtGui.QDialog):
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
-            raw_path_prefix = raw_path.split('.')[-2]
-            subject_name = os.path.basename(raw_path_prefix)
+            basename = os.path.basename(raw_path)
+            subject_name = basename.split('.')[0]
 
             # Check if the subject is already added to the experiment.
-            if subject_name in self.parent.subjectListModel.subjectNameList:
+            subject_names = [subject.subject_name for subject 
+                             in self.caller.experiment.get_subjects()]
+            if subject_name in subject_names:
                 QtGui.QApplication.restoreOverrideCursor()
                 msg = ('Subject ' + item.text() + ' is already added to the '
                        'experiment. Change the filename of the raw every time '
@@ -91,11 +93,10 @@ class AddSubjectDialog(QtGui.QDialog):
                 return
 
             try:
-                if self.caller.experiment._active_subject is not None:
-                    self.caller.experiment.release_memory()
                 self.caller.experiment.create_subject(subject_name,
                                                       self.caller.experiment,
-                                                      raw_path)
+                                                      basename,
+                                                      raw_path=raw_path)
             except Exception:
                 tb = traceback.format_exc()
                 title = 'Problem creating a new subject'
@@ -106,10 +107,11 @@ class AddSubjectDialog(QtGui.QDialog):
                 QtGui.QApplication.restoreOverrideCursor()
                 return
 
-            self.caller.activate_subject(subject_name,
-                                         do_meanwhile=self.parent.update_ui,
-                                         parent_handle=self.parent)
-
+        #self.caller.activate_subject(subject_name,
+        #                             do_meanwhile=self.parent.update_ui,
+        #                             parent_handle=self.parent)
+        self.caller.activate_subject(subject_name)
+        
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
 

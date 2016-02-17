@@ -1279,12 +1279,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        activeSubject = self.caller.experiment._active_subject
-
-        # Probably not created yet, because this is the first step of source
-        # analysis.
-        if not os.path.isdir(activeSubject._source_analysis_directory):
-            fileManager.create_sourceAnalysis_directory(activeSubject)
+        activeSubject = self.caller.experiment.active_subject
 
         if activeSubject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',
@@ -1544,10 +1539,12 @@ class MainWindow(QtGui.QMainWindow):
             self.statusLabel.setText('Add or activate subjects before '
                                      'continuing.')
             return
+        
         self.update_power_list()
-        sub_name = self.caller.experiment._active_subject_name
-        fname = self.caller._experiment._working_file_names[sub_name]
-        status = "Current working file: " + os.path.basename(fname)
+
+        name = self.caller.experiment.active_subject.working_file_name
+        status = "Current working file: " + name
+        
         self.statusLabel.setText(status)
 
         # Check whether ECG projections are calculated
@@ -1570,7 +1567,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
         # Populate epoch and evoked lists
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         active_sub = self.caller.experiment.active_subject
         print 'Loading evokeds...'
         epochs_items = self.caller.experiment.load_epochs(active_sub, 
@@ -1598,7 +1595,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
-        if self.caller._experiment._active_subject.check_reconFiles_copied():
+        if self.caller.experiment.active_subject.check_reconFiles_copied():
             self.ui.lineEditRecon.setText('Reconstructed mri image already '
                                           'copied.')
             self.ui.pushButtonConvertToMNE.setEnabled(True)
@@ -1608,7 +1605,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonCheckSegmentations.setEnabled(True)
 
         # Check if MRI image has been setup with mne_setup_forward solution
-        if self.caller._experiment._active_subject.check_mne_setup_mri_run():
+        if self.caller.experiment.active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
 

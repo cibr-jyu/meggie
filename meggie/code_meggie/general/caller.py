@@ -82,8 +82,8 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
-    @messaged
-    @threaded
+    # @messaged
+    # @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -171,8 +171,6 @@ class Caller(object):
         raw = mne.io.Raw(outputfile, preload=True)
         self.update_experiment_working_file(outputfile, raw)
 
-        self.experiment.save_parameter_file(bs, params['-f'], outputfile,
-                                            'maxfilter', params)        
         self.experiment.save_experiment_settings()
 
     def call_ecg_ssp(self, dic, subject):

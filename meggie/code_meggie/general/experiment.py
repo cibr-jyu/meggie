@@ -36,26 +36,17 @@ Classes needed for controlling Meggie experiments.
 """
 import os
 import re
-import shutil
-import gc
 import json
-import csv
-import sys
+
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.actionLogger import ActionLogger
 
 from meggie.ui.utils.decorators import messaged
 
 from PyQt4.QtCore import QObject
-from PyQt4 import QtGui
 
-
-# Better to use pickle rather than cpickle, as experiment paths may
-# include non-ascii characters
-import pickle
 
 class Experiment(QObject):
     
@@ -71,9 +62,8 @@ class Experiment(QObject):
     author             -- The name of the experiment's author
     description        -- A user defined description of the experiment
     subjects           -- The list of the Subject objects in this experiment
-    subject_paths      -- The list of the paths of the added subjects
     active_subject     -- The subject that is currently processed
-    working_file_names -- The complete path of the working file
+    action_logger      -- logs action
     """
 
     def __init__(self):
@@ -261,217 +251,49 @@ class Experiment(QObject):
         subject_name -- name of the subject
         """
         # Remove raw files from memory before activating new subject.
-
-        # self.release_memory()
-        # self._active_subject_name = subject_name
-        # working_file_name = self._working_file_names[subject_name]
-        # if len(working_file_name) == 0:
-        #     raise Exception('There is no working file in the chosen subject folder.')
-
-        # # Checks if the subject with subject_name already exists in subjects list.
-        # for subject in self._subjects:
-        #     if subject_name == subject.subject_name:
-        #         #self.set_active_subject(subject, raw_file_name)
-        #         self._active_subject = subject
-        #         self._active_subject_name = subject.subject_name
-        #         # Check if the working file is actually loaded already (in the
-        #         # case of addSubjectDialogMain accept() method).
-        #         self.load_working_file(subject)
-        #         self.save_experiment_settings()
-        raise NotImplementedError
+        if self.active_subject:
+            self.active_subject.release_memory()
+        # if subject_name in [subject.subject_name for subject in self.get_subjects()]:
+        #     working_file = subject.get_working_file()
+        for subject in self._subjects:
+            if subject_name == subject.subject_name:
+                subject.set_working_file(
+                    fileManager.open_raw(subject.working_file_path))
+                self.active_subject = subject
+        self.save_experiment_settings()
  
-    def create_subject(self, subject_name, experiment, raw_path):
+    def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
         
         Keyword arguments:
         subject_name    -- name of the subject
         experiment      -- Experiment object
-        raw_path        -- original path of the raw file
         """
-        # subject = Subject(experiment, subject_name)
-        # raw = fileManager.open_raw(raw_path)
-        # subject._working_file = raw
-        # complete_raw_path = os.path.join(subject.subject_path, os.path.basename(raw_path))
-        # # Check if file already exists.
-        # if not os.path.isfile(complete_raw_path):
-        #     # Makes the actual subject path on disk and copies raw file there.
-        #     fileManager.save_subject(self, subject, raw_path, subject.subject_path)
-        #     
-        #     # When activating subject the working_file filename is the one
-        #     # where the file was originally found. This changes it to
-        #     # the location of the subject path.
-        #     subject._working_file.info['filename'] = complete_raw_path
-        # 
-        # self._subjects.append(subject)
-        # self._active_subject_name = subject_name
-        # self.add_subject_path(subject.subject_path)
-        # self.update_working_file(complete_raw_path)
-        raise NotImplementedError
-
-    def create_subjects(self, experiment, subject_paths, workspace):
-        """Creates subjects when opening an experiment with subjects.
-        Raw file is not set here.
         
-        Keyword arguments:
-        experiment    -- experiment object from MainWindow
-        subject_names -- list of subject names
-        """
-        # for subject_path in subject_paths:
-        #     if os.path.exists(subject_path):
-        #         subject = Subject(experiment, os.path.basename(subject_path))
-        #         self._subjects.append(subject)
-        #     else:
-        #         folders = subject_path.split('/')
-        #         for i in range(len(folders)):
-        #             path = workspace + '/' + '/'.join(folders[i:])
-        #             # This here is done because the path might change when
-        #             # moving external hard-drive from one computer to another.
-        #             if os.path.exists(path):
-        #                 print 'Could not find ' + subject_path + '.'
-        #                 print 'Using ' + path + ' instead.'
-        #                 print 'Changing experiment workspace to ' + workspace
-        #                 self.workspace = workspace
-        #                 subject = Subject(experiment, os.path.basename(path))
-        #                 self._subjects.append(subject)
-        #                 self.update_working_file(path + '/' + subject.subject_name + '.fif',
-        #                                          subject.subject_name)
-        #                 break
-        raise NotImplementedError
-
-    def release_memory(self):
-        """Releases memory from previously processed subject by removing
-        references from raw files.
-        """
-        # if self.active_subject is not None:
-        #     self.active_subject._working_file = None
-        #     if len(self.active_subject._epochs) > 0:
-        #         for value in self.active_subject._epochs.values():
-        #             value._raw = None
-        #     if len(self.active_subject._evokeds) > 0:
-        #         for value in self.active_subject._evokeds.values():
-        #             value._raw = None
-        raise NotImplementedError
-
-    @messaged
-    def load_epochs(self, subject):
-        """Loads raw epoch files from subject folder and sets them on
-        subject._epochs objects.
-        """
-        # if not os.path.exists(self.active_subject._epochs_directory):
-        #     fileManager.create_epochs_directory(self.active_subject)
-        # epoch_items = []
-        # path = subject._epochs_directory
-        # # This here is done because the path might change when moving external
-        # # hard-drive from one computer to another.
-        # if not os.path.exists(path):
-        #     folders = path.split('/')
-        #     for i in range(len(folders)):
-        #         path = self.workspace + '/' + '/'.join(folders[i:])
-        #         if os.path.exists(path):
-        #             subject._epochs_directory = path
-        #             break;
-        # files = os.listdir(path)
-        # for f in files:
-        #     if f.endswith('.fif'):
-        #         fname = os.path.join(path, f)
-        # 
-        #         name = f[:-4]
-        #         _, params = fileManager.load_epochs(fname)
-        #         subject.handle_new_epochs(name, params)
-        #         item = QtGui.QListWidgetItem(name)
-        #         # Change color of the item to red if no param file available.
-        #         if params is None:
-        #             color = QtGui.QColor(255, 0, 0, 255)
-        #             brush = QtGui.QBrush()
-        #             brush.setColor(color)
-        #             item.setForeground(brush)
-        #         epoch_items.append(item)
-        #         # Raw needs to be set when activating already created subject.
-        #         #if subject._epochs[name]._raw is None:
-        #         #    subject._epochs[name]._raw = epochs
-        # return epoch_items
-        raise NotImplementedError
-
-    @messaged
-    def load_evokeds(self, subject):
-        """Loads raw evoked files from subject folder and sets them on
-        subject._evokeds objects.
-        """
-        # evokeds_items = []
-        # path = subject._evokeds_directory
-        # if not os.path.exists(path):
-        #     folders = path.split('/')
-        #     for i in range(len(folders)):
-        #         path = self.workspace + '/' + '/'.join(folders[i:])
-        #         if os.path.exists(path):
-        #             subject._evokeds_directory = path
-        #             break;
-        # files = os.listdir(subject._evokeds_directory)
-        # for f in files:
-        #     if f.endswith('.fif'):
-        #         evoked, categories = fileManager.load_evoked(
-        #             subject._evokeds_directory, f)
-        #         subject.handle_new_evoked(f, evoked, categories)
-        #         item = QtGui.QListWidgetItem(f)
-        #         evokeds_items.append(item)
-        #         # Raw needs to be set when activating already created subject.
-        #         if subject._evokeds[f]._raw is None:
-        #             subject._evokeds[f]._raw = evoked
-        # 
-        # return evokeds_items
-        raise NotImplementedError
-
-    def load_powers(self, subject):
-        """
-        Loads power files from the subject folder.
-        Returns a list of AverageTFR names.
-        """
-        # powers = list()
-        # path = os.path.join(subject.subject_path, 'TFR')
-        # if not os.path.exists(path):
-        #     return list()
-        # files = os.listdir(path)
-        # for fname in files:
-        #     if fname.endswith('.h5'):
-        #         powers.append(fname)
-        # return powers
-        raise NotImplementedError
-
+        
+        subject = Subject(experiment, subject_name, working_file_name)
+        if raw_path:
+            fileManager.save_subject(subject, raw_path)
+        self.add_subject(subject)
+        
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
         the experiment directory structure.
-        """
-        # experiment_directory = os.path.join(self._workspace, \
-        #                                     self._experiment_name)
-        # 
-        # # Make the directory if it doesn't exist
-        # if not os.path.isdir(experiment_directory):
-        #     try:
-        #         os.mkdir(experiment_directory)
-        #         print 'Meggie: Creating experiment settings ... \n'
-        #     except OSError:
-        #         raise Exception('No rights to save to the chosen path or' + 
-        #                         ' experiment name already exists. \n')
-        # 
-        # # String conversion, because shutil doesn't accept QStrings
-        # settingsFileName = str(self._experiment_name + '.exp')
-        # 
-        # # Actually a file object
-        # settingsFile = open(os.path.join(experiment_directory, 
-        #                     settingsFileName), 'wb')
-        # 
-        # # Protocol 2 used because of file object being pickled
-        # pickle.dump(self, settingsFile, 2)
-        # settingsFile.close()
-        
+        """        
         # save to file:
         # construct save dict
-        
-        
+        subjects = []
+        for subject in self.get_subjects():
+            subject_dict = {
+                'subject_name': subject.subject_name,
+                'evokeds': [],
+                'epochs': [] 
+            }
+            subjects.append(subject_dict)
         
         save_dict = {
-            'subjects': [subject.subject_name for subject in self.get_subjects()],
+            'subjects': subjects,
             'name': self.experiment_name,
             'author': self.author,
             'description': self.description,
@@ -488,47 +310,6 @@ class Experiment(QObject):
         
         with open(os.path.join(self.workspace, self.experiment_name + '.exp'), 'w') as f:
             json.dump(save_dict, f)
-
-    def save_parameter_file(self, command, inputfilename, outputfilename,
-                            operation, dic):
-        """
-        Saves the command and parameters related to creation of a certain
-        output file to a separate parameter file in csv-format.
-        
-        An example of the structure of the resulting parameter file:
-        
-        jn_multimodal01_raw_sss.fif
-        jn_multimodal01_raw_sss_ecg_proj.fif 
-        mne.preprocessing.compute_proj_eog
-        tmin,0.2
-        tmax,0.5
-        .
-        .
-        .  
-        
-        Keyword arguments:
-        command          -- command (as string) used.
-        inputfilename    -- name of the file the command with parameters
-                            was executed on
-        outputfilename   -- the resulting output file from the command.
-        operation        -- operation the command represents. Used for
-                            determining the parameter file name.
-        dic              -- dictionary including commands.
-        """
-        # paramfilename = os.path.join(os.path.split(outputfilename)[0],
-        #                              operation + '.param')
-        # 
-        # with open(paramfilename, 'wb') as paramfullname:
-        #     print 'Writing param file.'
-        #     csvwriter = csv.writer(paramfullname)
-        #     
-        #     csvwriter.writerow([inputfilename])
-        #     csvwriter.writerow([outputfilename])
-        #     csvwriter.writerow([command])
-        #     
-        #     for key, value in dic.items():
-        #         csvwriter.writerow([key, value])
-        raise NotImplementedError
 
 
 class ExperimentHandler(QObject):
@@ -629,20 +410,6 @@ class ExperimentHandler(QObject):
         print "kissa"
         raise NotImplementedError
     
-    def get_epochs(self, name):
-        """
-        Helper for loading mne.Epochs obejct to memory for processing.
-        Keyword arguments:
-        name        -- Collection name for the epochs
-        Returns mne.Epochs object
-        """
-        # return mne.read_epochs(os.path.join(self._epochs_directory,
-        #                                     name + '.fif'))
-        raise NotImplementedError
-    
-    def close_experiment(self):
-        raise NotImplementedError
-
     def initialize_logger(self, experiment):
 
         print 'Initializing logger' 
