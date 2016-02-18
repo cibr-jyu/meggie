@@ -179,7 +179,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        
+        self.ui.listWidgetEvents.clear()
         self.ui.comboBoxStimChannel.clear()
         for subject in self.caller.experiment.get_subjects():
             if subject_name == subject.subject_name:
@@ -217,7 +217,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 if 'event_name' in dic.keys():
                     self.ui.lineEditName.setText(dic['event_name'])
                 else:
-                    self.ui.lineEditName.setText('joo')
+                    self.ui.lineEditName.setText('Event')
                 if subject.subject_name != self.caller.experiment.active_subject.subject_name:   
                         raw_path = self.caller.experiment._working_file_names[subject.subject_name]
                         raw = fileManager.open_raw(raw_path, pre_load=False)
@@ -307,19 +307,19 @@ class EventSelectionDialog(QtGui.QDialog):
         if mag:
             value = self.ui.doubleSpinBoxMagReject_3.value()
             if value != -1:
-                reject['mag'] = 1e-15 * value
+                reject['mag'] = value #1e-15 * value
         if grad:
             value = self.ui.doubleSpinBoxGradReject_3.value()
             if value != -1:
-                reject['grad'] = 1e-13 * value
+                reject['grad'] = value #1e-13 * value
         if eeg:
             value = self.ui.doubleSpinBoxEEGReject_3.value()
             if value != -1:
-                reject['eeg'] = 1e-6 * value
+                reject['eeg'] = value #1e-6 * value
         if eog:
             value = self.ui.doubleSpinBoxEOGReject_3.value()
             if value != -1:
-                reject['eog'] = 1e-6 * value
+                reject['eog'] = value #1e-6 * value
 
         #Check if any picks are found with current parameter values.
 

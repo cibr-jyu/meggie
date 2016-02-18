@@ -53,5 +53,6 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         )
         if len(events) > 0:
             self.parent.batching_widget.data[self.caller.experiment.active_subject.subject_name]['fixed_length_events'].append(event_params)
-            self.parent.update_events()
+            subject = self.parent.get_selected_subject()
+            self.parent.update_events(subject)
         return QtGui.QDialog.accept(self, *args, **kwargs)
