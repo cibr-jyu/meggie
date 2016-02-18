@@ -758,9 +758,13 @@ class ExperimentHandler(QObject):
             if caller.experiment.workspace != working_directory:
                 caller.experiment.workspace = working_directory
             self.parent.update_ui()
-            caller.activate_subject(caller._experiment._active_subject_name,
-                                    do_meanwhile=self.parent.update_ui,
-                                    parent_handle=self.parent)
+
+            try:
+                caller.activate_subject(caller._experiment._active_subject_name,
+                                        do_meanwhile=self.parent.update_ui)
+            except Exception as e:
+                exc_messagebox(self.parent, e)
+
             self.parent.add_tabs()
             self.parent._initialize_ui()
             self.parent.reinitialize_models() 

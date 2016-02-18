@@ -44,7 +44,6 @@ from copy import deepcopy
 
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
-from meggie.ui.utils.decorators import messaged
 from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general.wrapper import wrap_mne_call
@@ -82,7 +81,6 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
-    @messaged
     @threaded
     def activate_subject(self, name):
         """
@@ -127,7 +125,6 @@ class Caller(object):
         retval = proc.wait()
         print "the program return code was %d" % retval
 
-    @messaged
     @threaded
     def call_maxfilter(self, params, custom):
         """
@@ -138,7 +135,6 @@ class Caller(object):
         custom -- Additional parameters as a string
         """
         self._call_maxfilter(params, custom)
-        return True
 
     def _call_maxfilter(self, params, custom):
         """Aux function for maxfiltering data. """
@@ -328,7 +324,6 @@ class Caller(object):
         print "Writing EOG events in %s" % eog_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
 
-    @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
         Applies ECG or EOG projections for MEG-data.  
@@ -387,7 +382,6 @@ class Caller(object):
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
 
-    @messaged
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
 
@@ -416,7 +410,6 @@ class Caller(object):
         self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
         return evokeds
 
-    @messaged
     def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
                    mask, event_name, grad, mag, eeg, eog):
         """
@@ -511,7 +504,6 @@ class Caller(object):
             # epochs_object = this_subject._epochs[epoch_name]
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
 
-    @messaged
     def create_new_epochs(self, epoch_params):
         """
         A method for creating new epochs with the given parameter values for
@@ -573,7 +565,6 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    @messaged
     def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
@@ -713,7 +704,6 @@ class Caller(object):
 
         return averageTitleString, dataList, evokeds
 
-    @messaged
     def plot_group_average(self, groups, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
@@ -881,7 +871,6 @@ class Caller(object):
 
         return averagedEvokeds, groups
 
-    @messaged
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
         """
@@ -991,7 +980,6 @@ class Caller(object):
                                    mode='ratio', copy=True)
         return power, itc, times, evoked, evoked_data
 
-    @messaged
     def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
@@ -1124,7 +1112,6 @@ class Caller(object):
                  overwrite=True)
         return power, itc
 
-    @messaged
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
                     maxfreq, interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
@@ -1367,7 +1354,6 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    @messaged
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.
@@ -1482,7 +1468,6 @@ class Caller(object):
             psdList.append((psds, freqs))
         return psdList
 
-    @messaged
     @threaded
     def filter(self, dataToFilter, info, dic):
         """
@@ -1586,7 +1571,6 @@ class Caller(object):
 
 ### Methods needed for source modeling ###    
 
-    @messaged
     def convert_mri_to_mne(self):
         """
         Uses mne_setup_mri to active subject recon directory to create Neuromag
@@ -1607,7 +1591,6 @@ class Caller(object):
         
         subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
 
-    @messaged
     def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate
@@ -1834,7 +1817,6 @@ class Caller(object):
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()
         self.coregHowtoDialog.show()
 
-    @messaged
     def create_forward_solution(self, fsdict):
         """
         Creates a forward solution based on parameters given in fsdict.

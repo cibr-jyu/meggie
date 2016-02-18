@@ -99,9 +99,11 @@ class AddSubjectDialog(QtGui.QDialog):
                 exc_messagebox(self.parent, e)
                 return
 
-            self.caller.activate_subject(subject_name,
-                                         do_meanwhile=self.parent.update_ui,
-                                         parent_handle=self.parent)
+            try:
+                self.caller.activate_subject(subject_name,
+                                             do_meanwhile=self.parent.update_ui)
+            except Exception as e:
+                exc_messagebox(self.parent, e)
 
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.

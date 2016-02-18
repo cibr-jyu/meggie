@@ -8,10 +8,12 @@ import mne
 from PyQt4 import QtCore,QtGui
 
 from meggie.ui.filtering.filterDialogUi import Ui_DialogFilter
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
+
+from meggie.ui.utils.messaging import messagebox
+from meggie.ui.utils.messaging import exc_messagebox
 
 from copy import deepcopy
 
@@ -37,10 +39,9 @@ class FilterDialog(QtGui.QDialog):
 
         paramDict = self.get_filter_parameters()
         if paramDict.get('isEmpty') == True:
-                message = 'Please select filter(s) to preview'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return
+            message = 'Please select filter(s) to preview'
+            messagebox(self.parent, message)
+            return
 
         self.drawPreview()
 
@@ -63,9 +64,13 @@ class FilterDialog(QtGui.QDialog):
             return
 
         filteredData = None
-        filteredData = self.caller.filter(dataToFilter, info, paramDict, 
-                                          do_meanwhile=self.parent.update_ui,
-                                          parent_handle=self)
+
+        try:
+            filteredData = self.caller.filter(dataToFilter, info, paramDict, 
+                                              do_meanwhile=self.parent.update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         if filteredData is None:
             return
 
@@ -140,10 +145,9 @@ class FilterDialog(QtGui.QDialog):
         length = str(self.ui.doubleSpinBoxBandStopLength.value()) + 's'
         dictionary['bandstop_length'] = length
         if dictionary.get('isEmpty') == True:
-                message = 'Please select filter(s) to apply'
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                return
+            message = 'Please select filter(s) to apply'
+            messagebox(self.parent, message)
+            return
 
         return dictionary
 
@@ -161,9 +165,11 @@ class FilterDialog(QtGui.QDialog):
             return
 
         result = None
-        result = self.caller.filter(raw, info, paramDict, 
-                                    do_meanwhile=self.parent.update_ui,
-                                    parent_handle=self)
+        try:
+            result = self.caller.filter(raw, info, paramDict, 
+                                        do_meanwhile=self.parent.update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
 
         if result is not None:
              self.parent._initialize_ui()
@@ -184,8 +190,7 @@ class FilterDialog(QtGui.QDialog):
     def _show_filter_freq_error(self, samplerate):
         message = 'Cutoff frequencies should be lower than samplerate/2 ' + \
                     '(' + 'current samplerate is ' + str(samplerate) + ' Hz)'
-        self.messageBox = messageBoxes.shortMessageBox(message)
-        self.messageBox.show()
+        messagebox(self.parent, message)
         return
 
     def _showLengthError(self, filterSource):
@@ -196,7 +201,9 @@ class FilterDialog(QtGui.QDialog):
 
         filterSource     -- which filter UI box is the source of error.
         """
-        message = 'Check filter length for ' + filterSource + \
-        '. It should end with \'s\' or \'ms\''
-        self.messageBox = messageBoxes.shortMessageBox(message)
-        self.messageBox.show()
+        message = ''.join([
+            'Check filter length for ',
+            filterSource,
+            '. It should end with \'s\' or \'ms\''
+        ])
+        messagebox(self.parent, message)

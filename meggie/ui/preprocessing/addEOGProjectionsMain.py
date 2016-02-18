@@ -42,6 +42,8 @@ from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
 from meggie.code_meggie.general.caller import Caller
 
+from meggie.ui.utils.messaging import exc_messagebox
+
 class AddEOGProjections(QtGui.QDialog):
     """
     Class for adding EOG projections.
@@ -87,12 +89,12 @@ class AddEOGProjections(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.working_file
         directory = self.caller.experiment._active_subject._subject_path
 
-        result = None
-        result = self.caller.apply_exg('eog', raw, directory, self.projs,
-                                       applied, parent_handle=self.parent)
-
-        if result:
+        try:
+            self.caller.apply_exg('eog', raw, directory, self.projs, applied)
             self.parent.ui.checkBoxEOGApplied.setChecked(True)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         self.parent._initialize_ui()
         self.close()
         

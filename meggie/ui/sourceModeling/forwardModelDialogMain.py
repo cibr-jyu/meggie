@@ -13,6 +13,9 @@ from meggie.ui.general import messageBoxes
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
+
 import string
 import re
 
@@ -168,7 +171,12 @@ class ForwardModelDialog(QtGui.QDialog):
         caller = Caller.Instance()
 
         result = None
-        result = caller.create_forward_model(fmdict, parent_handle=self.parent)
+
+        try:
+            result = caller.create_forward_model(fmdict)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         if result:
             self.close()
         

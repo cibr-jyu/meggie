@@ -43,6 +43,8 @@ from meggie.ui.preprocessing.maxFilterDialogUi import Ui_Dialog
 
 from meggie.code_meggie.general.caller import Caller
 
+from meggie.ui.utils.messaging import exc_messagebox
+
 
 class MaxFilterDialog(QtGui.QDialog):
     """
@@ -216,11 +218,11 @@ class MaxFilterDialog(QtGui.QDialog):
 
         custom = self.ui.textEditCustom.toPlainText()
 
-        result = None
-        result = caller.call_maxfilter(dictionary, custom, 
-                                       do_meanwhile=self.parent.update_ui,
-                                       parent_handle=self.parent)
-        if not result:
+        try:
+            caller.call_maxfilter(dictionary, custom, 
+                                  do_meanwhile=self.parent.update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
             self._show_progressbar(False)
             return
 

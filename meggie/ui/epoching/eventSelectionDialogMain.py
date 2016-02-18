@@ -49,7 +49,7 @@ from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.messagingi import messagebox
+from meggie.ui.utils.messaging import messagebox
 
 
 class EventSelectionDialog(QtGui.QDialog):

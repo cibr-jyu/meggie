@@ -18,7 +18,9 @@ from mne.utils import _clean_names
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.statistic import Statistic
 from meggie.ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
-from meggie.ui.general import messageBoxes
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 class EvokedStatsDialog(QtGui.QDialog):
 
@@ -169,9 +171,11 @@ class EvokedStatsDialog(QtGui.QDialog):
             return
         index = self.ui.comboBoxEvoked.currentIndex()
         caller = Caller.Instance()
-        caller.average_channels(self.evoked, None,
-                                set(self.selected_channels[index]),
-                                parent_handle=self)
+        try:
+            caller.average_channels(self.evoked, None,
+                                    set(self.selected_channels[index]))
+        except Exception as e:
+            exc_messagebox(self.parent, e)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """
@@ -330,9 +334,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                     this_data = _merge_grad_data(this_data[gradsIdxs])
                 except ValueError as err:
                     msg = 'Please select gradiometers as pairs for RMS.'
-                    messageBox = messageBoxes.shortMessageBox(msg, self,
-                                                              str(err))
-                    messageBox.exec_()
+                    messagebox(self.parent, msg)
                     return
         elif ch_type == 'mag':
             suffix = 'fT'
@@ -341,9 +343,8 @@ class EvokedStatsDialog(QtGui.QDialog):
             suffix = 'uV'
             scaler = 1e6
         else:
-            msg = ('Could not find data.')
-            messageBox = messageBoxes.shortMessageBox(msg)
-            messageBox.exec_()
+            msg = 'Could not find data.'
+            messagebox(self.parent, msg)
             return
         data = np.mean(this_data, axis=0)
         self.ui.doubleSpinBoxMinAmplitude.setSuffix(suffix)

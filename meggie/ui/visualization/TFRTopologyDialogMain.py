@@ -40,8 +40,9 @@ from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
 from meggie.ui.visualization.TFRGroupAverageDialogMain import TFRGroupAverageDialog
-from meggie.ui.general.messageBoxes import shortMessageBox
 
+from meggie.ui.utils.messaging import messagebox
+from meggie.ui.utils.messaging import exc_messagebox
 
 class TFRTopologyDialog(QtGui.QDialog):
     """
@@ -121,8 +122,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == 'No layout selected' or layout == '':
-            self.messageBox = shortMessageBox('No layout selected')
-            self.messageBox.show()
+            messagebox(self.parent, 'No layout selected')
             return
         if self.ui.groupBoxBaseline.isChecked():
             mode = self.ui.comboBoxMode.currentText()
@@ -142,10 +142,14 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonPhase.isChecked():
             reptype = 'itc'
         if self.tfr is not None:
-            self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
-                                     blstart, blend, None, None, layout, None,
-                                     None, cmap, parent_handle=self.parent)
+            try:
+                 self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
+                                          blstart, blend, None, None, layout, None,
+                                          None, cmap)
+            except Exception as e:
+                exc_messagebox(self.parent, e)
             return
+
 
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
@@ -166,10 +170,12 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp['fmax'] = self.ui.doubleSpinBoxScalpFmax.value()
         else:
             scalp = None
-        self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
-                                 decim, mode, blstart, blend, interval,
-                                 ncycles, layout, ch_type, scalp, cmap,
-                                 parent_handle=self.parent)
+        try:
+            self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
+                                     decim, mode, blstart, blend, interval,
+                                     ncycles, layout, ch_type, scalp, cmap)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
         self.parent.update_power_list()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
@@ -223,12 +229,14 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == 'No layout selected' or layout == '':
-            self.messageBox = shortMessageBox('No layout selected')
-            self.messageBox.show()
+            messagebox(self.parent, 'No layout selected')
             return
 
-        self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
-                                minfreq, maxfreq, interval, blstart,
-                                blend, ncycles, decim, layout, channels,
-                                form, dpi, saveTopo, savePlot, saveMax,
-                                parent_handle=self.parent)
+        try:
+            self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
+                                    minfreq, maxfreq, interval, blstart,
+                                    blend, ncycles, decim, layout, channels,
+                                    form, dpi, saveTopo, savePlot, saveMax)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+

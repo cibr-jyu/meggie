@@ -42,7 +42,7 @@ from PyQt4 import QtCore,QtGui
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
-from meggie.ui.general import messageBoxes
+from meggie.ui.utils.messaging import exc_messagebox
 
 class AddECGProjections(QtGui.QDialog):
     """
@@ -88,11 +88,13 @@ class AddECGProjections(QtGui.QDialog):
 
         raw = self.caller.experiment.active_subject.working_file
         directory = self.caller.experiment.active_subject.subject_path
-        result = self.caller.apply_exg('ecg', raw, directory, self.projs,
-                                       applied, parent_handle=self.parent)
 
-        if result == 0:
+        try:
+            self.caller.apply_exg('ecg', raw, directory, self.projs, applied)
             self.parent.ui.checkBoxECGApplied.setChecked(True)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         self.parent._initialize_ui()
         self.close()
         

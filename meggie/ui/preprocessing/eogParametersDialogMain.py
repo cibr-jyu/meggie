@@ -119,9 +119,11 @@ class EogParametersDialog(ProjectorDialog):
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
                 error_message = self.calculate_eog(subject, error_message)
-        self.caller.activate_subject(recently_active_subject,
-                                     do_meanwhile=self.parent.update_ui,
-                                     parent_handle=self.parent)
+        try:
+            self.caller.activate_subject(recently_active_subject,
+                                         do_meanwhile=self.parent.update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
         if len(error_message) > 0:
             messagebox(self.parent, error_message)
         self.parent._initialize_ui()

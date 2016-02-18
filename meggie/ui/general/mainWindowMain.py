@@ -454,8 +454,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epoch_params_ready.connect(self.
-                                                             create_new_epochs)
+        self.epochParameterDialog.epoch_params_ready.connect(self.create_new_epochs)  # noqa
         self.epochParameterDialog.finished.connect(self.on_close)
         self.epochParameterDialog.show()
 
@@ -486,7 +485,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         # Raw data is not present in the dictionary so get it from the
         # current experiment.active_subject.
-        self.caller.create_new_epochs(epoch_params, parent_handle=self)
+        try:
+            self.caller.create_new_epochs(epoch_params)
+        except Exception as e:
+            exc_messagebox(self, e)
+
         fname = epoch_params['collectionName']
         item = QtGui.QListWidgetItem(fname)
         self.epochList.addItem(item, 1, overwrite=True)
@@ -556,8 +559,7 @@ class MainWindow(QtGui.QMainWindow):
         # modify_epochs removes the previous Epochs object and raw files
         # created from it and creates new Epochs object and raw files.
         # Also removes the epochWidget item and replaces it with the new one.
-        self.epochParameterDialog.epoch_params_ready.connect(self.
-                                                             create_new_epochs)
+        self.epochParameterDialog.epoch_params_ready.connect(self.create_new_epochs)  # noqa
         self.epochParameterDialog.show()
 
     def on_pushButtonSaveEpochs_clicked(self, checked=None):
@@ -685,7 +687,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             self.caller.experiment.active_subject.handle_new_evoked(
                 evoked_name, evoked, category)
-        except Exception e:
+        except Exception as e:
             exc_messagebox(self, e)
             return
 
@@ -807,7 +809,10 @@ class MainWindow(QtGui.QMainWindow):
         else:
             layout = str(self.ui.labelLayout.text())
 
-        self.caller.plot_group_average(groups, layout, parent_handle=self)
+        try:
+            self.caller.plot_group_average(groups, layout)
+        except Exception as e:
+            exc_messagebox(self, e)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         """Exports the evoked data set to a user selected location."""
@@ -1039,7 +1044,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         raw = self.caller.experiment.active_subject._working_file
-        self.caller.plot_projs_topomap(raw, parent_handle=self)
+        try:
+            self.caller.plot_projs_topomap(raw)
+        except Exception as e:
+            exc_messagebox(self, e)
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
         """
@@ -1152,9 +1160,12 @@ class MainWindow(QtGui.QMainWindow):
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
-            self.caller.average_channels(name,
-                                         self.ui.comboBoxLobes.currentText(),
-                                         None, parent_handle=self)
+            try:
+                self.caller.average_channels(name,
+                                             self.ui.comboBoxLobes.currentText(),
+                                             None)
+            except Exception as e:
+                exc_messagebox(self, e)
             #TODO: visualizing actions logged or not?
             #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
             #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
@@ -1164,8 +1175,10 @@ class MainWindow(QtGui.QMainWindow):
             for i in xrange(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 channels.append(str(item.text()))
-            self.caller.average_channels(name, None, set(channels),
-                                         parent_handle=self)
+            try:
+                self.caller.average_channels(name, None, set(channels))
+            except Exception as e:
+                exc_messagebox(self, e)
             #TODO: visualizing actions logged or not?
             #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
             #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
@@ -1226,9 +1239,11 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.activate_subject(subject_name,
-                                     do_meanwhile=self.update_ui,
-                                     parent_handle=self)
+        try:
+            self.caller.activate_subject(subject_name,
+                                         do_meanwhile=self.update_ui)
+        except Exception as e:
+            exc_messagebox(self, e)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
@@ -1299,7 +1314,11 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        self.caller.convert_mri_to_mne(parent_handle=self)
+        try:
+            self.caller.convert_mri_to_mne()
+        except Exception as e:
+            exc_messagebox(self, e)
+
         self._initialize_ui()
 
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
