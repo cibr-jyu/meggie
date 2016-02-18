@@ -139,7 +139,7 @@ class EventSelectionDialog(QtGui.QDialog):
             events.append([int(event[0]), int(event[1]), int(event[2])])
         self.add_events(events, event_name)
 
-    def update_events(self):
+    def update_events(self, subject):
         """Add a list of events or a single event to the ui's eventlist.
 
         Keyword arguments:
@@ -148,7 +148,6 @@ class EventSelectionDialog(QtGui.QDialog):
         event_name -- The user-defined name of the events. Default is 'event'.
         """
         self.ui.listWidgetEvents.clear()
-        subject = self.get_subject_in_progress()
         subject_name = subject.subject_name
 
         if 'events' in self.batching_widget.data[subject_name]:
@@ -189,7 +188,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 if len(params_dict) > 2:
                     dic = params_dict
                 else:
-                    dic = self.get_default_values()
+                    dic = self.get_default_values(subject)
                     
                 rejection = dic['reject']
                 
@@ -219,34 +218,34 @@ class EventSelectionDialog(QtGui.QDialog):
                     self.ui.lineEditName.setText(dic['event_name'])
                 else:
                     self.ui.lineEditName.setText('joo')
-                    
-                for subject in self.caller.experiment.get_subjects():
-                    if subject_name == subject.subject_name:
+                if subject.subject_name != self.caller.experiment.active_subject.subject_name:   
                         raw_path = self.caller.experiment._working_file_names[subject.subject_name]
                         raw = fileManager.open_raw(raw_path, pre_load=False)
-                        #self.batching_widget.data[subject.subject_name + ' channels'] = raw.ch_names
                         ch_names = raw.ch_names
+                else:
+                    ch_names = subject.working_file.ch_names
                 if len(ch_names) == 0:
                     pass
                 stim_channels = [x for x in ch_names if x.startswith('STI')]
+
                 active = 0
                 for idx, channel in enumerate(stim_channels):
                     self.ui.comboBoxStimChannel.addItem(channel)
-                    if channel == dic['stim']:#self.caller.experiment.active_subject.stim_channel:
+                    if channel == dic['stim']:
                         active = idx
                 self.ui.comboBoxStimChannel.setCurrentIndex(active)
                 
                 if 'event_id' in dic.keys():
                     self.ui.spinBoxEventID.setValue(dic['event_id'])
                 else:
-                    self.ui.spinBoxEventID.SetValue(1)
+                    self.ui.spinBoxEventID.setValue(1)
                 
                 self.ui.lineEditCollectionName.setText(dic['collection_name'])
                 self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
                 self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
-                self.update_events()
+                self.update_events(subject)
     
-    def get_subject_in_progress(self):
+    def get_selected_subject(self):
         item = None
         if self.batching_widget.ui.checkBoxBatch.checkState():
             item = self.batching_widget.ui.listWidgetSubjects.currentItem()
@@ -259,8 +258,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 return subject
         return None
     
-    def get_default_values(self):
-        subject = self.get_subject_in_progress()
+    def get_default_values(self, subject):
         stim_channel = subject.stim_channel
         rejections = {
             'grad': 3000.00,
@@ -332,7 +330,19 @@ class EventSelectionDialog(QtGui.QDialog):
         elif grad:
             meg = 'grad'
         else: meg = False
-        info = self.caller.experiment.active_subject.working_file.info
+        
+        
+        subject = self.get_selected_subject()
+        if subject is self.caller.experiment.active_subject:
+            print 'selected subject is active subject'
+        if subject == self.caller.experiment.active_subject:
+            print 'selected subject == active subject'
+        if subject.subject_name is not self.caller.experiment.active_subject.subject_name:
+            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+            raw = fileManager.open_raw(raw_path, pre_load=False)
+            info = raw.info
+        else:
+            info = self.caller.experiment.active_subject.working_file.info
         picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
@@ -342,13 +352,18 @@ class EventSelectionDialog(QtGui.QDialog):
 
         #Create a dictionary containing all the parameters
         #Note: Raw is not collected here.
+        #events = []
+        #fle = []
+        events = self.batching_widget.data[subject.subject_name]['events']
+        fle = self.batching_widget.data[subject.subject_name]['fixed_length_events']  # noqa
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
-                      'tmax' : float(tmax), 'collection_name' : collection_name}
+                      'tmax' : float(tmax), 'collection_name' : collection_name,
+                      'events' : events, 'fixed_length_events' : fle}
         return param_dict
 
-    def create_eventlist(self, event_params):
+    def create_eventlist(self, subject, event_params):
         """
         Pick desired events from the raw data.
         """
@@ -357,8 +372,13 @@ class EventSelectionDialog(QtGui.QDialog):
         #this needs some manual logging or logging from the Events' __ini__
         #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
         #                  stim_channel, mask)
-        e = Events(self.caller.experiment.active_subject.working_file,
-                   event_params['stim'], event_params['mask'])
+        if subject.subject_name != self.caller.experiment.active_subject.subject_name:
+            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+            raw = fileManager.open_raw(raw_path, pre_load=False)
+        else:
+            raw = subject.working_file
+        
+        e = Events(raw, event_params['stim'], event_params['mask'])
         
         mask = np.bitwise_not(event_params['mask'])
         
@@ -437,10 +457,12 @@ class EventSelectionDialog(QtGui.QDialog):
             'event_id': self.ui.spinBoxEventID.value(),
             'event_name': str(self.ui.lineEditName.text())
         }
-        events = self.create_eventlist(event_params)
+        #Either active or non-active subject
+        subject = self.get_selected_subject()
+        events = self.create_eventlist(subject, event_params)
         if len(events) != 0:
-            self.batching_widget.data[self.caller.experiment.active_subject.subject_name]['events'].append(event_params)
-            self.update_events()
+            self.batching_widget.data[subject.subject_name]['events'].append(event_params)
+            self.update_events(subject)
         
 
     def accept(self):
