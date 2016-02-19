@@ -78,7 +78,9 @@ class BatchingWidget(QtGui.QWidget):
         for subject in self.caller.experiment.get_subjects():
             if subject.subject_name == str(item.text()):
                 
-                #self.data[subject.subject_name] = self.parent.collect_parameter_values()
+                self.data[subject.subject_name] = self.parent.collect_parameter_values()
+                
+                """
                 #TODO: pls come up with something practical instead, if the current style is the only way:
                 #TODO: in case of events, need to use append to prevent setting the events list
                 #to all of the subjects data
@@ -88,7 +90,7 @@ class BatchingWidget(QtGui.QWidget):
                     params_copy = deepcopy(params)
                     del params_copy['events']
                 self.data[subject.subject_name] = params_copy
-
+                """
                 
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
@@ -101,6 +103,8 @@ class BatchingWidget(QtGui.QWidget):
             for subject in self.caller.experiment.get_subjects():
                 if str(item.text()) == subject.subject_name:
                     self.data[subject.subject_name] = self.parent.collect_parameter_values()
+                    
+        print 'kala'
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed."""

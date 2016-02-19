@@ -40,6 +40,7 @@ import numpy as np
 from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 import mne
+from copy import deepcopy
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
@@ -169,11 +170,6 @@ class EventSelectionDialog(QtGui.QDialog):
                     'interval ' + str(event['interval']))
                 ) #, str(len(event)) + ' events found'))
                 self.ui.listWidgetEvents.addItem(item)
-            
-
-        #self.ui.listWidgetEvents.sortItems()
-        #if self.used_names.count(event_name) < 1:    
-        #    self.used_names.append(event_name)
 
     def selection_changed(self, subject_name, params_dict):
         """Unpickles parameter file from subject path and updates the values
@@ -184,7 +180,8 @@ class EventSelectionDialog(QtGui.QDialog):
         for subject in self.caller.experiment.get_subjects():
             if subject_name == subject.subject_name:
                 
-                #params_dict includes 'events' and 'fixed_length_events' keys
+                #Empty params_dict includes 'events' and 'fixed_length_events'
+                #keys.
                 if len(params_dict) > 2:
                     dic = params_dict
                 else:
@@ -303,6 +300,7 @@ class EventSelectionDialog(QtGui.QDialog):
             if reply == QtGui.QMessageBox.No:
                 return None
 
+        #TODO: are the values now correctly used in the epoch collection?
         reject = dict()
         if mag:
             value = self.ui.doubleSpinBoxMagReject_3.value()
@@ -331,12 +329,7 @@ class EventSelectionDialog(QtGui.QDialog):
             meg = 'grad'
         else: meg = False
         
-        
         subject = self.get_selected_subject()
-        if subject is self.caller.experiment.active_subject:
-            print 'selected subject is active subject'
-        if subject == self.caller.experiment.active_subject:
-            print 'selected subject == active subject'
         if subject.subject_name is not self.caller.experiment.active_subject.subject_name:
             raw_path = self.caller.experiment._working_file_names[subject.subject_name]
             raw = fileManager.open_raw(raw_path, pre_load=False)
@@ -350,12 +343,8 @@ class EventSelectionDialog(QtGui.QDialog):
             self.messageBox.show()
             return
 
-        #Create a dictionary containing all the parameters
-        #Note: Raw is not collected here.
-        #events = []
-        #fle = []
-        events = self.batching_widget.data[subject.subject_name]['events']
-        fle = self.batching_widget.data[subject.subject_name]['fixed_length_events']  # noqa
+        events = deepcopy(self.batching_widget.data[subject.subject_name]['events'])  # noqa
+        fle = deepcopy(self.batching_widget.data[subject.subject_name]['fixed_length_events'])  # noqa
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
