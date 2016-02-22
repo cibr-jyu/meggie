@@ -8,6 +8,7 @@ from PyQt4.QtGui import QDialogButtonBox
 
 from mne import make_fixed_length_events
 
+from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.epoching.fixedLengthEpochsDialogUi import Ui_FixedLengthEpochDialog
 
@@ -46,13 +47,18 @@ class FixedLengthEpochDialog(QtGui.QDialog):
             'event_id': self.ui.spinBoxId.value(),
             'event_name': str(self.ui.lineEditName.text())
         }
+        subject = self.parent.get_selected_subject()
+        if subject.subject_name is not self.caller.experiment.active_subject.subject_name:
+            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+            working_file = fileManager.open_raw(raw_path, pre_load=False)
+        else:
+            working_file = self.caller.experiment.active_subject.working_file
+        
         events = make_fixed_length_events(
-            self.caller.experiment.active_subject.working_file,
-            event_params['event_id'], event_params['tmin'],
+            working_file, event_params['event_id'], event_params['tmin'],
             event_params['tmax'], event_params['interval']
         )
         if len(events) > 0:
-            self.parent.batching_widget.data[self.caller.experiment.active_subject.subject_name]['fixed_length_events'].append(event_params)
-            subject = self.parent.get_selected_subject()
+            self.parent.batching_widget.data[subject.subject_name]['fixed_length_events'].append(event_params)
             self.parent.update_events(subject)
         return QtGui.QDialog.accept(self, *args, **kwargs)

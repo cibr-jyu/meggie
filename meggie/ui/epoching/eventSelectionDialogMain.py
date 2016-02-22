@@ -155,9 +155,10 @@ class EventSelectionDialog(QtGui.QDialog):
             events = self.batching_widget.data[subject_name]['events']
             for event in events:
                 item = QtGui.QListWidgetItem(
-                    '%s, %s (%s, %s)' % (event['event_id'], event['event_name'],
+                    '%s, %s, %s, %s' % ('ID=' + str(event['event_id']),
+                    'name=' + event['event_name'],
                     'mask=' + str(event['mask']),
-                    'stim=' + str(event['stim']))
+                    'stim=' + str(event['stim']))  # str(len(events)) + ' events found')
                 ) #str(len(event)) + ' events found'))
                 self.ui.listWidgetEvents.addItem(item)
 
@@ -488,6 +489,59 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent.update_epochs()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
+        
+        
+        
+        
+        
+        
+        
+        """
+        QtGui.QApplication.setOverrideCursor(QtGui.\
+                                     QCursor(QtCore.Qt.WaitCursor))
+        parameter_values = self.collect_parameter_values()
+        active_subject_name =  self.caller.experiment.active_subject_name
+        self.batching_widget.data[active_subject_name] = parameter_values
+        
+        error_message_channel = self.check_if_channel_exists(
+            self.caller.experiment.active_subject_name)
+        if len(error_message_channel) > 0:
+            self.messageBox = messageBoxes.shortMessageBox(
+            error_message_channel)
+            QtGui.QApplication.restoreOverrideCursor()
+            self.messageBox.show()
+            return
+
+        error_message = self.calculate_ecg(
+            self.caller.experiment.active_subject)
+        if len(error_message) > 0:
+            #Exception already handled in caller
+            QtGui.QApplication.restoreOverrideCursor()
+            self.close()
+            return
+        else:
+            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
+            self.parent.ui.checkBoxEOGComputed.setChecked(True)
+        self.close()
+        self.parent._initialize_ui()
+        QtGui.QApplication.restoreOverrideCursor()        
+        """
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         """
