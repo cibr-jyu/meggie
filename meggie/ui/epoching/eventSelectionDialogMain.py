@@ -663,5 +663,17 @@ class EventSelectionDialog(QtGui.QDialog):
             name = self.set_event_name(name, suffix)
             return name
 
-    def calculate_epochs(self):
-        pass
+    def calculate_epochs(self, subject):
+        try:
+            result = self.caller.create_new_epochs(
+                self.batching_widget.data[subject.subject_name], subject)
+            if not result == 0:
+                return ("Error while creating epochs for %s.\n" %
+                        subject.subject_name)
+        except Exception:
+            error_message = ''
+            return error_message
+        except ValueError as e:
+            error_message = str(e)
+            return error_message
+        return ''

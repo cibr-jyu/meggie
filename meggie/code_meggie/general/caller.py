@@ -50,6 +50,7 @@ from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
+from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
 
@@ -520,9 +521,13 @@ class Caller(object):
         
         #events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
         #    shortest_event=1, mask=mask)
-                
+
+        #events = params['events']
+        try:
+            events = self.create_eventlist(subject, params)
+        except ValueError:
+            raise
         
-        events = params['events']
         events = np.array(events) # Just to make sure it is a numpy array.
         if params['mag'] and params['grad']:
             params['meg'] = True
@@ -550,33 +555,48 @@ class Caller(object):
                 'Could not find any data. Perhaps the rejection thresholds',
                 'are too strict...'
                 ]))
+            
+        epochs_object = Epochs()
+        epochs_object._collection_name = params['collection_name']
+        #epochs._raw = epochs_raw
+        #epochs_object._params = params
+        subject.add_epochs(epochs_object)
         return epochs
 
-    @messaged
-    def create_new_epochs(self, epoch_params):
+    def create_eventlist(self, subject, params):
         """
-        A method for creating new epochs with the given parameter values for
-        the active subject.
-
-        Keyword arguments:
-        epoch_params = A dictionary containing the parameter values for
-                       creating the epochs minus the raw data.
+        Pick desired events from the raw data.
         """
-        # Raw data is not present in the dictionary so get it from the
-        # current experiment.active_subject.
-        epocher = Epochs()
-        subject = self.experiment.active_subject
-        epochs = epocher.create_epochs_from_dict(self.experiment, epoch_params,
-                                                 subject.working_file)
+        #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
+        #the MNE Events' __init__ function uses mne.find_events :  -  D
+        #this needs some manual logging or logging from the Events' __ini__
+        #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
+        #                  stim_channel, mask)
 
-        epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
+        #events = np.array(events) # Just to make sure it is a numpy array.
+        events = []
+        if len(params['events']) > 0:
+            for event_params in params['events']:
+                events.append(self.create_eventlist(subject, event_params))
+        if len(params['fixed_length_events']) > 0:
+            for event_params in params['fixed_length_events']:
+                events.append(self.create_eventlist(subject, event_params))            
+        if len(events) == 0:
+            raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
 
-        fname = epoch_params['collectionName']
-        self.experiment.active_subject.handle_new_epochs(fname, epoch_params)
 
-        fpath = os.path.join(subject._epochs_directory, fname)
-
-        fileManager.save_epoch(fpath, epochs, epoch_params, True)
+        if subject.subject_name != self.caller.experiment.active_subject.subject_name:
+            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
+            raw = fileManager.open_raw(raw_path, pre_load=False)
+        else:
+            raw = subject.working_file
+        e = Events(raw, event_params['stim'], event_params['mask'])
+        mask = np.bitwise_not(event_params['mask'])
+        #TODO: Log events?
+        #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
+        events = e.pick(np.bitwise_and(event_params['event_id'], mask))
+        print str(events)
+        return events
 
     def draw_evoked_potentials(self, evokeds, layout):  # , category):
         """
