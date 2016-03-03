@@ -527,22 +527,21 @@ class Caller(object):
             raw = fileManager.open_raw(raw_path, pre_load=False)
              
         events = []
-        events = np.array(events)
         event_params = params['events']
         fixed_length_event_params = params['fixed_length_events']
         
         if len(event_params) > 0:
             for event_params_dic in event_params:
                 #TODO: log
-                events = np.append(events, self.create_eventlist(event_params_dic, raw))
+                events.extend(self.create_eventlist(event_params_dic, raw))
         if len(fixed_length_event_params) > 0:
             for event_params_dic in fixed_length_event_params:
                 #TODO: log
-                events = np.append(events, make_fixed_length_events(
+                events.extend(make_fixed_length_events(
                     raw, event_params_dic['event_id'],
                     event_params_dic['tmin'],
                     event_params_dic['tmax'], event_params_dic['interval']
-                ))            
+                ))           
         if len(events) == 0:
             raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
         
@@ -568,12 +567,17 @@ class Caller(object):
         category = {}
         
         for event in params['events']:
-            
             category[event['event_name']] = event['event_id']
         
+        for event in params['fixed_length_events']:
+            category[event['event_name']] = event['event_id']
+
+        from pprint import pprint
+        pprint(events)
+
         #{params['event_name'] : params['event_id']}
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, events, category,  #params['category']
+            raw, np.array(events), category,  #params['category']
             params['tmin'], params['tmax'], picks=picks,
             reject=params['reject'])
         if len(epochs.get_data()) == 0:
@@ -582,10 +586,12 @@ class Caller(object):
                 'are too strict...'
                 ]))
         fname = os.path.join(self.experiment.workspace,
+            self.experiment.experiment_name,
             subject.subject_name, 'epochs', params['collection_name'])
         fileManager.save_epoch(fname, epochs, params=None, overwrite=True)
         epochs_object = Epochs()
-        epochs_object._collection_name = params['collection_name']
+        epochs_object.collection_name = params['collection_name']
+        epochs_object.params = params
         subject.add_epochs(epochs_object)
         return 0
         #return epochs
@@ -607,7 +613,6 @@ class Caller(object):
         #TODO: Log events?
         #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(params['event_id'], mask))
-        print str(events)
         return events
 
     def draw_evoked_potentials(self, evokeds, layout):  # , category):

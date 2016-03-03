@@ -481,7 +481,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         epochs = self.caller.experiment.active_subject.epochs
         if epochs is not None:
-            for epoch in epochs:
+            for epoch in epochs.values():
                 item = QtGui.QListWidgetItem(epoch.collection_name)
                 self.epochList.addItem(item)
 
