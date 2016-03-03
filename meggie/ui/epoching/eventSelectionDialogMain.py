@@ -218,8 +218,7 @@ class EventSelectionDialog(QtGui.QDialog):
         picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
             return
 
         #Create a dictionary containing all the parameters
@@ -333,8 +332,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if self.ui.listWidgetEvents.count() == 0:
             message = 'Cannot create epochs from empty list.'
-            self.errorMessage = messageBoxes.shortMessageBox(message)
-            self.errorMessage.show()
+            messagebox(self.parent, message)
             return
 
         param_dict = self.collect_parameter_values()

@@ -42,8 +42,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
 from meggie.ui.general.preferencesDialogUi import Ui_DialogPreferences
-from meggie.ui.general import messageBoxes
 
+from meggie.ui.utils.messaging import messagebox
 
 class PreferencesDialog(QtGui.QDialog):
     """
@@ -122,8 +122,7 @@ class PreferencesDialog(QtGui.QDialog):
             self.parent.change_workspace(workFilePath)
         else:
             message = 'No file path found for working file'
-            messageBox = messageBoxes.shortMessageBox(message)
-            messageBox.show()
+            messagebox(self.parent, message)
             return
         
         if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked() == True:

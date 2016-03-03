@@ -43,7 +43,6 @@ from PyQt4 import QtCore,QtGui
 
 from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
 from meggie.ui.preprocessing.projectorDialog import ProjectorDialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
@@ -321,10 +320,8 @@ class EcgParametersDialog(ProjectorDialog):
                                          'for subject: ' + subject._subject_name + \
                                          '\n'
         if len(error_message) is not 0:
-            self.messageBox = messageBoxes.\
-            shortMessageBox(error_message + '\nPlease change your ECG ' + \
-                            'detection channel for the subject/s above!')
-            self.messageBox.show()
+            messagebox(self.parent, ('Please change your ECG detection '
+                                     'channel for the subject/s above!'))
 
     def channel_name_validator(self, ch_name, ch_list):
         """Checks if the ch_list has the given ch_name by matching it with the

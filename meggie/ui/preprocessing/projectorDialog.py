@@ -6,9 +6,7 @@ Created on 8.9.2015
 from PyQt4 import QtGui, QtCore
 
 from meggie.code_meggie.general.caller import Caller
-
-from meggie.ui.general import messageBoxes
-
+from meggie.ui.utils.messaging import messagebox
 
 class ProjectorDialog(QtGui.QDialog):
     """
@@ -34,6 +32,5 @@ class ProjectorDialog(QtGui.QDialog):
         item = self.ui.listWidgetSubjects.currentItem()
         if item is None:
             message = 'Select a subject to remove.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
         item.setCheckState(QtCore.Qt.Unchecked)

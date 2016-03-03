@@ -80,7 +80,6 @@ from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDi
 from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.listWidget import ListWidget
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
@@ -304,8 +303,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment is None:
             msg = ('No active experiment to add a subject to. Load an '
                    'experiment or make a new one, then try again.')
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
+            messagebox(self, msg)
             return
 
         self.subject_dialog = AddSubjectDialog(self)
@@ -319,8 +317,7 @@ class MainWindow(QtGui.QMainWindow):
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
         if selIndexes == []:
             message = 'No subject selected for removal.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
 
         subject_name = selIndexes[0].data()
@@ -337,8 +334,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.subjectListModel.removeRows(selIndexes[0].row())
             except Exception:
                 msg = 'Could not remove the contents of the subject folder.'
-                self.messageBox = messageBoxes.shortMessageBox(msg)
-                self.messageBox.show()
+                messagebox(self, msg)
 
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -436,8 +432,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.caller.experiment is None:
             message = 'Please open an experiment first.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
         self.log_dialog = LogDialog(self)
         self.log_dialog.show()
@@ -592,10 +587,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         if self.caller.experiment is None:
-            self.messageBox = messageBoxes.shortMessageBox()
-            self.messageBox.labelException.setText('You do not currently have '
-                                                   'an experiment activated.')
-            self.messageBox.show()
+            messagebox(self, 'You do not currently have an experiment activated.')  # noqa
             return
         self.expInfoDialog = experimentInfoDialog()
         self.expInfoDialog.show()
@@ -710,9 +702,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         if self.epochList.ui.listWidgetEpochs.count() == 0:
-            message = 'Create epochs before visualizing.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, 'Create epochs before visualizing.')
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
@@ -727,8 +717,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.epochList.ui.listWidgetEpochs.currentItem()
         if item is None:
             message = 'No epochs collection selected.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
 
         epochs_name = str(item.text())
@@ -756,8 +745,7 @@ class MainWindow(QtGui.QMainWindow):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             layout = str(self.ui.labelLayout.text())
         if layout == '':
-            mBox = messageBoxes.shortMessageBox('No layout selected!')
-            mBox.exec_()
+            messagebox(self, 'No layout selected!')
             return
 
         self.ui.pushButtonVisualizeEvokedDataset.setText('      Visualizing...'
@@ -773,9 +761,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.draw_evoked_potentials(evoked_raw, layout)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
-            mBox = messageBoxes.shortMessageBox('Error while visualizing.\n' + 
-                                                str(e))
-            mBox.exec_()
+            exc_messagebox(self, e)
         finally:
             oldText = 'Visualize selected dataset'
             self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
@@ -796,10 +782,9 @@ class MainWindow(QtGui.QMainWindow):
 
         evoked_name = str(item.text())
         if '[' not in evoked_name or ']' not in evoked_name:
-            mBox = messageBoxes.shortMessageBox('Data set name must contain '
-                                                'event names inside brackets '
-                                                'for group averaging.')
-            mBox.exec_()
+            messagebox(self, ('Data set name must contain '
+                              'event names inside brackets '
+                              'for group averaging.'))
             return
 
         groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
@@ -899,9 +884,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         elif self.epochList.currentItem() is None:
-            self.messageBox = messageBoxes.shortMessageBox('No epochs '
-                                                           'selected.')
-            self.messageBox.show()
+            messagebox(self, 'No epochs selected')
 
         item_str = self.epochList.currentItem().text()
 
@@ -931,9 +914,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         elif self.evokedList.currentItem() is None:
-            self.messageBox = messageBoxes.shortMessageBox('No evokeds '
-                                                           'selected.')
-            self.messageBox.show()
+            messagebox(self, 'No evokeds selected.')
 
         item_str = self.evokedList.currentItem().text()
 
@@ -965,9 +946,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         elif self.ui.listWidgetPowerItems.currentItem() is None:
-            self.messageBox = messageBoxes.shortMessageBox('No power '
-                                                           'selected.')
-            self.messageBox.show()
+            messagebox(self, 'No power selected.')
             return
 
         item_str = self.ui.listWidgetPowerItems.currentItem().text()
@@ -1014,8 +993,7 @@ class MainWindow(QtGui.QMainWindow):
             fig = raw.plot(block=True, show=True, events=events)
             fig.canvas.mpl_connect('close_event', handle_close)
         except Exception, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
+            exc_messagebox(self, err)
             return
 
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
@@ -1028,8 +1006,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             self.caller.call_mne_browse_raw(info['filename'])
         except Exception, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
+            exc_messagebox(self, err)
             return
 
     def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
@@ -1058,9 +1035,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             self.maxFilterDialog = MaxFilterDialog(self)
         except Exception, err:
-            title = 'MaxFilter error:'
-            self.messageBox = messageBoxes.longMessageBox(title, str(err))
-            self.messageBox.show()
+            exc_messagebox(self, err)
             return
         self.maxFilterDialog.show()
 
@@ -1109,8 +1084,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must create epochs before TFR.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
@@ -1125,8 +1099,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must select the epochs for TFR.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         self.tfrTop_dialog = TFRTopologyDialog(self, name)
@@ -1155,8 +1128,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'Please select an epoch collection to channel average.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         if self.ui.radioButtonLobe.isChecked():
@@ -1292,8 +1264,7 @@ class MainWindow(QtGui.QMainWindow):
         if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
             msg = ("Reconstructed image directory should have both 'surf' "
                    "and 'mri' directories in it.")
-            messageBox = messageBoxes.shortMessageBox(msg)
-            messageBox.exec_()
+            messagebox(self, msg)
             return
 
         activeSubject = self.caller.experiment._active_subject
@@ -1305,8 +1276,7 @@ class MainWindow(QtGui.QMainWindow):
             msg = ('Could not copy files. Either the disk is full , you have '
                    'no rights to read the directory or something weird '
                    'happened.')
-            messageBox = messageBoxes.shortMessageBox(msg)
-            messageBox.exec_()
+            messagebox(self, msg)
 
         self._initialize_ui()
 
@@ -1341,8 +1311,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.ui.tableViewForwardModels.selectedIndexes() == []:
             message = 'Please select a forward model to remove.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
 
         reply = QtGui.QMessageBox.question(self, 'Removing forward model',
@@ -1372,8 +1341,7 @@ class MainWindow(QtGui.QMainWindow):
         except Exception:
             msg = ('There was a problem removing forward model. Nothing was '
                    'removed.')
-            self. messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
+            messagebox(self, msg)
 
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
         """
@@ -1408,8 +1376,7 @@ class MainWindow(QtGui.QMainWindow):
                 shutil.copyfile(path, targetName)
             except IOError:
                 msg = 'There was a problem while copying the coordinate file.'
-                messageBox = messageBoxes.shortMessageBox(msg)
-                messageBox.exec_()
+                messagebox(self, msg)
 
         self.forwardModelModel.initialize_model()
 
@@ -1423,8 +1390,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
             msg = 'Please select a forward model to (re-)coregister.'
-            self.messageBox = messageBoxes.shortMessageBox(msg)
-            self.messageBox.show()
+            messagebox(self, msg)
             return
 
         self.caller.coregister_with_mne_gui_coregistration()
@@ -1440,8 +1406,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
             message = ('Please select a forward model to (re)create a forward '
                        'solution for.')
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self, message)
             return
 
         self.fSolutionDialog = ForwardSolutionDialog(self)

@@ -40,7 +40,6 @@ from PyQt4 import QtCore, QtGui
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
