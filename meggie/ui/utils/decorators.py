@@ -36,6 +36,7 @@ def threaded(func):
             try:
                 exc = bucket.get(block=False)
                 pool.terminate()
+                QtGui.QApplication.restoreOverrideCursor()
                 raise exc[0], exc[1].args[0], exc[2]
             except Empty:
                 pass
