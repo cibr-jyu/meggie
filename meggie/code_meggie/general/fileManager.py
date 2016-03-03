@@ -606,7 +606,7 @@ def unpickle(fpath):
     return unpickledObject
 
 
-def save_epoch(fpath, epoch, params, overwrite=False):
+def save_epoch(fpath, epoch, params=None, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved

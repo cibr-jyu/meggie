@@ -479,7 +479,7 @@ class MainWindow(QtGui.QMainWindow):
         epoch_params = A dictionary containing the parameter values for
                        creating the epochs minus the raw data.
         """
-        epochs = self.caller.experiment.active_subject.get_epochs()
+        epochs = self.caller.experiment.active_subject.epochs
         if epochs is not None:
             for epoch in epochs:
                 item = QtGui.QListWidgetItem(epoch.collection_name)

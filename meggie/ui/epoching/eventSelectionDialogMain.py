@@ -469,13 +469,13 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.
-                                             QCursor(QtCore.Qt.WaitCursor))
         param_dict = self.collect_parameter_values()
         if param_dict is None:
             QtGui.QApplication.restoreOverrideCursor()
             return
-
+        
+        self.batching_widget.data[self.caller.experiment.active_subject.subject_name] = param_dict
+        
         if all([not self.ui.checkBoxEeg.isChecked(), 
                 not self.ui.checkBoxGrad.isChecked(),
                 not self.ui.checkBoxMag.isChecked()]):
@@ -485,63 +485,10 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage = messageBoxes.shortMessageBox(message)
             self.errorMessage.show()
             return
-
+        self.calculate_epochs(self.caller.experiment.active_subject)
+        self.close()
         self.parent.update_epochs()
         QtGui.QApplication.restoreOverrideCursor()
-        self.close()
-        
-        
-        
-        
-        
-        
-        
-        """
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                     QCursor(QtCore.Qt.WaitCursor))
-        parameter_values = self.collect_parameter_values()
-        active_subject_name =  self.caller.experiment.active_subject_name
-        self.batching_widget.data[active_subject_name] = parameter_values
-        
-        error_message_channel = self.check_if_channel_exists(
-            self.caller.experiment.active_subject_name)
-        if len(error_message_channel) > 0:
-            self.messageBox = messageBoxes.shortMessageBox(
-            error_message_channel)
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox.show()
-            return
-
-        error_message = self.calculate_ecg(
-            self.caller.experiment.active_subject)
-        if len(error_message) > 0:
-            #Exception already handled in caller
-            QtGui.QApplication.restoreOverrideCursor()
-            self.close()
-            return
-        else:
-            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-            self.parent.ui.checkBoxEOGComputed.setChecked(True)
-        self.close()
-        self.parent._initialize_ui()
-        QtGui.QApplication.restoreOverrideCursor()        
-        """
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
     def on_pushButtonSaveEvents_clicked(self, checked=None):
         """
@@ -665,8 +612,9 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def calculate_epochs(self, subject):
         try:
-            result = self.caller.create_new_epochs(
-                self.batching_widget.data[subject.subject_name], subject)
+            result = self.caller.create_epochs(
+                self.batching_widget.data[subject.subject_name], subject,
+                parent_handle=self.parent)
             if not result == 0:
                 return ("Error while creating epochs for %s.\n" %
                         subject.subject_name)

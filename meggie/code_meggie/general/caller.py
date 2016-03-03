@@ -20,6 +20,7 @@ import linecache
 from PyQt4 import QtCore, QtGui
 
 import mne
+from mne import make_fixed_length_events
 from mne.channels.layout import read_layout
 from mne.channels.layout import _pair_grad_sensors_from_ch_names
 from mne.channels.layout import _merge_grad_data
@@ -53,6 +54,7 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
+from meggie.code_meggie.general.subject import Subject
 
 
 @Singleton
@@ -517,18 +519,34 @@ class Caller(object):
             fileManager.save_epoch(fname, epochs, params, overwrite=True)
 
     @messaged
-    def create_epochs(self, subject, params):
+    def create_epochs(self, params, subject):
+        if subject == self.experiment.active_subject:
+            raw = subject.working_file
+        else:
+            raw_path = self.experiment._working_file_names[subject.subject_name]
+            raw = fileManager.open_raw(raw_path, pre_load=False)
+             
+        events = []
+        events = np.array(events)
+        event_params = params['events']
+        fixed_length_event_params = params['fixed_length_events']
         
-        #events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
-        #    shortest_event=1, mask=mask)
-
-        #events = params['events']
-        try:
-            events = self.create_eventlist(subject, params)
-        except ValueError:
-            raise
+        if len(event_params) > 0:
+            for event_params_dic in event_params:
+                #TODO: log
+                events = np.append(events, self.create_eventlist(event_params_dic, raw))
+        if len(fixed_length_event_params) > 0:
+            for event_params_dic in fixed_length_event_params:
+                #TODO: log
+                events = np.append(events, make_fixed_length_events(
+                    raw, event_params_dic['event_id'],
+                    event_params_dic['tmin'],
+                    event_params_dic['tmax'], event_params_dic['interval']
+                ))            
+        if len(events) == 0:
+            raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
         
-        events = np.array(events) # Just to make sure it is a numpy array.
+        #if 'mag' and 'grad' in params:
         if params['mag'] and params['grad']:
             params['meg'] = True
         elif params['mag']:
@@ -537,64 +555,58 @@ class Caller(object):
             params['meg'] = 'grad'
         else:
             params['meg'] = False
-        if not isinstance(subject.working_file, mne.io.Raw):
+        if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object')
         #TODO: log mne call
-        picks = mne.pick_types(subject.working_file.info, meg=params['meg'],
+        picks = mne.pick_types(raw.info, meg=params['meg'],
             eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
         if len(picks) == 0:
             raise ValueError(''.join([
                 'Picks cannot be empty. Select picks by checking the ',
                 'checkboxes.'
                 ]))
+        category = {}
+        
+        for event in params['events']:
+            
+            category[event['event_name']] = event['event_id']
+        
+        #{params['event_name'] : params['event_id']}
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            subject.working_file, events, params['category'], params['tmin'],
-            params['tmax'], picks=picks, reject=params['reject'])
+            raw, events, category,  #params['category']
+            params['tmin'], params['tmax'], picks=picks,
+            reject=params['reject'])
         if len(epochs.get_data()) == 0:
             raise ValueError(''.join([
                 'Could not find any data. Perhaps the rejection thresholds',
                 'are too strict...'
                 ]))
-            
+        fname = os.path.join(self.experiment.workspace,
+            subject.subject_name, 'epochs', params['collection_name'])
+        fileManager.save_epoch(fname, epochs, params=None, overwrite=True)
         epochs_object = Epochs()
         epochs_object._collection_name = params['collection_name']
-        #epochs._raw = epochs_raw
-        #epochs_object._params = params
         subject.add_epochs(epochs_object)
-        return epochs
+        return 0
+        #return epochs
 
-    def create_eventlist(self, subject, params):
+    def create_eventlist(self, params, raw):
         """
         Pick desired events from the raw data.
         """
         #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
         #the MNE Events' __init__ function uses mne.find_events :  -  D
         #this needs some manual logging or logging from the Events' __ini__
-        #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
+        #e = wrap_mne_call(self.experiment, Events, self.experiment.active_subject.working_file,
         #                  stim_channel, mask)
-
-        #events = np.array(events) # Just to make sure it is a numpy array.
         events = []
-        if len(params['events']) > 0:
-            for event_params in params['events']:
-                events.append(self.create_eventlist(subject, event_params))
-        if len(params['fixed_length_events']) > 0:
-            for event_params in params['fixed_length_events']:
-                events.append(self.create_eventlist(subject, event_params))            
-        if len(events) == 0:
-            raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
-
-
-        if subject.subject_name != self.caller.experiment.active_subject.subject_name:
-            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
-            raw = fileManager.open_raw(raw_path, pre_load=False)
-        else:
-            raw = subject.working_file
-        e = Events(raw, event_params['stim'], event_params['mask'])
-        mask = np.bitwise_not(event_params['mask'])
+        events = np.array(events) # Just to make sure it is a numpy array.
+        #events = []
+        e = Events(raw, params['stim'], params['mask'])
+        mask = np.bitwise_not(params['mask'])
         #TODO: Log events?
-        #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
-        events = e.pick(np.bitwise_and(event_params['event_id'], mask))
+        #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
+        events = e.pick(np.bitwise_and(params['event_id'], mask))
         print str(events)
         return events
 
