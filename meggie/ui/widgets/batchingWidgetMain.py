@@ -102,7 +102,9 @@ class BatchingWidget(QtGui.QWidget):
             item.setCheckState(QtCore.Qt.Checked)
             for subject in self.caller.experiment.get_subjects():
                 if str(item.text()) == subject.subject_name:
-                    self.data[subject.subject_name] = self.parent.collect_parameter_values()
+                    params = self.parent.collect_parameter_values()
+                    if params is not None:
+                        self.data[subject.subject_name] = params 
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed."""

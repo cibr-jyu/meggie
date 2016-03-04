@@ -47,7 +47,6 @@ from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
-from meggie.ui.epoching.groupEpochingDialogMain import GroupEpochingDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.general import messageBoxes
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -158,17 +157,21 @@ class EventSelectionDialog(QtGui.QDialog):
                     '%s, %s, %s, %s' % ('ID=' + str(event['event_id']),
                     'name=' + event['event_name'],
                     'mask=' + str(event['mask']),
-                    'stim=' + str(event['stim']))  # str(len(events)) + ' events found')
-                ) #str(len(event)) + ' events found'))
+                    'stim=' + str(event['stim'])
+                ))
+                # , [%s]
+                #     str(len(events)) + ' events found')
+                # )
                 self.ui.listWidgetEvents.addItem(item)
 
         if 'fixed_length_events' in self.batching_widget.data[subject_name]:
             fixed_length_events = self.batching_widget.data[subject_name]['fixed_length_events']
             for event in fixed_length_events:
                 item = QtGui.QListWidgetItem(
-                    '%s, %s (%s, %s, %s)' % (event['event_id'], event['event_name'],
-                    'start ' + str(event['tmin']), 'end ' + str(event['tmax']),
-                    'interval ' + str(event['interval']))
+                    '%s, %s, %s, %s, %s' % ('ID=' + str(event['event_id']),
+                    'name=' + event['event_name'],
+                    'start=' + str(event['tmin']), 'end=' + str(event['tmax']),
+                    'interval=' + str(event['interval']))
                 ) #, str(len(event)) + ' events found'))
                 self.ui.listWidgetEvents.addItem(item)
 
@@ -290,16 +293,6 @@ class EventSelectionDialog(QtGui.QDialog):
         #stim_channel = self.caller.experiment.active_subject._stim_channel
 
         collection_name = str(self.ui.lineEditCollectionName.text())
-        if len(self.parent.epochList.ui.listWidgetEpochs.\
-            findItems(collection_name, QtCore.Qt.MatchExactly)) > 0:
-            msg = ('Collection name %s exists. Overwrite existing epochs?' %
-                   collection_name)
-            reply = QtGui.QMessageBox.question(self, 'Collection exists', msg,
-                                               QtGui.QMessageBox.Yes |
-                                               QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.No:
-                return None
 
         #TODO: are the values now correctly used in the epoch collection?
         reject = dict()
@@ -375,7 +368,7 @@ class EventSelectionDialog(QtGui.QDialog):
         #TODO: Log events?
         #events = wrap_mne_call(self.caller.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(event_params['event_id'], mask))
-        print str(events)
+        
         return events
 
     def fill_parameters(self, params):
@@ -441,12 +434,22 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         if checked is None:
             return
+        # Forbid events with the same name
+        for key in self.batching_widget.data.keys():
+            for event in self.batching_widget.data[key]['events']:
+                if str(self.ui.lineEditName.text()) == event['event_name']:
+                    return
+            for event in self.batching_widget.data[key]['fixed_length_events']:
+                if str(self.ui.lineEditName.text()) == event['event_name']:
+                    return
+        
         event_params = {
             'stim': str(self.ui.comboBoxStimChannel.currentText()),
             'mask': self.ui.spinBoxMask.value(),
             'event_id': self.ui.spinBoxEventID.value(),
             'event_name': str(self.ui.lineEditName.text())
         }
+        
         #Either active or non-active subject
         subject = self.get_selected_subject()
         events = self.create_eventlist(subject, event_params)
@@ -490,78 +493,51 @@ class EventSelectionDialog(QtGui.QDialog):
         self.parent.update_epochs()
         QtGui.QApplication.restoreOverrideCursor()
 
-    def on_pushButtonSaveEvents_clicked(self, checked=None):
-        """
-        Called when save events button is clicked. Saves all the events in the
-        list to an excel-file.
-        """
-        if checked is None: return # Standard workaround
-        events = np.ndarray((self.ui.listWidgetEvents.count(),4), dtype=object)
-        for index in xrange(self.ui.listWidgetEvents.count()):
-            category = (self.ui.listWidgetEvents.item(index).
-                        data(33))
-            events[index,0] = str(category)
-            event = self.ui.listWidgetEvents.item(index).data(32)
-            events[index,1:] = event
-        #events = self.create_eventlist()'
-        if len(events) > 0:
-            try:
-                activeSubject = self.caller._experiment._active_subject
-                fileManager.write_events(events, activeSubject)
-            except UnicodeDecodeError, err:
-                message = 'Cannot save events: ' + str(err)
-                self.messageBox = messageBoxes.shortMessageBox(message)
-                self.messageBox.show()
-                print 'Aborting...'
-                return
+    def acceptBatch(self):
+        QtGui.QApplication.setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.WaitCursor))
+        
+        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        subject_names = []
+        for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
+            item = self.batching_widget.ui.listWidgetSubjects.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
 
-    def on_pushButtonReadEvents_clicked(self, checked=None):
-        """
-        Called when read events button is clicked. Reads events from an 
-        excel-file.
-        """
-        if checked is None: return # Standard workaround
-        title = 'Read events from xls. Format: name|sample|old id|new id.'
-        filename = str(QtGui.QFileDialog.getOpenFileName(self, title,
-                                                         self.caller.\
-                                                         experiment.\
-                                                         active_subject.\
-                                                         subject_path))
-        if filename == '':
-            return
-        self.ui.listWidgetEvents.clear()
-        try:
-            sheet = fileManager.read_events(filename)
-        except XLRDError, err:
-            self.messageBox = messageBoxes.shortMessageBox(str(err))
-            self.messageBox.show()
-            return
+        error_messages = []
+        
+        # In case of batch process:
+        # 1. Calculation is first done for the active subject to prevent an
+        #    excessive reading of a raw file.
+        if recently_active_subject in subject_names:
+            error_messages.append(
+                self.calculate_epochs(self.caller.experiment.active_subject)
+            )
+        
+        # 2. Calculation is done for the rest of the subjects.
+        for subject in self.caller.experiment.get_subjects():
+            if subject.subject_name in subject_names:
+                if subject.subject_name == recently_active_subject:
+                    continue
+                self.caller.activate_subject(subject.subject_name,
+                    do_meanwhile=self.parent.update_ui,
+                    parent_handle=self.parent)
+                # Calculation is done in a separate method so that Python
+                # frees memory from the earlier subject's data calculation.
 
-        for row_index in range(sheet.nrows):
-            #Check that there are no empty cells in a row
-            if not (any([x == '' for x in sheet.row_values(row_index)])):
-                item = CustomListItem(str(sheet.cell(row_index,0).value) +
-                                      ' ' + str(int(sheet.cell(row_index, 1).
-                                                    value)) + ', ' +
-                                      str(int(sheet.cell(row_index, 3).value)))
-                event = map(int, sheet.row_values(row_index)[1:4])
-                print event
-                item.setData(32, event)
-                item.setData(33, str(sheet.cell(row_index,0).value))
-                self.ui.listWidgetEvents.addItem(item)
+                error_messages.append(self.calculate_epochs(subject))
+                
+        self.caller.activate_subject(recently_active_subject,
+                                     do_meanwhile=self.parent.update_ui,
+                                     parent_handle=self.parent)
+        
+        # if len(error_messages) > 0:
+        #     self.messageBox = messageBoxes.shortMessageBox(str(error_messages))
+        #     self.messageBox.show()
+        # print [message for message in error_messages if message]
 
-        self.ui.listWidgetEvents.setCurrentItem(item)
-
-    def on_pushButtonBatching_clicked(self, checked=None):
-        """
-        Opens a dialog for batch processing epochs.
-        """
-        if checked is None: 
-            return
-
-        batchDialog = GroupEpochingDialog(self)
-        batchDialog.exec_()
-
+        self.parent._initialize_ui()
+        QtGui.QApplication.restoreOverrideCursor()
         self.close()
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
@@ -571,17 +547,6 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.fixedLengthDialog is None:
             self.fixedLengthDialog = FixedLengthEpochDialog(self)
         self.fixedLengthDialog.show()
-
-    def on_pushButtonClear_clicked(self, checked=None):
-        """
-        Method for clearing the event list.
-        """
-        self.batching_widget.data.pop('events', None)
-        #for row in range(self.ui.listWidgetEvents.count()):
-        #    item = self.ui.listWidgetEvents.item(row)
-        #    if item.data(33) in self.used_names:
-        #        self.used_names.remove(item.data(33))
-        self.ui.listWidgetEvents.clear()
 
     def set_event_name(self, name, suffix = 1):
         """Set the event name to name. If name exists, add suffix to it

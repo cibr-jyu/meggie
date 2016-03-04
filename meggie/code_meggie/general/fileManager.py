@@ -606,7 +606,7 @@ def unpickle(fpath):
     return unpickledObject
 
 
-def save_epoch(fpath, epoch, params=None, overwrite=False):
+def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -625,33 +625,8 @@ def save_epoch(fpath, epoch, params=None, overwrite=False):
     # First save the epochs
     epoch.save(fpath + '.fif')
     # Then save the parameters using pickle.
-    if params is None:
+    if params_to_save is None:
         return
-    # toPyObject turns the dict keys into QStrings so convert them back to
-    # strings.
-    # parameters = dict((str(k), v) for k, v in parameters.iteritems())
-
-    event_dict = {}
-    event_list = params['events']
-    #new_event_list = list()  # new list for excluding dropped epochs
-    drop_log = epoch.drop_log
-    drops = list()
-    for i, item in enumerate(event_list):
-        if len(drop_log[i]) != 0:  # add dropped epochs to params
-            drops.append(i)
-        key = str(item[1])
-        event = item[0]
-        # Create an empty list for the new key
-        if key not in event_dict:
-            event_dict[key] = []
-        event_dict[key].append(event)
-        #new_event_list.append(item)
-    params['events'] = event_dict
-    params['drops'] = drops
-    parameterFileName = str(fpath + '.param')
-    pickleObjectToFile(params, parameterFileName)
-    params['events'] = event_list  # list without dropped epochs
-
 
 def read_surface_names_into_list(subject):
     """

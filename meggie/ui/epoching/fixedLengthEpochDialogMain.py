@@ -32,7 +32,6 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')
-        #self.caller = Caller.Instance()
         self.raw = self.caller.experiment.active_subject.working_file
         tmax = int(self.raw.times[-1])
         self.ui.spinBoxStart.setMaximum(tmax)
@@ -40,6 +39,15 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         self.ui.spinBoxEnd.setValue(tmax)
 
     def accept(self, *args, **kwargs):
+        # Forbid events with the same name
+        for key in self.parent.batching_widget.data.keys():
+            for event in self.parent.batching_widget.data[key]['events']:
+                if str(self.ui.lineEditName.text()) == event['event_name']:
+                    return
+            for event in self.parent.batching_widget.data[key]['fixed_length_events']:
+                if str(self.ui.lineEditName.text()) == event['event_name']:
+                    return
+
         event_params = {
             'tmin': self.ui.spinBoxStart.value(),
             'tmax': self.ui.spinBoxEnd.value(),

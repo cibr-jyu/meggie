@@ -424,101 +424,6 @@ class Caller(object):
         return evokeds
 
     @messaged
-    def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
-                   mask, event_name, grad, mag, eeg, eog):
-        """
-        Creates epoch collection for all ``subjects`` with the given parameters
-
-        Keyword arguments:
-        subjects      - List of strings. Subjects to create epochs for.
-        epoch_name    - The name of the epoch collection as string.
-        tmin          - Start time for epochs as float.
-        tmax          - End time for epochs as float.
-        stim          - Boolean to indicate whether to include stim channel.
-        event_id      - The event_id as int.
-        mask          - Bit wise mask as int.
-        event_name    - Name for the event as string.
-        grad          - Peak-to-peak rejection limit for gradiometer channels
-                        or None if gradiometer channels are not included.
-        mag           - Peak-to-peak rejection limit for magnetometer channels
-                        or None if magnetometer channels are not included.
-        eeg           - Peak-to-peak rejection limit for EEG channels
-                        or None if EEG channels are not included.
-        eog           - Peak-to-peak rejection limit for EOG channels
-                        or None if EOG channels are not included.
-        """
-
-        self._batchEpoch(subjects, epoch_name, tmin, tmax, stim,
-                         event_id, mask, event_name, grad, mag, eeg,
-                         eog, do_meanwhile=self.parent.update_ui)
-
-    @threaded
-    def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
-                    mask, event_name, grad, mag, eeg, eog):
-        """Performed in a worker thread."""
-        # active_subject = self.experiment.active_subject_name
-        path = self.experiment.workspace
-        working_files = self.experiment._working_file_names.values()
-        reject = dict()
-        if grad is not None and grad >= 0:
-            reject['grad'] = grad
-        if mag is not None and mag >= 0:
-            reject['mag'] = mag
-        if eeg is not None and eeg >= 0:
-            reject['eeg'] = eeg
-        if eog is not None and eog >= 0:
-            reject['eog'] = eog
-        mag = mag is not None
-        grad = grad is not None
-        eeg = eeg is not None
-        eog = eog is not None
-
-        for subject in subjects:
-            path = os.path.join(path, subject)
-            fname = ''
-            for working_file in working_files:
-                if os.path.split(working_file)[1].startswith(subject):
-                    fname = working_file
-                    break
-            if fname == '':
-                print 'Could not find working file for %s. Skipping.' % subject
-                continue
-            for sub in self.experiment.get_subjects():
-                if sub.subject_name == subject:
-                    this_subject = sub
-                    break
-
-            stim_channel = this_subject.stim_channel
-            try:
-                raw = mne.io.Raw(fname)
-                #log mne call
-                events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
-                                         shortest_event=1, mask=mask)
-                #log mne call
-                events = wrap_mne_call(self.experiment, mne.pick_events, events, include=event_id)
-                epocher = Epochs()
-
-                #log mne call in Epochs class
-                epochs = epocher.create_epochs(self.experiment, raw, events, mag, grad, eeg,
-                                               stim, eog, reject,
-                                               {event_name: event_id}, tmin,
-                                               tmax)
-            except Exception as e:
-                raise Exception('Could not create epochs for subject ' +
-                                subject + ':\n' + str(e) + '\n')
-
-            path = os.path.join(os.path.split(fname)[0], 'epochs')
-            fname = os.path.join(path, epoch_name)
-            events = [(event, event_name) for event in events]
-            params = {'events': events, 'mag': mag, 'grad': grad,
-                      'eeg': eeg, 'stim': stim, 'eog': eog,
-                      'reject': reject, 'tmin': tmin, 'tmax': tmax,
-                      'collectionName': epoch_name, 'raw': fname}
-            this_subject.handle_new_epochs(epoch_name, params)
-            # epochs_object = this_subject._epochs[epoch_name]
-            fileManager.save_epoch(fname, epochs, params, overwrite=True)
-
-    @messaged
     def create_epochs(self, params, subject):
         if subject == self.experiment.active_subject:
             raw = subject.working_file
@@ -572,10 +477,9 @@ class Caller(object):
         for event in params['fixed_length_events']:
             category[event['event_name']] = event['event_id']
 
-        from pprint import pprint
-        pprint(events)
+        #from pprint import pprint
+        #pprint(events)
 
-        #{params['event_name'] : params['event_id']}
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
             raw, np.array(events), category,  #params['category']
             params['tmin'], params['tmax'], picks=picks,
@@ -588,29 +492,34 @@ class Caller(object):
         fname = os.path.join(self.experiment.workspace,
             self.experiment.experiment_name,
             subject.subject_name, 'epochs', params['collection_name'])
-        fileManager.save_epoch(fname, epochs, params=None, overwrite=True)
+        
+        params_to_save = {'events': events, 'mag': params['mag'], 'grad': params['grad'],
+                  'eeg': params['eeg'], 'stim': params['stim'], 'eog': params['eog'],
+                  'reject': params['reject'], 'tmin': params['tmin'], 'tmax': params['tmax'],
+                  'collectionName': params['collection_name'], 'raw': fname}
+        
+        fileManager.save_epoch(fname, epochs, params_to_save=None, overwrite=True)
         epochs_object = Epochs()
+        epochs_object.raw = epochs
         epochs_object.collection_name = params['collection_name']
         epochs_object.params = params
         subject.add_epochs(epochs_object)
         return 0
-        #return epochs
 
     def create_eventlist(self, params, raw):
         """
         Pick desired events from the raw data.
         """
         #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
-        #the MNE Events' __init__ function uses mne.find_events :  -  D
+        #the MNE Events' __init__ function uses mne.find_events
         #this needs some manual logging or logging from the Events' __ini__
         #e = wrap_mne_call(self.experiment, Events, self.experiment.active_subject.working_file,
         #                  stim_channel, mask)
         events = []
         events = np.array(events) # Just to make sure it is a numpy array.
-        #events = []
         e = Events(raw, params['stim'], params['mask'])
         mask = np.bitwise_not(params['mask'])
-        #TODO: Log events?
+        #TODO: Log events
         #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events

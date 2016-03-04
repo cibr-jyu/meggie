@@ -559,8 +559,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>814</x>
-     <y>686</y>
+     <x>872</x>
+     <y>1039</y>
     </hint>
     <hint type="destinationlabel">
      <x>513</x>
@@ -575,8 +575,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>693</x>
-     <y>686</y>
+     <x>643</x>
+     <y>1039</y>
     </hint>
     <hint type="destinationlabel">
      <x>560</x>
@@ -623,8 +623,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>577</y>
+     <x>167</x>
+     <y>576</y>
     </hint>
     <hint type="destinationlabel">
      <x>327</x>
@@ -639,17 +639,34 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>619</y>
+     <x>167</x>
+     <y>617</y>
     </hint>
     <hint type="destinationlabel">
-     <x>327</x>
-     <y>622</y>
+     <x>338</x>
+     <y>621</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonComputeBatch</sender>
+   <signal>clicked()</signal>
+   <receiver>EventSelectionDialog</receiver>
+   <slot>acceptBatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>695</x>
+     <y>1033</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>876</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
   <slot>openFileChooserDialog()</slot>
+  <slot>acceptBatch()</slot>
  </slots>
 </ui>

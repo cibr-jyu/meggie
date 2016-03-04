@@ -245,6 +245,7 @@ class Ui_EventSelectionDialog(object):
         QtCore.QObject.connect(self.checkBoxMag, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxMagReject_3.setEnabled)
         QtCore.QObject.connect(self.checkBoxEeg, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxEEGReject_3.setEnabled)
         QtCore.QObject.connect(self.checkBoxEog, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.doubleSpinBoxEOGReject_3.setEnabled)
+        QtCore.QObject.connect(self.pushButtonComputeBatch, QtCore.SIGNAL(_fromUtf8("clicked()")), EventSelectionDialog.acceptBatch)
         QtCore.QMetaObject.connectSlotsByName(EventSelectionDialog)
         EventSelectionDialog.setTabOrder(self.scrollArea, self.lineEditCollectionName)
         EventSelectionDialog.setTabOrder(self.lineEditCollectionName, self.doubleSpinBoxTmin)

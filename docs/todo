@@ -1,0 +1,7 @@
+TODO:
+
+- logit ipython script-muotoon, jotta voi copypastettaa ajettavaksi
+- epoch parametrit luettavaan muotoon
+- aktivoinnin yhteydessä epokit voisi ladata listaan mainwindowin update_epochs metodilla
+- messageboxit batchingissa: batchingwidgetille failed_subjects
+- testaa ecg, eog, filter ja epochs batchit

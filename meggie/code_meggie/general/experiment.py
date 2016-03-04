@@ -488,12 +488,6 @@ class Experiment(QObject):
                 _, params = fileManager.load_epochs(fname)
                 subject.handle_new_epochs(name, params)
                 item = QtGui.QListWidgetItem(name)
-                # Change color of the item to red if no param file available.
-                if params is None:
-                    color = QtGui.QColor(255, 0, 0, 255)
-                    brush = QtGui.QBrush()
-                    brush.setColor(color)
-                    item.setForeground(brush)
                 epoch_items.append(item)
                 # Raw needs to be set when activating already created subject.
                 #if subject._epochs[name]._raw is None:

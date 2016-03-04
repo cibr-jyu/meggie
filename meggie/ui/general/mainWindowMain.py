@@ -354,23 +354,19 @@ class MainWindow(QtGui.QMainWindow):
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
-        drops = params['drops']
-        events = params['events']
-        names = [x[1] for x in events]
-        event_counts = [[x, names.count(x)] for x in set(names)]
-        for event_count in event_counts:
+        #events = params['events']
+        
+        events = epochs.raw.event_id
+        
+        for event_name, event_id in events.items():
+            events_str = event_name + ': ' + str(event_id) + ' [' + str(len(epochs.raw[event_name])) + ' events found]'
             item = QtGui.QListWidgetItem()
-            name = event_count[0]
-            idx = names.index(name)
-            event_id = str(events[idx][0][2])
-            text = (name + ': ID ' + event_id + ', ' + str(event_count[1]) + 
-                    ' events')
-            item.setText(text)
+            item.setText(events_str)
             self.epochList.ui.listWidgetEvents.addItem(item)
-        item = QtGui.QListWidgetItem()
-        item.setText('Dropped epochs: %s' % len(drops))
-        self.epochList.ui.listWidgetEvents.addItem(item)
-        # TODO: create category items to add on the listWidgetEvents widget.
+        
+        
+        
+       # TODO: create category items to add on the listWidgetEvents widget.
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
         # Creates dictionary of strings instead of qstrings for rejections.
@@ -400,10 +396,7 @@ class MainWindow(QtGui.QMainWindow):
                                                1e-6) + 'uV')
         else:
             self.ui.textBrowserEOG.setText('-1')
-        filename_full_path = str(params['raw'])
-        filename_list = filename_full_path.split('/')
-        filename = filename_list[len(filename_list) - 1]
-        self.ui.textBrowserWorkingFile.setText(filename)
+        self.ui.textBrowserWorkingFile.setText(os.path.basename(epochs.raw.info['filename']))
 
     def clear_epoch_collection_parameters(self):
         """
@@ -473,15 +466,13 @@ class MainWindow(QtGui.QMainWindow):
             event.accept()
 
     def update_epochs(self):
-        """A slot for creating new epochs with the given parameter values.
-
-        Keyword arguments:
-        epoch_params = A dictionary containing the parameter values for
-                       creating the epochs minus the raw data.
+        """Populates the epochs list.
         """
+        self.epochList.clearItems()
         epochs = self.caller.experiment.active_subject.epochs
         if epochs is not None:
             for epoch in epochs.values():
+                print epoch.collection_name
                 item = QtGui.QListWidgetItem(epoch.collection_name)
                 self.epochList.addItem(item)
 
@@ -532,7 +523,7 @@ class MainWindow(QtGui.QMainWindow):
             brush = QtGui.QBrush()
             brush.setColor(color)
             item.setForeground(brush)
-        fileManager.save_epoch(os.path.join(epochs_dir, fname_prefix + '.fif'),
+        fileManager.save_epoch(os.path.join(epochs_dir, fname_prefix),
                                epochs, params)
         self.caller.experiment.active_subject.handle_new_epochs(fname_prefix,
                                                                 params)
