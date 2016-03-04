@@ -184,13 +184,13 @@ class Subject(QObject):
         """
         channels = self._working_file.info.get('ch_names')
         if 'STI101' in channels:
-            self._stim_channel = 'STI101'
+            return 'STI101'
         elif 'STI 101' in channels:
-            self._stim_channel = 'STI 101'
+            return 'STI 101'
         elif 'STI 014' in channels:
-            self._stim_channel = 'STI 014'
+            return 'STI 014'
         elif 'STI014' in channels:
-            self._stim_channel = 'STI014'
+            return 'STI014'
     
     def create_event_set(self):
         """
