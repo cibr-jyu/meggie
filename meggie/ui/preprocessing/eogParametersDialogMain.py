@@ -106,16 +106,14 @@ class EogParametersDialog(QtGui.QDialog):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
-
-        error_messages = []
-        
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            error_messages.append(
-                self.calculate_eog(self.caller.experiment.active_subject)
-            )
+            if self.calculate_eog(
+                self.caller.experiment.active_subject) is not True:
+                self.batching_widget.failed_subjects.append(
+                    self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.caller.experiment.get_subjects():
@@ -125,18 +123,20 @@ class EogParametersDialog(QtGui.QDialog):
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
-                # Calculation is done in a separate method so that Python
-                # frees memory from the earlier subject's data calculation.
-                error_messages.append(self.calculate_eog(subject))
+                # False if calculation unsuccessful
+                if self.calculate_eog(subject) is not True:
+                    self.batching_widget.failed_subjects.append(subject)
+                    continue
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
+
+        if len(self.batching_widget.failed_subjects) > 0:
+            print "Failed to calculate eog projections for subjects: "
+            for subject in self.batching_widget.failed_subjects:
+                print subject.subject_name
         
-        # if len(error_messages) > 0:
-        #     self.messageBox = messageBoxes.shortMessageBox(str(error_messages))
-        #     self.messageBox.show()
-        print [message for message in error_messages if message]
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
@@ -251,13 +251,7 @@ class EogParametersDialog(QtGui.QDialog):
         try:
             result = self.caller.call_eog_ssp(self.batching_widget.data[subject.subject_name], subject)
             if not result == 0:
-                return ("Error while computing projections for %s.\n" %
-                        subject.subject_name)
+                return False
         except Exception:
-            error_message = ''.join([
-                '\nAn error occurred during calculation for subject: ',
-                subject.subject_name + '. Proceed with care and check parameters!\n\n',
-                str(traceback.format_exc())
-            ])
-            return error_message
-        return ''
+            return False
+        return True

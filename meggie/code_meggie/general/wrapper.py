@@ -54,19 +54,3 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
         success_msg, working_file, mne_instance_name, cleaned_params_str))
     return result
 
-"""
-#@batched
-def batch_mne_call():
-    return
-
-#TODO: idea: create a queue of mne calls to use them in
-#      the exact order they were put into the queue,
-#      input being the user chosen raw file/files
-def batched(func):
-    def decorated(*args, **kwargs):
-        #TODO: create public Queue and put funcs and args in it here
-        batch = Queue()
-        batch.put(func, *args, **kwargs)
-        return
-    return decorated
-"""

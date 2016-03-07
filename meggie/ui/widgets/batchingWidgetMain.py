@@ -36,6 +36,7 @@ class BatchingWidget(QtGui.QWidget):
         self.adjustSize()
 
         self.data = {}
+        self.failed_subjects = []
         
         for subject in self.caller.experiment._subjects:
             item = QtGui.QListWidgetItem(subject.subject_name)

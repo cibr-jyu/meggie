@@ -504,15 +504,14 @@ class EventSelectionDialog(QtGui.QDialog):
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
 
-        error_messages = []
-        
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            error_messages.append(
-                self.calculate_epochs(self.caller.experiment.active_subject)
-            )
+            if self.calculate_epochs(
+                self.caller.experiment.active_subject) is not True:
+                    self.batching_widget.failed_subjects.append(
+                        self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.caller.experiment.get_subjects():
@@ -525,16 +524,20 @@ class EventSelectionDialog(QtGui.QDialog):
                 # Calculation is done in a separate method so that Python
                 # frees memory from the earlier subject's data calculation.
 
-                error_messages.append(self.calculate_epochs(subject))
+                # False if calculation unsuccessful
+                if self.calculate_epochs(subject) is not True:
+                    self.batching_widget.failed_subjects.append(subject)
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         
-        # if len(error_messages) > 0:
-        #     self.messageBox = messageBoxes.shortMessageBox(str(error_messages))
-        #     self.messageBox.show()
         # print [message for message in error_messages if message]
+        if len(self.batching_widget.failed_subjects) > 0:
+            print "Failed to create epochs for subjects: "
+            for subject in self.batching_widget.failed_subjects:
+                print subject.subject_name
+
 
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
@@ -581,12 +584,9 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.batching_widget.data[subject.subject_name], subject,
                 parent_handle=self.parent)
             if not result == 0:
-                return ("Error while creating epochs for %s.\n" %
-                        subject.subject_name)
+                return False
         except Exception:
-            error_message = ''
-            return error_message
+            return False
         except ValueError as e:
-            error_message = str(e)
-            return error_message
-        return ''
+            return False
+        return True

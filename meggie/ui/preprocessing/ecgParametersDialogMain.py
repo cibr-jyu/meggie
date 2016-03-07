@@ -161,29 +161,24 @@ class EcgParametersDialog(QtGui.QDialog):
         Collects the parameters for calculating PCA projections and pass them
         to the caller class.
         """
-        
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                      QCursor(QtCore.Qt.WaitCursor))
         parameter_values = self.collect_parameter_values()
         active_subject_name =  self.caller.experiment.active_subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
-        
-        error_message_channel = self.check_if_channel_exists(
-            self.caller.experiment.active_subject_name)
-        if len(error_message_channel) > 0:
-            self.messageBox = messageBoxes.shortMessageBox(
-            error_message_channel)
-            QtGui.QApplication.restoreOverrideCursor()
-            self.messageBox.show()
-            return
-
-        error_message = self.calculate_ecg(
-            self.caller.experiment.active_subject)
-        if len(error_message) > 0:
-            #Exception already handled in caller
-            QtGui.QApplication.restoreOverrideCursor()
-            self.close()
-            return
+        if self.check_if_channel_exists(
+            self.caller.experiment.active_subject_name) is not True:
+            self.batching_widget.failed_subjects.append(
+                self.caller.experiment.active_subject)
+        else:
+            if self.calculate_ecg(
+            self.caller.experiment.active_subject) is not True:
+                self.batching_widget.failed_subjects.append(
+                    self.caller.experiment.active_subject)
+        if len(self.batching_widget.failed_subjects) > 0:
+            print "Failed to calculate ecg projections for subjects: "
+            for subject in self.batching_widget.failed_subjects:
+                print subject.subject_name + ' '
         else:
             self.parent.ui.pushButtonApplyEOG.setEnabled(True)
             self.parent.ui.checkBoxEOGComputed.setChecked(True)
@@ -201,16 +196,19 @@ class EcgParametersDialog(QtGui.QDialog):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
-
-        error_messages = []
-        
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            error_messages.append(
-                self.calculate_ecg(self.caller.experiment.active_subject)
-            )
+            if self.check_if_channel_exists(
+                recently_active_subject) is not True:
+                self.batching_widget.failed_subjects.append(
+                    self.caller.experiment.active_subject)
+            else:
+                if self.calculate_ecg(
+                    self.caller.experiment.active_subject) is not True:
+                    self.batching_widget.failed_subjects.append(
+                        self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.caller.experiment.get_subjects():
@@ -221,25 +219,24 @@ class EcgParametersDialog(QtGui.QDialog):
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
                 
-                error_message_channel = self.check_if_channel_exists(
-                    subject.subject_name)
-                if len(error_message_channel) > 0:
-                    error_messages.append(error_message_channel)
-                    error_message_channel = ''
+                if self.check_if_channel_exists(
+                    subject.subject_name) is not True:
+                    self.batching_widget.failed_subjects.append(subject)
                     continue
                 
-                # Calculation is done in a separate method so that Python
-                # frees memory from the earlier subject's data calculation.
-                error_messages.append(self.calculate_ecg(subject))
+                # False if calculation unsuccessful
+                if self.calculate_ecg(subject) is not True:
+                    self.batching_widget.failed_subjects.append(subject)
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         
-        # if len(error_messages) > 0:
-        #     self.messageBox = messageBoxes.shortMessageBox(str(error_messages))
-        #     self.messageBox.show()
-        print [message for message in error_messages if message]
+        if len(self.batching_widget.failed_subjects) > 0:
+            print "Failed to calculate ecg projections for subjects: "
+            for subject in self.batching_widget.failed_subjects:
+                print subject.subject_name
+        
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
@@ -282,12 +279,8 @@ class EcgParametersDialog(QtGui.QDialog):
         if ch_name not in ch_list:
             ch_name = self.channel_name_validator(ch_name, ch_list)
             if ch_name == '':
-                error_message = ''.join([
-                    'Calculation prevented for the subject: ',
-                    subject_name
-                ])
-                return error_message
-        return ''
+                return False
+        return True
         
 
     def collect_parameter_values(self):
@@ -328,20 +321,12 @@ class EcgParametersDialog(QtGui.QDialog):
         Keyword arguments:
         subject               -- Subject object
         """
-        #QtGui.QApplication.setOverrideCursor(QtGui.\
-        #                                     QCursor(QtCore.Qt.WaitCursor))
         try:
             result = self.caller.call_ecg_ssp(self.batching_widget.data[subject.subject_name], subject)
             if not result == 0:
-                return ("Error while computing projections for %s.\n" %
-                        subject.subject_name)
+                return False
         except Exception:
-            error_message = ''.join([
-                '\nAn error occurred during calculation for subject: ',
-                subject.subject_name + '. Proceed with care and check parameters!\n\n',
-                str(traceback.format_exc())
-            ])
-            return error_message
-        return ''
+            return False
+        return True
 
 
