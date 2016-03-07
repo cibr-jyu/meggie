@@ -166,22 +166,15 @@ class EcgParametersDialog(QtGui.QDialog):
         parameter_values = self.collect_parameter_values()
         active_subject_name =  self.caller.experiment.active_subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
-        if self.check_if_channel_exists(
-            self.caller.experiment.active_subject_name) is not True:
+
+        if any([
+            not self.check_if_channel_exists(
+                self.caller.experiment.active_subject_name),
+            not self.calculate_ecg(self.caller.experiment.active_subject)    
+        ]):
             self.batching_widget.failed_subjects.append(
                 self.caller.experiment.active_subject)
-        else:
-            if self.calculate_ecg(
-            self.caller.experiment.active_subject) is not True:
-                self.batching_widget.failed_subjects.append(
-                    self.caller.experiment.active_subject)
-        if len(self.batching_widget.failed_subjects) > 0:
-            print "Failed to calculate ecg projections for subjects: "
-            for subject in self.batching_widget.failed_subjects:
-                print subject.subject_name + ' '
-        else:
-            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-            self.parent.ui.checkBoxEOGComputed.setChecked(True)
+        self.batching_widget.cleanup()
         self.close()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()        
@@ -200,15 +193,12 @@ class EcgParametersDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if self.check_if_channel_exists(
-                recently_active_subject) is not True:
+            if any ([
+               not self.check_if_channel_exists(recently_active_subject),
+               not self.calculate_ecg(self.caller.experiment.active_subject)      
+            ]):
                 self.batching_widget.failed_subjects.append(
                     self.caller.experiment.active_subject)
-            else:
-                if self.calculate_ecg(
-                    self.caller.experiment.active_subject) is not True:
-                    self.batching_widget.failed_subjects.append(
-                        self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.caller.experiment.get_subjects():
@@ -218,25 +208,17 @@ class EcgParametersDialog(QtGui.QDialog):
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
-                
-                if self.check_if_channel_exists(
-                    subject.subject_name) is not True:
-                    self.batching_widget.failed_subjects.append(subject)
-                    continue
-                
-                # False if calculation unsuccessful
-                if self.calculate_ecg(subject) is not True:
-                    self.batching_widget.failed_subjects.append(subject)
-                
+                if any ([
+                   not self.check_if_channel_exists(subject.subject_name),
+                   not self.calculate_ecg(subject)      
+                ]):
+                    self.batching_widget.failed_subjects.append(
+                        self.caller.experiment.active_subject)
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         
-        if len(self.batching_widget.failed_subjects) > 0:
-            print "Failed to calculate ecg projections for subjects: "
-            for subject in self.batching_widget.failed_subjects:
-                print subject.subject_name
-        
+        self.batching_widget.cleanup()        
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()

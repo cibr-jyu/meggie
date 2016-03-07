@@ -78,19 +78,14 @@ class EogParametersDialog(QtGui.QDialog):
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         parameter_values = self.collect_parameter_values()
-        active_subject_name =  self.caller.experiment.active_subject_name
+        active_subject_name = self.caller.experiment.active_subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         
-        error_message = self.calculate_eog(
-            self.caller.experiment.active_subject)
-        if len(error_message) > 0:
-            #Exception already handled in caller
-            QtGui.QApplication.restoreOverrideCursor()
-            self.close()
-            return
-        else:
-            self.parent.ui.pushButtonApplyEOG.setEnabled(True)
-            self.parent.ui.checkBoxEOGComputed.setChecked(True)
+        if not self.calculate_eog(self.caller.experiment.active_subject):
+            self.batching_widget.failed_subjects.append(
+                self.caller.experiment.active_subject)
+        
+        self.batching_widget.cleanup()
         self.close()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()        
@@ -110,8 +105,7 @@ class EogParametersDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if self.calculate_eog(
-                self.caller.experiment.active_subject) is not True:
+            if not self.calculate_eog(self.caller.experiment.active_subject):
                 self.batching_widget.failed_subjects.append(
                     self.caller.experiment.active_subject)
         
@@ -123,8 +117,8 @@ class EogParametersDialog(QtGui.QDialog):
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
-                # False if calculation unsuccessful
-                if self.calculate_eog(subject) is not True:
+                
+                if not self.calculate_eog(subject):
                     self.batching_widget.failed_subjects.append(subject)
                     continue
                 
@@ -132,11 +126,7 @@ class EogParametersDialog(QtGui.QDialog):
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
 
-        if len(self.batching_widget.failed_subjects) > 0:
-            print "Failed to calculate eog projections for subjects: "
-            for subject in self.batching_widget.failed_subjects:
-                print subject.subject_name
-        
+        self.batching_widget.cleanup()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()

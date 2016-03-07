@@ -333,7 +333,6 @@ class Experiment(QObject):
         self.release_memory()
         self._active_subject_name = subject_name
         
-        print 'working file name asetetaan'
         working_file_name = self._working_file_names[subject_name]
         if len(working_file_name) == 0:
             raise Exception('There is no working file in the chosen subject folder.')

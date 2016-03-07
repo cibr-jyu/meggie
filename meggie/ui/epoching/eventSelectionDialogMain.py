@@ -473,22 +473,20 @@ class EventSelectionDialog(QtGui.QDialog):
             self.errorMessage.show()
             return
         param_dict = self.collect_parameter_values()
-        if param_dict is None:
-            QtGui.QApplication.restoreOverrideCursor()
-            return
         
-        self.batching_widget.data[self.caller.experiment.active_subject.subject_name] = param_dict
-        
-        if all([not self.ui.checkBoxEeg.isChecked(), 
+        if param_dict is None or all([not self.ui.checkBoxEeg.isChecked(), 
                 not self.ui.checkBoxGrad.isChecked(),
                 not self.ui.checkBoxMag.isChecked()]):
             QtGui.QApplication.restoreOverrideCursor()
-            message = 'Picks cannot be empty. Select picks by checking the ' +\
-                      ' checkboxes.'
-            self.errorMessage = messageBoxes.shortMessageBox(message)
-            self.errorMessage.show()
-            return
-        self.calculate_epochs(self.caller.experiment.active_subject)
+            self.batching_widget.failed_subjects.append(
+                self.caller.experiment.active_subject)
+        else:
+            self.batching_widget.data[self.caller.experiment.active_subject.subject_name] = param_dict
+            if not self.calculate_epochs(self.caller.experiment.active_subject):
+                self.batching_widget.failed_subjects.append(
+                    self.caller.experiment.active_subject)
+
+        self.batching_widget.cleanup()
         self.close()
         self.parent.update_epochs()
         QtGui.QApplication.restoreOverrideCursor()
@@ -508,8 +506,8 @@ class EventSelectionDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if self.calculate_epochs(
-                self.caller.experiment.active_subject) is not True:
+            if not self.calculate_epochs(self.caller.experiment.active_subject
+            ):
                     self.batching_widget.failed_subjects.append(
                         self.caller.experiment.active_subject)
         
@@ -521,27 +519,16 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
-                # Calculation is done in a separate method so that Python
-                # frees memory from the earlier subject's data calculation.
-
-                # False if calculation unsuccessful
-                if self.calculate_epochs(subject) is not True:
+                if not self.calculate_epochs(subject):
                     self.batching_widget.failed_subjects.append(subject)
-                
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
-        
-        # print [message for message in error_messages if message]
-        if len(self.batching_widget.failed_subjects) > 0:
-            print "Failed to create epochs for subjects: "
-            for subject in self.batching_widget.failed_subjects:
-                print subject.subject_name
-
-
+        self.batching_widget.cleanup()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
+        
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
         """Opens a dialog for creating fixed length events."""

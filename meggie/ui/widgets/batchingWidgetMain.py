@@ -119,15 +119,8 @@ class BatchingWidget(QtGui.QWidget):
             self.messageBox.show()
         item.setCheckState(QtCore.Qt.Unchecked)
 
-def main():
-    app = QtGui.QApplication(sys.argv)
-    
-    widget = BatchingWidget()
-    widget.show()
-
-    sys.exit(app.exec_())
-    
-
-
-if __name__ == '__main__':
-    main()
+    def cleanup(self):
+        if len(self.failed_subjects) > 0:
+            print 'Failed calculation for subjects: ' 
+            for subject in self.failed_subjects:
+                print subject.subject_name

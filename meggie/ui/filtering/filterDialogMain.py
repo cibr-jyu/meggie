@@ -114,20 +114,20 @@ class FilterDialog(QtGui.QDialog):
         subject = self.caller.experiment.active_subject
         parameter_values = self.collect_parameter_values()
         info = subject.working_file.info
-        # Check if the filter frequency values are sane or not.
-        if (self._validateFilterFreq(parameter_values, info['sfreq']) == False):
-            return
         
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
+
         active_subject_name = self.caller.experiment.active_subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
-        error_message = self.filter(subject)
-        if len(error_message) > 0:
-            #Exception already handled in caller
-            QtGui.QApplication.restoreOverrideCursor()
-            self.close()
-            return
+        
+        if any([
+            self._validateFilterFreq(parameter_values, info['sfreq']) == False,
+            not self.filter(subject)
+        ]):
+            self.batching_widget.failed_subjects.append(subject)
+        
+        self.batching_widget.cleanup()
         self.close()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
@@ -142,8 +142,6 @@ class FilterDialog(QtGui.QDialog):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
-
-        error_messages = []
         
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
@@ -152,49 +150,40 @@ class FilterDialog(QtGui.QDialog):
 
             params = self.batching_widget.data[recently_active_subject]
             info = self.caller.experiment.active_subject.working_file.info
+            subject = self.caller.experiment.active_subject
             # Check if the filter frequency values are sane or not.
-            if (self._validateFilterFreq(params, info['sfreq']) == False):
-                error_messages.append(''.join([
-                    'Bad filter frequency values for subject ',
-                    recently_active_subject
-                ]))
-                pass
-            else:
-                error_messages.append(
-                    self.filter(self.caller.experiment.active_subject)
-            )
+            
+            if any([
+                self._validateFilterFreq(params, info['sfreq']) == False,
+                not self.filter(subject)
+            ]):
+                self.batching_widget.failed_subjects.append(subject)
         
         # 2. Calculation is done for the rest of the subjects.
         for subject in self.caller.experiment.get_subjects():
             if subject.subject_name in subject_names:
                 if subject.subject_name == recently_active_subject:
                     continue
+                
                 self.caller.activate_subject(subject.subject_name,
                     do_meanwhile=self.parent.update_ui,
                     parent_handle=self.parent)
 
                 params = self.batching_widget.data[subject.subject_name]
                 info = subject.working_file.info
-                # Check if the filter frequency values are sane or not.
-                if (self._validateFilterFreq(params, info['sfreq']) == False):
-                    error_messages.append(''.join([
-                        'Bad filter frequency values for subject ',
-                        subject.subject_name
-                    ]))
-                    continue
-                else:
-                    # Calculation is done in a separate method so that Python
-                    # frees memory from the earlier subject's data calculation.
-                    error_messages.append(self.filter(subject))
+                
+                if any([
+                    self._validateFilterFreq(params, info['sfreq']) == False,
+                    not self.filter(subject)
+                ]):
+                    self.batching_widget.failed_subjects.append(subject)        
+
                 
         self.caller.activate_subject(recently_active_subject,
                                      do_meanwhile=self.parent.update_ui,
                                      parent_handle=self.parent)
         
-        # if len(error_messages) > 0:
-        #     self.messageBox = messageBoxes.shortMessageBox(str(error_messages))
-        #     self.messageBox.show()
-        print [message for message in error_messages if message]
+        self.batching_widget.cleanup()
         self.parent._initialize_ui()
         QtGui.QApplication.restoreOverrideCursor()
         self.close()
@@ -363,12 +352,7 @@ class FilterDialog(QtGui.QDialog):
             result = self.caller.filter(params, subject,
                 do_meanwhile=self.parent.update_ui, parent_handle=self)
             if not result == 0:
-                return ("")
-        except Exception:
-            error_message = ''.join([
-                '\nAn error occurred during filtering for subject: ',
-                subject.subject_name + '. Proceed with care and check parameters!\n\n',
-                str(traceback.format_exc())
-            ])
-            return error_message
-        return ''
+                return False
+        except Exception as e:
+            return False
+        return True
