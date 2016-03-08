@@ -34,6 +34,8 @@ Contains the CreateExperimentDialog-class that holds the logic for
 CreateExperimentDialog-window.
 """
 
+import os
+
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
 
@@ -72,15 +74,13 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.show()
             return  
         
-        expDict = {'name': self.ui.lineEditExperimentName.text(),
+        expDict = {'name': os.path.join(self.parent.preferencesHandler.working_directory, self.ui.lineEditExperimentName.text()),
                    'author': self.ui.lineEditAuthor.text(),
                    'description': self.ui.textEditDescription.toPlainText()
                   }
         
         experiment = self.parent.experimentHandler.initialize_new_experiment(
-            expDict,
-            self.parent.preferencesHandler,
-            parent_handle=self.parent
+            expDict
         )
         
         self.experimentCreated.emit(experiment)

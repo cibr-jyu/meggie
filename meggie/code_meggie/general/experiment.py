@@ -79,6 +79,8 @@ class Experiment(QObject):
         self._action_logger = None
         self._workspace = None
 
+        
+
     @property
     def workspace(self):
         return self._workspace
@@ -101,8 +103,10 @@ class Experiment(QObject):
         Keyword arguments:
         experiment_name    -- the name of the experiment
         """
-        if (len(experiment_name) <= 30):
-            if re.match("^[A-Za-z0-9_ ]*$", experiment_name):
+        name = os.path.basename(experiment_name)
+        
+        if (len(name) <= 30):
+            if re.match("^[A-Za-z0-9_ ]*$", name):
                 self._experiment_name = str(experiment_name)
             else:
                 raise ValueError('Use only letters and numbers in experiment' +
@@ -269,8 +273,6 @@ class Experiment(QObject):
         subject_name    -- name of the subject
         experiment      -- Experiment object
         """
-        
-        
         subject = Subject(experiment, subject_name, working_file_name)
         if raw_path:
             fileManager.save_subject(subject, raw_path)
@@ -284,6 +286,8 @@ class Experiment(QObject):
         # save to file:
         # construct save dict
         subjects = []
+        epochs = []
+        evokeds = []
         for subject in self.get_subjects():
             subject_dict = {
                 'subject_name': subject.subject_name,
@@ -291,12 +295,28 @@ class Experiment(QObject):
                 'epochs': [] 
             }
             subjects.append(subject_dict)
+            for epoch in subject.epochs.items():
+                epoch_dict = {
+                    'collection_name': epoch.collection_name,
+                    'params': epoch.params
+                }
+                epochs.append(epoch_dict)
+            for evoked in subject.evokeds.items():
+                evoked_dict = {
+                    'name': evoked.name
+                }
+                evokeds.append(evoked_dict)
+        
+        
+        
         
         save_dict = {
             'subjects': subjects,
             'name': self.experiment_name,
             'author': self.author,
             'description': self.description,
+            'epochs': epochs,
+            'evokeds': evokeds
         }
         
         if self.active_subject:
@@ -327,8 +347,7 @@ class ExperimentHandler(QObject):
         """
         self.parent = parent
 
-    @messaged
-    def initialize_new_experiment(self, expDict, prefs):
+    def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data. Assumes that
         Meggie is currently devoid of a current experiment.
@@ -336,7 +355,8 @@ class ExperimentHandler(QObject):
         TODO: Keyword arguments:
            
         """
-
+        prefs = self.parent.preferencesHandler
+      
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -351,11 +371,12 @@ class ExperimentHandler(QObject):
         
         self.initialize_logger(experiment)
         
+        prefs.previous_experiment_name = experiment.experiment_name
+        prefs.write_preferences_to_disk()
+        
         return experiment
         
-
-    @messaged
-    def open_existing_experiment(self, name, parent_handle=None):
+    def open_existing_experiment(self, name):
         """
         Opens an existing experiment, which is assumed to be in the working
         directory.
@@ -364,6 +385,11 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
+        with open(name, 'r') as f:
+            data = json.loads(f)
+        
+        print data
+        
         # working_directory = self.parent.preferencesHandler.working_directory
         # if not os.path.exists(working_directory):
         #     raise Exception('Could not find working directory. Check preferences.')
@@ -378,7 +404,7 @@ class ExperimentHandler(QObject):
         # else:
         #     return
         # 
-        # fname = os.path.join(path, path.split('/')[-1] + '.exp')
+        # fname = os.path.join(path, os.path.basename(path + '.exp'))
         # if os.path.exists(path) and os.path.isfile(fname):
         #     caller = Caller.Instance()
         #     # Releases memory from the previously open experiment
@@ -408,6 +434,8 @@ class ExperimentHandler(QObject):
         # else:
         #     raise Exception("Experiment configuration file (.exp) not found!")
         print "kissa"
+        self.parent.preferencesHandler.previous_experiment_name = name
+        self.parent.preferencesHandler.write_preferences_to_disk()
         raise NotImplementedError
     
     def initialize_logger(self, experiment):

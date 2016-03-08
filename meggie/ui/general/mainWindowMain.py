@@ -209,8 +209,7 @@ class MainWindow(QtGui.QMainWindow):
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
             name = self.preferencesHandler.previous_experiment_name
-            self.experimentHandler.open_existing_experiment(name, 
-                                                            parent_handle=self)
+            self.experimentHandler.open_existing_experiment(name)
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -291,8 +290,7 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor
                                              (QtCore.Qt.WaitCursor))
         print 'Opening experiment ' + path
-        self.experimentHandler.open_existing_experiment(os.path.basename(path),
-                                                        parent_handle=self)
+        self.experimentHandler.open_existing_experiment(os.path.basename(path))
         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
@@ -1570,17 +1568,15 @@ class MainWindow(QtGui.QMainWindow):
         raw = self.caller.experiment.active_subject.get_working_file()
         active_sub = self.caller.experiment.active_subject
         print 'Loading evokeds...'
-        epochs_items = self.caller.experiment.load_epochs(active_sub, 
-                                                          parent_handle=self)
-        evokeds_items = self.caller.experiment.load_evokeds(active_sub,
-                                                            parent_handle=self)
+        epochs_items = self.caller.experiment.active_subject.epochs
+        evokeds_items = self.caller.experiment.active_subject.evokeds
         if epochs_items is not None:
             for item in epochs_items:
-                self.epochList.addItem(item)
+                self.epochList.addItem(item.collection_name)
 
         if evokeds_items is not None:
             for item in evokeds_items:
-                self.evokedList.addItem(item)
+                self.evokedList.addItem(item.name)
 
         # This updates the 'Subject info' section below the subject list.
         try:
@@ -1623,7 +1619,7 @@ class MainWindow(QtGui.QMainWindow):
         """Updates the TFR list."""
         self.ui.listWidgetPowerItems.clear()
         active_sub = self.caller.experiment.active_subject
-        power_items = self.caller.experiment.load_powers(active_sub)
+        power_items = fileManager.load_powers(active_sub)
         if len(power_items) > 0:
             for item in power_items:
                 self.ui.listWidgetPowerItems.addItem(item)

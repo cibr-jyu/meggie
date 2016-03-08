@@ -15,6 +15,7 @@ import shutil
 import glob
 import re
 import sys
+import json
 
 from os.path import isfile, join
 
@@ -526,6 +527,20 @@ def load_evoked(folder, fName):
 
     return evokeds, category
 
+def load_powers(subject):
+    """
+    Loads power files from the subject folder.
+    Returns a list of AverageTFR names.
+    """
+    powers = list()
+    path = os.path.join(subject.subject_path, 'TFR')
+    if not os.path.exists(path):
+        return list()
+    files = os.listdir(path)
+    for fname in files:
+        if fname.endswith('.h5'):
+            powers.append(fname)
+    return powers
 
 def open_raw(fname, pre_load=True):
     """
@@ -767,3 +782,5 @@ def save_subject(subject, path):
                       "Do you have the necessary permissions?")
     
     copyfile(path, subject.working_file_path)
+    
+    

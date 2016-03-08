@@ -1,7 +1,7 @@
 # coding: utf-8
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -75,12 +75,13 @@ class EventSelectionDialog(QtGui.QDialog):
         self.fixedLengthDialog = None
         self.ui.lineEditName.setText('Event')
         self.used_names = []
-        ch_names = self.caller.experiment.active_subject.working_file.ch_names
+        ch_names = self.caller.experiment.active_subject.get_working_file().ch_names
         stim_channels = [x for x in ch_names if x.startswith('STI')]
         active = 0
         for idx, channel in enumerate(stim_channels):
             self.ui.comboBoxStimChannel.addItem(channel)
-            if channel == self.caller.experiment.active_subject.stim_channel:
+            
+            if channel == self.caller.experiment.active_subject.find_stim_channel():
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
         if params is not None:
