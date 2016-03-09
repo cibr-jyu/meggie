@@ -260,14 +260,14 @@ class Subject(QObject):
         except OSError:
             raise IOError('Epochs could not be deleted from epochs folder.')
 
-    def add_evoked(self, name, evoked_object):
+    def add_evoked(self, evoked):
         """
         Adds Evoked object to the evokeds dictionary.
 
         Keyword arguments:
-        evoked_object  -- Evoked object
+        evoked  -- Evoked object
         """
-        self._evokeds[str(name)] = evoked_object
+        self._evokeds[evoked.name] = evoked
 
     @messaged
     def remove_evoked(self, name):

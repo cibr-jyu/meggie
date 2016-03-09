@@ -42,6 +42,8 @@ import json
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.actionLogger import ActionLogger
+from meggie.code_meggie.epoching.epochs import Epochs
+from meggie.code_meggie.epoching.evoked import Evoked
 
 from meggie.ui.utils.decorators import messaged
 
@@ -286,37 +288,32 @@ class Experiment(QObject):
         # save to file:
         # construct save dict
         subjects = []
-        epochs = []
-        evokeds = []
         for subject in self.get_subjects():
             subject_dict = {
                 'subject_name': subject.subject_name,
-                'evokeds': [],
-                'epochs': [] 
+                'working_file_name': subject.working_file_name,
+                'epochs': [], 
+                'evokeds': []
             }
-            subjects.append(subject_dict)
             for epoch in subject.epochs.items():
                 epoch_dict = {
                     'collection_name': epoch.collection_name,
                     'params': epoch.params
                 }
-                epochs.append(epoch_dict)
+                subject_dict['epochs'].append(epoch_dict)
             for evoked in subject.evokeds.items():
                 evoked_dict = {
                     'name': evoked.name
                 }
-                evokeds.append(evoked_dict)
-        
-        
-        
+                subject_dict['evokeds'].append(evoked_dict)
+            subjects.append(subject_dict)
         
         save_dict = {
             'subjects': subjects,
             'name': self.experiment_name,
+            'workspace': self.workspace,
             'author': self.author,
             'description': self.description,
-            'epochs': epochs,
-            'evokeds': evokeds
         }
         
         if self.active_subject:
@@ -385,11 +382,38 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
-        with open(name, 'r') as f:
-            data = json.loads(f)
-        
-        print data
-        
+        with open(name + '.exp', 'r') as f:
+            data = json.load(f)
+        prefs = self.parent.preferencesHandler
+        experiment = Experiment()
+        experiment.author = data['author']
+        experiment.experiment_name = data['name']
+        experiment.description = data['description']
+        experiment.workspace = data['workspace']
+ 
+        for subject_data in data['subject'].values():
+            subject = Subject(experiment, subject_data['subject_name'], subject_data['working_file_name'])
+            for epoch_data in subject_data['epochs']:
+                epochs = Epochs()
+                epochs.collection_name = epoch_data['collection_name']
+                epochs.params = epoch_data['params']
+                subject.add_epochs(epochs)
+            for evoked_data in subject_data['evokeds']:
+                evoked = Evoked()
+                evoked.name = evoked_data['name']
+                subject.add_evoked(evoked)
+            experiment.add_subject(subject)
+        if 'active_subject' in data.keys():
+            self.parent.caller.experiment.activate_subject(data['active_subject'])
+
+        experiment.save_experiment_settings()
+        self.initialize_logger(experiment)
+        prefs.previous_experiment_name = experiment.experiment_name
+        prefs.write_preferences_to_disk()
+        self.parent.caller.experiment = experiment
+        self.parent.add_tabs()
+        self.parent._initialize_ui()
+       
         # working_directory = self.parent.preferencesHandler.working_directory
         # if not os.path.exists(working_directory):
         #     raise Exception('Could not find working directory. Check preferences.')
@@ -433,10 +457,6 @@ class ExperimentHandler(QObject):
         #     self.parent.preferencesHandler.write_preferences_to_disk()
         # else:
         #     raise Exception("Experiment configuration file (.exp) not found!")
-        print "kissa"
-        self.parent.preferencesHandler.previous_experiment_name = name
-        self.parent.preferencesHandler.write_preferences_to_disk()
-        raise NotImplementedError
     
     def initialize_logger(self, experiment):
 
