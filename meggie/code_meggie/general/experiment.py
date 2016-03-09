@@ -390,21 +390,24 @@ class ExperimentHandler(QObject):
         experiment.experiment_name = data['name']
         experiment.description = data['description']
         experiment.workspace = data['workspace']
- 
-        for subject_data in data['subject'].values():
-            subject = Subject(experiment, subject_data['subject_name'], subject_data['working_file_name'])
-            for epoch_data in subject_data['epochs']:
-                epochs = Epochs()
-                epochs.collection_name = epoch_data['collection_name']
-                epochs.params = epoch_data['params']
-                subject.add_epochs(epochs)
-            for evoked_data in subject_data['evokeds']:
-                evoked = Evoked()
-                evoked.name = evoked_data['name']
-                subject.add_evoked(evoked)
-            experiment.add_subject(subject)
-        if 'active_subject' in data.keys():
-            self.parent.caller.experiment.activate_subject(data['active_subject'])
+        
+        if len(data['subjects']) > 0:
+                
+            for subject_data in data['subjects']:
+                subject = Subject(experiment, subject_data['subject_name'], subject_data['working_file_name'])
+                for epoch_data in subject_data['epochs']:
+                    epochs = Epochs()
+                    epochs.collection_name = epoch_data['collection_name']
+                    epochs.params = epoch_data['params']
+                    subject.add_epochs(epochs)
+                for evoked_data in subject_data['evokeds']:
+                    evoked = Evoked()
+                    evoked.name = evoked_data['name']
+                    subject.add_evoked(evoked)
+                experiment.add_subject(subject)
+            if 'active_subject' in data.keys():
+                a = data['active_subject']
+                experiment.activate_subject(data['active_subject'])
 
         experiment.save_experiment_settings()
         self.initialize_logger(experiment)

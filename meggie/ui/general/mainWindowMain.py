@@ -47,7 +47,7 @@ import gc
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QWhatsThis, QAbstractItemView
-from PyQt4.Qt import QApplication
+from PyQt4.Qt import QApplication, QStandardItem
 
 from mne.evoked import write_evokeds
 import mne
@@ -1564,10 +1564,16 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
-        # Populate epoch and evoked lists
+        # Populate subject list
+        #for subject in self.caller.experiment.get_subjects():
+        #    item = QStandardItem()
+        #    item.setText(subject.subject_name)
+        #    self.ui.listViewSubjects.addItem(item)
+
+        # Populate epoch and evoked lists        
         raw = self.caller.experiment.active_subject.get_working_file()
         active_sub = self.caller.experiment.active_subject
-        print 'Loading evokeds...'
+
         epochs_items = self.caller.experiment.active_subject.epochs
         evokeds_items = self.caller.experiment.active_subject.evokeds
         if epochs_items is not None:
