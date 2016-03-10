@@ -775,7 +775,7 @@ def save_subject(subject, path):
             subject.evokeds_directory,
             subject.source_analysis_directory,
             subject.forwardModels_directory,
-            subject.reconFiles_directory,
+            subject.reconFiles_directory
         ])
     except OSError as e:
         raise OSError("Couldn't create all the necessary folders. "

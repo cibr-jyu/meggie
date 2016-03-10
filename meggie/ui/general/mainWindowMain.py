@@ -208,8 +208,9 @@ class MainWindow(QtGui.QMainWindow):
         # the experiment, currently doesn't.
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
-            name = self.preferencesHandler.previous_experiment_name
-            self.experimentHandler.open_existing_experiment(name)
+            #name = self.preferencesHandler.previous_experiment_name
+            prefs = self.preferencesHandler
+            self.experimentHandler.open_existing_experiment(prefs)
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -1565,11 +1566,9 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
         # Populate subject list
-        #for subject in self.caller.experiment.get_subjects():
-        #    item = QStandardItem()
-        #    item.setText(subject.subject_name)
-        #    self.ui.listViewSubjects.addItem(item)
-
+        # Subject list is populated by calling reinitialize_models()
+        # in mainwindow
+        
         # Populate epoch and evoked lists        
         raw = self.caller.experiment.active_subject.get_working_file()
         active_sub = self.caller.experiment.active_subject

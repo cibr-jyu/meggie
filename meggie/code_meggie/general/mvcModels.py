@@ -343,21 +343,17 @@ class SubjectListModel(QtCore.QAbstractListModel):
         Reads the experiment directory and populates the
         subjectNameList accordingly.
         """
-        
         self.layoutAboutToBeChanged.emit()
         del self.subjectNameList[:]
         
         if self.caller.experiment == None:
             self.layoutChanged.emit()
             return
-
-        subject_paths = [subject.subject_path for subject 
-                         in self.caller.experiment.get_subjects()]
-
-        if (len(subject_paths) > 0):
-            for path in subject_paths:
-                subjectName = path.split('/')[-1]
-                self.subjectNameList.append(subjectName)
-
+        
+        subjects = self.caller.experiment.get_subjects()
+        
+        if len(subjects) > 0:
+            for subject in subjects:
+                self.subjectNameList.append(subject.subject_name)
         self.layoutChanged.emit()
         

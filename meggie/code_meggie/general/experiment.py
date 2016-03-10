@@ -37,7 +37,7 @@ Classes needed for controlling Meggie experiments.
 import os
 import re
 import json
-
+import shutil
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
@@ -217,6 +217,17 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
+        
+        for subject in self.get_subjects():
+            if subject.subject_name == sname:
+                self._subjects.remove(subject)
+                try:
+                    shutil.rmtree(subject.subject_path)
+                except OSError('Could not remove the contents of the subject folder.'):
+                    raise
+                    
+        self.save_experiment_settings()
+        
         # subject_path = os.path.join(self.workspace, self.experiment_name, sname)
 
         # if (subject_path in path for path in self.subject_paths):
@@ -246,7 +257,10 @@ class Experiment(QObject):
         #     raise
         # self.save_experiment_settings()
         # main_window._initialize_ui()
-        raise NotImplementedError
+        
+        
+        
+        #raise NotImplementedError
 
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
@@ -321,7 +335,7 @@ class Experiment(QObject):
         
         # save to file
         try:
-            os.makedirs(self.workspace)
+            os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
             pass
         
@@ -357,12 +371,14 @@ class ExperimentHandler(QObject):
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
-            experiment.experiment_name = expDict['name']
+            experiment.experiment_name = os.path.basename(expDict['name'])
+            #experiment.experiment_name = expDict['name']
             experiment.description = expDict['description']
         except AttributeError:
             raise Exception('Cannot assign attribute to experiment.')
         
-        experiment.workspace = os.path.join(prefs.working_directory, expDict['name'])
+        experiment.workspace = prefs.working_directory
+        #experiment.workspace = os.path.join(prefs.working_directory, expDict['name'])
         
         experiment.save_experiment_settings()
         
@@ -373,7 +389,7 @@ class ExperimentHandler(QObject):
         
         return experiment
         
-    def open_existing_experiment(self, name):
+    def open_existing_experiment(self, prefs):
         """
         Opens an existing experiment, which is assumed to be in the working
         directory.
@@ -382,7 +398,9 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
-        with open(name + '.exp', 'r') as f:
+        #with open(name + '.exp', 'r') as f:
+        a = os.path.join(prefs.working_directory, prefs.previous_experiment_name)
+        with open(os.path.join(prefs.working_directory, prefs.previous_experiment_name + '.exp'), 'r') as f:
             data = json.load(f)
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
@@ -412,10 +430,10 @@ class ExperimentHandler(QObject):
         experiment.save_experiment_settings()
         self.initialize_logger(experiment)
         prefs.previous_experiment_name = experiment.experiment_name
-        prefs.write_preferences_to_disk()
         self.parent.caller.experiment = experiment
         self.parent.add_tabs()
         self.parent._initialize_ui()
+        self.parent.reinitialize_models()
        
         # working_directory = self.parent.preferencesHandler.working_directory
         # if not os.path.exists(working_directory):
