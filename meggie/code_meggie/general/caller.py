@@ -1865,7 +1865,6 @@ class Caller(object):
                    'message was: \n\n' + str(e))
             raise Exception(msg)
 
-    @messaged
     def compute_inverse(self, fwd_name):
         """Computes an inverse operator for the forward solution and saves it
         to the source_analysis directory.
@@ -1969,7 +1968,7 @@ class Caller(object):
         # Update ui.
         self.parent.update_covariance_info_box()
 
-    def make_source_estimate(self, inst_name, type, inv_name, method):
+    def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
         """
         Method for computing source estimate.
         Args:
@@ -1978,12 +1977,13 @@ class Caller(object):
                 One of ['raw', 'epochs', 'evoked'].
             inv_name: Name of the inverse operator.
             method: Method to use ('MNE', 'dSPM', 'sLORETA').
+            lmbd: Regularization parameter.
         """
         # TODO: refactor
         subject = self.experiment.active_subject
         source_dir = subject._source_analysis_directory
         inv_file = os.path.join(source_dir, inv_name)
-        lmbd = 1. / 9.
+
         try:
             inv = mne.minimum_norm.read_inverse_operator(inv_file)
         except Exception as err:
@@ -2032,7 +2032,8 @@ class Caller(object):
         if isinstance(stc, list):  # epochs and evoked saved individually
             for i, estimate in enumerate(stc):
                 stc_fname = os.path.join(subject._stc_directory,
-                                         stc_fname[:-8] + '-' + type + str(i))
+                                         stc_fname[:-8] + '-' + type + '-' +
+                                         method + str(i))
                 try:
                     estimate.save(stc_fname)
                 except Exception as err:
@@ -2042,7 +2043,7 @@ class Caller(object):
             return stc
 
         stc_fname = os.path.join(subject._stc_directory,
-                                 stc_fname[:-8] + '-' + type)
+                                 stc_fname[:-8] + '-' + type + '-' + method)
         try:
             stc.save(stc_fname)
         except Exception as err:

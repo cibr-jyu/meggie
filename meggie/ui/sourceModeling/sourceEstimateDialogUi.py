@@ -56,6 +56,16 @@ class Ui_SourceEstimateDialog(object):
         self.comboBoxMethod.addItem(_fromUtf8(""))
         self.comboBoxMethod.addItem(_fromUtf8(""))
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.comboBoxMethod)
+        self.labelLambda = QtGui.QLabel(SourceEstimateDialog)
+        self.labelLambda.setObjectName(_fromUtf8("labelLambda"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.labelLambda)
+        self.doubleSpinBoxLambda = QtGui.QDoubleSpinBox(SourceEstimateDialog)
+        self.doubleSpinBoxLambda.setDecimals(6)
+        self.doubleSpinBoxLambda.setMinimum(0.001)
+        self.doubleSpinBoxLambda.setSingleStep(0.1)
+        self.doubleSpinBoxLambda.setProperty("value", 0.111111)
+        self.doubleSpinBoxLambda.setObjectName(_fromUtf8("doubleSpinBoxLambda"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxLambda)
         self.gridLayout.addLayout(self.formLayout, 1, 0, 1, 1)
 
         self.retranslateUi(SourceEstimateDialog)
@@ -70,4 +80,5 @@ class Ui_SourceEstimateDialog(object):
         self.comboBoxMethod.setItemText(0, _translate("SourceEstimateDialog", "MNE", None))
         self.comboBoxMethod.setItemText(1, _translate("SourceEstimateDialog", "dSPM", None))
         self.comboBoxMethod.setItemText(2, _translate("SourceEstimateDialog", "sLORETA", None))
+        self.labelLambda.setText(_translate("SourceEstimateDialog", "Regularization parameter (lambda):", None))
 

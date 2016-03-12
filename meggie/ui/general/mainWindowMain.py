@@ -1451,7 +1451,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         fwd_name = str(self.ui.listWidgetForwardSolution.currentItem().text())
-        inv = self.caller.compute_inverse(fwd_name, parent_handle=self)
+        inv = self.caller.compute_inverse(fwd_name)
         _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
                                        self.caller.experiment.active_subject)
 
@@ -1630,6 +1630,8 @@ class MainWindow(QtGui.QMainWindow):
         for bad in bads:
             self.ui.listWidgetBads.addItem(bad)
 
+        _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
+                                       self.caller.experiment.active_subject)
         self.update_covariance_info_box()
         self._update_source_estimates()
 

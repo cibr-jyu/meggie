@@ -39,7 +39,8 @@ class SourceEstimateDialog(QtGui.QDialog):
         inst_name = str(self.ui.labelEvoked.text())  # TODO: change label name
         inv_name = str(self.ui.comboBoxInverseOperator.currentText())
         method = str(self.ui.comboBoxMethod.currentText())
+        lmbd = self.ui.doubleSpinBoxLambda.value()
         stc = self.caller.make_source_estimate(inst_name, self.type,
-                                               inv_name, method)
+                                               inv_name, method, lmbd)
         self.stc_computed.emit()
         self.close()

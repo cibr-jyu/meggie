@@ -351,7 +351,8 @@ class SubjectListModel(QtCore.QAbstractListModel):
                 self.subjectNameList.append(subjectName)
 
         self.layoutChanged.emit()
-        
+
+
 def _initializeForwardSolutionList(solution_list, subject):
     """Helper for populating forward solution list widget.
 

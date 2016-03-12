@@ -2648,9 +2648,6 @@
                      <string>Forward solutions to base inverse operator on:</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_21">
-                     <item row="1" column="0">
-                      <widget class="QTableView" name="tableViewFSolutionsToInverse"/>
-                     </item>
                      <item row="0" column="0">
                       <widget class="QListWidget" name="listWidgetForwardSolution"/>
                      </item>
@@ -2708,9 +2705,6 @@
                      <string>Inverse operators:</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_25">
-                     <item row="1" column="0">
-                      <widget class="QTableView" name="tableViewInverseOperators"/>
-                     </item>
                      <item row="0" column="0">
                       <widget class="QListWidget" name="listWidgetInverseOperator"/>
                      </item>
@@ -3700,8 +3694,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonComputeCovarianceRaw</tabstop>
   <tabstop>pushButtonComputeCovarianceEpochs</tabstop>
   <tabstop>pushButtonComputeInverse</tabstop>
-  <tabstop>tableViewFSolutionsToInverse</tabstop>
-  <tabstop>tableViewInverseOperators</tabstop>
   <tabstop>radioButtonRaw</tabstop>
   <tabstop>radioButtonEpoch</tabstop>
   <tabstop>radioButtonEvoked</tabstop>
