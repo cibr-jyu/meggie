@@ -1016,19 +1016,19 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         def handle_close(event):
-            raw = self.caller.experiment.active_subject._working_file
-            fname = self.caller.experiment.active_subject._working_file.info['filename']
+            raw = self.caller.experiment.active_subject.get_working_file()
+            fname = self.caller.experiment.active_subject.get_working_file().info['filename']
             fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
             
             self._initialize_ui()
-            bads = self.caller.experiment.active_subject.working_file.info['bads']
+            bads = self.caller.experiment.active_subject.get_working_file().info['bads']
             self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
         if self.ui.checkBoxShowEvents.isChecked():
             events = self.caller.experiment.active_subject.get_events()
         else:
             events = None
         try:
-            raw = self.caller.experiment.active_subject._working_file
+            raw = self.caller.experiment.active_subject.get_working_file()
             fig = raw.plot(block=True, show=True, events=events)
             fig.canvas.mpl_connect('close_event', handle_close)
         except Exception, err:
@@ -1042,7 +1042,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.caller.experiment is None:
             return
-        info = self.caller.experiment.active_subject.working_file.info
+        info = self.caller.experiment.active_subject.get_working_file().info
         try:
             self.caller.call_mne_browse_raw(info['filename'])
         except Exception, err:
@@ -1061,7 +1061,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment is None:
             return
 
-        raw = self.caller.experiment.active_subject._working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         self.caller.plot_projs_topomap(raw, parent_handle=self)
 
     def on_pushButtonMaxFilter_clicked(self, checked=None):
@@ -1106,7 +1106,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
             return
-        info = self.caller.experiment.active_subject.working_file.info
+        info = self.caller.experiment.active_subject.get_working_file().info
         self.addEogProjs = AddEOGProjections(self, info['projs'])
         self.addEogProjs.exec_()
 
@@ -1114,7 +1114,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
             return
-        info = self.caller.experiment.active_subject.working_file.info
+        info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
         self.addEcgProjs.exec_()
 
@@ -1256,15 +1256,14 @@ class MainWindow(QtGui.QMainWindow):
         subject_name = selIndexes[0].data()
 
         # Not much point trying to activate an already active subject.
-        if subject_name == self.caller.experiment.active_subject_name:
-            QtGui.QApplication.restoreOverrideCursor()
-            return
+        if self.caller.experiment.active_subject:
+            if subject_name == self.caller.experiment.active_subject.subject_name:
+                QtGui.QApplication.restoreOverrideCursor()
+                return
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
-        self.caller.activate_subject(subject_name,
-                                     do_meanwhile=self.update_ui,
-                                     parent_handle=self)
+        self.caller.activate_subject(subject_name)
         self._initialize_ui()
 
         # To tell the MVC models that the active subject has changed.

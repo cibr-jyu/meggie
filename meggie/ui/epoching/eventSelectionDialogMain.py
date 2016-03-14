@@ -213,7 +213,7 @@ class EventSelectionDialog(QtGui.QDialog):
         elif grad:
             meg = 'grad'
         else: meg = False
-        info = self.caller.experiment.active_subject.working_file.info
+        info = self.caller.experiment.active_subject.get_working_file().info
         picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
@@ -242,7 +242,7 @@ class EventSelectionDialog(QtGui.QDialog):
         #this needs some manual logging or logging from the Events' __ini__
         #e = wrap_mne_call(self.caller.experiment, Events, self.caller.experiment.active_subject.working_file,
         #                  stim_channel, mask)
-        e = Events(self.caller.experiment.active_subject.working_file,
+        e = Events(self.caller.experiment.active_subject.get_working_file(),
                    stim_channel, mask)
         
         mask = np.bitwise_not(mask)

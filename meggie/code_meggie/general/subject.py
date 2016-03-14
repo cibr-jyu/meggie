@@ -75,6 +75,7 @@ class Subject(QObject):
         self._epochs = dict()
         self._evokeds = dict()
         self._subject_path = os.path.join(experiment.workspace,
+                                          experiment.experiment_name,
                                           subject_name)
         
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
@@ -169,8 +170,8 @@ class Subject(QObject):
         """Releases memory from previously processed subject by removing
         references from raw files.
         """
-        if self.working_file is not None:
-            self.working_file = None
+        if self.get_working_file() is not None:
+            self.set_working_file(None)
             if len(self.epochs) > 0:
                 for value in self.epochs.values():
                     value.raw = None

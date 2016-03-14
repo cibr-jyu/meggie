@@ -102,7 +102,7 @@ class Caller(object):
         sample      -- Sample to convert to time.
         Returns time as seconds.
         """
-        raw = self.experiment.active_subject.working_file
+        raw = self.experiment.active_subject.get_working_file()
         
         #log mne call
         #self.log_action(raw.index_as_time, sample - raw.first_samp, 0)
@@ -524,7 +524,7 @@ class Caller(object):
         epocher = Epochs()
         subject = self.experiment.active_subject
         epochs = epocher.create_epochs_from_dict(self.experiment, epoch_params,
-                                                 subject.working_file)
+                                                 subject.get_working_file())
 
         epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
 
@@ -550,7 +550,7 @@ class Caller(object):
 
         colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
 
-        mi = MeasurementInfo(self.experiment.active_subject.working_file)
+        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
 
         title = mi.subject_name
 
@@ -591,7 +591,7 @@ class Caller(object):
         # Plotting:
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.experiment.active_subject._working_file)
+        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
         fig.canvas.set_window_title(mi.subject_name + 
              '-- channel average for ' + averageTitleString)
         fig.suptitle('Channel average for ' + averageTitleString, y=1.0025)
@@ -755,7 +755,7 @@ class Caller(object):
     def _group_average(self, groups, ignore_not_found=False):
         """Performed in a worker thread."""
         # TODO: log something?
-        chs = self.experiment.active_subject.working_file.info['ch_names']
+        chs = self.experiment.active_subject.get_working_file().info['ch_names']
         chs = _clean_names(chs)
         evokeds = dict()
         eweights = dict()
@@ -1168,7 +1168,7 @@ class Caller(object):
     def _TFR_average(self, epochs_name, selected_channels, reptype,
                      frequencies, ncycles, decim, save_max=False):
         """Performed in a working thread."""
-        chs = self.experiment.active_subject.working_file.info['ch_names']
+        chs = self.experiment.active_subject.get_working_file().info['ch_names']
         subjects = self.experiment.get_subjects()
         directory = ''
         files2ave = []
@@ -1390,7 +1390,7 @@ class Caller(object):
             except Exception:
                 message = 'Could not read layout information.'
                 raise Exception(message)
-        raw = self.experiment.active_subject.working_file
+        raw = self.experiment.active_subject.get_working_file()
 
         if params['ch'] == 'meg':
             picks = mne.pick_types(raw.info, meg=True, eeg=False,
@@ -1845,7 +1845,7 @@ class Caller(object):
         fsdict    -- dictionary of parameters for forward solution creation.
         """
         activeSubject = self.parent._experiment._active_subject
-        rawInfo = activeSubject._working_file.info
+        rawInfo = activeSubject.get_working_file().info
 
         tableView = self.parent.ui.tableViewFModelsForSolution
         selectedRowIndexes = tableView.selectedIndexes()
@@ -1901,7 +1901,7 @@ class Caller(object):
             if subjectName is not None:
                 if subjectName == self.experiment.active_subject_name:
                     fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.active_subject.working_file
+                    raw = self.experiment.active_subject.get_working_file()
                 else:
                     fileNameToWrite = subjectName + '-cov.fif'
                     raw = self.experiment.get_subject_working_file(subjectName)
@@ -1961,7 +1961,7 @@ class Caller(object):
         """
         self.experiment.update_working_file(fname)
         self.experiment.active_subject_raw_path = fname
-        self.experiment.active_subject.working_file = raw
+        self.experiment.active_subject.set_working_file(raw)
         status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
         self.parent.statusLabel.setText(status)
         

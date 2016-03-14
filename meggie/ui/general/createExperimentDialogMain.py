@@ -74,7 +74,7 @@ class CreateExperimentDialog(QtGui.QDialog):
             self.messageBox.show()
             return  
         
-        expDict = {'name': os.path.join(self.parent.preferencesHandler.working_directory, self.ui.lineEditExperimentName.text()),
+        expDict = {'name': self.ui.lineEditExperimentName.text(), #'name': os.path.join(self.parent.preferencesHandler.working_directory, self.ui.lineEditExperimentName.text()),
                    'author': self.ui.lineEditAuthor.text(),
                    'description': self.ui.textEditDescription.toPlainText()
                   }

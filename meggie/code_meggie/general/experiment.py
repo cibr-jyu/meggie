@@ -217,7 +217,8 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        
+        if self.active_subject.subject_name == sname:
+            self.active_subject = None
         for subject in self.get_subjects():
             if subject.subject_name == sname:
                 self._subjects.remove(subject)
@@ -225,7 +226,7 @@ class Experiment(QObject):
                     shutil.rmtree(subject.subject_path)
                 except OSError('Could not remove the contents of the subject folder.'):
                     raise
-                    
+              
         self.save_experiment_settings()
         
         # subject_path = os.path.join(self.workspace, self.experiment_name, sname)
@@ -333,13 +334,14 @@ class Experiment(QObject):
         if self.active_subject:
             save_dict['active_subject'] = self.active_subject.subject_name
         
-        # save to file
+        # necessary?
         try:
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
             pass
         
-        with open(os.path.join(self.workspace, self.experiment_name + '.exp'), 'w') as f:
+        # save to file
+        with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f)
 
 
@@ -400,7 +402,7 @@ class ExperimentHandler(QObject):
         """
         #with open(name + '.exp', 'r') as f:
         a = os.path.join(prefs.working_directory, prefs.previous_experiment_name)
-        with open(os.path.join(prefs.working_directory, prefs.previous_experiment_name + '.exp'), 'r') as f:
+        with open(os.path.join(prefs.working_directory, prefs.previous_experiment_name, prefs.previous_experiment_name + '.exp'), 'r') as f:  # noqa
             data = json.load(f)
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
