@@ -356,23 +356,19 @@ class MainWindow(QtGui.QMainWindow):
             # TODO: Fill source file field if no parameters for epochs
             # collection. 'filename' is the current location of the collection,
             # so add some other information here?
-        drops = params['drops']
-        events = params['events']
-        names = [x[1] for x in events]
-        event_counts = [[x, names.count(x)] for x in set(names)]
-        for event_count in event_counts:
+        #events = params['events']
+        
+        events = epochs.raw.event_id
+        
+        for event_name, event_id in events.items():
+            events_str = event_name + ': ' + str(event_id) + ' [' + str(len(epochs.raw[event_name])) + ' events found]'
             item = QtGui.QListWidgetItem()
-            name = event_count[0]
-            idx = names.index(name)
-            event_id = str(events[idx][0][2])
-            text = (name + ': ID ' + event_id + ', ' + str(event_count[1]) + 
-                    ' events')
-            item.setText(text)
+            item.setText(events_str)
             self.epochList.ui.listWidgetEvents.addItem(item)
-        item = QtGui.QListWidgetItem()
-        item.setText('Dropped epochs: %s' % len(drops))
-        self.epochList.ui.listWidgetEvents.addItem(item)
-        # TODO: create category items to add on the listWidgetEvents widget.
+        
+        
+        
+       # TODO: create category items to add on the listWidgetEvents widget.
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
         # Creates dictionary of strings instead of qstrings for rejections.
@@ -402,10 +398,7 @@ class MainWindow(QtGui.QMainWindow):
                                                1e-6) + 'uV')
         else:
             self.ui.textBrowserEOG.setText('-1')
-        filename_full_path = str(params['raw'])
-        filename_list = filename_full_path.split('/')
-        filename = filename_list[len(filename_list) - 1]
-        self.ui.textBrowserWorkingFile.setText(filename)
+        self.ui.textBrowserWorkingFile.setText(os.path.basename(epochs.raw.info['filename']))
 
     def clear_epoch_collection_parameters(self):
         """
@@ -453,7 +446,6 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.epoch_params_ready.connect(self.create_new_epochs)  # noqa
         self.epochParameterDialog.finished.connect(self.on_close)
         self.epochParameterDialog.show()
 
@@ -474,25 +466,16 @@ class MainWindow(QtGui.QMainWindow):
         else:
             event.accept()
 
-    @QtCore.pyqtSlot(dict)
-    def create_new_epochs(self, epoch_params):
-        """A slot for creating new epochs with the given parameter values.
-
-        Keyword arguments:
-        epoch_params = A dictionary containing the parameter values for
-                       creating the epochs minus the raw data.
+    def update_epochs(self):
+        """Populates the epochs list.
         """
-        # Raw data is not present in the dictionary so get it from the
-        # current experiment.active_subject.
-        try:
-            self.caller.create_new_epochs(epoch_params)
-        except Exception as e:
-            exc_messagebox(self, e)
-
-        fname = epoch_params['collectionName']
-        item = QtGui.QListWidgetItem(fname)
-        self.epochList.addItem(item, 1, overwrite=True)
-        self.epochList.setCurrentItem(item)
+        self.epochList.clearItems()
+        epochs = self.caller.experiment.active_subject.epochs
+        if epochs is not None:
+            for epoch in epochs.values():
+                print epoch.collection_name
+                item = QtGui.QListWidgetItem(epoch.collection_name)
+                self.epochList.addItem(item)
 
     def on_pushButtonLoadEpochs_clicked(self, checked=None):
         """Load epochs from a folder.
@@ -539,7 +522,7 @@ class MainWindow(QtGui.QMainWindow):
             brush = QtGui.QBrush()
             brush.setColor(color)
             item.setForeground(brush)
-        fileManager.save_epoch(os.path.join(epochs_dir, fname_prefix + '.fif'),
+        fileManager.save_epoch(os.path.join(epochs_dir, fname_prefix),
                                epochs, params)
         self.caller.experiment.active_subject.handle_new_epochs(fname_prefix,
                                                                 params)
@@ -555,10 +538,6 @@ class MainWindow(QtGui.QMainWindow):
         collection_name = str(self.epochList.currentItem().text())
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.initialize(collection_name)
-        # modify_epochs removes the previous Epochs object and raw files
-        # created from it and creates new Epochs object and raw files.
-        # Also removes the epochWidget item and replaces it with the new one.
-        self.epochParameterDialog.epoch_params_ready.connect(self.create_new_epochs)  # noqa
         self.epochParameterDialog.show()
 
     def on_pushButtonSaveEpochs_clicked(self, checked=None):
@@ -624,7 +603,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # If no events are selected, show a message to to the user and return.
         if len(items) == 0:
-            messagebox('Please select an epoch collection to average.')
+            messagebox(self, 'Please select an epoch collection to average.')
             return
 
         prefix = ''
@@ -655,7 +634,7 @@ class MainWindow(QtGui.QMainWindow):
             if str(self.evokedList.item(item_idx).text()) == evoked_name:
                 message = ('Evoked data set with name %s already exists!' % 
                            evoked_name)
-                messagebox(message)
+                messagebox(self, message)
                 return
 
         item = QtGui.QListWidgetItem(evoked_name)
@@ -668,7 +647,7 @@ class MainWindow(QtGui.QMainWindow):
             except IOError:
                 message = ('Writing to selected folder is not allowed. You can'
                            ' still process the evoked file (visualize etc.).')
-                messagebox(message)
+                messagebox(self, message)
 
         try:
             print 'Writing evoked data as ' + evoked_name + ' ...'
@@ -676,7 +655,7 @@ class MainWindow(QtGui.QMainWindow):
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
-            messagebox(message)
+            messagebox(self, message)
 
         self.evokedList.addItem(item)
         self.ui.listWidgetInverseEvoked.addItem(item.text())
@@ -708,6 +687,10 @@ class MainWindow(QtGui.QMainWindow):
             return
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             messagebox(self, 'Create epochs before visualizing.')
+            return
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+            message = 'Please select an epoch collection on the list.'
+            messagebox(self, message)
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.get_epochs(name)
@@ -1810,8 +1793,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.forwardModelModel.initialize_model()
         self.subjectListModel.initialize_model()
-        _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
-                                       self.caller.experiment.active_subject)
+        if self.caller.experiment.active_subject:
+            _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
+                self.caller.experiment.active_subject)
 
 # Miscellaneous code:
 

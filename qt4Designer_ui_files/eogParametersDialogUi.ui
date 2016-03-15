@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>891</height>
+    <width>653</width>
+    <height>945</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,6 +36,13 @@
       <widget class="QPushButton" name="pushButtonCancel">
        <property name="text">
         <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonComputeBatch">
+       <property name="text">
+        <string>Compute Batch</string>
        </property>
       </widget>
      </item>
@@ -67,8 +74,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>643</width>
-        <height>834</height>
+        <width>635</width>
+        <height>888</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -125,7 +132,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>246</width>
+             <width>251</width>
              <height>41</height>
             </rect>
            </property>
@@ -211,7 +218,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>451</width>
+             <width>455</width>
              <height>41</height>
             </rect>
            </property>
@@ -297,7 +304,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>316</width>
+             <width>325</width>
              <height>41</height>
             </rect>
            </property>
@@ -392,7 +399,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>495</width>
+             <width>508</width>
              <height>41</height>
             </rect>
            </property>
@@ -569,7 +576,7 @@
           <rect>
            <x>10</x>
            <y>110</y>
-           <width>309</width>
+           <width>310</width>
            <height>41</height>
           </rect>
          </property>
@@ -782,245 +789,15 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBoxBatch">
+      <widget class="QWidget" name="widget" native="true">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>580</y>
-         <width>631</width>
-         <height>240</height>
+         <width>551</width>
+         <height>301</height>
         </rect>
        </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>240</height>
-        </size>
-       </property>
-       <property name="title">
-        <string>Batch processing</string>
-       </property>
-       <widget class="QWidget" name="verticalLayoutWidget_4">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>471</width>
-          <height>209</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <item>
-          <widget class="QCheckBox" name="checkBoxBatch">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Enable</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelSubjects">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Select subject to modify its parameters</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_17">
-           <item>
-            <widget class="QListWidget" name="listWidgetSubjects">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_10">
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_11">
-               <item>
-                <spacer name="verticalSpacer_7">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLabel" name="label">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Apply parameters:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_30">
-                 <item>
-                  <widget class="QPushButton" name="pushButtonApply">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>90</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>90</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>Apply</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_6">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="text">
-                    <string>to selected subject</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_4">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_31">
-                 <item>
-                  <widget class="QPushButton" name="pushButtonApplyAll">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>90</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>90</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>Apply to all</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_7">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="text">
-                    <string>subjects on the list</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonRemove">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Remove subject from this process</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
       </widget>
      </widget>
     </widget>
@@ -1059,8 +836,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>650</x>
-     <y>880</y>
+     <x>642</x>
+     <y>934</y>
     </hint>
     <hint type="destinationlabel">
      <x>333</x>
@@ -1069,148 +846,39 @@
    </hints>
   </connection>
   <connection>
+   <sender>pushButtonComputeBatch</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptBatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>926</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>367</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>pushButtonCancel</sender>
-   <signal>clicked(bool)</signal>
+   <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>559</x>
-     <y>880</y>
+     <x>378</x>
+     <y>921</y>
     </hint>
     <hint type="destinationlabel">
-     <x>248</x>
-     <y>8</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelSubjects</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>44</x>
-     <y>630</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>69</x>
-     <y>655</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>listWidgetSubjects</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>40</x>
-     <y>629</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>123</x>
-     <y>697</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>39</x>
-     <y>634</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>329</x>
-     <y>705</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonApply</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>34</x>
-     <y>626</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>311</x>
-     <y>729</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_6</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>38</x>
-     <y>624</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>391</x>
-     <y>730</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonApplyAll</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>44</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>292</x>
-     <y>768</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_7</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>54</x>
-     <y>630</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>431</x>
-     <y>764</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBatch</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonRemove</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>29</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>39</x>
-     <y>812</y>
+     <x>259</x>
+     <y>5</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>acceptBatch()</slot>
+ </slots>
 </ui>

@@ -93,6 +93,10 @@ class Subject(QObject):
         self._forwardModelModel = None
 
     @property
+    def epochs(self):
+        return self._epochs
+
+    @property
     def raw_data(self):
         """
         Returns the raw data object (instance of RawFIF) of the subject.

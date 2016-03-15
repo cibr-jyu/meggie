@@ -123,9 +123,10 @@ class EpochWidget(QtGui.QWidget):
         item = self.ui.listWidgetEpochs.currentItem()
         if item is None: return
         caller = Caller.Instance()
-        epochs = caller.experiment.active_subject._epochs
+        epochs = caller.experiment.active_subject.epochs
         key = str(item.text())
         if epochs.has_key(key):
-            epoch = caller.experiment.active_subject._epochs[key]
+            epoch = caller.experiment.active_subject.epochs[key]
             #if not epoch._raw is None:
-            self.parent.show_epoch_collection_parameters(epoch)
+            if epoch.params is not None:
+                self.parent.show_epoch_collection_parameters(epoch)

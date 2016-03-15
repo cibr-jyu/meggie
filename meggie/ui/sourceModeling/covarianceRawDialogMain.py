@@ -163,7 +163,7 @@ class CovarianceRawDialog(QtGui.QDialog):
             raw = fileManager.open_raw(subjectPath, False)
         except Exception:
             message = 'Could not open file for showing info.'
-            exc_messagebox(message)
+            messagebox(self.parent, message)
             return
         
         info = Ui_infoDialog()

@@ -45,7 +45,6 @@ def threaded(func):
             if do_meanwhile:
                 do_meanwhile()
             sleep(0.2)
-         
         result = async_result.get()
         pool.terminate()
 
