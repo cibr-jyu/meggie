@@ -1895,4 +1895,4 @@ class Ui_MainWindow(object):
         self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
         self.actionShow_log.setText(_translate("MainWindow", "Show log", None))
 
-#import mainWindowIcons_rc
+from meggie.ui.icons import mainWindowIcons_rc
