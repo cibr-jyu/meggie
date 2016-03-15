@@ -1466,7 +1466,8 @@ class Caller(object):
 
         Returns the filtered array.
         """
-        return self._filter(dic, subject)
+        self._filter(dic, subject)
+        return 0
     
     def _filter(self, dic, subject):
         """Performed in a working thread."""
@@ -1551,7 +1552,6 @@ class Caller(object):
                                              trans, trans, picks=picks,
                                              n_jobs=2, copy=True)
 
-        return dataToFilter
 
 ### Methods needed for source modeling ###    
 
