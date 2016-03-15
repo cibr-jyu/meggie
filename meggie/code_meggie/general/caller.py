@@ -169,6 +169,7 @@ class Caller(object):
         # TODO: log mne call
         #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
         raw = mne.io.Raw(outputfile, preload=True)
+        #TODO: subject.update_working_file(fname, raw)
         self.update_experiment_working_file(outputfile, raw)
 
         self.experiment.save_experiment_settings()
@@ -382,6 +383,7 @@ class Caller(object):
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
         
         raw = mne.io.Raw(fname, preload=True)
+        #TODO: subject.update_working_file(fname, raw)
         self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
 

@@ -51,7 +51,7 @@ class FilterDialog(QtGui.QDialog):
         should be saved over the working file, and saves if the user answers
         yes.
         """
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         paramDict = self.get_filter_parameters()
         dataToFilter = raw._data
         info = raw.info
@@ -95,6 +95,7 @@ class FilterDialog(QtGui.QDialog):
 
             previewRaw.save(fname, overwrite=True)
             raw = mne.io.Raw(fname, preload=True)
+            #TODO: subject.update_working_file(fname, raw)
             self.caller.update_experiment_working_file(fname, raw)
 
             self.parent._initialize_ui()
@@ -153,7 +154,7 @@ class FilterDialog(QtGui.QDialog):
         actually do the filtering.
         """
         paramDict = self.get_filter_parameters()   
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         info = raw.info
 
         # Check if the filter frequency values are sane or not.

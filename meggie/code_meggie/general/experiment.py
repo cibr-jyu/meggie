@@ -217,18 +217,18 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        if self.active_subject.subject_name == sname:
-            self.active_subject = None
         for subject in self.get_subjects():
             if subject.subject_name == sname:
-                self._subjects.remove(subject)
                 try:
                     shutil.rmtree(subject.subject_path)
                 except OSError('Could not remove the contents of the subject folder.'):
                     raise
+                self._subjects.remove(subject)
+                if self.active_subject.subject_name == sname:
+                    self.active_subject = None
               
         self.save_experiment_settings()
-        
+        main_window._initialize_ui()
         # subject_path = os.path.join(self.workspace, self.experiment_name, sname)
 
         # if (subject_path in path for path in self.subject_paths):
@@ -274,9 +274,7 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         if self.active_subject:
             self.active_subject.release_memory()
-        # if subject_name in [subject.subject_name for subject in self.get_subjects()]:
-        #     working_file = subject.get_working_file()
-        for subject in self._subjects:
+        for subject in self.get_subjects():
             if subject_name == subject.subject_name:
                 subject.set_working_file(
                     fileManager.open_raw(subject.working_file_path))

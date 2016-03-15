@@ -45,7 +45,7 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
         params_str += '{0} = {1}, '.format(str(key), str(value))
     #remove the last comma and whitespace
     cleaned_params_str = params_str[0:len(params_str) - 2]
-    working_file = experiment._working_file_names[experiment.active_subject_name]
+    working_file = experiment.active_subject.working_file_name
     logger.logger.info('{0}\nFile: {1}\n{2}({3})'.format(success_msg, working_file, mne_instance_name, cleaned_params_str))
     return result
 

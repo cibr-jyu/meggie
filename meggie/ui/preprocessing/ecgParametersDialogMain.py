@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ class EcgParametersDialog(ProjectorDialog):
     def __init__(self, parent):
         ProjectorDialog.__init__(self, parent, Ui_Dialog)
 
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
@@ -371,7 +371,7 @@ class EcgParametersDialog(ProjectorDialog):
         #2. would have to read raw every time when creating params dictionaries
         dictionary = dict()
         if batch_checked is False:
-            raw = self.caller.experiment.active_subject.working_file
+            raw = self.caller.experiment.active_subject.get_working_file()
             dictionary = {'i': raw}
 
         tmin = self.ui.doubleSpinBoxTmin.value()
@@ -470,7 +470,7 @@ class EcgParametersDialog(ProjectorDialog):
                 return incorrect_ECG_channel, error_message
             subject.ecg_params['ch_name'] = ch_name
         if subject.subject_name == self.caller.experiment._active_subject_name:
-            subject.ecg_params['i'] = self.caller.experiment._active_subject._working_file
+            subject.ecg_params['i'] = self.caller.experiment.active_subject.get_working_file()
         else:
             subject._ecg_params['i'] = self.caller.experiment.\
                                 get_subject_working_file(subject.subject_name)
