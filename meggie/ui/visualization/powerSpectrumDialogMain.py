@@ -136,10 +136,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             start = condition.getStartTime()
             end = condition.getEndTime()
             if end < start:
-                messageBox = QtGui.QMessageBox()
-                messageBox.setText("End time must be higher than the "
-                                   "start time.")
-                messageBox.exec_()
+                messagebox(self.parent, "End time must be higher than the start time.")
                 return
             times.append((start, end))
 
@@ -148,17 +145,12 @@ class PowerSpectrumDialog(QtGui.QDialog):
             channelColors[i] = (condition.getChannelColor(), channels)
             i += 1
         if len(times) == 0:
-            messageBox = QtGui.QMessageBox()
-            messageBox.setText("Could not find data. Check parameters!")
-            messageBox.exec_()
+            messagebox(self.parent, "Could not find data. Check parameters!")
             return
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
         if fmin >= fmax:
-            messageBox = QtGui.QMessageBox()
-            messageBox.setText("End frequency must be higher than the "
-                               "starting frequency.")
-            messageBox.exec_()
+            messagebox(self.parent, "End frequency must be higher than the starting frequency")
             return
         params = dict()
         params['times'] = times
@@ -178,16 +170,18 @@ class PowerSpectrumDialog(QtGui.QDialog):
         elif self.ui.radioButtonLayoutFromFile.isChecked():
             params['lout'] = str(self.ui.labelLayout.text())
             if params['lout'] == 'No layout selected':
-                messageBox = QtGui.QMessageBox()
-                messageBox.setText("No layout selected!")
-                messageBox.exec_()
+                messagebox(self.parent, 'No layout selected!')
                 return
 
         try:
+            QtGui.QApplication.setOverrideCursor(
+                QtGui.QCursor(QtCore.Qt.WaitCursor))
             self.caller.plot_power_spectrum(params, save_data, colors,
                                             channelColors)
         except Exception as e:
             exc_messagebox(self.parent, e)
+        QtGui.QApplication.restoreOverrideCursor()
+
 
     @QtCore.pyqtSlot(int)
     def on_comboBoxStart_currentIndexChanged(self, index):
