@@ -377,9 +377,6 @@ class Caller(object):
 
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
-        
-        raw = mne.io.Raw(fname, preload=True)
-        self.experiment.active_subject.set_working_file(raw)
         self.experiment.save_experiment_settings()
 
     def plot_projs_topomap(self, raw):

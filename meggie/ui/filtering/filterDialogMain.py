@@ -104,7 +104,7 @@ class FilterDialog(QtGui.QDialog):
             if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
                 previewRaw.info['highpass'] = paramDict['high_cutoff_freq']
 
-            previewRaw.save(fname, overwrite=True)
+            fileManager.save_raw(self.caller.experiment, previewRaw, fname, overwrite=True)       
             self.caller.experiment.active_subject.set_working_file(previewRaw)
 
             self.parent._initialize_ui()

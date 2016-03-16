@@ -615,7 +615,7 @@ class MainWindow(QtGui.QMainWindow):
             if not prefix == '':
                 prefix = prefix + '-'
             key = str(item.text())
-            epoch = self.caller.experiment.active_subject.get_epochs(key)
+            epoch = self.caller.experiment.active_subject.epochs[key]
             epochs.append(epoch)
             category.update(epoch.event_id)
             prefix = prefix + item.text()
