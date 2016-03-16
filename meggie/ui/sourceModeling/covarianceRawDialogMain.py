@@ -8,12 +8,14 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import QApplication
 
 from meggie.ui.sourceModeling.covarianceRawDialogUi import Ui_covarianceRawDialog
-from meggie.ui.general import messageBoxes
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 import os
 from pickle import PickleError
@@ -50,8 +52,7 @@ class CovarianceRawDialog(QtGui.QDialog):
         self.ui.radioButtonElseWhere and \
         self.ui.lineEditRawFile.text()) == '' :
             message = 'Please select a raw file to compute covariance from.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
             return
         
         if self.ui.buttonGroupRawFile.checkedButton() == \
@@ -110,8 +111,7 @@ class CovarianceRawDialog(QtGui.QDialog):
         # Basic sanity checking for input values.
         if pdict['starttime'] >= pdict['endtime']:
             message = 'Check beginning and end of your time interval'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
             return
         
         # To differentiate between covariance matrix created from raw 
@@ -121,20 +121,13 @@ class CovarianceRawDialog(QtGui.QDialog):
         try:
             self.caller.create_covariance_from_raw(pdict)    
         except ValueError as e:
-            message = 'Could not compute covariance. MNE error message was: ' +\
-            '\n\n' + str(e)
-            self.messagebox = messageBoxes.shortMessageBox(message)
-            self.messagebox.show()
+            exc_messagebox(self.parent, e)
             return   
         except IOError as e:
-            self.messagebox = messageBoxes.shortMessageBox(str(e.message) + \
-            str(e))
-            self.messagebox.show()
+            exc_messagebox(self.parent, e)
             return
         except PickleError as e:
-            self.messagebox = messageBoxes.shortMessageBox('Could not write ' +\
-            + 'parameter file. There error message was:\n\n' + str(e))
-            self.messagebox.show()
+            exc_messagebox(self.parent, e)
             return
         
         self.close()
@@ -170,8 +163,7 @@ class CovarianceRawDialog(QtGui.QDialog):
             raw = fileManager.open_raw(subjectPath, False)
         except Exception:
             message = 'Could not open file for showing info.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.show()
+            messagebox(self.parent, message)
             return
         
         info = Ui_infoDialog()

@@ -37,7 +37,9 @@ from PyQt4.QtGui import QDialogButtonBox, QListWidgetItem
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.epoching.groupEpochingDialogUi import Ui_GroupEpochDialog
-from meggie.ui.general import messageBoxes
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 class GroupEpochingDialog(QtGui.QDialog):
     """
@@ -52,11 +54,11 @@ class GroupEpochingDialog(QtGui.QDialog):
                                                               'computation')
         self.caller = Caller.Instance()
         self.parent = parent
-        subjects = self.caller.experiment.get_subjects()
         self.ui.listWidgetSubjects.setSelectionMode(QtGui.\
                                     QAbstractItemView.MultiSelection)
-        for subject in subjects:
-            item = QListWidgetItem(subject.subject_name)
+        subjects = self.caller.experiment.subjects
+        for name in subjects:
+            item = QListWidgetItem(name)
             self.ui.listWidgetSubjects.addItem(item)
             item.setSelected(True)
 
@@ -75,8 +77,7 @@ class GroupEpochingDialog(QtGui.QDialog):
         event_name = str(self.ui.lineEditName.text())
         if event_name == '':
             msg = 'Event name cannot be empty!'
-            mBox = messageBoxes.shortMessageBox(msg)
-            mBox.exec_()
+            messagebox(self.parent, msg)
             return
         grad = self.ui.doubleSpinBoxGradReject_3.value() * 1e-13 if\
                 self.ui.checkBoxGrad.isChecked() else None
@@ -87,9 +88,12 @@ class GroupEpochingDialog(QtGui.QDialog):
         eog = self.ui.doubleSpinBoxEOGReject_3.value() * 1e-6 if\
                 self.ui.checkBoxEog.isChecked() else None
 
-        self.caller.batchEpoch(subjects, epoch_name, tmin, tmax, stim,
-                               event_id, mask, event_name, grad, mag, 
-                               eeg, eog, parent_handle=self.parent)
+        try:
+            self.caller.batchEpoch(subjects, epoch_name, tmin, tmax, stim,
+                                   event_id, mask, event_name, grad, mag, 
+                                   eeg, eog)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
 
         self.parent.parent._initialize_ui()
         

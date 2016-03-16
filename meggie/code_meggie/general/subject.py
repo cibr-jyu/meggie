@@ -49,8 +49,6 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
 from meggie.code_meggie.sourceModeling.forwardModels import ForwardModels
 
-from meggie.ui.utils.decorators import messaged
-
 class Subject(QObject):
     
     def __init__(self, experiment, subject_name, working_file_name):
@@ -83,6 +81,7 @@ class Subject(QObject):
         self._source_analysis_directory = os.path.join(self._subject_path, 'sourceAnalysis')  # noqa
         self._reconFiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
         self._forwardModels_directory = os.path.join(self._source_analysis_directory, 'forwardModels')  # noqa
+        self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
 
         # Models for various types of data stored in subject
         self._forwardModelModel = None   
@@ -106,6 +105,10 @@ class Subject(QObject):
     @property
     def forwardModels_directory(self):
         return self._forwardModels_directory  
+
+    @property
+    def stc_directory(self):
+        return self._stc_directory
 
     @property
     def subject_name(self):
@@ -134,15 +137,19 @@ class Subject(QObject):
     def set_working_file(self, working_file):
         self._working_file = working_file
 
-    def get_working_file(self, preload=True):
+    def get_working_file(self, preload=True, temporary=False):
         """
         Returns the current working raw object.
         """
         if isinstance(self._working_file, mne.io.Raw):
+            if preload:
+                self._working_file.load_data()
             return self._working_file
         else:
-            self._working_file = self.load_working_file(preload)
-            return self._working_file
+            raw = self.load_working_file(preload)
+            if not temporary:
+                self._working_file = raw
+            return raw
 
     @property
     def epochs(self):
@@ -183,7 +190,7 @@ class Subject(QObject):
         """
         Finds the correct stimulus channel for the data.
         """
-        channels = self._working_file.info.get('ch_names')
+        channels = self.get_working_file().info.get('ch_names')
         if 'STI101' in channels:
             return 'STI101'
         elif 'STI 101' in channels:
@@ -200,8 +207,6 @@ class Subject(QObject):
         Raises type error if the working_file attribute is not set or
         if the data is not of type mne.io.Raw.
         """
-        if not isinstance(self._working_file, mne.io.Raw):
-            raise TypeError('Not a raw object')
 
         events = self.get_events()
         
@@ -217,11 +222,11 @@ class Subject(QObject):
         stim_channel = self.find_stim_channel()
         
         try:
-            events = mne.find_events(self._working_file)
+            events = mne.find_events(self.get_working_file())
         except Exception as e:
             print 'Warning: %s' % e
             print 'Reading events with minimum length of 1...'
-            events = mne.find_events(self.working_file,
+            events = mne.find_events(self.get_working_file(),
                                      stim_channel=stim_channel,
                                      shortest_event=1)
         return events
@@ -235,7 +240,6 @@ class Subject(QObject):
         """
         self._epochs[epochs.collection_name] = epochs
 
-    @messaged
     def remove_epochs(self, collection_name):
         """
         Removes epochs from epochs dictionary.
@@ -270,7 +274,6 @@ class Subject(QObject):
         """
         self._evokeds[evoked.name] = evoked
 
-    @messaged
     def remove_evoked(self, name):
         """
         Removes evoked object from the evoked dictionary.
@@ -284,7 +287,6 @@ class Subject(QObject):
         except OSError:
             raise IOError('Evoked could not be deleted from average folder.')
 
-    @messaged
     def remove_power(self, name):
         """
         Removes AVGPower object from the TFR dictionary.

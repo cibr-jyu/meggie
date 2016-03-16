@@ -8,10 +8,12 @@ Created on 30.6.2014
 from PyQt4 import QtGui
 
 from meggie.ui.sourceModeling.forwardModelDialogUi import Ui_forwardModelDialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 import string
 import re
@@ -126,49 +128,51 @@ class ForwardModelDialog(QtGui.QDialog):
         
         activeSubject = self.caller._experiment._active_subject
         if fileManager.check_fModel_name(fmname, activeSubject):
-            message = 'That forward model name is already in use. Please ' + \
-            'select another.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+            message = ('That forward model name is already in use. '
+                       'Please select another.')
+            messagebox(self.parent, message)
             return
         
         # A bit of checking for stupidities in naming to avoid conflicts
         # with directories created by MNE scripts.
         if string.lower(fmdict['fmname']) == ('mri' or 'bem' or 'surf'):
-            message = "'mri', 'bem' and 'surf' are not acceptable fmodel names" + \
-                      " (they get mixed up with directory names created by MNE)."
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+            message = ("'mri', 'bem' and 'surf' are not acceptable fmodel names"
+                       " (they get mixed up with directory names created by MNE).")
+            messagebox(self.parent, message)
             return
         
         # Forward model should have a name.
         if (fmdict['fmname']) == '':
             message = "Please give a name to your forward model."
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+            messagebox(self.parent, message)
             return
         
         # Name should only use alphanumeric and underscores.
         if not re.match('^[\w+$]' ,fmdict['fmname']): 
-            message = 'Please only use alphabets, numbers and underscores in ' + \
-            'forward model name'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+            message = ('Please only use alphabets, numbers and underscores in '
+                       'forward model name')
+            messagebox(self.parent, message)
             return
         
         # To help the user with the weird ico parameter.
-        if (fmdict['sspaceArgs']['surfaceDecimMethod']) != 'traditional (default)' and \
-        fmdict['sspaceArgs']['surfaceDecimValue'] == '0':
-            message = 'You need to use a nonzero ico parameter if you ' + \
-            'to use a nontraditional cortical surface decimation method.'
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+        if all([
+            (fmdict['sspaceArgs']['surfaceDecimMethod']) != 'traditional (default)',
+            fmdict['sspaceArgs']['surfaceDecimValue'] == '0']
+        ):
+            message = ('You need to use a nonzero ico parameter if you '
+                       'to use a nontraditional cortical surface decimation method.')
+            messagebox(self.parent, message)
             return
         
         caller = Caller.Instance()
 
         result = None
-        result = caller.create_forward_model(fmdict, parent_handle=self.parent)
+
+        try:
+            result = caller.create_forward_model(fmdict)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         if result:
             self.close()
         

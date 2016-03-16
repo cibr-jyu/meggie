@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,10 @@ from threading import Thread
 from PyQt4 import QtCore,QtGui
 
 from meggie.ui.preprocessing.maxFilterDialogUi import Ui_Dialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
+
+from meggie.ui.utils.messaging import exc_messagebox
 
 
 class MaxFilterDialog(QtGui.QDialog):
@@ -167,7 +168,7 @@ class MaxFilterDialog(QtGui.QDialog):
             dictionary['-hp'] = ''
 
         caller = Caller.Instance()
-        raw = caller.experiment.active_subject.working_file
+        raw = caller.experiment.active_subject.get_working_file()
         dictionary['-f'] = raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif
@@ -217,11 +218,11 @@ class MaxFilterDialog(QtGui.QDialog):
 
         custom = self.ui.textEditCustom.toPlainText()
 
-        result = None
-        result = caller.call_maxfilter(dictionary, custom, 
-                                       do_meanwhile=self.parent.update_ui,
-                                       parent_handle=self.parent)
-        if not result:
+        try:
+            caller.call_maxfilter(dictionary, custom, 
+                                  do_meanwhile=self.parent.update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
             self._show_progressbar(False)
             return
 
@@ -275,10 +276,5 @@ class MaxFilterDialog(QtGui.QDialog):
         Keyword arguments:
         visible  -- Whether to show or hide progress bar.
         """
-        if visible:
-            QtGui.QApplication.setOverrideCursor(QtGui.\
-                                                 QCursor(QtCore.Qt.WaitCursor))
-        else:
-            QtGui.QApplication.restoreOverrideCursor()
         self.ui.labelComputeMaxFilter.setVisible(visible)
         self.ui.progressBarComputeMaxFilter.setVisible(visible)

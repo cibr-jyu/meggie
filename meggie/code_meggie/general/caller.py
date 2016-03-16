@@ -20,10 +20,11 @@ import linecache
 from PyQt4 import QtCore, QtGui
 
 import mne
+from mne import make_fixed_length_events
 from mne.channels.layout import read_layout
 from mne.channels.layout import _pair_grad_sensors_from_ch_names
 from mne.channels.layout import _merge_grad_data
-from mne.viz import plot_topo
+from mne.viz import plot_evoked_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
@@ -44,14 +45,15 @@ from copy import deepcopy
 
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
-from meggie.ui.utils.decorators import messaged
 from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
+from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
+from meggie.code_meggie.general.subject import Subject
 
 
 @Singleton
@@ -82,8 +84,6 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
-    # @messaged
-    # @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -127,7 +127,6 @@ class Caller(object):
         retval = proc.wait()
         print "the program return code was %d" % retval
 
-    @messaged
     @threaded
     def call_maxfilter(self, params, custom):
         """
@@ -138,7 +137,6 @@ class Caller(object):
         custom -- Additional parameters as a string
         """
         self._call_maxfilter(params, custom)
-        return True
 
     def _call_maxfilter(self, params, custom):
         """Aux function for maxfiltering data. """
@@ -169,8 +167,8 @@ class Caller(object):
         # TODO: log mne call
         #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
         raw = mne.io.Raw(outputfile, preload=True)
-        #TODO: subject.update_working_file(fname, raw)
-        self.update_experiment_working_file(outputfile, raw)
+
+        self.experiment.active_subject.set_working_file(raw)
 
         self.experiment.save_experiment_settings()
 
@@ -187,7 +185,7 @@ class Caller(object):
     @threaded
     def _call_ecg_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = dic.get('i')
+        raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
@@ -261,14 +259,13 @@ class Caller(object):
         dic           -- dictionary of parameters including the MEG-data.
         subject       -- The subject to perform action on.
         """
-
         self._call_eog_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         return 0
 
     @threaded
     def _call_eog_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = dic.get('i')
+        raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
@@ -327,7 +324,6 @@ class Caller(object):
         print "Writing EOG events in %s" % eog_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
 
-    @messaged
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
         Applies ECG or EOG projections for MEG-data.  
@@ -383,11 +379,9 @@ class Caller(object):
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
         
         raw = mne.io.Raw(fname, preload=True)
-        #TODO: subject.update_working_file(fname, raw)
-        self.update_experiment_working_file(fname, raw)
+        self.experiment.active_subject.set_working_file(raw)
         self.experiment.save_experiment_settings()
 
-    @messaged
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
 
@@ -416,126 +410,100 @@ class Caller(object):
         self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
         return evokeds
 
-    @messaged
-    def batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
-                   mask, event_name, grad, mag, eeg, eog):
+    def create_epochs(self, params, subject):
+        if subject == self.experiment.active_subject:
+            raw = subject.get_working_file()
+        else:
+            raw_path = self.experiment._working_file_names[subject.subject_name]
+            raw = fileManager.open_raw(raw_path, pre_load=False)
+             
+        events = []
+        event_params = params['events']
+        fixed_length_event_params = params['fixed_length_events']
+        
+        if len(event_params) > 0:
+            for event_params_dic in event_params:
+                #TODO: log
+                events.extend(self.create_eventlist(event_params_dic, raw))
+        if len(fixed_length_event_params) > 0:
+            for event_params_dic in fixed_length_event_params:
+                #TODO: log
+                events.extend(make_fixed_length_events(
+                    raw, event_params_dic['event_id'],
+                    event_params_dic['tmin'],
+                    event_params_dic['tmax'], event_params_dic['interval']
+                ))           
+        if len(events) == 0:
+            raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
+        
+        #if 'mag' and 'grad' in params:
+        if params['mag'] and params['grad']:
+            params['meg'] = True
+        elif params['mag']:
+            params['meg'] = 'mag'
+        elif params['grad']:
+            params['meg'] = 'grad'
+        else:
+            params['meg'] = False
+        if not isinstance(raw, mne.io.Raw):
+            raise TypeError('Not a Raw object')
+        #TODO: log mne call
+        picks = mne.pick_types(raw.info, meg=params['meg'],
+            eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
+        if len(picks) == 0:
+            raise ValueError(''.join([
+                'Picks cannot be empty. Select picks by checking the ',
+                'checkboxes.'
+                ]))
+        category = {}
+        
+        for event in params['events']:
+            category[event['event_name']] = event['event_id']
+        
+        for event in params['fixed_length_events']:
+            category[event['event_name']] = event['event_id']
+
+        #from pprint import pprint
+        #pprint(events)
+
+        epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
+            raw, np.array(events), category,  #params['category']
+            params['tmin'], params['tmax'], picks=picks,
+            reject=params['reject'])
+        if len(epochs.get_data()) == 0:
+            raise ValueError(''.join([
+                'Could not find any data. Perhaps the rejection thresholds',
+                'are too strict...'
+                ]))
+        fname = os.path.join(self.experiment.workspace,
+            self.experiment.experiment_name,
+            subject.subject_name, 'epochs', params['collection_name'])
+        
+        params_to_save = {'events': events, 'mag': params['mag'], 'grad': params['grad'],
+                  'eeg': params['eeg'], 'stim': params['stim'], 'eog': params['eog'],
+                  'reject': params['reject'], 'tmin': params['tmin'], 'tmax': params['tmax'],
+                  'collectionName': params['collection_name'], 'raw': fname}
+        
+        fileManager.save_epoch(fname, epochs, params_to_save=None, overwrite=True)
+        epochs_object = Epochs()
+        epochs_object.raw = epochs
+        epochs_object.collection_name = params['collection_name']
+        epochs_object.params = params
+        subject.add_epochs(epochs_object)
+        return 0
+
+    def create_eventlist(self, params, raw):
         """
-        Creates epoch collection for all ``subjects`` with the given parameters
-
-        Keyword arguments:
-        subjects      - List of strings. Subjects to create epochs for.
-        epoch_name    - The name of the epoch collection as string.
-        tmin          - Start time for epochs as float.
-        tmax          - End time for epochs as float.
-        stim          - Boolean to indicate whether to include stim channel.
-        event_id      - The event_id as int.
-        mask          - Bit wise mask as int.
-        event_name    - Name for the event as string.
-        grad          - Peak-to-peak rejection limit for gradiometer channels
-                        or None if gradiometer channels are not included.
-        mag           - Peak-to-peak rejection limit for magnetometer channels
-                        or None if magnetometer channels are not included.
-        eeg           - Peak-to-peak rejection limit for EEG channels
-                        or None if EEG channels are not included.
-        eog           - Peak-to-peak rejection limit for EOG channels
-                        or None if EOG channels are not included.
+        Pick desired events from the raw data.
         """
-
-        self._batchEpoch(subjects, epoch_name, tmin, tmax, stim,
-                         event_id, mask, event_name, grad, mag, eeg,
-                         eog, do_meanwhile=self.parent.update_ui)
-
-    @threaded
-    def _batchEpoch(self, subjects, epoch_name, tmin, tmax, stim, event_id,
-                    mask, event_name, grad, mag, eeg, eog):
-        """Performed in a worker thread."""
-        # active_subject = self.experiment.active_subject_name
-        path = self.experiment.workspace
-        working_files = self.experiment._working_file_names.values()
-        reject = dict()
-        if grad is not None and grad >= 0:
-            reject['grad'] = grad
-        if mag is not None and mag >= 0:
-            reject['mag'] = mag
-        if eeg is not None and eeg >= 0:
-            reject['eeg'] = eeg
-        if eog is not None and eog >= 0:
-            reject['eog'] = eog
-        mag = mag is not None
-        grad = grad is not None
-        eeg = eeg is not None
-        eog = eog is not None
-
-        for subject in subjects:
-            path = os.path.join(path, subject)
-            fname = ''
-            for working_file in working_files:
-                if os.path.split(working_file)[1].startswith(subject):
-                    fname = working_file
-                    break
-            if fname == '':
-                print 'Could not find working file for %s. Skipping.' % subject
-                continue
-            for sub in self.experiment.get_subjects():
-                if sub.subject_name == subject:
-                    this_subject = sub
-                    break
-
-            stim_channel = this_subject.stim_channel
-            try:
-                raw = mne.io.Raw(fname)
-                #log mne call
-                events = wrap_mne_call(self.experiment, mne.find_events, raw, stim_channel=stim_channel,
-                                         shortest_event=1, mask=mask)
-                #log mne call
-                events = wrap_mne_call(self.experiment, mne.pick_events, events, include=event_id)
-                epocher = Epochs()
-
-                #log mne call in Epochs class
-                epochs = epocher.create_epochs(self.experiment, raw, events, mag, grad, eeg,
-                                               stim, eog, reject,
-                                               {event_name: event_id}, tmin,
-                                               tmax)
-            except Exception as e:
-                raise Exception('Could not create epochs for subject ' +
-                                subject + ':\n' + str(e) + '\n')
-
-            path = os.path.join(os.path.split(fname)[0], 'epochs')
-            fname = os.path.join(path, epoch_name)
-            events = [(event, event_name) for event in events]
-            params = {'events': events, 'mag': mag, 'grad': grad,
-                      'eeg': eeg, 'stim': stim, 'eog': eog,
-                      'reject': reject, 'tmin': tmin, 'tmax': tmax,
-                      'collectionName': epoch_name, 'raw': fname}
-            this_subject.handle_new_epochs(epoch_name, params)
-            # epochs_object = this_subject._epochs[epoch_name]
-            fileManager.save_epoch(fname, epochs, params, overwrite=True)
-
-    @messaged
-    def create_new_epochs(self, epoch_params):
-        """
-        A method for creating new epochs with the given parameter values for
-        the active subject.
-
-        Keyword arguments:
-        epoch_params = A dictionary containing the parameter values for
-                       creating the epochs minus the raw data.
-        """
-        # Raw data is not present in the dictionary so get it from the
-        # current experiment.active_subject.
-        epocher = Epochs()
-        subject = self.experiment.active_subject
-        epochs = epocher.create_epochs_from_dict(self.experiment, epoch_params,
-                                                 subject.get_working_file())
-
-        epoch_params['raw'] = self.experiment._working_file_names[self.experiment._active_subject_name]
-
-        fname = epoch_params['collectionName']
-        self.experiment.active_subject.handle_new_epochs(fname, epoch_params)
-
-        fpath = os.path.join(subject._epochs_directory, fname)
-
-        fileManager.save_epoch(fpath, epochs, epoch_params, True)
+        events = []
+        events = np.array(events) # Just to make sure it is a numpy array.
+        e = Events(raw, params['stim'], params['mask'])
+        mask = np.bitwise_not(params['mask'])
+        #TODO: Log events
+        #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
+        events = e.pick(np.bitwise_and(params['event_id'], mask))
+        return events
 
     def draw_evoked_potentials(self, evokeds, layout):  # , category):
         """
@@ -556,7 +524,7 @@ class Caller(object):
 
         title = mi.subject_name
 
-        fig = wrap_mne_call(self.experiment, plot_topo, evokeds, layout,
+        fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
                             color=colors[:len(evokeds)], title=title)
 
         conditions = [e.comment for e in evokeds]
@@ -573,7 +541,6 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    @messaged
     def average_channels(self, instance, lobeName, channelSet=None):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
@@ -713,7 +680,6 @@ class Caller(object):
 
         return averageTitleString, dataList, evokeds
 
-    @messaged
     def plot_group_average(self, groups, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
@@ -729,7 +695,6 @@ class Caller(object):
                 do_meanwhile=self.parent.update_ui
             )
         except Warning as e:
-            QtGui.QApplication.restoreOverrideCursor()
             reply = QtGui.QMessageBox.question(
                 self.parent, 
                 "Evoked responses not found",
@@ -741,8 +706,6 @@ class Caller(object):
             if reply == QtGui.QMessageBox.No:
                 return
             else:
-                QtGui.QApplication.setOverrideCursor(
-                    QtGui.QCursor(QtCore.Qt.WaitCursor))
                 evokeds, groups = self._group_average(
                     groups,
                     ignore_not_found=True,
@@ -766,10 +729,10 @@ class Caller(object):
             for ch in chs:
                 evokeds[group][ch] = []                
             eweights[group] = []
-        subjects = self.experiment.get_subjects()
+        subjects = self.experiment.subjects.values()
         files2ave = []
         for subject in subjects:
-            directory = subject._evokeds_directory
+            directory = subject.evokeds_directory
             files = [ f for f in listdir(directory)\
                       if isfile(join(directory, f)) and f.endswith('.fif') ]
             for f in files:
@@ -884,7 +847,6 @@ class Caller(object):
 
         return averagedEvokeds, groups
 
-    @messaged
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
         """
@@ -994,7 +956,6 @@ class Caller(object):
                                    mode='ratio', copy=True)
         return power, itc, times, evoked, evoked_data
 
-    @messaged
     def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
                      blstart, blend, interval, ncycles, lout, ch_type, scalp,
                      color_map='auto'):
@@ -1127,7 +1088,6 @@ class Caller(object):
                  overwrite=True)
         return power, itc
 
-    @messaged
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
                     maxfreq, interval, blstart, blend, ncycles, decim, layout,
                     selected_channels, form, dpi, save_topo, save_plot,
@@ -1171,7 +1131,7 @@ class Caller(object):
                      frequencies, ncycles, decim, save_max=False):
         """Performed in a working thread."""
         chs = self.experiment.active_subject.get_working_file().info['ch_names']
-        subjects = self.experiment.get_subjects()
+        subjects = self.experiment.subjects.values()
         directory = ''
         files2ave = []
         for subject in subjects:
@@ -1370,7 +1330,6 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    @messaged
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.
@@ -1485,9 +1444,8 @@ class Caller(object):
             psdList.append((psds, freqs))
         return psdList
 
-    @messaged
     @threaded
-    def filter(self, dataToFilter, info, dic):
+    def filter(self, dic, subject):
         """
         Filters the data array in place according to parameters in paramDict.
         Depending on the parameters, the filter is one or more of
@@ -1501,12 +1459,14 @@ class Caller(object):
 
         Returns the filtered array.
         """
-        return self._filter(dataToFilter, info, dic)
-
-    def _filter(self, dataToFilter, info, dic):
+        self._filter(dic, subject)
+        return 0
+    
+    def _filter(self, dic, subject):
         """Performed in a working thread."""
+        dataToFilter = subject.get_working_file()
+        info = dataToFilter.info
         sf = info['sfreq']
-
         if isinstance(dataToFilter, mne.io.Raw):
             hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
             lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
@@ -1585,11 +1545,9 @@ class Caller(object):
                                              trans, trans, picks=picks,
                                              n_jobs=2, copy=True)
 
-        return dataToFilter
 
 ### Methods needed for source modeling ###    
 
-    @messaged
     def convert_mri_to_mne(self):
         """
         Uses mne_setup_mri to active subject recon directory to create Neuromag
@@ -1610,7 +1568,6 @@ class Caller(object):
         
         subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
 
-    @messaged
     def create_forward_model(self, fmdict):
         """
         Creates a single forward model and saves it to an appropriate
@@ -1746,8 +1703,8 @@ class Caller(object):
             # TODO: this actually has an MNE-Python counterpart, which doesn't
             # help much, as the others don't (11.10.2014).
             mne_setup_source_space_commandList = \
-            ['$MNE_ROOT/bin/mne_setup_source_space'] + \
-            setupSourceSpaceArgs
+                ['$MNE_ROOT/bin/mne_setup_source_space'] + \
+                setupSourceSpaceArgs
             mne_setup_source_spaceCommand = ' '.join(
                                             mne_setup_source_space_commandList)
             setupSSproc = subprocess.check_output(mne_setup_source_spaceCommand,
@@ -1810,8 +1767,8 @@ class Caller(object):
         """
         Uses mne.gui.coregistration for head coordinate coregistration.
         """
-        
-        activeSubject = self.parent._experiment._active_subject
+
+        activeSubject = self.experiment.active_subject
         tableView = self.parent.ui.tableViewFModelsForCoregistration
         
         # Selection for the view is SingleSelection / SelectRows, so this
@@ -1820,15 +1777,14 @@ class Caller(object):
         selectedFmodelName = selectedRowIndexes[0].data() 
                              
         subjects_dir = os.path.join(activeSubject._forwardModels_directory,
-                               selectedFmodelName)
+                                    selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path,
-                               self.experiment._working_file_names
-                               [self.experiment._active_subject_name])
+                               self.experiment.active_subject.working_file_name)
 
-        mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
-                               raw=rawPath, subject=subject,
-                               subjects_dir=subjects_dir)
+        gui = mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
+                                     inst=rawPath, subject=subject,
+                                     subjects_dir=subjects_dir)
         QtCore.QCoreApplication.processEvents()
 
         # Needed for copying the resulting trans file to the right location.
@@ -1837,7 +1793,6 @@ class Caller(object):
         self.coregHowtoDialog.ui.labelTransFileWarning.hide()
         self.coregHowtoDialog.show()
 
-    @messaged
     def create_forward_solution(self, fsdict):
         """
         Creates a forward solution based on parameters given in fsdict.
@@ -1882,10 +1837,45 @@ class Caller(object):
             fileManager.write_forward_solution_parameters(fmdir, fsdict)
             self.parent.forwardModelModel.initialize_model()
         except Exception as e:
-            title = 'Error'
             msg = ('There was a problem with forward solution. The MNE-Python '
                    'message was: \n\n' + str(e))
             raise Exception(msg)
+
+    def compute_inverse(self, fwd_name):
+        """Computes an inverse operator for the forward solution and saves it
+        to the source_analysis directory.
+        Keyword arguments:
+            fwd: The forward operator name.
+
+        Returns:
+            The inverse operator
+        """
+        subject = self.experiment.active_subject
+        info = subject.get_working_file().info
+        sa_dir = subject._source_analysis_directory
+        fwd_file = os.path.join(subject._forwardModels_directory, fwd_name,
+                                'reconFiles', 'reconFiles-fwd.fif')
+        if os.path.isfile(fwd_file):
+            print 'Reading forward solution...'
+        else:
+            raise IOError('Could not find forward solution with name %s.' %
+                          fwd_file)
+        fwd = mne.read_forward_solution(fwd_file)
+        cov_file = os.path.join(sa_dir, subject.subject_name + '-cov.fif')
+        if os.path.isfile(cov_file):
+            print 'Using %s to compute inverse.' % cov_file
+        else:
+            raise IOError('Could not find covariance file with name %s.' %
+                          cov_file)
+        cov = mne.read_cov(cov_file)
+        inv = mne.minimum_norm.make_inverse_operator(info, fwd, cov)
+        inv_fname = os.path.join(sa_dir, subject.subject_name + '-inv.fif')
+        try:
+            mne.minimum_norm.write_inverse_operator(inv_fname, inv)
+        except Exception as e:
+            msg = ('Exception while computing inverse operator:\n\n' + str(e))
+            raise Exception(msg)
+        return inv
 
     def create_covariance_from_raw(self, cvdict):
         """
@@ -1897,22 +1887,16 @@ class Caller(object):
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
-        subjectName = cvdict['rawsubjectname']
-        fileNameToWrite = ''
-        try:
-            if subjectName is not None:
-                if subjectName == self.experiment.active_subject_name:
-                    fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.active_subject.get_working_file()
-                else:
-                    fileNameToWrite = subjectName + '-cov.fif'
-                    raw = self.experiment.get_subject_working_file(subjectName)
-            else:
-                raw = fileManager.open_raw(cvdict['rawfilepath'], True)
-                basename = os.path.basename(cvdict['rawfilepath'])
-                fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
-        except Exception:
-            raise
+        subject_name = cvdict['rawsubjectname']
+        if subject_name is not None:
+            subject = self.experiment.subjects[subject_name]
+            raw = subject.get_working_file()
+            name = os.path.basename(subject.working_file_name)
+            filename_to_write = name + '-cov.fif'
+        else:
+            raw = fileManager.open_raw(cvdict['rawfilepath'], True)
+            basename = os.path.basename(cvdict['rawfilepath'])
+            filename_to_write = os.path.splitext(basename)[0] + '-cov.fif'
 
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
@@ -1923,17 +1907,17 @@ class Caller(object):
         picks = cvdict['picks']
 
         try:
-            cov = mne.compute_raw_data_covariance(raw, tmin, tmax, tstep,
-                                                  reject, flat, picks)
-        except ValueError:
-            raise
+            cov = mne.cov.compute_raw_covariance(raw, tmin, tmax, tstep,
+                                                 reject, flat, picks)
+        except ValueError as e:
+            raise ValueError('Error while computing covariance. ' + str(e))
 
         path = self.experiment.active_subject._source_analysis_directory
 
         # Remove previous covariance file before creating a new one.
         fileManager.remove_files_with_regex(path, '.*-cov.fif')
 
-        filePathToWrite = os.path.join(path, fileNameToWrite)
+        filePathToWrite = os.path.join(path, filename_to_write)
         try:
             mne.write_cov(filePathToWrite, cov)
         except IOError as err:
@@ -1954,19 +1938,110 @@ class Caller(object):
         # Update ui.
         self.parent.update_covariance_info_box()
 
-    def update_experiment_working_file(self, fname, raw):
+    def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
         """
-        Changes the current working file for the experiment the caller relates
-        to.
-        fname    -- name of the new working file
-        raw      -- working file data
+        Method for computing source estimate.
+        Args:
+            inst_name: Name of the data instance.
+            type: str to indicate type of data.
+                One of ['raw', 'epochs', 'evoked'].
+            inv_name: Name of the inverse operator.
+            method: Method to use ('MNE', 'dSPM', 'sLORETA').
+            lmbd: Regularization parameter.
         """
-        self.experiment.update_working_file(fname)
-        self.experiment.active_subject_raw_path = fname
-        self.experiment.active_subject.set_working_file(raw)
-        status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
-        self.parent.statusLabel.setText(status)
-        
+        # TODO: refactor
+        subject = self.experiment.active_subject
+        source_dir = subject._source_analysis_directory
+        inv_file = os.path.join(source_dir, inv_name)
+
+        try:
+            inv = mne.minimum_norm.read_inverse_operator(inv_file)
+        except Exception as err:
+            raise Exception('Error while reading inverse '
+                            'operator:\n' + str(err))
+        if type == 'raw':
+            inst = subject.get_working_file()
+            try:
+                stc = mne.minimum_norm.apply_inverse_raw(inst, inv,
+                                                         lambda2=lmbd,
+                                                         method=method)
+            except Exception as err:
+                raise Exception('Exception while computing inverse '
+                                'solution:\n' + str(err))
+        elif type == 'epochs':
+            inst = subject.get_epochs(inst_name)
+            try:
+                stc = mne.minimum_norm.apply_inverse_epochs(inst, inv,
+                                                            lambda2=lmbd,
+                                                            method=method)
+            except Exception as err:
+                raise Exception('Exception while computing inverse '
+                                'solution:\n' + str(err))
+        elif type == 'evoked':
+            evoked = subject._evokeds[inst_name]
+            evoked_raw = evoked._raw
+
+            if isinstance(evoked_raw, list):
+                stc = list()
+                for inst in evoked_raw:
+                    try:
+                        stc.append(mne.minimum_norm.apply_inverse(inst, inv,
+                            lambda2=lmbd, method=method))
+                    except Exception as err:
+                        raise Exception('Exception while computing inverse '
+                                        'solution:\n' + str(err))
+            else:
+                try:
+                    stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
+                                                         lambda2=lmbd,
+                                                         method=method)
+                except Exception as err:
+                    raise Exception('Exception while computing inverse '
+                                    'solution:\n' + str(err))
+        stc_fname = os.path.split(inv_file)[-1]
+        if isinstance(stc, list):  # epochs and evoked saved individually
+            for i, estimate in enumerate(stc):
+                stc_fname = os.path.join(subject._stc_directory,
+                                         stc_fname[:-8] + '-' + type + '-' +
+                                         method + str(i))
+                try:
+                    estimate.save(stc_fname)
+                except Exception as err:
+                    raise Exception('Exception while saving inverse '
+                                    'solution:\n' + str(err))
+            print 'Inverse solution computed succesfully.'
+            return stc
+
+        stc_fname = os.path.join(subject._stc_directory,
+                                 stc_fname[:-8] + '-' + type + '-' + method)
+        try:
+            stc.save(stc_fname)
+        except Exception as err:
+            raise Exception('Exception while saving inverse '
+                            'solution:\n' + str(err))
+        print 'Inverse solution computed succesfully.'
+        return stc
+
+    def plotStc(self, stc_name, hemi, surface, smoothing_steps, alpha):
+        """Method for plotting source estimate.
+        Args:
+            stc: Stc name.
+            hemi: Hemisphere 'lh', 'rh' or 'both'.
+            surface: Type of surface.
+            smoothing_steps: The amount of smoothing.
+            alpha: Alpha value to use.
+        """
+        subject = self.experiment.active_subject
+        stc_dir = subject._stc_directory
+        fname = os.path.join(stc_dir, stc_name)
+        stc = mne.read_source_estimate(fname)
+        try:
+            stc.plot(subject='', surface=surface, hemi=hemi, alpha=alpha,
+                     smoothing_steps=smoothing_steps, time_viewer=True,
+                     subjects_dir=subject._reconFiles_directory)
+        except Exception as e:
+            raise Exception('Error while plotting source estimate:\n' + str(e))
+
     def log_action(self, mne_func, *args, **kwargs):
         """
         Helper method for logging

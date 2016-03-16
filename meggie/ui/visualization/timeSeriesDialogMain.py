@@ -33,7 +33,7 @@ class TimeSeriesDialog(QtGui.QDialog):
 
         self.widgets = []
         subject = self.caller.experiment.active_subject
-        self.raw = subject.working_file
+        self.raw = subject.get_working_file()
         self.ui.comboBoxChannels.addItems(self.raw.ch_names)
         index = self.ui.comboBoxChannels.findText(subject.stim_channel)
         self.ui.comboBoxChannels.setCurrentIndex(index)
@@ -42,8 +42,7 @@ class TimeSeriesDialog(QtGui.QDialog):
         """Finds events based on triggers on the selected channel."""
         if checked is None:
             return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
+
         for widget in reversed(self.widgets):
             index = widget.index
             self.on_RemoveWidget_clicked(index)
@@ -55,7 +54,6 @@ class TimeSeriesDialog(QtGui.QDialog):
             events = mne.find_events(self.raw, stim_channel=channel, mask=mask,
                                      verbose=True)
         except:
-            QtGui.QApplication.restoreOverrideCursor()
             return
         tceil = np.floor(self.raw.index_as_time(self.raw.n_times))  # ms to s
         for i in xrange(len(events) - 1):
@@ -72,7 +70,6 @@ class TimeSeriesDialog(QtGui.QDialog):
             widget.removeWidget.connect(self.on_RemoveWidget_clicked)
             widget.channelCopy.connect(self.copyChannels)
             self.ui.verticalLayoutConditions.addWidget(widget)
-        QtGui.QApplication.restoreOverrideCursor()
 
     @QtCore.pyqtSlot(int)
     def on_RemoveWidget_clicked(self, index):

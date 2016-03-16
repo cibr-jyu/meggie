@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ from PyQt4 import QtCore,QtGui
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
-from meggie.ui.general import messageBoxes
+from meggie.ui.utils.messaging import exc_messagebox
 
 class AddECGProjections(QtGui.QDialog):
     """
@@ -86,13 +86,15 @@ class AddECGProjections(QtGui.QDialog):
             check_box=self.listWidget.itemWidget(self.listWidget.item(index))
             applied.append(check_box.isChecked())
 
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         directory = self.caller.experiment.active_subject.subject_path
-        result = self.caller.apply_exg('ecg', raw, directory, self.projs,
-                                       applied, parent_handle=self.parent)
 
-        if result == 0:
+        try:
+            self.caller.apply_exg('ecg', raw, directory, self.projs, applied)
             self.parent.ui.checkBoxECGApplied.setChecked(True)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         self.parent._initialize_ui()
         self.close()
         

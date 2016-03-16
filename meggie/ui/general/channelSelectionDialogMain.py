@@ -29,7 +29,7 @@ class ChannelSelectionDialog(QtGui.QDialog):
         
         
         self.ui.listWidgetChannels.clear()
-        channels = caller.experiment.active_subject.working_file.info['ch_names']
+        channels = caller.experiment.active_subject.get_working_file().info['ch_names']
         for channel in channels:
             item = QListWidgetItem(channel)
             self.ui.listWidgetChannels.addItem(item)

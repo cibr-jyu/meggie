@@ -71,7 +71,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1102</width>
+          <width>1103</width>
           <height>750</height>
          </rect>
         </property>
@@ -2630,140 +2630,88 @@
               <attribute name="title">
                <string>Inverse operator</string>
               </attribute>
-              <widget class="QPushButton" name="pushButton_5">
-               <property name="geometry">
-                <rect>
-                 <x>390</x>
-                 <y>10</y>
-                 <width>138</width>
-                 <height>461</height>
-                </rect>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>1</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Compute 
- inverse operator...</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_16">
-               <property name="geometry">
-                <rect>
-                 <x>370</x>
-                 <y>240</y>
-                 <width>16</width>
-                 <height>16</height>
-                </rect>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Abyssinica SIL</family>
-                 <pointsize>12</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>---</string>
-               </property>
-              </widget>
-              <widget class="QLabel" name="label_17">
-               <property name="geometry">
-                <rect>
-                 <x>530</x>
-                 <y>240</y>
-                 <width>31</width>
-                 <height>16</height>
-                </rect>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Abyssinica SIL</family>
-                 <pointsize>12</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>--&gt;</string>
-               </property>
-              </widget>
               <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>21</x>
-                 <y>11</y>
-                 <width>381</width>
-                 <height>262</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_15">
-                <item>
-                 <widget class="QGroupBox" name="groupBox_7">
-                  <property name="title">
-                   <string>Forward solutions to base inverse operator on:</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_21">
-                   <item row="0" column="0">
-                    <widget class="QTableView" name="tableViewFSolutionsToInverse"/>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_8">
-                  <property name="title">
-                   <string>Noise covariance matrix info:</string>
-                  </property>
-                  <widget class="QLabel" name="label_12">
-                   <property name="geometry">
-                    <rect>
-                     <x>40</x>
-                     <y>90</y>
-                     <width>271</width>
-                     <height>20</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>edellisen välilehden tiedot myös tähän </string>
-                   </property>
-                  </widget>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="layoutWidget">
-               <property name="geometry">
-                <rect>
-                 <x>560</x>
                  <y>10</y>
-                 <width>374</width>
-                 <height>461</height>
+                 <width>841</width>
+                 <height>261</height>
                 </rect>
                </property>
-               <layout class="QFormLayout" name="formLayout_13">
-                <item row="1" column="0">
-                 <widget class="QGroupBox" name="groupBox_10">
-                  <property name="title">
-                   <string>Information about selected inverse operator:</string>
+               <layout class="QHBoxLayout" name="horizontalLayout_37">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                  <item>
+                   <widget class="QGroupBox" name="groupBox_7">
+                    <property name="title">
+                     <string>Forward solutions to base inverse operator on:</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_21">
+                     <item row="0" column="0">
+                      <widget class="QListWidget" name="listWidgetForwardSolution"/>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QGroupBox" name="groupBox_8">
+                    <property name="title">
+                     <string>Noise covariance matrix info:</string>
+                    </property>
+                    <widget class="QLabel" name="label_12">
+                     <property name="geometry">
+                      <rect>
+                       <x>40</x>
+                       <y>90</y>
+                       <width>271</width>
+                       <height>20</height>
+                      </rect>
+                     </property>
+                     <property name="text">
+                      <string>edellisen välilehden tiedot myös tähän </string>
+                     </property>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonComputeInverse">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>1</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Compute 
+ inverse operator...</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0" colspan="2">
-                 <widget class="QGroupBox" name="groupBox_9">
-                  <property name="title">
-                   <string>Inverse operators:</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_25">
-                   <item row="0" column="0">
-                    <widget class="QTableView" name="tableViewInverseOperators"/>
-                   </item>
-                  </layout>
-                 </widget>
+                <item>
+                 <layout class="QFormLayout" name="formLayout_13">
+                  <item row="1" column="0">
+                   <widget class="QGroupBox" name="groupBox_10">
+                    <property name="title">
+                     <string>Information about selected inverse operator:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QGroupBox" name="groupBox_9">
+                    <property name="title">
+                     <string>Inverse operators:</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_25">
+                     <item row="0" column="0">
+                      <widget class="QListWidget" name="listWidgetInverseOperator"/>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </widget>
@@ -2777,8 +2725,8 @@
                 <rect>
                  <x>30</x>
                  <y>20</y>
-                 <width>431</width>
-                 <height>513</height>
+                 <width>430</width>
+                 <height>511</height>
                 </rect>
                </property>
                <property name="title">
@@ -2788,37 +2736,72 @@
                 <item row="0" column="0" colspan="2">
                  <layout class="QVBoxLayout" name="verticalLayout_25">
                   <item>
-                   <widget class="QRadioButton" name="radioButton">
+                   <widget class="QRadioButton" name="radioButtonRaw">
                     <property name="text">
                      <string>Raw file</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <layout class="QVBoxLayout" name="verticalLayout_24">
                     <item>
-                     <widget class="QRadioButton" name="radioButton_2">
+                     <widget class="QRadioButton" name="radioButtonEpoch">
                       <property name="text">
                        <string>Epoch collection</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QListView" name="listView_3"/>
+                     <widget class="QFrame" name="frameInverseEpochs">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>400</width>
+                        <height>200</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
                   <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_19">
-                    <item>
-                     <widget class="QRadioButton" name="radioButton_3">
+                   <layout class="QGridLayout" name="gridLayout_32">
+                    <item row="0" column="0">
+                     <widget class="QRadioButton" name="radioButtonEvoked">
                       <property name="text">
                        <string>Evoked dataset</string>
                       </property>
                      </widget>
                     </item>
-                    <item>
-                     <widget class="QListView" name="listView_2"/>
+                    <item row="1" column="0">
+                     <widget class="QGroupBox" name="groupBoxInverseEvoked">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="title">
+                       <string>Evoked collections</string>
+                      </property>
+                      <layout class="QGridLayout" name="gridLayout_33">
+                       <item row="0" column="0">
+                        <widget class="QListWidget" name="listWidgetInverseEvoked">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </item>
                    </layout>
                   </item>
@@ -2837,12 +2820,7 @@
                </property>
                <property name="text">
                 <string>Make 
- source estimate...
-HUOM! Tämän takaa 
-voisi valita 
-käytettävän 
-inverse operatorin
- </string>
+ source estimate</string>
                </property>
               </widget>
               <widget class="QLabel" name="label_35">
@@ -2871,34 +2849,36 @@ inverse operatorin
                 <string>--&gt;</string>
                </property>
               </widget>
-              <widget class="QGroupBox" name="groupBox_23">
+              <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
                 <rect>
                  <x>640</x>
                  <y>40</y>
-                 <width>371</width>
-                 <height>211</height>
+                 <width>284</width>
+                 <height>263</height>
                 </rect>
                </property>
-               <property name="title">
-                <string>Source estimates:</string>
-               </property>
-               <widget class="QLabel" name="label_37">
-                <property name="geometry">
-                 <rect>
-                  <x>20</x>
-                  <y>50</y>
-                  <width>271</width>
-                  <height>61</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>Tähän lista, jossa: nimi; mihin pohjautuu; muut parametrit (pelkkä nimi voi riittää tähän, kaikki muut ehkä erilliseen lootaan alle)</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
+               <layout class="QVBoxLayout" name="verticalLayout_26">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_23">
+                  <property name="title">
+                   <string>Source estimates:</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_30">
+                   <item row="0" column="0">
+                    <widget class="QListWidget" name="listWidgetSourceEstimate"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonVisStc">
+                  <property name="text">
+                   <string>Visualize</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </widget>
              <widget class="QWidget" name="tabSourceAnalysis">
@@ -2917,19 +2897,6 @@ inverse operatorin
                <property name="title">
                 <string>Source estimates:</string>
                </property>
-               <widget class="QLabel" name="label_38">
-                <property name="geometry">
-                 <rect>
-                  <x>30</x>
-                  <y>60</y>
-                  <width>211</width>
-                  <height>91</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>Edellisen välilehden lista tähän</string>
-                </property>
-               </widget>
               </widget>
               <widget class="QTextEdit" name="textEdit">
                <property name="geometry">
@@ -2944,10 +2911,10 @@ inverse operatorin
                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans';&quot;&gt;Näille paikkeille sitten visualisointia, export-toimintoja yms.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans';&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;Näille paikkeille sitten visualisointia, export-toimintoja yms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </widget>
@@ -3726,14 +3693,10 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonCreateForwardSolution</tabstop>
   <tabstop>pushButtonComputeCovarianceRaw</tabstop>
   <tabstop>pushButtonComputeCovarianceEpochs</tabstop>
-  <tabstop>pushButton_5</tabstop>
-  <tabstop>tableViewFSolutionsToInverse</tabstop>
-  <tabstop>tableViewInverseOperators</tabstop>
-  <tabstop>radioButton</tabstop>
-  <tabstop>radioButton_2</tabstop>
-  <tabstop>listView_3</tabstop>
-  <tabstop>radioButton_3</tabstop>
-  <tabstop>listView_2</tabstop>
+  <tabstop>pushButtonComputeInverse</tabstop>
+  <tabstop>radioButtonRaw</tabstop>
+  <tabstop>radioButtonEpoch</tabstop>
+  <tabstop>radioButtonEvoked</tabstop>
   <tabstop>pushButtonMakeSourceEstimate</tabstop>
   <tabstop>textEdit</tabstop>
   <tabstop>textEditConsole</tabstop>
@@ -3755,12 +3718,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1544</x>
+     <y>658</y>
     </hint>
    </hints>
   </connection>
@@ -3771,12 +3734,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1545</x>
+     <y>682</y>
     </hint>
    </hints>
   </connection>
@@ -3787,12 +3750,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1361</x>
+     <y>617</y>
     </hint>
     <hint type="destinationlabel">
-     <x>466</x>
-     <y>160</y>
+     <x>1544</x>
+     <y>623</y>
     </hint>
    </hints>
   </connection>
@@ -3809,6 +3772,54 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>447</x>
      <y>735</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEpoch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameInverseEpochs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>472</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>561</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>518</y>
     </hint>
    </hints>
   </connection>

@@ -40,10 +40,12 @@ from PyQt4 import QtCore, QtGui
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.general import messageBoxes
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 import traceback
 import os
@@ -71,8 +73,6 @@ class AddSubjectDialog(QtGui.QDialog):
 
     def accept(self):
         """ Add the new subject. """
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor
-                                             (QtCore.Qt.WaitCursor))
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -80,16 +80,12 @@ class AddSubjectDialog(QtGui.QDialog):
             subject_name = basename.split('.')[0]
 
             # Check if the subject is already added to the experiment.
-            subject_names = [subject.subject_name for subject 
-                             in self.caller.experiment.get_subjects()]
-            if subject_name in subject_names:
-                QtGui.QApplication.restoreOverrideCursor()
-                msg = ('Subject ' + item.text() + ' is already added to the '
+            if subject_name in self.caller.experiment.subjects:
+                msg = ('Subject ' + subject_name + ' is already added to the '
                        'experiment. Change the filename of the raw every time '
                        'you want to create a new subject with the same raw '
                        'file.')
-                self.messageBox = messageBoxes.shortMessageBox(msg)
-                self.messageBox.show()
+                messagebox(self.parent, msg)
                 return
 
             try:
@@ -97,21 +93,15 @@ class AddSubjectDialog(QtGui.QDialog):
                                                       self.caller.experiment,
                                                       basename,
                                                       raw_path=raw_path)
-            except Exception:
-                tb = traceback.format_exc()
-                title = 'Problem creating a new subject'
-                msg = ('There was a problem creating a new subject. Please '
-                       'copy the following to your bug report:\n\n' + str(tb))
-                self.messageBox = messageBoxes.longMessageBox(title, msg)
-                self.messageBox.show()
-                QtGui.QApplication.restoreOverrideCursor()
+            except Exception as e:
+                exc_messagebox(self.parent, e)
                 return
 
-        #self.caller.activate_subject(subject_name,
-        #                             do_meanwhile=self.parent.update_ui,
-        #                             parent_handle=self.parent)
-        self.caller.activate_subject(subject_name)
-        
+        try:
+            self.caller.activate_subject(subject_name)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
 
@@ -122,7 +112,6 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent.reinitialize_models()
 
         self.close()
-        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowse_clicked(self, checked=None):
         """Open file browser for raw data files."""
@@ -149,15 +138,15 @@ class AddSubjectDialog(QtGui.QDialog):
         """Opens the infoDialog for the raw file selected."""
         if checked is None:
             return
+
         try:
             self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.
                                             currentItem().text(),
                                             pre_load=False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
 
-        except (IOError, OSError, ValueError) as e:
-            self.messageBox = messageBoxes.shortMessageBox(str(e))
-            self.messageBox.show()
+        except Exception as e:
+            exc_messagebox(self, e)
             return
 
         info = Ui_infoDialog()

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ from PyQt4 import QtCore, QtGui
 
 from meggie.ui.visualization.TFRfromEpochsUi import Ui_DialogEpochsTFR
 from meggie.code_meggie.general.caller import Caller
-from meggie.ui.general.messageBoxes import shortMessageBox
+from meggie.ui.utils.messaging import exc_messagebox
 
 class TFRDialog(QtGui.QDialog):
     """
@@ -75,6 +75,8 @@ class TFRDialog(QtGui.QDialog):
         cmap = str(self.ui.comboBoxCmap.currentText())
 
         caller = Caller.Instance()
-        caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
-                   ncycles, decim, cmap,
-                   parent_handle=self.parent)
+        try:
+            caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
+                       ncycles, decim, cmap)
+        except Exception as e:
+            exc_messagebox(self, e)

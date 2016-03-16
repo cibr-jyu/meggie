@@ -14,7 +14,9 @@ from meggie.code_meggie.general import fileManager
 from meggie.ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.visualization.timeSeriesDialogMain import TimeSeriesDialog
 from meggie.ui.widgets.powerSpectrumWidgetMain import PowerSpectrumWidget
-from meggie.ui.general.messageBoxes import shortMessageBox
+
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 
 class PowerSpectrumDialog(QtGui.QDialog):
@@ -45,7 +47,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.installEventFilters()
         self.parent = parent
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         tmax = np.floor(raw.index_as_time(raw.n_times))
         self.tmax = tmax
         widget = PowerSpectrumWidget(tmax, self)
@@ -181,9 +183,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
                 messageBox.exec_()
                 return
 
-        self.caller.plot_power_spectrum(params, save_data, colors,
-                                        channelColors, 
-                                        parent_handle=self.parent)
+        try:
+            self.caller.plot_power_spectrum(params, save_data, colors,
+                                            channelColors)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
 
     @QtCore.pyqtSlot(int)
     def on_comboBoxStart_currentIndexChanged(self, index):
@@ -195,7 +199,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         if not self.ui.checkBoxTriggers.isChecked():
             return
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         stim_channel = self.caller.experiment.active_subject.stim_channel
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerStart = int(self.ui.comboBoxStart.currentText())
@@ -214,8 +218,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         """
         if not self.ui.checkBoxTriggers.isChecked():
             return
-        raw = self.caller.experiment.active_subject.working_file
-        stim_channel = self.caller.experiment.active_subject._stim_channel
+        raw = self.caller.experiment.active_subject.get_working_file()
+        stim_channel = self.caller.experiment.active_subject.stim_channel
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerEnd = int(self.ui.comboBoxEnd.currentText())
         tmax = np.where(triggers[:, 2] == triggerEnd)[0][0]
@@ -227,8 +231,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                    'selecting a trigger that appears in the data more than '
                    'once, there is ambiguity in the selection of the time '
                    'window!')
-            mBox = shortMessageBox(msg)
-            mBox.exec_()
+            messagebox(self.parent, msg)
 
     @QtCore.pyqtSlot(bool)
     def on_checkBoxTriggers_toggled(self, toggled):
@@ -278,7 +281,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         for widget in self.conditions:
             self.on_RemoveWidget_clicked(widget.index)
 
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         tmax = np.floor(raw.index_as_time(raw.n_times))
         for idx, condition in enumerate(conditions):
             widget = PowerSpectrumWidget(tmax, self)

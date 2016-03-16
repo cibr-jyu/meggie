@@ -32,8 +32,6 @@ import csv
 from meggie.code_meggie.general.statistic import Statistic
 from meggie.code_meggie.general.wrapper import wrap_mne_call
 
-from meggie.ui.utils.decorators import messaged
-    
     
 def copy_recon_files(activeSubject, sourceDirectory):
         """
@@ -563,6 +561,17 @@ def open_raw(fname, pre_load=True):
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
     
+def open_raw_by_subject_name(experiment, subject_name, pre_load=False):
+    try:
+        
+        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
+    except IOError as e:
+        raise IOError('File does not exist or is not a raw-file.' + str(e))
+    except OSError as e:
+        raise OSError('You do not have permission to read the file.' + str(e))
+    except ValueError as e:
+        raise ValueError('File is not a raw-file.' + str(e))
+    
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
@@ -606,7 +615,7 @@ def unpickle(fpath):
     return unpickledObject
 
 
-def save_epoch(fpath, epoch, params, overwrite=False):
+def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -625,33 +634,8 @@ def save_epoch(fpath, epoch, params, overwrite=False):
     # First save the epochs
     epoch.save(fpath + '.fif')
     # Then save the parameters using pickle.
-    if params is None:
+    if params_to_save is None:
         return
-    # toPyObject turns the dict keys into QStrings so convert them back to
-    # strings.
-    # parameters = dict((str(k), v) for k, v in parameters.iteritems())
-
-    event_dict = {}
-    event_list = params['events']
-    #new_event_list = list()  # new list for excluding dropped epochs
-    drop_log = epoch.drop_log
-    drops = list()
-    for i, item in enumerate(event_list):
-        if len(drop_log[i]) != 0:  # add dropped epochs to params
-            drops.append(i)
-        key = str(item[1])
-        event = item[0]
-        # Create an empty list for the new key
-        if key not in event_dict:
-            event_dict[key] = []
-        event_dict[key].append(event)
-        #new_event_list.append(item)
-    params['events'] = event_dict
-    params['drops'] = drops
-    parameterFileName = str(fpath + '.param')
-    pickleObjectToFile(params, parameterFileName)
-    params['events'] = event_list  # list without dropped epochs
-
 
 def read_surface_names_into_list(subject):
     """
@@ -762,7 +746,6 @@ def load_tfr(fname):
     """
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
 
-
 def create_folders(paths):
     for path in paths:
         os.makedirs(path)
@@ -775,12 +758,12 @@ def save_subject(subject, path):
             subject.evokeds_directory,
             subject.source_analysis_directory,
             subject.forwardModels_directory,
-            subject.reconFiles_directory
+            subject.reconFiles_directory,
+            subject.stc_directory
         ])
     except OSError as e:
         raise OSError("Couldn't create all the necessary folders. "
                       "Do you have the necessary permissions?")
     
     copyfile(path, subject.working_file_path)
-    
     

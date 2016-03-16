@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppakangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,8 @@ Created on Apr 30, 2013
 @author: Jaakko Leppakangas
 Contains the EpochDialog class that holds the logic for epochDialog-window.
 """
-from meggie.ui.general import messageBoxes
+from meggie.ui.utils.messaging import exc_messagebox
+
 from meggie.ui.epoching.epochDialogUi import Ui_Dialog
 from meggie.code_meggie.general.caller import Caller
 
@@ -113,13 +114,11 @@ class EpochDialog(QtGui.QDialog):
             category[str(self.parent.ui.listWidgetEvents.item(index).data(33).
                          toPyObject())] = event[2]
         try:
-            epochs = Epochs(caller.experiment.working_file,
+            epochs = Epochs(caller.experiment.active_subject.get_working_file(),
                             events, mag, grad, eeg, stim, eog, reject,
                             category, float(self.tmin), float(self.tmax))
         except Exception, err:
-            message = 'Could not create epochs: ' + str(err)
-            self.messageBox = messageBoxes.shortMessageBox(message)
-            self.messageBox.exec_()
+            exc_messagebox(self.parent, err)
             return
         self.epochs_created.emit(epochs, self.collectionName)
         self.close()

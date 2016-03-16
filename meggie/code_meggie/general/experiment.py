@@ -45,8 +45,6 @@ from meggie.code_meggie.general.actionLogger import ActionLogger
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
 
-from meggie.ui.utils.decorators import messaged
-
 from PyQt4.QtCore import QObject
 
 
@@ -76,7 +74,7 @@ class Experiment(QObject):
         self._experiment_name = 'experiment'
         self._author = 'unknown author'
         self._description = 'no description'
-        self._subjects = []
+        self._subjects = {}
         self._active_subject = None
         self._action_logger = None
         self._workspace = None
@@ -199,9 +197,10 @@ class Experiment(QObject):
         Keyword arguments:
         subject    -- the subject object created by subject class
         """
-        self._subjects.append(subject)
+        self.subjects[subject.subject_name] = subject
 
-    def get_subjects(self):
+    @property
+    def subjects(self):
         """
         Returns a list of all subjects.
         """
@@ -217,51 +216,19 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        for subject in self.get_subjects():
-            if subject.subject_name == sname:
-                try:
-                    shutil.rmtree(subject.subject_path)
-                except OSError('Could not remove the contents of the subject folder.'):
-                    raise
-                self._subjects.remove(subject)
-                if self.active_subject.subject_name == sname:
-                    self.active_subject = None
-              
+	if self.active_subject.subject_name == sname:
+	    self.active_subject = None
+
+        subject = self.subjects.get(sname)
+	self.subjects.pop(sname)
+
+ 	try:
+	    shutil.rmtree(subject.subject_path)
+	except OSError:
+	    raise OSError('Could not remove the contents of the subject folder.')    
+
         self.save_experiment_settings()
         main_window._initialize_ui()
-        # subject_path = os.path.join(self.workspace, self.experiment_name, sname)
-
-        # if (subject_path in path for path in self.subject_paths):
-        #     # Need to call _subject_paths to be able to remove.
-        #     # Doesn't work if call subject_path without _.
-        #     self._subject_paths.remove(subject_path)
-        #     del self._working_file_names[sname]
-
-        # # If subject is not created with the chosen subject list item,
-        # # hence activated using activate -button after opening an existing
-        # # experiment, only subject_paths list and working_file_names dictionary
-        # # needs to be updated.
-        # for subject in self._subjects:
-        #     if subject.subject_name == sname:
-        #         self._subjects.remove(subject)
-
-        # # If active subject is removed, the active properties have to be
-        # # reseted to default values.    
-        # if subject_path == os.path.join(self._workspace, self._experiment_name,
-        #                                 self.active_subject_name):
-        #     self._active_subject_name = ''
-        #     self._active_subject = None
-
-        # try:
-        #     shutil.rmtree(subject_path)
-        # except OSError('Could not remove the contents of the subject folder.'):
-        #     raise
-        # self.save_experiment_settings()
-        # main_window._initialize_ui()
-        
-        
-        
-        #raise NotImplementedError
 
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
@@ -274,11 +241,7 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         if self.active_subject:
             self.active_subject.release_memory()
-        for subject in self.get_subjects():
-            if subject_name == subject.subject_name:
-                subject.set_working_file(
-                    fileManager.open_raw(subject.working_file_path))
-                self.active_subject = subject
+        self.active_subject = self.subjects[subject_name]
         self.save_experiment_settings()
  
     def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
@@ -292,7 +255,8 @@ class Experiment(QObject):
         if raw_path:
             fileManager.save_subject(subject, raw_path)
         self.add_subject(subject)
-        
+
+
     def save_experiment_settings(self):
         """
         Saves (pickles) the experiment settings into a file in the root of
@@ -301,7 +265,8 @@ class Experiment(QObject):
         # save to file:
         # construct save dict
         subjects = []
-        for subject in self.get_subjects():
+
+        for subject in self.subjects.values():
             subject_dict = {
                 'subject_name': subject.subject_name,
                 'working_file_name': subject.working_file_name,
@@ -328,11 +293,10 @@ class Experiment(QObject):
             'author': self.author,
             'description': self.description,
         }
-        
+
         if self.active_subject:
             save_dict['active_subject'] = self.active_subject.subject_name
         
-        # necessary?
         try:
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
@@ -388,7 +352,7 @@ class ExperimentHandler(QObject):
         prefs.write_preferences_to_disk()
         
         return experiment
-        
+
     def open_existing_experiment(self, prefs):
         """
         Opens an existing experiment, which is assumed to be in the working
@@ -434,50 +398,6 @@ class ExperimentHandler(QObject):
         self.parent.add_tabs()
         self.parent._initialize_ui()
         self.parent.reinitialize_models()
-       
-        # working_directory = self.parent.preferencesHandler.working_directory
-        # if not os.path.exists(working_directory):
-        #     raise Exception('Could not find working directory. Check preferences.')
-        # if name is not '':
-        #     print "Opening experiment " + name
-        #     try:
-        #         path = os.path.join(
-        #                     self.parent.preferencesHandler.working_directory, 
-        #                     name)
-        #     except IOError:
-        #         raise Exception("Error opening the experiment.")
-        # else:
-        #     return
-        # 
-        # fname = os.path.join(path, os.path.basename(path + '.exp'))
-        # if os.path.exists(path) and os.path.isfile(fname):
-        #     caller = Caller.Instance()
-        #     # Releases memory from the previously open experiment
-        #     caller._experiment = None
-        #     gc.collect()
-        #     print "Opening file " + fname
-        #     caller._experiment = fileManager.unpickle(fname)
-        #     self.initialize_logger(caller._experiment)
-        # 
-        #     self.parent.update_ui()
-        #     caller.experiment.create_subjects(caller._experiment,
-        #                     caller._experiment._subject_paths,
-        #                     self.parent.preferencesHandler.working_directory)
-        #     if caller.experiment.workspace != working_directory:
-        #         caller.experiment.workspace = working_directory
-        #     self.parent.update_ui()
-        #     caller.activate_subject(caller._experiment._active_subject_name,
-        #                             do_meanwhile=self.parent.update_ui,
-        #                             parent_handle=self.parent)
-        #     self.parent.add_tabs()
-        #     self.parent._initialize_ui()
-        #     self.parent.reinitialize_models() 
-        #     
-        # 
-        #     self.parent.preferencesHandler.previous_experiment_name = caller.experiment._experiment_name
-        #     self.parent.preferencesHandler.write_preferences_to_disk()
-        # else:
-        #     raise Exception("Experiment configuration file (.exp) not found!")
     
     def initialize_logger(self, experiment):
 

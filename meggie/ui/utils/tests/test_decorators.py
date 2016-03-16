@@ -4,7 +4,6 @@ import sys
 from time import sleep
 
 from meggie.ui.utils.decorators import threaded
-from meggie.ui.utils.decorators import messaged
 
 class TestDecorators(unittest.TestCase):
 

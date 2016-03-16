@@ -36,6 +36,7 @@ tempdir = _TempDir()
 
 def _get_experiment():
     """Helper for constructing experiment."""
+    raise Exception("Has to be rewritten")
     exp = experiment.Experiment()
     exp.workspace = tempdir._path
     os.chmod(tempdir._path, 0777)
@@ -68,7 +69,7 @@ def _update_ui():
 def test_call_exg_ssp():
     """Test calling ecg_ssp and eog_ssp."""
     _setup_caller()
-    raw = caller.experiment.get_subjects()[0]._working_file
+    raw = caller.experiment.subjects[0].get_working_file()
     params = {'i': raw, 'tmin': -0.1, 'tmax': 0.1, 'event-id': 999,
               'ecg-l-freq': 1., 'ecg-h-freq': 50., 'n-grad': 1, 'n-mag': 1,
               'n-eeg': 1, 'l-freq': 0, 'h-freq': 50, 'rej-grad': 2000,
