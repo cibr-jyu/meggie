@@ -87,20 +87,6 @@ def move_trans_file(subject, fModelName):
     except IOError: raise
     
     
-def remove_sourceAnalysis_files(aSubject):
-    """
-    Recursively removes contents of the source analysis directory.
-    Used when copying new recon files invalidates the rest of the source
-    analysis chain. 
-    
-    Keyword arguments:
-    
-    aSubject    -- currently active subject in the experiment 
-    """
-    
-    # shutil.rmtree(directory, ignore_errors, onerror)
-    
-
 def create_fModel_directory(fmname, subject):
     """
     Create a directory for the final forward model (under the directory of the
@@ -345,69 +331,6 @@ def link_triang_files(subject):
     except Exception:
         pass
     
-
-def create_key_csv_evoked(evoked):
-    """Create a list used for creating a csv file of key values in evoked.
-    
-    The file contains the
-    epoch,  channel, min, min_time, max, max_time,
-    half_max, half_max_time-, half_max_time+ and integral in that order.
-    
-    Keyword arguments:
-    
-    evoked -- An instance of evoked data.
-    
-    return a list of rows to write.
-    """
-    # TODO adjust into saving key values of averaged data.
-    stat = Statistic()
-    data = evoked.data
-    rows = []
-    # Create the first row with headings for the fields
-    rows.append(['channel', 'min', 'min_time', 'max', 'max_time',
-                 'half_max', 'half_max_time-', 'half_max_time+', 'integral'])
-    
-    # create the actual rows
-    for i in range(len(data)):
-        for j in range(len(data[i])):
-
-            row = []
-
-            row.append(evoked.ch_names[j])
-
-            minimum, min_time = stat.find_minimum(data[i][j])
-            row.append(minimum)
-            row.append(evoked.times[min_time])
-
-            maximum, max_time = stat.find_maximum(data[i][j])
-            row.append(maximum)
-            row.append(evoked.times[max_time])
-            
-            half_max, half_max_time_b, half_max_time_a = \
-            stat.find_half_maximum(data[i][j])
-            
-            row.append(half_max)
-            # If half_max_times are -1, the half_max value is not reached
-            # inside the epoch window.
-            if half_max_time_b == -1:
-                row.append(None)
-            else:
-                row.append(evoked.times[half_max_time_b])
-                
-            if half_max_time_a == -1:
-                row.append(None)
-            else:
-                row.append(evoked.times[half_max_time_a])
-                
-            integral = stat.integrate(data[i], half_max_time_b,
-                                      half_max_time_a)
-            
-            row.append(integral)
-            
-            rows.append(row)
-            
-    return rows    
-    
     
 def delete_file_at(folder, files):
     """Delete files from a folder.
@@ -561,17 +484,6 @@ def open_raw(fname, pre_load=True):
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
     
-def open_raw_by_subject_name(experiment, subject_name, pre_load=False):
-    try:
-        
-        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
-    except IOError as e:
-        raise IOError('File does not exist or is not a raw-file.' + str(e))
-    except OSError as e:
-        raise OSError('You do not have permission to read the file.' + str(e))
-    except ValueError as e:
-        raise ValueError('File is not a raw-file.' + str(e))
-    
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
@@ -673,56 +585,6 @@ def read_surface_names_into_list(subject):
     # To set and back to remove duplicates.
     return list(set(finalSurfNameList))
 
-
-def write_events(events, subject):
-        """
-        Saves the events into an Excel file (.xls). 
-        Keyword arguments:
-        events           -- Events to be saved
-        subject          -- subject (as object) whose events are in question 
-                            (usually active subject)
-        """
-        wbs = Workbook()
-        ws = wbs.add_sheet('Events')
-        styleNumber = XFStyle()
-        styleNumber.num_format_str = 'general'
-        sizex = events.shape[0]
-        sizey = events.shape[1]
-
-        path_to_save = os.path.join(subject._subject_path, 'events')
-        if not os.path.exists(path_to_save):
-            print 'Creating directory %s' % path_to_save
-            os.mkdir(path_to_save)
-        print 'Writing events to %s' % path_to_save
-        # Saves events to csv file for easier modification with text editors.
-        try:
-            csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
-            csv_file_writer = csv.writer(csv_file)
-            csv_file_writer.writerows(events)
-        except Exception as err:
-            raise err 
-        finally:
-            csv_file.close()
-
-        for i in range(sizex):
-            for j in range(sizey):
-                ws.write(i, j, events[i][j], styleNumber)
-        try:
-            wbs.save(os.path.join(path_to_save, 'events.xls'))
-        except Exception as err:
-            raise err
-
-
-def read_events(filename):
-    """
-    Reads the events from a chosen excel file.
-    Keyword arguments:
-    filename      -- File to read from.
-    """
-    wbr = open_workbook(filename)
-    sheet = wbr.sheet_by_index(0)
-    return sheet
-    
     
 def get_layouts():
     """

@@ -42,15 +42,6 @@ class PowerSpectrumWidget(QtGui.QWidget):
             self.ui.pushButtonRemove.setVisible(False)
         self._index = value
 
-    def setMaxTime(self, tmax):
-        """Method for setting max time for spinboxes."""
-        self.ui.spinBoxTmin.setMaximum(tmax)
-        self.ui.spinBoxTmax.setMaximum(tmax)
-        if self.ui.spinBoxTmin.value() > tmax:
-            self.ui.spinBoxTmin.setValue(5)
-        if self.ui.spinBoxTmax.value() > tmax:
-            self.ui.spinBoxTmax.setValue(tmax-5)
-
     def getStartTime(self):
         """Method for getting the starting time of condition."""
         return self.ui.spinBoxTmin.value()

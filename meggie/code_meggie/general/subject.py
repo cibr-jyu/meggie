@@ -300,35 +300,6 @@ class Subject(QObject):
         except OSError as err:
             raise IOError('The file could not be deleted from TFR folder.')
 
-### Code related to source modeling ###
-
-    def add_forwardModel(self, name, fmodel):
-        """
-        Adds a ForwardModels object to the forwardModels dictionary.
-        """
-        self._forwardModels[str(name)] = fmodel
-    
-    
-    def handle_new_forwardModels(self, name, params):
-        """
-        Creates a forward model object and adds it to the 
-        self._forwardModels dictionary.
-        Does nothing if given collection name exists already in the dictionary.
-        
-        Keyword arguments
-        name        -- name of the forward model
-        params      -- forward model parameters
-        """
-        # Checks if forward model with given name exists.
-        if self._forwardModels.has_key(name):
-            return
-        #toPyObject turns the dict keys into QStrings so convert them back to
-        #strings.
-        #params_str = dict((str(k), v) for k, v in parameters.iteritems())
-        fmodel = ForwardModels()
-        fmodel._fmodel_name = name
-        fmodel._params = params
-        self.add_forwardModel(name, fmodel)
     
 ### Code for checking the state of the subject ###   
 
