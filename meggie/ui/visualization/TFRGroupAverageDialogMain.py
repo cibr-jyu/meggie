@@ -64,7 +64,6 @@ class TFRGroupAverageDialog(QtGui.QDialog):
         channelSelector.channelsChanged.connect(self.channels_modified)
         channelSelector.exec_()
 
-
     @QtCore.pyqtSlot(list)
     def channels_modified(self, channels):
         """
@@ -76,17 +75,6 @@ class TFRGroupAverageDialog(QtGui.QDialog):
         self.ui.listWidgetChannels.clear()
         self.ui.listWidgetChannels.addItems(channels)
         
-    
-    def getFigureParameters(self):
-        """
-        Method for getting parameters for the saved figures.
-        """
-        form = str(self.ui.comboBoxFormat.currentText())
-        dpi = self.ui.spinBoxDpi.value()
-        saveTopo = self.ui.checkBoxSaveTopo.isChecked()
-        return form, dpi, saveTopo
-
-
     def accept(self):
         """
         Emits a signal for starting the computation.

@@ -89,9 +89,6 @@ class EventSelectionDialog(QtGui.QDialog):
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
         
-        #if params is not None:
-        #    self.fill_parameters(params)
-            
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
         for name in self.caller.experiment.subjects:
             self.batching_widget.data[name] = {}
@@ -355,63 +352,6 @@ class EventSelectionDialog(QtGui.QDialog):
         events = e.pick(np.bitwise_and(event_params['event_id'], mask))
         
         return events
-
-    def fill_parameters(self, params):
-        """Fill the fields in the dialog with parameters values from a dict.
-
-        Keyword arguments:
-
-        params -- A dict containing the parameter values to be used.
-        """
-        params_str = dict((str(key), value) for
-                          key, value in params.iteritems())
-        for item in params_str['events']:
-            events = []
-            events.append(item[0])
-            event_name = item[1]
-            self.add_events(events, event_name)
-
-        if params_str['mag'] is True:
-            self.ui.checkBoxMag.setChecked(True)
-        else:
-            self.ui.checkBoxMag.setChecked(False)
-
-        if params_str['grad'] is True:
-            self.ui.checkBoxGrad.setChecked(True)
-        else:
-            self.ui.checkBoxGrad.setChecked(False)
-
-        if params_str['eeg'] is True:
-            self.ui.checkBoxEeg.setChecked(True)
-        else:
-            self.ui.checkBoxEeg.setChecked(False)
-
-        if params_str['stim'] is True:
-            self.ui.checkBoxStim.setChecked(True)
-        else:
-            self.ui.checkBoxStim.setChecked(False)
-
-        if params_str['eog'] is True:
-            self.ui.checkBoxEog.setChecked(True)
-        else:
-            self.ui.checkBoxEog.setChecked(False)
-
-        reject = params_str['reject']
-        if reject.has_key('mag'):
-            self.ui.doubleSpinBoxMagReject_3.setValue(reject['mag'])
-
-        if reject.has_key('grad'):
-            self.ui.doubleSpinBoxGradReject_3.setValue(reject['grad'])
-
-        if reject.has_key('eeg'):
-            self.ui.doubleSpinBoxEegReject_3.setValue(reject['eeg'])
-
-        if reject.has_key('eog'):
-            self.ui.doubleSpinBoxEogReject_3.setValue(reject['eog'])
-
-        self.ui.doubleSpinBoxTmin.setValue(params_str['tmin'])
-        self.ui.doubleSpinBoxTmax.setValue(params_str['tmax'])
-        self.ui.lineEditCollectionName.setText(params_str['collectionName'])
 
     def on_pushButtonAdd_clicked(self, checked=None):
         """

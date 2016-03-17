@@ -105,7 +105,6 @@ class Caller(object):
         raw = self.experiment.active_subject.get_working_file()
         
         #log mne call
-        #self.log_action(raw.index_as_time, sample - raw.first_samp, 0)
         return raw.index_as_time(sample - raw.first_samp)[0]
 
     def call_mne_browse_raw(self, filename):
@@ -592,8 +591,6 @@ class Caller(object):
 
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
-            #log mne call
-            #self.log_action(epochs.average, category)
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
@@ -2035,18 +2032,3 @@ class Caller(object):
                      subjects_dir=subject._reconFiles_directory)
         except Exception as e:
             raise Exception('Error while plotting source estimate:\n' + str(e))
-
-    def log_action(self, mne_func, *args, **kwargs):
-        """
-        Helper method for logging
-        
-        Keyword arguments:
-        TODO: outcome     - string interpreting the successfulness of the action
-        mne_func    - reference to mne function (or class in some cases)
-        args        - arguments passed to the mne function (or class)
-        kwargs      - keyword arguments passed to the mne function (or class)
-        """
-        #wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
-        
-    def log_raw_changed(self, fname):
-        self.experiment.action_logger.log_message('Raw changed: ' + fname)
