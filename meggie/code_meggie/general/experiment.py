@@ -242,7 +242,7 @@ class Experiment(QObject):
         if self.active_subject:
             self.active_subject.release_memory()
         self.active_subject = self.subjects[subject_name]
-        self.save_experiment_settings()
+        
  
     def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
@@ -273,13 +273,13 @@ class Experiment(QObject):
                 'epochs': [], 
                 'evokeds': []
             }
-            for epoch in subject.epochs.items():
+            for epoch in subject.epochs.values():
                 epoch_dict = {
                     'collection_name': epoch.collection_name,
                     'params': epoch.params
                 }
                 subject_dict['epochs'].append(epoch_dict)
-            for evoked in subject.evokeds.items():
+            for evoked in subject.evokeds.values():
                 evoked_dict = {
                     'name': evoked.name
                 }
@@ -294,9 +294,6 @@ class Experiment(QObject):
             'description': self.description,
         }
 
-        if self.active_subject:
-            save_dict['active_subject'] = self.active_subject.subject_name
-        
         try:
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
@@ -378,7 +375,7 @@ class ExperimentHandler(QObject):
             for subject_data in data['subjects']:
                 subject = Subject(experiment, subject_data['subject_name'], subject_data['working_file_name'])
                 for epoch_data in subject_data['epochs']:
-                    epochs = Epochs()
+                    epochs = Epochs(epoch_data['collection_name'], subject, epoch_data['params'])
                     epochs.collection_name = epoch_data['collection_name']
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
@@ -387,11 +384,7 @@ class ExperimentHandler(QObject):
                     evoked.name = evoked_data['name']
                     subject.add_evoked(evoked)
                 experiment.add_subject(subject)
-            if 'active_subject' in data.keys():
-                a = data['active_subject']
-                experiment.activate_subject(data['active_subject'])
 
-        experiment.save_experiment_settings()
         self.initialize_logger(experiment)
         prefs.previous_experiment_name = experiment.experiment_name
         self.parent.caller.experiment = experiment

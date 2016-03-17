@@ -1,5 +1,6 @@
 # coding: utf-8
 from meggie.code_meggie.general.wrapper import wrap_mne_call
+from meggie.code_meggie.epoching.epochs import Epochs
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -255,7 +256,7 @@ class EventSelectionDialog(QtGui.QDialog):
         return self.caller.experiment.subjects[subject_name]
     
     def get_default_values(self, subject):
-        stim_channel = subject.stim_channel
+        stim_channel = subject.find_stim_channel
         rejections = {
             'grad': 3000.00,
             'mag': 4000.00
@@ -458,6 +459,19 @@ class EventSelectionDialog(QtGui.QDialog):
 
         param_dict = self.collect_parameter_values()
         
+        epochs = self.parent.caller.experiment.active_subject.epochs
+        if param_dict['collection_name'] in epochs:
+            header = 'Epoch collection name exists. '
+            message = ''.join([
+                'Are you sure you want to overwrite the ',
+                'collection?'
+            ])
+            reply = QtGui.QMessageBox.question(self.parent, header, message,                
+                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.No:
+                return
+            
+        
         if param_dict is None or all([not self.ui.checkBoxEeg.isChecked(), 
                 not self.ui.checkBoxGrad.isChecked(),
                 not self.ui.checkBoxMag.isChecked()]):
@@ -470,11 +484,30 @@ class EventSelectionDialog(QtGui.QDialog):
                     self.caller.experiment.active_subject)
 
         self.batching_widget.cleanup()
+        self.parent._initialize_ui()
+        self.caller.experiment.save_experiment_settings()
         self.close()
-        self.parent.update_epochs()
 
     def acceptBatch(self):
-        
+
+        found = False
+        for name, subject_data in self.batching_widget.data.items():
+            for epoch_name in self.caller.experiment.subjects[name].epochs:
+                if epoch_name == subject_data['collection_name']:
+                    found = True
+                    break
+
+        if found:
+            header = 'Collection name exists in experiment within one or more subjects. '
+            message = ''.join([
+                'Are you sure you want to overwrite the ',
+                'collection?'
+            ])
+            reply = QtGui.QMessageBox.question(self.parent, header, message,                
+                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.No:
+                return 
+            
         recently_active_subject = self.caller.experiment.active_subject.subject_name
         subject_names = []
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
@@ -496,16 +529,14 @@ class EventSelectionDialog(QtGui.QDialog):
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
-                self.caller.activate_subject(name,
-                    do_meanwhile=self.parent.update_ui)
+                self.caller.activate_subject(name)
                 if not self.calculate_epochs(subject):
                     self.batching_widget.failed_subjects.append(subject)
-        self.caller.activate_subject(recently_active_subject,
-                                     do_meanwhile=self.parent.update_ui)
+        self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent._initialize_ui()
+        self.caller.experiment.save_experiment_settings()
         self.close()
-        
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
         """Opens a dialog for creating fixed length events."""

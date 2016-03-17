@@ -437,28 +437,11 @@ def load_epochs(fname, load_object=False):
     # TODO: fix this.
     Return a tuple with an Epochs instance and 
     """
-    if load_object:
-        try:
-            epochs = mne.read_epochs(fname)
-        except IOError:
-            raise Exception('Reading from selected folder is not allowed.')
-    else:
-        epochs = None
     try:
-        parameters = unpickle(fname[:-4] + '.param')
+        epochs = mne.read_epochs(fname)
     except IOError:
-        parameters = None
-        return epochs, parameters
-
-    event_list = []
-    event_dict = parameters['events']
-    for key in event_dict:
-        for event in event_dict[key]:
-            event_tuple = (event, key)
-            event_list.append(event_tuple)
-
-    parameters['events'] = event_list
-    return epochs, parameters
+        raise Exception('Reading epochs failed.')
+    return epochs
 
 def load_evoked(folder, fName):
     """Load evokeds to the list when mainWindow is initialized

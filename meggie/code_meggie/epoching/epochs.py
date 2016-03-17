@@ -34,13 +34,13 @@ Created on Mar 12, 2013
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 Contains the Epochs-class for handling epochs created from the MEG data.
 """
+import os
+
 from PyQt4.QtCore import QObject
 
 import mne
 
-import numpy as np
-
-from meggie.code_meggie.general.wrapper import wrap_mne_call
+from meggie.code_meggie.general.fileManager import load_epochs
 
 class Epochs(QObject):
     
@@ -53,22 +53,27 @@ class Epochs(QObject):
                   category, tmin, tmax)
     """
 
-    def __init__(self):
+    def __init__(self, collection_name, subject, params, raw=None):
         """
         Constructor
         """
         QObject.__init__(self)
-        self._collection_name = ''
-        self._raw = None
-        self._params = dict()
+        self._collection_name = collection_name
+        self._raw = raw
+        self._params = params
+        self._path = os.path.join(subject.epochs_directory, collection_name + '.fif')
 
     @property
     def raw(self):
         """
-        Returns the raw .fif of the epoch collection.
+        Returns the current working raw object.
         """
-        return self._raw
-
+        if isinstance(self._raw, mne.Epochs):
+            return self._raw
+        else:
+            raw = self.load_working_file()
+            return raw
+ 
     @raw.setter
     def raw(self, raw):
         """
@@ -112,3 +117,9 @@ class Epochs(QObject):
         """
         self._params = params
 
+    def load_working_file(self):
+        if self._raw is None:
+            self._raw = load_epochs(self._path)
+        return self._raw
+
+                  

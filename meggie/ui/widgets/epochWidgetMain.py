@@ -36,51 +36,13 @@ class EpochWidget(QtGui.QWidget):
         self.ui.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
         
-    def addItem(self, item, suffix = 1, overwrite=False):
-        """
-        Add an item or items to the widget's list and sort the list.
-        
-        If item is a list, add all the items in it. Item text is converted to
-        start with an uppercase letter and the list is also sorted in ascending
-        order.
-        
-        Keyword arguments:
-        item   = a single QListWidgetItem or a list of QListWidgetItems
-                 to be added.
-        suffix = a suffix given to the item to make the item's text unique.
-        
-        """
-        try:
-            for i in item:
-                #A recursive call for each individual item
-                self.addItem(i)
-        
-        except TypeError:
-            #If suffix is 1 there's no need to add it to the item's text. I.e.
-            #Name "Epochs" doesn't have to become "Epochs1"
-            if suffix is 1:
-                if not self.ui.listWidgetEpochs.findItems(item.text(),\
-                                                          QtCore.Qt.\
-                                                          MatchFixedString):
-                    self.ui.listWidgetEpochs.addItem(item)
-                    self.ui.listWidgetEpochs.sortItems()
-                else:
-                    if overwrite: return
-                    suffix += 1
-                    self.addItem(item, suffix)
-                
-            else:
-                if not self.ui.listWidgetEpochs.findItems(str(item.text()) +\
-                                                          str(suffix),\
-                                                          QtCore.Qt.\
-                                                          MatchFixedString):
-                    item.setText(str(item.text()) + str(suffix))
-                    self.ui.listWidgetEpochs.addItem(item)
-                    self.ui.listWidgetEpochs.sortItems()
-                else:
-                    suffix += 1
-                    self.addItem(item, suffix)
 
+#    def addItem(self, collection_name):
+#        """
+#        Add an item or items to the widget's list
+#        """
+#        self.ui.listWidgetEpochs.addItem(collection_name)
+        
     def clearItems(self):
         """Remove all the items from the widget's list.
         """

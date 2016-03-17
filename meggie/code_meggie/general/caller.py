@@ -482,10 +482,7 @@ class Caller(object):
                   'collectionName': params['collection_name'], 'raw': fname}
         
         fileManager.save_epoch(fname, epochs, params_to_save=None, overwrite=True)
-        epochs_object = Epochs()
-        epochs_object.raw = epochs
-        epochs_object.collection_name = params['collection_name']
-        epochs_object.params = params
+        epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         subject.add_epochs(epochs_object)
         return 0
 
