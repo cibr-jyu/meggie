@@ -207,9 +207,9 @@ class Subject(QObject):
         Raises type error if the working_file attribute is not set or
         if the data is not of type mne.io.Raw.
         """
-
         events = self.get_events()
-        
+        if not events:
+            return
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()
         for i in set(events[:,2]):
@@ -220,7 +220,8 @@ class Subject(QObject):
         """Helper for reading the events."""
         
         stim_channel = self.find_stim_channel()
-        
+        if not stim_channel:
+            return
         try:
             events = mne.find_events(self.get_working_file())
         except Exception as e:

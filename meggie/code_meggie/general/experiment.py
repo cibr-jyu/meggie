@@ -216,16 +216,16 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-	if self.active_subject.subject_name == sname:
-	    self.active_subject = None
-
-        subject = self.subjects.get(sname)
-	self.subjects.pop(sname)
-
- 	try:
-	    shutil.rmtree(subject.subject_path)
-	except OSError:
-	    raise OSError('Could not remove the contents of the subject folder.')    
+        
+        if getattr(self, 'active_subject', None) and self.active_subject.subject_name == sname:
+            self.active_subject = None
+        
+        subject = self.subjects.pop(sname)
+    
+        try:
+            shutil.rmtree(subject.subject_path)
+        except OSError:
+            raise OSError('Could not remove the contents of the subject folder.')    
 
         self.save_experiment_settings()
         main_window._initialize_ui()
@@ -345,12 +345,12 @@ class ExperimentHandler(QObject):
         
         self.initialize_logger(experiment)
         
-        prefs.previous_experiment_name = experiment.experiment_name
+        prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
         prefs.write_preferences_to_disk()
         
         return experiment
 
-    def open_existing_experiment(self, prefs):
+    def open_existing_experiment(self, prefs, path=None):
         """
         Opens an existing experiment, which is assumed to be in the working
         directory.
@@ -359,10 +359,21 @@ class ExperimentHandler(QObject):
         
         name        -- name of the existing experiment to be opened
         """
-        #with open(name + '.exp', 'r') as f:
-        a = os.path.join(prefs.working_directory, prefs.previous_experiment_name)
-        with open(os.path.join(prefs.working_directory, prefs.previous_experiment_name, prefs.previous_experiment_name + '.exp'), 'r') as f:  # noqa
+        
+        if path:
+            exp_file = path 
+        else:
+            exp_file = os.path.join(
+            prefs.previous_experiment_name,
+            os.path.basename(prefs.previous_experiment_name) + '.exp'
+            )
+        
+        if not os.path.isfile(exp_file):
+            return
+        
+        with open(exp_file, 'r') as f:
             data = json.load(f)
+            
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
         experiment.author = data['author']
@@ -386,7 +397,7 @@ class ExperimentHandler(QObject):
                 experiment.add_subject(subject)
 
         self.initialize_logger(experiment)
-        prefs.previous_experiment_name = experiment.experiment_name
+        prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
         self.parent.caller.experiment = experiment
         self.parent.add_tabs()
         self.parent._initialize_ui()
@@ -397,7 +408,7 @@ class ExperimentHandler(QObject):
         print 'Initializing logger' 
         try:
             experiment.action_logger = ActionLogger()
-            experiment.action_logger.initialize_logger(experiment.workspace)
+            experiment.action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
         except:
             experiment.action_logger.log_message('Could not initialize logger.')
             print 'Unable to initialize logger'

@@ -297,8 +297,7 @@ class SubjectListModel(QtCore.QAbstractListModel):
             return QtCore.QVariant()
         
         try:
-            activeSubjectName = self.caller._experiment._active_subject.\
-            _subject_name
+            activeSubjectName = self.caller.experiment.active_subject.subject_name
         except Exception as e:
             activeSubjectName = None
          

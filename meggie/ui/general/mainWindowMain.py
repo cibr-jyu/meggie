@@ -43,6 +43,7 @@ import traceback
 import shutil
 import sip
 import gc
+import json
 
 import matplotlib
 import mne
@@ -293,12 +294,19 @@ class MainWindow(QtGui.QMainWindow):
                    (self, "Select _experiment directory", directory))
         if path == '':
             return
-
+        exp_path = os.path.join(path, os.path.basename(path) + '.exp')
+        
+        if not os.path.isfile(exp_path):
+            messagebox(self,
+                'There is no settings file (.exp) in the selected folder.')
+        
         print 'Opening experiment ' + path
+
         try:
-            self.experimentHandler.open_existing_experiment(self.preferencesHandler)
+            self.experimentHandler.open_existing_experiment(self.preferencesHandler, path=exp_path)
         except Exception as e:
             exc_messagebox(self, e)
+        self.preferencesHandler.write_preferences_to_disk()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """Open subject dialog."""
@@ -1814,11 +1822,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         preferencesDialog = PreferencesDialog(self)
         preferencesDialog.exec_()
-
-    def change_workspace(self, workspace):
-        if self.caller.experiment is None:
-            return
-        self.caller.experiment.workspace = workspace
 
     def hide_workspace_option(self):
         self.ui.actionSet_workspace.setVisible(False)
