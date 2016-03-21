@@ -58,7 +58,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         widget.removeWidget.connect(self.on_RemoveWidget_clicked)
         widget.channelCopy.connect(self.copyChannels)
         self.ui.verticalLayoutConditions.addWidget(widget)
-        stim_channel = self.caller.experiment.active_subject._stim_channel
+        stim_channel = self.caller.experiment.active_subject.find_stim_channel()
         try:
             triggers = find_events(raw, stim_channel=stim_channel)
             for trigger in set(triggers[:, 2]):
@@ -200,7 +200,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if not self.ui.checkBoxTriggers.isChecked():
             return
         raw = self.caller.experiment.active_subject.get_working_file()
-        stim_channel = self.caller.experiment.active_subject.stim_channel
+        stim_channel = self.caller.experiment.active_subject.find_stim_channel()
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerStart = int(self.ui.comboBoxStart.currentText())
         tmin = np.where(triggers[:, 2] == triggerStart)[0][0]
@@ -219,7 +219,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if not self.ui.checkBoxTriggers.isChecked():
             return
         raw = self.caller.experiment.active_subject.get_working_file()
-        stim_channel = self.caller.experiment.active_subject.stim_channel
+        stim_channel = self.caller.experiment.active_subject.find_stim_channel()
         triggers = find_events(raw, stim_channel=stim_channel)
         triggerEnd = int(self.ui.comboBoxEnd.currentText())
         tmax = np.where(triggers[:, 2] == triggerEnd)[0][0]

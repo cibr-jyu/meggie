@@ -341,14 +341,12 @@ def delete_file_at(folder, files):
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
     """
-    try:
-        if isinstance(files, list):
-            for f in files:
-                os.remove(os.path.join(folder, f))
-            return
-        os.remove(os.path.join(folder, files))
-    except OSError: raise
-
+    if isinstance(files, list):
+        for f in files:
+            os.remove(os.path.join(folder, f))
+        return
+    os.remove(os.path.join(folder, files))
+    
 def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
@@ -366,70 +364,17 @@ def load_epochs(fname, load_object=False):
         raise Exception('Reading epochs failed.')
     return epochs
 
-def load_evoked(folder, fName):
+def load_evoked(fname):
     """Load evokeds to the list when mainWindow is initialized
 
     Keyword arguments:
-    folder  -- the folder for loading evoked
-    file -- the name of the fif-file containing evokeds.
-
+    fName -- the name of the fif-file containing evokeds.
     """
-    split = os.path.split(fName)
-    name = os.path.splitext(split[1])[0]
-    if name == '': return
-    category = dict()
-    evokeds = []
-    i = 0
-    # Couldn't find a way to check how many evoked datasets are in the
-    # .fif file. So, after the condition gets list index out of range we get
-    # an exception. This makes it hard to check if the data type is right,
-    # since both 'index out of bound' and 'no evoked data found' raise
-    # ValueError.
     try:
-        while mne.Evoked(os.path.join(folder, fName), condition=i) is not None:
-            evoked = mne.Evoked(os.path.join(folder, fName), condition=i)
-            event_name = evoked.comment  # .split('_', 1)
-            if i < 5:
-                category[event_name] = i + 1
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 5:
-                category[event_name] = 8
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 6:
-                category[event_name] = 16
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 7:    
-                category[event_name] = 32
-                i += 1
-                evokeds.append(evoked)
-                continue
-
-            # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
-            # This makes sure that Meggie won't stop working if more
-            # than 8 evoked sets exist.
-            if i >= 8:
-                message = ('WARNING: There are more than 8 evoked'
-                           ' sets in the evoked.fif file. This does not'
-                           ' necessarily support all the functionality in'
-                           ' Meggie. The evoked.fif files with more than 8'
-                           ' datasets could not be loaded.')
-                raise Exception(message)
-    except ValueError:
-        try:
-            if mne.Evoked(os.path.join(folder, fName),
-                          condition=0) is not None:
-                return evokeds, category
-        except ValueError:
-            raise Exception('File is not an evoked.fif file.')
-            return None, None
-
-    return evokeds, category
+        evokeds = mne.read_evokeds(fname)
+    except IOError:
+        raise Exception('Reading evokeds failed.')
+    return evokeds
 
 def load_powers(subject):
     """
@@ -510,7 +455,7 @@ def unpickle(fpath):
     return unpickledObject
 
 
-def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
+def save_epoch(epoch, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -524,13 +469,10 @@ def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
     overwrite -- A boolean telling whether existing files should be
                  replaced. False by default. 
     """
-    if os.path.exists(fpath + '.fif') and overwrite is False:
+    if os.path.exists(epoch.path) and overwrite is False:
         return
     # First save the epochs
-    epoch.save(fpath + '.fif')
-    # Then save the parameters using pickle.
-    if params_to_save is None:
-        return
+    epoch.raw.save(epoch.path)
 
 def read_surface_names_into_list(subject):
     """

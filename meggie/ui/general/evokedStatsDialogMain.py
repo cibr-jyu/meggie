@@ -175,7 +175,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             caller.average_channels(self.evoked, None,
                                     set(self.selected_channels[index]))
         except Exception as e:
-            exc_messagebox(self.parent, e)
+            exc_messagebox(self, e)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """
@@ -334,7 +334,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                     this_data = _merge_grad_data(this_data[gradsIdxs])
                 except ValueError as err:
                     msg = 'Please select gradiometers as pairs for RMS.'
-                    messagebox(self.parent, msg)
+                    messagebox(self, msg)
                     return
         elif ch_type == 'mag':
             suffix = 'fT'
@@ -344,7 +344,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             scaler = 1e6
         else:
             msg = 'Could not find data.'
-            messagebox(self.parent, msg)
+            messagebox(self, msg)
             return
         data = np.mean(this_data, axis=0)
         self.ui.doubleSpinBoxMinAmplitude.setSuffix(suffix)

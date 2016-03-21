@@ -398,12 +398,16 @@ class Caller(object):
         evokeds = []
         for epoch in epochs:
             for name in category.keys():
-                if name in epoch.event_id:
-                    evokeds.append(epoch[name].average())
-                    #evokeds.append(wrap_mne_call(self.experiment, epoch[name].average()))
+                for event in epoch.params['events']:
+                    if name in event.values():
+                        epoch_raw = epoch.raw
+                        evokeds.append(epoch_raw[name].average())
+                #if name in epoch.event_id:
+                #    evokeds.append(epoch[name].average())
+                #    evokeds.append(wrap_mne_call(self.experiment, epoch[name].average()))
         #log mne call
         #TODO: epochs is a list of epoch -> log to single line with a comma separator
-        self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
+        #self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
         return evokeds
 
     def create_epochs(self, params, subject):
@@ -480,8 +484,8 @@ class Caller(object):
                   'reject': params['reject'], 'tmin': params['tmin'], 'tmax': params['tmax'],
                   'collectionName': params['collection_name'], 'raw': fname}
         
-        fileManager.save_epoch(fname, epochs, params_to_save=None, overwrite=True)
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
+        fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
         return 0
 

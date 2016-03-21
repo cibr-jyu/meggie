@@ -23,7 +23,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         self.epochs = epochs
         if epochs is None: return
         # Fills channels list with epoch collection channel names.
-        for channel in epochs.ch_names:
+        for channel in epochs.raw.ch_names:
             item = QtGui.QListWidgetItem()
             item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
@@ -42,7 +42,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         # for fig in figs:
         #     fig.canvas.set_window_title(title)
         
-        pick = self.epochs.ch_names.index(self.ui.listWidgetChannels.currentItem().text())
+        pick = self.epochs.raw.ch_names.index(self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
         vmin = self.ui.spinBoxVmin.value()
         vmax = self.ui.spinBoxVmax.value()

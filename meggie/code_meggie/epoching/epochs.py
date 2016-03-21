@@ -122,4 +122,7 @@ class Epochs(QObject):
             self._raw = load_epochs(self._path)
         return self._raw
 
+    @property
+    def path(self):
+        return self._path
                   

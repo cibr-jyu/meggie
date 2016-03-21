@@ -35,7 +35,7 @@ class TimeSeriesDialog(QtGui.QDialog):
         subject = self.caller.experiment.active_subject
         self.raw = subject.get_working_file()
         self.ui.comboBoxChannels.addItems(self.raw.ch_names)
-        index = self.ui.comboBoxChannels.findText(subject.stim_channel)
+        index = self.ui.comboBoxChannels.findText(subject.find_stim_channel())
         self.ui.comboBoxChannels.setCurrentIndex(index)
 
     def on_pushButtonFind_clicked(self, checked=None):

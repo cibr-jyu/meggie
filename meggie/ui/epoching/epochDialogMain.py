@@ -86,7 +86,6 @@ class EpochDialog(QtGui.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
-        #stim_channel = caller.experiment.stim_channel
         
         reject = dict()
         if mag:

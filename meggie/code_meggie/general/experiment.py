@@ -281,7 +281,8 @@ class Experiment(QObject):
                 subject_dict['epochs'].append(epoch_dict)
             for evoked in subject.evokeds.values():
                 evoked_dict = {
-                    'name': evoked.name
+                    'name': evoked.name,
+                    'categories': evoked.categories
                 }
                 subject_dict['evokeds'].append(evoked_dict)
             subjects.append(subject_dict)
@@ -391,8 +392,7 @@ class ExperimentHandler(QObject):
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
                 for evoked_data in subject_data['evokeds']:
-                    evoked = Evoked()
-                    evoked.name = evoked_data['name']
+                    evoked = Evoked(evoked_data['name'], subject, evoked_data['categories'])
                     subject.add_evoked(evoked)
                 experiment.add_subject(subject)
 

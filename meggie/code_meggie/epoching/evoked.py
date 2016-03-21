@@ -4,15 +4,20 @@ Created on 20.2.2014
 @author: jaolpeso
 '''
 
+import os
+
 from PyQt4.QtCore import QObject
 
+import mne
+
+from meggie.code_meggie.general.fileManager import load_evoked
 
 class Evoked(QObject):
     """
     Class for creating and handling evokeds
     """
 
-    def __init__(self):
+    def __init__(self, name, subject, categories, raw=None):
         """
         Constructor
         
@@ -22,17 +27,22 @@ class Evoked(QObject):
         events -- list of events in raw file
         """
         QObject.__init__(self)
-        self._name = ''
-        self._raw = None
-        self._categories = dict()
+        self._name = name
+        self._raw = raw
+        self._categories = categories
+        self._path = os.path.join(subject.evokeds_directory, name)
         
     @property
     def raw(self):
         """
         Returns the raw .fif of the evoked.
         """
-        return self._raw
-
+        if isinstance(self._raw, mne.Evoked):
+            return self._raw
+        else:
+            raw = self.load_working_file()
+            return raw
+        
     @raw.setter
     def raw(self, raw):
         """
@@ -77,3 +87,9 @@ class Evoked(QObject):
         categories    -- dict() of events in epochs.event_id
         """
         self._categories = categories
+        
+    def load_working_file(self):
+        if self._raw is None:
+            self._raw = load_evoked(self._path)
+        return self._raw
+

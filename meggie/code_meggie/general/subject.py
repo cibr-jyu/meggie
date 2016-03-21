@@ -208,7 +208,7 @@ class Subject(QObject):
         if the data is not of type mne.io.Raw.
         """
         events = self.get_events()
-        if not events:
+        if events is None:
             return
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()
@@ -252,12 +252,6 @@ class Subject(QObject):
         files_to_delete = filter(os.path.isfile, glob.\
                                  glob(os.path.join(self._epochs_directory, \
                                                    collection_name + '.fif')))
-        files_to_delete += filter(os.path.isfile, glob.\
-                                  glob(os.path.join(self._epochs_directory, \
-                                                    collection_name + '.param')))
-        files_to_delete += filter(os.path.isfile, glob.\
-                                  glob(os.path.join(self._epochs_directory, \
-                                                    collection_name + '.csv')))
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
         self._epochs.pop(str(str(collection_name)), None)
