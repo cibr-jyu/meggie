@@ -529,40 +529,54 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        collection_names = [str(item.text()) for item 
+                 in self.epochList.ui.listWidgetEpochs.selectedItems()]
 
         # If no events are selected, show a message to to the user and return.
-        if len(items) == 0:
+        if len(collection_names) == 0:
             messagebox(self, 'Please select an epoch collection to average.')
             return
 
-        prefix = ''
-        epochs = []
-        category = dict()
-        for item in items:
-            if not prefix == '':
-                prefix = prefix + '-'
-            key = str(item.text())
-            epoch = self.caller.experiment.active_subject.epochs[key]
-            epochs.append(epoch)
-            for event in epoch.params['events']:
-                #category.update(event['event_id'])
-                category[event['event_name']] = event['event_id']
-            #category.update(epoch.event_id)
-            prefix = prefix + item.text()
 
-        evoked = self.caller.average(epochs, category)
+        epoch_collections = {}
+        for name in collection_names:
+            subject = self.caller.experiment.active_subject
+            collection = subject.epochs[name]
+            epoch = collection.raw
+            event_dict = collection.raw.event_id
+            for key in event_dict:
+                if key not in epoch_collections:
+                    epoch_collections[key] = [epoch[key]]
+                else:
+                    if collection not in epoch_collections[key]:
+                        epoch_collections[key].append(epoch[key])
+        
+        evoked_collections = {}
+        for name, collection in epoch_collections.items():
+            evokeds = []
+            for epochs in collection:
+                evoked = epochs.average()
+                evokeds.append(evoked)
+            evoked_collections[name] = evokeds
+        
+        
+        evokeds = {}
+        for key, collection in evoked_collections.items():
+            data = [evoked.data for evoked in collection]
+            evoked = collection[0]
+            evoked.data = sum(data) / len(data)
+            evoked.comment = key
+            evokeds[key] = evoked
+        
+        if not evokeds:
+            raise Exception('No evokeds found.')
+        
+        evoked_name = (
+            '-'.join(collection_names) + '[' +
+            '-'.join(evokeds.keys()) + ']' +
+            '_evoked.fif'
+        )
 
-        category_str = ''
-        i = 0
-        for key in category.keys():
-            if i == 0:
-                category_str += key
-                i = 1
-            else:
-                category_str += '-' + key
-
-        evoked_name = prefix + '[' + str(category_str) + ']_evoked.fif'
         for item_idx in range(self.evokedList.count()):
             if str(self.evokedList.item(item_idx).text()) == evoked_name:
                 message = ('Evoked data set with name %s already exists!' % 
@@ -573,7 +587,7 @@ class MainWindow(QtGui.QMainWindow):
         item = QtGui.QListWidgetItem(evoked_name)
 
         # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = self.caller.experiment.active_subject._evokeds_directory
+        saveFolder = self.caller.experiment.active_subject.evokeds_directory
         if os.path.exists(saveFolder) is False:
             try:
                 os.mkdir(saveFolder)
@@ -581,20 +595,22 @@ class MainWindow(QtGui.QMainWindow):
                 message = ('Writing to selected folder is not allowed. You can'
                            ' still process the evoked file (visualize etc.).')
                 messagebox(self, message)
+                return
 
         try:
             print 'Writing evoked data as ' + evoked_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_name), evoked)
+            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
             messagebox(self, message)
+            return
 
         self.evokedList.addItem(item)
         self.ui.listWidgetInverseEvoked.addItem(item.text())
         
         subject = self.caller.experiment.active_subject
-        new_evoked = Evoked(evoked_name, subject, category, evoked)
+        new_evoked = Evoked(evoked_name, subject, evokeds)
         try:
             subject.add_evoked(new_evoked)
             self.caller.experiment.save_experiment_settings()
@@ -674,11 +690,11 @@ class MainWindow(QtGui.QMainWindow):
 
         evoked_name = str(item.text())
         evoked = self.caller.experiment.active_subject.evokeds[evoked_name]
-        evoked_raw = evoked.raw
+        mne_evokeds = evoked.mne_evokeds
 
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
-            self.caller.draw_evoked_potentials(evoked_raw, layout)
+            self.caller.draw_evoked_potentials(mne_evokeds.values(), layout)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)

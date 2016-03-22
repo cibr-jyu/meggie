@@ -17,7 +17,7 @@ class Evoked(QObject):
     Class for creating and handling evokeds
     """
 
-    def __init__(self, name, subject, categories, raw=None):
+    def __init__(self, name, subject, mne_evokeds):
         """
         Constructor
         
@@ -28,30 +28,46 @@ class Evoked(QObject):
         """
         QObject.__init__(self)
         self._name = name
-        self._raw = raw
-        self._categories = categories
+        self._mne_evokeds = mne_evokeds
         self._path = os.path.join(subject.evokeds_directory, name)
         
+#     @property
+#     def raw(self):
+#         """
+#         Returns the raw .fif of the evoked.
+#         """
+#         if isinstance(self._raw, mne.Evoked):
+#             return self._raw
+#         else:
+#             raw = self.load_working_file()
+#             return raw
+#         
+#     @raw.setter
+#     def raw(self, raw):
+#         """
+#         Sets the raw data for the evoked collection.
+#          
+#         Keyword arguments:
+#         raw    -- the raw .fif of the collection
+#         """
+#         self._raw = raw        
+
     @property
-    def raw(self):
+    def mne_evokeds(self):
         """
-        Returns the raw .fif of the evoked.
         """
-        if isinstance(self._raw, mne.Evoked):
-            return self._raw
-        else:
-            raw = self.load_working_file()
-            return raw
-        
-    @raw.setter
-    def raw(self, raw):
-        """
-        Sets the raw data for the evoked collection.
-         
-        Keyword arguments:
-        raw    -- the raw .fif of the collection
-        """
-        self._raw = raw        
+        if None in self._mne_evokeds.values():
+            # load everything
+            evokeds = load_evoked(self._path)
+            for key in self._mne_evokeds:
+                for evoked in evokeds:
+                    if key == evoked.comment:
+                        self._mne_evokeds[key] = evoked
+                        break
+            if None in self._mne_evokeds.keys():
+                raise ValueError('Event name ' + key + 
+                                 ' missing from Evoked FIF file.')
+        return self._mne_evokeds
 
     @property
     def name(self):
@@ -70,26 +86,8 @@ class Evoked(QObject):
         """
         self._name = name
         
-    @property
-    def categories(self):
-        """
-        Returns the dictionary of categories (events in epochs which were
-        averaged).
-        """
-        return self._categories
-        
-    @categories.setter
-    def categories(self, categories):
-        """
-        Sets the categories for evoked.
-        
-        Keyword arguments:
-        categories    -- dict() of events in epochs.event_id
-        """
-        self._categories = categories
-        
-    def load_working_file(self):
-        if self._raw is None:
-            self._raw = load_evoked(self._path)
-        return self._raw
+#     def load_working_file(self):
+#         if self._raw is None:
+#             self._raw = load_evoked(self._path)
+#         return self._raw
 

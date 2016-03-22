@@ -381,35 +381,6 @@ class Caller(object):
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
 
-    def average(self, epochs, category):
-        """Average epochs.
-
-        Average epochs and save the evoked dataset to a file.
-        Raise an exception if epochs are not found.
-
-        Keyword arguments:
-        epochs      -- Epochs averaged
-        """
-        if epochs is None:
-            raise Exception('No epochs found.')
-
-        # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories).
-        evokeds = []
-        for epoch in epochs:
-            for name in category.keys():
-                for event in epoch.params['events']:
-                    if name in event.values():
-                        epoch_raw = epoch.raw
-                        evokeds.append(epoch_raw[name].average())
-                #if name in epoch.event_id:
-                #    evokeds.append(epoch[name].average())
-                #    evokeds.append(wrap_mne_call(self.experiment, epoch[name].average()))
-        #log mne call
-        #TODO: epochs is a list of epoch -> log to single line with a comma separator
-        #self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
-        return evokeds
-
     def create_epochs(self, params, subject):
         if subject == self.experiment.active_subject:
             raw = subject.get_working_file()
@@ -525,6 +496,7 @@ class Caller(object):
                             color=colors[:len(evokeds)], title=title)
 
         conditions = [e.comment for e in evokeds]
+        print conditions
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
                                   positions):
