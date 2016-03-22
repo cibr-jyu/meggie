@@ -612,7 +612,7 @@ class MainWindow(QtGui.QMainWindow):
         if item is None:
             return
         name = str(item.text())
-        evokeds = self.caller.experiment.active_subject._evokeds[name].raw
+        evokeds = self.caller.experiment.active_subject.evokeds.get(name).raw
         self.evokedStatsDialog = EvokedStatsDialog(evokeds)
         self.evokedStatsDialog.show()
 
@@ -988,6 +988,7 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, message)
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        
         if self.ui.radioButtonLobe.isChecked():
             try:
                 self.caller.average_channels(name,

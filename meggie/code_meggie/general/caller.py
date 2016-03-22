@@ -544,15 +544,15 @@ class Caller(object):
         if it is provided.
 
         Keyword arguments:
-        instance     -- name of the epochs to average, evoked object or list of
+        epochs     -- epochs to average, evoked object or list of
                         evoked objects.
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
 
-        result = self._average_channels(instance, lobeName, channelSet,
-                                        do_meanwhile=self.parent.update_ui)
-        averageTitleString, dataList, evokeds = result
+        averageTitleString, dataList = self._average_channels(
+            instance, lobeName, channelSet, do_meanwhile=self.parent.update_ui
+        )
 
         # Plotting:
         plt.clf()
@@ -563,7 +563,7 @@ class Caller(object):
         fig.suptitle('Channel average for ' + averageTitleString, y=1.0025)
 
         # Draw a separate plot for each event type
-        for index, (eventName, data) in enumerate(dataList):
+        for index, (times, eventName, data) in enumerate(dataList):
             ca = fig.add_subplot(len(dataList), 1, index + 1) 
             ca.set_title(eventName)
             # Times information is the same as in original evokeds
@@ -577,7 +577,7 @@ class Caller(object):
                 label = ('uV')
                 data *= 1e6
 
-            ca.plot(evokeds[0].times , data)
+            ca.plot(times, data)
             ca.set_xlabel('Time (s)')
             ca.set_ylabel(label)
         plt.tight_layout()
@@ -587,7 +587,7 @@ class Caller(object):
     def _average_channels(self, instance, lobeName, channelSet=None):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
-            epochs = self.experiment.active_subject.get_epochs(instance)
+            epochs = self.experiment.active_subject.epochs.get(instance).raw
             if epochs is None:
                 raise Exception('No epochs found.')
 
@@ -625,29 +625,27 @@ class Caller(object):
         if re.match("^MEG[0-9]+", channelNameString):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
 
+        dataList = []
         # Picks only the desired channels from the evokeds.
-        evokedToAve = wrap_mne_call(self.experiment,
-                                    mne.pick_channels_evoked, evokeds[0],
-                                    list(channelsToAve))
-
-        # TODO: log something from below?
-        # Returns channel indices for grad channel pairs in evokedToAve.
-        ch_names = evokedToAve.ch_names
-        gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
-
-        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
-
-        # eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
-        eeg_picks = mne.pick_types(evokeds[0].info, meg=False, eeg=True,
-                                   ref_meg=False)
-        eegIdxs = [ch_names.index(evokeds[0].ch_names[idx]) for idx in
-                   eeg_picks if evokeds[0].ch_names[idx] in ch_names]
-        dataList = list()
-        for i in range(len(evokeds)):
+        for evoked in evokeds:
+            evokedToAve = wrap_mne_call(
+                self.experiment,
+                mne.pick_channels_evoked, evoked,
+                list(channelsToAve)
+            )
+            # TODO: log something from below?
+            # Returns channel indices for grad channel pairs in evokedToAve.
+            ch_names = evokedToAve.ch_names
+            gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
+    
+            magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
+    
+            eegIdxs = mne.pick_types(evokedToAve.info, meg=False, eeg=True,
+                                       ref_meg=False)
+        
             print "Calculating channel averages for " + averageTitleString
 
             # Merges the grad channel pairs in evokedToAve
-            # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
             if len(gradsIdxs) > 0:
                 gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
 
@@ -655,25 +653,29 @@ class Caller(object):
                 averagedGradData = np.mean(gradData, axis=0)
 
                 # Links the event name and the corresponding data
-                dataList.append((evokeds[i].comment + '_grad',
-                                 averagedGradData))
-            elif len(ch_names) == 1 and re.compile('MEG.{3,4}[23]$').match(ch_names[0]):
-                dataList.append((evokeds[i].comment + '_grad',
-                                 evokedToAve.data[0]))
+                dataList.append((
+                    evokedToAve.times, 
+                    evokedToAve.comment + '_grad',
+                    averagedGradData
+                ))
             if len(magsIdxs) > 0:
-                mag_data = list()
-                for idx in magsIdxs:
-                    mag_data.append(evokedToAve.data[idx])
+                mag_data = evokedToAve.data[magsIdxs]
                 averagedMagData = np.mean(mag_data, axis=0)
-                dataList.append((evokeds[i].comment + '_mag', averagedMagData))
+                dataList.append((
+                    evokedToAve.times,
+                    evokedToAve.comment + '_mag', 
+                    averagedMagData
+                ))
             if len(eegIdxs) > 0:
-                eeg_data = list()
-                for idx in eegIdxs:
-                    eeg_data.append(evokedToAve.data[idx])
+                eeg_data = evokedToAve.data[eegIdxs]
                 averagedEegData = np.mean(eeg_data, axis=0)
-                dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
+                dataList.append((
+                    evokedToAve.times,
+                    evokedToAve.comment + '_eeg', 
+                    averagedEegData
+                ))
 
-        return averageTitleString, dataList, evokeds
+        return averageTitleString, dataList
 
     def plot_group_average(self, groups, layout):
         """

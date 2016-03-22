@@ -28,16 +28,13 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def __init__(self, evoked=None):
         """Constructor.
-
-        Keyword arguments:
-
-        evoked = a dictionary containing evoked-objects.
         """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
         self.ui.setupUi(self)
         self.evoked = evoked
-        if evoked is None: return
+        if evoked is None:
+            return
 
         #Selected_items is a dictionary containing all the channels selected
         #across the evoked sets in the comboBoxEvokeds. 
