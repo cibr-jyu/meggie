@@ -69,8 +69,13 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         self.evoked_set_changed()
 
-        self.ui.doubleSpinBoxStart.setValue(evoked[0].times[0])
-        self.ui.doubleSpinBoxStop.setValue(evoked[0].times[-1])
+        evokeds = self.evoked.values()
+        self.ui.doubleSpinBoxStart.setValue(evokeds[0].times[0])
+        self.ui.doubleSpinBoxStop.setValue(evokeds[0].times[-1])
+        #self.ui.doubleSpinBoxStart.setValue(evoked[0].times[0])
+        #self.ui.doubleSpinBoxStop.setValue(evoked[0].times[-1])
+        
+        
         #Save CSV: Create a CSV file of the key values displayed on the right side
 
     def checkBox_state_changed(self):
@@ -100,8 +105,12 @@ class EvokedStatsDialog(QtGui.QDialog):
     def evoked_set_changed(self):
         """Updates the channel list with current evoked's channels."""
         index = self.ui.comboBoxEvoked.currentIndex()
-        channels = self.evoked[index].info['ch_names']
-
+ 
+        for evoked in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked.comment:
+                channels = self.evoked.values()[index].ch_names
+                evoked_event = evoked
+        
         #First clear the channel list.
         for i in range(self.ui.listWidgetChannels.count()):
             self.ui.listWidgetChannels.takeItem(0)
@@ -124,7 +133,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                     item.setSelected(True)
                     break
 
-        self.update_start_stop()
+        self.update_start_stop(evoked_event)
 
         #self.ui.pushButtonSetSelected.setEnabled(False)
 
@@ -390,10 +399,14 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                             ch_type)
             self.ui.labelSelectedChannel.setText(title)
 
-    def update_start_stop(self):
+    def update_start_stop(self, evoked_event):
         """ Aux function for updating upper and lower limit for time window."""
-        times = self.evoked[self.ui.comboBoxEvoked.currentIndex()].times
+        times = evoked_event.times
+
         self.ui.doubleSpinBoxStart.setMinimum(times[0])
         self.ui.doubleSpinBoxStart.setMaximum(times[-1])
         self.ui.doubleSpinBoxStop.setMinimum(times[0])
         self.ui.doubleSpinBoxStop.setMaximum(times[-1])
+
+        self.ui.doubleSpinBoxStart.setValue(times[0])
+        self.ui.doubleSpinBoxStop.setValue(times[-1])
