@@ -13,7 +13,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'mne==0.10.0',
+        'mne==0.11.0',
     ],
     entry_points = {
         'console_scripts': ['meggie=meggie.run:main'],
