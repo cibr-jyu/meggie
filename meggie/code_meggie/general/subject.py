@@ -35,7 +35,8 @@ Created on Oct 22, 2013
 """
 
 from PyQt4.QtCore import QObject
-from PyQt4 import QtGui,QtCore
+from PyQt4 import QtGui
+from PyQt4 import QtCore
 
 import os
 import glob
@@ -50,72 +51,64 @@ from meggie.code_meggie.sourceModeling.forwardModels import ForwardModels
 
 class Subject(QObject):
     
-    def __init__(self, experiment, subject_name):
+    def __init__(self, experiment, subject_name, working_file_name):
         """
         Constructor for the subject class.
         
         Keyword arguments:
-        experiment      -- experiment for the subject
-        subject_name    -- the name of the subject
+        experiment        -- experiment for the subject
+        subject_name      -- the name of the subject
+        working_file_name -- the name of the subject's working file that can be
+                             different from subject_name
         """
         QObject.__init__(self)
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
-
-        self._event_set = None
-        self._stim_channel = None
         self._working_file = None
-        self._working_file_path = 'no path defined'
-        self._experiment = experiment
+        self._working_file_name = working_file_name
+
         # Dictionary for epochs where key is the name of the collection
         # and value is the epochs object. Similar approach with evoked and
         # forward model objects.
         self._epochs = dict()
         self._evokeds = dict()
-        self._ecg_params = dict()
-        self._eog_params = dict()
-        self._subject_path = os.path.join(self._experiment.workspace,
-                                          self._experiment.experiment_name,
-                                          self._subject_name)
+        self._subject_path = os.path.join(experiment.workspace,
+                                          experiment.experiment_name,
+                                          subject_name)
+        
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
-        self._evokeds_directory = os.path.join(self._epochs_directory,
-                                               'average')
-        self._source_analysis_directory = os.path.join(self._subject_path,
-                                                       'sourceAnalysis')
-        self._reconFiles_directory = \
-            os.path.join(self._source_analysis_directory, 'reconFiles')
-        self._forwardModels_directory = \
-            os.path.join(self._source_analysis_directory, 'forwardModels')
-        self._stc_directory = os.path.join(self._source_analysis_directory,
-                                           'stc')
+        self._evokeds_directory = os.path.join(self._epochs_directory, 'average')  # noqa
+        self._source_analysis_directory = os.path.join(self._subject_path, 'sourceAnalysis')  # noqa
+        self._reconFiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
+        self._forwardModels_directory = os.path.join(self._source_analysis_directory, 'forwardModels')  # noqa
+        self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
 
         # Models for various types of data stored in subject
-        self._forwardModelModel = None
+        self._forwardModelModel = None   
 
     @property
-    def epochs(self):
-        return self._epochs
+    def epochs_directory(self):
+        return self._epochs_directory
 
     @property
-    def raw_data(self):
-        """
-        Returns the raw data object (instance of RawFIF) of the subject.
-        """
-        return self._raw_data  # TODO: what is this?
+    def evokeds_directory(self):
+        return self._evokeds_directory
+    
+    @property
+    def source_analysis_directory(self):
+        return self._source_analysis_directory
+    
+    @property
+    def reconFiles_directory(self):
+        return self._reconFiles_directory
+    
+    @property
+    def forwardModels_directory(self):
+        return self._forwardModels_directory  
 
-    @raw_data.setter
-    def raw_data(self, raw_data):
-        """
-        Sets the raw data object for the subject.
-        Raises an exception if the given data type is wrong. 
-        Keyword arguments:
-        raw_data        -- Instance of RawFIF.
-                           The raw data file of the measured data
-        """
-        if (isinstance(raw_data, mne.io.Raw)):
-            self._raw_data = raw_data
-        else:
-            raise Exception('Wrong data type')
+    @property
+    def stc_directory(self):
+        return self._stc_directory
 
     @property
     def subject_name(self):
@@ -123,13 +116,6 @@ class Subject(QObject):
         Returns the subject_name of the subject.
         """
         return self._subject_name
-
-    @subject_name.setter
-    def subject_name(self, subject_name):
-        """
-        Sets the subject_name for the subject.
-        """
-        self._subject_name = subject_name
         
     @property
     def subject_path(self):
@@ -137,94 +123,83 @@ class Subject(QObject):
         Returns the subject_path of the subject.
         """
         return self._subject_path
-
-    @subject_path.setter
-    def subject_path(self, subject_path):
-        """
-        Sets the subject_path for the subject.
-        """
-        self._subject_path = subject_path
-
+    
     @property
-    def working_file(self):
+    def working_file_path(self):
+        path = os.path.join(self._subject_path,
+                            self._working_file_name)
+        return path
+    
+    @property
+    def working_file_name(self):
+        return self._working_file_name
+
+    def set_working_file(self, working_file):
+        self._working_file = working_file
+
+    def get_working_file(self, preload=True, temporary=False):
         """
         Returns the current working raw object.
         """
-        return self._working_file
-
-    @working_file.setter
-    def working_file(self, raw):
-        """
-        Sets the current working raw object and notifies the main window to
-        show it.
-        Keyword arguments:
-        raw         -- Instance of RawFIF.
-        """
-        if (isinstance(raw, mne.io.Raw)):
-            self._working_file = raw
+        if isinstance(self._working_file, mne.io.Raw):
+            if preload:
+                self._working_file.load_data()
+            return self._working_file
         else:
-            raise Exception('Wrong data type')
+            raw = self.load_working_file(preload)
+            if not temporary:
+                self._working_file = raw
+            return raw
 
     @property
-    def ecg_params(self):
-        """Returns ecg_params.
-        """
-        return self._ecg_params
-
-    @ecg_params.setter
-    def ecg_params(self, ecg_params):
-        """Sets ecg_params.
-        
-        Keyword arguments:
-        ecg_params    -- dictionary of ecg parameters
-        """
-        self._ecg_params = ecg_params
-
-    @property
-    def eog_params(self):
-        """Returns eog_params.
-        """
-        return self._eog_params
-
-    @eog_params.setter
-    def eog_params(self, eog_params):
-        """Sets eog_params.
-        
-        Keyword arguments:
-        eog_params    -- dictionary of eog parameters
-        """
-        self._eog_params = eog_params
-
-    @property
-    def stim_channel(self):
-        """
-        Property for stimulus channel.
-        """
-        return self._stim_channel
+    def epochs(self):
+        return self._epochs
     
-    @stim_channel.setter
-    def stim_channel(self, stim_ch):
+    @property
+    def evokeds(self):
+        return self._evokeds
+    
+    def load_working_file(self, preload=True):
+        """Loads raw file from subject folder and sets it on
+        subject._working_file property.
+         
+        Keyword arguments:
+        subject    -- Subject object
         """
-        Setter for stimulus channel.
+        if self._working_file is None:
+            path = self.subject_path
+            try:
+                return fileManager.open_raw(os.path.join(path, self.working_file_name))
+            except OSError:
+                raise IOError("Couldn't find raw file.")
+            
+    def release_memory(self):
+        """Releases memory from previously processed subject by removing
+        references from raw files.
         """
-        self._stim_channel = stim_ch
+        if self.get_working_file() is not None:
+            self.set_working_file(None)
+            if len(self.epochs) > 0:
+                for value in self.epochs.values():
+                    value.raw = None
+            if len(self.evokeds) > 0:
+                for value in self.evokeds.values():
+                    value.raw = None    
 
     def find_stim_channel(self):
         """
         Finds the correct stimulus channel for the data.
         """
-        channels = self._working_file.info.get('ch_names')
+        channels = self.get_working_file().info.get('ch_names')
         if 'STI101' in channels:
-            self._stim_channel = 'STI101'
+            return 'STI101'
         elif 'STI 101' in channels:
-            self._stim_channel = 'STI 101'
+            return 'STI 101'
         elif 'STI 014' in channels:
-            self._stim_channel = 'STI 014'
+            return 'STI 014'
         elif 'STI014' in channels:
-            self._stim_channel = 'STI014'
+            return 'STI014'
     
-### Code related to epochs, epoching and events ###
-
     def create_event_set(self):
         """
         Creates an event set where the first element is the id
@@ -232,28 +207,28 @@ class Subject(QObject):
         Raises type error if the working_file attribute is not set or
         if the data is not of type mne.io.Raw.
         """
-        if not isinstance(self._working_file, mne.io.Raw):
-            raise TypeError('Not a raw object')
-        if self.stim_channel == None:
-            return
         events = self.get_events()
-        
+        if events is None:
+            return
         bins = np.bincount(events[:,2]) #number of events stored in an array
         d = dict()
         for i in set(events[:,2]):
             d[i] = bins[i]
-        self._event_set = d
+        return d
 
     def get_events(self):
         """Helper for reading the events."""
+        
+        stim_channel = self.find_stim_channel()
+        if not stim_channel:
+            return
         try:
-            events = mne.find_events(self._working_file,
-                                     stim_channel=self._stim_channel)
+            events = mne.find_events(self.get_working_file())
         except Exception as e:
             print 'Warning: %s' % e
             print 'Reading events with minimum length of 1...'
-            events = mne.find_events(self.working_file,
-                                     stim_channel=self._stim_channel,
+            events = mne.find_events(self.get_working_file(),
+                                     stim_channel=stim_channel,
                                      shortest_event=1)
         return events
 
@@ -264,40 +239,7 @@ class Subject(QObject):
         Keyword arguments:
         epochs      -- Epochs object including param.fif and collection_name
         """
-        self._epochs[epochs._collection_name] = epochs
-
-    def get_epochs(self, name):
-        """
-        Helper for loading mne.Epochs instance to memory for processing.
-        Keyword arguments:
-        name        -- Collection name for the epochs
-        Returns instance of mne.Epochs.
-        """
-        return mne.read_epochs(os.path.join(self._epochs_directory,
-                                            name + '.fif'))
-
-    def handle_new_epochs(self, name, params):
-        """
-        Creates Epochs object and adds it to the self._epochs dictionary.
-        Does nothing if given collection name exists in epochs dictionary.
-
-        Keyword arguments
-        name        -- name of the epoch collection
-        params      -- epochs parameters
-        Returns the epochs obejct
-        """
-        # Checks if epochs with given name exists.
-        #if self._epochs.has_key(name):
-        #    return
-        #toPyObject turns the dict keys into QStrings so convert them back to
-        #strings.
-        #params_str = dict((str(k), v) for k, v in parameters.iteritems())
-        epochs = Epochs()
-        epochs._collection_name = name
-        #epochs._raw = epochs_raw
-        epochs._params = params
-        self.add_epochs(epochs)
-        return epochs
+        self._epochs[epochs.collection_name] = epochs
 
     def remove_epochs(self, collection_name):
         """
@@ -310,54 +252,22 @@ class Subject(QObject):
         files_to_delete = filter(os.path.isfile, glob.\
                                  glob(os.path.join(self._epochs_directory, \
                                                    collection_name + '.fif')))
-        files_to_delete += filter(os.path.isfile, glob.\
-                                  glob(os.path.join(self._epochs_directory, \
-                                                    collection_name + '.param')))
-        files_to_delete += filter(os.path.isfile, glob.\
-                                  glob(os.path.join(self._epochs_directory, \
-                                                    collection_name + '.csv')))
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
-
+        self._epochs.pop(str(str(collection_name)), None)
         try:
-            collection_name = str(collection_name)
-            del self._epochs[collection_name]
-
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
-            raise Exception('Epochs could not be deleted from epochs folder.')
+            raise IOError('Epochs could not be deleted from epochs folder.')
 
-    def handle_new_evoked(self, name, evoked, categories):
-        """
-        Creates new Evoked object and adds it to the self._evokeds dictionary.
-        Does nothing if given evoked name that is in self._evokeds.keys().
-
-        Keyword arguments
-        name       -- name of the evoked in QString
-        evoked     -- raw evoked file
-        categories -- dict() of events in epochs.event_id
-        """
-        # Checks if evoked with given name exists.
-        if self._evokeds.has_key(str(name)):
-            return
-
-        evoked_object = Evoked()
-        if evoked is None:
-            raise Exception('Evoked is None')
-
-        evoked_object._raw = evoked
-        evoked_object._name = str(name)
-        evoked_object._categories = categories
-        self.add_evoked(name, evoked_object)
-
-    def add_evoked(self, name, evoked_object):
+    def add_evoked(self, evoked):
         """
         Adds Evoked object to the evokeds dictionary.
 
         Keyword arguments:
-        evoked_object  -- Evoked object
+        evoked  -- Evoked object
         """
-        self._evokeds[str(name)] = evoked_object
+        self._evokeds[evoked.name] = evoked
 
     def remove_evoked(self, name):
         """
@@ -366,11 +276,11 @@ class Subject(QObject):
         Keyword arguments:
         name    -- name of the evoked in QString
         """
+        self._evokeds.pop(str(name), None)
         try:
             fileManager.delete_file_at(self._evokeds_directory, name)
-            del self._evokeds[str(name)]
         except OSError:
-            raise Exception('Evoked could not be deleted from average folder.')
+            raise IOError('Evoked could not be deleted from average folder.')
 
     def remove_power(self, name):
         """
@@ -383,41 +293,9 @@ class Subject(QObject):
         try:
             fileManager.delete_file_at(path, name)
         except OSError as err:
-            raise Exception('The file could not be deleted from TFR folder.')
+            raise IOError('The file could not be deleted from TFR folder.')
 
-
-### Code related to source modeling ###
-
-    def add_forwardModel(self, name, fmodel):
-        """
-        Adds a ForwardModels object to the forwardModels dictionary.
-        """
-        self._forwardModels[str(name)] = fmodel
     
-    
-    def handle_new_forwardModels(self, name, params):
-        """
-        Creates a forward model object and adds it to the 
-        self._forwardModels dictionary.
-        Does nothing if given collection name exists already in the dictionary.
-        
-        Keyword arguments
-        name        -- name of the forward model
-        params      -- forward model parameters
-        """
-        # Checks if forward model with given name exists.
-        if self._forwardModels.has_key(name):
-            return
-        #toPyObject turns the dict keys into QStrings so convert them back to
-        #strings.
-        #params_str = dict((str(k), v) for k, v in parameters.iteritems())
-        fmodel = ForwardModels()
-        fmodel._fmodel_name = name
-        fmodel._params = params
-        self.add_forwardModel(name, fmodel)
-    
-   
-
 ### Code for checking the state of the subject ###   
 
     def check_ecg_projs(self):
@@ -425,7 +303,7 @@ class Subject(QObject):
         Checks the subject folder for ECG projection files.
         Returns True if projections found.
         """
-        path = self._subject_path
+        path = self.subject_path
         #Check whether ECG projections are calculated
         files =  filter(os.path.isfile, glob.glob(path + '/*_ecg_avg_proj*'))
         files += filter(os.path.isfile, glob.glob(path + '/*_ecg_proj*'))
@@ -439,7 +317,7 @@ class Subject(QObject):
         Checks the subject folder for EOG projection files.
         Returns True if projections found.
         """
-        path = self._subject_path
+        path = self.subject_path
         #Check whether EOG projections are calculated
         files =  filter(os.path.isfile, glob.glob(path + '/*_eog_avg_proj*'))
         files += filter(os.path.isfile, glob.glob(path + '/*_eog_proj*'))
@@ -453,7 +331,7 @@ class Subject(QObject):
         Checks the subject folder for ECG applied file.
         Returns True if ecg_applied found.
         """
-        path = self._subject_path
+        path = self.subject_path
         #Check whether ECG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '/*ecg_applied*'))
         if len(files) > 0:
@@ -465,7 +343,7 @@ class Subject(QObject):
         Checks the subject folder for EOG applied file.
         Returns True if eog_applied found.
         """
-        path = self._subject_path
+        path = self.subject_path
         #Check whether EOG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
         if len(files) > 0:
@@ -477,7 +355,7 @@ class Subject(QObject):
         Checks the subject folder for sss/tsss applied file.
         Returns True if sss/tsss found.
         """
-        path = self._subject_path
+        path = self.subject_path
         #Check whether sss/tsss method is applied.
         files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
         if len(files) > 0:
@@ -485,7 +363,7 @@ class Subject(QObject):
         return False
 
     def check_reconFiles_copied(self):
-        reconDir = self._experiment._active_subject._reconFiles_directory
+        reconDir = self.reconFiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 
         if os.path.isdir(mriDir):
             return True
@@ -493,7 +371,7 @@ class Subject(QObject):
             return False
 
     def check_mne_setup_mri_run(self):
-        reconDir = self._experiment._active_subject._reconFiles_directory
+        reconDir = self.reconFiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 
         T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
         brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')

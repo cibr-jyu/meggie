@@ -86,7 +86,7 @@ class AddEOGProjections(QtGui.QDialog):
             check_box = self.listWidget.itemWidget(self.listWidget.item(index))
             applied.append(check_box.isChecked())
 
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         directory = self.caller.experiment._active_subject._subject_path
 
         try:

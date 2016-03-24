@@ -116,9 +116,6 @@ class ForwardModelModel(QtCore.QAbstractTableModel):
             self.layoutChanged.emit()
             return
         
-        if not os.path.isdir(activeSubject._forwardModels_directory):
-            fileManager.populate_sourceAnalysis_directory(activeSubject)
-        
         self._fmodels_directory = activeSubject._forwardModels_directory
         fmsdir = self._fmodels_directory
         
@@ -300,8 +297,7 @@ class SubjectListModel(QtCore.QAbstractListModel):
             return QtCore.QVariant()
         
         try:
-            activeSubjectName = self.caller._experiment._active_subject.\
-            _subject_name
+            activeSubjectName = self.caller.experiment.active_subject.subject_name
         except Exception as e:
             activeSubjectName = None
          
@@ -337,19 +333,15 @@ class SubjectListModel(QtCore.QAbstractListModel):
         Reads the experiment directory and populates the
         subjectNameList accordingly.
         """
-        
         self.layoutAboutToBeChanged.emit()
         del self.subjectNameList[:]
         
         if self.caller.experiment == None:
             self.layoutChanged.emit()
             return
-
-        if (len(self.caller.experiment._subject_paths) > 0):
-            for path in self.caller.experiment._subject_paths:
-                subjectName = path.split('/')[-1]
-                self.subjectNameList.append(subjectName)
-
+        
+        for name in self.caller.experiment.subjects:
+            self.subjectNameList.append(name)
         self.layoutChanged.emit()
 
 

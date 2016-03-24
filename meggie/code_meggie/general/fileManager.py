@@ -15,8 +15,11 @@ import shutil
 import glob
 import re
 import sys
+import json
 
 from os.path import isfile, join
+
+from shutil import copyfile
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
@@ -44,16 +47,14 @@ def copy_recon_files(activeSubject, sourceDirectory):
         Returns True if copying was successful, else returns False.
         
         """         
-        reconDir = activeSubject._reconFiles_directory
+        reconDir = activeSubject.reconFiles_directory
         
         # Empty the destination directory first by removing it, then make it
         # again.
         if os.path.isdir(reconDir):
             dir_util.remove_tree(reconDir)
-
-        create_reconFiles_directory(activeSubject)
         
-        dst = activeSubject._reconFiles_directory
+        dst = activeSubject.reconFiles_directory
         
         try:
             print '\n Meggie: Copying recon files... \n'
@@ -86,20 +87,6 @@ def move_trans_file(subject, fModelName):
     except IOError: raise
     
     
-def remove_sourceAnalysis_files(aSubject):
-    """
-    Recursively removes contents of the source analysis directory.
-    Used when copying new recon files invalidates the rest of the source
-    analysis chain. 
-    
-    Keyword arguments:
-    
-    aSubject    -- currently active subject in the experiment 
-    """
-    
-    # shutil.rmtree(directory, ignore_errors, onerror)
-    
-
 def create_fModel_directory(fmname, subject):
     """
     Create a directory for the final forward model (under the directory of the
@@ -121,10 +108,6 @@ def create_fModel_directory(fmname, subject):
     fromCopyDirData = os.path.join(subject._reconFiles_directory, 'bem')
     fromCopyDirParams = subject._reconFiles_directory
     
-    # If this is the first forward model, the forwardModels directory doesn't
-    # exist yet.
-    if not os.path.isdir(subject._forwardModels_directory):
-        populate_sourceAnalysis_directory(subject)
     
     # Existence actually checked already by check_fModel_name via
     # forwardModelDialog. fmDirFinal is needed because mne.gui.coregistration
@@ -348,69 +331,6 @@ def link_triang_files(subject):
     except Exception:
         pass
     
-
-def create_key_csv_evoked(evoked):
-    """Create a list used for creating a csv file of key values in evoked.
-    
-    The file contains the
-    epoch,  channel, min, min_time, max, max_time,
-    half_max, half_max_time-, half_max_time+ and integral in that order.
-    
-    Keyword arguments:
-    
-    evoked -- An instance of evoked data.
-    
-    return a list of rows to write.
-    """
-    # TODO adjust into saving key values of averaged data.
-    stat = Statistic()
-    data = evoked.data
-    rows = []
-    # Create the first row with headings for the fields
-    rows.append(['channel', 'min', 'min_time', 'max', 'max_time',
-                 'half_max', 'half_max_time-', 'half_max_time+', 'integral'])
-    
-    # create the actual rows
-    for i in range(len(data)):
-        for j in range(len(data[i])):
-
-            row = []
-
-            row.append(evoked.ch_names[j])
-
-            minimum, min_time = stat.find_minimum(data[i][j])
-            row.append(minimum)
-            row.append(evoked.times[min_time])
-
-            maximum, max_time = stat.find_maximum(data[i][j])
-            row.append(maximum)
-            row.append(evoked.times[max_time])
-            
-            half_max, half_max_time_b, half_max_time_a = \
-            stat.find_half_maximum(data[i][j])
-            
-            row.append(half_max)
-            # If half_max_times are -1, the half_max value is not reached
-            # inside the epoch window.
-            if half_max_time_b == -1:
-                row.append(None)
-            else:
-                row.append(evoked.times[half_max_time_b])
-                
-            if half_max_time_a == -1:
-                row.append(None)
-            else:
-                row.append(evoked.times[half_max_time_a])
-                
-            integral = stat.integrate(data[i], half_max_time_b,
-                                      half_max_time_a)
-            
-            row.append(integral)
-            
-            rows.append(row)
-            
-    return rows    
-    
     
 def delete_file_at(folder, files):
     """Delete files from a folder.
@@ -421,14 +341,12 @@ def delete_file_at(folder, files):
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
     """
-    try:
-        if isinstance(files, list):
-            for f in files:
-                os.remove(os.path.join(folder, f))
-            return
-        os.remove(os.path.join(folder, files))
-    except OSError: raise
-
+    if isinstance(files, list):
+        for f in files:
+            os.remove(os.path.join(folder, f))
+        return
+    os.remove(os.path.join(folder, files))
+    
 def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
@@ -440,94 +358,38 @@ def load_epochs(fname, load_object=False):
     # TODO: fix this.
     Return a tuple with an Epochs instance and 
     """
-    if load_object:
-        try:
-            epochs = mne.read_epochs(fname)
-        except IOError:
-            raise Exception('Reading from selected folder is not allowed.')
-    else:
-        epochs = None
     try:
-        parameters = unpickle(fname[:-4] + '.param')
+        epochs = mne.read_epochs(fname)
     except IOError:
-        parameters = None
-        return epochs, parameters
+        raise Exception('Reading epochs failed.')
+    return epochs
 
-    event_list = []
-    event_dict = parameters['events']
-    for key in event_dict:
-        for event in event_dict[key]:
-            event_tuple = (event, key)
-            event_list.append(event_tuple)
-
-    parameters['events'] = event_list
-    return epochs, parameters
-
-def load_evoked(folder, fName):
+def load_evoked(fname):
     """Load evokeds to the list when mainWindow is initialized
 
     Keyword arguments:
-    folder  -- the folder for loading evoked
-    file -- the name of the fif-file containing evokeds.
-
+    fName -- the name of the fif-file containing evokeds.
     """
-    split = os.path.split(fName)
-    name = os.path.splitext(split[1])[0]
-    if name == '': return
-    category = dict()
-    evokeds = []
-    i = 0
-    # Couldn't find a way to check how many evoked datasets are in the
-    # .fif file. So, after the condition gets list index out of range we get
-    # an exception. This makes it hard to check if the data type is right,
-    # since both 'index out of bound' and 'no evoked data found' raise
-    # ValueError.
     try:
-        while mne.Evoked(os.path.join(folder, fName), condition=i) is not None:
-            evoked = mne.Evoked(os.path.join(folder, fName), condition=i)
-            event_name = evoked.comment  # .split('_', 1)
-            if i < 5:
-                category[event_name] = i + 1
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 5:
-                category[event_name] = 8
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 6:
-                category[event_name] = 16
-                i += 1
-                evokeds.append(evoked)
-                continue
-            if i == 7:    
-                category[event_name] = 32
-                i += 1
-                evokeds.append(evoked)
-                continue
+        evokeds = mne.read_evokeds(fname)
+    except IOError:
+        raise Exception('Reading evokeds failed.')
+    return evokeds
 
-            # Current event ids have only 1, 2, 3, 4, 5, 8, 16 and 32.
-            # This makes sure that Meggie won't stop working if more
-            # than 8 evoked sets exist.
-            if i >= 8:
-                message = ('WARNING: There are more than 8 evoked'
-                           ' sets in the evoked.fif file. This does not'
-                           ' necessarily support all the functionality in'
-                           ' Meggie. The evoked.fif files with more than 8'
-                           ' datasets could not be loaded.')
-                raise Exception(message)
-    except ValueError:
-        try:
-            if mne.Evoked(os.path.join(folder, fName),
-                          condition=0) is not None:
-                return evokeds, category
-        except ValueError:
-            raise Exception('File is not an evoked.fif file.')
-            return None, None
-
-    return evokeds, category
-
+def load_powers(subject):
+    """
+    Loads power files from the subject folder.
+    Returns a list of AverageTFR names.
+    """
+    powers = list()
+    path = os.path.join(subject.subject_path, 'TFR')
+    if not os.path.exists(path):
+        return list()
+    files = os.listdir(path)
+    for fname in files:
+        if fname.endswith('.h5'):
+            powers.append(fname)
+    return powers
 
 def open_raw(fname, pre_load=True):
     """
@@ -549,17 +411,6 @@ def open_raw(fname, pre_load=True):
 
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
-    
-def open_raw_by_subject_name(experiment, subject_name, pre_load=False):
-    try:
-        
-        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
-    except IOError as e:
-        raise IOError('File does not exist or is not a raw-file.' + str(e))
-    except OSError as e:
-        raise OSError('You do not have permission to read the file.' + str(e))
-    except ValueError as e:
-        raise ValueError('File is not a raw-file.' + str(e))
     
 
 def pickleObjectToFile(picklable, fpath):
@@ -604,7 +455,7 @@ def unpickle(fpath):
     return unpickledObject
 
 
-def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
+def save_epoch(epoch, overwrite=False):
     """Save epochs and the parameter values used to create them.
     
     The epochs are saved to fpath.fif. the parameter values are saved
@@ -618,13 +469,10 @@ def save_epoch(fpath, epoch, params_to_save=None, overwrite=False):
     overwrite -- A boolean telling whether existing files should be
                  replaced. False by default. 
     """
-    if os.path.exists(fpath + '.fif') and overwrite is False:
+    if os.path.exists(epoch.path) and overwrite is False:
         return
     # First save the epochs
-    epoch.save(fpath + '.fif')
-    # Then save the parameters using pickle.
-    if params_to_save is None:
-        return
+    epoch.raw.save(epoch.path)
 
 def read_surface_names_into_list(subject):
     """
@@ -662,56 +510,6 @@ def read_surface_names_into_list(subject):
     # To set and back to remove duplicates.
     return list(set(finalSurfNameList))
 
-
-def write_events(events, subject):
-        """
-        Saves the events into an Excel file (.xls). 
-        Keyword arguments:
-        events           -- Events to be saved
-        subject          -- subject (as object) whose events are in question 
-                            (usually active subject)
-        """
-        wbs = Workbook()
-        ws = wbs.add_sheet('Events')
-        styleNumber = XFStyle()
-        styleNumber.num_format_str = 'general'
-        sizex = events.shape[0]
-        sizey = events.shape[1]
-
-        path_to_save = os.path.join(subject._subject_path, 'events')
-        if not os.path.exists(path_to_save):
-            print 'Creating directory %s' % path_to_save
-            os.mkdir(path_to_save)
-        print 'Writing events to %s' % path_to_save
-        # Saves events to csv file for easier modification with text editors.
-        try:
-            csv_file = open(os.path.join(path_to_save, 'events.csv'), 'w')
-            csv_file_writer = csv.writer(csv_file)
-            csv_file_writer.writerows(events)
-        except Exception as err:
-            raise err 
-        finally:
-            csv_file.close()
-
-        for i in range(sizex):
-            for j in range(sizey):
-                ws.write(i, j, events[i][j], styleNumber)
-        try:
-            wbs.save(os.path.join(path_to_save, 'events.xls'))
-        except Exception as err:
-            raise err
-
-
-def read_events(filename):
-    """
-    Reads the events from a chosen excel file.
-    Keyword arguments:
-    filename      -- File to read from.
-    """
-    wbr = open_workbook(filename)
-    sheet = wbr.sheet_by_index(0)
-    return sheet
-    
     
 def get_layouts():
     """
@@ -735,75 +533,24 @@ def load_tfr(fname):
     """
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
 
+def create_folders(paths):
+    for path in paths:
+        os.makedirs(path)
 
-def save_subject(experiment, subject, file_name, path):
-    create_subject_directory(path)
-    if os.path.exists(path):
-        try:
-            # TODO: Check if the file is saved with .fif suffix,
-            # if not, save the file with .fif suffix.
-            mne.io.Raw.save(subject._working_file,
-                            os.path.join(path,
-                                         str(os.path.basename(file_name))))
-            
-            # Save channel names list under subject folder
-            pickleObjectToFile(subject._working_file.ch_names,
-                os.path.join(subject._subject_path, 'channels'))
-        except Exception: raise
-    create_epochs_directory(subject)
-    create_evokeds_directory(subject)
-    populate_sourceAnalysis_directory(subject)
-    #create_sourceAnalysis_directory(subject)
-    #create_forwardModels_directory(subject)
-    #create_reconFiles_directory(subject)
-    #create_stc_directory(subject)
-
-def create_subject_directory(path):
+def save_subject(subject, path):
     try:
-        os.mkdir(path)
-    except OSError:
-        raise Exception('No rights to save to the chosen path or' + 
-                        ' subject/experiment name already exists')
-        return
-
-def create_epochs_directory(subject):
-    """
-    Create a directory for saving epochs under the subject directory.
-    TODO possibly move this and following methods to fileManager.
-    """
-    try:
-        os.mkdir(subject._epochs_directory)
-    except OSError:
-        raise OSError('can\'t create epochs directory to' + \
-                      ' the chosen path')                
-
-
-def create_evokeds_directory(subject):
-    """
-    Create a directory for saving evokeds under the epochs directory.
-    """
-    try:
-        os.mkdir(subject._evokeds_directory)
-    except OSError:
-        raise OSError('can\'t create evokeds directory to' + \
-                      ' the chosen path')                
-
-
-def populate_sourceAnalysis_directory(subject):
-    try:
-        os.mkdir(subject._source_analysis_directory)
-        os.mkdir(subject._forwardModels_directory)
-        os.mkdir(subject._reconFiles_directory)
-        os.mkdir(subject._stc_directory)
-    except OSError as err:
-        raise OSError('Error while constructing source analysis directory '
-                      'structure:\n' + str(err))
-
-
-def create_reconFiles_directory(subject):
-
-    try:
-        os.mkdir(subject._reconFiles_directory)
-    except OSError:
-        raise OSError('can\'t create reconFiles directory to' + \
-                      ' the chosen path')
+        create_folders([
+            subject.subject_path,
+            subject.epochs_directory,
+            subject.evokeds_directory,
+            subject.source_analysis_directory,
+            subject.forwardModels_directory,
+            subject.reconFiles_directory,
+            subject.stc_directory
+        ])
+    except OSError as e:
+        raise OSError("Couldn't create all the necessary folders. "
+                      "Do you have the necessary permissions?")
+    
+    copyfile(path, subject.working_file_path)
+    

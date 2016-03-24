@@ -77,7 +77,7 @@ class EogParametersDialog(QtGui.QDialog):
         them to the caller class.
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name = self.caller.experiment.active_subject_name
+        active_subject_name = self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         
         if not self.calculate_eog(self.caller.experiment.active_subject):
@@ -105,19 +105,17 @@ class EogParametersDialog(QtGui.QDialog):
                     self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
-        for subject in self.caller.experiment.get_subjects():
-            if subject.subject_name in subject_names:
-                if subject.subject_name == recently_active_subject:
+        for name, subject in self.caller.experiment.subjects.items():
+            if name in subject_names:
+                if name == recently_active_subject:
                     continue
-                self.caller.activate_subject(subject.subject_name,
-                    do_meanwhile=self.parent.update_ui)
+                self.caller.activate_subject(name)
                 
                 if not self.calculate_eog(subject):
                     self.batching_widget.failed_subjects.append(subject)
                     continue
                 
-        self.caller.activate_subject(recently_active_subject,
-                                     do_meanwhile=self.parent.update_ui)
+        self.caller.activate_subject(recently_active_subject)
 
         self.batching_widget.cleanup()
         self.parent._initialize_ui()
@@ -163,38 +161,33 @@ class EogParametersDialog(QtGui.QDialog):
         """Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        #subject_name = str(self.batching_widget.ui.listWidgetSubjects.currentItem().text())
-        # TODO: if experiment had subjects dictionary instead of list,
-        # we could set:
-        # subject = self.parent.experiment._subjects[subject_name]
 
-        for subject in self.caller.experiment.get_subjects():
-            if subject_name == subject._subject_name:
-                if len(params_dict) > 0:
-                    dic = params_dict  
-                else:
-                    dic = self.get_default_values()
-                self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
-                self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-                self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
-                self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
-                self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
-                self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
-                self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
-                self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
-                self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
-                self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-                self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
-                self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
-                self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
-                self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-                self.ui.lineEditBad.setProperty("value", dic.get('bads'))
-                self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
-                self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-                self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
-                self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
-                self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
-                self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
+        subject = self.caller.experiment.subjects[subject_name]
+	if len(params_dict) > 0:
+	    dic = params_dict  
+	else:
+	    dic = self.get_default_values()
+	self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+	self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+	self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+	self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
+	self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
+	self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+	self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+	self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+	self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+	self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+	self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
+	self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
+	self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
+	self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
+	self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+	self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+	self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+	self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
+	self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+	self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+	self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
     def get_default_values(self):
         """Sets default values for dialog."""

@@ -68,17 +68,13 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents_2)
 
-        try:
-            raw = self.caller.experiment.active_subject.working_file
-        except:
-            return
+        raw = self.caller.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
-        subjects = self.caller.experiment.get_subjects()
-        for subject in subjects:
-            raw_path = self.caller.experiment._working_file_names[subject.subject_name]
-            raw = fileManager.open_raw(raw_path, pre_load=False)
-            self.batching_widget.data[subject.subject_name + ' channels'] = raw.ch_names
+
+        for name, subject in self.caller.experiment.subjects.items():
+            raw = subject.get_working_file(temporary=True)
+            self.batching_widget.data[name + ' channels'] = raw.ch_names
 
 
     def selection_changed(self, subject_name, params_dict):
@@ -86,50 +82,48 @@ class EcgParametersDialog(QtGui.QDialog):
         Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        #subject_name = str(self.ui.listWidgetSubjects.currentItem().text())
 
-        for subject in self.caller.experiment.get_subjects():
-            if subject_name == subject.subject_name:
-                self.ui.comboBoxECGChannel.clear()
-                if len(params_dict) > 0:
-                    dic = params_dict  
-                else:
-                    dic = self.get_default_values()
-                channel_list = self.batching_widget.data[subject_name + ' channels']
-                self.ui.comboBoxECGChannel.addItems(channel_list)
-                channel_name = dic.get('ch_name')
-                if channel_name is None:
-                    channel_name = channel_list[0]
-                if channel_name not in channel_list:
-                    channel_name = self.channel_name_validator(channel_name,
-                                                               channel_list)
-                if channel_name == '':
-                    pass
-                else:
-                    ch_idx = self.ui.comboBoxECGChannel.findText(channel_name,
-                                                    QtCore.Qt.MatchContains)
-                    self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
-                self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
-                self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-                self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
-                self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))  # noqa
-                self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))  # noqa
-                self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
-                self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
-                self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
-                self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
-                self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-                self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
-                self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
-                self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
-                self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-                self.ui.lineEditBad.setProperty("value", dic.get('bads'))
-                self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
-                self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-                self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
-                self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
-                self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
-                self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
+        subject = self.caller.experiment.subjects[subject_name]
+	self.ui.comboBoxECGChannel.clear()
+	if len(params_dict) > 0:
+	    dic = params_dict  
+	else:
+	    dic = self.get_default_values()
+	channel_list = self.batching_widget.data[subject_name + ' channels']
+	self.ui.comboBoxECGChannel.addItems(channel_list)
+	channel_name = dic.get('ch_name')
+	if channel_name is None:
+	    channel_name = channel_list[0]
+	if channel_name not in channel_list:
+	    channel_name = self.channel_name_validator(channel_name,
+						       channel_list)
+	if channel_name == '':
+	    pass
+	else:
+	    ch_idx = self.ui.comboBoxECGChannel.findText(channel_name,
+					    QtCore.Qt.MatchContains)
+	    self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
+	self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+	self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+	self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+	self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))  # noqa
+	self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))  # noqa
+	self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+	self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+	self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+	self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+	self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+	self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
+	self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
+	self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
+	self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
+	self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+	self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+	self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+	self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
+	self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+	self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+	self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
     def get_default_values(self):
         """Sets default values for dialog."""
@@ -164,12 +158,12 @@ class EcgParametersDialog(QtGui.QDialog):
         to the caller class.
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name =  self.caller.experiment.active_subject_name
+        active_subject_name =  self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
 
         if any([
             not self.check_if_channel_exists(
-                self.caller.experiment.active_subject_name),
+                self.caller.experiment.active_subject.subject_name),
             not self.calculate_ecg(self.caller.experiment.active_subject)    
         ]):
             self.batching_widget.failed_subjects.append(
@@ -198,20 +192,18 @@ class EcgParametersDialog(QtGui.QDialog):
                     self.caller.experiment.active_subject)
         
         # 2. Calculation is done for the rest of the subjects.
-        for subject in self.caller.experiment.get_subjects():
-            if subject.subject_name in subject_names:
-                if subject.subject_name == recently_active_subject:
+        for name, subject in self.caller.experiment.subjects.items():
+            if name in subject_names:
+                if name == recently_active_subject:
                     continue
-                self.caller.activate_subject(subject.subject_name,
-                    do_meanwhile=self.parent.update_ui)
+                self.caller.activate_subject(name)
                 if any ([
-                   not self.check_if_channel_exists(subject.subject_name),
+                   not self.check_if_channel_exists(name),
                    not self.calculate_ecg(subject)      
                 ]):
                     self.batching_widget.failed_subjects.append(
                         self.caller.experiment.active_subject)
-        self.caller.activate_subject(recently_active_subject,
-                                     do_meanwhile=self.parent.update_ui)
+        self.caller.activate_subject(recently_active_subject)
         
         self.batching_widget.cleanup()        
         self.parent._initialize_ui()

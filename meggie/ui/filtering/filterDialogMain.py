@@ -58,7 +58,7 @@ class FilterDialog(QtGui.QDialog):
         should be saved over the working file, and saves if the user answers
         yes.
         """
-        raw = self.caller.experiment.active_subject.working_file
+        raw = self.caller.experiment.active_subject.get_working_file()
         paramDict = self.collect_parameter_values()()
         dataToFilter = raw._data
         info = raw.info
@@ -104,9 +104,8 @@ class FilterDialog(QtGui.QDialog):
             if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
                 previewRaw.info['highpass'] = paramDict['high_cutoff_freq']
 
-            previewRaw.save(fname, overwrite=True)
-            raw = mne.io.Raw(fname, preload=True)
-            self.caller.update_experiment_working_file(fname, raw)
+            fileManager.save_raw(self.caller.experiment, previewRaw, fname, overwrite=True)       
+            self.caller.experiment.active_subject.set_working_file(previewRaw)
 
             self.parent._initialize_ui()
 
@@ -118,10 +117,9 @@ class FilterDialog(QtGui.QDialog):
         """
         subject = self.caller.experiment.active_subject
         parameter_values = self.collect_parameter_values()
-        info = subject.working_file.info
+        info = subject.get_working_file().info
         
-        active_subject_name = self.caller.experiment.active_subject_name
-        self.batching_widget.data[active_subject_name] = parameter_values
+        self.batching_widget.data[subject.subject_name] = parameter_values
         
         if any([
             self._validateFilterFreq(parameter_values, info['sfreq']) == False,
@@ -148,7 +146,7 @@ class FilterDialog(QtGui.QDialog):
         if recently_active_subject in subject_names:
 
             params = self.batching_widget.data[recently_active_subject]
-            info = self.caller.experiment.active_subject.working_file.info
+            info = self.caller.experiment.active_subject.get_working_file().info
             subject = self.caller.experiment.active_subject
             # Check if the filter frequency values are sane or not.
             
@@ -159,16 +157,15 @@ class FilterDialog(QtGui.QDialog):
                 self.batching_widget.failed_subjects.append(subject)
         
         # 2. Calculation is done for the rest of the subjects.
-        for subject in self.caller.experiment.get_subjects():
-            if subject.subject_name in subject_names:
-                if subject.subject_name == recently_active_subject:
+        for name, subject in self.caller.experiment.subjects.items():
+            if name in subject_names:
+                if name == recently_active_subject:
                     continue
                 
-                self.caller.activate_subject(subject.subject_name,
-                    do_meanwhile=self.parent.update_ui)
+                self.caller.activate_subject(name)
 
-                params = self.batching_widget.data[subject.subject_name]
-                info = subject.working_file.info
+                params = self.batching_widget.data[name]
+                info = subject.get_working_file().info
                 
                 if any([
                     self._validateFilterFreq(params, info['sfreq']) == False,
@@ -177,8 +174,7 @@ class FilterDialog(QtGui.QDialog):
                     self.batching_widget.failed_subjects.append(subject)        
 
                 
-        self.caller.activate_subject(recently_active_subject,
-                                     do_meanwhile=self.parent.update_ui)
+        self.caller.activate_subject(recently_active_subject)
         
         self.batching_widget.cleanup()
         self.parent._initialize_ui()
@@ -215,43 +211,43 @@ class FilterDialog(QtGui.QDialog):
         messagebox(self.parent, message)
         
     def selection_changed(self, subject_name, params_dict):
-        for subject in self.caller.experiment.get_subjects():
-            if subject_name == subject._subject_name:
-                if len(params_dict) > 0:
-                    dic = params_dict  
-                else:
-                    dic = self.get_default_values()
-                self.ui.doubleSpinBoxLength.setProperty("value", dic.get('length'))
-                self.ui.doubleSpinBoxTransBandwidth.setProperty("value", dic.get('trans_bw'))
-                
-                if dic.get('lowpass'):
-                    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq'))
-                else:
-                    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq_false'))
-                self.ui.checkBoxLowpass.setChecked(dic.get('lowpass'))
-                
-                self.ui.checkBoxHighpass.setChecked(dic.get('highpass'))
-                if dic.get('highpass'):
-                    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq'))
-                else:
-                    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq_false'))
-                
-                self.ui.checkBoxBandstop.setChecked(dic.get('bandstop1'))
-                if dic.get('bandstop1'):
-                    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq'))
-                else:
-                    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq_false'))
-                
-                self.ui.checkBoxBandstop2.setChecked(dic.get('bandstop2'))
-                if dic.get('bandstop2'):
-                    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq'))
-                else:
-                    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq_false'))
-                
-                self.ui.doubleSpinBoxBandstopWidth.setProperty("value", dic.get('bandstop_bw'))
-                self.ui.doubleSpinBoxNotchTransBw.setProperty("value", dic.get('bandstop_transbw'))
-                self.ui.doubleSpinBoxBandStopLength.setProperty("value", dic.get('bandstop_length'))
-                self.update()
+        subject = self.caller.experiment.subjects[subject_name]
+
+	if len(params_dict) > 0:
+	    dic = params_dict  
+	else:
+	    dic = self.get_default_values()
+	self.ui.doubleSpinBoxLength.setProperty("value", dic.get('length'))
+	self.ui.doubleSpinBoxTransBandwidth.setProperty("value", dic.get('trans_bw'))
+	
+	if dic.get('lowpass'):
+	    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq'))
+	else:
+	    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq_false'))
+	self.ui.checkBoxLowpass.setChecked(dic.get('lowpass'))
+	
+	self.ui.checkBoxHighpass.setChecked(dic.get('highpass'))
+	if dic.get('highpass'):
+	    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq'))
+	else:
+	    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq_false'))
+	
+	self.ui.checkBoxBandstop.setChecked(dic.get('bandstop1'))
+	if dic.get('bandstop1'):
+	    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq'))
+	else:
+	    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq_false'))
+	
+	self.ui.checkBoxBandstop2.setChecked(dic.get('bandstop2'))
+	if dic.get('bandstop2'):
+	    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq'))
+	else:
+	    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq_false'))
+	
+	self.ui.doubleSpinBoxBandstopWidth.setProperty("value", dic.get('bandstop_bw'))
+	self.ui.doubleSpinBoxNotchTransBw.setProperty("value", dic.get('bandstop_transbw'))
+	self.ui.doubleSpinBoxBandStopLength.setProperty("value", dic.get('bandstop_length'))
+	self.update()
     
     def get_default_values(self):
         """Sets default values for dialog."""

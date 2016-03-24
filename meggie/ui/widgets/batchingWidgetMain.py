@@ -41,8 +41,8 @@ class BatchingWidget(QtGui.QWidget):
         self.data = {}
         self.failed_subjects = []
         
-        for subject in self.caller.experiment._subjects:
-            item = QtGui.QListWidgetItem(subject.subject_name)
+        for name in self.caller.experiment.subjects:
+            item = QtGui.QListWidgetItem(name)
             item.setCheckState(QtCore.Qt.Unchecked)
             item.setFlags(QtCore.Qt.ItemIsEnabled)
             self.ui.listWidgetSubjects.addItem(item)
@@ -74,42 +74,32 @@ class BatchingWidget(QtGui.QWidget):
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
         """
-        if checked is None: return
+        if checked is None: 
+            return
         item = self.ui.listWidgetSubjects.currentItem()
         if item is None:
             return
         item.setCheckState(QtCore.Qt.Checked)
-        for subject in self.caller.experiment.get_subjects():
-            if subject.subject_name == str(item.text()):
-                
-                self.data[subject.subject_name] = self.parent.collect_parameter_values()
-                
-                """
-                #TODO: pls come up with something practical instead, if the current style is the only way:
-                #TODO: in case of events, need to use append to prevent setting the events list
-                #to all of the subjects data
-                params = self.parent.collect_parameter_values()
-                if 'events' in params.keys():
-                    self.data[subject.subject_name]['events'].append(params['events'])
-                    params_copy = deepcopy(params)
-                    del params_copy['events']
-                self.data[subject.subject_name] = params_copy
-                """
-                
+        
+        subject = self.caller.experiment.subjects[str(item.text())]
+	self.data[subject.subject_name] = self.parent.collect_parameter_values()
+	
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
         """
-        if checked is None: return
+        if checked is None: 
+            return
+
         for i in range(self.ui.listWidgetSubjects.count()):
             item = self.ui.listWidgetSubjects.item(i)
             item.setCheckState(QtCore.Qt.Checked)
-            for subject in self.caller.experiment.get_subjects():
-                if str(item.text()) == subject.subject_name:
-                    params = self.parent.collect_parameter_values()
-                    if params is not None:
-                        self.data[subject.subject_name] = params 
-
+            name = str(item.text())
+            if name in self.caller.experiment.subjects:
+                params = self.parent.collect_parameter_values()
+		if params is not None:
+		    self.data[name] = params 
+ 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed."""
         if checked is None:

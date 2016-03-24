@@ -84,7 +84,6 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
-    @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -103,10 +102,9 @@ class Caller(object):
         sample      -- Sample to convert to time.
         Returns time as seconds.
         """
-        raw = self.experiment.active_subject.working_file
+        raw = self.experiment.active_subject.get_working_file()
         
         #log mne call
-        #self.log_action(raw.index_as_time, sample - raw.first_samp, 0)
         return raw.index_as_time(sample - raw.first_samp)[0]
 
     def call_mne_browse_raw(self, filename):
@@ -168,10 +166,9 @@ class Caller(object):
         # TODO: log mne call
         #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
         raw = mne.io.Raw(outputfile, preload=True)
-        self.update_experiment_working_file(outputfile, raw)
 
-        self.experiment.save_parameter_file(bs, params['-f'], outputfile,
-                                            'maxfilter', params)        
+        self.experiment.active_subject.set_working_file(raw)
+
         self.experiment.save_experiment_settings()
 
     def call_ecg_ssp(self, dic, subject):
@@ -187,7 +184,7 @@ class Caller(object):
     @threaded
     def _call_ecg_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = subject.working_file
+        raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
@@ -267,7 +264,7 @@ class Caller(object):
     @threaded
     def _call_eog_ssp(self, dic, subject):
         """Performed in a worker thread."""
-        raw_in = subject.working_file
+        raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
         event_id = dic.get('event-id')
@@ -379,66 +376,59 @@ class Caller(object):
 
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
-        
-        raw = mne.io.Raw(fname, preload=True)
-        self.update_experiment_working_file(fname, raw)
         self.experiment.save_experiment_settings()
 
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
 
-    def average(self, epochs, category):
-        """Average epochs.
-
-        Average epochs and save the evoked dataset to a file.
-        Raise an exception if epochs are not found.
-
-        Keyword arguments:
-        epochs      -- Epochs averaged
-        """
-        if epochs is None:
-            raise Exception('No epochs found.')
-
-        # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories).
-        evokeds = []
-        for epoch in epochs:
-            for name in category.keys():
-                if name in epoch.event_id:
-                    evokeds.append(epoch[name].average())
-                    #evokeds.append(wrap_mne_call(self.experiment, epoch[name].average()))
-        #log mne call
-        #TODO: epochs is a list of epoch -> log to single line with a comma separator
-        self.experiment.action_logger.log_message('SUCCESS: average' + '\n' + str(epochs) + '\n-->' + '\n' + str(evokeds))
-        return evokeds
-
     def create_epochs(self, params, subject):
-        if subject == self.experiment.active_subject:
-            raw = subject.working_file
-        else:
-            raw_path = self.experiment._working_file_names[subject.subject_name]
-            raw = fileManager.open_raw(raw_path, pre_load=False)
+        """ Epochs are created in a way that one collection consists of such 
+        things that belong together. We wanted multiple collections because 
+        MNE Epochs don't allow multiple id's for one event name, so doing 
+        subselections for averaging and visualizing purposes from one collection
+        is not feasible.
+        """
+        raw = subject.get_working_file()
              
         events = []
         event_params = params['events']
         fixed_length_event_params = params['fixed_length_events']
-        
+       
+        category = {}
+
+        # event_id should not matter after epochs are created.
+        # counter is used so that no collisions would happen.
+        event_id_counter = 0
+
         if len(event_params) > 0:
             for event_params_dic in event_params:
-                #TODO: log
-                events.extend(self.create_eventlist(event_params_dic, raw))
+                event_id = event_params_dic['event_id']
+                category['id_' + str(event_id)] = event_id_counter
+                new_events = np.array(self.create_eventlist(event_params_dic, 
+                                                            raw))
+                new_events[:, 2] = event_id_counter
+                events.extend([event for event in new_events])
+                event_id_counter += 1
+                
+
         if len(fixed_length_event_params) > 0:
-            for event_params_dic in fixed_length_event_params:
-                #TODO: log
-                events.extend(make_fixed_length_events(
-                    raw, event_params_dic['event_id'],
+            for idx, event_params_dic in enumerate(fixed_length_event_params):
+                category['fixed_' + str(idx + 1)] = event_id_counter
+                event_params_dic['event_id'] = event_id_counter
+                events.extend(make_fixed_length_events(raw, 
+                    event_params_dic['event_id'],
                     event_params_dic['tmin'],
-                    event_params_dic['tmax'], event_params_dic['interval']
-                ))           
+                    event_params_dic['tmax'], 
+                    event_params_dic['interval']
+                ))
+                event_id_counter += 1
+
         if len(events) == 0:
             raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
-        
-        #if 'mag' and 'grad' in params:
+
+        if not isinstance(raw, mne.io.Raw):
+            raise TypeError('Not a Raw object')
+
         if params['mag'] and params['grad']:
             params['meg'] = True
         elif params['mag']:
@@ -447,36 +437,22 @@ class Caller(object):
             params['meg'] = 'grad'
         else:
             params['meg'] = False
-        if not isinstance(raw, mne.io.Raw):
-            raise TypeError('Not a Raw object')
-        #TODO: log mne call
+
         picks = mne.pick_types(raw.info, meg=params['meg'],
             eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
-        if len(picks) == 0:
-            raise ValueError(''.join([
-                'Picks cannot be empty. Select picks by checking the ',
-                'checkboxes.'
-                ]))
-        category = {}
-        
-        for event in params['events']:
-            category[event['event_name']] = event['event_id']
-        
-        for event in params['fixed_length_events']:
-            category[event['event_name']] = event['event_id']
 
-        #from pprint import pprint
-        #pprint(events)
+        if len(picks) == 0:
+            raise ValueError('Picks cannot be empty. Select picks by ' + 
+                             'checking the checkboxes.')
 
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, np.array(events), category,  #params['category']
-            params['tmin'], params['tmax'], picks=picks,
-            reject=params['reject'])
+            raw, np.array(events), category, params['tmin'], params['tmax'], 
+            picks=picks, reject=params['reject'])
+
         if len(epochs.get_data()) == 0:
-            raise ValueError(''.join([
-                'Could not find any data. Perhaps the rejection thresholds',
-                'are too strict...'
-                ]))
+            raise ValueError('Could not find any data. Perhaps the ' + 
+                             'rejection thresholds are too strict...')
+
         fname = os.path.join(self.experiment.workspace,
             self.experiment.experiment_name,
             subject.subject_name, 'epochs', params['collection_name'])
@@ -486,11 +462,8 @@ class Caller(object):
                   'reject': params['reject'], 'tmin': params['tmin'], 'tmax': params['tmax'],
                   'collectionName': params['collection_name'], 'raw': fname}
         
-        fileManager.save_epoch(fname, epochs, params_to_save=None, overwrite=True)
-        epochs_object = Epochs()
-        epochs_object.raw = epochs
-        epochs_object.collection_name = params['collection_name']
-        epochs_object.params = params
+        epochs_object = Epochs(params['collection_name'], subject, params, epochs)
+        fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
         return 0
 
@@ -498,17 +471,8 @@ class Caller(object):
         """
         Pick desired events from the raw data.
         """
-        #TODO: log MNE call: you don't get the stim_channel or mask arguments here, because 
-        #the MNE Events' __init__ function uses mne.find_events
-        #this needs some manual logging or logging from the Events' __ini__
-        #e = wrap_mne_call(self.experiment, Events, self.experiment.active_subject.working_file,
-        #                  stim_channel, mask)
-        events = []
-        events = np.array(events) # Just to make sure it is a numpy array.
         e = Events(raw, params['stim'], params['mask'])
         mask = np.bitwise_not(params['mask'])
-        #TODO: Log events
-        #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events
 
@@ -527,7 +491,7 @@ class Caller(object):
 
         colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
 
-        mi = MeasurementInfo(self.experiment.active_subject.working_file)
+        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
 
         title = mi.subject_name
 
@@ -535,6 +499,7 @@ class Caller(object):
                             color=colors[:len(evokeds)], title=title)
 
         conditions = [e.comment for e in evokeds]
+        print conditions
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
                                   positions):
@@ -554,26 +519,26 @@ class Caller(object):
         if it is provided.
 
         Keyword arguments:
-        instance     -- name of the epochs to average, evoked object or list of
+        epochs     -- epochs to average, evoked object or list of
                         evoked objects.
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
 
-        result = self._average_channels(instance, lobeName, channelSet,
-                                        do_meanwhile=self.parent.update_ui)
-        averageTitleString, dataList, evokeds = result
+        averageTitleString, dataList = self._average_channels(
+            instance, lobeName, channelSet, do_meanwhile=self.parent.update_ui
+        )
 
         # Plotting:
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.experiment.active_subject._working_file)
+        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
         fig.canvas.set_window_title(mi.subject_name + 
              '-- channel average for ' + averageTitleString)
         fig.suptitle('Channel average for ' + averageTitleString, y=1.0025)
 
         # Draw a separate plot for each event type
-        for index, (eventName, data) in enumerate(dataList):
+        for index, (times, eventName, data) in enumerate(dataList):
             ca = fig.add_subplot(len(dataList), 1, index + 1) 
             ca.set_title(eventName)
             # Times information is the same as in original evokeds
@@ -587,7 +552,7 @@ class Caller(object):
                 label = ('uV')
                 data *= 1e6
 
-            ca.plot(evokeds[0].times , data)
+            ca.plot(times, data)
             ca.set_xlabel('Time (s)')
             ca.set_ylabel(label)
         plt.tight_layout()
@@ -597,7 +562,7 @@ class Caller(object):
     def _average_channels(self, instance, lobeName, channelSet=None):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
-            epochs = self.experiment.active_subject.get_epochs(instance)
+            epochs = self.experiment.active_subject.epochs.get(instance).raw
             if epochs is None:
                 raise Exception('No epochs found.')
 
@@ -605,8 +570,6 @@ class Caller(object):
 
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
-            #log mne call
-            #self.log_action(epochs.average, category)
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
@@ -637,29 +600,27 @@ class Caller(object):
         if re.match("^MEG[0-9]+", channelNameString):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
 
+        dataList = []
         # Picks only the desired channels from the evokeds.
-        evokedToAve = wrap_mne_call(self.experiment,
-                                    mne.pick_channels_evoked, evokeds[0],
-                                    list(channelsToAve))
-
-        # TODO: log something from below?
-        # Returns channel indices for grad channel pairs in evokedToAve.
-        ch_names = evokedToAve.ch_names
-        gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
-
-        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
-
-        # eegIdxs = mne.pick_channels_regexp(ch_names, regexp='EEG.{3,4}')
-        eeg_picks = mne.pick_types(evokeds[0].info, meg=False, eeg=True,
-                                   ref_meg=False)
-        eegIdxs = [ch_names.index(evokeds[0].ch_names[idx]) for idx in
-                   eeg_picks if evokeds[0].ch_names[idx] in ch_names]
-        dataList = list()
-        for i in range(len(evokeds)):
+        for evoked in evokeds:
+            evokedToAve = wrap_mne_call(
+                self.experiment,
+                mne.pick_channels_evoked, evoked,
+                list(channelsToAve)
+            )
+            # TODO: log something from below?
+            # Returns channel indices for grad channel pairs in evokedToAve.
+            ch_names = evokedToAve.ch_names
+            gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
+    
+            magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
+    
+            eegIdxs = mne.pick_types(evokedToAve.info, meg=False, eeg=True,
+                                       ref_meg=False)
+        
             print "Calculating channel averages for " + averageTitleString
 
             # Merges the grad channel pairs in evokedToAve
-            # evokedToChannelAve = mne.fiff.evoked.Evoked(None)
             if len(gradsIdxs) > 0:
                 gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
 
@@ -667,25 +628,29 @@ class Caller(object):
                 averagedGradData = np.mean(gradData, axis=0)
 
                 # Links the event name and the corresponding data
-                dataList.append((evokeds[i].comment + '_grad',
-                                 averagedGradData))
-            elif len(ch_names) == 1 and re.compile('MEG.{3,4}[23]$').match(ch_names[0]):
-                dataList.append((evokeds[i].comment + '_grad',
-                                 evokedToAve.data[0]))
+                dataList.append((
+                    evokedToAve.times, 
+                    evokedToAve.comment + '_grad',
+                    averagedGradData
+                ))
             if len(magsIdxs) > 0:
-                mag_data = list()
-                for idx in magsIdxs:
-                    mag_data.append(evokedToAve.data[idx])
+                mag_data = evokedToAve.data[magsIdxs]
                 averagedMagData = np.mean(mag_data, axis=0)
-                dataList.append((evokeds[i].comment + '_mag', averagedMagData))
+                dataList.append((
+                    evokedToAve.times,
+                    evokedToAve.comment + '_mag', 
+                    averagedMagData
+                ))
             if len(eegIdxs) > 0:
-                eeg_data = list()
-                for idx in eegIdxs:
-                    eeg_data.append(evokedToAve.data[idx])
+                eeg_data = evokedToAve.data[eegIdxs]
                 averagedEegData = np.mean(eeg_data, axis=0)
-                dataList.append((evokeds[i].comment + '_eeg', averagedEegData))
+                dataList.append((
+                    evokedToAve.times,
+                    evokedToAve.comment + '_eeg', 
+                    averagedEegData
+                ))
 
-        return averageTitleString, dataList, evokeds
+        return averageTitleString, dataList
 
     def plot_group_average(self, groups, layout):
         """
@@ -727,7 +692,7 @@ class Caller(object):
     def _group_average(self, groups, ignore_not_found=False):
         """Performed in a worker thread."""
         # TODO: log something?
-        chs = self.experiment.active_subject.working_file.info['ch_names']
+        chs = self.experiment.active_subject.get_working_file().info['ch_names']
         chs = _clean_names(chs)
         evokeds = dict()
         eweights = dict()
@@ -736,10 +701,10 @@ class Caller(object):
             for ch in chs:
                 evokeds[group][ch] = []                
             eweights[group] = []
-        subjects = self.experiment.get_subjects()
+        subjects = self.experiment.subjects.values()
         files2ave = []
         for subject in subjects:
-            directory = subject._evokeds_directory
+            directory = subject.evokeds_directory
             files = [ f for f in listdir(directory)\
                       if isfile(join(directory, f)) and f.endswith('.fif') ]
             for f in files:
@@ -1137,8 +1102,8 @@ class Caller(object):
     def _TFR_average(self, epochs_name, selected_channels, reptype,
                      frequencies, ncycles, decim, save_max=False):
         """Performed in a working thread."""
-        chs = self.experiment.active_subject.working_file.info['ch_names']
-        subjects = self.experiment.get_subjects()
+        chs = self.experiment.active_subject.get_working_file().info['ch_names']
+        subjects = self.experiment.subjects.values()
         directory = ''
         files2ave = []
         for subject in subjects:
@@ -1358,7 +1323,7 @@ class Caller(object):
             except Exception:
                 message = 'Could not read layout information.'
                 raise Exception(message)
-        raw = self.experiment.active_subject.working_file
+        raw = self.experiment.active_subject.get_working_file()
 
         if params['ch'] == 'meg':
             picks = mne.pick_types(raw.info, meg=True, eeg=False,
@@ -1471,7 +1436,7 @@ class Caller(object):
     
     def _filter(self, dic, subject):
         """Performed in a working thread."""
-        dataToFilter = subject.working_file
+        dataToFilter = subject.get_working_file()
         info = dataToFilter.info
         sf = info['sfreq']
         if isinstance(dataToFilter, mne.io.Raw):
@@ -1787,8 +1752,7 @@ class Caller(object):
                                     selectedFmodelName)
         subject = 'reconFiles'
         rawPath = os.path.join(activeSubject.subject_path,
-                               self.experiment._working_file_names
-                               [self.experiment._active_subject_name])
+                               self.experiment.active_subject.working_file_name)
 
         gui = mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
                                      inst=rawPath, subject=subject,
@@ -1809,8 +1773,8 @@ class Caller(object):
 
         fsdict    -- dictionary of parameters for forward solution creation.
         """
-        activeSubject = self.experiment.active_subject
-        rawInfo = activeSubject._working_file.info
+        activeSubject = self.parent._experiment._active_subject
+        rawInfo = activeSubject.get_working_file().info
 
         tableView = self.parent.ui.tableViewFModelsForSolution
         selectedRowIndexes = tableView.selectedIndexes()
@@ -1859,7 +1823,7 @@ class Caller(object):
             The inverse operator
         """
         subject = self.experiment.active_subject
-        info = subject.working_file.info
+        info = subject.get_working_file().info
         sa_dir = subject._source_analysis_directory
         fwd_file = os.path.join(subject._forwardModels_directory, fwd_name,
                                 'reconFiles', 'reconFiles-fwd.fif')
@@ -1895,18 +1859,16 @@ class Caller(object):
         cvdict        -- dictionary containing parameters for covariance
                          computation
         """
-        subjectName = cvdict['rawsubjectname']
-        fileNameToWrite = ''
-        try:
-            if subjectName is not None:
-                fileNameToWrite = subjectName + '-cov.fif'
-                raw = self.experiment.get_subject_working_file(subjectName)
-            else:
-                raw = fileManager.open_raw(cvdict['rawfilepath'], True)
-                basename = os.path.basename(cvdict['rawfilepath'])
-                fileNameToWrite = os.path.splitext(basename)[0] + '-cov.fif'
-        except Exception:
-            raise
+        subject_name = cvdict['rawsubjectname']
+        if subject_name is not None:
+            subject = self.experiment.subjects[subject_name]
+            raw = subject.get_working_file()
+            name = os.path.basename(subject.working_file_name)
+            filename_to_write = name + '-cov.fif'
+        else:
+            raw = fileManager.open_raw(cvdict['rawfilepath'], True)
+            basename = os.path.basename(cvdict['rawfilepath'])
+            filename_to_write = os.path.splitext(basename)[0] + '-cov.fif'
 
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
@@ -1927,7 +1889,7 @@ class Caller(object):
         # Remove previous covariance file before creating a new one.
         fileManager.remove_files_with_regex(path, '.*-cov.fif')
 
-        filePathToWrite = os.path.join(path, fileNameToWrite)
+        filePathToWrite = os.path.join(path, filename_to_write)
         try:
             mne.write_cov(filePathToWrite, cov)
         except IOError as err:
@@ -1970,7 +1932,7 @@ class Caller(object):
             raise Exception('Error while reading inverse '
                             'operator:\n' + str(err))
         if type == 'raw':
-            inst = subject.working_file
+            inst = subject.get_working_file()
             try:
                 stc = mne.minimum_norm.apply_inverse_raw(inst, inv,
                                                          lambda2=lmbd,
@@ -2051,31 +2013,3 @@ class Caller(object):
                      subjects_dir=subject._reconFiles_directory)
         except Exception as e:
             raise Exception('Error while plotting source estimate:\n' + str(e))
-
-    def update_experiment_working_file(self, fname, raw):
-        """
-        Changes the current working fil e for the experiment the caller relates
-        to.
-        fname    -- name of the new working file
-        raw      -- working file data
-        """
-        self.experiment.update_working_file(fname)
-        self.experiment.active_subject_raw_path = fname
-        self.experiment.active_subject.working_file = raw
-        status = "Current working file: " + os.path.basename(self.experiment.active_subject_raw_path)
-        self.parent.statusLabel.setText(status)
-        
-    def log_action(self, mne_func, *args, **kwargs):
-        """
-        Helper method for logging
-        
-        Keyword arguments:
-        TODO: outcome     - string interpreting the successfulness of the action
-        mne_func    - reference to mne function (or class in some cases)
-        args        - arguments passed to the mne function (or class)
-        kwargs      - keyword arguments passed to the mne function (or class)
-        """
-        #wrapper.wrap_mne_call(self.experiment.action_logger, mne_func, *args, **kwargs)
-        
-    def log_raw_changed(self, fname):
-        self.experiment.action_logger.log_message('Raw changed: ' + fname)

@@ -57,7 +57,7 @@ class TFRDialog(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.epochs = epochs
-        ch_names = self.epochs.ch_names
+        ch_names = self.epochs.raw.ch_names
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
@@ -76,7 +76,7 @@ class TFRDialog(QtGui.QDialog):
 
         caller = Caller.Instance()
         try:
-            caller.TFR(self.epochs, ch_index, minfreq, maxfreq, interval,
+            caller.TFR(self.epochs.raw, ch_index, minfreq, maxfreq, interval,
                        ncycles, decim, cmap)
         except Exception as e:
             exc_messagebox(self, e)

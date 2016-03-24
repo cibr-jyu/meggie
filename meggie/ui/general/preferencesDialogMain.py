@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,6 @@ class PreferencesDialog(QtGui.QDialog):
         
         if os.path.isdir(self._workFilepath):
             workFilePath = self._workFilepath
-            self.parent.change_workspace(workFilePath)
         else:
             message = 'No file path found for working file'
             messagebox(self.parent, message)

@@ -168,7 +168,7 @@ class MaxFilterDialog(QtGui.QDialog):
             dictionary['-hp'] = ''
 
         caller = Caller.Instance()
-        raw = caller.experiment.active_subject.working_file
+        raw = caller.experiment.active_subject.get_working_file()
         dictionary['-f'] = raw.info.get('filename')
         
         #raw.fif -> raw_sss.fif

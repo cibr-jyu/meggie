@@ -28,20 +28,20 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def __init__(self, evoked=None):
         """Constructor.
-
-        Keyword arguments:
-
-        evoked = a dictionary containing evoked-objects.
         """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
         self.ui.setupUi(self)
         self.evoked = evoked
-        if evoked is None: return
+        if evoked is None:
+            return
 
         #Selected_items is a dictionary containing all the channels selected
         #across the evoked sets in the comboBoxEvokeds. 
-        self.selected_channels = [list() for _ in self.evoked]
+        #self.selected_channels = [list() for _ in self.evoked]
+        self.selected_channels = {}
+        for evoked in self.evoked.values():
+            self.selected_channels[evoked.comment] = list()
 
         self.populateComboBoxEvoked()
 
@@ -68,12 +68,14 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         self.ui.comboBoxEvoked.currentIndexChanged.connect(self.
                                                            evoked_set_changed)
-        #self.ui.pushButtonSetSelected.setEnabled(False)
-
+       
         self.evoked_set_changed()
 
-        self.ui.doubleSpinBoxStart.setValue(evoked[0].times[0])
-        self.ui.doubleSpinBoxStop.setValue(evoked[0].times[-1])
+        evokeds = self.evoked.values()
+        self.ui.doubleSpinBoxStart.setValue(evokeds[0].times[0])
+        self.ui.doubleSpinBoxStop.setValue(evokeds[0].times[-1])
+        
+        
         #Save CSV: Create a CSV file of the key values displayed on the right side
 
     def checkBox_state_changed(self):
@@ -102,9 +104,12 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def evoked_set_changed(self):
         """Updates the channel list with current evoked's channels."""
-        index = self.ui.comboBoxEvoked.currentIndex()
-        channels = self.evoked[index].info['ch_names']
-
+        for evoked_value in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
+                channels = evoked_value.ch_names
+                evoked = evoked_value
+                event_name = evoked_value.comment
+        
         #First clear the channel list.
         for i in range(self.ui.listWidgetChannels.count()):
             self.ui.listWidgetChannels.takeItem(0)
@@ -120,33 +125,34 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         #Finally check if there are any channels that need to be set as
         #selected in the new channel list.
-        for channel in self.selected_channels[index]:
+        #for channel in self.selected_channels[index]:
+        for channel in self.selected_channels[event_name]:
             for i in range(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
                 if str(item.text()) == channel:
                     item.setSelected(True)
                     break
 
-        self.update_start_stop()
+        self.update_start_stop(evoked)
 
-        #self.ui.pushButtonSetSelected.setEnabled(False)
 
     def on_pushButtonClearSelections_clicked(self):
         """Reset the values in the dialog's spinboxes."""
         self.reset_data_values()
-        #self.ui.pushButtonSetSelected.setEnabled(False)
 
     def on_pushButtonSetSelected_clicked(self, checked=None):
         """Save selected channels to selected_channels dictionary."""
         if checked is None: return
         if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
 
-        index = self.ui.comboBoxEvoked.currentIndex()
-        #self.selected_channels[index] = list()
-        evoked = self.evoked[index]
+        for evoked_value in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
+                evoked = evoked_value
+                event_name = evoked_value.comment
+        
         selection = list()
         for item in self.ui.listWidgetChannels.selectedItems():
-            if item not in self.selected_channels[index]:
+            if item not in self.selected_channels[event_name]:
                 selection.append(str(item.text()))
         if self.ui.radioButtonGrad.isChecked():
             picks = mne.pick_types(evoked.info, meg='grad', ref_meg=False,
@@ -157,25 +163,29 @@ class EvokedStatsDialog(QtGui.QDialog):
         elif self.ui.radioButtonEeg.isChecked():
             picks = mne.pick_types(evoked.info, meg=False, eeg=True,
                                    ref_meg=False, selection=selection)
-        self.selected_channels[index] = [evoked.ch_names[x] for x in picks]
-        #self.ui.pushButtonSetSelected.setEnabled(False)
+        self.selected_channels[event_name] = [evoked.ch_names[x] for x in picks]
 
         self.update_info()
         #TODO: Update the info widgets. If item_selection has multiple
         #channels, they should be averaged and the result of that should be
-        #shown on the info widgets.   
+        #shown on the info widgets.
 
     def on_pushButtonVisualize_clicked(self, checked=None):
         """Visualize selected channel(s)."""
         if checked is None: 
             return
-        index = self.ui.comboBoxEvoked.currentIndex()
         caller = Caller.Instance()
+        
+        for evoked in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked.comment:
+                evoked_to_viz = evoked
+                event_name = evoked.comment
+        
         try:
-            caller.average_channels(self.evoked, None,
-                                    set(self.selected_channels[index]))
+            caller.average_channels(evoked_to_viz, None,
+                                    set(self.selected_channels[event_name]))
         except Exception as e:
-            exc_messagebox(self.parent, e)
+            exc_messagebox(self, e)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """
@@ -183,13 +193,18 @@ class EvokedStatsDialog(QtGui.QDialog):
         """
         if checked is None: return
         caller = Caller.Instance()
-        index = self.ui.comboBoxEvoked.currentIndex()
+        
+        for evoked_value in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
+                evoked = evoked_value
+                event_name = evoked_value.comment
+        
         exp_path = os.path.join(caller.experiment.workspace,
                                 caller.experiment.experiment_name)
         path = os.path.join(exp_path, 'output')
         if not os.path.isdir(path):
             os.mkdir(path)
-        filename = self.evoked[index].comment + '_stats.csv'
+        filename = event_name + '_stats.csv'
         path = os.path.join(path, filename)
         fname = str(QFileDialog.getSaveFileName(parent=self, caption='Save csv'
                                                 ' file.', directory=path))
@@ -198,7 +213,6 @@ class EvokedStatsDialog(QtGui.QDialog):
         print 'Saving csv...'
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
-        evoked = self.evoked[index]
         times = evoked.times
         min_idx = np.searchsorted(times, tmin)
         max_idx = np.searchsorted(times, tmax)
@@ -213,7 +227,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                              'Time of maximum', 'Half maximum',
                              'Time before max', 'Time after max', 'Duration',
                              'Integral'])
-            for ch_name in self.selected_channels[index]:
+            for ch_name in self.selected_channels[event_name]:
                 pick = evoked.ch_names.index(ch_name)
                 this_data = data[pick]
                 ch_type = mne.channels.channels.channel_type(evoked.info, pick)
@@ -231,7 +245,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                                     tmax, min_idx, max_idx, scaler)
 
                 if ch_name.startswith('MEG') and ch_name.endswith('3'):
-                    if (ch_name[:-1] + '2') in self.selected_channels[index]:
+                    if (ch_name[:-1] + '2') in self.selected_channels[event_name]:
                         # Merge data from pair of grad channels
                         pick2 = evoked.ch_names.index(ch_name[:-1] + '2')
                         this_data = _merge_grad_data(np.array([this_data,
@@ -271,23 +285,6 @@ class EvokedStatsDialog(QtGui.QDialog):
         for evoked in self.evoked:
             self.ui.comboBoxEvoked.addItem(str(evoked))
 
-    def reset_data_values(self):
-        """Reset all the spinboxes and labels displaying data."""
-        self.ui.checkBoxLFrontal.setChecked(False)
-        self.ui.checkBoxLOcci.setChecked(False)
-        self.ui.checkBoxLParietal.setChecked(False)
-        self.ui.checkBoxLTemp.setChecked(False)
-        self.ui.checkBoxRFrontal.setChecked(False)
-        self.ui.checkBoxROcci.setChecked(False)
-        self.ui.checkBoxRParietal.setChecked(False)
-        self.ui.checkBoxRTemp.setChecked(False)
-        self.ui.checkBoxVertex.setChecked(False)
-        self.ui.labelSelectedChannel.setText('No Channels selected.')
-        self.resetSpinBoxes()
-
-        index = self.ui.comboBoxEvoked.currentIndex()
-        self.selected_channels[index] = list()
-
     def resetSpinBoxes(self):
         """Reset the values in the dialog's spinboxes."""
         self.ui.doubleSpinBoxDuration.setValue(0)
@@ -302,8 +299,13 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def update_info(self):
         """Update the info widgets with data based on item."""
-        evoked = self.evoked[self.ui.comboBoxEvoked.currentIndex()]
-        names = self.selected_channels[self.ui.comboBoxEvoked.currentIndex()]
+
+        for evoked_value in self.evoked.values():
+            if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
+                evoked = evoked_value
+                event_name = evoked_value.comment
+        
+        names = self.selected_channels[event_name]
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
         times = evoked.times
@@ -334,7 +336,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                     this_data = _merge_grad_data(this_data[gradsIdxs])
                 except ValueError as err:
                     msg = 'Please select gradiometers as pairs for RMS.'
-                    messagebox(self.parent, msg)
+                    messagebox(self, msg)
                     return
         elif ch_type == 'mag':
             suffix = 'fT'
@@ -344,7 +346,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             scaler = 1e6
         else:
             msg = 'Could not find data.'
-            messagebox(self.parent, msg)
+            messagebox(self, msg)
             return
         data = np.mean(this_data, axis=0)
         self.ui.doubleSpinBoxMinAmplitude.setSuffix(suffix)
@@ -393,10 +395,14 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                             ch_type)
             self.ui.labelSelectedChannel.setText(title)
 
-    def update_start_stop(self):
+    def update_start_stop(self, evoked_event):
         """ Aux function for updating upper and lower limit for time window."""
-        times = self.evoked[self.ui.comboBoxEvoked.currentIndex()].times
+        times = evoked_event.times
+
         self.ui.doubleSpinBoxStart.setMinimum(times[0])
         self.ui.doubleSpinBoxStart.setMaximum(times[-1])
         self.ui.doubleSpinBoxStop.setMinimum(times[0])
         self.ui.doubleSpinBoxStop.setMaximum(times[-1])
+
+        self.ui.doubleSpinBoxStart.setValue(times[0])
+        self.ui.doubleSpinBoxStop.setValue(times[-1])

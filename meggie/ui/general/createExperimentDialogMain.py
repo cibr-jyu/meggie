@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,8 @@
 Contains the CreateExperimentDialog-class that holds the logic for
 CreateExperimentDialog-window.
 """
+
+import os
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal
@@ -73,10 +75,11 @@ class CreateExperimentDialog(QtGui.QDialog):
             messagebox(self.parent, message)
             return  
         
-        expDict = {'name': self.ui.lineEditExperimentName.text(),
-                   'author': self.ui.lineEditAuthor.text(),
-                   'description': self.ui.textEditDescription.toPlainText()
-                  }
+        expDict = {
+            'name': self.ui.lineEditExperimentName.text(),
+            'author': self.ui.lineEditAuthor.text(),
+            'description': self.ui.textEditDescription.toPlainText()
+        }
         try:
             experiment = self.parent.experimentHandler.initialize_new_experiment(
                 expDict,
