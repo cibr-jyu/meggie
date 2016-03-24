@@ -706,14 +706,13 @@ class Caller(object):
                 else:
                     evoked_groups[key] = [value]
 
-        from meggie.code_meggie.utils.debug import debug_trace
-        debug_trace()
-
-        grand_average = mne.grand_average(responses)
+        grand_averages = []
+        for evokeds in evoked_groups.values():
+            grand_averages.append(mne.grand_average(evokeds))
 
         # TODO: save group average data to file
 
-        return grand_average
+        return grand_averages
 
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):
