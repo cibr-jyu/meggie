@@ -372,8 +372,15 @@ class ExperimentHandler(QObject):
         if not os.path.isfile(exp_file):
             return
         
-        with open(exp_file, 'r') as f:
-            data = json.load(f)
+        try:
+            with open(exp_file, 'r') as f:
+                data = json.load(f)
+        except ValueError:
+            raise ValueError('Experiment from ' + exp_file + ' could not be ' + 
+                             'opened. If it is an old experiment, you might ' + 
+                             'want to create a new one as old-style ' + 
+                             '(pre 0.1.5) experiments are not supported ' + 
+                             'anymore.')
             
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
