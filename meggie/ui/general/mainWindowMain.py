@@ -372,7 +372,7 @@ class MainWindow(QtGui.QMainWindow):
         events = epochs.raw.event_id
         
         for event_name, event_id in events.items():
-            events_str = event_name + ': ' + str(event_id) + ' [' + str(len(epochs.raw[event_name])) + ' events found]'
+            events_str = event_name + ' [' + str(len(epochs.raw[event_name])) + ' events found]'
             item = QtGui.QListWidgetItem()
             item.setText(events_str)
             self.epochList.ui.listWidgetEvents.addItem(item)
@@ -532,48 +532,25 @@ class MainWindow(QtGui.QMainWindow):
         collection_names = [str(item.text()) for item 
                  in self.epochList.ui.listWidgetEpochs.selectedItems()]
 
-        # If no events are selected, show a message to to the user and return.
+        # If no collections are selected, show a message to to the user and return.
         if len(collection_names) == 0:
             messagebox(self, 'Please select an epoch collection to average.')
             return
 
-
-        epoch_collections = {}
+        evokeds = {}
         for name in collection_names:
             subject = self.caller.experiment.active_subject
             collection = subject.epochs[name]
             epoch = collection.raw
-            event_dict = collection.raw.event_id
-            for key in event_dict:
-                if key not in epoch_collections:
-                    epoch_collections[key] = [epoch[key]]
-                else:
-                    if collection not in epoch_collections[key]:
-                        epoch_collections[key].append(epoch[key])
-        
-        evoked_collections = {}
-        for name, collection in epoch_collections.items():
-            evokeds = []
-            for epochs in collection:
-                evoked = epochs.average()
-                evokeds.append(evoked)
-            evoked_collections[name] = evokeds
-        
-        
-        evokeds = {}
-        for key, collection in evoked_collections.items():
-            data = [evoked.data for evoked in collection]
-            evoked = collection[0]
-            evoked.data = sum(data) / len(data)
-            evoked.comment = key
-            evokeds[key] = evoked
-        
+            evoked = epoch.average()
+            evoked.comment = name
+            evokeds[name] = evoked
+
         if not evokeds:
             raise Exception('No evokeds found.')
         
         evoked_name = (
-            '-'.join(collection_names) + '[' +
-            '-'.join(evokeds.keys()) + ']' +
+            '-'.join(collection_names) +
             '_evoked.fif'
         )
 
@@ -695,6 +672,8 @@ class MainWindow(QtGui.QMainWindow):
 
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
+	    QtGui.QApplication.setOverrideCursor(
+		    QtGui.QCursor(QtCore.Qt.WaitCursor))
             self.caller.draw_evoked_potentials(mne_evokeds.values(), layout)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
@@ -703,6 +682,7 @@ class MainWindow(QtGui.QMainWindow):
             oldText = 'Visualize selected dataset'
             self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
             self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
+            QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """

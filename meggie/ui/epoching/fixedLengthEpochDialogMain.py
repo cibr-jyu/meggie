@@ -10,7 +10,7 @@ from mne import make_fixed_length_events
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
-from meggie.ui.epoching.fixedLengthEpochsDialogUi import Ui_FixedLengthEpochDialog
+from meggie.ui.epoching.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
 
 class FixedLengthEpochDialog(QtGui.QDialog):
     """
@@ -32,34 +32,23 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')
-        self.raw = self.caller.experiment.active_subject.get_working_file()
+        self.raw = self.caller.experiment.active_subject.get_working_file(temporary=True)
         tmax = int(self.raw.times[-1])
         self.ui.spinBoxStart.setMaximum(tmax)
         self.ui.spinBoxEnd.setMaximum(tmax)
         self.ui.spinBoxEnd.setValue(tmax)
 
     def accept(self, *args, **kwargs):
-        # Forbid events with the same name
-        for key in self.parent.batching_widget.data.keys():
-            for event in self.parent.batching_widget.data[key]['events']:
-                if str(self.ui.lineEditName.text()) == event['event_name']:
-                    return
-            for event in self.parent.batching_widget.data[key]['fixed_length_events']:
-                if str(self.ui.lineEditName.text()) == event['event_name']:
-                    return
-
         event_params = {
             'tmin': self.ui.spinBoxStart.value(),
             'tmax': self.ui.spinBoxEnd.value(),
             'interval': self.ui.doubleSpinBoxInterval.value(),
-            'event_id': self.ui.spinBoxId.value(),
-            'event_name': str(self.ui.lineEditName.text())
         }
         subject = self.parent.get_selected_subject()
         working_file = subject.get_working_file(preload=False)
         
         events = make_fixed_length_events(
-            working_file, event_params['event_id'], event_params['tmin'],
+            working_file, 0, event_params['tmin'],
             event_params['tmax'], event_params['interval']
         )
         if len(events) > 0:

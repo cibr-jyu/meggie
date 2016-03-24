@@ -382,32 +382,53 @@ class Caller(object):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
 
     def create_epochs(self, params, subject):
-        if subject == self.experiment.active_subject:
-            raw = subject.get_working_file()
-        else:
-            raw_path = self.experiment._working_file_names[subject.subject_name]
-            raw = fileManager.open_raw(raw_path, pre_load=False)
+        """ Epochs are created in a way that one collection consists of such 
+        things that belong together. We wanted multiple collections because 
+        MNE Epochs don't allow multiple id's for one event name, so doing 
+        subselections for averaging and visualizing purposes from one collection
+        is not feasible.
+        """
+        raw = subject.get_working_file()
              
         events = []
         event_params = params['events']
         fixed_length_event_params = params['fixed_length_events']
-        
+       
+        category = {}
+
+        # event_id should not matter after epochs are created.
+        # counter is used so that no collisions would happen.
+        event_id_counter = 0
+
         if len(event_params) > 0:
             for event_params_dic in event_params:
-                #TODO: log
-                events.extend(self.create_eventlist(event_params_dic, raw))
+                event_id = event_params_dic['event_id']
+                category['id_' + str(event_id)] = event_id_counter
+                new_events = np.array(self.create_eventlist(event_params_dic, 
+                                                            raw))
+                new_events[:, 2] = event_id_counter
+                events.extend([event for event in new_events])
+                event_id_counter += 1
+                
+
         if len(fixed_length_event_params) > 0:
-            for event_params_dic in fixed_length_event_params:
-                #TODO: log
-                events.extend(make_fixed_length_events(
-                    raw, event_params_dic['event_id'],
+            for idx, event_params_dic in enumerate(fixed_length_event_params):
+                category['fixed_' + str(idx + 1)] = event_id_counter
+                event_params_dic['event_id'] = event_id_counter
+                events.extend(make_fixed_length_events(raw, 
+                    event_params_dic['event_id'],
                     event_params_dic['tmin'],
-                    event_params_dic['tmax'], event_params_dic['interval']
-                ))           
+                    event_params_dic['tmax'], 
+                    event_params_dic['interval']
+                ))
+                event_id_counter += 1
+
         if len(events) == 0:
             raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
-        
-        #if 'mag' and 'grad' in params:
+
+        if not isinstance(raw, mne.io.Raw):
+            raise TypeError('Not a Raw object')
+
         if params['mag'] and params['grad']:
             params['meg'] = True
         elif params['mag']:
@@ -416,36 +437,22 @@ class Caller(object):
             params['meg'] = 'grad'
         else:
             params['meg'] = False
-        if not isinstance(raw, mne.io.Raw):
-            raise TypeError('Not a Raw object')
-        #TODO: log mne call
+
         picks = mne.pick_types(raw.info, meg=params['meg'],
             eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
-        if len(picks) == 0:
-            raise ValueError(''.join([
-                'Picks cannot be empty. Select picks by checking the ',
-                'checkboxes.'
-                ]))
-        category = {}
-        
-        for event in params['events']:
-            category[event['event_name']] = event['event_id']
-        
-        for event in params['fixed_length_events']:
-            category[event['event_name']] = event['event_id']
 
-        #from pprint import pprint
-        #pprint(events)
+        if len(picks) == 0:
+            raise ValueError('Picks cannot be empty. Select picks by ' + 
+                             'checking the checkboxes.')
 
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, np.array(events), category,  #params['category']
-            params['tmin'], params['tmax'], picks=picks,
-            reject=params['reject'])
+            raw, np.array(events), category, params['tmin'], params['tmax'], 
+            picks=picks, reject=params['reject'])
+
         if len(epochs.get_data()) == 0:
-            raise ValueError(''.join([
-                'Could not find any data. Perhaps the rejection thresholds',
-                'are too strict...'
-                ]))
+            raise ValueError('Could not find any data. Perhaps the ' + 
+                             'rejection thresholds are too strict...')
+
         fname = os.path.join(self.experiment.workspace,
             self.experiment.experiment_name,
             subject.subject_name, 'epochs', params['collection_name'])
@@ -464,12 +471,8 @@ class Caller(object):
         """
         Pick desired events from the raw data.
         """
-        events = []
-        events = np.array(events) # Just to make sure it is a numpy array.
         e = Events(raw, params['stim'], params['mask'])
         mask = np.bitwise_not(params['mask'])
-        #TODO: Log events
-        #events = wrap_mne_call(self.experiment, e.pick, np.bitwise_and(event_id, mask))
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events
 

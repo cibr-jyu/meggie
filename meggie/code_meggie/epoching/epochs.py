@@ -47,10 +47,6 @@ class Epochs(QObject):
     """
     A class for creating and handling epochs.
     
-    Public functions:
-    
-    create_epochs(raw, events, mag, grad, eeg, stim, eog, reject,
-                  category, tmin, tmax)
     """
 
     def __init__(self, collection_name, subject, params, raw=None):

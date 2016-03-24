@@ -2,7 +2,8 @@
 
 # Form implementation generated from reading ui file 'eventSelectionDialogUi.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created: Thu Mar 24 22:25:07 2016
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -36,7 +37,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 865, 993))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 865, 991))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(741, 400))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.pushButtonFixedLength = QtGui.QPushButton(self.scrollAreaWidgetContents)
@@ -93,17 +94,6 @@ class Ui_EventSelectionDialog(object):
         self.spinBoxMask.setObjectName(_fromUtf8("spinBoxMask"))
         self.horizontalLayout_6.addWidget(self.spinBoxMask)
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
-        self.horizontalLayout_5 = QtGui.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.labelName = QtGui.QLabel(self.groupBoxEvent)
-        self.labelName.setObjectName(_fromUtf8("labelName"))
-        self.horizontalLayout_5.addWidget(self.labelName)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem)
-        self.lineEditName = QtGui.QLineEdit(self.groupBoxEvent)
-        self.lineEditName.setObjectName(_fromUtf8("lineEditName"))
-        self.horizontalLayout_5.addWidget(self.lineEditName)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_5)
         self.gridLayout_2.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
         self.pushButtonAdd = QtGui.QPushButton(self.groupBoxEvent)
         self.pushButtonAdd.setObjectName(_fromUtf8("pushButtonAdd"))
@@ -225,8 +215,8 @@ class Ui_EventSelectionDialog(object):
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
         self.horizontalLayout_10.setContentsMargins(0, 0, -1, -1)
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem1)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem)
         self.pushButtonCancel = QtGui.QPushButton(EventSelectionDialog)
         self.pushButtonCancel.setObjectName(_fromUtf8("pushButtonCancel"))
         self.horizontalLayout_10.addWidget(self.pushButtonCancel)
@@ -253,8 +243,7 @@ class Ui_EventSelectionDialog(object):
         EventSelectionDialog.setTabOrder(self.doubleSpinBoxTmax, self.checkBoxStim)
         EventSelectionDialog.setTabOrder(self.checkBoxStim, self.spinBoxEventID)
         EventSelectionDialog.setTabOrder(self.spinBoxEventID, self.spinBoxMask)
-        EventSelectionDialog.setTabOrder(self.spinBoxMask, self.lineEditName)
-        EventSelectionDialog.setTabOrder(self.lineEditName, self.checkBoxGrad)
+        EventSelectionDialog.setTabOrder(self.spinBoxMask, self.checkBoxGrad)
         EventSelectionDialog.setTabOrder(self.checkBoxGrad, self.doubleSpinBoxGradReject_3)
         EventSelectionDialog.setTabOrder(self.doubleSpinBoxGradReject_3, self.checkBoxMag)
         EventSelectionDialog.setTabOrder(self.checkBoxMag, self.doubleSpinBoxMagReject_3)
@@ -274,7 +263,6 @@ class Ui_EventSelectionDialog(object):
         self.labelEventID.setText(_translate("EventSelectionDialog", "Event ID:", None))
         self.labelMask.setText(_translate("EventSelectionDialog", "Mask", None))
         self.spinBoxMask.setToolTip(_translate("EventSelectionDialog", "<html><head/><body><p>Mask bit used for finding events. For example, if mask is set to 1, first bit is ignored.</p></body></html>", None))
-        self.labelName.setText(_translate("EventSelectionDialog", "Event name:      ", None))
         self.pushButtonAdd.setText(_translate("EventSelectionDialog", "Add to list >>", None))
         self.groupBoxRejection.setTitle(_translate("EventSelectionDialog", "Rejection parameters", None))
         self.checkBoxGrad.setToolTip(_translate("EventSelectionDialog", "Include or exclude grad channels", None))

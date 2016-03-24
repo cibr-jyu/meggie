@@ -31,27 +31,6 @@ class Evoked(QObject):
         self._mne_evokeds = mne_evokeds
         self._path = os.path.join(subject.evokeds_directory, name)
         
-#     @property
-#     def raw(self):
-#         """
-#         Returns the raw .fif of the evoked.
-#         """
-#         if isinstance(self._raw, mne.Evoked):
-#             return self._raw
-#         else:
-#             raw = self.load_working_file()
-#             return raw
-#         
-#     @raw.setter
-#     def raw(self, raw):
-#         """
-#         Sets the raw data for the evoked collection.
-#          
-#         Keyword arguments:
-#         raw    -- the raw .fif of the collection
-#         """
-#         self._raw = raw        
-
     @property
     def mne_evokeds(self):
         """
