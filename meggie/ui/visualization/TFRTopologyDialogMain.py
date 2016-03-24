@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         if tfr is None:
             self.tfr = None
             subject = self.caller.experiment.active_subject
-            epochs = subject.get_epochs(epoch_name)
+            epochs = subject.epochs[epoch_name].raw
             self.ui.labelEpochName.setText(epoch_name)
             self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
             self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
@@ -159,8 +159,9 @@ class TFRTopologyDialog(QtGui.QDialog):
 
         ch_type = str(self.ui.comboBoxChannels.currentText())
 
-        epochs = self.caller.experiment.active_subject.get_epochs(self.
-                                                                  epoch_name)
+        epochs = self.caller.experiment.active_subject.epochs[self.
+                                                              epoch_name].raw
+                                                              
         epochs.name = self.epoch_name  # not stored in epochs when saved
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
