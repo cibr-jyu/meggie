@@ -652,172 +652,68 @@ class Caller(object):
 
         return averageTitleString, dataList
 
-    def plot_group_average(self, groups, layout):
+    def plot_group_average(self, evoked_name, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
         average data to ``output`` folder.
         Keyword arguments:
-        groups        -- A list of group names.
+        evoked_name        -- name of the evoked objects
         layout        -- Layout used for plotting channels.
         """
+        count = 0
+        for name, subject in self.experiment.subjects.items():
+            if subject.evokeds.get(evoked_name):
+                count += 1
 
-        try:
-            evokeds, groups = self._group_average(
-                groups,
-                do_meanwhile=self.parent.update_ui
-            )
-        except Warning as e:
+        if count == 0:
+            raise ValueError('No evoked responses found from any subject.')
+        if count > 0 and count < len(self.experiment.subjects):
             reply = QtGui.QMessageBox.question(
                 self.parent, 
                 "Evoked responses not found",
                 "Evoked responses not found from every subject. "
+                "(" + str(count) + " resopnses found.) "
                 "Draw the evoked potentials anyway?",
                 QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.No
             )
             if reply == QtGui.QMessageBox.No:
                 return
-            else:
-                evokeds, groups = self._group_average(
-                    groups,
-                    ignore_not_found=True,
-                    do_meanwhile=self.parent.update_ui
-                )
+        
+        evokeds = self._group_average(
+           evoked_name, do_meanwhile=self.parent.update_ui
+        )
 
         print "Plotting evoked..."
         self.parent.update_ui()
         self.draw_evoked_potentials(evokeds, layout)
 
     @threaded
-    def _group_average(self, groups, ignore_not_found=False):
+    def _group_average(self, evoked_name):
         """Performed in a worker thread."""
-        # TODO: log something?
-        chs = self.experiment.active_subject.get_working_file().info['ch_names']
-        chs = _clean_names(chs)
-        evokeds = dict()
-        eweights = dict()
-        for group in groups:
-            evokeds[group] = dict()
-            for ch in chs:
-                evokeds[group][ch] = []                
-            eweights[group] = []
+
         subjects = self.experiment.subjects.values()
-        files2ave = []
-        for subject in subjects:
-            directory = subject.evokeds_directory
-            files = [ f for f in listdir(directory)\
-                      if isfile(join(directory, f)) and f.endswith('.fif') ]
-            for f in files:
-                fgroups = re.split('[\[\]]', f)  # '1-2-3'
-                if not len(fgroups) == 3: 
-                    continue 
-                fgroups = re.split('[-]', fgroups[1])  # ['1','2','3']
-                if sorted(fgroups) == sorted(groups):
-                    files2ave.append(directory + '/' + f)
 
-        print "Found " + str(len(files2ave)) + " subjects with evoked " + \
-                        "responses labeled: " + str(groups)
-        if len(files2ave) < len(subjects) and not ignore_not_found:
-            raise Warning(" ".join([
-                "Found only", str(len(files2ave)),
-                "subjects of", str(len(subjects)),
-                "with evoked responses labeled:",
-                str(groups)
-            ]))
+        responses = [subject.evokeds.get(evoked_name) for subject in subjects]
+        responses = filter(bool, responses)
 
-        evokedTmin = 0
-        evokedInfo = []
-        for f in files2ave:
-            for group in groups:
-                evoked = mne.read_evokeds(f, condition=group)
-                evokedTmin = evoked.first / evoked.info['sfreq']
-                evokedInfo = evoked.info
+        # assumme all have same same amount of evokeds
+        evoked_groups = {}
+        for response in responses:
+            for key, value in response.mne_evokeds.items():
+                if evoked_groups.get(key):
+                    evoked_groups[key].append(value)
+                else:
+                    evoked_groups[key] = [value]
 
-                info = evoked.info['ch_names']
-                info = _clean_names(info)
-                for cidx in xrange(len(info)):
-                    ch_name = info[cidx]
-                    if not ch_name in evokeds[group].keys():
-                        raise KeyError('%s not in channels. Make sure all '
-                                       'data sets contain the same channel '
-                                       'info.' % ch_name)
+        from meggie.code_meggie.utils.debug import debug_trace
+        debug_trace()
 
-                    evokeds[group][ch_name].append(evoked.data[cidx])
-                eweights[group].append(evoked.nave)
+        grand_average = mne.grand_average(responses)
 
-        evs = []
-        usedChannels = []
-        bads = []
-        for group in groups:
-            max_key = max(evokeds[group],
-                          key=lambda x: len(evokeds[group][x]))
-            length = len(evokeds[group][max_key])
-            evokedSet = []
-            for ch in chs:
-                if len(evokeds[group][ch]) < length:
-                    if not ch in bads: 
-                        bads.append(ch)
-                    continue
+        # TODO: save group average data to file
 
-                if not ch in usedChannels: 
-                    usedChannels.append(ch)
-                data = evokeds[group][ch]
-                w = eweights[group]
-                epoch_length = len(data[0])
-                for d in data:
-                    if not len(d) == epoch_length:
-                        raise Exception("Epochs are different " +
-                                        "in sizes!")
-                ave = np.average(data, axis=0, weights=w)
-                evokedSet.append(ave)
-
-            evs.append(deepcopy(evokedSet))
-
-        print 'Used channels: ' + str(usedChannels)
-        print '\nBad channels: ' + str(bads)
-        evokedInfo['ch_names'] = usedChannels
-        evokedInfo['chs'] = [ch for ch in evokedInfo['chs']
-                             if ch['ch_name'] in usedChannels]
-        evokedInfo['bads'] = []
-        evokedInfo['nchan'] = len(usedChannels)
-
-        averagedEvokeds = []
-        for groupidx in xrange(len(groups)):
-            averagedEvokeds.append(mne.EvokedArray(evs[groupidx],
-                                                   info=evokedInfo,
-                                                   tmin=evokedTmin,
-                                                   comment=groups
-                                                   [groupidx]))
-
-        write2file = True
-        if write2file:  # TODO add option in GUI for this
-            exp_path = os.path.join(self.experiment.workspace,
-                                    self.experiment.experiment_name)
-            if not os.path.isdir(exp_path + '/output'):
-                os.mkdir(exp_path + '/output')
-            fName = '-'.join(groups) + '_group_average.txt'
-            fName = exp_path + '/output/' + fName
-            print 'Saving averages in ' + fName
-            f = open(fName, 'w')
-            f.write('Times, ')
-            for time in averagedEvokeds[0].times:
-                f.write(repr(time))
-                f.write(', ')
-            f.write('\n')
-            i = 0
-            for evoked in averagedEvokeds:
-                f.write(repr(groups[i]))
-                f.write('\n')
-                i = i + 1
-                for ch_idx in xrange(len(evoked.ch_names)):
-                    f.write(repr(evoked.ch_names[ch_idx] + ', '))
-                    for j in xrange(len(evoked.data[ch_idx])):
-                        f.write(repr(evoked.data[ch_idx][j]))
-                        f.write(', ')
-                    f.write('\n')
-            f.close()
-
-        return averagedEvokeds, groups
+        return grand_average
 
     def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
             decim, color_map='auto'):

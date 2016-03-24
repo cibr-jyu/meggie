@@ -690,29 +690,22 @@ class MainWindow(QtGui.QMainWindow):
         results as ascii to ``output`` folder. Uses event names for determining
         which responses to average across subjects.
         """
-        import re
         if checked is None:
             return
+
         item = self.evokedList.currentItem()
         if item is None:
             return
 
         evoked_name = str(item.text())
-        if '[' not in evoked_name or ']' not in evoked_name:
-            messagebox(self, ('Data set name must contain '
-                              'event names inside brackets '
-                              'for group averaging.'))
-            return
 
-        groups = re.split('[\[\]]', evoked_name)[1]  # '1-2-3'
-        groups = re.split('[-]', groups)  # ['1','2','3']
         if self.ui.radioButtonSelectLayout.isChecked():
             layout = self.ui.comboBoxLayout.currentText()
         else:
             layout = str(self.ui.labelLayout.text())
 
         try:
-            self.caller.plot_group_average(groups, layout)
+            self.caller.plot_group_average(evoked_name, layout)
         except Exception as e:
             exc_messagebox(self, e)
 
