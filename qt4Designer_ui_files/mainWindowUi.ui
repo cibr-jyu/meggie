@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1683</width>
-    <height>987</height>
+    <height>883</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -71,8 +71,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1327</width>
-          <height>793</height>
+          <width>1314</width>
+          <height>750</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -868,7 +868,7 @@
                  </property>
                 </widget>
                </widget>
-               <widget class="QWidget" name="">
+               <widget class="QWidget" name="layoutWidget">
                 <property name="geometry">
                  <rect>
                   <x>10</x>
@@ -1664,18 +1664,19 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label">
+                   <widget class="QPushButton" name="pushButtonCreateEvokedBatch">
                     <property name="text">
-                     <string>Creates an evoked dataset from the currently chosen epoch collection if no events are selected. Otherwise creates an evoked dataset from the selected events of the currently chosen epoch collection.</string>
+                     <string>----------  Batch evokeds ---------&gt;</string>
                     </property>
-                    <property name="scaledContents">
-                     <bool>false</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="widget" native="true">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
                    </widget>
                   </item>
@@ -1697,7 +1698,7 @@
                 <item row="0" column="2">
                  <layout class="QVBoxLayout" name="verticalLayout_6">
                   <item>
-                   <widget class="QGroupBox" name="groupBoxEvokeds">
+                   <widget class="QGroupBox" name="groupBoxEvokeds2">
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
@@ -1707,11 +1708,16 @@
                     <property name="title">
                      <string>Evoked datasets (averaged epoch collections):</string>
                     </property>
-                    <layout class="QGridLayout" name="gridLayout_16">
-                     <item row="0" column="0">
-                      <widget class="QWidget" name="widgetEvokeds" native="true"/>
-                     </item>
-                    </layout>
+                    <widget class="QGroupBox" name="groupBoxEvokeds">
+                     <property name="geometry">
+                      <rect>
+                       <x>17</x>
+                       <y>25</y>
+                       <width>364</width>
+                       <height>264</height>
+                      </rect>
+                     </property>
+                    </widget>
                    </widget>
                   </item>
                   <item>

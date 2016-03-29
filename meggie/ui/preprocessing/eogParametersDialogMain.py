@@ -79,10 +79,12 @@ class EogParametersDialog(QtGui.QDialog):
         parameter_values = self.collect_parameter_values()
         active_subject_name = self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
-        
-        if not self.calculate_eog(self.caller.experiment.active_subject):
-            self.batching_widget.failed_subjects.append(
-                self.caller.experiment.active_subject)
+
+        try:
+            self.calculate_eog(self.caller.experiment.active_subject)
+        except Exception as e:
+            self.batching_widget.failed_subjects.append((
+                self.caller.experiment.active_subject, str(e)))        
         
         self.batching_widget.cleanup()
         self.close()
@@ -92,17 +94,22 @@ class EogParametersDialog(QtGui.QDialog):
         
         recently_active_subject = self.caller.experiment.active_subject.subject_name
         subject_names = []
+
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
+        
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if not self.calculate_eog(self.caller.experiment.active_subject):
-                self.batching_widget.failed_subjects.append(
-                    self.caller.experiment.active_subject)
+
+            try:
+                self.calculate_eog(self.caller.experiment.active_subject)
+            except Exception as e:
+                self.batching_widget.failed_subjects.append((
+                    self.caller.experiment.active_subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -110,13 +117,14 @@ class EogParametersDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 self.caller.activate_subject(name)
-                
-                if not self.calculate_eog(subject):
-                    self.batching_widget.failed_subjects.append(subject)
-                    continue
+
+                try:
+                    self.calculate_eog(subject)
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((
+                        subject, str(e)))
                 
         self.caller.activate_subject(recently_active_subject)
-
         self.batching_widget.cleanup()
         self.parent._initialize_ui()
         self.close()
@@ -223,10 +231,6 @@ class EogParametersDialog(QtGui.QDialog):
         Keyword arguments:
         subject               -- Subject object
         """
-        try:
-            result = self.caller.call_eog_ssp(self.batching_widget.data[subject.subject_name], subject)
-            if not result == 0:
-                return False
-        except Exception:
-            return False
-        return True
+        self.caller.call_eog_ssp(
+            self.batching_widget.data[subject.subject_name], subject)
+        

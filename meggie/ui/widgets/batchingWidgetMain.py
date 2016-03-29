@@ -111,8 +111,15 @@ class BatchingWidget(QtGui.QWidget):
             messagebox(self, message)
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def cleanup(self):
+    def cleanup(self, parent=None):
         if len(self.failed_subjects) > 0:
-            print 'Failed calculation for subjects: ' 
-            for subject in self.failed_subjects:
-                print subject.subject_name
+            rows = []
+            rows.append('Failed calculation for subjects:')
+            
+            for subject, message in self.failed_subjects:
+                rows.append(subject.subject_name + ' (' + message + ')')
+                
+            if not parent:
+                parent = self.parent.parent
+            
+            messagebox(parent, '\n'.join(rows))

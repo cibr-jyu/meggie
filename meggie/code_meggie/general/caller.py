@@ -179,7 +179,6 @@ class Caller(object):
         subject       -- The subject to perform the action on.
         """
         self._call_ecg_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
-        return 0
 
     @threaded
     def _call_ecg_ssp(self, dic, subject):
@@ -259,7 +258,6 @@ class Caller(object):
         subject       -- The subject to perform action on.
         """
         self._call_eog_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
-        return 0
 
     @threaded
     def _call_eog_ssp(self, dic, subject):
@@ -406,6 +404,8 @@ class Caller(object):
                 category['id_' + str(event_id)] = event_id_counter
                 new_events = np.array(self.create_eventlist(event_params_dic, 
                                                             raw))
+                if len(new_events) == 0:
+                    raise ValueError('No events found with selected id.')
                 new_events[:, 2] = event_id_counter
                 events.extend([event for event in new_events])
                 event_id_counter += 1
@@ -465,7 +465,6 @@ class Caller(object):
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
-        return 0
 
     def create_eventlist(self, params, raw):
         """
@@ -499,7 +498,6 @@ class Caller(object):
                             color=colors[:len(evokeds)], title=title)
 
         conditions = [e.comment for e in evokeds]
-        print conditions
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
         for cond, col, pos in zip(conditions, colors[:len(evokeds)],
                                   positions):
@@ -661,7 +659,7 @@ class Caller(object):
         layout        -- Layout used for plotting channels.
         """
         count = 0
-        for name, subject in self.experiment.subjects.items():
+        for subject in self.experiment.subjects.values():
             if subject.evokeds.get(evoked_name):
                 count += 1
 
@@ -707,8 +705,10 @@ class Caller(object):
                     evoked_groups[key] = [value]
 
         grand_averages = []
-        for evokeds in evoked_groups.values():
-            grand_averages.append(mne.grand_average(evokeds))
+        for key, evokeds in evoked_groups.items():
+            grand_averaged = mne.grand_average(evokeds)
+            grand_averaged.comment = key
+            grand_averages.append(grand_averaged)
 
         # TODO: save group average data to file
 
@@ -1327,7 +1327,6 @@ class Caller(object):
         Returns the filtered array.
         """
         self._filter(dic, subject)
-        return 0
     
     def _filter(self, dic, subject):
         """Performed in a working thread."""

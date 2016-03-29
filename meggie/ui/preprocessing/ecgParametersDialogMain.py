@@ -83,47 +83,51 @@ class EcgParametersDialog(QtGui.QDialog):
         on dialog.
         """
 
-        subject = self.caller.experiment.subjects[subject_name]
-	self.ui.comboBoxECGChannel.clear()
-	if len(params_dict) > 0:
-	    dic = params_dict  
-	else:
-	    dic = self.get_default_values()
-	channel_list = self.batching_widget.data[subject_name + ' channels']
-	self.ui.comboBoxECGChannel.addItems(channel_list)
-	channel_name = dic.get('ch_name')
-	if channel_name is None:
-	    channel_name = channel_list[0]
-	if channel_name not in channel_list:
-	    channel_name = self.channel_name_validator(channel_name,
-						       channel_list)
-	if channel_name == '':
-	    pass
-	else:
-	    ch_idx = self.ui.comboBoxECGChannel.findText(channel_name,
-					    QtCore.Qt.MatchContains)
-	    self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
-	self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
-	self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-	self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
-	self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))  # noqa
-	self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))  # noqa
-	self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
-	self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
-	self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
-	self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
-	self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-	self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
-	self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
-	self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
-	self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-	self.ui.lineEditBad.setProperty("value", dic.get('bads'))
-	self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
-	self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-	self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
-	self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
-	self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
-	self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
+        self.ui.comboBoxECGChannel.clear()
+        
+        if len(params_dict) > 0:
+            dic = params_dict  
+        else:
+            dic = self.get_default_values()
+        
+        channel_list = self.batching_widget.data[subject_name + ' channels']
+        self.ui.comboBoxECGChannel.addItems(channel_list)
+        channel_name = dic.get('ch_name')
+        
+        if channel_name is None:
+            channel_name = channel_list[0]
+        
+        if channel_name not in channel_list:
+            channel_name = self.channel_name_validator(channel_name,
+        					       channel_list)
+        if channel_name == '':
+            pass
+        else:
+            ch_idx = self.ui.comboBoxECGChannel.findText(channel_name,
+        				    QtCore.Qt.MatchContains)
+        
+        self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
+        self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+        self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+        self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+        self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))  # noqa
+        self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))  # noqa
+        self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+        self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+        self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+        self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+        self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+        self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
+        self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
+        self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
+        self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
+        self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+        self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+        self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+        self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
+        self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+        self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+        self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
     def get_default_values(self):
         """Sets default values for dialog."""
@@ -160,14 +164,14 @@ class EcgParametersDialog(QtGui.QDialog):
         parameter_values = self.collect_parameter_values()
         active_subject_name =  self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
-
-        if any([
-            not self.check_if_channel_exists(
-                self.caller.experiment.active_subject.subject_name),
-            not self.calculate_ecg(self.caller.experiment.active_subject)    
-        ]):
-            self.batching_widget.failed_subjects.append(
-                self.caller.experiment.active_subject)
+        try:
+            self.check_if_channel_exists(
+                self.caller.experiment.active_subject.subject_name)
+            self.calculate_ecg(self.caller.experiment.active_subject)    
+        except Exception as e:
+            self.batching_widget.failed_subjects.append((
+                self.caller.experiment.active_subject, str(e)))
+            
         self.batching_widget.cleanup()
         self.close()
         self.parent._initialize_ui()
@@ -184,27 +188,27 @@ class EcgParametersDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if any ([
-               not self.check_if_channel_exists(recently_active_subject),
-               not self.calculate_ecg(self.caller.experiment.active_subject)      
-            ]):
-                self.batching_widget.failed_subjects.append(
-                    self.caller.experiment.active_subject)
+            try:
+                self.check_if_channel_exists(
+                    self.caller.experiment.active_subject.subject_name)
+                self.calculate_ecg(self.caller.experiment.active_subject)    
+            except Exception as e:
+                self.batching_widget.failed_subjects.append((
+                    self.caller.experiment.active_subject, str(e)))
         
-        # 2. Calculation is done for the rest of the subjects.
+        # 2. Calculation is done for the rest of the subjects
         for name, subject in self.caller.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
                 self.caller.activate_subject(name)
-                if any ([
-                   not self.check_if_channel_exists(name),
-                   not self.calculate_ecg(subject)      
-                ]):
-                    self.batching_widget.failed_subjects.append(
-                        self.caller.experiment.active_subject)
+            try:
+                self.check_if_channel_exists(subject.subject_name)
+                self.calculate_ecg(subject)    
+            except Exception as e:
+                self.batching_widget.failed_subjects.append((subject, str(e)))              
+
         self.caller.activate_subject(recently_active_subject)
-        
         self.batching_widget.cleanup()        
         self.parent._initialize_ui()
         self.close()
@@ -247,8 +251,7 @@ class EcgParametersDialog(QtGui.QDialog):
         if ch_name not in ch_list:
             ch_name = self.channel_name_validator(ch_name, ch_list)
             if ch_name == '':
-                return False
-        return True
+                raise ValueError("Channel doesn't exist")
         
 
     def collect_parameter_values(self):
@@ -289,12 +292,5 @@ class EcgParametersDialog(QtGui.QDialog):
         Keyword arguments:
         subject               -- Subject object
         """
-        try:
-            result = self.caller.call_ecg_ssp(
-                self.batching_widget.data[subject.subject_name], subject)
-            if not result == 0:
-                return False
-        except Exception:
-            return False
-        return True
-
+        self.caller.call_ecg_ssp(
+            self.batching_widget.data[subject.subject_name], subject)

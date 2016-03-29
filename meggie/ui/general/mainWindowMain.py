@@ -161,9 +161,15 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList = EpochWidget(self)
         self.epochList.hide()
 
-        self.evokedList = ListWidget(self.ui.widgetEvokeds)
-        self.evokedList.setMinimumWidth(345)
-        self.evokedList.setMaximumHeight(120)
+        #self.evokedList = ListWidget(self)
+        self.evokedList = ListWidget(self.ui.groupBoxEvokeds)
+        #self.evokedList.setMaximumWidth(100)
+        
+        #self.evokedList.setHorizontalScrollBarPolicy(300)
+        self.evokedList.setMinimumWidth(330)
+        self.evokedList.setMaximumWidth(330)
+        self.evokedList.setMinimumHeight(120)
+        self.evokedList.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
