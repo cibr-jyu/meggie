@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ecgParametersDialogBatch.ui'
+# Form implementation generated from reading ui file 'ecgParametersDialogUi.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(634, 968)
+        Dialog.resize(629, 956)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.scrollArea = QtGui.QScrollArea(Dialog)
@@ -34,16 +34,17 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_2 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 616, 911))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 611, 899))
+        self.scrollAreaWidgetContents_2.setMinimumSize(QtCore.QSize(611, 899))
         self.scrollAreaWidgetContents_2.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.scrollAreaWidgetContents_2.setObjectName(_fromUtf8("scrollAreaWidgetContents_2"))
         self.tabWidgetECGSettings = QtGui.QTabWidget(self.scrollAreaWidgetContents_2)
-        self.tabWidgetECGSettings.setGeometry(QtCore.QRect(0, 0, 591, 571))
+        self.tabWidgetECGSettings.setGeometry(QtCore.QRect(0, 0, 591, 481))
         self.tabWidgetECGSettings.setObjectName(_fromUtf8("tabWidgetECGSettings"))
         self.tabECG1 = QtGui.QWidget()
         self.tabECG1.setObjectName(_fromUtf8("tabECG1"))
         self.layoutWidget = QtGui.QWidget(self.tabECG1)
-        self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 568, 470))
+        self.layoutWidget.setGeometry(QtCore.QRect(9, 9, 568, 421))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
@@ -59,6 +60,7 @@ class Ui_Dialog(object):
         self.groupBoxEvent = QtGui.QGroupBox(self.layoutWidget)
         self.groupBoxEvent.setObjectName(_fromUtf8("groupBoxEvent"))
         self.formLayout_4 = QtGui.QFormLayout(self.groupBoxEvent)
+        self.formLayout_4.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout_4.setObjectName(_fromUtf8("formLayout_4"))
         self.frame = QtGui.QFrame(self.groupBoxEvent)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -291,7 +293,7 @@ class Ui_Dialog(object):
         self.spinBoxTaps.setObjectName(_fromUtf8("spinBoxTaps"))
         self.horizontalLayout_22.addWidget(self.spinBoxTaps)
         self.verticalLayoutWidget = QtGui.QWidget(self.tabECG2)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 250, 389, 111))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 210, 389, 101))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -319,7 +321,7 @@ class Ui_Dialog(object):
         self.lineEditBad.setObjectName(_fromUtf8("lineEditBad"))
         self.horizontalLayout_29.addWidget(self.lineEditBad)
         self.groupBox = QtGui.QGroupBox(self.tabECG2)
-        self.groupBox.setGeometry(QtCore.QRect(10, 400, 520, 132))
+        self.groupBox.setGeometry(QtCore.QRect(10, 310, 520, 132))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.formLayout_2 = QtGui.QFormLayout(self.groupBox)
         self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
@@ -386,8 +388,7 @@ class Ui_Dialog(object):
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.frameEpochRejection)
         self.tabWidgetECGSettings.addTab(self.tabECG2, _fromUtf8(""))
         self.widget = QtGui.QWidget(self.scrollAreaWidgetContents_2)
-        self.widget.setGeometry(QtCore.QRect(0, 580, 591, 311))
-        self.widget.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.widget.setGeometry(QtCore.QRect(0, 490, 301, 371))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -483,7 +484,7 @@ class Ui_Dialog(object):
         self.doubleSpinBoxMagReject.setSuffix(_translate("Dialog", " fT", None))
         self.labelEOGReject.setText(_translate("Dialog", "EOG:", None))
         self.doubleSpinBoxEOGReject.setSuffix(_translate("Dialog", " uV", None))
-        self.tabWidgetECGSettings.setTabText(self.tabWidgetECGSettings.indexOf(self.tabECG2), _translate("Dialog", "Bads etc.", None))
+        self.tabWidgetECGSettings.setTabText(self.tabWidgetECGSettings.indexOf(self.tabECG2), _translate("Dialog", "Advanced", None))
         self.pushButtonCancel.setText(_translate("Dialog", "Cancel", None))
         self.pushButtonComputeBatch.setText(_translate("Dialog", "Compute Batch", None))
         self.pushButtonCompute.setText(_translate("Dialog", "Compute", None))

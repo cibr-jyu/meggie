@@ -86,10 +86,10 @@ from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-from meggie.ui.widgets.listWidget import ListWidget
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -131,11 +131,11 @@ class MainWindow(QtGui.QMainWindow):
         # defined by the CreateExperimentDialog or the by the Open_experiment_
         # triggered action.
 
-        # Direct output to console
-        self.directOutput()
-        self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-        sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-        sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+#         # Direct output to console
+#         self.directOutput()
+#         self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+#         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+#         sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -161,16 +161,16 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList = EpochWidget(self)
         self.epochList.hide()
 
-        #self.evokedList = ListWidget(self)
-        self.evokedList = ListWidget(self.ui.groupBoxEvokeds)
-        #self.evokedList.setMaximumWidth(100)
+        #self.ui.listWidgetEvoked.setHorizontalScrollBarPolicy(300)
+        self.ui.listWidgetEvoked.setMinimumWidth(346)
+        self.ui.listWidgetEvoked.setMaximumWidth(346)
         
-        #self.evokedList.setHorizontalScrollBarPolicy(300)
-        self.evokedList.setMinimumWidth(330)
-        self.evokedList.setMaximumWidth(330)
-        self.evokedList.setMinimumHeight(120)
-        self.evokedList.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-
+        self.batching_widget = BatchingWidget(
+            self, self.ui.widget,
+            self.ui.pushButtonCreateEvoked,
+            self.ui.pushButtonCreateEvokedBatch, 
+        )
+        
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
 
@@ -560,8 +560,8 @@ class MainWindow(QtGui.QMainWindow):
             '_evoked.fif'
         )
 
-        for item_idx in range(self.evokedList.count()):
-            if str(self.evokedList.item(item_idx).text()) == evoked_name:
+        for item_idx in range(self.ui.listWidgetEvoked.count()):
+            if str(self.ui.listWidgetEvoked.item(item_idx).text()) == evoked_name:
                 message = ('Evoked data set with name %s already exists!' % 
                            evoked_name)
                 messagebox(self, message)
@@ -589,7 +589,7 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, message)
             return
 
-        self.evokedList.addItem(item)
+        self.ui.listWidgetEvoked.addItem(item)
         self.ui.listWidgetInverseEvoked.addItem(item.text())
         
         subject = self.caller.experiment.active_subject
@@ -601,13 +601,13 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, e)
             return
 
-        self.evokedList.setCurrentItem(item)
+        self.ui.listWidgetEvoked.setCurrentItem(item)
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""
         if checked is None:
             return
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
         name = str(item.text())
@@ -656,7 +656,7 @@ class MainWindow(QtGui.QMainWindow):
         """Plot the evoked data as a topology."""
         if checked is None:
             return
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
         layout = ''
@@ -699,7 +699,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
 
@@ -761,13 +761,13 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.evokedList.count() == 0:
+        if self.ui.listWidgetEvoked.count() == 0:
             return
 
-        elif self.evokedList.currentItem() is None:
+        elif self.ui.listWidgetEvoked.currentItem() is None:
             messagebox(self, 'No evokeds selected.')
 
-        item_str = self.evokedList.currentItem().text()
+        item_str = self.ui.listWidgetEvoked.currentItem().text()
 
         message = 'Permanently remove evokeds and the related files?'
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
@@ -776,9 +776,9 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            item = self.evokedList.currentItem()
-            row = self.evokedList.row(item)
-            self.evokedList.takeItem(row)
+            item = self.ui.listWidgetEvoked.currentItem()
+            row = self.ui.listWidgetEvoked.row(item)
+            self.ui.listWidgetEvoked.takeItem(row)
             self.ui.listWidgetInverseEvoked.takeItem(row)
             try:
                 self.caller.experiment.active_subject.remove_evoked(
@@ -1352,7 +1352,7 @@ class MainWindow(QtGui.QMainWindow):
         # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
-        self.evokedList.clear()
+        self.ui.listWidgetEvoked.clear()
         self.ui.listWidgetInverseEvoked.clear()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
@@ -1435,7 +1435,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if evokeds_items is not None:
             for evoked in evokeds_items.values():
-                self.evokedList.addItem(evoked.name)
+                self.ui.listWidgetEvoked.addItem(evoked.name)
                 self.ui.listWidgetInverseEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
@@ -1685,7 +1685,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-
+ 
     def normalOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
@@ -1698,7 +1698,7 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
-
+ 
     def errorOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.

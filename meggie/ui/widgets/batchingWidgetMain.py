@@ -27,19 +27,32 @@ class BatchingWidget(QtGui.QWidget):
     """
     caller = Caller.Instance()
     
-    def __init__(self, parent, *args, **kwargs):
-        super(BatchingWidget, self).__init__(*args, **kwargs)
+    def __init__(self, parent, container, pushButtonCompute=None, pushButtonComputeBatch=None):
+        super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
-        self.parent.ui.pushButtonCompute.setEnabled(True)
-        self.parent.ui.pushButtonComputeBatch.setEnabled(False)
-        self.ui.groupBoxBatch.hide()
+
+        if not pushButtonCompute:
+            pushButtonCompute = self.parent.ui.pushButtonCompute
+        if not pushButtonComputeBatch:    
+            pushButtonComputeBatch = self.parent.ui.pushButtonComputeBatch
+        
+        self.pushButtonComputeBatch = pushButtonComputeBatch
+        self.pushButtonCompute = pushButtonCompute
+        
+        self.pushButtonCompute.setEnabled(True)
+        self.pushButtonComputeBatch.setEnabled(False)
+
+        self.ui.functionalityWidget.hide()
         self.setGeometry(self.parent.ui.widget.geometry())
         self.adjustSize()
 
         self.data = {}
         self.failed_subjects = []
+        
+        if self.caller.experiment is None:
+            return
         
         for name in self.caller.experiment.subjects:
             item = QtGui.QListWidgetItem(name)
@@ -59,16 +72,16 @@ class BatchingWidget(QtGui.QWidget):
     
     def showWidget(self, disabled):
         if disabled:
-            self.ui.groupBoxBatch.show()
+            self.ui.functionalityWidget.show()
             self.adjustSize()
-            self.parent.ui.pushButtonCompute.setEnabled(False)
-            self.parent.ui.pushButtonComputeBatch.setEnabled(True)
+            self.pushButtonCompute.setEnabled(False)
+            self.pushButtonComputeBatch.setEnabled(True)
             #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
         else:
-            self.ui.groupBoxBatch.hide()
+            self.ui.functionalityWidget.hide()
             self.adjustSize()
-            self.parent.ui.pushButtonCompute.setEnabled(True)
-            self.parent.ui.pushButtonComputeBatch.setEnabled(False)
+            self.pushButtonCompute.setEnabled(True)
+            self.pushButtonComputeBatch.setEnabled(False)
             #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
 
     def on_pushButtonApply_clicked(self, checked=None):

@@ -87,7 +87,9 @@ class EventSelectionDialog(QtGui.QDialog):
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
         
-        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(self, 
+            self.ui.scrollAreaWidgetContents)
+        
         for name in self.caller.experiment.subjects:
             self.batching_widget.data[name] = {}
             self.batching_widget.data[name]['events'] = []

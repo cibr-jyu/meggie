@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>945</height>
+    <width>582</width>
+    <height>957</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,14 +74,14 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>635</width>
-        <height>888</height>
+        <width>564</width>
+        <height>900</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>540</width>
-        <height>690</height>
+        <width>564</width>
+        <height>900</height>
        </size>
       </property>
       <widget class="QTabWidget" name="tabWidgetEOGSettings">
@@ -90,7 +90,7 @@
          <x>0</x>
          <y>0</y>
          <width>553</width>
-         <height>571</height>
+         <height>481</height>
         </rect>
        </property>
        <property name="currentIndex">
@@ -384,7 +384,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>511</width>
+            <width>521</width>
             <height>61</height>
            </rect>
           </property>
@@ -492,7 +492,7 @@
        </widget>
        <widget class="QWidget" name="tabEOG2">
         <attribute name="title">
-         <string>Bads etc.</string>
+         <string>Advanced</string>
         </attribute>
         <widget class="QWidget" name="horizontalLayoutWidget_17">
          <property name="geometry">
@@ -604,9 +604,9 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>250</y>
+           <y>210</y>
            <width>371</width>
-           <height>111</height>
+           <height>101</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -640,9 +640,9 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>400</y>
+           <y>310</y>
            <width>491</width>
-           <height>151</height>
+           <height>131</height>
           </rect>
          </property>
          <property name="title">
@@ -793,9 +793,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>580</y>
-         <width>551</width>
-         <height>301</height>
+         <y>490</y>
+         <width>301</width>
+         <height>371</height>
         </rect>
        </property>
       </widget>
