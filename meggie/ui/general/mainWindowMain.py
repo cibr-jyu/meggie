@@ -165,7 +165,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetEvoked.setMinimumWidth(346)
         self.ui.listWidgetEvoked.setMaximumWidth(346)
         
-        self.batching_widget = BatchingWidget(
+        self.evokeds_batching_widget = BatchingWidget(
             self, self.ui.widget,
             self.ui.pushButtonCreateEvoked,
             self.ui.pushButtonCreateEvokedBatch, 
@@ -527,6 +527,47 @@ class MainWindow(QtGui.QMainWindow):
         else:
             QWhatsThis.enterWhatsThisMode()
 
+    def _calculate_evokeds(self, subject, collection_names):
+        
+        evokeds = {}
+        for name in collection_names:
+            collection = subject.epochs[name]
+            epoch = collection.raw
+            evoked = epoch.average()
+            evoked.comment = name
+            evokeds[name] = evoked
+
+        evoked_name = (
+            '-'.join(collection_names) +
+            '_evoked.fif'
+        )
+        
+        if evoked_name in subject.evokeds:
+            message = ('Evoked data set with name %s already exists!' % 
+                       evoked_name)
+            raise ValueError(message)
+
+        # Save evoked into evoked (average) directory with name evoked_name
+        saveFolder = self.caller.experiment.active_subject.evokeds_directory
+        if not os.path.exists(saveFolder):
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                message = ('Writing to selected folder is not allowed. You can'
+                           ' still process the evoked file (visualize etc.).')
+                raise IOError(message)
+
+        try:
+            print 'Writing evoked data as ' + evoked_name + ' ...'
+            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+        except IOError:
+            message = ('Writing to selected folder is not allowed. You can '
+                       'still process the evoked file (visualize etc.).')
+            raise IOError(message)
+        
+        new_evoked = Evoked(evoked_name, subject, evokeds)
+        subject.add_evoked(new_evoked)        
+
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
@@ -535,73 +576,45 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        collection_names = [str(item.text()) for item 
-                 in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        collection_names = [str(item.text()) for item in selected_items]
 
         # If no collections are selected, show a message to to the user and return.
         if len(collection_names) == 0:
             messagebox(self, 'Please select an epoch collection to average.')
             return
 
-        evokeds = {}
-        for name in collection_names:
-            subject = self.caller.experiment.active_subject
-            collection = subject.epochs[name]
-            epoch = collection.raw
-            evoked = epoch.average()
-            evoked.comment = name
-            evokeds[name] = evoked
-
-        if not evokeds:
-            raise Exception('No evokeds found.')
-        
-        evoked_name = (
-            '-'.join(collection_names) +
-            '_evoked.fif'
-        )
-
-        for item_idx in range(self.ui.listWidgetEvoked.count()):
-            if str(self.ui.listWidgetEvoked.item(item_idx).text()) == evoked_name:
-                message = ('Evoked data set with name %s already exists!' % 
-                           evoked_name)
-                messagebox(self, message)
-                return
-
-        item = QtGui.QListWidgetItem(evoked_name)
-
-        # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = self.caller.experiment.active_subject.evokeds_directory
-        if os.path.exists(saveFolder) is False:
-            try:
-                os.mkdir(saveFolder)
-            except IOError:
-                message = ('Writing to selected folder is not allowed. You can'
-                           ' still process the evoked file (visualize etc.).')
-                messagebox(self, message)
-                return
-
-        try:
-            print 'Writing evoked data as ' + evoked_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
-        except IOError:
-            message = ('Writing to selected folder is not allowed. You can '
-                       'still process the evoked file (visualize etc.).')
-            messagebox(self, message)
-            return
-
-        self.ui.listWidgetEvoked.addItem(item)
-        self.ui.listWidgetInverseEvoked.addItem(item.text())
-        
         subject = self.caller.experiment.active_subject
-        new_evoked = Evoked(evoked_name, subject, evokeds)
+        
         try:
-            subject.add_evoked(new_evoked)
-            self.caller.experiment.save_experiment_settings()
+            self._calculate_evokeds(subject, collection_names)
         except Exception as e:
             exc_messagebox(self, e)
-            return
 
-        self.ui.listWidgetEvoked.setCurrentItem(item)
+        self.caller.experiment.save_experiment_settings()
+        self.evokeds_batching_widget.cleanup(self)
+        self._initialize_ui()
+
+    def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subject_names = self.evokeds_batching_widget.selected_subjects
+        
+        for subject_name, collection_names in self.evokeds_batching_widget.data.items():
+            if subject_name in subject_names:
+                
+                try:
+                    self.calculate_evokeds(subject_name, collection_names)
+                except Exception as e:
+                    failed_subjects = self.evokeds_batching_widget.failed_subjects
+                    failed_subjects.append((subject_name, str(e)))
+                
+
+        self.caller.experiment.save_experiment_settings()
+        self.evokeds_batching_widget.cleanup(self)
+        self._initialize_ui()
+        
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""
@@ -1655,6 +1668,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject:
             _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
                 self.caller.experiment.active_subject)
+
+    def collect_parameter_values(self):
+        #TODO: clear batchingWidget data after group average
+        collection_names = [str(item.text()) for item 
+                in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        return collection_names        
 
 # Miscellaneous code:
 

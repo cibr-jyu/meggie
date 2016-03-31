@@ -53,16 +53,8 @@ class BatchingWidget(QtGui.QWidget):
         
         if self.caller.experiment is None:
             return
-        
-        for name in self.caller.experiment.subjects:
-            item = QtGui.QListWidgetItem(name)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            item.setFlags(QtCore.Qt.ItemIsEnabled)
-            self.ui.listWidgetSubjects.addItem(item)
-
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
-        #print str(item.text())
         subject_name = str(item.text())
         if subject_name in self.data.keys():
             data_dict = self.data[subject_name]
@@ -71,18 +63,25 @@ class BatchingWidget(QtGui.QWidget):
         self.parent.selection_changed(subject_name, data_dict)
     
     def showWidget(self, disabled):
+        
         if disabled:
             self.ui.functionalityWidget.show()
             self.adjustSize()
             self.pushButtonCompute.setEnabled(False)
             self.pushButtonComputeBatch.setEnabled(True)
-            #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
+
+            for name in self.caller.experiment.subjects:
+                item = QtGui.QListWidgetItem(name)
+                item.setCheckState(QtCore.Qt.Unchecked)
+                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                self.ui.listWidgetSubjects.addItem(item)
+        
         else:
+            self.ui.listWidgetSubjects.clear()
             self.ui.functionalityWidget.hide()
             self.adjustSize()
             self.pushButtonCompute.setEnabled(True)
             self.pushButtonComputeBatch.setEnabled(False)
-            #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
@@ -124,6 +123,16 @@ class BatchingWidget(QtGui.QWidget):
             messagebox(self, message)
         item.setCheckState(QtCore.Qt.Unchecked)
 
+    @property
+    def selected_subjects(self):
+        subject_names = [] 
+        for i in range(self.ui.listWidgetSubjects.count()):
+            item = self.ui.listWidgetSubjects.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
+                
+        return subject_names
+
     def cleanup(self, parent=None):
         if len(self.failed_subjects) > 0:
             rows = []
@@ -136,3 +145,8 @@ class BatchingWidget(QtGui.QWidget):
                 parent = self.parent.parent
             
             messagebox(parent, '\n'.join(rows))
+        self.data = {}
+        self.failed_subjects = []
+        self.ui.checkBoxBatch.setChecked(False)
+        self.ui.functionalityWidget.hide()
+        
