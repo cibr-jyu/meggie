@@ -107,7 +107,7 @@ class FilterDialog(QtGui.QDialog):
             fileManager.save_raw(self.caller.experiment, previewRaw, fname, overwrite=True)       
             self.caller.experiment.active_subject.set_working_file(previewRaw)
 
-            self.parent._initialize_ui()
+            self.parent.initialize_ui()
 
 
     def accept(self):
@@ -129,7 +129,7 @@ class FilterDialog(QtGui.QDialog):
         
         self.batching_widget.cleanup()
         self.close()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         
     def acceptBatch(self):
         
@@ -177,7 +177,7 @@ class FilterDialog(QtGui.QDialog):
         self.caller.activate_subject(recently_active_subject)
         
         self.batching_widget.cleanup()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.close()
     
     def _validateFilterFreq(self, paramDict, samplerate):

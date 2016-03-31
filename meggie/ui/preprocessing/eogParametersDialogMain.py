@@ -85,8 +85,8 @@ class EogParametersDialog(QtGui.QDialog):
                 self.caller.experiment.active_subject)
         
         self.batching_widget.cleanup()
+        self.parent.initialize_ui()
         self.close()
-        self.parent._initialize_ui()
     
     def acceptBatch(self):
         
@@ -118,7 +118,7 @@ class EogParametersDialog(QtGui.QDialog):
         self.caller.activate_subject(recently_active_subject)
 
         self.batching_widget.cleanup()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.close()
         
     def collect_parameter_values(self):

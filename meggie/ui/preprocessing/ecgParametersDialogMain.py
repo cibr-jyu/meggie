@@ -170,7 +170,7 @@ class EcgParametersDialog(QtGui.QDialog):
                 self.caller.experiment.active_subject)
         self.batching_widget.cleanup()
         self.close()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         
     def acceptBatch(self):
         
@@ -206,7 +206,7 @@ class EcgParametersDialog(QtGui.QDialog):
         self.caller.activate_subject(recently_active_subject)
         
         self.batching_widget.cleanup()        
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.close()
 
     def channel_name_validator(self, ch_name, ch_list):
