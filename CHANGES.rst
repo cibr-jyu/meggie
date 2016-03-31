@@ -1,10 +1,20 @@
 Changelog
 =========
 
-0.1.6 (unreleased)
+0.2.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.0 (2016-03-31)
+------------------
+
+- Whole new batching functionality
+- New beautiful core without pickling
+- Experiments can be opened from everywhere
+- Old-style experiments cannot be opened anymore
+- Cleaned up a lot of code
+- Log mne commands
 
 0.1.5 (2016-02-08)
 ------------------
