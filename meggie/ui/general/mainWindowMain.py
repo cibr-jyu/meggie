@@ -131,11 +131,11 @@ class MainWindow(QtGui.QMainWindow):
         # defined by the CreateExperimentDialog or the by the Open_experiment_
         # triggered action.
 
-#         # Direct output to console
-#         self.directOutput()
-#         self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-#         sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-#         sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+        # Direct output to console
+        # self.directOutput()
+        # self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+        # sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+        # sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -146,7 +146,6 @@ class MainWindow(QtGui.QMainWindow):
         self.preferencesHandler.set_env_variables()
 
         # For handling initialization and switching of experiments.
-        # TODO: currently only handles initialization.
         self.experimentHandler = experiment.ExperimentHandler(self)
 
         # No tabs in the tabWidget initially
@@ -218,12 +217,13 @@ class MainWindow(QtGui.QMainWindow):
         for colnum in range(1, 16):
             tvfs.setColumnHidden(colnum, True)
 
-        # TODO: should show empty mainWindow with "loading previous experiment
-        # named <name>"-notification to user before starting to load
-        # the experiment, currently doesn't.
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
-            self.experimentHandler.open_existing_experiment(self.preferencesHandler)
+            exp = self.experimentHandler.open_existing_experiment(self.preferencesHandler)
+            self.caller.experiment = exp
+            self.add_tabs()
+            self.initialize_ui()
+            self.reinitialize_models()
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -281,7 +281,7 @@ class MainWindow(QtGui.QMainWindow):
         gc.collect()
         
         self.add_tabs()
-        self._initialize_ui()
+        self.initialize_ui()
         self.reinitialize_models()
 
     def on_actionOpen_experiment_triggered(self, checked=None):
@@ -310,7 +310,12 @@ class MainWindow(QtGui.QMainWindow):
         print 'Opening experiment ' + path
 
         try:
-            self.experimentHandler.open_existing_experiment(self.preferencesHandler, path=exp_path)
+            exp = self.experimentHandler.open_existing_experiment(
+                self.preferencesHandler, path=exp_path)
+            self.caller.experiment = exp
+            self.add_tabs()
+            self.initialize_ui()
+            self.reinitialize_models()
         except Exception as e:
             exc_messagebox(self, e)
         self.preferencesHandler.write_preferences_to_disk()
@@ -356,6 +361,7 @@ class MainWindow(QtGui.QMainWindow):
             except Exception:
                 msg = 'Could not remove the contents of the subject folder.'
                 messagebox(self, msg)
+            self.initialize_ui()
 
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -833,7 +839,7 @@ class MainWindow(QtGui.QMainWindow):
             fname = self.caller.experiment.active_subject.get_working_file().info['filename']
             fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
             
-            self._initialize_ui()
+            self.initialize_ui()
             bads = self.caller.experiment.active_subject.get_working_file().info['bads']
             self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
         if self.ui.checkBoxShowEvents.isChecked():
@@ -1070,7 +1076,7 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.activate_subject(subject_name)
         except Exception as e:
             exc_messagebox(self, e)
-        self._initialize_ui()
+        self.initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
@@ -1127,7 +1133,7 @@ class MainWindow(QtGui.QMainWindow):
                    'happened.')
             messagebox(self, msg)
 
-        self._initialize_ui()
+        self.initialize_ui()
 
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         if checked is None:
@@ -1138,7 +1144,7 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as e:
             exc_messagebox(self, e)
 
-        self._initialize_ui()
+        self.initialize_ui()
 
     def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
         """
@@ -1341,7 +1347,7 @@ class MainWindow(QtGui.QMainWindow):
 # Code for UI initialization (when starting the program) and
 # updating when something changes
 
-    def _initialize_ui(self):
+    def initialize_ui(self):
         """
         Method for setting up the GUI. Called whenever a subject is activated,
         either via creation of a new subject or change of an active subject.

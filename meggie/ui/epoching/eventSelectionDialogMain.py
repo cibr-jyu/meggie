@@ -345,7 +345,7 @@ class EventSelectionDialog(QtGui.QDialog):
         #         self.caller.experiment.active_subject)
 
         self.batching_widget.cleanup()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.caller.experiment.save_experiment_settings()
         self.close()
 
@@ -400,7 +400,7 @@ class EventSelectionDialog(QtGui.QDialog):
                                                                  str(e)))
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.caller.experiment.save_experiment_settings()
         self.close()
 

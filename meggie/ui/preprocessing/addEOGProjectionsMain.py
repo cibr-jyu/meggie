@@ -95,6 +95,6 @@ class AddEOGProjections(QtGui.QDialog):
         except Exception as e:
             exc_messagebox(self.parent, e)
 
-        self.parent._initialize_ui()
+        self.parent.initialize_ui()
         self.close()
         

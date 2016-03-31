@@ -228,7 +228,6 @@ class Experiment(QObject):
             raise OSError('Could not remove the contents of the subject folder.')    
 
         self.save_experiment_settings()
-        main_window._initialize_ui()
 
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
@@ -406,11 +405,9 @@ class ExperimentHandler(QObject):
 
         self.initialize_logger(experiment)
         prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
-        self.parent.caller.experiment = experiment
-        self.parent.add_tabs()
-        self.parent._initialize_ui()
-        self.parent.reinitialize_models()
-    
+
+        return experiment
+
     def initialize_logger(self, experiment):
 
         print 'Initializing logger' 
