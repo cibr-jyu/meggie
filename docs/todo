@@ -5,3 +5,8 @@ TODO:
 - aktivoinnin yhteydessä epokit voisi ladata listaan mainwindowin update_epochs metodilla
 - messageboxit batchingissa: batchingwidgetille failed_subjects
 - testaa ecg, eog, filter ja epochs batchit
+
+UI:
+
+- scrollbarit kaikkialle (dialogit, widgetit jne)
+- ME TARVITAAN EPOKIT ITSENÄISYYYTTÄ JULISTAA

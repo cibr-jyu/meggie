@@ -87,7 +87,9 @@ class EventSelectionDialog(QtGui.QDialog):
                 active = idx
         self.ui.comboBoxStimChannel.setCurrentIndex(active)
         
-        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(self, 
+            self.ui.scrollAreaWidgetContents)
+        
         for name in self.caller.experiment.subjects:
             self.batching_widget.data[name] = {}
             self.batching_widget.data[name]['events'] = []
@@ -330,9 +332,17 @@ class EventSelectionDialog(QtGui.QDialog):
                 return
         
         self.batching_widget.data[self.caller.experiment.active_subject.subject_name] = param_dict
-        if not self.calculate_epochs(self.caller.experiment.active_subject):
-            self.batching_widget.failed_subjects.append(
-                self.caller.experiment.active_subject)
+        try:
+            self.calculate_epochs(self.caller.experiment.active_subject)
+        except Exception as e:
+            self.batching_widget.failed_subjects.append((
+                self.caller.experiment.active_subject,
+                str(e)
+            ))
+        
+        # if not self.calculate_epochs(self.caller.experiment.active_subject):
+        #     self.batching_widget.failed_subjects.append(
+        #         self.caller.experiment.active_subject)
 
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -370,9 +380,11 @@ class EventSelectionDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-            if not self.calculate_epochs(self.caller.experiment.active_subject):
-                self.batching_widget.failed_subjects.append(
-                    self.caller.experiment.active_subject)
+            try:
+                self.calculate_epochs(self.caller.experiment.active_subject)
+            except Exception as e:
+                self.batching_widget.failed_subjects.append((
+                    self.caller.experiment.active_subject, str(e)))                
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -380,9 +392,12 @@ class EventSelectionDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 self.caller.activate_subject(name)
-                if not self.calculate_epochs(subject):
-                    self.batching_widget.failed_subjects.append(subject)
-
+                
+                try:
+                    self.calculate_epochs(subject)
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject, 
+                                                                 str(e)))
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -398,14 +413,6 @@ class EventSelectionDialog(QtGui.QDialog):
         self.fixedLengthDialog.show()
 
     def calculate_epochs(self, subject):
-        try:
-            result = self.caller.create_epochs(
-                self.batching_widget.data[subject.subject_name], subject)
-            if not result == 0:
-                return False
-        except Exception:
-            return False
-        except ValueError as e:
-            return False
-        return True
+        self.caller.create_epochs(
+            self.batching_widget.data[subject.subject_name], subject)
 

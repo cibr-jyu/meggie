@@ -27,29 +27,34 @@ class BatchingWidget(QtGui.QWidget):
     """
     caller = Caller.Instance()
     
-    def __init__(self, parent, *args, **kwargs):
-        super(BatchingWidget, self).__init__(*args, **kwargs)
+    def __init__(self, parent, container, pushButtonCompute=None, pushButtonComputeBatch=None):
+        super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
-        self.parent.ui.pushButtonCompute.setEnabled(True)
-        self.parent.ui.pushButtonComputeBatch.setEnabled(False)
-        self.ui.groupBoxBatch.hide()
+
+        if not pushButtonCompute:
+            pushButtonCompute = self.parent.ui.pushButtonCompute
+        if not pushButtonComputeBatch:    
+            pushButtonComputeBatch = self.parent.ui.pushButtonComputeBatch
+        
+        self.pushButtonComputeBatch = pushButtonComputeBatch
+        self.pushButtonCompute = pushButtonCompute
+        
+        self.pushButtonCompute.setEnabled(True)
+        self.pushButtonComputeBatch.setEnabled(False)
+
+        self.ui.functionalityWidget.hide()
         self.setGeometry(self.parent.ui.widget.geometry())
         self.adjustSize()
 
         self.data = {}
         self.failed_subjects = []
         
-        for name in self.caller.experiment.subjects:
-            item = QtGui.QListWidgetItem(name)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            item.setFlags(QtCore.Qt.ItemIsEnabled)
-            self.ui.listWidgetSubjects.addItem(item)
-
+        if self.caller.experiment is None:
+            return
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
-        #print str(item.text())
         subject_name = str(item.text())
         if subject_name in self.data.keys():
             data_dict = self.data[subject_name]
@@ -58,18 +63,25 @@ class BatchingWidget(QtGui.QWidget):
         self.parent.selection_changed(subject_name, data_dict)
     
     def showWidget(self, disabled):
+        
         if disabled:
-            self.ui.groupBoxBatch.show()
+            self.ui.functionalityWidget.show()
             self.adjustSize()
-            self.parent.ui.pushButtonCompute.setEnabled(False)
-            self.parent.ui.pushButtonComputeBatch.setEnabled(True)
-            #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
+            self.pushButtonCompute.setEnabled(False)
+            self.pushButtonComputeBatch.setEnabled(True)
+
+            for name in self.caller.experiment.subjects:
+                item = QtGui.QListWidgetItem(name)
+                item.setCheckState(QtCore.Qt.Unchecked)
+                item.setFlags(QtCore.Qt.ItemIsEnabled)
+                self.ui.listWidgetSubjects.addItem(item)
+        
         else:
-            self.ui.groupBoxBatch.hide()
+            self.ui.listWidgetSubjects.clear()
+            self.ui.functionalityWidget.hide()
             self.adjustSize()
-            self.parent.ui.pushButtonCompute.setEnabled(True)
-            self.parent.ui.pushButtonComputeBatch.setEnabled(False)
-            #TODO: self.parent.adjustSize() (doesnt work with scrollArea?)
+            self.pushButtonCompute.setEnabled(True)
+            self.pushButtonComputeBatch.setEnabled(False)
 
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
@@ -111,8 +123,30 @@ class BatchingWidget(QtGui.QWidget):
             messagebox(self, message)
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def cleanup(self):
+    @property
+    def selected_subjects(self):
+        subject_names = [] 
+        for i in range(self.ui.listWidgetSubjects.count()):
+            item = self.ui.listWidgetSubjects.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
+                
+        return subject_names
+
+    def cleanup(self, parent=None):
         if len(self.failed_subjects) > 0:
-            print 'Failed calculation for subjects: ' 
-            for subject in self.failed_subjects:
-                print subject.subject_name
+            rows = []
+            rows.append('Failed calculation for subjects:')
+            
+            for subject, message in self.failed_subjects:
+                rows.append(subject.subject_name + ' (' + message + ')')
+                
+            if not parent:
+                parent = self.parent.parent
+            
+            messagebox(parent, '\n'.join(rows))
+        self.data = {}
+        self.failed_subjects = []
+        self.ui.checkBoxBatch.setChecked(False)
+        self.ui.functionalityWidget.hide()
+        

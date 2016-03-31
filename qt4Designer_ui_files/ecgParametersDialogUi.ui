@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>968</height>
+    <width>629</width>
+    <height>956</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,9 +30,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>616</width>
-        <height>911</height>
+        <width>611</width>
+        <height>899</height>
        </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>611</width>
+        <height>899</height>
+       </size>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -43,7 +49,7 @@
          <x>0</x>
          <y>0</y>
          <width>591</width>
-         <height>571</height>
+         <height>481</height>
         </rect>
        </property>
        <property name="currentIndex">
@@ -59,7 +65,7 @@
            <x>9</x>
            <y>9</y>
            <width>568</width>
-           <height>470</height>
+           <height>421</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -83,6 +89,9 @@
              <string>Events</string>
             </property>
             <layout class="QFormLayout" name="formLayout_4">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
              <item row="0" column="0">
               <widget class="QFrame" name="frame">
                <property name="frameShape">
@@ -449,7 +458,7 @@
        </widget>
        <widget class="QWidget" name="tabECG2">
         <attribute name="title">
-         <string>Bads etc.</string>
+         <string>Advanced</string>
         </attribute>
         <widget class="QWidget" name="horizontalLayoutWidget_17">
          <property name="geometry">
@@ -546,9 +555,9 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>250</y>
+           <y>210</y>
            <width>389</width>
-           <height>111</height>
+           <height>101</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -610,7 +619,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>400</y>
+           <y>310</y>
            <width>520</width>
            <height>132</height>
           </rect>
@@ -750,13 +759,10 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>580</y>
-         <width>591</width>
-         <height>311</height>
+         <y>490</y>
+         <width>301</width>
+         <height>371</height>
         </rect>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
        </property>
       </widget>
      </widget>

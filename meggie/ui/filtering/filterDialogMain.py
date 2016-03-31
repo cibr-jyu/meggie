@@ -15,6 +15,7 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
+from meggie.code_meggie.general import fileManager
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -118,15 +119,14 @@ class FilterDialog(QtGui.QDialog):
         subject = self.caller.experiment.active_subject
         parameter_values = self.collect_parameter_values()
         info = subject.get_working_file().info
-        
         self.batching_widget.data[subject.subject_name] = parameter_values
         
-        if any([
-            self._validateFilterFreq(parameter_values, info['sfreq']) == False,
-            not self.filter(subject)
-        ]):
-            self.batching_widget.failed_subjects.append(subject)
-        
+        try:
+            self._validateFilterFreq(parameter_values, info['sfreq'])
+            self.filter(subject)
+        except Exception as e:
+            self.batching_widget.failed_subjects.append(subject, str(e))
+
         self.batching_widget.cleanup()
         self.close()
         self.parent.initialize_ui()
@@ -135,6 +135,7 @@ class FilterDialog(QtGui.QDialog):
         
         recently_active_subject = self.caller.experiment.active_subject.subject_name
         subject_names = []
+        
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
@@ -144,17 +145,16 @@ class FilterDialog(QtGui.QDialog):
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
-
             params = self.batching_widget.data[recently_active_subject]
             info = self.caller.experiment.active_subject.get_working_file().info
             subject = self.caller.experiment.active_subject
             # Check if the filter frequency values are sane or not.
             
-            if any([
-                self._validateFilterFreq(params, info['sfreq']) == False,
-                not self.filter(subject)
-            ]):
-                self.batching_widget.failed_subjects.append(subject)
+            try:
+                self._validateFilterFreq(params, info['sfreq'])
+                self.filter(subject)
+            except Exception as e:
+                self.batching_widget.failed_subjects.append(subject, str(e))
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -163,19 +163,16 @@ class FilterDialog(QtGui.QDialog):
                     continue
                 
                 self.caller.activate_subject(name)
-
                 params = self.batching_widget.data[name]
                 info = subject.get_working_file().info
-                
-                if any([
-                    self._validateFilterFreq(params, info['sfreq']) == False,
-                    not self.filter(subject)
-                ]):
-                    self.batching_widget.failed_subjects.append(subject)        
 
+            try:
+                self._validateFilterFreq(params, info['sfreq'])
+                self.filter(subject)
+            except Exception as e:
+                self.batching_widget.failed_subjects.append(subject, str(e))
                 
         self.caller.activate_subject(recently_active_subject)
-        
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.close()
@@ -193,11 +190,10 @@ class FilterDialog(QtGui.QDialog):
                 self._show_filter_freq_error(samplerate)
 
     def _show_filter_freq_error(self, samplerate):
-        message = 'Cutoff frequencies should be lower than samplerate/2 ' + \
-                    '(' + 'current samplerate is ' + str(samplerate) + ' Hz)'
-        messagebox(self.parent, message)
-        return
-
+        message = ('Cutoff frequencies should be lower than samplerate/2 ' +
+                   '(' + 'current samplerate is ' + str(samplerate) + ' Hz)')
+        raise ValueError(message)
+        
     def _showLengthError(self, filterSource):
         """
         Show the error for wrong type of filter length string.
@@ -212,42 +208,41 @@ class FilterDialog(QtGui.QDialog):
         
     def selection_changed(self, subject_name, params_dict):
         subject = self.caller.experiment.subjects[subject_name]
-
-	if len(params_dict) > 0:
-	    dic = params_dict  
-	else:
-	    dic = self.get_default_values()
-	self.ui.doubleSpinBoxLength.setProperty("value", dic.get('length'))
-	self.ui.doubleSpinBoxTransBandwidth.setProperty("value", dic.get('trans_bw'))
-	
-	if dic.get('lowpass'):
-	    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq'))
-	else:
-	    self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq_false'))
-	self.ui.checkBoxLowpass.setChecked(dic.get('lowpass'))
-	
-	self.ui.checkBoxHighpass.setChecked(dic.get('highpass'))
-	if dic.get('highpass'):
-	    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq'))
-	else:
-	    self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq_false'))
-	
-	self.ui.checkBoxBandstop.setChecked(dic.get('bandstop1'))
-	if dic.get('bandstop1'):
-	    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq'))
-	else:
-	    self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq_false'))
-	
-	self.ui.checkBoxBandstop2.setChecked(dic.get('bandstop2'))
-	if dic.get('bandstop2'):
-	    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq'))
-	else:
-	    self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq_false'))
-	
-	self.ui.doubleSpinBoxBandstopWidth.setProperty("value", dic.get('bandstop_bw'))
-	self.ui.doubleSpinBoxNotchTransBw.setProperty("value", dic.get('bandstop_transbw'))
-	self.ui.doubleSpinBoxBandStopLength.setProperty("value", dic.get('bandstop_length'))
-	self.update()
+        if len(params_dict) > 0:
+            dic = params_dict  
+        else:
+            dic = self.get_default_values()
+        self.ui.doubleSpinBoxLength.setProperty("value", dic.get('length'))
+        self.ui.doubleSpinBoxTransBandwidth.setProperty("value", dic.get('trans_bw'))
+    
+        if dic.get('lowpass'):
+            self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq'))
+        else:
+            self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq_false'))
+        self.ui.checkBoxLowpass.setChecked(dic.get('lowpass'))
+    
+        self.ui.checkBoxHighpass.setChecked(dic.get('highpass'))
+        if dic.get('highpass'):
+            self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq'))
+        else:
+            self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq_false'))
+        
+        self.ui.checkBoxBandstop.setChecked(dic.get('bandstop1'))
+        if dic.get('bandstop1'):
+            self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq'))
+        else:
+            self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq_false'))
+        
+        self.ui.checkBoxBandstop2.setChecked(dic.get('bandstop2'))
+        if dic.get('bandstop2'):
+            self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq'))
+        else:
+            self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq_false'))
+        
+        self.ui.doubleSpinBoxBandstopWidth.setProperty("value", dic.get('bandstop_bw'))
+        self.ui.doubleSpinBoxNotchTransBw.setProperty("value", dic.get('bandstop_transbw'))
+        self.ui.doubleSpinBoxBandStopLength.setProperty("value", dic.get('bandstop_length'))
+        self.update()
     
     def get_default_values(self):
         """Sets default values for dialog."""
@@ -337,11 +332,4 @@ class FilterDialog(QtGui.QDialog):
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
         
-        try:
-            result = self.caller.filter(params, subject,
-                do_meanwhile=self.parent.update_ui)
-            if not result == 0:
-                return False
-        except Exception as e:
-            return False
-        return True
+        self.caller.filter(params, subject, do_meanwhile=self.parent.update_ui)

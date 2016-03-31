@@ -9,24 +9,80 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>1050</height>
+    <width>759</width>
+    <height>941</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Meggie - Epoch Creation</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonComputeBatch">
+       <property name="text">
+        <string>Batch epochs</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCompute">
+       <property name="text">
+        <string>Create epochs</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="enabled">
       <bool>true</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -36,21 +92,21 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>865</width>
-        <height>991</height>
+        <width>741</width>
+        <height>884</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>741</width>
-        <height>400</height>
+        <width>700</width>
+        <height>850</height>
        </size>
       </property>
       <widget class="QPushButton" name="pushButtonFixedLength">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>630</y>
+         <x>570</x>
+         <y>430</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -62,10 +118,10 @@
       <widget class="QGroupBox" name="groupBox">
        <property name="geometry">
         <rect>
-         <x>351</x>
-         <y>7</y>
-         <width>511</width>
-         <height>621</height>
+         <x>350</x>
+         <y>200</y>
+         <width>381</width>
+         <height>231</height>
         </rect>
        </property>
        <property name="title">
@@ -81,9 +137,9 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>680</y>
-         <width>581</width>
-         <height>281</height>
+         <y>430</y>
+         <width>311</width>
+         <height>441</height>
         </rect>
        </property>
       </widget>
@@ -93,7 +149,7 @@
          <x>10</x>
          <y>200</y>
          <width>332</width>
-         <height>229</height>
+         <height>231</height>
         </rect>
        </property>
        <property name="title">
@@ -181,10 +237,10 @@
       <widget class="QGroupBox" name="groupBoxRejection">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>430</y>
-         <width>331</width>
-         <height>196</height>
+         <x>350</x>
+         <y>10</y>
+         <width>381</width>
+         <height>191</height>
         </rect>
        </property>
        <property name="title">
@@ -454,52 +510,15 @@
         </item>
        </layout>
       </widget>
+      <zorder>pushButtonFixedLength</zorder>
+      <zorder>groupBox</zorder>
+      <zorder>widget</zorder>
+      <zorder>groupBoxEvent</zorder>
+      <zorder>groupBoxRejection</zorder>
+      <zorder>groupBoxEpoch</zorder>
+      <zorder></zorder>
      </widget>
     </widget>
-   </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonCancel">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonComputeBatch">
-       <property name="text">
-        <string>Batch epochs</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonCompute">
-       <property name="text">
-        <string>Create epochs</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'eogParametersDialogBatch.ui'
+# Form implementation generated from reading ui file 'eogParametersDialogUi.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -26,7 +26,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setEnabled(True)
-        Dialog.resize(653, 945)
+        Dialog.resize(582, 957)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_13 = QtGui.QHBoxLayout()
@@ -53,11 +53,11 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 635, 888))
-        self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(540, 690))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 564, 900))
+        self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(564, 900))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.tabWidgetEOGSettings = QtGui.QTabWidget(self.scrollAreaWidgetContents)
-        self.tabWidgetEOGSettings.setGeometry(QtCore.QRect(0, 0, 553, 571))
+        self.tabWidgetEOGSettings.setGeometry(QtCore.QRect(0, 0, 553, 481))
         self.tabWidgetEOGSettings.setObjectName(_fromUtf8("tabWidgetEOGSettings"))
         self.tabEOG1 = QtGui.QWidget()
         self.tabEOG1.setObjectName(_fromUtf8("tabEOG1"))
@@ -176,7 +176,7 @@ class Ui_Dialog(object):
         self.groupBoxEvent.setGeometry(QtCore.QRect(10, 10, 541, 99))
         self.groupBoxEvent.setObjectName(_fromUtf8("groupBoxEvent"))
         self.frame = QtGui.QFrame(self.groupBoxEvent)
-        self.frame.setGeometry(QtCore.QRect(10, 30, 511, 61))
+        self.frame.setGeometry(QtCore.QRect(10, 30, 521, 61))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
@@ -276,7 +276,7 @@ class Ui_Dialog(object):
         self.spinBoxTaps.setObjectName(_fromUtf8("spinBoxTaps"))
         self.horizontalLayout_22.addWidget(self.spinBoxTaps)
         self.verticalLayoutWidget = QtGui.QWidget(self.tabEOG2)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 250, 371, 111))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 210, 371, 101))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -291,7 +291,7 @@ class Ui_Dialog(object):
         self.checkBoxSSPCompute.setObjectName(_fromUtf8("checkBoxSSPCompute"))
         self.verticalLayout.addWidget(self.checkBoxSSPCompute)
         self.groupBox = QtGui.QGroupBox(self.tabEOG2)
-        self.groupBox.setGeometry(QtCore.QRect(10, 400, 491, 151))
+        self.groupBox.setGeometry(QtCore.QRect(10, 310, 491, 131))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.frameEpochRejection = QtGui.QFrame(self.groupBox)
         self.frameEpochRejection.setEnabled(True)
@@ -357,7 +357,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_12.addLayout(self.verticalLayout_3)
         self.tabWidgetEOGSettings.addTab(self.tabEOG2, _fromUtf8(""))
         self.widget = QtGui.QWidget(self.scrollAreaWidgetContents)
-        self.widget.setGeometry(QtCore.QRect(0, 580, 551, 301))
+        self.widget.setGeometry(QtCore.QRect(0, 490, 301, 371))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -432,5 +432,5 @@ class Ui_Dialog(object):
         self.doubleSpinBoxMagReject.setSuffix(_translate("Dialog", " fT", None))
         self.labelEogReject.setText(_translate("Dialog", "EOG:", None))
         self.doubleSpinBoxEOGReject.setSuffix(_translate("Dialog", " uV", None))
-        self.tabWidgetEOGSettings.setTabText(self.tabWidgetEOGSettings.indexOf(self.tabEOG2), _translate("Dialog", "Bads etc.", None))
+        self.tabWidgetEOGSettings.setTabText(self.tabWidgetEOGSettings.indexOf(self.tabEOG2), _translate("Dialog", "Advanced", None))
 

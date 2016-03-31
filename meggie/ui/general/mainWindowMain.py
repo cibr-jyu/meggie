@@ -86,10 +86,10 @@ from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-from meggie.ui.widgets.listWidget import ListWidget
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -156,10 +156,16 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList = EpochWidget(self)
         self.epochList.hide()
 
-        self.evokedList = ListWidget(self.ui.widgetEvokeds)
-        self.evokedList.setMinimumWidth(345)
-        self.evokedList.setMaximumHeight(120)
-
+        #self.ui.listWidgetEvoked.setHorizontalScrollBarPolicy(300)
+        self.ui.listWidgetEvoked.setMinimumWidth(346)
+        self.ui.listWidgetEvoked.setMaximumWidth(346)
+        
+        self.evokeds_batching_widget = BatchingWidget(
+            self, self.ui.widget,
+            self.ui.pushButtonCreateEvoked,
+            self.ui.pushButtonCreateEvokedBatch, 
+        )
+        
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
 
@@ -523,6 +529,47 @@ class MainWindow(QtGui.QMainWindow):
         else:
             QWhatsThis.enterWhatsThisMode()
 
+    def _calculate_evokeds(self, subject, collection_names):
+        
+        evokeds = {}
+        for name in collection_names:
+            collection = subject.epochs[name]
+            epoch = collection.raw
+            evoked = epoch.average()
+            evoked.comment = name
+            evokeds[name] = evoked
+
+        evoked_name = (
+            '-'.join(collection_names) +
+            '_evoked.fif'
+        )
+        
+        if evoked_name in subject.evokeds:
+            message = ('Evoked data set with name %s already exists!' % 
+                       evoked_name)
+            raise ValueError(message)
+
+        # Save evoked into evoked (average) directory with name evoked_name
+        saveFolder = self.caller.experiment.active_subject.evokeds_directory
+        if not os.path.exists(saveFolder):
+            try:
+                os.mkdir(saveFolder)
+            except IOError:
+                message = ('Writing to selected folder is not allowed. You can'
+                           ' still process the evoked file (visualize etc.).')
+                raise IOError(message)
+
+        try:
+            print 'Writing evoked data as ' + evoked_name + ' ...'
+            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+        except IOError:
+            message = ('Writing to selected folder is not allowed. You can '
+                       'still process the evoked file (visualize etc.).')
+            raise IOError(message)
+        
+        new_evoked = Evoked(evoked_name, subject, evokeds)
+        subject.add_evoked(new_evoked)        
+
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
@@ -531,79 +578,51 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        collection_names = [str(item.text()) for item 
-                 in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        collection_names = [str(item.text()) for item in selected_items]
 
         # If no collections are selected, show a message to to the user and return.
         if len(collection_names) == 0:
             messagebox(self, 'Please select an epoch collection to average.')
             return
 
-        evokeds = {}
-        for name in collection_names:
-            subject = self.caller.experiment.active_subject
-            collection = subject.epochs[name]
-            epoch = collection.raw
-            evoked = epoch.average()
-            evoked.comment = name
-            evokeds[name] = evoked
-
-        if not evokeds:
-            raise Exception('No evokeds found.')
-        
-        evoked_name = (
-            '-'.join(collection_names) +
-            '_evoked.fif'
-        )
-
-        for item_idx in range(self.evokedList.count()):
-            if str(self.evokedList.item(item_idx).text()) == evoked_name:
-                message = ('Evoked data set with name %s already exists!' % 
-                           evoked_name)
-                messagebox(self, message)
-                return
-
-        item = QtGui.QListWidgetItem(evoked_name)
-
-        # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = self.caller.experiment.active_subject.evokeds_directory
-        if os.path.exists(saveFolder) is False:
-            try:
-                os.mkdir(saveFolder)
-            except IOError:
-                message = ('Writing to selected folder is not allowed. You can'
-                           ' still process the evoked file (visualize etc.).')
-                messagebox(self, message)
-                return
-
-        try:
-            print 'Writing evoked data as ' + evoked_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
-        except IOError:
-            message = ('Writing to selected folder is not allowed. You can '
-                       'still process the evoked file (visualize etc.).')
-            messagebox(self, message)
-            return
-
-        self.evokedList.addItem(item)
-        self.ui.listWidgetInverseEvoked.addItem(item.text())
-        
         subject = self.caller.experiment.active_subject
-        new_evoked = Evoked(evoked_name, subject, evokeds)
+        
         try:
-            subject.add_evoked(new_evoked)
-            self.caller.experiment.save_experiment_settings()
+            self._calculate_evokeds(subject, collection_names)
         except Exception as e:
             exc_messagebox(self, e)
-            return
 
-        self.evokedList.setCurrentItem(item)
+        self.caller.experiment.save_experiment_settings()
+        self.evokeds_batching_widget.cleanup(self)
+        self._initialize_ui()
+
+    def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subject_names = self.evokeds_batching_widget.selected_subjects
+        
+        for subject_name, collection_names in self.evokeds_batching_widget.data.items():
+            if subject_name in subject_names:
+                
+                try:
+                    self.calculate_evokeds(subject_name, collection_names)
+                except Exception as e:
+                    failed_subjects = self.evokeds_batching_widget.failed_subjects
+                    failed_subjects.append((subject_name, str(e)))
+                
+
+        self.caller.experiment.save_experiment_settings()
+        self.evokeds_batching_widget.cleanup(self)
+        self._initialize_ui()
+        
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""
         if checked is None:
             return
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
         name = str(item.text())
@@ -652,7 +671,7 @@ class MainWindow(QtGui.QMainWindow):
         """Plot the evoked data as a topology."""
         if checked is None:
             return
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
         layout = ''
@@ -695,7 +714,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        item = self.evokedList.currentItem()
+        item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
 
@@ -757,13 +776,13 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.evokedList.count() == 0:
+        if self.ui.listWidgetEvoked.count() == 0:
             return
 
-        elif self.evokedList.currentItem() is None:
+        elif self.ui.listWidgetEvoked.currentItem() is None:
             messagebox(self, 'No evokeds selected.')
 
-        item_str = self.evokedList.currentItem().text()
+        item_str = self.ui.listWidgetEvoked.currentItem().text()
 
         message = 'Permanently remove evokeds and the related files?'
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
@@ -772,9 +791,9 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            item = self.evokedList.currentItem()
-            row = self.evokedList.row(item)
-            self.evokedList.takeItem(row)
+            item = self.ui.listWidgetEvoked.currentItem()
+            row = self.ui.listWidgetEvoked.row(item)
+            self.ui.listWidgetEvoked.takeItem(row)
             self.ui.listWidgetInverseEvoked.takeItem(row)
             try:
                 self.caller.experiment.active_subject.remove_evoked(
@@ -1348,7 +1367,7 @@ class MainWindow(QtGui.QMainWindow):
         # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
-        self.evokedList.clear()
+        self.ui.listWidgetEvoked.clear()
         self.ui.listWidgetInverseEvoked.clear()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
@@ -1431,7 +1450,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if evokeds_items is not None:
             for evoked in evokeds_items.values():
-                self.evokedList.addItem(evoked.name)
+                self.ui.listWidgetEvoked.addItem(evoked.name)
                 self.ui.listWidgetInverseEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
@@ -1652,6 +1671,12 @@ class MainWindow(QtGui.QMainWindow):
             _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
                 self.caller.experiment.active_subject)
 
+    def collect_parameter_values(self):
+        #TODO: clear batchingWidget data after group average
+        collection_names = [str(item.text()) for item 
+                in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        return collection_names        
+
 # Miscellaneous code:
 
     def directOutput(self):
@@ -1681,7 +1706,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-
+ 
     def normalOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
@@ -1694,7 +1719,7 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
-
+ 
     def errorOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
