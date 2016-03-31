@@ -129,64 +129,65 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         self.ui.comboBoxStimChannel.clear()
         subject = self.caller.experiment.subjects.get(subject_name)
-	
-	# Empty params_dict includes 'events' and 'fixed_length_events' keys.
-	if len(params_dict) > 2:
-	    dic = params_dict
-	else:
-	    dic = self.get_default_values(subject)
-	    
-	rejection = dic['reject']
-	
-	if 'grad' in rejection.keys():
-	    self.ui.checkBoxGrad.setChecked(True)
-	    self.ui.doubleSpinBoxGradReject_3.setValue(rejection['grad'])
-	else:
-	    self.ui.checkBoxGrad.setChecked(False)
-
-	if 'mag' in rejection.keys():
-	    self.ui.checkBoxMag.setChecked(True)
-	    self.ui.doubleSpinBoxMagReject_3.setValue(rejection['mag'])
-	else:
-	    self.ui.checkBoxMag.setChecked(False)
-
-	if 'eeg' in rejection.keys():
-	    self.ui.checkBoxEeg.setChecked(True)
-	    self.ui.doubleSpinBoxEEGReject_3.setValue(rejection['eeg'])
-	else:
-	    self.ui.checkBoxEeg.setChecked(False)
-
-	if 'eog' in rejection.keys():
-	    self.ui.checkBoxEog.setChecked(True)
-	    self.ui.doubleSpinBoxEOGReject_3.setValue(rejection['eog'])
-	else:
-	    self.ui.checkBoxEog.setChecked(False)
-
-        raw = subject.get_working_file(preload=False)
-        ch_names = raw.ch_names
-
-	if len(ch_names) == 0:
-	    pass
-
-	stim_channels = [x for x in ch_names if x.startswith('STI')]
-
-	active = 0
-	for idx, channel in enumerate(stim_channels):
-	    self.ui.comboBoxStimChannel.addItem(channel)
-	    if channel == dic['stim']:
-		active = idx
-
-	self.ui.comboBoxStimChannel.setCurrentIndex(active)
-	
-	if 'event_id' in dic.keys():
-	    self.ui.spinBoxEventID.setValue(dic['event_id'])
-	else:
-	    self.ui.spinBoxEventID.setValue(1)
-	
-	self.ui.lineEditCollectionName.setText(dic['collection_name'])
-	self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
-	self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
-	self.update_events(subject)
+        
+        # Empty params_dict includes 'events' and 'fixed_length_events' keys.
+        if len(params_dict) > 2:
+            dic = params_dict
+        else:
+            dic = self.get_default_values(subject)
+            
+        rejection = dic['reject']
+        
+        if 'grad' in rejection.keys():
+            self.ui.checkBoxGrad.setChecked(True)
+            self.ui.doubleSpinBoxGradReject_3.setValue(rejection['grad'])
+        else:
+            self.ui.checkBoxGrad.setChecked(False)
+        
+        if 'mag' in rejection.keys():
+            self.ui.checkBoxMag.setChecked(True)
+            self.ui.doubleSpinBoxMagReject_3.setValue(rejection['mag'])
+        else:
+            self.ui.checkBoxMag.setChecked(False)
+        
+        if 'eeg' in rejection.keys():
+            self.ui.checkBoxEeg.setChecked(True)
+            self.ui.doubleSpinBoxEEGReject_3.setValue(rejection['eeg'])
+        else:
+            self.ui.checkBoxEeg.setChecked(False)
+        
+        if 'eog' in rejection.keys():
+            self.ui.checkBoxEog.setChecked(True)
+            self.ui.doubleSpinBoxEOGReject_3.setValue(rejection['eog'])
+        else:
+            self.ui.checkBoxEog.setChecked(False)
+        
+            raw = subject.get_working_file(preload=False)
+            ch_names = raw.ch_names
+            
+            print ch_names
+        
+        stim_channels = [x for x in ch_names if x.startswith('STI')]
+        
+        active = 0
+        for idx, channel in enumerate(stim_channels):
+            self.ui.comboBoxStimChannel.addItem(channel)
+            if channel == dic['stim']:
+                active = idx
+            elif channel == subject.find_stim_channel():
+                active = idx
+            
+        self.ui.comboBoxStimChannel.setCurrentIndex(active)
+        
+        if 'event_id' in dic.keys():
+            self.ui.spinBoxEventID.setValue(dic['event_id'])
+        else:
+            self.ui.spinBoxEventID.setValue(1)
+        
+        self.ui.lineEditCollectionName.setText(dic['collection_name'])
+        self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
+        self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
+        self.update_events(subject)
 
     def get_selected_subject(self):
         item = None
@@ -308,6 +309,8 @@ class EventSelectionDialog(QtGui.QDialog):
         if len(events) != 0:
             self.batching_widget.data[subject.subject_name]['events'].append(event_params)
             self.update_events(subject)
+        else:
+            messagebox(self.parent, "No events found.")
 
     def accept(self):
         """
