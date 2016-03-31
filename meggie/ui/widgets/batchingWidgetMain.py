@@ -27,7 +27,9 @@ class BatchingWidget(QtGui.QWidget):
     """
     caller = Caller.Instance()
     
-    def __init__(self, parent, container, pushButtonCompute=None, pushButtonComputeBatch=None):
+    def __init__(self, parent, container, pushButtonCompute=None,
+                 pushButtonComputeBatch=None, selection_changed=None,
+                 collect_parameter_values=None, hideHook=None):
         super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
@@ -37,9 +39,17 @@ class BatchingWidget(QtGui.QWidget):
             pushButtonCompute = self.parent.ui.pushButtonCompute
         if not pushButtonComputeBatch:    
             pushButtonComputeBatch = self.parent.ui.pushButtonComputeBatch
+        if not selection_changed:
+            selection_changed = self.parent.selection_changed
+        if not collect_parameter_values:
+            collect_parameter_values = self.parent.collect_parameter_values
+            
+        self.hideHook = hideHook
         
         self.pushButtonComputeBatch = pushButtonComputeBatch
         self.pushButtonCompute = pushButtonCompute
+        self.selection_changed = selection_changed
+        self.collect_parameter_values = collect_parameter_values
         
         self.pushButtonCompute.setEnabled(True)
         self.pushButtonComputeBatch.setEnabled(False)
@@ -55,12 +65,15 @@ class BatchingWidget(QtGui.QWidget):
             return
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
+        if not item:
+            return
+        
         subject_name = str(item.text())
         if subject_name in self.data.keys():
             data_dict = self.data[subject_name]
         else:
             data_dict = {}
-        self.parent.selection_changed(subject_name, data_dict)
+        self.selection_changed(subject_name, data_dict)
     
     def showWidget(self, disabled):
         
@@ -83,6 +96,9 @@ class BatchingWidget(QtGui.QWidget):
             self.pushButtonCompute.setEnabled(True)
             self.pushButtonComputeBatch.setEnabled(False)
 
+            if self.hideHook:
+                self.hideHook()
+
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
         """
@@ -94,8 +110,7 @@ class BatchingWidget(QtGui.QWidget):
         item.setCheckState(QtCore.Qt.Checked)
         
         subject = self.caller.experiment.subjects[str(item.text())]
-	self.data[subject.subject_name] = self.parent.collect_parameter_values()
-	
+        self.data[subject.subject_name] = self.collect_parameter_values()
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
@@ -108,9 +123,9 @@ class BatchingWidget(QtGui.QWidget):
             item.setCheckState(QtCore.Qt.Checked)
             name = str(item.text())
             if name in self.caller.experiment.subjects:
-                params = self.parent.collect_parameter_values()
-		if params is not None:
-		    self.data[name] = params 
+                params = self.collect_parameter_values()
+                if params:
+                    self.data[name] = params 
  
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes subject from the list of subjects to be processed."""

@@ -163,7 +163,10 @@ class MainWindow(QtGui.QMainWindow):
         self.evokeds_batching_widget = BatchingWidget(
             self, self.ui.widget,
             self.ui.pushButtonCreateEvoked,
-            self.ui.pushButtonCreateEvokedBatch, 
+            self.ui.pushButtonCreateEvokedBatch,
+            self.evoked_selection_changed,
+            self.collect_evoked_parameter_values,
+            lambda: self.initialize_ui()
         )
         
         # Populate the combobox for selecting lobes for channel averages.
@@ -529,11 +532,33 @@ class MainWindow(QtGui.QMainWindow):
         else:
             QWhatsThis.enterWhatsThisMode()
 
+    def collect_evoked_parameter_values(self):
+        collection_names = [str(item.text()) for item 
+                in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        return collection_names        
+
+    def evoked_selection_changed(self, subject_name, data_dict):
+        epoch_widget = self.epochList.ui.listWidgetEpochs
+        
+        epoch_widget.clear()
+        for name in self.caller.experiment.subjects[subject_name].epochs:
+            item = QtGui.QListWidgetItem()
+            item.setText(name)
+            epoch_widget.addItem(item)
+            if name in data_dict:
+                epoch_widget.setItemSelected(item, True)
+
     def _calculate_evokeds(self, subject, collection_names):
         
         evokeds = {}
         for name in collection_names:
             collection = subject.epochs[name]
+
+            try:
+                collection = subject.epochs[name]
+            except KeyError:
+                raise KeyError('No epoch collection called ' + str(name))
+
             epoch = collection.raw
             evoked = epoch.average()
             evoked.comment = name
@@ -595,7 +620,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
-        self._initialize_ui()
+        self.initialize_ui()
 
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         if checked is None:
@@ -612,11 +637,28 @@ class MainWindow(QtGui.QMainWindow):
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject_name, str(e)))
                 
-
         self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
-        self._initialize_ui()
+        self.initialize_ui()
+
+    def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
+        if checked is None:
+            return
         
+        subject_names = self.evokeds_batching_widget.selected_subjects
+        
+        for subject_name, collection_names in self.evokeds_batching_widget.data.items():
+            if subject_name in subject_names:
+                subject = self.caller.experiment.subjects[subject_name]
+                try:
+                    self._calculate_evokeds(subject, collection_names)
+                except Exception as e:
+                    failed_subjects = self.evokeds_batching_widget.failed_subjects
+                    failed_subjects.append((subject, str(e)))
+                    
+        self.caller.experiment.save_experiment_settings()
+        self.evokeds_batching_widget.cleanup(self)
+        self.initialize_ui()
 
     def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
         """Open the evokedStatsDialog for viewing statistical data."""

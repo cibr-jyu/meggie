@@ -202,7 +202,7 @@ class Experiment(QObject):
     @property
     def subjects(self):
         """
-        Returns a list of all subjects.
+        Returns a dict of all subjects.
         """
         return self._subjects
 
