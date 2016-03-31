@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.2.1 (unreleased)
+0.2.2 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.1 (2016-03-31)
+------------------
+
+- Fix after broken merge
 
 0.2.0 (2016-03-31)
 ------------------
