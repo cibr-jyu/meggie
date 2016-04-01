@@ -128,10 +128,11 @@ class MainWindow(QtGui.QMainWindow):
         self.processes = []
 
         # Direct output to console
-        self.directOutput()
-        self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-        sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-        sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+        if 'debug' not in sys.argv:
+            self.directOutput()
+            self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
