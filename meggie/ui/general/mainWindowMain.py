@@ -127,12 +127,12 @@ class MainWindow(QtGui.QMainWindow):
         # quit.
         self.processes = []
 
-        # Direct output to console
-        if 'debug' not in sys.argv:
-            self.directOutput()
-            self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+#         # Direct output to console
+#         if 'debug' not in sys.argv:
+#             self.directOutput()
+#             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+#             sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+#             sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -219,11 +219,21 @@ class MainWindow(QtGui.QMainWindow):
 
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment is True:
-            exp = self.experimentHandler.open_existing_experiment(self.preferencesHandler)
-            self.caller.experiment = exp
-            self.add_tabs()
-            self.initialize_ui()
-            self.reinitialize_models()
+            exp = None
+            
+            try:
+                exp = self.experimentHandler.open_existing_experiment(self.preferencesHandler)
+            except Exception as e:
+                exc_messagebox(self, e)
+            
+            if exp:
+                self.caller.experiment = exp
+                self.add_tabs()
+                self.initialize_ui()
+                self.reinitialize_models()
+            else:
+                self.preferencesHandler.previous_experiment_name = ''
+                self.preferencesHandler.write_preferences_to_disk()
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
@@ -301,23 +311,21 @@ class MainWindow(QtGui.QMainWindow):
                    (self, "Select _experiment directory", directory))
         if path == '':
             return
-        exp_path = os.path.join(path, os.path.basename(path) + '.exp')
-        
-        if not os.path.isfile(exp_path):
-            messagebox(self,
-                'There is no settings file (.exp) in the selected folder.')
         
         print 'Opening experiment ' + path
 
         try:
             exp = self.experimentHandler.open_existing_experiment(
-                self.preferencesHandler, path=exp_path)
+                self.preferencesHandler, path=path)
             self.caller.experiment = exp
             self.add_tabs()
             self.initialize_ui()
             self.reinitialize_models()
         except Exception as e:
             exc_messagebox(self, e)
+            #messagebox(self, e)
+        except ValueError as e:
+            messagebox(self, e)
         self.preferencesHandler.write_preferences_to_disk()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
@@ -1816,8 +1824,4 @@ def main():
 
     window.showMaximized()
     
-    #window.action_logger = ActionLogger(window)
-    #window.action_logger.initialize_logger()
-    #TODO: initialize here
-
     sys.exit(app.exec_())

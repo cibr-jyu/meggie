@@ -289,7 +289,7 @@ class Experiment(QObject):
         save_dict = {
             'subjects': subjects,
             'name': self.experiment_name,
-            'workspace': self.workspace,
+            #'workspace': self.workspace,
             'author': self.author,
             'description': self.description,
         }
@@ -361,15 +361,17 @@ class ExperimentHandler(QObject):
         """
         
         if path:
-            exp_file = path 
+            exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
         else:
+            if prefs.previous_experiment_name == '':
+                return
             exp_file = os.path.join(
             prefs.previous_experiment_name,
             os.path.basename(prefs.previous_experiment_name) + '.exp'
             )
         
         if not os.path.isfile(exp_file):
-            return
+            raise ValueError('Trying to open experiment without settings file (.exp).')
         
         try:
             with open(exp_file, 'r') as f:
@@ -386,14 +388,20 @@ class ExperimentHandler(QObject):
         experiment.author = data['author']
         experiment.experiment_name = data['name']
         experiment.description = data['description']
-        experiment.workspace = data['workspace']
+        if path:
+            experiment.workspace = os.path.dirname(path)
+        else:
+            experiment.workspace = os.path.dirname(
+                prefs.previous_experiment_name)
         
         if len(data['subjects']) > 0:
                 
             for subject_data in data['subjects']:
-                subject = Subject(experiment, subject_data['subject_name'], subject_data['working_file_name'])
+                subject = Subject(experiment, subject_data['subject_name'],
+                    subject_data['working_file_name'])
                 for epoch_data in subject_data['epochs']:
-                    epochs = Epochs(epoch_data['collection_name'], subject, epoch_data['params'])
+                    epochs = Epochs(epoch_data['collection_name'], subject,
+                        epoch_data['params'])
                     epochs.collection_name = epoch_data['collection_name']
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
