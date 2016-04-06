@@ -68,9 +68,6 @@ class AddSubjectDialog(QtGui.QDialog):
         self.parent = parent
         self.ui.pushButtonShowFileInfo.setEnabled(False)
 
-        self.ui.listWidgetFileNames.itemSelectionChanged.connect
-        (self.file_path_changed)
-
     def accept(self):
         """ Add the new subject. """
         for i in range(self.ui.listWidgetFileNames.count()):
@@ -164,8 +161,7 @@ class AddSubjectDialog(QtGui.QDialog):
             row = i.row()
             self.ui.listWidgetFileNames.takeItem(row)
 
-    def file_path_changed(self):
-        """A slot for enabling or disabling show file info button."""
+    def on_listWidgetFileNames_itemSelectionChanged(self):
         items = self.ui.listWidgetFileNames.selectedItems()
         if len(items) > 0:
             self.ui.pushButtonRemove.setEnabled(True)
