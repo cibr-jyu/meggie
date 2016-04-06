@@ -584,7 +584,6 @@ class MainWindow(QtGui.QMainWindow):
             raise ValueError(message)
 
         # Save evoked into evoked (average) directory with name evoked_name
-        #saveFolder = self.caller.experiment.active_subject.evokeds_directory
         saveFolder = subject.evokeds_directory
         if not os.path.exists(saveFolder):
             try:
