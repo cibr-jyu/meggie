@@ -584,7 +584,8 @@ class MainWindow(QtGui.QMainWindow):
             raise ValueError(message)
 
         # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = self.caller.experiment.active_subject.evokeds_directory
+        #saveFolder = self.caller.experiment.active_subject.evokeds_directory
+        saveFolder = subject.evokeds_directory
         if not os.path.exists(saveFolder):
             try:
                 os.mkdir(saveFolder)
@@ -631,31 +632,31 @@ class MainWindow(QtGui.QMainWindow):
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
-    def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
-        if checked is None:
-            return
-        
-        subject_names = self.evokeds_batching_widget.selected_subjects
-        
-        for subject_name, collection_names in self.evokeds_batching_widget.data.items():
-            if subject_name in subject_names:
-                
-                try:
-                    self.calculate_evokeds(subject_name, collection_names)
-                except Exception as e:
-                    failed_subjects = self.evokeds_batching_widget.failed_subjects
-                    failed_subjects.append((subject_name, str(e)))
-                
-        self.caller.experiment.save_experiment_settings()
-        self.evokeds_batching_widget.cleanup(self)
-        self.initialize_ui()
+#     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
+#         if checked is None:
+#             return
+#         
+#         subject_names = self.evokeds_batching_widget.selected_subjects
+#         
+#         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
+#             if subject_name in subject_names:
+#                 
+#                 try:
+#                     self.calculate_evokeds(subject_name, collection_names)
+#                 except Exception as e:
+#                     failed_subjects = self.evokeds_batching_widget.failed_subjects
+#                     failed_subjects.append((subject_name, str(e)))
+#                 
+#         self.caller.experiment.save_experiment_settings()
+#         self.evokeds_batching_widget.cleanup(self)
+#         self.initialize_ui()
 
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         if checked is None:
             return
-        
+         
         subject_names = self.evokeds_batching_widget.selected_subjects
-        
+         
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
                 subject = self.caller.experiment.subjects[subject_name]
@@ -664,7 +665,7 @@ class MainWindow(QtGui.QMainWindow):
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject, str(e)))
-                    
+                     
         self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()

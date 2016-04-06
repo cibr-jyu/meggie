@@ -42,9 +42,6 @@ class ActionLogger(object):
         Keyword arguments
         path     -- path to save the log file
         """
-        #TODO: If you use FileHandler for writing logs, the size of log file will grow with time.
-        #Someday, it will occupy all of your disk. In order to avoid that situation, you should
-        #use RotatingFileHandler instead of FileHandler in production environment.
         self._logger = logging.getLogger(path)
         handler = logging.FileHandler(os.path.join(path, 'meggie.log'))
         #handler = RotatingFileHandler(os.path.join(path, 'meggie.log'))
@@ -61,11 +58,6 @@ class ActionLogger(object):
     def log_message(self, msg):
         """
         Logs given messages.
-        TODO: let user write messages in Meggie to log them using this function
-              perhaps better create log_user_message method instead for unique separation
-        
-        Keyword arguments
-        msg
         """
         self._logger.info('---------------------------------------')
         self._logger.info(msg)
@@ -79,42 +71,40 @@ class ActionLogger(object):
         callargs          -- dictionary of args to clean
         """
         
-        #TODO: remove unnecessary params
-        
-        """
-        if (mne_instance_name == 'filter'):
-            callargs = self.clean_filter_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'notch_filter'):
-            callargs = self.clean_notch_filter_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'low_pass_filter'):
-            callargs = self.clean_low_pass_filter_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'high_pass_filter'):
-            callargs = self.clean_high_pass_filter_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'band_stop_filter'):
-            callargs = self.clean_band_stop_filter_args(mne_instance_name, callargs)
-
-        if (mne_instance_name == 'compute_proj_ecg'):
-            #verbose, raw_event, avg_ref, iir_params, flat, raw
-            callargs = self.clean_compute_proj_exg_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'compute_proj_eog'):
-            #verbose, raw_event, avg_ref, iir_params, flat, raw
-            callargs = self.clean_compute_proj_exg_args(mne_instance_name, callargs)
-        
-        if (mne_instance_name == 'write_proj'):
-            callargs = self.clean_write_proj_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'write_events'):
-            callargs = self.clean_write_events_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'add_proj'):
-            callargs = self.clean_add_proj_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'compute_raw_psd'):
-            callargs = self.clean_compute_raw_psd_args(mne_instance_name, callargs)
-        if (mne_instance_name == 'Epochs'):
-            callargs = self.clean_epochs_args(mne_instance_name, callargs)
-
-        if (mne_instance_name == 'save'):
-            callargs = self.clean_save_args(mne_instance_name, callargs)
-        """
-        return callargs
+#         #TODO: remove unnecessary params
+#         if (mne_instance_name == 'filter'):
+#             callargs = self.clean_filter_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'notch_filter'):
+#             callargs = self.clean_notch_filter_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'low_pass_filter'):
+#             callargs = self.clean_low_pass_filter_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'high_pass_filter'):
+#             callargs = self.clean_high_pass_filter_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'band_stop_filter'):
+#             callargs = self.clean_band_stop_filter_args(mne_instance_name, callargs)
+# 
+#         if (mne_instance_name == 'compute_proj_ecg'):
+#             #verbose, raw_event, avg_ref, iir_params, flat, raw
+#             callargs = self.clean_compute_proj_exg_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'compute_proj_eog'):
+#             #verbose, raw_event, avg_ref, iir_params, flat, raw
+#             callargs = self.clean_compute_proj_exg_args(mne_instance_name, callargs)
+#         
+#         if (mne_instance_name == 'write_proj'):
+#             callargs = self.clean_write_proj_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'write_events'):
+#             callargs = self.clean_write_events_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'add_proj'):
+#             callargs = self.clean_add_proj_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'compute_raw_psd'):
+#             callargs = self.clean_compute_raw_psd_args(mne_instance_name, callargs)
+#         if (mne_instance_name == 'Epochs'):
+#             callargs = self.clean_epochs_args(mne_instance_name, callargs)
+# 
+#         if (mne_instance_name == 'save'):
+#             callargs = self.clean_save_args(mne_instance_name, callargs)
+#         
+#         return callargs
             
     def clean_compute_proj_exg_args(self, mne_instance_name, callargs):
         if 'verbose' in callargs.keys():
