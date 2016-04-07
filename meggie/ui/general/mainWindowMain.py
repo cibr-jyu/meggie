@@ -476,6 +476,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the epoch dialog."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         self.epochParameterDialog = EventSelectionDialog(self)
         self.epochParameterDialog.finished.connect(self.on_close)
         self.epochParameterDialog.show()
@@ -611,6 +614,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
         collection_names = [str(item.text()) for item in selected_items]
@@ -634,7 +639,9 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         if checked is None:
             return
-         
+        if self.caller.experiment.active_subject is None:
+            return
+
         subject_names = self.evokeds_batching_widget.selected_subjects
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
@@ -655,6 +662,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the evokedStatsDialog for viewing statistical data."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
@@ -668,6 +678,9 @@ class MainWindow(QtGui.QMainWindow):
         """Plot image over epochs channel"""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             messagebox(self, 'Create epochs before visualizing.')
             return
@@ -685,6 +698,9 @@ class MainWindow(QtGui.QMainWindow):
         """Call ``epochs.plot``."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         item = self.epochList.ui.listWidgetEpochs.currentItem()
         if item is None:
             message = 'No epochs collection selected.'
@@ -704,6 +720,9 @@ class MainWindow(QtGui.QMainWindow):
         """Plot the evoked data as a topology."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
@@ -746,6 +765,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
@@ -767,6 +788,9 @@ class MainWindow(QtGui.QMainWindow):
         """Opens a dialog for selecting a layout file."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         fName = str(QtGui.QFileDialog.
                     getOpenFileName(self, "Select a layout file", '/home/',
                                     "Layout-files (*.lout *.lay);;All files "
@@ -776,6 +800,8 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch item and the files related to it."""
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         if self.epochList.isEmpty():
@@ -807,6 +833,8 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked item and the files related to it."""
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         if self.ui.listWidgetEvoked.count() == 0:
@@ -841,6 +869,8 @@ class MainWindow(QtGui.QMainWindow):
         """Delete the selected power item and the files related to it."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         if self.ui.listWidgetPowerItems.count() == 0:
             return
@@ -873,7 +903,7 @@ class MainWindow(QtGui.QMainWindow):
         """Call ``raw.plot``."""
         if checked is None:
             return
-        if self.caller.experiment is None:
+        if self.caller.experiment.active_subject is None:
             return
 
         def handle_close(event):
@@ -900,8 +930,9 @@ class MainWindow(QtGui.QMainWindow):
         """Call mne_browse_raw."""
         if checked is None:
             return
-        if self.caller.experiment is None:
+        if self.caller.experiment.active_subject is None:
             return
+        
         info = self.caller.experiment.active_subject.get_working_file().info
         try:
             self.caller.call_mne_browse_raw(info['filename'])
@@ -911,13 +942,16 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
         """Call mne_browse_raw."""
+        if self.caller.experiment.active_subject is None:
+            return
+
         self.on_pushButtonMNE_Browse_Raw_clicked(checked)
 
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""
         if checked is None:
             return
-        if self.caller.experiment is None:
+        if self.caller.experiment.active_subject is None:
             return
 
         raw = self.caller.experiment.active_subject.get_working_file()
@@ -933,6 +967,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         try:
             self.maxFilterDialog = MaxFilterDialog(self)
         except Exception, err:
@@ -944,6 +981,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the power spectrum visualization dialog."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         self.spectrumDialog = PowerSpectrumDialog(self)
         self.spectrumDialog.finished.connect(self.on_close)
         self.spectrumDialog.show()
@@ -952,6 +992,10 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
+        
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
@@ -960,6 +1004,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for calculating the ECG PCA."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
 
@@ -967,6 +1014,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEogProjs = AddEOGProjections(self, info['projs'])
         self.addEogProjs.exec_()
@@ -975,6 +1025,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+        
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
         self.addEcgProjs.exec_()
@@ -983,6 +1036,9 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+        
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must create epochs before TFR.'
             messagebox(self, message)
@@ -998,6 +1054,9 @@ class MainWindow(QtGui.QMainWindow):
         """Opens the dialog for plotting TFR topology."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must select the epochs for TFR.'
             messagebox(self, message)
@@ -1011,6 +1070,9 @@ class MainWindow(QtGui.QMainWindow):
         """Visualize existing AVGPower as topology."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         item = self.ui.listWidgetPowerItems.currentItem()
         if item is None:
             return
@@ -1027,6 +1089,9 @@ class MainWindow(QtGui.QMainWindow):
         """Shows the channels average graph."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+        
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'Please select an epoch collection to channel average.'
             messagebox(self, message)
@@ -1064,6 +1129,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         channels = list()
         for i in xrange(self.ui.listWidgetChannels.count()):
             item = self.ui.listWidgetChannels.item(i)
@@ -1089,6 +1157,8 @@ class MainWindow(QtGui.QMainWindow):
         Show the dialog for filtering.
         """
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         self.filterDialog = FilterDialog(self)
@@ -1130,6 +1200,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         activeSubject = self.caller.experiment.active_subject
 
@@ -1164,8 +1236,6 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, msg)
             return
 
-        activeSubject = self.caller.experiment._active_subject
-
         try:
             fileManager.copy_recon_files(activeSubject, path)
             self.ui.lineEditRecon.setText(path)
@@ -1179,6 +1249,8 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_pushButtonConvertToMNE_clicked(self, checked=None):
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         try:
@@ -1194,6 +1266,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         self.fmodelDialog = ForwardModelDialog(self)
         self.fmodelDialog.show()
@@ -1204,6 +1278,8 @@ class MainWindow(QtGui.QMainWindow):
         from the disk.
         """
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         if self.ui.tableViewForwardModels.selectedIndexes() == []:
@@ -1248,6 +1324,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         activeSubject = self._experiment._active_subject
         tableView = self.ui.tableViewFModelsForCoregistration
@@ -1284,6 +1362,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
             msg = 'Please select a forward model to (re-)coregister.'
@@ -1298,6 +1378,8 @@ class MainWindow(QtGui.QMainWindow):
         selected forward model in tableViewFModelsForSolution.
         """
         if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
             return
 
         if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
@@ -1323,6 +1405,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
 
         self.covarianceRawDialog = CovarianceRawDialog(self)
         self.covarianceRawDialog.show()
@@ -1335,11 +1419,17 @@ class MainWindow(QtGui.QMainWindow):
         # TODO:
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
 
     def on_pushButtonComputeInverse_clicked(self, checked=None):
         """Compute inverse operator clicked."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         fwd_name = str(self.ui.listWidgetForwardSolution.currentItem().text())
         inv = self.caller.compute_inverse(fwd_name)
         _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
@@ -1349,6 +1439,9 @@ class MainWindow(QtGui.QMainWindow):
         """Make source estimate clicked."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         ui = self.ui
         if ui.radioButtonRaw.isChecked():
             inst_name = self.caller.experiment.active_subject.subject_name
@@ -1382,6 +1475,9 @@ class MainWindow(QtGui.QMainWindow):
         """Visualize source estimates."""
         if checked is None:
             return
+        if self.caller.experiment.active_subject is None:
+            return
+
         stc = str(self.ui.listWidgetSourceEstimate.currentItem().text())
         self.plotStcDialog = PlotStcDialog(self, stc)
         self.plotStcDialog.show()
