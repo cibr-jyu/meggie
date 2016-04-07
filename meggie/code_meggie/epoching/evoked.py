@@ -48,6 +48,10 @@ class Evoked(QObject):
                                  ' missing from Evoked FIF file.')
         return self._mne_evokeds
 
+    def forget_evokeds(self):
+        for key in self._mne_evokeds:
+            self._mne_evokeds[key] = None
+
     @property
     def name(self):
         """

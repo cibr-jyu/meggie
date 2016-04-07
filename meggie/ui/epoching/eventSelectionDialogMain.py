@@ -37,6 +37,7 @@ EventSelectionDialog-window.
 
 import numpy as np
 import mne
+import traceback
 
 from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
@@ -342,6 +343,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.caller.experiment.active_subject,
                 str(e)
             ))
+            import traceback; traceback.print_exc()
         
         # if not self.calculate_epochs(self.caller.experiment.active_subject):
         #     self.batching_widget.failed_subjects.append(
@@ -387,7 +389,8 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.calculate_epochs(self.caller.experiment.active_subject)
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.caller.experiment.active_subject, str(e)))                
+                    self.caller.experiment.active_subject, str(e)))     
+                traceback.print_exc()           
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -401,6 +404,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, 
                                                                  str(e)))
+                    traceback.print_exc()
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
