@@ -737,7 +737,7 @@ class MainWindow(QtGui.QMainWindow):
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
 	    QtGui.QApplication.setOverrideCursor(
-		    QtGui.QCursor(QtCore.Qt.WaitCursor))
+                QtGui.QCursor(QtCore.Qt.WaitCursor))
             self.caller.draw_evoked_potentials(mne_evokeds.values(), layout)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
@@ -769,9 +769,21 @@ class MainWindow(QtGui.QMainWindow):
             layout = str(self.ui.labelLayout.text())
 
         try:
-            self.caller.plot_group_average(evoked_name, layout)
+            evokeds = self.caller.plot_group_average(evoked_name, layout)
         except Exception as e:
             exc_messagebox(self, e)
+            return
+
+        QtGui.QApplication.setOverrideCursor(
+            QtGui.QCursor(QtCore.Qt.WaitCursor))
+        self.update_ui()
+
+        try:
+            self.caller.draw_evoked_potentials(evokeds, layout)
+        except Exception as e:
+            exc_messagebox(self, e)
+
+        QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """Opens a dialog for selecting a layout file."""

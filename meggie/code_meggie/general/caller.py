@@ -475,7 +475,7 @@ class Caller(object):
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events
 
-    def draw_evoked_potentials(self, evokeds, layout):  # , category):
+    def draw_evoked_potentials(self, evokeds, layout):
         """
         Draws a topography representation of the evoked potentials.
 
@@ -682,9 +682,7 @@ class Caller(object):
            evoked_name, do_meanwhile=self.parent.update_ui
         )
 
-        print "Plotting evoked..."
-        self.parent.update_ui()
-        self.draw_evoked_potentials(evokeds, layout)
+        return evokeds
 
     @threaded
     def _group_average(self, evoked_name):
