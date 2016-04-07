@@ -8,7 +8,7 @@ def exc_messagebox(parent, e):
     # create messagebox for user
     message = '\n\n'.join([
         'There has been an error with following message: ',
-        e.args[0],
+        str(e.args[0]),
         'More information can be found from console below.',
     ])
 
