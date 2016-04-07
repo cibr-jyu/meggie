@@ -136,6 +136,7 @@ class BatchingWidget(QtGui.QWidget):
         if item is None:
             message = 'Select a subject to remove.'
             messagebox(self, message)
+            return
         item.setCheckState(QtCore.Qt.Unchecked)
 
     @property
