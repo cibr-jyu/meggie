@@ -104,7 +104,7 @@ class ActionLogger(object):
 #         if (mne_instance_name == 'save'):
 #             callargs = self.clean_save_args(mne_instance_name, callargs)
 #         
-#         return callargs
+        return callargs
             
     def clean_compute_proj_exg_args(self, mne_instance_name, callargs):
         if 'verbose' in callargs.keys():

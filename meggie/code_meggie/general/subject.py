@@ -184,7 +184,11 @@ class Subject(QObject):
                     value.raw = None
             if len(self.evokeds) > 0:
                 for value in self.evokeds.values():
-                    value.raw = None    
+                    value.forget_evokeds()
+
+                    
+                    
+                     
 
     def find_stim_channel(self):
         """

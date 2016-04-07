@@ -127,12 +127,12 @@ class MainWindow(QtGui.QMainWindow):
         # quit.
         self.processes = []
 
-        # Direct output to console
-        if 'debug' not in sys.argv:
-            self.directOutput()
-            self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+#         # Direct output to console
+#         if 'debug' not in sys.argv:
+#             self.directOutput()
+#             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+#             sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+#             sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -578,10 +578,10 @@ class MainWindow(QtGui.QMainWindow):
             '_evoked.fif'
         )
         
-        if evoked_name in subject.evokeds:
-            message = ('Evoked data set with name %s already exists!' % 
-                       evoked_name)
-            raise ValueError(message)
+#         if evoked_name in subject.evokeds:
+#             message = ('Evoked data set with name %s already exists!' % 
+#                        evoked_name)
+#             raise ValueError(message)
 
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = subject.evokeds_directory
@@ -639,12 +639,13 @@ class MainWindow(QtGui.QMainWindow):
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
-                subject = self.caller.experiment.subjects[subject_name]
+                subject = self.caller.experiment.activate_subject(subject_name)
                 try:
                     self._calculate_evokeds(subject, collection_names)
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject, str(e)))
+                    traceback.print_exc()
                      
         self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)

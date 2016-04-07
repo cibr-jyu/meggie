@@ -241,7 +241,7 @@ class Experiment(QObject):
         if self.active_subject:
             self.active_subject.release_memory()
         self.active_subject = self.subjects[subject_name]
-        
+        return self.active_subject
  
     def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
