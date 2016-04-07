@@ -16,6 +16,7 @@ import shutil
 import inspect
 from inspect import getcallargs
 import linecache
+import copy
 
 from PyQt4 import QtCore, QtGui
 
@@ -386,11 +387,26 @@ class Caller(object):
         subselections for averaging and visualizing purposes from one collection
         is not feasible.
         """
+        params_copy = copy.deepcopy(params)
+        reject_data = params_copy['reject']
+        
+        if 'grad' in reject_data:
+            reject_data['grad'] *= 1e-13
+        if 'mag' in reject_data:
+            reject_data['mag'] *= 1e-15
+        if 'eeg' in reject_data:
+            reject_data['eeg'] *= 1e-6
+        if 'eog' in reject_data:
+            reject_data['eog'] *= 1e-6
+        
+        
+        
+        a = params_copy['reject']
         raw = subject.get_working_file()
              
         events = []
-        event_params = params['events']
-        fixed_length_event_params = params['fixed_length_events']
+        event_params = params_copy['events']
+        fixed_length_event_params = params_copy['fixed_length_events']
        
         category = {}
 
@@ -429,25 +445,25 @@ class Caller(object):
         if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object')
 
-        if params['mag'] and params['grad']:
-            params['meg'] = True
-        elif params['mag']:
-            params['meg'] = 'mag'
-        elif params['grad']:
-            params['meg'] = 'grad'
+        if params_copy['mag'] and params_copy['grad']:
+            params_copy['meg'] = True
+        elif params_copy['mag']:
+            params_copy['meg'] = 'mag'
+        elif params_copy['grad']:
+            params_copy['meg'] = 'grad'
         else:
-            params['meg'] = False
+            params_copy['meg'] = False
 
-        picks = mne.pick_types(raw.info, meg=params['meg'],
-            eeg=params['eeg'], stim=params['stim'], eog=params['eog'])
+        picks = mne.pick_types(raw.info, meg=params_copy['meg'],
+            eeg=params_copy['eeg'], stim=params_copy['stim'], eog=params_copy['eog'])
 
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
                              'checking the checkboxes.')
 
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, np.array(events), category, params['tmin'], params['tmax'], 
-            picks=picks, reject=params['reject'])
+            raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
+            picks=picks, reject=params_copy['reject'])
 
         if len(epochs.get_data()) == 0:
             raise ValueError('Could not find any data. Perhaps the ' + 
@@ -456,11 +472,6 @@ class Caller(object):
         fname = os.path.join(self.experiment.workspace,
             self.experiment.experiment_name,
             subject.subject_name, 'epochs', params['collection_name'])
-        
-        params_to_save = {'events': events, 'mag': params['mag'], 'grad': params['grad'],
-                  'eeg': params['eeg'], 'stim': params['stim'], 'eog': params['eog'],
-                  'reject': params['reject'], 'tmin': params['tmin'], 'tmax': params['tmax'],
-                  'collectionName': params['collection_name'], 'raw': fname}
         
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
