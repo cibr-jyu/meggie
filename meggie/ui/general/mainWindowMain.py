@@ -406,18 +406,15 @@ class MainWindow(QtGui.QMainWindow):
         params_rejections_str = dict((str(key), value) for key, value in
                                      params['reject'].iteritems())
         if 'mag' in params_rejections_str:
-            self.ui.textBrowserMag.setText(str(params_rejections_str['mag'] / 
-                                               1e-15) + ' fT')
+            self.ui.textBrowserMag.setText(str(params_rejections_str['mag']) + ' fT')
         else:
             self.ui.textBrowserMag.setText('-1')
         if 'grad' in params_rejections_str:
-            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad'] / 
-                                                1e-13) + ' fT/cm')
+            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']) + ' fT/cm')
         else:
             self.ui.textBrowserGrad.setText('-1')
         if 'eeg' in params_rejections_str:
-            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg'] / 
-                                               1e-6) + 'uV')
+            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg']) + 'uV')
         else:
             self.ui.textBrowserEEG.setText('-1')
         if 'stim' in params_rejections_str:
