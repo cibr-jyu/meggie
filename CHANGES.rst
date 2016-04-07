@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.2.4 (unreleased)
+0.2.5 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.4 (2016-04-07)
+------------------
+
+- Fix epoch rejections
 
 0.2.3 (2016-04-07)
 ------------------
