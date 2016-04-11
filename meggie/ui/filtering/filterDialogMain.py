@@ -125,7 +125,7 @@ class FilterDialog(QtGui.QDialog):
             self._validateFilterFreq(parameter_values, info['sfreq'])
             self.filter(subject)
         except Exception as e:
-            self.batching_widget.failed_subjects.append(subject, str(e))
+            self.batching_widget.failed_subjects.append((subject, str(e)))
 
         self.batching_widget.cleanup()
         self.close()
@@ -154,7 +154,7 @@ class FilterDialog(QtGui.QDialog):
                 self._validateFilterFreq(params, info['sfreq'])
                 self.filter(subject)
             except Exception as e:
-                self.batching_widget.failed_subjects.append(subject, str(e))
+                self.batching_widget.failed_subjects.append((subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -170,7 +170,7 @@ class FilterDialog(QtGui.QDialog):
                 self._validateFilterFreq(params, info['sfreq'])
                 self.filter(subject)
             except Exception as e:
-                self.batching_widget.failed_subjects.append(subject, str(e))
+                self.batching_widget.failed_subjects.append((subject, str(e)))
                 
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
