@@ -10,3 +10,16 @@ UI:
 
 - scrollbarit kaikkialle (dialogit, widgetit jne)
 - ME TARVITAAN EPOKIT ITSENÄISYYYTTÄ JULISTAA
+
+12.4.2016:
+
+- tekstidataa evokedeista
+- huonot kanavat pudottavat eventtejä epokkien luonnissa, koska niiden arvot ylittävät rejektioiden arvoja
+	- olisi hyvä pystyä valitsemaan vain pari kiinnostavaa hyvää kanavaa (myös batchina joikaiselle subjectille), jotka sitten mm. epokoida
+	- voiko huonoja kanavia poistaa tallentamatta raakatiedostoa? (vie paljon aikaa, jos ajetaan batchina)
+- EEG kanavakartta evokedien visualisointiin
+- eventtien poistaminen epokkidialogissa
+- batch epochingissa montako eventtiä kullekin subjectin kokoelmalle löydettiin (esim. tuloste konsoliin), niin ei tarvitse tarkistaa erikseen aktivoimalla subjecteja
+- 'batch completed'-messagebox ajon jälkeen, jotta tietää prosessin valmistuneen (onko tarvetta throbblerin lisäämisen jälkeen?)
+- averaging välilehdellä voisi batchissa valitsemalla subjectin päivittää epokkilistasta valitun kyseisen kokoelman eventtien lukumäärän
+
