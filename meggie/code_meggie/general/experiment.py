@@ -39,6 +39,7 @@ import re
 import json
 import shutil
 
+from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.general.actionLogger import ActionLogger
@@ -65,6 +66,8 @@ class Experiment(QObject):
     active_subject     -- The subject that is currently processed
     action_logger      -- logs action
     """
+    caller = Caller.Instance()
+
 
     def __init__(self):
         """
@@ -279,11 +282,15 @@ class Experiment(QObject):
                 }
                 subject_dict['epochs'].append(epoch_dict)
             for evoked in subject.evokeds.values():
-                evoked_dict = {
-                    'name': evoked.name,
-                    'event_names': evoked.mne_evokeds.keys(),
-                }
-                subject_dict['evokeds'].append(evoked_dict)
+                try:
+                    evoked_dict = {
+                        'name': evoked.name,
+                        'event_names': evoked.mne_evokeds.keys(),
+                    }
+                    subject_dict['evokeds'].append(evoked_dict)
+                except IOError:
+                    del subject.evokeds[evoked.name]
+                    print 'Missing evoked response file. Experiment updated.'
             subjects.append(subject_dict)
         
         save_dict = {
@@ -302,6 +309,9 @@ class Experiment(QObject):
         # save to file
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f)
+        
+        if self.caller.experiment: 
+            self.caller.parent.initialize_ui()
 
 
 class ExperimentHandler(QObject):

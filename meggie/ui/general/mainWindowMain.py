@@ -577,12 +577,30 @@ class MainWindow(QtGui.QMainWindow):
             '-'.join(collection_names) +
             '_evoked.fif'
         )
-        
-#         if evoked_name in subject.evokeds:
-#             message = ('Evoked data set with name %s already exists!' % 
-#                        evoked_name)
-#             raise ValueError(message)
+    
+        self._save_evoked(subject, evokeds, evoked_name)
+#         # Save evoked into evoked (average) directory with name evoked_name
+#         saveFolder = subject.evokeds_directory
+#         if not os.path.exists(saveFolder):
+#             try:
+#                 os.mkdir(saveFolder)
+#             except IOError:
+#                 message = ('Writing to selected folder is not allowed. You can'
+#                            ' still process the evoked file (visualize etc.).')
+#                 raise IOError(message)
+# 
+#         try:
+#             print 'Writing evoked data as ' + evoked_name + ' ...'
+#             write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+#         except IOError:
+#             message = ('Writing to selected folder is not allowed. You can '
+#                        'still process the evoked file (visualize etc.).')
+#             raise IOError(message)
+#         
+#         new_evoked = Evoked(evoked_name, subject, evokeds)
+#         subject.add_evoked(new_evoked)        
 
+    def _save_evoked(self, subject, evokeds, evoked_name):
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = subject.evokeds_directory
         if not os.path.exists(saveFolder):
@@ -602,8 +620,8 @@ class MainWindow(QtGui.QMainWindow):
             raise IOError(message)
         
         new_evoked = Evoked(evoked_name, subject, evokeds)
-        subject.add_evoked(new_evoked)        
-
+        subject.add_evoked(new_evoked)                
+        
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
         Create averaged epoch collection (evoked dataset).
@@ -640,6 +658,8 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         subject_names = self.evokeds_batching_widget.selected_subjects
+        
+        recently_active_subject_name = self.caller.experiment.active_subject.subject_name
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
@@ -651,6 +671,7 @@ class MainWindow(QtGui.QMainWindow):
                     failed_subjects.append((subject, str(e)))
                     traceback.print_exc()
                      
+        self.caller.experiment.activate_subject(recently_active_subject_name)
         self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
@@ -777,21 +798,24 @@ class MainWindow(QtGui.QMainWindow):
             layout = str(self.ui.labelLayout.text())
 
         try:
-            evokeds = self.caller.plot_group_average(evoked_name, layout)
+            evokeds = self.caller.group_average(evoked_name, layout)
         except Exception as e:
             exc_messagebox(self, e)
             return
 
-        QtGui.QApplication.setOverrideCursor(
-            QtGui.QCursor(QtCore.Qt.WaitCursor))
-        self.update_ui()
+        self._save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name)
 
-        try:
-            self.caller.draw_evoked_potentials(evokeds, layout)
-        except Exception as e:
-            exc_messagebox(self, e)
-
-        QtGui.QApplication.restoreOverrideCursor()
+        self.initialize_ui()
+#         QtGui.QApplication.setOverrideCursor(
+#             QtGui.QCursor(QtCore.Qt.WaitCursor))
+# 
+#         
+#         try:
+#             self.caller.draw_evoked_potentials(evokeds, layout)
+#         except Exception as e:
+#             exc_messagebox(self, e)
+# 
+#         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """Opens a dialog for selecting a layout file."""

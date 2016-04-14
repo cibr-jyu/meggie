@@ -373,7 +373,7 @@ def load_evoked(fname):
     try:
         evokeds = mne.read_evokeds(fname)
     except IOError:
-        raise Exception('Reading evokeds failed.')
+        raise IOError('Reading evokeds failed.')
     return evokeds
 
 def load_powers(subject):

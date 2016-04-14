@@ -661,7 +661,7 @@ class Caller(object):
 
         return averageTitleString, dataList
 
-    def plot_group_average(self, evoked_name, layout):
+    def group_average(self, evoked_name, layout):
         """
         Plots group average of all subjects in the experiment. Also saves group
         average data to ``output`` folder.
@@ -700,12 +700,12 @@ class Caller(object):
         """Performed in a worker thread."""
 
         subjects = self.experiment.subjects.values()
-
         responses = [subject.evokeds.get(evoked_name) for subject in subjects]
         responses = filter(bool, responses)
 
         # assumme all have same same amount of evokeds
         evoked_groups = {}
+        
         for response in responses:
             for key, value in response.mne_evokeds.items():
                 if evoked_groups.get(key):
@@ -713,13 +713,12 @@ class Caller(object):
                 else:
                     evoked_groups[key] = [value]
 
-        grand_averages = []
+        grand_averages = {}
+
         for key, evokeds in evoked_groups.items():
             grand_averaged = mne.grand_average(evokeds)
             grand_averaged.comment = key
-            grand_averages.append(grand_averaged)
-
-        # TODO: save group average data to file
+            grand_averages[key] = grand_averaged
 
         return grand_averages
 
