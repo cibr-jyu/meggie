@@ -227,7 +227,8 @@ class Subject(QObject):
         if not stim_channel:
             return
         try:
-            events = mne.find_events(self.get_working_file())
+            events = mne.find_events(self.get_working_file(),
+                stim_channel=stim_channel)
         except Exception as e:
             print 'Warning: %s' % e
             print 'Reading events with minimum length of 1...'

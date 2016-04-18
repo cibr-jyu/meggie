@@ -1,4 +1,5 @@
 # coding: utf-8
+from PyQt4.Qt import QMimeData
 
 #Copyright (c) <2013>, <Kari Aliranta, Jaakko Lepp�kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
@@ -96,6 +97,11 @@ class EventSelectionDialog(QtGui.QDialog):
             self.batching_widget.data[name]['events'] = []
             self.batching_widget.data[name]['fixed_length_events'] = [] 
 
+        for ch_name in ch_names:
+            item = QtGui.QListWidgetItem(ch_name)
+            self.ui.listWidgetChannels.addItem(item)
+            self.ui.listWidgetChannels.setItemSelected(item, True)
+
     def update_events(self, subject):
         """Add a list of events or a single event to the ui's eventlist.
         """
@@ -163,11 +169,8 @@ class EventSelectionDialog(QtGui.QDialog):
         else:
             self.ui.checkBoxEog.setChecked(False)
         
-            raw = subject.get_working_file(preload=False)
-            ch_names = raw.ch_names
-            
-            print ch_names
-        
+        raw = subject.get_working_file(preload=False)
+        ch_names = raw.ch_names
         stim_channels = [x for x in ch_names if x.startswith('STI')]
         
         active = 0
@@ -276,11 +279,17 @@ class EventSelectionDialog(QtGui.QDialog):
 
         events = deepcopy(self.batching_widget.data[subject.subject_name]['events'])  # noqa
         fle = deepcopy(self.batching_widget.data[subject.subject_name]['fixed_length_events'])  # noqa
+        items = self.ui.listWidgetChannels.selectedItems()
+        channels = []
+        for item in items:
+            channels.append(str(item.text()))
+        
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 'collection_name' : collection_name,
-                      'events' : events, 'fixed_length_events' : fle}
+                      'events' : events, 'fixed_length_events' : fle,
+                      'channels' : channels}
         return param_dict
 
     def create_eventlist(self, subject, event_params):
@@ -359,6 +368,8 @@ class EventSelectionDialog(QtGui.QDialog):
         found = False
         for name, subject_data in self.batching_widget.data.items():
             for epoch_name in self.caller.experiment.subjects[name].epochs:
+                if 'collection_name' not in subject_data:
+                    continue
                 if epoch_name == subject_data['collection_name']:
                     found = True
                     break

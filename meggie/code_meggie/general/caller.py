@@ -399,9 +399,6 @@ class Caller(object):
         if 'eog' in reject_data:
             reject_data['eog'] *= 1e-6
         
-        
-        
-        a = params_copy['reject']
         raw = subject.get_working_file()
              
         events = []
@@ -453,9 +450,19 @@ class Caller(object):
             params_copy['meg'] = 'grad'
         else:
             params_copy['meg'] = False
+        
+        #raw.info['bads'] = params['channels']
 
+        # find all proper picks
         picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-            eeg=params_copy['eeg'], stim=params_copy['stim'], eog=params_copy['eog'])
+            eeg=params_copy['eeg'], stim=params_copy['stim'], 
+            eog=params_copy['eog'])
+        
+        # filter to only interesting ones
+        picks = [idx for idx, name in enumerate(raw.info['ch_names'])
+                 if name in params['channels'] and
+                 idx in picks]
+
 
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
@@ -463,7 +470,7 @@ class Caller(object):
 
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
             raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
-            picks=picks, reject=params_copy['reject'])
+            picks=picks, reject=params_copy['reject'], proj=False)
 
         if len(epochs.get_data()) == 0:
             raise ValueError('Could not find any data. Perhaps the ' + 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
-    <height>941</height>
+    <width>763</width>
+    <height>977</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -92,8 +92,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>741</width>
-        <height>884</height>
+        <width>745</width>
+        <height>920</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -136,8 +136,8 @@
       <widget class="QWidget" name="widget" native="true">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>430</y>
+         <x>370</x>
+         <y>470</y>
          <width>311</width>
          <height>441</height>
         </rect>
@@ -510,13 +510,39 @@
         </item>
        </layout>
       </widget>
-      <zorder>pushButtonFixedLength</zorder>
+      <widget class="QGroupBox" name="groupBoxInterestingChannels">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>430</y>
+         <width>321</width>
+         <height>481</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Select interesting channels</string>
+       </property>
+       <widget class="QListWidget" name="listWidgetChannels">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>301</width>
+          <height>451</height>
+         </rect>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+       </widget>
+      </widget>
       <zorder>groupBox</zorder>
       <zorder>widget</zorder>
       <zorder>groupBoxEvent</zorder>
       <zorder>groupBoxRejection</zorder>
       <zorder>groupBoxEpoch</zorder>
-      <zorder></zorder>
+      <zorder>pushButtonFixedLength</zorder>
+      <zorder>groupBoxInterestingChannels</zorder>
      </widget>
     </widget>
    </item>
