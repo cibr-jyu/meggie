@@ -127,12 +127,12 @@ class MainWindow(QtGui.QMainWindow):
         # quit.
         self.processes = []
 
-        # Direct output to console
-        if 'debug' not in sys.argv:
-            self.directOutput()
-            self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+#         # Direct output to console
+#         if 'debug' not in sys.argv:
+#             self.directOutput()
+#             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+#             sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
+#             sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -323,7 +323,6 @@ class MainWindow(QtGui.QMainWindow):
             self.reinitialize_models()
         except Exception as e:
             exc_messagebox(self, e)
-            #messagebox(self, e)
         except ValueError as e:
             messagebox(self, e)
         self.preferencesHandler.write_preferences_to_disk()
@@ -349,27 +348,32 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
+
         if selIndexes == []:
             message = 'No subject selected for removal.'
             messagebox(self, message)
             return
 
-        subject_name = selIndexes[0].data()
-
-        message = 'Permanently remove subject and the related files?'
-        reply = QtGui.QMessageBox.question(self, 'delete subject',
-                                           message, QtGui.QMessageBox.Yes | 
+        message = 'Permanently remove the selected subects and the related files?'
+        reply = QtGui.QMessageBox.question(self, 'delete selected subjects',
+                                           message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
-
         if reply == QtGui.QMessageBox.Yes:
-            try:
-                self.caller.experiment.remove_subject(subject_name, self)
-                self.subjectListModel.removeRows(selIndexes[0].row())
-            except Exception:
-                msg = 'Could not remove the contents of the subject folder.'
-                messagebox(self, msg)
-            self.initialize_ui()
+            rows_to_remove = []
+            for index in selIndexes:
+                subject_name = index.data()
+        
+                try:
+                    self.caller.experiment.remove_subject(subject_name, self)
+                    rows_to_remove.append(index.row())
+                except Exception:
+                    msg = 'Could not remove the contents of the subject folder.'
+                    messagebox(self, msg)
+    
+            self.subjectListModel.removeRows(rows_to_remove)
+
+        self.initialize_ui()
 
     def show_epoch_collection_parameters(self, epochs):
         """
@@ -1208,6 +1212,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         selIndexes = self.ui.listViewSubjects.selectedIndexes()
+        
+        if len(selIndexes) > 1:
+            return
+        
         subject_name = selIndexes[0].data()
 
         # Not much point trying to activate an already active subject.
@@ -1653,7 +1661,6 @@ class MainWindow(QtGui.QMainWindow):
                                        self.caller.experiment.active_subject)
         self.update_covariance_info_box()
         self._update_source_estimates()
-
 
     def update_power_list(self):
         """Updates the TFR list."""

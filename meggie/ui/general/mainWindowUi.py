@@ -1541,6 +1541,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addWidget(self.pushButtonMNE_Browse_Raw, 1, 1, 1, 1)
         self.gridLayout_12.addLayout(self.gridLayout_5, 1, 0, 1, 1)
         self.listViewSubjects = QtGui.QListView(self.groupBoxSubject_2)
+        self.listViewSubjects.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.listViewSubjects.setObjectName(_fromUtf8("listViewSubjects"))
         self.gridLayout_12.addWidget(self.listViewSubjects, 0, 0, 1, 1)
         self.gridLayout_9.addWidget(self.groupBoxSubject_2, 0, 0, 1, 1)
@@ -1608,7 +1609,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionHide_Show_subject_list_and_info)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonLayoutFromFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.pushButtonBrowseLayout.setEnabled)
         QtCore.QObject.connect(self.radioButtonLayoutFromFile, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.labelLayout.setEnabled)
         QtCore.QObject.connect(self.radioButtonSelectLayout, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.comboBoxLayout.setEnabled)

@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -3540,7 +3540,11 @@ p, li { white-space: pre-wrap; }
          </layout>
         </item>
         <item row="0" column="0">
-         <widget class="QListView" name="listViewSubjects"/>
+         <widget class="QListView" name="listViewSubjects">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

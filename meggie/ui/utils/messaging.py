@@ -15,6 +15,6 @@ def exc_messagebox(parent, e):
     parent.messagebox = messageBoxes.shortMessageBox(message)
     parent.messagebox.show()
 
-def messagebox(parent, msg):
-    parent.messagebox = messageBoxes.shortMessageBox(msg)
+def messagebox(parent, msg, title='Info'):
+    parent.messagebox = messageBoxes.shortMessageBox(msg, title=title)
     parent.messagebox.show()

@@ -322,11 +322,10 @@ class SubjectListModel(QtCore.QAbstractListModel):
         """
         Removal of a single row from the model.
         """
-        self.beginRemoveRows(parent, position, position + rows - 1)
-        singleItem = self.subjectNameList[position]
-        self.subjectNameList.remove(singleItem)
-        self.endRemoveRows()
-        
+        position2 = position[0]
+        self.beginRemoveRows(parent, position2, position2 + rows - 1)
+        self.subjectNameList = [item for idx, item in enumerate(self.subjectNameList) if idx not in position]
+        self.endRemoveRows()        
     
     def initialize_model(self):
         """
@@ -342,6 +341,7 @@ class SubjectListModel(QtCore.QAbstractListModel):
         
         for name in self.caller.experiment.subjects:
             self.subjectNameList.append(name)
+        self.subjectNameList.sort(key=str)
         self.layoutChanged.emit()
 
 

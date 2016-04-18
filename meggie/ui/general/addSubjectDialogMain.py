@@ -70,6 +70,7 @@ class AddSubjectDialog(QtGui.QDialog):
 
     def accept(self):
         """ Add the new subject. """
+        failed_subjects = []
         for i in range(self.ui.listWidgetFileNames.count()):
             item = self.ui.listWidgetFileNames.item(i)
             raw_path = item.text()
@@ -78,12 +79,8 @@ class AddSubjectDialog(QtGui.QDialog):
 
             # Check if the subject is already added to the experiment.
             if subject_name in self.caller.experiment.subjects:
-                msg = ('Subject ' + subject_name + ' is already added to the '
-                       'experiment. Change the filename of the raw every time '
-                       'you want to create a new subject with the same raw '
-                       'file.')
-                messagebox(self.parent, msg)
-                return
+                failed_subjects.append(subject_name)
+                continue
 
             try:
                 self.caller.experiment.create_subject(subject_name,
@@ -92,12 +89,17 @@ class AddSubjectDialog(QtGui.QDialog):
                                                       raw_path=raw_path)
             except Exception as e:
                 exc_messagebox(self.parent, e)
-                return
 
         try:
             self.caller.activate_subject(subject_name)
         except Exception as e:
-            exc_messagebox(self.parent, e)
+            pass
+
+        if len(failed_subjects) > 0:
+            msg = 'The following subjects were already added to the experiment: \n'
+            for subject_name in failed_subjects:
+                msg += subject_name + '\n'
+                messagebox(self.parent, msg)
 
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
