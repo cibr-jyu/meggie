@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.2.6 (unreleased)
+0.2.7 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.6 (2016-04-19)
+------------------
+
+- Allow saving all evoked data
+- Interesting channels selection on epoch creation
+- Fix layout files
+- Group averaging creates evoked object
 
 0.2.5 (2016-04-07)
 ------------------
