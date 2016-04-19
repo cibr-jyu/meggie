@@ -7,18 +7,14 @@ Created on Mar 13, 2013
 A module for various file operations needed by Meggie.
 """
  
-import mne
-
 import os
 import pickle
 import shutil
 import glob
 import re
 import sys
-import json
 
 from os.path import isfile, join
-
 from shutil import copyfile
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
@@ -27,40 +23,41 @@ from distutils import dir_util
 
 from xlrd import open_workbook
 from xlwt import Workbook, XFStyle
-import csv
 
-from meggie.code_meggie.general.statistic import Statistic
+import mne
+import numpy as np
+
 from meggie.code_meggie.general.wrapper import wrap_mne_call
-
     
+
 def copy_recon_files(activeSubject, sourceDirectory):
-        """
-        Copies mri and surf files from the given directory to under the active
-        subject's reconFiles directory (after creating the said directory, 
-        if need be).
-        
-        Keyword arguments:
-        
-        activeSubject            -- currently active subject
-        sourceDirectory     -- directory including the mri and surf file 
-        
-        Returns True if copying was successful, else returns False.
-        
-        """         
-        reconDir = activeSubject.reconFiles_directory
-        
-        # Empty the destination directory first by removing it, then make it
-        # again.
-        if os.path.isdir(reconDir):
-            dir_util.remove_tree(reconDir)
-        
-        dst = activeSubject.reconFiles_directory
-        
-        try:
-            print '\n Meggie: Copying recon files... \n'
-            dir_util.copy_tree(sourceDirectory, dst)
-            print '\n Meggie: Recon files copying complete! \n'
-        except IOError: raise
+    """
+    Copies mri and surf files from the given directory to under the active
+    subject's reconFiles directory (after creating the said directory, 
+    if need be).
+    
+    Keyword arguments:
+    
+    activeSubject            -- currently active subject
+    sourceDirectory     -- directory including the mri and surf file 
+    
+    Returns True if copying was successful, else returns False.
+    
+    """         
+    reconDir = activeSubject.reconFiles_directory
+    
+    # Empty the destination directory first by removing it, then make it
+    # again.
+    if os.path.isdir(reconDir):
+        dir_util.remove_tree(reconDir)
+    
+    dst = activeSubject.reconFiles_directory
+    
+    try:
+        print '\n Meggie: Copying recon files... \n'
+        dir_util.copy_tree(sourceDirectory, dst)
+        print '\n Meggie: Recon files copying complete! \n'
+    except IOError: raise
     
     
 def move_trans_file(subject, fModelName):
@@ -208,70 +205,70 @@ def write_forward_model_parameters(fmname, subject, sspaceArgs=None,
     
            
 def convertFModelParamDictToCmdlineParamTuple(fmdict):
-        """
-        Converts the parameters input in the dialog into valid command line
-        argument strings for various MNE-C-scripts (mne_setup_source_space, 
-        mne_watershed_bem, mne_setup_forward_model) used in forward model
-        creation.
-        
-        Keyword arguments:
-        
-        pdict        -- dictionary of three dictionaries, created by 
-                        ForwardModelDialogMain.
-        
-        Returns a tuple of lists with suitable arguments for commandline tools.
-        Looks like this:
-        (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
-        mne_setup_forward_model_argumentList) 
-        """
-        
-        # Arguments for source space setup
-        if fmdict['sspaceArgs']['surfaceDecimMethod'] == 'traditional (default)':
-            sDecimIcoArg = []
-        else: sDecimIcoArg = ['--ico', fmdict['sspaceArgs']['surfaceDecimValue']]
-        
-        if fmdict['sspaceArgs']['computeCorticalStats'] == True:
-            cpsArg = ['--cps']
-        else: cpsArg = []
-        
-        spacingArg = ['--spacing', fmdict['sspaceArgs']['spacing']]
-        surfaceArg = ['--surface', fmdict['sspaceArgs']['surfaceName']]
-        
-        setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
-        
-        # Arguments for BEM model meshes
-        if fmdict['wsshedArgs']['useAtlas'] == True:
-            waterShedArgs = ['--atlas']
-        else: waterShedArgs = []
-        
-        # Arguments for BEM model setup
-        surfArg = ['--surf']
-        bemIcoArg = ['--ico', fmdict['sfmodelArgs']['triangFilesIco']]
-        
-        if fmdict['sfmodelArgs']['compartModel'] == 'three layer':
-            braincArg = fmdict['sfmodelArgs']['brainc']
-            skullcArg = fmdict['sfmodelArgs']['skullc']
-            scalpcArg = fmdict['sfmodelArgs']['scalpc']
-            homogArg = ['']
-        else:
-            braincArg = ['']
-            skullcArg = ['']
-            scalpcArg = ['']
-            homogArg = ['--homog']
+    """
+    Converts the parameters input in the dialog into valid command line
+    argument strings for various MNE-C-scripts (mne_setup_source_space, 
+    mne_watershed_bem, mne_setup_forward_model) used in forward model
+    creation.
+    
+    Keyword arguments:
+    
+    pdict        -- dictionary of three dictionaries, created by 
+                    ForwardModelDialogMain.
+    
+    Returns a tuple of lists with suitable arguments for commandline tools.
+    Looks like this:
+    (mne_setup_source_space_argumentList, mne_watershed_bem_argumentList, 
+    mne_setup_forward_model_argumentList) 
+    """
+    
+    # Arguments for source space setup
+    if fmdict['sspaceArgs']['surfaceDecimMethod'] == 'traditional (default)':
+        sDecimIcoArg = []
+    else: sDecimIcoArg = ['--ico', fmdict['sspaceArgs']['surfaceDecimValue']]
+    
+    if fmdict['sspaceArgs']['computeCorticalStats'] == True:
+        cpsArg = ['--cps']
+    else: cpsArg = []
+    
+    spacingArg = ['--spacing', fmdict['sspaceArgs']['spacing']]
+    surfaceArg = ['--surface', fmdict['sspaceArgs']['surfaceName']]
+    
+    setupSourceSpaceArgs = spacingArg + surfaceArg + sDecimIcoArg + cpsArg
+    
+    # Arguments for BEM model meshes
+    if fmdict['wsshedArgs']['useAtlas'] == True:
+        waterShedArgs = ['--atlas']
+    else: waterShedArgs = []
+    
+    # Arguments for BEM model setup
+    surfArg = ['--surf']
+    bemIcoArg = ['--ico', fmdict['sfmodelArgs']['triangFilesIco']]
+    
+    if fmdict['sfmodelArgs']['compartModel'] == 'three layer':
+        braincArg = fmdict['sfmodelArgs']['brainc']
+        skullcArg = fmdict['sfmodelArgs']['skullc']
+        scalpcArg = fmdict['sfmodelArgs']['scalpc']
+        homogArg = ['']
+    else:
+        braincArg = ['']
+        skullcArg = ['']
+        scalpcArg = ['']
+        homogArg = ['--homog']
 
-        if fmdict['sfmodelArgs']['nosol'] == True:
-            nosolArg = ['--nosol']
-        else: nosolArg = ['']
-        
-        innerShiftArg = ['--innerShift', fmdict['sfmodelArgs']['innerShift']] 
-        outerShiftArg = ['--outerShift', fmdict['sfmodelArgs']['outerShift']] 
-        skullShiftArg = ['--outerShift', fmdict['sfmodelArgs']['skullShift']] 
-        
-        setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
-                          skullcArg + scalpcArg + nosolArg + innerShiftArg + \
-                          outerShiftArg + skullShiftArg
-        
-        return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
+    if fmdict['sfmodelArgs']['nosol'] == True:
+        nosolArg = ['--nosol']
+    else: nosolArg = ['']
+    
+    innerShiftArg = ['--innerShift', fmdict['sfmodelArgs']['innerShift']] 
+    outerShiftArg = ['--outerShift', fmdict['sfmodelArgs']['outerShift']] 
+    skullShiftArg = ['--outerShift', fmdict['sfmodelArgs']['skullShift']] 
+    
+    setupFModelArgs = homogArg + surfArg + bemIcoArg + braincArg + \
+                      skullcArg + scalpcArg + nosolArg + innerShiftArg + \
+                      outerShiftArg + skullShiftArg
+    
+    return (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs)
 
 
 def write_forward_solution_parameters(fmdir, fsdict):
@@ -347,6 +344,7 @@ def delete_file_at(folder, files):
         return
     os.remove(os.path.join(folder, files))
     
+    
 def load_epochs(fname, load_object=False):
     """Load epochs from a folder.
     
@@ -364,6 +362,7 @@ def load_epochs(fname, load_object=False):
         raise Exception('Reading epochs failed.')
     return epochs
 
+
 def load_evoked(fname):
     """Load evokeds to the list when mainWindow is initialized
 
@@ -375,6 +374,7 @@ def load_evoked(fname):
     except IOError:
         raise IOError('Reading evokeds failed.')
     return evokeds
+
 
 def load_powers(subject):
     """
@@ -390,6 +390,7 @@ def load_powers(subject):
         if fname.endswith('.h5'):
             powers.append(fname)
     return powers
+
 
 def open_raw(fname, pre_load=True):
     """
@@ -409,8 +410,41 @@ def open_raw(fname, pre_load=True):
     except ValueError as e:
         raise ValueError('File is not a raw-file.' + str(e))
 
+
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
+    
+
+def group_save_evokeds(filename, evokeds, names):
+    """ Combine data from multiple evokeds to one big csv """
+
+    if len(evokeds) == 0:
+        raise ValueError("At least one evoked object is needed.")
+
+    print "Writing " + str(len(evokeds)) + " subject's evoked data to csv."
+
+    # gather all the data to list of rows
+    all_data = []
+
+    # time point data, assume same lengths for all evokeds
+    all_data.append(['times'] + evokeds[0].times.tolist())
+
+    # time series data
+    for sub_idx, evoked in enumerate(evokeds):
+        for ch_idx in range(len(evoked.data)):
+            ch_name = evoked.info['ch_names'][ch_idx].replace(' ', '')
+            row_name = names[sub_idx] + ' ' + ch_name
+
+            # mark bad channels
+            if evoked.info['ch_names'][ch_idx] in evoked.info['bads']:
+                row_name += ' (bad)'
+
+            row = [row_name] + evoked.data[ch_idx, :].tolist()
+            all_data.append(row)
+
+    # save to file
+    all_data = np.array(all_data)
+    np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
     
 
 def pickleObjectToFile(picklable, fpath):
@@ -474,6 +508,7 @@ def save_epoch(epoch, overwrite=False):
     # First save the epochs
     epoch.raw.save(epoch.path)
 
+
 def read_surface_names_into_list(subject):
     """
     Reads the surface files from under the subject's surf directory and
@@ -516,19 +551,19 @@ def get_layouts():
     Finds the layout files from MNE_ROOT.
     Returns a list of strings of found files. 
     """
-    import pkg_resources
+    from pkg_resources import resource_filename
     
     files = []
     
     try:
-        path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
+        path_meggie = resource_filename('meggie', 'data/layouts')
 
         files.extend([f for f in os.listdir(path_meggie)])
     except:
         pass        
     
     try:    
-        path = pkg_resources.resource_filename('mne', 'channels/data/layouts')
+        path = resource_filename('mne', 'channels/data/layouts')
         
         files.extend([f for f in os.listdir(path) 
                       if isfile(join(path,f)) and f.endswith('.lout')])
@@ -545,9 +580,11 @@ def load_tfr(fname):
     """
     return mne.time_frequency.tfr.read_tfrs(fname)[0]
 
+
 def create_folders(paths):
     for path in paths:
         os.makedirs(path)
+
 
 def save_subject(subject, path):
     try:
@@ -565,4 +602,3 @@ def save_subject(subject, path):
                       "Do you have the necessary permissions?")
     
     copyfile(path, subject.working_file_path)
-    

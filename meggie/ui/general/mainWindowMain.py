@@ -690,10 +690,8 @@ class MainWindow(QtGui.QMainWindow):
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
-        name = str(item.text())
-        #evokeds = self.caller.experiment.active_subject.evokeds.get(name).raw
-        evokeds = self.caller.experiment.active_subject.evokeds[name].mne_evokeds
-        self.evokedStatsDialog = EvokedStatsDialog(evokeds)
+        evoked_name = str(item.text())
+        self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
         self.evokedStatsDialog.show()
 
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):

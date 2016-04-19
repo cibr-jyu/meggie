@@ -21,26 +21,29 @@ from meggie.ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+from meggie.code_meggie.general import fileManager
+from scipy.weave.catalog import default_dir
 
 class EvokedStatsDialog(QtGui.QDialog):
 
     """A Window for displaying statistical information of averaged epochs."""
 
-    def __init__(self, evoked=None):
+    def __init__(self, parent, evoked_name):
         """Constructor.
         """
         QtGui.QDialog.__init__(self)
         self.ui = Ui_EvokedStatsDialog()
         self.ui.setupUi(self)
-        self.evoked = evoked
-        if evoked is None:
-            return
+        self.parent = parent
+        self.evoked_name = evoked_name
+
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
 
         #Selected_items is a dictionary containing all the channels selected
         #across the evoked sets in the comboBoxEvokeds. 
-        #self.selected_channels = [list() for _ in self.evoked]
         self.selected_channels = {}
-        for evoked in self.evoked.values():
+        for evoked in evokeds.values():
             self.selected_channels[evoked.comment] = list()
 
         self.populateComboBoxEvoked()
@@ -71,12 +74,10 @@ class EvokedStatsDialog(QtGui.QDialog):
        
         self.evoked_set_changed()
 
-        evokeds = self.evoked.values()
-        self.ui.doubleSpinBoxStart.setValue(evokeds[0].times[0])
-        self.ui.doubleSpinBoxStop.setValue(evokeds[0].times[-1])
+        values = evokeds.values()
+        self.ui.doubleSpinBoxStart.setValue(values[0].times[0])
+        self.ui.doubleSpinBoxStop.setValue(values[0].times[-1])
         
-        
-        #Save CSV: Create a CSV file of the key values displayed on the right side
 
     def checkBox_state_changed(self):
         """Select or unselect channels based on the checkbox.
@@ -104,7 +105,10 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def evoked_set_changed(self):
         """Updates the channel list with current evoked's channels."""
-        for evoked_value in self.evoked.values():
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        
+        for evoked_value in evokeds.values():
             if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
                 channels = evoked_value.ch_names
                 evoked = evoked_value
@@ -145,7 +149,10 @@ class EvokedStatsDialog(QtGui.QDialog):
         if checked is None: return
         if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
 
-        for evoked_value in self.evoked.values():
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+
+        for evoked_value in evokeds.values():
             if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
                 evoked = evoked_value
                 event_name = evoked_value.comment
@@ -176,7 +183,10 @@ class EvokedStatsDialog(QtGui.QDialog):
             return
         caller = Caller.Instance()
         
-        for evoked in self.evoked.values():
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        
+        for evoked in evokeds.values():
             if self.ui.comboBoxEvoked.currentText() == evoked.comment:
                 evoked_to_viz = evoked
                 event_name = evoked.comment
@@ -187,29 +197,75 @@ class EvokedStatsDialog(QtGui.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
 
+    def on_pushButtonGroupSaveCSV_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        default_dir = os.path.join(self.parent.caller.experiment.workspace,
+            self.parent.caller.experiment.experiment_name, 'output', )
+        
+        if not os.path.isdir(default_dir):
+            os.mkdir(default_dir)
+            
+        collection_name = str(self.ui.comboBoxEvoked.currentText())
+
+        name = collection_name + '_group_stats.csv'
+        path = os.path.join(default_dir, name)
+        filename = str(QtGui.QFileDialog.getSaveFileName(parent=self,
+                       caption='Save csv file.', directory=path))
+        
+        if filename == '':
+            return
+        
+        subjects = self.parent.caller.experiment.subjects
+        
+        names = []
+        evokeds = []
+        for name, subject in subjects.items():
+            meggie_evoked = subject.evokeds.get(self.evoked_name)
+            if meggie_evoked:
+                evoked = meggie_evoked.mne_evokeds.get(collection_name)
+                if evoked:
+                    evokeds.append(evoked)
+                    names.append(name)
+        
+        fileManager.group_save_evokeds(filename, evokeds, names)
+
     def on_pushButtonCSV_clicked(self, checked=None):
         """
         Saves a csv file of the statistics.
         """
-        if checked is None: return
-        caller = Caller.Instance()
+        if checked is None:
+            return
         
-        for evoked_value in self.evoked.values():
-            if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
-                evoked = evoked_value
-                event_name = evoked_value.comment
+        caller = self.parent.caller
         
         exp_path = os.path.join(caller.experiment.workspace,
                                 caller.experiment.experiment_name)
+        
         path = os.path.join(exp_path, 'output')
+        
         if not os.path.isdir(path):
             os.mkdir(path)
-        filename = event_name + '_stats.csv'
+        
+        collection_name = str(self.ui.comboBoxEvoked.currentText())
+        
+        filename = collection_name + '_stats.csv'
         path = os.path.join(path, filename)
-        fname = str(QFileDialog.getSaveFileName(parent=self, caption='Save csv'
-                                                ' file.', directory=path))
+        
+        fname = str(QFileDialog.getSaveFileName(parent=self, 
+                                                caption='Save csv file.',
+                                                directory=path))
         if fname == '':
             return
+        
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        evoked = evokeds.get(collection_name)
+        
+        if not evoked:
+            return
+        
         print 'Saving csv...'
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
@@ -227,7 +283,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                              'Time of maximum', 'Half maximum',
                              'Time before max', 'Time after max', 'Duration',
                              'Integral'])
-            for ch_name in self.selected_channels[event_name]:
+            for ch_name in self.selected_channels[collection_name]:
                 pick = evoked.ch_names.index(ch_name)
                 this_data = data[pick]
                 ch_type = mne.channels.channels.channel_type(evoked.info, pick)
@@ -245,7 +301,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                                     tmax, min_idx, max_idx, scaler)
 
                 if ch_name.startswith('MEG') and ch_name.endswith('3'):
-                    if (ch_name[:-1] + '2') in self.selected_channels[event_name]:
+                    if (ch_name[:-1] + '2') in self.selected_channels[collection_name]:
                         # Merge data from pair of grad channels
                         pick2 = evoked.ch_names.index(ch_name[:-1] + '2')
                         this_data = _merge_grad_data(np.array([this_data,
@@ -282,7 +338,10 @@ class EvokedStatsDialog(QtGui.QDialog):
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
         """
-        for evoked in self.evoked:
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        
+        for evoked in evokeds:
             self.ui.comboBoxEvoked.addItem(str(evoked))
 
     def resetSpinBoxes(self):
@@ -299,8 +358,10 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def update_info(self):
         """Update the info widgets with data based on item."""
-
-        for evoked_value in self.evoked.values():
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        
+        for evoked_value in evokeds.values():
             if self.ui.comboBoxEvoked.currentText() == evoked_value.comment:
                 evoked = evoked_value
                 event_name = evoked_value.comment

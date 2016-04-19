@@ -719,5 +719,5 @@ class Ui_EvokedStatsDialog(object):
         self.labelHalfMax.setText(_translate("EvokedStatsDialog", "Half maximum:", None))
         self.doubleSpinBoxHalfMaxBefore.setSuffix(_translate("EvokedStatsDialog", "s", None))
         self.pushButtonCSV.setText(_translate("EvokedStatsDialog", "Save CSV", None))
-        self.pushButtonGroupSaveCSV.setText(_translate("EvokedStatsDialog", "Group Save CSV", None))
+        self.pushButtonGroupSaveCSV.setText(_translate("EvokedStatsDialog", "Group Save All", None))
 

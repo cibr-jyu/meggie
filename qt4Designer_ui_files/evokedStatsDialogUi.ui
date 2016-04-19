@@ -1635,7 +1635,7 @@ MEG 2211</string>
        <item row="13" column="2">
         <widget class="QPushButton" name="pushButtonGroupSaveCSV">
          <property name="text">
-          <string>Group Save CSV</string>
+          <string>Group Save All</string>
          </property>
         </widget>
        </item>
