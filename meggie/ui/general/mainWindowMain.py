@@ -810,16 +810,6 @@ class MainWindow(QtGui.QMainWindow):
         self._save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name)
 
         self.initialize_ui()
-#         QtGui.QApplication.setOverrideCursor(
-#             QtGui.QCursor(QtCore.Qt.WaitCursor))
-# 
-#         
-#         try:
-#             self.caller.draw_evoked_potentials(evokeds, layout)
-#         except Exception as e:
-#             exc_messagebox(self, e)
-# 
-#         QtGui.QApplication.restoreOverrideCursor()
 
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """Opens a dialog for selecting a layout file."""
@@ -1534,6 +1524,7 @@ class MainWindow(QtGui.QMainWindow):
         Checks the existence of a ton of files and sets the GUI fields to
         reflect the state of the experiment and subject according to them.
         """
+
         # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
@@ -1572,6 +1563,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonCheckSurfaces.setEnabled(False)
         self.ui.pushButtonCheckSegmentations.setEnabled(False)
         #self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
+                
+        self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
 
         if self.caller.experiment.active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
@@ -1584,6 +1577,7 @@ class MainWindow(QtGui.QMainWindow):
         status = "Current working file: " + name
         
         self.statusLabel.setText(status)
+        #self.ui.
 
         # Check whether ECG projections are calculated
         if self.caller.experiment.active_subject.check_ecg_projs():
@@ -1630,8 +1624,6 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as err:
             exc_messagebox(self, err)
             return
-        self.setWindowTitle('Meggie - ' +
-                            self.caller.experiment.experiment_name)
 
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.

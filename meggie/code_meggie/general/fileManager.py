@@ -516,13 +516,25 @@ def get_layouts():
     Finds the layout files from MNE_ROOT.
     Returns a list of strings of found files. 
     """
+    import pkg_resources
+    
+    files = []
+    
     try:
-        import pkg_resources
-        path = pkg_resources.resource_filename('mne', 'channels/data/layouts')
-        files = [ f[:-5] for f in os.listdir(path)\
-                        if isfile(join(path,f)) and f.endswith('.lout') ]
+        path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
+
+        files.extend([f for f in os.listdir(path_meggie)])
     except:
-        return []
+        pass        
+    
+    try:    
+        path = pkg_resources.resource_filename('mne', 'channels/data/layouts')
+        
+        files.extend([f for f in os.listdir(path) 
+                      if isfile(join(path,f)) and f.endswith('.lout')])
+    except:
+        pass
+    
     return files
 
 

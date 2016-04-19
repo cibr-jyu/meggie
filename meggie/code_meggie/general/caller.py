@@ -451,8 +451,6 @@ class Caller(object):
         else:
             params_copy['meg'] = False
         
-        #raw.info['bads'] = params['channels']
-
         # find all proper picks
         picks = mne.pick_types(raw.info, meg=params_copy['meg'],
             eeg=params_copy['eeg'], stim=params_copy['stim'], 
@@ -462,23 +460,30 @@ class Caller(object):
         picks = [idx for idx, name in enumerate(raw.info['ch_names'])
                  if name in params['channels'] and
                  idx in picks]
-
+        
 
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
                              'checking the checkboxes.')
 
-        epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
-            picks=picks, reject=params_copy['reject'], proj=False)
+        # copy and apply projections beforehand, as projections are
+        # not valid anymore for a subselection of channels
+        # see: https://github.com/mne-tools/mne-python/issues/3138
+        proj_raw = raw.copy()
+        proj_raw.info['projs'] = [proj for proj in proj_raw.info['projs'] 
+                      if proj.get('active') != True]
+        proj_raw.apply_proj()
+        proj_raw.info['projs'] = []
 
+        epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
+            proj_raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
+            picks=picks, reject=params_copy['reject'])
+        
+        del proj_raw    
+    
         if len(epochs.get_data()) == 0:
             raise ValueError('Could not find any data. Perhaps the ' + 
                              'rejection thresholds are too strict...')
-
-        fname = os.path.join(self.experiment.workspace,
-            self.experiment.experiment_name,
-            subject.subject_name, 'epochs', params['collection_name'])
         
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
@@ -493,6 +498,22 @@ class Caller(object):
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events
 
+    def read_layout(self, layout):
+        import pkg_resources
+        path_mne = pkg_resources.resource_filename('mne', 'channels/data/layouts')
+        path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
+        
+        print path_mne
+        print path_meggie
+        print layout
+        
+        if os.path.exists(os.path.join(path_mne, layout)):
+            return read_layout(layout, path_mne)
+        
+        if os.path.exists(os.path.join(path_meggie, layout)):
+            return read_layout(layout, path_meggie)
+
+
     def draw_evoked_potentials(self, evokeds, layout):
         """
         Draws a topography representation of the evoked potentials.
@@ -504,13 +525,13 @@ class Caller(object):
         if layout == 'Infer from data':
             layout = None  # Tries to guess the locations from the data.
         else:
-            layout = read_layout(layout)
+            layout = self.read_layout(layout)
 
         colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
 
-        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
+        #mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
 
-        title = mi.subject_name
+        title = self.experiment.active_subject.subject_name
 
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
                             color=colors[:len(evokeds)], title=title)
@@ -688,7 +709,7 @@ class Caller(object):
                 self.parent, 
                 "Evoked responses not found",
                 "Evoked responses not found from every subject. "
-                "(" + str(count) + " resopnses found.) "
+                "(" + str(count) + " responses found.) "
                 "Draw the evoked potentials anyway?",
                 QtGui.QMessageBox.Yes,
                 QtGui.QMessageBox.No
@@ -885,7 +906,7 @@ class Caller(object):
         if lout == 'Infer from data':
             layout = None
         else:
-            layout = read_layout(lout)
+            layout = self.read_layout(lout)
         
         if blstart is None and blend is None:
             baseline = None
@@ -981,7 +1002,7 @@ class Caller(object):
         if layout == 'Infer from data':
             layout = None
         else:
-            layout = read_layout(layout)
+            layout = self.read_layout(layout)
 
         frequencies = np.arange(minfreq, maxfreq, interval)
 
@@ -1229,7 +1250,7 @@ class Caller(object):
             lout = None
         else:
             try:
-                lout = read_layout(params['lout'], scale=True)
+                lout = self.read_layout(params['lout'], scale=True)
             except Exception:
                 message = 'Could not read layout information.'
                 raise Exception(message)
