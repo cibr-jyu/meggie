@@ -413,6 +413,10 @@ def open_raw(fname, pre_load=True):
 
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
+    print fname
+    print os.path.basename(fname)
+    print experiment.active_subject.working_file_name
+    experiment.active_subject.working_file_name = os.path.basename(fname)
     
 
 def group_save_evokeds(filename, evokeds, names):

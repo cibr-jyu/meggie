@@ -79,6 +79,12 @@ class EventSelectionDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.fixedLengthDialog = None
         self.used_names = []
+        
+        self.event_data = {
+            'events': [],
+            'fixed_length_events': []
+        }
+        
         ch_names = self.caller.experiment.active_subject.get_working_file().ch_names
         stim_channels = [x for x in ch_names if x.startswith('STI')]
 
@@ -91,25 +97,22 @@ class EventSelectionDialog(QtGui.QDialog):
         
         self.batching_widget = BatchingWidget(self, 
             self.ui.scrollAreaWidgetContents)
-        
-        for name in self.caller.experiment.subjects:
-            self.batching_widget.data[name] = {}
-            self.batching_widget.data[name]['events'] = []
-            self.batching_widget.data[name]['fixed_length_events'] = [] 
 
         for ch_name in ch_names:
             item = QtGui.QListWidgetItem(ch_name)
             self.ui.listWidgetChannels.addItem(item)
             self.ui.listWidgetChannels.setItemSelected(item, True)
 
-    def update_events(self, subject):
+        
+    def update_events(self):
         """Add a list of events or a single event to the ui's eventlist.
         """
         self.ui.listWidgetEvents.clear()
-        subject_name = subject.subject_name
-
-        if 'events' in self.batching_widget.data[subject_name]:
-            events = self.batching_widget.data[subject_name]['events']
+ 
+        event_data = self.event_data
+        
+        if 'events' in event_data:
+            events = event_data['events']
             for event in events:
                 item = QtGui.QListWidgetItem(
                     '%s, %s, %s' % (
@@ -118,9 +121,9 @@ class EventSelectionDialog(QtGui.QDialog):
                     'stim=' + str(event['stim'])
                 ))
                 self.ui.listWidgetEvents.addItem(item)
-
-        if 'fixed_length_events' in self.batching_widget.data[subject_name]:
-            fixed_length_events = self.batching_widget.data[subject_name]['fixed_length_events']
+ 
+        if 'fixed_length_events' in event_data:
+            fixed_length_events = event_data['fixed_length_events']
             for idx, event in enumerate(fixed_length_events):
                 item = QtGui.QListWidgetItem(
                     '%s, %s, %s, %s' % (
@@ -191,7 +194,14 @@ class EventSelectionDialog(QtGui.QDialog):
         self.ui.lineEditCollectionName.setText(dic['collection_name'])
         self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
         self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
-        self.update_events(subject)
+        
+        events = deepcopy(params_dict['events'])
+        fle = deepcopy(params_dict['fixed_length_events'])
+        
+        self.event_data['events'] = events
+        self.event_data['fixed_length_events'] = fle
+        
+        self.update_events()
 
     def get_selected_subject(self):
         item = None
@@ -277,8 +287,9 @@ class EventSelectionDialog(QtGui.QDialog):
             messagebox(self.parent, message)
             return
 
-        events = deepcopy(self.batching_widget.data[subject.subject_name]['events'])  # noqa
-        fle = deepcopy(self.batching_widget.data[subject.subject_name]['fixed_length_events'])  # noqa
+        events = deepcopy(self.event_data['events'])
+        fle = deepcopy(self.event_data['fixed_length_events'])
+        
         items = self.ui.listWidgetChannels.selectedItems()
         channels = []
         for item in items:
@@ -287,8 +298,9 @@ class EventSelectionDialog(QtGui.QDialog):
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
-                      'tmax' : float(tmax), 'collection_name' : collection_name,
-                      'events' : events, 'fixed_length_events' : fle,
+                      'tmax' : float(tmax), 
+                      'collection_name' : collection_name,
+                      'events' : events, 'fixed_length_events' : fle, 
                       'channels' : channels}
         return param_dict
 
@@ -317,8 +329,8 @@ class EventSelectionDialog(QtGui.QDialog):
         subject = self.get_selected_subject()
         events = self.create_eventlist(subject, event_params)
         if len(events) != 0:
-            self.batching_widget.data[subject.subject_name]['events'].append(event_params)
-            self.update_events(subject)
+            self.event_data['events'].append(event_params)
+            self.update_events()
         else:
             messagebox(self.parent, "No events found.")
 

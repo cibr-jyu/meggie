@@ -1056,7 +1056,7 @@ class MainWindow(QtGui.QMainWindow):
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
         self.addEcgProjs.exec_()
-
+        
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
@@ -1577,22 +1577,34 @@ class MainWindow(QtGui.QMainWindow):
         self.statusLabel.setText(status)
         #self.ui.
 
+        active_subject = self.caller.experiment.active_subject
+
         # Check whether ECG projections are calculated
-        if self.caller.experiment.active_subject.check_ecg_projs():
+        if active_subject.check_ecg_projs():
             self.ui.pushButtonApplyECG.setEnabled(True)
             self.ui.checkBoxECGComputed.setChecked(True)
+        
         # Check whether EOG projections are calculated
-        if self.caller.experiment.active_subject.check_eog_projs():
+        if active_subject.check_eog_projs():
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.checkBoxEOGComputed.setChecked(True)
+        
         # Check whether ECG projections are applied
-        if self.caller.experiment.active_subject.check_ecg_applied():
+        if all([
+            active_subject.check_ecg_applied(), 
+            'ecg_applied' in active_subject.working_file_name
+        ]):
             self.ui.checkBoxECGApplied.setChecked(True)
+        
         # Check whether EOG projections are applied
-        if self.caller.experiment.active_subject.check_eog_applied():
+        if all([
+            active_subject.check_eog_applied(),
+            'eog_applied' in active_subject.working_file_name
+        ]):
             self.ui.checkBoxEOGApplied.setChecked(True)
+        
         # Check whether sss/tsss method is applied.
-        if self.caller.experiment.active_subject.check_sss_applied():
+        if active_subject.check_sss_applied():
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
@@ -1601,11 +1613,10 @@ class MainWindow(QtGui.QMainWindow):
         # in mainwindow
         
         # Populate epoch and evoked lists        
-        raw = self.caller.experiment.active_subject.get_working_file()
-        active_sub = self.caller.experiment.active_subject
+        raw = active_subject.get_working_file()
 
-        epochs_items = self.caller.experiment.active_subject.epochs
-        evokeds_items = self.caller.experiment.active_subject.evokeds
+        epochs_items = active_subject.epochs
+        evokeds_items = active_subject.evokeds
         if epochs_items is not None:
             for epoch in epochs_items.values():
                 self.epochList.ui.listWidgetEpochs.addItem(epoch.collection_name)
@@ -1625,7 +1636,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Check whether reconstructed mri files have been copied to the recon
         # files directory under the subject and set up the UI accordingly.
-        if self.caller.experiment.active_subject.check_reconFiles_copied():
+        if active_subject.check_reconFiles_copied():
             self.ui.lineEditRecon.setText('Reconstructed mri image already '
                                           'copied.')
             self.ui.pushButtonConvertToMNE.setEnabled(True)
@@ -1635,7 +1646,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonCheckSegmentations.setEnabled(True)
 
         # Check if MRI image has been setup with mne_setup_forward solution
-        if self.caller.experiment.active_subject.check_mne_setup_mri_run():
+        if active_subject.check_mne_setup_mri_run():
             self.ui.checkBoxConvertedToMNE.setChecked(True)
             self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
 
@@ -1648,7 +1659,7 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.listWidgetBads.addItem(bad)
 
         _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
-                                       self.caller.experiment.active_subject)
+                                       active_subject)
         self.update_covariance_info_box()
         self._update_source_estimates()
 

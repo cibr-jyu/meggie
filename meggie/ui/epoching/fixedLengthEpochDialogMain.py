@@ -52,6 +52,6 @@ class FixedLengthEpochDialog(QtGui.QDialog):
             event_params['tmax'], event_params['interval']
         )
         if len(events) > 0:
-            self.parent.batching_widget.data[subject.subject_name]['fixed_length_events'].append(event_params)
-            self.parent.update_events(subject)
+            self.parent.event_data['fixed_length_events'].append(event_params)
+            self.parent.update_events()
         return QtGui.QDialog.accept(self, *args, **kwargs)

@@ -339,6 +339,7 @@ class Caller(object):
 
         self._apply_exg(kind, raw, directory, projs, applied,
                         do_meanwhile=self.parent.update_ui)
+        self.experiment.save_experiment_settings()
         return True
 
     @threaded
@@ -375,7 +376,6 @@ class Caller(object):
 
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
-        self.experiment.save_experiment_settings()
 
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
@@ -461,7 +461,6 @@ class Caller(object):
                  if name in params['channels'] and
                  idx in picks]
         
-
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
                              'checking the checkboxes.')
@@ -477,7 +476,7 @@ class Caller(object):
 
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
             proj_raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
-            picks=picks, reject=params_copy['reject'])
+            picks=picks, reject=params_copy['reject'], add_eeg_ref=False)
         
         del proj_raw    
     

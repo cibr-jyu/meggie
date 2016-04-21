@@ -68,6 +68,11 @@ class BatchingWidget(QtGui.QWidget):
         if not item:
             return
         
+        a = item.checkState()
+        b = QtCore.Qt.Checked
+        if item.checkState() != QtCore.Qt.Checked:
+            return
+        
         subject_name = str(item.text())
         if subject_name in self.data.keys():
             data_dict = self.data[subject_name]
@@ -83,12 +88,14 @@ class BatchingWidget(QtGui.QWidget):
             self.pushButtonCompute.setEnabled(False)
             self.pushButtonComputeBatch.setEnabled(True)
 
-            for name in self.caller.experiment.subjects:
+            subject_names = sorted(self.caller.experiment.subjects.keys())
+             
+            for name in subject_names:
                 item = QtGui.QListWidgetItem(name)
                 item.setCheckState(QtCore.Qt.Unchecked)
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 self.ui.listWidgetSubjects.addItem(item)
-        
+
         else:
             self.ui.listWidgetSubjects.clear()
             self.ui.functionalityWidget.hide()

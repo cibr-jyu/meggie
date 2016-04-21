@@ -133,6 +133,10 @@ class Subject(QObject):
     @property
     def working_file_name(self):
         return self._working_file_name
+    
+    @working_file_name.setter
+    def working_file_name(self, name):
+        self._working_file_name = name
 
     def set_working_file(self, working_file):
         self._working_file = working_file
