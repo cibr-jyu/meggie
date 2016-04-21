@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.2.7 (unreleased)
+0.2.8 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.7 (2016-04-19)
+------------------
+
+- Fix EEG reference reapplying
+- UI stuff
 
 0.2.6 (2016-04-19)
 ------------------
