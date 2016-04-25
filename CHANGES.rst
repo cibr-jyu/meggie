@@ -1,12 +1,17 @@
 Changelog
 =========
 
-0.2.8 (unreleased)
+0.2.9 (unreleased)
 ------------------
 
 - Nothing changed yet.
 
-0.2.7 (2016-04-19)
+0.2.8 (2016-04-25)
+------------------
+
+- Remove epoch and evoked batch, clear event list
+
+0.2.7 (2016-04-21)
 ------------------
 
 - Fix EEG reference reapplying
