@@ -437,7 +437,7 @@ class Caller(object):
                 event_id_counter += 1
 
         if len(events) == 0:
-            raise ValueError('Could not create epochs for subject %s: No events found with given params.' % subject)
+            raise ValueError('Could not create epochs for subject: No events found with given params.')
 
         if not isinstance(raw, mne.io.Raw):
             raise TypeError('Not a Raw object')

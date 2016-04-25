@@ -823,7 +823,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.labelLayout.setText(fName)
 
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
-        """Delete the selected epoch item and the files related to it."""
+        """Delete the selected epoch collection."""
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
@@ -837,7 +837,7 @@ class MainWindow(QtGui.QMainWindow):
 
         item_str = self.epochList.currentItem().text()
 
-        message = 'Permanently remove epochs and the related files?'
+        message = 'Permanently remove epochs?'
         reply = QtGui.QMessageBox.question(self, 'delete epochs',
                                            message, QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
@@ -855,8 +855,40 @@ class MainWindow(QtGui.QMainWindow):
             self.clear_epoch_collection_parameters()
         self.caller.experiment.save_experiment_settings()
 
+    def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        
+        if self.epochList.currentItem() is None:
+            messagebox(self, 'No epochs selected')
+
+        collection_name = self.epochList.currentItem().text()
+        
+        message = 'Permanently remove epoch collection from all subjects?'
+        reply = QtGui.QMessageBox.question(self, 'delete epochs',
+                                           message, QtGui.QMessageBox.Yes | 
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            for subject in self.caller.experiment.subjects.values():
+                if collection_name in subject.epochs:
+                    subject.remove_epochs(
+                        collection_name,
+                    )
+            
+        if self.epochList.ui.listWidgetEpochs.count() == 0:
+            self.clear_epoch_collection_parameters()
+        
+        if collection_name not in self.caller.experiment.active_subject.epochs:
+            self.epochList.remove_item(self.epochList.currentItem())
+        
+        self.caller.experiment.save_experiment_settings()
+
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
-        """Delete the selected evoked item and the files related to it."""
+        """Delete the selected evoked."""
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
@@ -867,27 +899,56 @@ class MainWindow(QtGui.QMainWindow):
 
         elif self.ui.listWidgetEvoked.currentItem() is None:
             messagebox(self, 'No evokeds selected.')
+            return
 
         item_str = self.ui.listWidgetEvoked.currentItem().text()
 
-        message = 'Permanently remove evokeds and the related files?'
+        message = 'Permanently remove evokeds?'
         reply = QtGui.QMessageBox.question(self, 'delete evokeds',
                                            message, QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            item = self.ui.listWidgetEvoked.currentItem()
-            row = self.ui.listWidgetEvoked.row(item)
-            self.ui.listWidgetEvoked.takeItem(row)
-            self.ui.listWidgetInverseEvoked.takeItem(row)
             try:
                 self.caller.experiment.active_subject.remove_evoked(
                     item_str,
                 )
             except Exception as e:
                 exc_messagebox(self, e)
+            item = self.ui.listWidgetEvoked.currentItem()
+            row = self.ui.listWidgetEvoked.row(item)
+            self.ui.listWidgetEvoked.takeItem(row)
+            self.ui.listWidgetInverseEvoked.takeItem(row)
             self.caller.experiment.save_experiment_settings()
+
+
+    def on_pushButtonGroupDeleteEvoked_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if self.ui.listWidgetEvoked.currentItem() is None:
+            messagebox(self, 'No evokeds selected')
+            return
+
+        collection_name = self.ui.listWidgetEvoked.currentItem().text()
+        
+        message = 'Permanently remove evokeds from all subjects?'
+        reply = QtGui.QMessageBox.question(self, 'delete evokeds',
+                                           message, QtGui.QMessageBox.Yes | 
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            for subject in self.caller.experiment.subjects.values():
+                if collection_name in subject.evokeds:
+                    subject.remove_evoked(collection_name)
+        
+        if collection_name not in self.caller.experiment.active_subject.evokeds:
+            self.ui.listWidgetEvoked.takeItem(
+                self.ui.listWidgetEvoked.currentRow())
+        
+        self.caller.experiment.save_experiment_settings()
 
 
     def on_pushButtonDeletePower_clicked(self, checked=None):

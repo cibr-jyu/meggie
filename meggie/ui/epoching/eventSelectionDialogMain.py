@@ -131,7 +131,7 @@ class EventSelectionDialog(QtGui.QDialog):
                     'start=' + str(event['tmin']), 
                     'end=' + str(event['tmax']),
                     'interval=' + str(event['interval'])
-                )) 
+                ))
                 self.ui.listWidgetEvents.addItem(item)
 
     def selection_changed(self, subject_name, params_dict):
@@ -334,6 +334,14 @@ class EventSelectionDialog(QtGui.QDialog):
         else:
             messagebox(self.parent, "No events found.")
 
+    def on_pushButtonClear_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        self.ui.listWidgetEvents.clear()
+        self.event_data['events'] = []
+        self.event_data['fixed_length_events'] = []
+        
     def accept(self):
         """
         """

@@ -263,11 +263,11 @@ class Subject(QObject):
                                                    collection_name + '.fif')))
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
-        self._epochs.pop(str(str(collection_name)), None)
         try:
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
             raise IOError('Epochs could not be deleted from epochs folder.')
+        self._epochs.pop(str(str(collection_name)), None)
 
     def add_evoked(self, evoked):
         """
@@ -285,11 +285,11 @@ class Subject(QObject):
         Keyword arguments:
         name    -- name of the evoked in QString
         """
-        self._evokeds.pop(str(name), None)
         try:
             fileManager.delete_file_at(self._evokeds_directory, name)
         except OSError:
             raise IOError('Evoked could not be deleted from average folder.')
+        self._evokeds.pop(str(name), None)
 
     def remove_power(self, name):
         """
