@@ -447,6 +447,21 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEOG.clear()
         self.ui.textBrowserWorkingFile.clear()
 
+    def show_evoked_info(self):
+        if self.ui.listWidgetEvoked.currentItem() is None:
+            return
+
+        meggie_evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
+        meggie_evoked = self.caller.experiment.active_subject.evokeds.get(meggie_evoked_name)
+        
+        for mne_evoked in meggie_evoked.mne_evokeds.values():
+            print mne_evoked.comment
+
+    def clear_evoked_info(self):
+        #TODO
+        #self.ui.
+        return
+
     def on_actionSet_workspace_triggered(self, checked=None):
         """
         Open the preferences dialog the for specific purpose of initial setting
@@ -574,6 +589,11 @@ class MainWindow(QtGui.QMainWindow):
 
             epoch = collection.raw
             evoked = epoch.average()
+#             #save info about event name and the number of events found with the name to the evoked.comment field 
+#             events = epoch.event_id
+#             for event_name, event_id in events.items():
+#                 events_str = event_name + ',' + str(len(epoch[event_name])) + ' events found'
+#             evoked.comment = events_str
             evoked.comment = name
             evokeds[name] = evoked
 
@@ -583,26 +603,6 @@ class MainWindow(QtGui.QMainWindow):
         )
     
         self._save_evoked(subject, evokeds, evoked_name)
-#         # Save evoked into evoked (average) directory with name evoked_name
-#         saveFolder = subject.evokeds_directory
-#         if not os.path.exists(saveFolder):
-#             try:
-#                 os.mkdir(saveFolder)
-#             except IOError:
-#                 message = ('Writing to selected folder is not allowed. You can'
-#                            ' still process the evoked file (visualize etc.).')
-#                 raise IOError(message)
-# 
-#         try:
-#             print 'Writing evoked data as ' + evoked_name + ' ...'
-#             write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
-#         except IOError:
-#             message = ('Writing to selected folder is not allowed. You can '
-#                        'still process the evoked file (visualize etc.).')
-#             raise IOError(message)
-#         
-#         new_evoked = Evoked(evoked_name, subject, evokeds)
-#         subject.add_evoked(new_evoked)        
 
     def _save_evoked(self, subject, evokeds, evoked_name):
         # Save evoked into evoked (average) directory with name evoked_name

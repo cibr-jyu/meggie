@@ -73,7 +73,7 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
         for name, subject in self.caller.experiment.subjects.items():
-            raw = subject.get_working_file(temporary=True)
+            raw = subject.get_working_file(preload=False, temporary=True)
             self.batching_widget.data[name + ' channels'] = raw.ch_names
 
 

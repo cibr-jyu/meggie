@@ -92,3 +92,4 @@ class EpochWidget(QtGui.QWidget):
             #if not epoch._raw is None:
             if epoch.params is not None:
                 self.parent.show_epoch_collection_parameters(epoch)
+        #self.parent.show_evoked_info()
