@@ -837,7 +837,7 @@
                 <rect>
                  <x>10</x>
                  <y>10</y>
-                 <width>411</width>
+                 <width>431</width>
                  <height>501</height>
                 </rect>
                </property>
@@ -910,7 +910,7 @@
                  <rect>
                   <x>10</x>
                   <y>10</y>
-                  <width>391</width>
+                  <width>411</width>
                   <height>341</height>
                  </rect>
                 </property>
@@ -937,7 +937,7 @@
               <widget class="QFrame" name="frameEpochCollectionParameters">
                <property name="geometry">
                 <rect>
-                 <x>430</x>
+                 <x>450</x>
                  <y>10</y>
                  <width>396</width>
                  <height>501</height>
