@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.2.9 (unreleased)
+0.2.10 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.2.9 (2016-04-27)
+------------------
+
+- Improve performance in ECG calculation dialog
+- Make exp file more readable
 
 0.2.8 (2016-04-25)
 ------------------

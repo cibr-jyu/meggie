@@ -2,9 +2,9 @@ from setuptools import setup
 
 setup(
     name='meggie',
-    version='0.2.8',
+    version='0.2.9',
     description="",
-    author='Erkka Heinila',
+    author='Erkka Heinila, Janne Pesonen',
     author_email='erkka.heinila@jyu.fi',
     url='https://yousource.it.jyu.fi/+hoksotin/hoksotin/lahdekoodit',
     license='BSD',
