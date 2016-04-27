@@ -141,7 +141,7 @@ class AddSubjectDialog(QtGui.QDialog):
         try:
             self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.
                                             currentItem().text(),
-                                            pre_load=False)
+                                            preload=False)
             self.ui.pushButtonShowFileInfo.setEnabled(True)
 
         except Exception as e:

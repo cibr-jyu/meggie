@@ -308,8 +308,8 @@ class Experiment(QObject):
         
         # save to file
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
-            json.dump(save_dict, f)
-        
+            json.dump(save_dict, f, sort_keys=True, indent=4)
+            
         if self.caller.experiment: 
             self.caller.parent.initialize_ui()
 

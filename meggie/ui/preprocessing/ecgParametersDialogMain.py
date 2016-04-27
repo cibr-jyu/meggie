@@ -72,10 +72,6 @@ class EcgParametersDialog(QtGui.QDialog):
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
-        for name, subject in self.caller.experiment.subjects.items():
-            raw = subject.get_working_file(preload=False, temporary=True)
-            self.batching_widget.data[name + ' channels'] = raw.ch_names
-
 
     def selection_changed(self, subject_name, params_dict):
         """
@@ -90,16 +86,16 @@ class EcgParametersDialog(QtGui.QDialog):
         else:
             dic = self.get_default_values()
         
-        channel_list = self.batching_widget.data[subject_name + ' channels']
+        #channel_list = self.batching_widget.data[subject_name + ' channels']
+        subject = self.caller.experiment.subjects.get(subject_name)
+        raw = subject.get_working_file(preload=False, temporary=True)
+        channel_list = raw.ch_names
         self.ui.comboBoxECGChannel.addItems(channel_list)
         channel_name = dic.get('ch_name')
         
         if channel_name is None:
             channel_name = channel_list[0]
         
-        if channel_name not in channel_list:
-            channel_name = self.channel_name_validator(channel_name,
-        					       channel_list)
         if channel_name == '':
             pass
         else:
@@ -165,8 +161,6 @@ class EcgParametersDialog(QtGui.QDialog):
         active_subject_name =  self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         try:
-            self.check_if_channel_exists(
-                self.caller.experiment.active_subject.subject_name)
             self.calculate_ecg(self.caller.experiment.active_subject)    
         except Exception as e:
             self.batching_widget.failed_subjects.append((
@@ -189,8 +183,6 @@ class EcgParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                self.check_if_channel_exists(
-                    self.caller.experiment.active_subject.subject_name)
                 self.calculate_ecg(self.caller.experiment.active_subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
@@ -203,7 +195,6 @@ class EcgParametersDialog(QtGui.QDialog):
                     continue
                 self.caller.activate_subject(name)
             try:
-                self.check_if_channel_exists(subject.subject_name)
                 self.calculate_ecg(subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((subject, str(e)))              
@@ -212,46 +203,6 @@ class EcgParametersDialog(QtGui.QDialog):
         self.batching_widget.cleanup()        
         self.parent.initialize_ui()
         self.close()
-
-    def channel_name_validator(self, ch_name, ch_list):
-        """Checks if the ch_list has the given ch_name by matching it with the
-        ch_list spacing style.
-        Returns empty string if the ch_name doesn't match.
-
-        Keyword arguments:
-        ch_name    -- name of the channel
-        (e.g. 'MEG 0113', 'MISC201', 'EOG 061')
-        ch_list    -- list of the channels
-        [MEG 0112]
-        [MEG 0113]
-           ...
-        [EOG 061]
-           ...
-           etc.
-        """
-        if ' ' in ch_name:
-            ch_name = ch_name.replace(" ", "")
-            if ch_name in ch_list:
-                return ch_name
-        else:
-            ch_name = ch_name.replace("MEG", "MEG ")
-            ch_name = ch_name.replace("EOG", "EOG ")
-            ch_name = ch_name.replace("STI", "STI ")
-            ch_name = ch_name.replace("MISC", "MISC ")
-            ch_name = ch_name.replace("ECG", "ECG ")
-            if ch_name in ch_list:
-                return ch_name
-        return ''
-    
-    def check_if_channel_exists(self, subject_name):
-        """Checks if batching_widget data holds correct ch_name
-        for the calculation"""
-        ch_list = self.batching_widget.data[subject_name + ' channels']
-        ch_name = self.batching_widget.data[subject_name]['ch_name']
-        if ch_name not in ch_list:
-            ch_name = self.channel_name_validator(ch_name, ch_list)
-            if ch_name == '':
-                raise ValueError("Channel doesn't exist")
         
 
     def collect_parameter_values(self):

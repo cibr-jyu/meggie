@@ -173,7 +173,7 @@ class Subject(QObject):
         if self._working_file is None:
             path = self.subject_path
             try:
-                return fileManager.open_raw(os.path.join(path, self.working_file_name))
+                return fileManager.open_raw(os.path.join(path, self.working_file_name), preload=preload)
             except OSError:
                 raise IOError("Couldn't find raw file.")
             

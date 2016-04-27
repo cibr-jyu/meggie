@@ -392,17 +392,17 @@ def load_powers(subject):
     return powers
 
 
-def open_raw(fname, pre_load=True):
+def open_raw(fname, preload=True):
     """
     Opens a raw file.
     Keyword arguments:
     fname         -- A file to open
-    pre_load      -- A boolean telling, whether to read the entire data
+    preload      -- A boolean telling, whether to read the entire data
                      in the file.
     Raises an exception if the file cannot be opened.
     """
     try:
-        return mne.io.Raw(fname, preload=pre_load, allow_maxshield=True)
+        return mne.io.Raw(fname, preload=preload, allow_maxshield=True)
     except IOError as e:
         raise IOError('File does not exist or is not a raw-file.' + str(e))
     except OSError as e:

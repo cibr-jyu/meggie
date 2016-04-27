@@ -484,6 +484,7 @@ class Caller(object):
             raise ValueError('Could not find any data. Perhaps the ' + 
                              'rejection thresholds are too strict...')
         
+        params.pop('channels')
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)

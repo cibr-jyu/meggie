@@ -68,8 +68,6 @@ class BatchingWidget(QtGui.QWidget):
         if not item:
             return
         
-        a = item.checkState()
-        b = QtCore.Qt.Checked
         if item.checkState() != QtCore.Qt.Checked:
             return
         
