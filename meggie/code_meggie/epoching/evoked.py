@@ -30,6 +30,7 @@ class Evoked(QObject):
         self._name = name
         self._mne_evokeds = mne_evokeds
         self._path = os.path.join(subject.evokeds_directory, name)
+        self._info = {}
         
     @property
     def mne_evokeds(self):
@@ -69,6 +70,14 @@ class Evoked(QObject):
         """
         self._name = name
         
+    @property
+    def info(self):
+        return self._info
+
+    @info.setter
+    def info(self, info):
+        self._info = info
+
 #     def load_working_file(self):
 #         if self._raw is None:
 #             self._raw = load_evoked(self._path)

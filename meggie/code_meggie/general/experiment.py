@@ -39,6 +39,8 @@ import re
 import json
 import shutil
 
+from meggie.ui.utils.decorators import threaded
+
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
@@ -225,10 +227,14 @@ class Experiment(QObject):
         
         subject = self.subjects.pop(sname)
     
-        try:
-            shutil.rmtree(subject.subject_path)
-        except OSError:
-            raise OSError('Could not remove the contents of the subject folder.')    
+        @threaded
+        def remove_data(): 
+            try:
+                shutil.rmtree(subject.subject_path)
+            except OSError:
+                raise OSError('Could not remove the contents of the subject folder.')    
+        
+        remove_data()
 
         self.save_experiment_settings()
 
@@ -246,6 +252,7 @@ class Experiment(QObject):
         self.active_subject = self.subjects[subject_name]
         return self.active_subject
  
+    @threaded
     def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
         
@@ -286,6 +293,7 @@ class Experiment(QObject):
                     evoked_dict = {
                         'name': evoked.name,
                         'event_names': evoked.mne_evokeds.keys(),
+                        'info': evoked.info,
                     }
                     subject_dict['evokeds'].append(evoked_dict)
                 except IOError:
@@ -418,6 +426,8 @@ class ExperimentHandler(QObject):
                 for evoked_data in subject_data['evokeds']:
                     mne_evokeds = dict([(name, None) for name in evoked_data['event_names']])
                     evoked = Evoked(evoked_data['name'], subject, mne_evokeds)
+                    if 'info' in evoked_data:
+                        evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
                 experiment.add_subject(subject)
 
