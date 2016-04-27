@@ -90,6 +90,7 @@ from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -588,12 +589,13 @@ class MainWindow(QtGui.QMainWindow):
                 raise KeyError('No epoch collection called ' + str(name))
 
             epoch = collection.raw
-            evoked = epoch.average()
-#             #save info about event name and the number of events found with the name to the evoked.comment field 
-#             events = epoch.event_id
-#             for event_name, event_id in events.items():
-#                 events_str = event_name + ',' + str(len(epoch[event_name])) + ' events found'
-#             evoked.comment = events_str
+            
+            @threaded
+            def average():
+                return epoch.average()
+
+            evoked = average()
+
             evoked.comment = name
             evokeds[name] = evoked
 
@@ -604,7 +606,7 @@ class MainWindow(QtGui.QMainWindow):
     
         self._save_evoked(subject, evokeds, evoked_name)
 
-    def _save_evoked(self, subject, evokeds, evoked_name):
+    def _save_evoked(self, subject, evokeds, evoked_name, subject_names=[]):
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = subject.evokeds_directory
         if not os.path.exists(saveFolder):
@@ -624,7 +626,74 @@ class MainWindow(QtGui.QMainWindow):
             raise IOError(message)
         
         new_evoked = Evoked(evoked_name, subject, evokeds)
+
+        epoch_info = {}
+        for key in evokeds:
+            epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
+            events = epoch.event_id
+            epoch_info[key] = dict([(name, len(epoch[name])) 
+                                    for name in events])
+        
+        if not subject_names:
+            subject_names = [subject.subject_name]
+        
+        #TODO: add every subject epoch infos to group averaged data
+        new_evoked.info['subjects'] = subject_names
+        new_evoked.info['epoch_collections'] = epoch_info
+        print new_evoked.info
         subject.add_evoked(new_evoked)                
+        
+    def on_listWidgetEvoked_currentItemChanged(self, item):
+        if not item:
+            return
+        
+        evoked_name = str(item.text())
+        evoked = self.caller.experiment.active_subject.evokeds.get(evoked_name)
+        names = 'Subjects:\n'
+        
+        if 'subjects' not in evoked.info:
+            self.ui.textBrowserEvokedInfo.clear()
+            return 
+        
+        for subject_name in evoked.info['subjects']:
+            names += subject_name + '\n'
+ 
+        collections = 'Epoch collection info (active subject):\n'
+         
+        for collection_name, events in evoked.info['epoch_collections'].items():
+            collections += collection_name
+            for key, value in events.items():
+                collections += ' [' + key + ', ' + str(value) + ' events] '
+            collections += '\n'
+ 
+        self.ui.textBrowserEvokedInfo.setText(names + '\n' + collections)
+
+
+#         evoked_name = str(item.text())
+#         evoked = self.caller.experiment.active_subject.evokeds.get(evoked_name)
+# 
+#         info = 'Subjects:\n'
+#         
+#         #if len(evoked.info['subjects']) > 1:
+#         #    #forget the group_ prefix to enable getting the correct evoked infos
+#         #    evoked_name = evoked_name[6:len(evoked_name)]
+#         
+#         for subject_name in evoked.info['subjects']:
+#             info += subject_name + '\n'
+#         
+#         for subject_name in evoked.info['subjects']:
+#             subject = self.caller.experiment.subjects.get(subject_name)
+#             evoked = subject.evokeds.get(evoked_name)
+#             info += '\nEpoch collection info (' + subject_name + ')' + ':\n'
+#             
+#             for collection_name, events in evoked.info['epoch_collections'].items():
+#                 info += collection_name
+#                 for key, value in events.items():
+#                     info += ' [' + key + ', ' + str(value) + ' events] '
+#                 info += '\n'
+#         
+#         self.ui.textBrowserEvokedInfo.setText(info)
+         
         
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
@@ -800,12 +869,12 @@ class MainWindow(QtGui.QMainWindow):
             layout = str(self.ui.labelLayout.text())
 
         try:
-            evokeds = self.caller.group_average(evoked_name, layout)
+            evokeds, averaged_subjects = self.caller.group_average(evoked_name, layout)
         except Exception as e:
             exc_messagebox(self, e)
             return
 
-        self._save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name)
+        self._save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name, subject_names=averaged_subjects)
 
         self.initialize_ui()
 
