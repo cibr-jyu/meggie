@@ -47,7 +47,7 @@ class Ui_covarianceEpochDialog(object):
         self.groupBoxParams = QtGui.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxParams.setObjectName(_fromUtf8("groupBoxParams"))
         self.verticalLayoutWidget = QtGui.QWidget(self.groupBoxParams)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 30, 441, 188))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 30, 470, 188))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
@@ -126,5 +126,5 @@ class Ui_covarianceEpochDialog(object):
         self.doubleSpinBoxTmax.setSuffix(_translate("covarianceEpochDialog", " s", None))
         self.labelMethod.setText(_translate("covarianceEpochDialog", "Method:", None))
         self.labelNjobs.setText(_translate("covarianceEpochDialog", "Number of jobs:", None))
-        self.checkBoxKeepSampleMean.setText(_translate("covarianceEpochDialog", "Keep sample mean", None))
+        self.checkBoxKeepSampleMean.setText(_translate("covarianceEpochDialog", "Keep sample mean (not checked enabled for empirical method)", None))
 

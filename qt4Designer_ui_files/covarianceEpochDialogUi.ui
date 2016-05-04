@@ -65,7 +65,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>441</width>
+            <width>470</width>
             <height>188</height>
            </rect>
           </property>
@@ -171,7 +171,7 @@
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Keep sample mean</string>
+              <string>Keep sample mean (not checked enabled for empirical method)</string>
              </property>
              <property name="checked">
               <bool>true</bool>
