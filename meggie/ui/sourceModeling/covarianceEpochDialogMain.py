@@ -41,6 +41,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
         self.populate_doublespinboxes(epoch)
         
         methods = {
+            'auto': '',
             'empirical': '',
             'diagonal_fixed': '',
             'ledoit_wolf': '',
@@ -50,7 +51,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
         }
         
         self.ui.comboBoxMethod.addItems(methods.keys())
-        self.ui.comboBoxMethod.setCurrentIndex(methods.keys().index('empirical'))
+        self.ui.comboBoxMethod.setCurrentIndex(methods.keys().index('auto'))
         
     def accept(self):
         """
@@ -78,8 +79,10 @@ class CovarianceEpochDialog(QtGui.QDialog):
         method = self.ui.comboBoxMethod.currentText()
         
         if method is not 'empirical':
-            #only empirical supports False
+            #only 'empirical' supports False
             params['keep_sample_mean'] = True
+        
+        params['n_jobs'] = self.ui.spinBoxNjobs.value()
         
         #if None, starts at first sample
         params['tmin'] = self.ui.doubleSpinBoxTmin.value()
@@ -110,6 +113,12 @@ class CovarianceEpochDialog(QtGui.QDialog):
 
         epoch = self.caller.experiment.active_subject.epochs.get(str(item.text()))
         self.populate_doublespinboxes(epoch)
+
+    def on_comboBoxMethod_currentIndexChanged(self, method_name):
+        if method_name is 'empirical':
+            self.ui.checkBoxKeepSampleMean.setEnabled(True)
+        else:
+            self.ui.checkBoxKeepSampleMean.setEnabled(False)
 
     def populate_doublespinboxes(self, epoch):
         self.ui.doubleSpinBoxTmin.setMinimum(epoch.params['tmin'])
