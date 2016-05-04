@@ -1865,8 +1865,6 @@ class MainWindow(QtGui.QMainWindow):
             covLayout.addWidget(covarianceWidgetRaw)
 
         if cvdict['covarianceSource'] == 'epochs':
-            # TODO: implement this functionality, then use existing
-            # CovarianceWidgetEpochs
             covarianceWidgetEpochs = CovarianceWidgetEpochs()
             cvwui = covarianceWidgetEpochs.ui
             

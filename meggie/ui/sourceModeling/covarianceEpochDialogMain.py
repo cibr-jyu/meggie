@@ -95,9 +95,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
         # and covariance matrix created from epochs.
         params['covarianceSource'] = 'epochs'
         
-        
         try:
-            #TODO: caller.create_covariance_from_epochs
             self.caller.create_covariance_from_epochs(params)    
         except ValueError as e:
             exc_messagebox(self.parent, e)
@@ -108,7 +106,6 @@ class CovarianceEpochDialog(QtGui.QDialog):
         except PickleError as e:
             exc_messagebox(self.parent, e)
             return
-
         
         self.close()
 
