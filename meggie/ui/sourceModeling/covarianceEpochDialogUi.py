@@ -90,6 +90,7 @@ class Ui_covarianceEpochDialog(object):
         self.labelNjobs.setObjectName(_fromUtf8("labelNjobs"))
         self.horizontalLayout_4.addWidget(self.labelNjobs)
         self.spinBoxNjobs = QtGui.QSpinBox(self.verticalLayoutWidget)
+        self.spinBoxNjobs.setEnabled(True)
         self.spinBoxNjobs.setMinimum(1)
         self.spinBoxNjobs.setMaximum(99)
         self.spinBoxNjobs.setProperty("value", 3)

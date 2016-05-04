@@ -4,6 +4,7 @@ Created on 3.5.2016
 @author: jaolpeso
 '''
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 
 from meggie.ui.sourceModeling.covarianceEpochDialogUi import Ui_covarianceEpochDialog
 
@@ -70,7 +71,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
             collections.append(str(item.text()))
         
         params['collection_names'] = collections
-        
+
         if self.ui.checkBoxKeepSampleMean.isChecked():
             params['keep_sample_mean'] = True
         else:
@@ -114,8 +115,9 @@ class CovarianceEpochDialog(QtGui.QDialog):
         epoch = self.caller.experiment.active_subject.epochs.get(str(item.text()))
         self.populate_doublespinboxes(epoch)
 
+    @QtCore.pyqtSlot(str)
     def on_comboBoxMethod_currentIndexChanged(self, method_name):
-        if method_name is 'empirical':
+        if str(method_name) == 'empirical':
             self.ui.checkBoxKeepSampleMean.setEnabled(True)
         else:
             self.ui.checkBoxKeepSampleMean.setEnabled(False)
