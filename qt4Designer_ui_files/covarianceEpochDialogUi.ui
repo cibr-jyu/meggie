@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>503</width>
-    <height>555</height>
+    <width>515</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>483</width>
-        <height>498</height>
+        <width>495</width>
+        <height>514</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -46,7 +46,7 @@
             <x>10</x>
             <y>30</y>
             <width>441</width>
-            <height>121</height>
+            <height>191</height>
            </rect>
           </property>
           <property name="selectionMode">
@@ -66,7 +66,7 @@
             <x>10</x>
             <y>30</y>
             <width>441</width>
-            <height>110</height>
+            <height>153</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -83,6 +83,9 @@
               <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
                <property name="suffix">
                 <string> s</string>
+               </property>
+               <property name="minimum">
+                <double>-1000000000.000000000000000</double>
                </property>
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
@@ -108,6 +111,9 @@
                <property name="suffix">
                 <string> s</string>
                </property>
+               <property name="minimum">
+                <double>-1000000000.000000000000000</double>
+               </property>
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
                </property>
@@ -115,6 +121,20 @@
                 <double>0.100000000000000</double>
                </property>
               </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="labelMethod">
+               <property name="text">
+                <string>Method:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxMethod"/>
              </item>
             </layout>
            </item>
@@ -129,26 +149,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBoxProjections">
-         <property name="title">
-          <string>Projections</string>
-         </property>
-         <widget class="QListWidget" name="listWidgetProjections">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>441</width>
-            <height>121</height>
-           </rect>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::ExtendedSelection</enum>
-          </property>
          </widget>
         </widget>
        </item>

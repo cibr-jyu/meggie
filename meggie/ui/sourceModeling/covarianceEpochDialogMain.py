@@ -15,7 +15,7 @@ from meggie.ui.utils.messaging import messagebox
 class CovarianceEpochDialog(QtGui.QDialog):
     """
     The class containing the logic for the dialog for collecting the
-    parameters computing the noise covariance for a raw file.
+    parameters computing the noise covariance for epoch collection/s.
     """
     caller = Caller.Instance()
 
@@ -26,14 +26,36 @@ class CovarianceEpochDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         epochs = self.caller.experiment.active_subject.epochs
-
-        for collection_name in epochs:
-            self.ui.listWidgetEpochs.addItem(collection_name)
-           
+        name = ''
+        item = None
+        for collection_name in epochs.keys():
+            item = QtGui.QListWidgetItem(collection_name)
+            self.ui.listWidgetEpochs.addItem(item)
+            name = collection_name
+            
+        self.ui.listWidgetEpochs.setItemSelected(item, True)
+        epoch = self.caller.experiment.active_subject.epochs.get(name)
+        self.populate_doublespinboxes(epoch)
+        #self.ui.doubleSpinBoxTmin.setValue(epoch.params['tmin'])
+        #self.ui.doubleSpinBoxTmax.SetValue(epoch.params['tmax'])
+        
+        
+        methods = {
+            'empirical': '',
+            'diagonal_fixed': '',
+            'ledoit_wolf': '',
+            'shrunk': '',
+            'pca': '',
+            'factor_analysis': ''
+        }
+        
+        self.ui.comboBoxMethod.addItems(methods.keys())
+        self.ui.comboBoxMethod.setCurrentIndex(methods.keys().index('empirical'))
+        
     def accept(self):
         """
         Gets the arguments from the gui and passes them to caller for computing
-        the noise covariance matrix. 
+        the noise covariance matrix.
         """
         params = dict()
         
@@ -54,26 +76,20 @@ class CovarianceEpochDialog(QtGui.QDialog):
             params['keep_sample_mean'] = True
         else:
             params['keep_sample_mean'] = False
+            
+        method = self.ui.comboBoxMethod.currentText()
         
-        if self.ui.doubleSpinBoxTmin.value == 0.00:
-            params['tmin'] = None
-        else:
-            params['tmin'] = self.ui.doubleSpinBoxTmin.value
+        if method is not 'empirical':
+            #only empirical supports False
+            params['keep_sample_mean'] = True
         
-        if self.ui.doubleSpinBoxTmax.value == 0.00:
-            params['tmax'] = None
-        else:
-            params['tmax'] = self.ui.doubleSpinBoxTmax.value
+        #if None, starts at first sample
+        params['tmin'] = self.ui.doubleSpinBoxTmin.value()
         
-        projections = []
-        
-        for item in self.ui.listWidgetProjections.selectedItems():
-            projections.append(str(item.text()))
-        
-        if len(projections) == 0:
-            params['projs'] = None
-        else:
-            params['projs'] = projections
+        #if None, ends at last sample
+        params['tmax'] = self.ui.doubleSpinBoxTmax.value()
+
+        params['method'] = self.ui.comboBoxMethod.currentText()
         
         try:
             #TODO: caller.create_covariance_from_epoch
@@ -90,12 +106,16 @@ class CovarianceEpochDialog(QtGui.QDialog):
     def on_listWidgetEpochs_currentItemChanged(self, item):
         if not item:
             return
-        
-        #TODO: which projections to show if multiple epochs selected
-        epoch = self.caller.experiment.active_subject.epochs.get(str(item.text()))
-        raw = epoch.raw
-        projs = raw.info['projs']
 
-        for proj in projs:
-            self.ui.listWidgetEpochs.addItem(str(proj))
+        epoch = self.caller.experiment.active_subject.epochs.get(str(item.text()))
+
+        self.populate_doublespinboxes(epoch)
+
+    def populate_doublespinboxes(self, epoch):
+        self.ui.doubleSpinBoxTmin.setMinimum(epoch.params['tmin'])
+        self.ui.doubleSpinBoxTmin.setMaximum(epoch.params['tmax'])
+        self.ui.doubleSpinBoxTmax.setMinimum(epoch.params['tmin'])
+        self.ui.doubleSpinBoxTmax.setMaximum(epoch.params['tmax'])
+        self.ui.doubleSpinBoxTmin.setValue(epoch.params['tmin'])
+        self.ui.doubleSpinBoxTmax.setValue(epoch.params['tmax'])
         
