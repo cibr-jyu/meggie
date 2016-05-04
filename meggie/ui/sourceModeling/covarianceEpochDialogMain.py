@@ -28,6 +28,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
         epochs = self.caller.experiment.active_subject.epochs
         name = ''
         item = None
+        
         for collection_name in epochs.keys():
             item = QtGui.QListWidgetItem(collection_name)
             self.ui.listWidgetEpochs.addItem(item)
@@ -36,9 +37,6 @@ class CovarianceEpochDialog(QtGui.QDialog):
         self.ui.listWidgetEpochs.setItemSelected(item, True)
         epoch = self.caller.experiment.active_subject.epochs.get(name)
         self.populate_doublespinboxes(epoch)
-        #self.ui.doubleSpinBoxTmin.setValue(epoch.params['tmin'])
-        #self.ui.doubleSpinBoxTmax.SetValue(epoch.params['tmax'])
-        
         
         methods = {
             'empirical': '',
@@ -58,14 +56,12 @@ class CovarianceEpochDialog(QtGui.QDialog):
         the noise covariance matrix.
         """
         params = dict()
-        
         collections = []
         
         if len(self.ui.listWidgetEpochs.selectedItems()) == 0:
             message = ('Select epochs before computation.')
             messagebox(self.parent, message)
             return
-        
         
         for item in self.ui.listWidgetEpochs.selectedItems():
             collections.append(str(item.text()))
@@ -85,11 +81,9 @@ class CovarianceEpochDialog(QtGui.QDialog):
         
         #if None, starts at first sample
         params['tmin'] = self.ui.doubleSpinBoxTmin.value()
-        
         #if None, ends at last sample
         params['tmax'] = self.ui.doubleSpinBoxTmax.value()
-
-        params['method'] = self.ui.comboBoxMethod.currentText()
+        params['method'] = method
         
         try:
             #TODO: caller.create_covariance_from_epoch
@@ -104,11 +98,11 @@ class CovarianceEpochDialog(QtGui.QDialog):
         self.close()
 
     def on_listWidgetEpochs_currentItemChanged(self, item):
+        
         if not item:
             return
 
         epoch = self.caller.experiment.active_subject.epochs.get(str(item.text()))
-
         self.populate_doublespinboxes(epoch)
 
     def populate_doublespinboxes(self, epoch):
