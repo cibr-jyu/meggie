@@ -87,6 +87,7 @@ from meggie.ui.sourceModeling.covarianceEpochDialogMain import CovarianceEpochDi
 from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
+from meggie.ui.widgets.covarianceWidgetEpochsMain import CovarianceWidgetEpochs
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -1866,7 +1867,22 @@ class MainWindow(QtGui.QMainWindow):
         if cvdict['covarianceSource'] == 'epochs':
             # TODO: implement this functionality, then use existing
             # CovarianceWidgetEpochs
-            pass
+            covarianceWidgetEpochs = CovarianceWidgetEpochs()
+            cvwui = covarianceWidgetEpochs.ui
+            
+            for collection_name in cvdict['collection_names']:
+                cvwui.listWidgetEpochs.addItem(collection_name)
+            
+            cvwui.textBrowserTmin.setText(str(cvdict['tmin']))
+            cvwui.textBrowserTmax.setText(str(cvdict['tmax']))
+            
+            if cvdict['keep_sample_mean'] == True:
+                cvwui.labelKeepSampleValue.setText('True')
+            else:
+                cvwui.labelKeepSampleValue.setText('False')
+            
+            cvwui.labelMethodValue.setText(cvdict['method'])
+            covLayout.addWidget(covarianceWidgetEpochs)
 
     def populate_raw_tab_event_list(self):
         """

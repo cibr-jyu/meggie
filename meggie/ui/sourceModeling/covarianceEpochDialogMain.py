@@ -79,7 +79,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
             
         method = self.ui.comboBoxMethod.currentText()
         
-        if method is not 'empirical':
+        if method != 'empirical':
             #only 'empirical' supports False
             params['keep_sample_mean'] = True
         
@@ -91,9 +91,14 @@ class CovarianceEpochDialog(QtGui.QDialog):
         params['tmax'] = self.ui.doubleSpinBoxTmax.value()
         params['method'] = method
         
+        # To differentiate between covariance matrix created from raw 
+        # and covariance matrix created from epochs.
+        params['covarianceSource'] = 'epochs'
+        
+        
         try:
-            #TODO: caller.create_covariance_from_epoch
-            self.caller.create_covariance_from_epoch(params)    
+            #TODO: caller.create_covariance_from_epochs
+            self.caller.create_covariance_from_epochs(params)    
         except ValueError as e:
             exc_messagebox(self.parent, e)
             return   
