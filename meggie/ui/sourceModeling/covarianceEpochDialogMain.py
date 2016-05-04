@@ -12,6 +12,8 @@ from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
+from pickle import PickleError
+
 class CovarianceEpochDialog(QtGui.QDialog):
     """
     The class containing the logic for the dialog for collecting the
@@ -94,6 +96,10 @@ class CovarianceEpochDialog(QtGui.QDialog):
         except IOError as e:
             exc_messagebox(self.parent, e)
             return
+        except PickleError as e:
+            exc_messagebox(self.parent, e)
+            return
+
         
         self.close()
 
