@@ -66,5 +66,3 @@ class StcFreqDialog(QtGui.QDialog):
             exc_messagebox(self, e)
         finally:
             QtGui.QApplication.restoreOverrideCursor()
-
-
