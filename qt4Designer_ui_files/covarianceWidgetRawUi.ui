@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>587</height>
+    <width>444</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -177,6 +177,40 @@
         </layout>
        </widget>
       </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QGroupBox" name="groupBoxPicks">
+        <property name="title">
+         <string>Picks:</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_30">
+         <item row="0" column="0">
+          <widget class="QTextBrowser" name="textBrowserPicks"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QTextBrowser" name="textBrowserBasedOn">
+        <property name="maximumSize">
+         <size>
+          <width>10000</width>
+          <height>29</height>
+         </size>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="lineWrapMode">
+         <enum>QTextEdit::NoWrap</enum>
+        </property>
+        <property name="lineWrapColumnOrWidth">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBoxRejections_2">
         <property name="sizePolicy">
@@ -343,6 +377,28 @@
          <item row="1" column="3">
           <widget class="QTextBrowser" name="textBrowserFlatMag"/>
          </item>
+         <item row="2" column="2">
+          <widget class="QTextBrowser" name="textBrowserGradPeakCovariance">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="2">
           <widget class="QTextBrowser" name="textBrowserMagPeakCovariance">
            <property name="enabled">
@@ -377,63 +433,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QTextBrowser" name="textBrowserGradPeakCovariance">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>30</height>
-            </size>
-           </property>
-          </widget>
-         </item>
         </layout>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QGroupBox" name="groupBoxPicks">
-        <property name="title">
-         <string>Picks:</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_30">
-         <item row="0" column="0">
-          <widget class="QTextBrowser" name="textBrowserPicks"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QTextBrowser" name="textBrowserBasedOn">
-        <property name="maximumSize">
-         <size>
-          <width>10000</width>
-          <height>29</height>
-         </size>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QTextEdit::NoWrap</enum>
-        </property>
-        <property name="lineWrapColumnOrWidth">
-         <number>0</number>
-        </property>
        </widget>
       </item>
      </layout>

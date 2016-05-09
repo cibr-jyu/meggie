@@ -1799,14 +1799,44 @@ class Caller(object):
         except ValueError as e:
             raise ValueError('Error while computing covariance. ' + str(e))
 
+        self._save_covariance(cov, cvdict, filename_to_write)
+
+    def create_covariance_from_epochs(self, params):
+        subject = self.experiment.active_subject
+        collection_names = params['collection_names']
+        epochs = []
+        filename_to_write = ''
+
+        for collection_name in collection_names:
+            epoch = subject.epochs.get(collection_name)
+            epochs.append(epoch.raw)
+            filename_to_write += os.path.splitext(collection_name)[0] + '-'
+        
+        filename_to_write = filename_to_write[:len(filename_to_write)-1] + '-cov.fif'
+        tmin = params['tmin']
+        tmax = params['tmax']
+        keep_sample_mean = params['keep_sample_mean']
+        method = params['method']
+        
+        try:
+            cov = mne.compute_covariance(epochs,
+                keep_sample_mean=keep_sample_mean, tmin=tmin, tmax=tmax,
+                method=method)            
+        except ValueError as e:
+            raise ValueError('Error while computing covariance. ' + str(e))
+        
+        self._save_covariance(cov, params, filename_to_write)
+        
+    def _save_covariance(self, cov, params, filename_to_write):
+        
         path = self.experiment.active_subject._source_analysis_directory
 
         # Remove previous covariance file before creating a new one.
         fileManager.remove_files_with_regex(path, '.*-cov.fif')
 
-        filePathToWrite = os.path.join(path, filename_to_write)
+        filepath_to_write = os.path.join(path, filename_to_write)
         try:
-            mne.write_cov(filePathToWrite, cov)
+            mne.write_cov(filepath_to_write, cov)
         except IOError as err:
             err.message = ('Could not write covariance file. The error '
                            'message was: \n\n' + err.message)
@@ -1816,7 +1846,7 @@ class Caller(object):
         try:
             fileManager.remove_files_with_regex(path, 'covariance.param')
             cvparamFile = os.path.join(path, 'covariance.param')
-            fileManager.pickleObjectToFile(cvdict, cvparamFile)
+            fileManager.pickleObjectToFile(params, cvparamFile)
 
         except Exception:
             fileManager.remove_files_with_regex(path, '*-cov.fif')

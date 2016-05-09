@@ -1902,3 +1902,5 @@ class Ui_MainWindow(object):
         self.actionToggle_whatsthis_mode.setToolTip(_translate("MainWindow", "Click this, then click something in the user interface to get more info about it", None))
         self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
         self.actionShow_log.setText(_translate("MainWindow", "Show log", None))
+
+from meggie.ui.icons import mainWindowIcons_rc
