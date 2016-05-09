@@ -448,11 +448,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEOG.clear()
         self.ui.textBrowserWorkingFile.clear()
 
-    def clear_evoked_info(self):
-        #TODO
-        #self.ui.
-        return
-
     def on_actionSet_workspace_triggered(self, checked=None):
         """
         Open the preferences dialog the for specific purpose of initial setting
@@ -639,6 +634,7 @@ class MainWindow(QtGui.QMainWindow):
         
     def on_listWidgetEvoked_currentItemChanged(self, item):
         if not item:
+            self.ui.textBrowserEvokedInfo.clear()
             return
         
         evoked_name = str(item.text())
