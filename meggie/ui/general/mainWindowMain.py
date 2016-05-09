@@ -450,16 +450,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEOG.clear()
         self.ui.textBrowserWorkingFile.clear()
 
-    def show_evoked_info(self):
-        if self.ui.listWidgetEvoked.currentItem() is None:
-            return
-
-        meggie_evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
-        meggie_evoked = self.caller.experiment.active_subject.evokeds.get(meggie_evoked_name)
-        
-        for mne_evoked in meggie_evoked.mne_evokeds.values():
-            print mne_evoked.comment
-
     def clear_evoked_info(self):
         #TODO
         #self.ui.
