@@ -78,6 +78,7 @@ class Caller(object):
     def experiment(self, experiment):
         self._experiment = experiment
 
+    @threaded
     def activate_subject(self, name):
         """
         Activates the subject.
@@ -690,10 +691,15 @@ class Caller(object):
         evoked_name        -- name of the evoked objects
         layout        -- Layout used for plotting channels.
         """
+        #subjects_averaged = []
         count = 0
+        group_info = {}
         for subject in self.experiment.subjects.values():
             if subject.evokeds.get(evoked_name):
                 count += 1
+                #subjects_averaged.append(subject.subject_name)
+                evoked = subject.evokeds.get(evoked_name)
+                group_info[subject.subject_name] = evoked.info
 
         if count == 0:
             raise ValueError('No evoked responses found from any subject.')
@@ -714,7 +720,7 @@ class Caller(object):
            evoked_name, do_meanwhile=self.parent.update_ui
         )
 
-        return evokeds
+        return evokeds, group_info #subjects_averaged, group_info
 
     @threaded
     def _group_average(self, evoked_name):

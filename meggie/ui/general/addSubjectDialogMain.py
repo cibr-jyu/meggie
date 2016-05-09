@@ -90,11 +90,6 @@ class AddSubjectDialog(QtGui.QDialog):
             except Exception as e:
                 exc_messagebox(self.parent, e)
 
-#         try:
-#             self.caller.activate_subject(subject_name)
-#         except Exception as e:
-#             pass
-
         if len(failed_subjects) > 0:
             msg = 'The following subjects were already added to the experiment: \n'
             for subject_name in failed_subjects:
