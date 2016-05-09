@@ -631,10 +631,7 @@ class MainWindow(QtGui.QMainWindow):
             for subject_name, info in group_epoch_info.items():               
                 epoch_info[subject_name] = info['epoch_collections']
                 subject_names = ['group evoked']
-                #for collection_name in info['epoch_collections']:
-                    #epoch_info[subject_name + ': ' + collection_name] = info['epoch_collections']
         
-        #TODO: add every subject epoch infos to group averaged data
         new_evoked.info['subjects'] = subject_names
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
@@ -660,11 +657,10 @@ class MainWindow(QtGui.QMainWindow):
         for collection_name, events in evoked.info['epoch_collections'].items():
             info += collection_name
             for key, value in events.items():
-                info += ' [' + key + ', ' + str(value) + '] '# + ' events] '
+                info += ' [' + key + ', ' + str(value) + '] '
             info += '\n\n'
  
         self.ui.textBrowserEvokedInfo.setText(info)
-
         
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
@@ -691,7 +687,6 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as e:
             exc_messagebox(self, e)
 
-        #self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
