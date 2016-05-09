@@ -448,16 +448,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.textBrowserEOG.clear()
         self.ui.textBrowserWorkingFile.clear()
 
-    def show_evoked_info(self):
-        if self.ui.listWidgetEvoked.currentItem() is None:
-            return
-
-        meggie_evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
-        meggie_evoked = self.caller.experiment.active_subject.evokeds.get(meggie_evoked_name)
-        
-        for mne_evoked in meggie_evoked.mne_evokeds.values():
-            print mne_evoked.comment
-
     def clear_evoked_info(self):
         #TODO
         #self.ui.
@@ -627,22 +617,6 @@ class MainWindow(QtGui.QMainWindow):
         
         new_evoked = Evoked(evoked_name, subject, evokeds)
 
-#         epoch_info = {}
-#         for key in evokeds:
-#             epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
-#             events = epoch.event_id
-#             epoch_info[key] = dict([(name, len(epoch[name])) 
-#                                     for name in events])
-#         
-#         if not subject_names:
-#             subject_names = [subject.subject_name]
-#         
-#         #TODO: add every subject epoch infos to group averaged data
-#         new_evoked.info['subjects'] = subject_names
-#         new_evoked.info['epoch_collections'] = epoch_info
-#         print new_evoked.info
-#         subject.add_evoked(new_evoked)                
-        
         epoch_info = {}
         subject_names = []
         
@@ -650,20 +624,21 @@ class MainWindow(QtGui.QMainWindow):
             for key in evokeds:
                 epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
                 events = epoch.event_id
-                epoch_info[key] = dict([(name, len(epoch[name])) 
+                epoch_info[key] = dict([(name, str(len(epoch[name])) + ' events') 
                                         for name in events])
             subject_names = [subject.subject_name]
         else:
             for subject_name, info in group_epoch_info.items():               
-                for collection_name in info['epoch_collections']:
-                    epoch_info[subject_name + ': ' + collection_name] = info['epoch_collections']
-                    #subject_names.append(subject_name)
+                epoch_info[subject_name] = info['epoch_collections']
+                subject_names = ['group evoked']
+                #for collection_name in info['epoch_collections']:
+                    #epoch_info[subject_name + ': ' + collection_name] = info['epoch_collections']
         
         #TODO: add every subject epoch infos to group averaged data
         new_evoked.info['subjects'] = subject_names
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
-        
+        self.caller.experiment.save_experiment_settings()
         
     def on_listWidgetEvoked_currentItemChanged(self, item):
         if not item:
@@ -685,7 +660,7 @@ class MainWindow(QtGui.QMainWindow):
         for collection_name, events in evoked.info['epoch_collections'].items():
             info += collection_name
             for key, value in events.items():
-                info += ' [' + key + ', ' + str(value) + ' events] '
+                info += ' [' + key + ', ' + str(value) + '] '# + ' events] '
             info += '\n\n'
  
         self.ui.textBrowserEvokedInfo.setText(info)
@@ -716,7 +691,7 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as e:
             exc_messagebox(self, e)
 
-        self.caller.experiment.save_experiment_settings()
+        #self.caller.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
