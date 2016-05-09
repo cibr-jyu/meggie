@@ -21,9 +21,6 @@ from shutil import copyfile
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
 
-from xlrd import open_workbook
-from xlwt import Workbook, XFStyle
-
 import mne
 import numpy as np
 
@@ -606,3 +603,21 @@ def save_subject(subject, path):
                       "Do you have the necessary permissions?")
     
     copyfile(path, subject.working_file_path)
+
+
+def _read_epoch_stcs(subject):
+    """
+    Helper for getting stc epoch dirs for a subject.
+    Args:
+        subject: instance of Subject
+            Subject in use.
+
+    Returns: list
+        List of epoch dirs as str.
+    """
+    stc_dir = subject.stc_directory
+    stcs = list()
+    for epochs_dir in os.listdir(stc_dir):
+        if os.path.isdir(os.path.join(stc_dir, epochs_dir)):
+            stcs.append(epochs_dir)
+    return stcs

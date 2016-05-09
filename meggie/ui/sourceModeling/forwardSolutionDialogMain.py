@@ -6,19 +6,18 @@ Created on 19.12.2014
 
 
 from PyQt4 import QtGui
+from PyQt4.QtCore import pyqtSignal
 
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.sourceModeling.forwardSolutionDialogUi import Ui_DialogCreateFSolution
-
-from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 
 import multiprocessing
 
 
 class ForwardSolutionDialog(QtGui.QDialog):
-    
+    fwd_sol_computed = pyqtSignal()
     
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -65,7 +64,8 @@ class ForwardSolutionDialog(QtGui.QDialog):
         paramdict['njobs'] = self.ui.spinBoxNJobs.value()
         caller = Caller.Instance()
         try:
-            caller.create_forward_solution(paramdict)   
+            caller.create_forward_solution(paramdict)
+            self.fwd_sol_computed.emit()
         except Exception as e:
             exc_messagebox(self.parent, e)
 

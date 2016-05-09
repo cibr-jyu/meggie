@@ -352,6 +352,7 @@ def _initializeForwardSolutionList(solution_list, subject):
         solution_list: list widget
         subject: subject
     """
+    solution_list.clear()
     fm_dir = subject._forwardModels_directory
     forward_models = list()
     for fm_name in [name for name in os.listdir(fm_dir)

@@ -34,6 +34,7 @@ Created on Apr 26, 2013
 Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 """
 from PyQt4 import QtCore, QtGui
+import numpy as np
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
@@ -155,7 +156,11 @@ class TFRTopologyDialog(QtGui.QDialog):
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles = self.ui.spinBoxNcycles.value()
+        freqs = np.arange(minfreq, maxfreq, interval)
+        if self.ui.radioButtonFixed.isChecked():
+            ncycles = self.ui.doubleSpinBoxNcycles.value()
+        elif self.ui.radioButtonAdapted.isChecked():
+            ncycles = self.ui.doubleSpinBoxCycleFactor.value() * freqs
 
         ch_type = str(self.ui.comboBoxChannels.currentText())
 
@@ -172,9 +177,9 @@ class TFRTopologyDialog(QtGui.QDialog):
         else:
             scalp = None
         try:
-            self.caller.TFR_topology(epochs, reptype, minfreq, maxfreq,
-                                     decim, mode, blstart, blend, interval,
-                                     ncycles, layout, ch_type, scalp, cmap)
+            self.caller.TFR_topology(epochs, reptype, freqs, decim, mode,
+                                     blstart, blend, ncycles, layout, ch_type,
+                                     scalp, cmap)
         except Exception as e:
             exc_messagebox(self.parent, e)
         self.parent.update_power_list()

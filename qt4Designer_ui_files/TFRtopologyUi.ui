@@ -28,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>526</width>
-        <height>534</height>
+        <height>546</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -38,6 +38,479 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelEpochName">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBoxTopogpraphyType">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Topography type</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButtonInduced">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Induced power</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="radioButtonPhase">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Phase locking value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_17">
+            <item>
+             <widget class="QLabel" name="labelCmap">
+              <property name="text">
+               <string>Color map:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxCmap">
+              <item>
+               <property name="text">
+                <string>auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RdBu_r</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Reds</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YlOrRd</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>seismic</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>bwr</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBoxFrequencies">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>2</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Frequency window</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="1">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item>
+               <widget class="QLabel" name="labelMinFreq">
+                <property name="text">
+                 <string>Minimum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>200.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>7.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QLabel" name="labelMaxFreq">
+                <property name="text">
+                 <string>Maximum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>7.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>600.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>30.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="labelFrequencyInterval">
+                <property name="text">
+                 <string>Frequency interval:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>99.989999999999995</double>
+                </property>
+                <property name="value">
+                 <double>3.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Temporal decim factor:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="spinBoxDecim">
+                <property name="value">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="1">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="1">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <item>
+               <widget class="QRadioButton" name="radioButtonFixed">
+                <property name="text">
+                 <string>Fixed</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="ncyclesLabel">
+                <property name="text">
+                 <string>ncycles</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>7.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <item>
+               <widget class="QRadioButton" name="radioButtonAdapted">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can define different number of cycles for each frequency of interest. The defined factor is multiplied by the frequency in hertz to get the number of cycles (ncycles = freq * factor). For instance, with a factor of 0.5, frequencies of 2, 4 and 6 tranlslate to morlet wavelets with cycles of 1, 2 and 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Adapted</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_7">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can define different number of cycles for each frequency of interest. The defined factor is multiplied by the frequency in hertz to get the number of cycles (ncycles = freq * factor). For instance, with a factor of 0.5, frequencies of 2, 4 and 6 tranlslate to morlet wavelets with cycles of 1, 2 and 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>cycles / freq</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxCycleFactor">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can define different number of cycles for each frequency of interest. The defined factor is multiplied by the frequency in hertz to get the number of cycles (ncycles = freq * factor). For instance, with a factor of 0.5, frequencies of 2, 4 and 6 tranlslate to morlet wavelets with cycles of 1, 2 and 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>2.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QGroupBox" name="groupBoxScalp">
+         <property name="toolTip">
+          <string>If checked, a scalp plot will be displayed.</string>
+         </property>
+         <property name="title">
+          <string>Scalp plot</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_16">
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Channels:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBoxChannels">
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>mag</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>grad</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>eeg</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
+              <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Minimum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmin">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="value">
+                 <double>7.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Maximum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmax">
+                <property name="suffix">
+                 <string>Hz</string>
+                </property>
+                <property name="value">
+                 <double>30.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Start time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmin">
+                <property name="minimum">
+                 <double>-10.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>End time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmax">
+                <property name="minimum">
+                 <double>-10.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item row="3" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxBaseline">
          <property name="sizePolicy">
@@ -216,413 +689,6 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBoxFrequencies">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>2</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Frequency window</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_5">
-          <item row="2" column="1">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_13">
-              <item>
-               <widget class="QLabel" name="labelMinFreq">
-                <property name="text">
-                 <string>Minimum frequency:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
-                <property name="suffix">
-                 <string>Hz</string>
-                </property>
-                <property name="minimum">
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>200.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>7.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
-              <item>
-               <widget class="QLabel" name="labelMaxFreq">
-                <property name="text">
-                 <string>Maximum frequency:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
-                <property name="suffix">
-                 <string>Hz</string>
-                </property>
-                <property name="minimum">
-                 <double>7.000000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>600.000000000000000</double>
-                </property>
-                <property name="value">
-                 <double>30.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLabel" name="labelFrequencyInterval">
-                <property name="text">
-                 <string>Frequency interval:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
-                <property name="suffix">
-                 <string>Hz</string>
-                </property>
-                <property name="minimum">
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>99.989999999999995</double>
-                </property>
-                <property name="value">
-                 <double>3.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QLabel" name="labelNcycles">
-                <property name="text">
-                 <string>Number of cycles:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="spinBoxNcycles">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="value">
-                 <number>7</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Temporal decim factor:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="spinBoxDecim">
-                <property name="value">
-                 <number>3</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QGroupBox" name="groupBoxScalp">
-         <property name="toolTip">
-          <string>If checked, a scalp plot will be displayed.</string>
-         </property>
-         <property name="title">
-          <string>Scalp plot</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_16">
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Channels:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="comboBoxChannels">
-                <property name="currentIndex">
-                 <number>1</number>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>mag</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>grad</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>eeg</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>Minimum frequency:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmin">
-                <property name="suffix">
-                 <string>Hz</string>
-                </property>
-                <property name="value">
-                 <double>7.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_14">
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Maximum frequency:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpFmax">
-                <property name="suffix">
-                 <string>Hz</string>
-                </property>
-                <property name="value">
-                 <double>30.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Start time:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmin">
-                <property name="minimum">
-                 <double>-10.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>End time:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpTmax">
-                <property name="minimum">
-                 <double>-10.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelEpochName">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBoxTopogpraphyType">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Topography type</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButtonInduced">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>Induced power</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="radioButtonPhase">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>Phase locking value</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_17">
-            <item>
-             <widget class="QLabel" name="labelCmap">
-              <property name="text">
-               <string>Color map:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxCmap">
-              <item>
-               <property name="text">
-                <string>auto</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>RdBu_r</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Reds</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>YlOrRd</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>seismic</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>bwr</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="4" column="0">
-           <spacer name="verticalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -739,8 +805,11 @@
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
-  <tabstop>spinBoxNcycles</tabstop>
   <tabstop>spinBoxDecim</tabstop>
+  <tabstop>radioButtonFixed</tabstop>
+  <tabstop>doubleSpinBoxNcycles</tabstop>
+  <tabstop>radioButtonAdapted</tabstop>
+  <tabstop>doubleSpinBoxCycleFactor</tabstop>
   <tabstop>groupBoxScalp</tabstop>
   <tabstop>comboBoxChannels</tabstop>
   <tabstop>doubleSpinBoxScalpFmin</tabstop>
@@ -754,8 +823,8 @@
   <tabstop>doubleSpinBoxBaselineEnd</tabstop>
   <tabstop>checkBoxBaselineEndNone</tabstop>
   <tabstop>radioButtonSelectLayout</tabstop>
-  <tabstop>radioButtonLayoutFromFile</tabstop>
   <tabstop>comboBoxLayout</tabstop>
+  <tabstop>radioButtonLayoutFromFile</tabstop>
   <tabstop>pushButtonBrowseLayout</tabstop>
   <tabstop>pushButtonGroupAverage</tabstop>
   <tabstop>buttonBox</tabstop>
@@ -801,12 +870,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>280</x>
-     <y>472</y>
+     <x>258</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
-     <x>128</x>
-     <y>475</y>
+     <x>117</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -817,12 +886,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>280</x>
-     <y>472</y>
+     <x>258</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
-     <x>212</x>
-     <y>475</y>
+     <x>190</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -833,12 +902,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>280</x>
-     <y>509</y>
+     <x>258</x>
+     <y>523</y>
     </hint>
     <hint type="destinationlabel">
-     <x>206</x>
-     <y>512</y>
+     <x>186</x>
+     <y>526</y>
     </hint>
    </hints>
   </connection>
@@ -849,12 +918,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>280</x>
-     <y>509</y>
+     <x>258</x>
+     <y>523</y>
     </hint>
     <hint type="destinationlabel">
-     <x>122</x>
-     <y>512</y>
+     <x>113</x>
+     <y>526</y>
     </hint>
    </hints>
   </connection>
@@ -865,8 +934,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>566</y>
+     <x>101</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>369</x>
@@ -881,8 +950,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>99</x>
-     <y>601</y>
+     <x>110</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>369</x>
@@ -897,12 +966,76 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>77</x>
-     <y>601</y>
+     <x>88</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
-     <x>81</x>
-     <y>628</y>
+     <x>91</x>
+     <y>654</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ncyclesLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>322</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>136</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxNcycles</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonAdapted</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_7</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>40</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonAdapted</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxCycleFactor</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>354</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>358</y>
     </hint>
    </hints>
   </connection>

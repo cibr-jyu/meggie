@@ -9,14 +9,11 @@ This module contains caller class which calls third party software.
 import subprocess
 import os
 import glob
-import traceback
 import fnmatch
 import re
 import shutil
-import inspect
-from inspect import getcallargs
-import linecache
 import copy
+from functools import partial
 
 from PyQt4 import QtCore, QtGui
 
@@ -28,20 +25,17 @@ from mne.channels.layout import _merge_grad_data
 from mne.viz import plot_evoked_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
-from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt
+from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt, _preproc_tfr
 from mne.time_frequency import compute_raw_psd
 from mne.preprocessing import compute_proj_ecg, compute_proj_eog
-from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter,\
-    notch_filter
+from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter
 
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
 
-from os import listdir
 from os.path import isfile, join
 from subprocess import CalledProcessError
-from time import sleep
 from copy import deepcopy
 
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
@@ -54,7 +48,6 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
-from meggie.code_meggie.general.subject import Subject
 
 
 @Singleton
@@ -859,9 +852,8 @@ class Caller(object):
                                    mode='ratio', copy=True)
         return power, itc, times, evoked, evoked_data
 
-    def TFR_topology(self, inst, reptype, minfreq, maxfreq, decim, mode,  
-                     blstart, blend, interval, ncycles, lout, ch_type, scalp,
-                     color_map='auto'):
+    def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
+                     ncycles, lout, ch_type, scalp, color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
@@ -869,14 +861,12 @@ class Caller(object):
         inst          -- Epochs extracted from the data or previously computed
                          AverageTFR object to plot.
         reptype       -- Type of representation (average or itc).
-        minfreq       -- Starting frequency for the representation.
-        maxfreq       -- Ending frequency for the representation.
+        freqs         -- Frequencies for the representation as a numpy array.
         decim         -- Temporal decimation factor.
         mode          -- Rescaling mode (logratio | ratio | zscore |
                          mean | percent).
         blstart       -- Starting point for baseline correction.
         blend         -- Ending point for baseline correction.
-        interval      -- Interval to use for the frequencies of interest.
         ncycles       -- Value used to count the number of cycles.
         layout        -- Layout to use.
         ch_type       -- Channel type (mag | grad | eeg).
@@ -889,14 +879,8 @@ class Caller(object):
 
         plt.close()
         if isinstance(inst, mne.epochs._BaseEpochs):  # TFR from epochs
-    
-            # Find intervals for given frequency band
-            frequencies = np.arange(minfreq, maxfreq, interval)
-    
-            power, itc = self._TFR_topology(
-                inst, frequencies, ncycles,
-                decim, do_meanwhile=self.parent.update_ui
-            )
+            power, itc = self._TFR_topology(inst, freqs, ncycles, decim,
+                                            do_meanwhile=self.parent.update_ui)
 
         elif reptype == 'average':  # TFR from averageTFR
             power = inst
@@ -936,9 +920,9 @@ class Caller(object):
             self.parent.update_ui()
            
             fig = wrap_mne_call(self.experiment, power.plot_topo,
-                                            baseline=baseline, mode=mode, fmin=minfreq,
-                                            fmax=maxfreq, layout=layout, cmap=cmap,
-                                            title='Average power')
+                                baseline=baseline, mode=mode, fmin=freqs[0],
+                                fmax=freqs[-1], layout=layout, cmap=cmap,
+                                title='Average power')
 
         elif reptype == 'itc':  # phase locked
             if color_map == 'auto':
@@ -957,8 +941,8 @@ class Caller(object):
                                     show=False)
                 
             fig = wrap_mne_call(self.experiment, itc.plot_topo,
-                                baseline=baseline, mode=mode, fmin=minfreq,
-                                fmax=maxfreq, layout=layout, cmap=cmap,
+                                baseline=baseline, mode=mode, fmin=freqs[0],
+                                fmax=freqs[-1], layout=layout, cmap=cmap,
                                 title=title)
 
             fig.show()
@@ -1519,33 +1503,29 @@ class Caller(object):
         # offer to skip them and only perform setup_forward_model.
         reply = 'computeAll'
         if len(sourceSpaceSetupTestList) > 0 and \
-        os.path.exists(waterShedSurfaceTestFile) and \
-        os.path.exists(wsCorTestFile):
+            os.path.exists(waterShedSurfaceTestFile) and \
+            os.path.exists(wsCorTestFile):
         
             try: 
                 sSpaceDict = fileManager.unpickle(os.path.join(fmDir,
                                                   'setupSourceSpace.param'))
-            except Exception:
-                sSpaceDict = dict()
-                
-            try:
                 wshedDict = fileManager.unpickle(os.path.join(fmDir,
                                                               'wshed.param'))
-            except Exception:
-                wshedDict = dict()
-        
-            fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
-                                                      wshedDict)
+
+                fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
+                                                          wshedDict)
             
-            fModelSkipDialog.exec_()
-            reply = fModelSkipDialog.get_return_value()
-            
+                fModelSkipDialog.exec_()
+                reply = fModelSkipDialog.get_return_value()
+            except:
+                # On error compute all.
+                reply = 'computeAll'
         
         if reply == 'cancel':
             # To keep forward model dialog open
             return False
         
-        if reply == 'bemOnly':
+        elif reply == 'bemOnly':
             # Need to do this to get triangulation files to right place and
             # naming for mne_setup_forward_model.
             fileManager.link_triang_files(activeSubject)
@@ -1572,7 +1552,7 @@ class Caller(object):
                      fmodel_dict_to_list(mergedDict)
             self.parent.forwardModelModel.add_fmodel(fmlist)
         
-        if reply == 'computeAll':
+        elif reply == 'computeAll':
             # To make overwriting unnecessary
             if os.path.isdir(bemDir):
                 shutil.rmtree(bemDir)
@@ -1669,7 +1649,6 @@ class Caller(object):
         """
         Uses mne.gui.coregistration for head coordinate coregistration.
         """
-
         activeSubject = self.experiment.active_subject
         tableView = self.parent.ui.tableViewFModelsForCoregistration
         
@@ -1703,7 +1682,7 @@ class Caller(object):
 
         fsdict    -- dictionary of parameters for forward solution creation.
         """
-        activeSubject = self.parent._experiment._active_subject
+        activeSubject = self.experiment._active_subject
         rawInfo = activeSubject.get_working_file().info
 
         tableView = self.parent.ui.tableViewFModelsForSolution
@@ -1794,11 +1773,11 @@ class Caller(object):
             subject = self.experiment.subjects[subject_name]
             raw = subject.get_working_file()
             name = os.path.basename(subject.working_file_name)
-            filename_to_write = name + '-cov.fif'
+            filename_to_write = name[:-4] + '-cov.fif'
         else:
             raw = fileManager.open_raw(cvdict['rawfilepath'], True)
-            basename = os.path.basename(cvdict['rawfilepath'])
-            filename_to_write = os.path.splitext(basename)[0] + '-cov.fif'
+            basename = os.path.basename(cvdict['rawfilepath'])[0]
+            filename_to_write = os.path.splitext(basename)[:-4] + '-cov.fif'
 
         tmin = cvdict['starttime']
         tmax = cvdict['endtime']
@@ -1871,7 +1850,7 @@ class Caller(object):
                 raise Exception('Exception while computing inverse '
                                 'solution:\n' + str(err))
         elif type == 'epochs':
-            inst = subject.get_epochs(inst_name)
+            inst = subject.epochs[inst_name].raw
             try:
                 stc = mne.minimum_norm.apply_inverse_epochs(inst, inv,
                                                             lambda2=lmbd,
@@ -1880,7 +1859,7 @@ class Caller(object):
                 raise Exception('Exception while computing inverse '
                                 'solution:\n' + str(err))
         elif type == 'evoked':
-            evoked = subject._evokeds[inst_name]
+            evoked = subject.evokeds[inst_name]
             evoked_raw = evoked._raw
 
             if isinstance(evoked_raw, list):
@@ -1902,10 +1881,18 @@ class Caller(object):
                                     'solution:\n' + str(err))
         stc_fname = os.path.split(inv_file)[-1]
         if isinstance(stc, list):  # epochs and evoked saved individually
+            if type == 'epochs':
+                stc_path = os.path.join(subject._stc_directory,
+                                        stc_fname[:-8] + '-' + type + '-' +
+                                        method)
+                os.mkdir(stc_path)
             for i, estimate in enumerate(stc):
-                stc_fname = os.path.join(subject._stc_directory,
-                                         stc_fname[:-8] + '-' + type + '-' +
-                                         method + str(i))
+                if type == 'epochs':
+                    stc_fname = os.path.join(stc_path, 'epoch-' + str(i))
+                else:
+                    stc_fname = os.path.join(subject._stc_directory,
+                                             stc_fname[:-8] + '-' + type +
+                                             '-' + method + str(i))
                 try:
                     estimate.save(stc_fname)
                 except Exception as err:
@@ -1943,3 +1930,64 @@ class Caller(object):
                      subjects_dir=subject._reconFiles_directory)
         except Exception as e:
             raise Exception('Error while plotting source estimate:\n' + str(e))
+
+    def tfr_clicked(self, event, data, stc, freqs):
+        """
+        Callback function for plotting frequencies in source space.
+        Args:
+            event: Mpl event.
+            data: Power in shape (sources, times).
+            stc: Instance of SourceEstimate. Used for wrapping the freq data.
+            freqs: List of float. Frequencies of interest.
+        """
+        x_data = event.xdata
+        y_data = event.ydata
+        ax = event.inaxes
+        ax.text(0.5, 0.5, 'Loading...')
+        ax.get_figure().canvas.draw()
+        #time_idx = np.argmin([abs(x_data / 1000. - t) for t in stc.times])
+        freq_idx = np.argmin([abs(y_data - f) for f in freqs])
+        stc._data = data[:, freq_idx, :]
+        subjects_dir = self.experiment.active_subject.reconFiles_directory
+        label = str(freqs[freq_idx]) + ' Hz, time=%0.2f ms'
+        stc.plot(subject='', subjects_dir=subjects_dir, time_label=label,
+                 time_viewer=True)
+
+    def plot_stc_freq(self, stc, data, freqs, tmin, tmax, ncycles, njobs):
+        """
+        Computes morlet tfr over set of stcs over epochs. Operates on stc
+        instance in place.
+        Args:
+            stc: Instance of stc containing the info. Used as a wrapper when
+                plotting the frequencies in source space. Modified in place.
+            data: Data in shape (epochs, sources, times).
+            freqs: List of float. Frequencies of interest.
+            tmin: Float. Minimum time of interest.
+            tmax: Float. Maximum time of interest.
+            ncycles: Float or list of float. Number of cycles for the wavelet.
+            njobs: Int. Number of cores to use for the computation.
+
+        Returns: Instance of figure.
+        Matplotlib figure containing average TFR over the epoch stcs.
+
+        """
+        import matplotlib.pyplot as plt
+
+        tmin_i = np.argmin([abs(tmin - t) for t in stc.times])
+        tmax_i = np.argmin([abs(tmax - t) for t in stc.times])
+        data = np.array(data)[:, :, tmin_i:tmax_i]
+        power, _ = mne.time_frequency.tfr._induced_power_cwt(data,
+            sfreq=stc.sfreq, frequencies=freqs, n_cycles=ncycles, n_jobs=njobs)
+
+        fig, ax = plt.subplots(1, 1)
+        ax.imshow(np.mean(power, axis=0),
+                  extent=(stc.times[tmin_i], stc.times[tmax_i], freqs[0],
+                          freqs[-1]), aspect="auto", origin="lower")
+
+        stc.times = stc.times[tmin_i:tmax_i]
+        click_callback = partial(self.tfr_clicked, data=power, stc=stc,
+                                 freqs=freqs)
+        fig.canvas.mpl_connect('button_press_event', click_callback)
+        fig.suptitle('Average power over all sources.')
+        plt.show(block=True)
+        return fig

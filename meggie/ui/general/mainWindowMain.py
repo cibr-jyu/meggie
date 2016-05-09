@@ -84,6 +84,7 @@ from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
 from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
 from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
 from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
+from meggie.ui.sourceModeling.stcFreqDialogMain import StcFreqDialog
 from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
 from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
 from meggie.ui.general.logDialogMain import LogDialog
@@ -180,7 +181,6 @@ class MainWindow(QtGui.QMainWindow):
         # tab.
         self.forwardModelModel = ForwardModelModel(self)
         self.subjectListModel = SubjectListModel(self)
-
 
         # Proxymodels for tuning what is actually shown in the views below.
         self.proxyModelTableViewForwardSolutionSource = QtGui.\
@@ -1401,6 +1401,7 @@ class MainWindow(QtGui.QMainWindow):
         try:
             fileManager.remove_fModel_directory(fmname, subject)
             self.forwardModelModel.removeRows(selectedRowNumber)
+            self.reinitialize_models()
         except Exception:
             msg = ('There was a problem removing forward model. Nothing was '
                    'removed.')
@@ -1417,7 +1418,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
-        activeSubject = self._experiment._active_subject
+        activeSubject = self.caller.experiment._active_subject
         tableView = self.ui.tableViewFModelsForCoregistration
 
         # Selection for the view is SingleSelection / SelectRows, so this
@@ -1479,6 +1480,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.fSolutionDialog = ForwardSolutionDialog(self)
+        self.fSolutionDialog.fwd_sol_computed.connect(self.reinitialize_models)
         self.fSolutionDialog.show()
 
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
@@ -1560,6 +1562,16 @@ class MainWindow(QtGui.QMainWindow):
             if os.path.isfile(os.path.join(dir, stc[:-6] + 'rh.stc')):
                 self.ui.listWidgetSourceEstimate.addItem(stc[:-7])
 
+        for stc_dir in [f for f in os.listdir(dir) if
+                        os.path.isdir(os.path.join(dir, f))]:  # epochs dirs
+            for stc_file in os.listdir(os.path.join(dir, stc_dir)):
+                if stc_file.endswith('lh.stc'):
+                    continue  # don't add duplicates
+                if os.path.isfile(os.path.join(dir, stc_dir,
+                                               stc_file[:-6] + 'rh.stc')):
+                    self.ui.listWidgetSourceEstimate.addItem(os.path.join(
+                        stc_dir, stc_file[:-7]))
+
 
     def on_pushButtonVisStc_clicked(self, checked=None):
         """Visualize source estimates."""
@@ -1571,6 +1583,15 @@ class MainWindow(QtGui.QMainWindow):
         stc = str(self.ui.listWidgetSourceEstimate.currentItem().text())
         self.plotStcDialog = PlotStcDialog(self, stc)
         self.plotStcDialog.show()
+
+
+    def on_pushButtonStcFreq_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        self.stcFreqDialog = StcFreqDialog(self)
+        self.stcFreqDialog.show()
 
 # Code for UI initialization (when starting the program) and
 # updating when something changes

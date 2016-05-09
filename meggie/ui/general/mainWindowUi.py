@@ -54,7 +54,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents_3 = QtGui.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1314, 750))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1313, 750))
         self.scrollAreaWidgetContents_3.setMinimumSize(QtCore.QSize(1100, 750))
         self.scrollAreaWidgetContents_3.setObjectName(_fromUtf8("scrollAreaWidgetContents_3"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrollAreaWidgetContents_3)
@@ -1126,6 +1126,9 @@ class Ui_MainWindow(object):
         spacerItem20 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_34.addItem(spacerItem20)
         self.formLayout_16.setLayout(0, QtGui.QFormLayout.SpanningRole, self.horizontalLayout_34)
+        self.pushButtonPlotCov = QtGui.QPushButton(self.tabNoiseCovariance)
+        self.pushButtonPlotCov.setObjectName(_fromUtf8("pushButtonPlotCov"))
+        self.formLayout_16.setWidget(1, QtGui.QFormLayout.LabelRole, self.pushButtonPlotCov)
         self.tabWidget.addTab(self.tabNoiseCovariance, _fromUtf8(""))
         self.tabInverseOperator = QtGui.QWidget()
         self.tabInverseOperator.setObjectName(_fromUtf8("tabInverseOperator"))
@@ -1246,8 +1249,16 @@ class Ui_MainWindow(object):
         self.tabSourceAnalysis = QtGui.QWidget()
         self.tabSourceAnalysis.setObjectName(_fromUtf8("tabSourceAnalysis"))
         self.groupBox_24 = QtGui.QGroupBox(self.tabSourceAnalysis)
-        self.groupBox_24.setGeometry(QtCore.QRect(20, 30, 371, 211))
+        self.groupBox_24.setGeometry(QtCore.QRect(20, 30, 221, 91))
         self.groupBox_24.setObjectName(_fromUtf8("groupBox_24"))
+        self.gridLayout_16 = QtGui.QGridLayout(self.groupBox_24)
+        self.gridLayout_16.setObjectName(_fromUtf8("gridLayout_16"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.pushButtonStcFreq = QtGui.QPushButton(self.groupBox_24)
+        self.pushButtonStcFreq.setObjectName(_fromUtf8("pushButtonStcFreq"))
+        self.verticalLayout_2.addWidget(self.pushButtonStcFreq)
+        self.gridLayout_16.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         self.textEdit = QtGui.QTextEdit(self.tabSourceAnalysis)
         self.textEdit.setGeometry(QtCore.QRect(460, 60, 211, 171))
         self.textEdit.setObjectName(_fromUtf8("textEdit"))
@@ -1811,6 +1822,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabForwardSolution), _translate("MainWindow", "Forward solution", None))
         self.pushButtonComputeCovarianceRaw.setText(_translate("MainWindow", "Compute noise covariance matrix based on raw file...", None))
         self.pushButtonComputeCovarianceEpochs.setText(_translate("MainWindow", "Compute noise covariance matrix based on epochs...", None))
+        self.pushButtonPlotCov.setText(_translate("MainWindow", "Plot current covariance matrix", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNoiseCovariance), _translate("MainWindow", "Noise covariance", None))
         self.groupBox_7.setTitle(_translate("MainWindow", "Forward solutions to base inverse operator on:", None))
         self.groupBox_8.setTitle(_translate("MainWindow", "Noise covariance matrix info:", None))
@@ -1833,10 +1845,11 @@ class Ui_MainWindow(object):
         self.pushButtonVisStc.setText(_translate("MainWindow", "Visualize", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSourceEstimate), _translate("MainWindow", "Source estimate", None))
         self.groupBox_24.setTitle(_translate("MainWindow", "Source estimates:", None))
+        self.pushButtonStcFreq.setText(_translate("MainWindow", "Frequency analysis", None))
         self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"</style></head><body style=\" font-family:\'Noto Sans\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\">Näille paikkeille sitten visualisointia, export-toimintoja yms.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Sans\'; font-size:10pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Sans\'; font-size:10pt;\"><br /></span></p></body></html>", None))
@@ -1878,5 +1891,3 @@ class Ui_MainWindow(object):
         self.actionToggle_whatsthis_mode.setToolTip(_translate("MainWindow", "Click this, then click something in the user interface to get more info about it", None))
         self.actionDirectToConsole.setText(_translate("MainWindow", "Direct output to console", None))
         self.actionShow_log.setText(_translate("MainWindow", "Show log", None))
-
-from meggie.ui.icons import mainWindowIcons_rc
