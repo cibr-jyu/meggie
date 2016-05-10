@@ -42,9 +42,10 @@ class FilterDialog(QtGui.QDialog):
         """
         Draws the preview.
         """
-        if checked is None: return
+        if checked is None: 
+            return
 
-        paramDict = self.collect_parameter_values()()
+        paramDict = self.collect_parameter_values()
         if paramDict.get('isEmpty') == True:
             message = 'Please select filter(s) to preview'
             messagebox(self.parent, message)
@@ -54,62 +55,24 @@ class FilterDialog(QtGui.QDialog):
 
     def drawPreview(self):
         """
-        Shows the data (mne.raw.plot()) filtered with the given filters, but
-        does not actually modify it. Also asks whether the previewed file
-        should be saved over the working file, and saves if the user answers
-        yes.
         """
-        raw = self.caller.experiment.active_subject.get_working_file()
-        paramDict = self.collect_parameter_values()()
-        dataToFilter = raw._data
-        info = raw.info
-
-        samplerate = raw.info['sfreq']
-
-        # Check if the filter frequency values are sane or not.
-        if (self._validateFilterFreq(paramDict, samplerate) == False):
-            return
-
-        filteredData = None
-
+        subject = self.caller.experiment.active_subject
+        params = self.collect_parameter_values()
+        info = subject.get_working_file().info
+        
+        params['length'] = params['length'] + 's'
+        params['bandstop_length'] = params['bandstop_length'] + 's'
+        
         try:
-            filteredData = self.caller.filter(dataToFilter, info, paramDict, 
-                                              do_meanwhile=self.parent.update_ui)
+            self._validateFilterFreq(params, info['sfreq'])
+            raw = self.caller.filter(params, subject, 
+                                     do_meanwhile=self.parent.update_ui,
+                                     preview=True)
+            raw.plot(block=True)
         except Exception as e:
-            exc_messagebox(self.parent, e)
-
-        if filteredData is None:
-            return
-
-        previewRaw = deepcopy(raw)
-        previewRaw._data = filteredData
-
-        # This should really block, but doesn't.
-        previewRaw.plot(block=True)                       
-
-        reply = QtGui.QMessageBox.question(self, 'Apply filters?',
-                    'Apply the previewed filters to the working file?',
-                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                    QtGui.QMessageBox.Yes)
-
-        if reply == QtGui.QMessageBox.Yes:
-            fname = previewRaw.info.get('filename')
-            # This actually saves the file over current working file,
-            # because the previewRaw filename is the same as that of raw
-            # file it is copied from.
-
-            # Update the data file with new filter values.
-            if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-                previewRaw.info['lowpass'] = paramDict['low_cutoff_freq']
-
-            if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-                previewRaw.info['highpass'] = paramDict['high_cutoff_freq']
-
-            fileManager.save_raw(self.caller.experiment, previewRaw, fname, overwrite=True)       
-            self.caller.experiment.active_subject.set_working_file(previewRaw)
-
-            self.parent.initialize_ui()
-
+            pass
+        
+        self.parent.initialize_ui()
 
     def accept(self):
         """
@@ -261,7 +224,6 @@ class FilterDialog(QtGui.QDialog):
             'bandstop_transbw': 0.500,
             'bandstop_length': 10.00
         }
-
         
     def collect_parameter_values(self):
         """
@@ -270,7 +232,7 @@ class FilterDialog(QtGui.QDialog):
         """
         dictionary = {}
         dictionary['isEmpty'] = True
-        length = str(self.ui.doubleSpinBoxLength.value())# + 's'
+        length = str(self.ui.doubleSpinBoxLength.value())
         dictionary['length'] = length
         dictionary['trans_bw'] = self.ui.doubleSpinBoxTransBandwidth.value()
         dictionary['lowpass'] = self.ui.checkBoxLowpass.isChecked()
@@ -281,7 +243,6 @@ class FilterDialog(QtGui.QDialog):
         else:
             #Only UI needs the value: value set to different key
             dictionary['low_cutoff_freq_false'] = self.ui.doubleSpinBoxLowpassCutoff.value()
-
 
         dictionary['highpass'] = self.ui.checkBoxHighpass.isChecked()
         if dictionary['highpass']:
@@ -310,8 +271,7 @@ class FilterDialog(QtGui.QDialog):
         dictionary['bandstop_bw'] = self.ui.doubleSpinBoxBandstopWidth.value()
         dictionary['bandstop_transbw'] = self.ui.doubleSpinBoxNotchTransBw.\
                                                                         value()
-        a = self.ui.doubleSpinBoxBandStopLength.value()
-        length = str(self.ui.doubleSpinBoxBandStopLength.value())# + 's'
+        length = str(self.ui.doubleSpinBoxBandStopLength.value())
         dictionary['bandstop_length'] = length
         if dictionary.get('isEmpty') == True:
             message = 'Please select filter(s) to apply'
