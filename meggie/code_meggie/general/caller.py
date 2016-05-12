@@ -482,6 +482,14 @@ class Caller(object):
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
+        
+        #event info for batch
+        events = epochs.event_id
+        events_str = ''
+        for event_name, event_id in events.items():
+            events_str += event_name + ' [' + str(len(epochs[event_name])) + ' events found]\n'
+        
+        return subject.subject_name + ', ' + params['collection_name'] + ':\n' + events_str
 
     def create_eventlist(self, params, raw):
         """

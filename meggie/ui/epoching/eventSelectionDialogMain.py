@@ -412,12 +412,15 @@ class EventSelectionDialog(QtGui.QDialog):
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
 
+        epoch_info = []
+
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                self.calculate_epochs(self.caller.experiment.active_subject)
+                events_str = self.calculate_epochs(self.caller.experiment.active_subject)
+                epoch_info.append(events_str) 
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
                     self.caller.experiment.active_subject, str(e)))     
@@ -431,7 +434,8 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.caller.activate_subject(name)
                 
                 try:
-                    self.calculate_epochs(subject)
+                    events_str = self.calculate_epochs(subject)
+                    epoch_info.append(events_str)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, 
                                                                  str(e)))
@@ -440,6 +444,11 @@ class EventSelectionDialog(QtGui.QDialog):
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.caller.experiment.save_experiment_settings()
+        
+        if len(epoch_info) > 0:
+            for info in epoch_info:
+                print info
+            
         self.close()
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
@@ -451,6 +460,6 @@ class EventSelectionDialog(QtGui.QDialog):
         self.fixedLengthDialog.show()
 
     def calculate_epochs(self, subject):
-        self.caller.create_epochs(
+        events_str = self.caller.create_epochs(
             self.batching_widget.data[subject.subject_name], subject)
-
+        return events_str
