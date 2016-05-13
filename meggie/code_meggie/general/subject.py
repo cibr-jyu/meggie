@@ -241,6 +241,20 @@ class Subject(QObject):
                                      shortest_event=1)
         return events
 
+    def get_cov(self):
+        """Helper method for getting the current covariance matrix."""
+        sa_dir = self._source_analysis_directory
+        files = os.listdir(sa_dir)
+        cov_file = [f for f in files if f.endswith('-cov.fif')]
+        if len(cov_file) == 0:
+            raise ValueError('No covariance file found.')
+        elif len(cov_file) > 1:
+            raise ValueError('Multiple covariance files found. Remove the '
+                             'other one!')
+        else:
+            cov_file = cov_file[0]
+        return mne.read_cov(os.path.join(sa_dir, cov_file))
+
     def add_epochs(self, epochs):
         """
         Adds Epochs object to the epochs dictionary.

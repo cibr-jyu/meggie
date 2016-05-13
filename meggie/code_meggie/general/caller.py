@@ -1714,13 +1714,7 @@ class Caller(object):
             raise IOError('Could not find forward solution with name %s.' %
                           fwd_file)
         fwd = mne.read_forward_solution(fwd_file)
-        cov_file = os.path.join(sa_dir, subject.subject_name + '-cov.fif')
-        if os.path.isfile(cov_file):
-            print 'Using %s to compute inverse.' % cov_file
-        else:
-            raise IOError('Could not find covariance file with name %s.' %
-                          cov_file)
-        cov = mne.read_cov(cov_file)
+        cov = subject.get_cov()
         inv = mne.minimum_norm.make_inverse_operator(info, fwd, cov)
         inv_fname = os.path.join(sa_dir, subject.subject_name + '-inv.fif')
         try:
@@ -1820,6 +1814,12 @@ class Caller(object):
 
         # Update ui.
         self.parent.update_covariance_info_box()
+
+    def plot_covariance(self):
+        """Plots the covariance matrix."""
+        subject = self.experiment.active_subject
+        cov = subject.get_cov()
+        cov.plot(subject._working_file.info)
 
     def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
         """

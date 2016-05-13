@@ -1550,6 +1550,12 @@ class MainWindow(QtGui.QMainWindow):
         self.covarianceEpochDialog = CovarianceEpochDialog(self)
         self.covarianceEpochDialog.show()
 
+    def on_pushButtonPlotCov_clicked(self, checked=None):
+        """Plots the covariance matrix."""
+        if checked is None:
+            return
+        self.caller.plot_covariance()
+
     def on_pushButtonComputeInverse_clicked(self, checked=None):
         """Compute inverse operator clicked."""
         if checked is None:
