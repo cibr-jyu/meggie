@@ -1,25 +1,14 @@
 TODO:
 
-- logit ipython script-muotoon, jotta voi copypastettaa ajettavaksi
-- epoch parametrit luettavaan muotoon
-- aktivoinnin yhteydessä epokit voisi ladata listaan mainwindowin update_epochs metodilla
-- messageboxit batchingissa: batchingwidgetille failed_subjects
-- testaa ecg, eog, filter ja epochs batchit
+- Scripting:
+* Miten tehdään raw.add_proj(projs[applied])?
+* Ei voida tietynlaista applied listaa (esim. [True, True, False, True, False, False]) antaa eri raakatiedostoille, kun ei ehkä vastaa samantyyppistä tilannetta/projektioiden lukumäärää jne?
+* Pitäisikö compute_proj_exg jälkeen kysyä heti käyttäjältä mitkä projektiot lisätään? Tällöin oikeat projs ja events attribuutit olisi yhä helposti saatavilla skriptissä
+epochs
+* Eventtilistan luominen 
+* Epokkien luominen
 
-UI:
-
-- scrollbarit kaikkialle (dialogit, widgetit jne)
-- ME TARVITAAN EPOKIT ITSENÄISYYYTTÄ JULISTAA
-
-12.4.2016:
-
-- tekstidataa evokedeista
-- huonot kanavat pudottavat eventtejä epokkien luonnissa, koska niiden arvot ylittävät rejektioiden arvoja
-	- olisi hyvä pystyä valitsemaan vain pari kiinnostavaa hyvää kanavaa (myös batchina joikaiselle subjectille), jotka sitten mm. epokoida
-	- voiko huonoja kanavia poistaa tallentamatta raakatiedostoa? (vie paljon aikaa, jos ajetaan batchina)
-- EEG kanavakartta evokedien visualisointiin
-- eventtien poistaminen epokkidialogissa
-- batch epochingissa montako eventtiä kullekin subjectin kokoelmalle löydettiin (esim. tuloste konsoliin), niin ei tarvitse tarkistaa erikseen aktivoimalla subjecteja
-- 'batch completed'-messagebox ajon jälkeen, jotta tietää prosessin valmistuneen (onko tarvetta throbblerin lisäämisen jälkeen?)
-- averaging välilehdellä voisi batchissa valitsemalla subjectin päivittää epokkilistasta valitun kyseisen kokoelman eventtien lukumäärän
-
+- TFR preprocessing välilehdelle, power spetrcum dialogista turhaa pois
+- Jonnekin Epoching/Averaging/TFR/"Fourier Analysis" paikkaan spektrit laskettavaks epokkikokoelmista (joita voi olla useampia)
+- Show evoked stats: tallennuksen hienosäätöä ja kanavavalinnatkin mukaan
+- Pohdi epokkien kanavavalintaa vielä.
