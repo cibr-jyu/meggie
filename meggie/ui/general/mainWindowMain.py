@@ -1911,23 +1911,25 @@ class MainWindow(QtGui.QMainWindow):
                                     "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
-        self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation,
+        self.ui.tabWidget.insertTab(4, self.ui.tabFourierAnalysis, "Fourier Analysis")
+        self.ui.tabWidget.insertTab(5, self.ui.tabSourceAnalysis, "Source Analysis")
+        
+        self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation,
                                     "Source modelling preparation")
-        self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel,
+        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabForwardModel,
                                     "Forward model creation")
-        self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration,
+        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabCoregistration,
                                     "Coregistration")
-        self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution,
+        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabForwardSolution,
                                     "Forward solution creation")
-        self.ui.tabWidget.insertTab(9, self.ui.tabNoiseCovariance,
+        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabNoiseCovariance,
                                     "Noise covariance")
-        self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator,
+        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabInverseOperator,
                                     "Inverse operator")
-        self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate,
+        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabSourceEstimate,
                                     "Source estimate")
-        self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis,
-                                    "Source analysis")
+        self.ui.tabWidgetSourceAnalysis.insertTab(8, self.ui.tabAnalysis,
+                                    "Analysis")
 
     def on_currentChanged(self):
         """
