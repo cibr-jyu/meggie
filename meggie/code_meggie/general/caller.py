@@ -1231,6 +1231,12 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
+    def TFR_raw(self, freqs):
+        raw = self.experiment.active_subject.get_working_file()
+        ev = mne.EvokedArray(raw._data, raw.info, tmin=0)
+        tfr = mne.time_frequency.tfr_morlet(ev, freqs, 4, return_itc=False)
+        mne.viz.plot_tfr_topomap(tfr)
+
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
         Method for plotting power spectrum.

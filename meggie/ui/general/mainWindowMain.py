@@ -74,6 +74,7 @@ from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.visualization.TFRDialogMain import TFRDialog
 from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
+from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
 from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
@@ -1106,6 +1107,14 @@ class MainWindow(QtGui.QMainWindow):
         self.spectrumDialog = PowerSpectrumDialog(self)
         self.spectrumDialog.finished.connect(self.on_close)
         self.spectrumDialog.show()
+        
+    def on_pushButtonTFRraw_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        self.tfr_raw_dialog = TFRRawDialog(self) 
+        self.tfr_raw_dialog.show()       
 
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
