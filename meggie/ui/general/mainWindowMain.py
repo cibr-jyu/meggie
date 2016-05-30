@@ -76,6 +76,7 @@ from meggie.ui.visualization.TFRDialogMain import TFRDialog
 from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
 from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
 from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.ui.visualization.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.filtering.filterDialogMain import FilterDialog
@@ -1108,14 +1109,23 @@ class MainWindow(QtGui.QMainWindow):
         self.spectrumDialog.finished.connect(self.on_close)
         self.spectrumDialog.show()
         
-    def on_pushButtonTFRraw_clicked(self, checked=None):
+    def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
+        """Open the power spectrum visualization dialog."""
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
             return
-        self.tfr_raw_dialog = TFRRawDialog(self) 
-        self.tfr_raw_dialog.show()       
 
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+            message = 'You must select the epochs for Power spectrum.'
+            messagebox(self, message)
+            return
+
+        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        epochs = self.caller.experiment.active_subject.epochs.get(name)
+        self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
+        self.spectrumDialogEpochs.show()
+        
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
@@ -1177,7 +1187,7 @@ class MainWindow(QtGui.QMainWindow):
         self.tfr_dialog = TFRDialog(self, epochs)
         self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
-
+        
     def on_pushButtonTFRTopology_clicked(self, checked=None):
         """Opens the dialog for plotting TFR topology."""
         if checked is None:
@@ -1212,6 +1222,14 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
+        
+    def on_pushButtonTFRraw_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        self.tfr_raw_dialog = TFRRawDialog(self) 
+        self.tfr_raw_dialog.show()       
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""

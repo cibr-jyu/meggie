@@ -28,46 +28,49 @@
 #either expressed or implied, of the FreeBSD Project.
 
 """
-Created on 24.5.2016
+Created on 30.5.2016
 
 @author: jaolpeso
 """
 from PyQt4 import QtGui
 
-from meggie.ui.visualization.TFRfromRawDialogUi import Ui_DialogRawTFR
+from meggie.ui.visualization.powerSpectrumEpochsDialogUi import Ui_Dialog
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 
-class TFRRawDialog(QtGui.QDialog):
+class PowerSpectrumEpochsDialog(QtGui.QDialog):
     """
-    Class containing the logic for TFRDialog. Collects the necessary parameter
-    values and passes them to the Caller-class.
     """
     
-    def __init__(self, parent):
+    def __init__(self, parent, epochs):
         """
         Constructor. Sets up the dialog
         
         Keyword arguments:
         
         parent    --    Parent of the dialog
-        epochs    --    a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.ui = Ui_DialogRawTFR()
+        self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.epochs = epochs
+        self.ui.comboBoxChannelType.addItem('grad')
+        self.ui.comboBoxChannelType.addItem('mag')
+        self.ui.comboBoxChannelType.addItem('planar1')
+        self.ui.comboBoxChannelType.addItem('planar2')
         
     def accept(self):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        interval = self.ui.doubleSpinBoxFreqInterval.value()
-        freqs = [minfreq, maxfreq, interval]
+        ch_type = self.ui.comboBoxChannelType.currentText()
+        normalize = False
+        if self.ui.checkBoxNormalize.isChecked():
+            normalize = True
         caller = Caller.Instance()
+        
         try:
-            caller.TFR_raw(freqs)
+            caller.plot_power_spectrum_epochs(self.epochs, ch_type, normalize)
         except Exception as e:
             exc_messagebox(self, e)

@@ -1351,6 +1351,10 @@ class Caller(object):
             psdList.append((psds, freqs))
         return psdList
 
+#    @threaded
+    def plot_power_spectrum_epochs(self, epochs, ch_type, normalize):
+        epochs.raw.plot_psd_topomap(ch_type=ch_type, normalize=normalize)
+
     @threaded
     def filter(self, dic, subject, preview=False):
         """
