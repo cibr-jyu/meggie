@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
-    <height>339</height>
+    <width>888</width>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -255,7 +255,7 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
+      <item row="7" column="0">
        <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -299,9 +299,6 @@
         </item>
        </layout>
       </item>
-      <item row="6" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-      </item>
      </layout>
     </widget>
    </item>
@@ -314,6 +311,37 @@
       <set>QDialogButtonBox::NoButton</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonReject">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAccept">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -332,50 +360,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>PowerSpectrumDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>266</x>
-     <y>580</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>PowerSpectrumDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>334</x>
-     <y>580</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>radioButtonLayoutFromFile</sender>
    <signal>toggled(bool)</signal>
    <receiver>pushButtonBrowseLayout</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>628</x>
-     <y>173</y>
+     <x>720</x>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel">
-     <x>775</x>
-     <y>171</y>
+     <x>856</x>
+     <y>366</y>
     </hint>
    </hints>
   </connection>
@@ -386,12 +382,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>593</x>
-     <y>168</y>
+     <x>720</x>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel">
-     <x>61</x>
-     <y>203</y>
+     <x>89</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonAccept</sender>
+   <signal>clicked()</signal>
+   <receiver>PowerSpectrumDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>824</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>885</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonReject</sender>
+   <signal>clicked()</signal>
+   <receiver>PowerSpectrumDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>723</x>
+     <y>494</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>885</x>
+     <y>402</y>
     </hint>
    </hints>
   </connection>

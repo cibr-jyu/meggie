@@ -50,14 +50,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.get_working_file()
         tmax = np.floor(raw.index_as_time(raw.n_times))
         self.tmax = tmax
-        widget = PowerSpectrumWidget(tmax, self)
-        widget.setStartTime(5)
-        widget.setEndTime(tmax)
-        self.conditions.append(widget)
-        widget.index = 0
-        widget.removeWidget.connect(self.on_RemoveWidget_clicked)
-        widget.channelCopy.connect(self.copyChannels)
-        self.ui.verticalLayoutConditions.addWidget(widget)
+        #widget = PowerSpectrumWidget(tmax, self)
+        #widget.setStartTime(5)
+        #widget.setEndTime(tmax)
+        #self.conditions.append(widget)
+        #widget.index = 0
+        #widget.removeWidget.connect(self.on_RemoveWidget_clicked)
+        #widget.channelCopy.connect(self.copyChannels)
+        #self.ui.verticalLayoutConditions.addWidget(widget)
         stim_channel = self.caller.experiment.active_subject.find_stim_channel()
         try:
             triggers = find_events(raw, stim_channel=stim_channel)
@@ -67,8 +67,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         except Exception as e:
             print 'Could not find triggers from %s.' % stim_channel
 
-        self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
-        self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)
+        #self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
+        #self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)
 
         # Populate layouts combobox.
         layouts = fileManager.get_layouts()
