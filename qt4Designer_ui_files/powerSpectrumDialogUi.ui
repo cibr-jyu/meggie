@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>870</width>
-    <height>590</height>
+    <height>339</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <string>Conditions</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
          <layout class="QFormLayout" name="formLayout_2">
@@ -186,7 +186,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -248,17 +248,44 @@
         </item>
        </layout>
       </item>
-      <item row="7" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item row="2" column="0">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QPushButton" name="pushButtonSeriesFromTriggers">
+         <widget class="QLabel" name="labelTmin">
           <property name="text">
-           <string>Construct time series from triggers</string>
+           <string>Start time:</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_4">
+         <widget class="QSpinBox" name="spinBoxTmin"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelTmax">
+          <property name="text">
+           <string>End time:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxTmax"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -270,136 +297,10 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonAddTimeSeries">
-          <property name="toolTip">
-           <string>Add condition.</string>
-          </property>
-          <property name="text">
-           <string>Add time series</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
-      <item row="8" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="0">
-       <widget class="QScrollArea" name="scrollAreaConditions">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>255</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>550</height>
-         </size>
-        </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>824</width>
-           <height>193</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayoutConditions"/>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="checkBoxTriggers">
-          <property name="text">
-           <string>Use triggers for time series</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Start trigger:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBoxStart">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>End trigger:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBoxEnd">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+      <item row="6" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
       </item>
      </layout>
     </widget>
@@ -426,12 +327,6 @@
   <tabstop>comboBoxLayout</tabstop>
   <tabstop>radioButtonLayoutFromFile</tabstop>
   <tabstop>pushButtonBrowseLayout</tabstop>
-  <tabstop>checkBoxTriggers</tabstop>
-  <tabstop>comboBoxStart</tabstop>
-  <tabstop>comboBoxEnd</tabstop>
-  <tabstop>scrollAreaConditions</tabstop>
-  <tabstop>pushButtonSeriesFromTriggers</tabstop>
-  <tabstop>pushButtonAddTimeSeries</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -465,86 +360,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxTriggers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxStart</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>166</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>544</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxTriggers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxEnd</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>99</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxTriggers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>390</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxTriggers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_2</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>96</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>697</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxTriggers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonAddTimeSeries</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>84</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>786</x>
-     <y>512</y>
     </hint>
    </hints>
   </connection>
