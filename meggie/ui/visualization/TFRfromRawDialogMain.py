@@ -62,12 +62,15 @@ class TFRRawDialog(QtGui.QDialog):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        interval = self.ui.doubleSpinBoxFreqInterval.value()
-        freqs = [minfreq, maxfreq, interval]
+        wsize = self.ui.spinBoxWsize.value()
+        if self.ui.checkBoxTstep.isChecked():
+            tstep = None
+        else:
+            tstep = self.ui.spinBoxTstep.value()
         caller = Caller.Instance()
         try:
-            caller.TFR_raw(freqs)
+            caller.TFR_raw(wsize, tstep)
         except Exception as e:
             exc_messagebox(self, e)
+            
+        self.close()

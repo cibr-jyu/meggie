@@ -1231,11 +1231,13 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    def TFR_raw(self, freqs):
+    def TFR_raw(self, wsize, tstep):
         raw = self.experiment.active_subject.get_working_file()
-        ev = mne.EvokedArray(raw._data, raw.info, tmin=0)
-        tfr = mne.time_frequency.tfr_morlet(ev, freqs, 4, return_itc=False)
-        mne.viz.plot_tfr_topomap(tfr)
+        tfr = mne.time_frequency.stft(raw._data, wsize, tstep=tstep)
+        freqs = mne.time_frequency.stftfreq(wsize, sfreq=None)
+        #TODO: times = 
+        #tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
+        #tfr_.plot_topo()
 
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """
