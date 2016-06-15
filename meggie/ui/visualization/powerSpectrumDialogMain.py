@@ -163,7 +163,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         save_data = self.ui.checkBoxSaveData.isChecked()
         if save_data is True:
             #Let logger know about the saved calculations
-            #self.parent.action_logger.add_notification('Power spectrum calculation data saved to file under the experiment root.')
             pass
         if self.ui.radioButtonSelectLayout.isChecked():
             params['lout'] = str(self.ui.comboBoxLayout.currentText())

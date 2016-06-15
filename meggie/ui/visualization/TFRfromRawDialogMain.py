@@ -36,13 +36,16 @@ from PyQt4 import QtGui
 
 from meggie.ui.visualization.TFRfromRawDialogUi import Ui_DialogRawTFR
 from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.general import fileManager
 from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 class TFRRawDialog(QtGui.QDialog):
     """
     Class containing the logic for TFRDialog. Collects the necessary parameter
     values and passes them to the Caller-class.
     """
+    caller = Caller.Instance()
     
     def __init__(self, parent):
         """
@@ -58,19 +61,56 @@ class TFRRawDialog(QtGui.QDialog):
         self.ui = Ui_DialogRawTFR()
         self.ui.setupUi(self)
         
+        raw = self.caller.experiment.active_subject.get_working_file()
+        channels = raw.info['ch_names']
+        self.ui.comboBoxChannel.addItems(channels)
+
+        # Populate layouts combobox.
+        layouts = fileManager.get_layouts()
+        self.ui.comboBoxLayout.addItems(layouts)
+
+        
     def accept(self):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
         wsize = self.ui.spinBoxWsize.value()
         if self.ui.checkBoxTstep.isChecked():
-            tstep = None
+            tstep = wsize / 2
         else:
             tstep = self.ui.spinBoxTstep.value()
-        caller = Caller.Instance()
+            
+        channel = self.ui.comboBoxChannel.currentText()
+        fmin, fmax = None, None
+
+        if self.ui.checkBoxFrequency.isChecked():
+            fmin = self.ui.spinBoxFmin.value()
+            fmax = self.ui.spinBoxFmax.value()
+        
+        if self.ui.radioButtonSelectLayout.isChecked():
+            layout = str(self.ui.comboBoxLayout.currentText())
+        elif self.ui.radioButtonLayoutFromFile.isChecked():
+            layout = str(self.ui.labelLayout.text())
+            if layout == 'No layout selected':
+                messagebox(self.parent, 'No layout selected!')
+                return
+        
         try:
-            caller.TFR_raw(wsize, tstep)
+            self.caller.TFR_raw(wsize, tstep, layout, channel, fmin, fmax)
         except Exception as e:
             exc_messagebox(self, e)
             
         self.close()
+
+    def on_pushButtonBrowseLayout_clicked(self, checked=None):
+        """
+        Called when browse layout button is clicked.
+        Opens a file dialog for selecting a file.
+        """
+        if checked is None:
+            return
+        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
+                                                      '/home/', "Layout-files "
+                                                      "(*.lout *.lay);;All "
+                                                      "files (*.*)"))
+        self.ui.labelLayout.setText(fname)

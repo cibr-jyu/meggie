@@ -13,6 +13,7 @@ import fnmatch
 import re
 import shutil
 import copy
+import math
 from functools import partial
 
 from PyQt4 import QtCore, QtGui
@@ -1231,13 +1232,26 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    def TFR_raw(self, wsize, tstep):
+    def TFR_raw(self, wsize, tstep, layout, channel, fmin, fmax):
         raw = self.experiment.active_subject.get_working_file()
-        tfr = mne.time_frequency.stft(raw._data, wsize, tstep=tstep)
-        freqs = mne.time_frequency.stftfreq(wsize, sfreq=None)
-        #TODO: times = 
-        #tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
-        #tfr_.plot_topo()
+        tfr = np.abs(mne.time_frequency.stft(raw._data, wsize, tstep=tstep))
+        freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
+        times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
+        
+        tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
+
+        
+        if (not fmin and raw.info['highpass'] and 
+                not math.isnan(raw.info['highpass'])):
+            fmin = raw.info['highpass']
+
+        if (not fmax and raw.info['lowpass'] and 
+                not math.isnan(raw.info['lowpass'])):
+            fmax = raw.info['lowpass']       
+        
+        tfr_.plot(picks=[channel], baseline=[None, None], fmin=fmin, fmax=fmax,
+                  layout=layout)
+
 
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
         """

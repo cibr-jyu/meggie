@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>219</height>
+    <width>495</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Meggie - TFR from raw</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -26,6 +26,27 @@
    </item>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Select channel:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBoxChannel"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -51,13 +72,13 @@
        <item>
         <widget class="QSpinBox" name="spinBoxWsize">
          <property name="maximum">
-          <number>100</number>
+          <number>1000000000</number>
          </property>
          <property name="singleStep">
           <number>1</number>
          </property>
          <property name="value">
-          <number>4</number>
+          <number>1024</number>
          </property>
         </widget>
        </item>
@@ -111,13 +132,13 @@
           <bool>false</bool>
          </property>
          <property name="maximum">
-          <number>50</number>
+          <number>1000000000</number>
          </property>
          <property name="singleStep">
           <number>1</number>
          </property>
          <property name="value">
-          <number>2</number>
+          <number>512</number>
          </property>
         </widget>
        </item>
@@ -130,7 +151,126 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxFrequency">
+       <property name="text">
+        <string>Limit frequencies</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Min frequency:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxFmin">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Max frequency:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxFmax">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>40</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_35">
+       <item>
+        <widget class="QRadioButton" name="radioButtonSelectLayout">
+         <property name="text">
+          <string>Select layout</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBoxLayout">
+         <item>
+          <property name="text">
+           <string>Infer from data</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_36">
+         <item>
+          <widget class="QRadioButton" name="radioButtonLayoutFromFile">
+           <property name="text">
+            <string>Layout from file</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonBrowseLayout">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
     </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -143,8 +283,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
-     <y>209</y>
+     <x>266</x>
+     <y>421</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -159,8 +299,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>325</x>
-     <y>209</y>
+     <x>334</x>
+     <y>421</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -175,12 +315,60 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>92</y>
+     <x>141</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>407</x>
-     <y>125</y>
+     <x>483</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFrequency</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBoxFmin</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFrequency</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBoxFmax</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonLayoutFromFile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonBrowseLayout</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>355</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>443</x>
+     <y>356</y>
     </hint>
    </hints>
   </connection>
