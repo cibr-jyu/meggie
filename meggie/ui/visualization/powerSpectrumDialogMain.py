@@ -38,7 +38,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         nfft       - The length of the tapers ie. the windows.
                      The smaller it is the smoother are the PSDs.
         logarithm  - A boolean that determines if a logarithmic scale is used.
-        lout       - A layout file name.
         """
         QtGui.QDialog.__init__(self)
 
@@ -67,13 +66,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         except Exception as e:
             print 'Could not find triggers from %s.' % stim_channel
 
-        #self.ui.buttonBox.addButton("Start", QtGui.QDialogButtonBox.AcceptRole)
-        #self.ui.buttonBox.addButton(QtGui.QDialogButtonBox.Close)
-
-        # Populate layouts combobox.
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
-
     @QtCore.pyqtSlot(int)
     def on_RemoveWidget_clicked(self, index):
         """
@@ -94,19 +86,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         channels = self.conditions[index].getChannels()
         for widget in self.conditions:
             widget.on_ChannelsChanged(channels)
-
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """
-        Called when browse layout button is clicked.
-        Opens a file dialog for selecting a file.
-        """
-        if checked is None:
-            return
-        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                                      '/home/', "Layout-files "
-                                                      "(*.lout *.lay);;All "
-                                                      "files (*.*)"))
-        self.ui.labelLayout.setText(fname)
 
     def on_pushButtonAddTimeSeries_clicked(self, checked=None):
         """
@@ -164,13 +143,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if save_data is True:
             #Let logger know about the saved calculations
             pass
-        if self.ui.radioButtonSelectLayout.isChecked():
-            params['lout'] = str(self.ui.comboBoxLayout.currentText())
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            params['lout'] = str(self.ui.labelLayout.text())
-            if params['lout'] == 'No layout selected':
-                messagebox(self.parent, 'No layout selected!')
-                return
 
         try:
             QtGui.QApplication.setOverrideCursor(

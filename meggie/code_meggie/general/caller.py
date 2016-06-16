@@ -502,13 +502,12 @@ class Caller(object):
         return events
 
     def read_layout(self, layout):
+        if not layout or layout == "Infer from data":
+            return None
+        
         import pkg_resources
         path_mne = pkg_resources.resource_filename('mne', 'channels/data/layouts')
         path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
-        
-        print path_mne
-        print path_meggie
-        print layout
         
         if os.path.exists(os.path.join(path_mne, layout)):
             return read_layout(layout, path_mne)
@@ -517,7 +516,7 @@ class Caller(object):
             return read_layout(layout, path_meggie)
 
 
-    def draw_evoked_potentials(self, evokeds, layout):
+    def draw_evoked_potentials(self, evokeds):
         """
         Draws a topography representation of the evoked potentials.
 
@@ -525,10 +524,7 @@ class Caller(object):
         evokeds  - Evoked object or list of evokeds.
         layout   - The desired layout as a string.
         """
-        if layout == 'Infer from data':
-            layout = None  # Tries to guess the locations from the data.
-        else:
-            layout = self.read_layout(layout)
+        layout = self.read_layout(self.experiment.active_subject.layout)
 
         colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
 
@@ -868,7 +864,7 @@ class Caller(object):
         return power, itc, times, evoked, evoked_data
 
     def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
-                     ncycles, lout, ch_type, scalp, color_map='auto'):
+                     ncycles, ch_type, scalp, color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
@@ -902,10 +898,7 @@ class Caller(object):
         elif reptype == 'itc':  # TFR from averageTFR
             itc = inst
 
-        if lout == 'Infer from data':
-            layout = None
-        else:
-            layout = self.read_layout(lout)
+        layout = self.read_layout(self.experiment.active_subject.layout)
         
         if blstart is None and blend is None:
             baseline = None
@@ -991,17 +984,14 @@ class Caller(object):
         return power, itc
 
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
-                    maxfreq, interval, blstart, blend, ncycles, decim, layout,
+                    maxfreq, interval, blstart, blend, ncycles, decim,
                     selected_channels, form, dpi, save_topo, save_plot,
                     save_max):
         """
         Method for computing average TFR over all subjects in the experiment.
         Creates data and picture files to output folder of the experiment.
         """
-        if layout == 'Infer from data':
-            layout = None
-        else:
-            layout = self.read_layout(layout)
+        layout = self.read_layout(self.experiment.active_subject.layout)
 
         frequencies = np.arange(minfreq, maxfreq, interval)
 
@@ -1232,8 +1222,14 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    def TFR_raw(self, wsize, tstep, layout, channel, fmin, fmax):
+    def TFR_raw(self, wsize, tstep, channel, fmin, fmax):
+        lout = self.read_layout(self.experiment.active_subject.layout)
+        
         raw = self.experiment.active_subject.get_working_file()
+        
+        raw = raw.copy()
+        raw.apply_proj()
+        
         tfr = np.abs(mne.time_frequency.stft(raw._data, wsize, tstep=tstep))
         freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
@@ -1249,8 +1245,8 @@ class Caller(object):
                 not math.isnan(raw.info['lowpass'])):
             fmax = raw.info['lowpass']       
         
-        tfr_.plot(picks=[channel], baseline=[None, None], fmin=fmin, fmax=fmax,
-                  layout=layout)
+        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, #baseline=[None, None],
+                  layout=lout, mode='logratio')
 
 
     def plot_power_spectrum(self, params, save_data, colors, channelColors):
@@ -1266,14 +1262,7 @@ class Caller(object):
                          values are tuple of (color, list of channels of
                          interest).
         """
-        if params['lout'] == 'Infer from data':
-            lout = None
-        else:
-            try:
-                lout = self.read_layout(params['lout'], scale=True)
-            except Exception:
-                message = 'Could not read layout information.'
-                raise Exception(message)
+        lout = self.read_layout(self.experiment.active_subject.layout)
         raw = self.experiment.active_subject.get_working_file()
 
         if params['ch'] == 'meg':

@@ -67,8 +67,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.epoch_name = epoch_name
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
         if tfr is None:
             self.tfr = None
             subject = self.caller.experiment.active_subject
@@ -100,17 +98,6 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.ui.doubleSpinBoxBaselineEnd.setMinimum(tfr.times[0])
             self.ui.doubleSpinBoxBaselineEnd.setMaximum(tfr.times[-1])
 
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """
-        Opens a dialog for selecting a layout file.
-        """
-        if checked is None:
-            return
-        fName = str(QtGui.QFileDialog.getOpenFileName(self,
-                            "Select a layout file", '/home/', 
-                            "Layout-files (*.lout *.lay);;All files (*.*)"))
-        self.ui.labelLayout.setText(fName)
-
     def accept(self):
         """
         Collects the parameter values from the dialog window and passes them
@@ -118,13 +105,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         feedback to the user.
         """
         cmap = self.ui.comboBoxCmap.currentText()
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == 'No layout selected' or layout == '':
-            messagebox(self.parent, 'No layout selected')
-            return
         if self.ui.groupBoxBaseline.isChecked():
             mode = self.ui.comboBoxMode.currentText()
             if self.ui.checkBoxBaselineStartNone.isChecked():
@@ -144,9 +124,9 @@ class TFRTopologyDialog(QtGui.QDialog):
             reptype = 'itc'
         if self.tfr is not None:
             try:
-                 self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
-                                          blstart, blend, None, None, layout, None,
-                                          None, cmap)
+                self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
+                                         blstart, blend, None, None, None,
+                                         None, cmap)
             except Exception as e:
                 exc_messagebox(self.parent, e)
             return
@@ -178,7 +158,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp = None
         try:
             self.caller.TFR_topology(epochs, reptype, freqs, decim, mode,
-                                     blstart, blend, ncycles, layout, ch_type,
+                                     blstart, blend, ncycles, ch_type,
                                      scalp, cmap)
         except Exception as e:
             exc_messagebox(self.parent, e)
@@ -230,18 +210,10 @@ class TFRTopologyDialog(QtGui.QDialog):
         else:
             saveMax = None
 
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == 'No layout selected' or layout == '':
-            messagebox(self.parent, 'No layout selected')
-            return
-
         try:
             self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
                                     minfreq, maxfreq, interval, blstart,
-                                    blend, ncycles, decim, layout, channels,
+                                    blend, ncycles, decim, channels,
                                     form, dpi, saveTopo, savePlot, saveMax)
         except Exception as e:
             exc_messagebox(self.parent, e)

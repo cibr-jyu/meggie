@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -1804,64 +1804,6 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="3" column="0">
-                      <layout class="QVBoxLayout" name="verticalLayout_27">
-                       <item>
-                        <layout class="QHBoxLayout" name="horizontalLayout_35">
-                         <item>
-                          <widget class="QRadioButton" name="radioButtonSelectLayout">
-                           <property name="text">
-                            <string>Select layout</string>
-                           </property>
-                           <property name="checked">
-                            <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QComboBox" name="comboBoxLayout">
-                           <item>
-                            <property name="text">
-                             <string>Infer from data</string>
-                            </property>
-                           </item>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <layout class="QHBoxLayout" name="horizontalLayout_36">
-                         <item>
-                          <widget class="QRadioButton" name="radioButtonLayoutFromFile">
-                           <property name="text">
-                            <string>Layout from file</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QPushButton" name="pushButtonBrowseLayout">
-                           <property name="enabled">
-                            <bool>false</bool>
-                           </property>
-                           <property name="text">
-                            <string>Browse...</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <widget class="QLabel" name="labelLayout">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="text">
-                          <string>No layout selected</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
                      <item row="0" column="0">
                       <layout class="QGridLayout" name="gridLayout">
                        <item row="1" column="0">
@@ -1995,8 +1937,6 @@
                        </item>
                       </layout>
                      </widget>
-                     <zorder>groupBoxAvailableTFR</zorder>
-                     <zorder>layoutWidget</zorder>
                     </widget>
                    </item>
                   </layout>
@@ -3136,7 +3076,7 @@ p, li { white-space: pre-wrap; }
    <property name="minimumSize">
     <size>
      <width>330</width>
-     <height>720</height>
+     <height>757</height>
     </size>
    </property>
    <property name="floating">
@@ -3651,6 +3591,13 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="pushButtonLayout">
+            <property name="text">
+             <string>Change layout...</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item row="0" column="0">
@@ -3796,10 +3743,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonDeleteEvoked</tabstop>
   <tabstop>pushButtonVisualizeEvokedDataset</tabstop>
   <tabstop>pushButtonOpenEvokedStatsDialog</tabstop>
-  <tabstop>radioButtonSelectLayout</tabstop>
-  <tabstop>comboBoxLayout</tabstop>
-  <tabstop>radioButtonLayoutFromFile</tabstop>
-  <tabstop>pushButtonBrowseLayout</tabstop>
   <tabstop>pushButtonTFR</tabstop>
   <tabstop>pushButtonTFRTopology</tabstop>
   <tabstop>textEditConsole</tabstop>
@@ -3815,66 +3758,18 @@ p, li { white-space: pre-wrap; }
  </resources>
  <connections>
   <connection>
-   <sender>radioButtonSelectLayout</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1361</x>
-     <y>617</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1544</x>
-     <y>623</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>radioButtonCustomChannels</sender>
    <signal>toggled(bool)</signal>
    <receiver>pushButtonModifyChannels</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>717</y>
+     <x>549</x>
+     <y>785</y>
     </hint>
     <hint type="destinationlabel">
-     <x>447</x>
-     <y>735</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonBrowseLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1361</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1544</x>
-     <y>658</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1361</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1545</x>
-     <y>682</y>
+     <x>549</x>
+     <y>809</y>
     </hint>
    </hints>
   </connection>

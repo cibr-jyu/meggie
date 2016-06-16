@@ -64,11 +64,6 @@ class TFRRawDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.get_working_file()
         channels = raw.info['ch_names']
         self.ui.comboBoxChannel.addItems(channels)
-
-        # Populate layouts combobox.
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
-
         
     def accept(self):
         """
@@ -80,37 +75,17 @@ class TFRRawDialog(QtGui.QDialog):
         else:
             tstep = self.ui.spinBoxTstep.value()
             
-        channel = self.ui.comboBoxChannel.currentText()
+        channel_idx = self.ui.comboBoxChannel.currentIndex()
+        #a = self.ui.comboBoxChannel.itemText(channel_idx)
         fmin, fmax = None, None
 
         if self.ui.checkBoxFrequency.isChecked():
             fmin = self.ui.spinBoxFmin.value()
             fmax = self.ui.spinBoxFmax.value()
         
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = str(self.ui.comboBoxLayout.currentText())
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-            if layout == 'No layout selected':
-                messagebox(self.parent, 'No layout selected!')
-                return
-        
         try:
-            self.caller.TFR_raw(wsize, tstep, layout, channel, fmin, fmax)
+            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax)
         except Exception as e:
             exc_messagebox(self, e)
             
         self.close()
-
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """
-        Called when browse layout button is clicked.
-        Opens a file dialog for selecting a file.
-        """
-        if checked is None:
-            return
-        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
-                                                      '/home/', "Layout-files "
-                                                      "(*.lout *.lay);;All "
-                                                      "files (*.*)"))
-        self.ui.labelLayout.setText(fname)

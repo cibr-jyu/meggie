@@ -186,83 +186,14 @@
         </item>
        </layout>
       </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_27">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_35">
-            <item>
-             <widget class="QRadioButton" name="radioButtonSelectLayout">
-              <property name="text">
-               <string>Select layout</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxLayout">
-              <item>
-               <property name="text">
-                <string>Infer from data</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_36">
-              <item>
-               <widget class="QRadioButton" name="radioButtonLayoutFromFile">
-                <property name="text">
-                 <string>Layout from file</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButtonBrowseLayout">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Browse...</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelLayout">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>No layout selected</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
+      <item row="6" column="0">
        <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="labelTmin">
@@ -298,6 +229,13 @@
          </spacer>
         </item>
        </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -351,46 +289,10 @@
   <tabstop>comboBoxChannels</tabstop>
   <tabstop>spinBoxNfft</tabstop>
   <tabstop>checkBoxLogarithm</tabstop>
-  <tabstop>radioButtonSelectLayout</tabstop>
-  <tabstop>comboBoxLayout</tabstop>
-  <tabstop>radioButtonLayoutFromFile</tabstop>
-  <tabstop>pushButtonBrowseLayout</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonBrowseLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>720</x>
-     <y>363</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>856</x>
-     <y>366</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>720</x>
-     <y>363</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>89</x>
-     <y>395</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>pushButtonAccept</sender>
    <signal>clicked()</signal>
@@ -398,8 +300,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>824</x>
-     <y>493</y>
+     <x>877</x>
+     <y>366</y>
     </hint>
     <hint type="destinationlabel">
      <x>885</x>
@@ -414,8 +316,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>723</x>
-     <y>494</y>
+     <x>786</x>
+     <y>366</y>
     </hint>
     <hint type="destinationlabel">
      <x>885</x>

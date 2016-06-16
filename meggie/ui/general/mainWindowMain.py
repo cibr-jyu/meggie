@@ -61,6 +61,7 @@ matplotlib.use('Qt4Agg')
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
+from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
@@ -122,6 +123,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        self.layoutDialog = None
         self.spectrumDialog = None
         self.filterDialog = None
         self.epochParameterDialog = None
@@ -240,9 +242,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
 
-        # Populate layouts combobox.
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
@@ -781,15 +780,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
-        layout = ''
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = str(self.ui.comboBoxLayout.currentText())
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == '':
-            messagebox(self, 'No layout selected!')
-            return
-
+        
         self.ui.pushButtonVisualizeEvokedDataset.setText('      Visualizing...'
                                                          '      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
@@ -800,9 +791,9 @@ class MainWindow(QtGui.QMainWindow):
 
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
-	    QtGui.QApplication.setOverrideCursor(
+            QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-            self.caller.draw_evoked_potentials(mne_evokeds.values(), layout)
+            self.caller.draw_evoked_potentials(mne_evokeds.values())
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)
@@ -829,13 +820,8 @@ class MainWindow(QtGui.QMainWindow):
 
         evoked_name = str(item.text())
 
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        else:
-            layout = str(self.ui.labelLayout.text())
-
         try:
-            evokeds, group_epoch_info = self.caller.group_average(evoked_name, layout)
+            evokeds, group_epoch_info = self.caller.group_average(evoked_name)
         except Exception as e:
             exc_messagebox(self, e)
             return
@@ -844,18 +830,14 @@ class MainWindow(QtGui.QMainWindow):
 
         self.initialize_ui()
 
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """Opens a dialog for selecting a layout file."""
+    def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
             return
-
-        fName = str(QtGui.QFileDialog.
-                    getOpenFileName(self, "Select a layout file", '/home/',
-                                    "Layout-files (*.lout *.lay);;All files "
-                                    "(*.*)"))
-        self.ui.labelLayout.setText(fName)
+        
+        self.layoutDialog = LayoutDialog(self)
+        self.layoutDialog.show()
 
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch collection."""
@@ -1019,14 +1001,8 @@ class MainWindow(QtGui.QMainWindow):
                 exc_messagebox(self, e)
         else:
             return
-
-    def on_pushButtonRawPlot_clicked(self, checked=None):
-        """Call ``raw.plot``."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
+        
+    def plot_raw(self):
         def handle_close(event):
             raw = self.caller.experiment.active_subject.get_working_file()
             fname = self.caller.experiment.active_subject.get_working_file().info['filename']
@@ -1047,6 +1023,15 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, err)
             return
 
+    def on_pushButtonRawPlot_clicked(self, checked=None):
+        """Call ``raw.plot``."""
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+
+        self.plot_raw()
+
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""
         if checked is None:
@@ -1054,12 +1039,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
         
-        info = self.caller.experiment.active_subject.get_working_file().info
-        try:
-            self.caller.call_mne_browse_raw(info['filename'])
-        except Exception, err:
-            exc_messagebox(self, err)
-            return
+        self.plot_raw()
 
     def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
         """Call mne_browse_raw."""
@@ -1133,7 +1113,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
-        
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
