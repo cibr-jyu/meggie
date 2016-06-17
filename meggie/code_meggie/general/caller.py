@@ -1249,18 +1249,13 @@ class Caller(object):
                   layout=lout, mode='logratio')
 
 
-    def plot_power_spectrum(self, params, save_data, colors, channelColors):
+    def plot_power_spectrum(self, params, save_data):
         """
         Method for plotting power spectrum.
         Parameters:
         params         - Dictionary containing the parameters.
         save_data      - Boolean indicating whether to save psd data to files.
                          Only data from channels of interest is saved.
-        colors         - List of default colors. One for each time series.
-        channelColors  - Dictionary of channel specific colors. Keys are
-                         indices of the time series (starting from zero). The
-                         values are tuple of (color, list of channels of
-                         interest).
         """
         lout = self.read_layout(self.experiment.active_subject.layout)
         raw = self.experiment.active_subject.get_working_file()
@@ -1271,33 +1266,19 @@ class Caller(object):
         elif params['ch'] == 'eeg':
             picks = mne.pick_types(raw.info, meg=False, eeg=True,
                                    exclude=[])
+        
         params['picks'] = picks
 
-        psds = self._compute_spectrum(raw, params,
-                                      do_meanwhile=self.parent.update_ui)
+        psd_list = self._compute_spectrum(raw, params,
+                                          do_meanwhile=self.parent.update_ui)
 
+        # average psds
+        psds = np.mean([psds for psds, freqs in psd_list], axis=0)
+        freqs = psd_list[0][1]
+        
+        # TODO
         if save_data:
-            print 'Writing to file...'
-            exp_path = os.path.join(self.experiment.workspace,
-                                    self.experiment.experiment_name)
-            if not os.path.isdir(exp_path + '/output'):
-                os.mkdir(exp_path + '/output')
-            fname = os.path.join(exp_path + '/output',
-                                 self.experiment.active_subject.subject_name + 
-                                 '_spectrum.txt')
-            f = open(fname, 'w')
-            f.write('freqs, ')
-            for freq in psds[0][1]:
-                f.write(str(freq) + ', ')
-            for idx, time in enumerate(params['times']):
-                f.write('\n' + str(time[0]) + 's to ' + str(time[1]) + 's\n')
-                for ch_name in channelColors[idx][1]:
-                    f.write(ch_name + ', ')
-                    ch_idx = raw.ch_names.index(ch_name)
-                    for psd in psds[idx][0][ch_idx]:
-                        f.write(str(psd) + ', ')
-                    f.write('\n')
-            f.close()
+            pass
 
         print "Plotting power spectrum..."
 
@@ -1306,9 +1287,7 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
-            for i in xrange(len(psds)):
-                color = colors[i]
-                ax.plot(psds[i][1], psds[i][0][ch_idx], color=color)
+            ax.plot(freqs, psds[ch_idx])
             plt.xlabel('Frequency (Hz)')
             if params['log']:
                 plt.ylabel('Power (dB)')
@@ -1325,13 +1304,7 @@ class Caller(object):
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout,
                                        on_pick=my_callback):
-            for i in xrange(len(psds)):
-                channel = info['ch_names'][idx]
-                if (channel in channelColors[i][1]):
-                    ax.plot(psds[i][0][idx], color=channelColors[i][0],
-                            linewidth=0.2)
-                else:
-                    ax.plot(psds[i][0][idx], color=colors[i], linewidth=0.2)
+            ax.plot(psds[idx], linewidth=0.2)
         plt.show()
 
     @threaded
@@ -1344,7 +1317,7 @@ class Caller(object):
         overlap = params['overlap']
         picks = params['picks']
 
-        psdList = []
+        psd_list = []
         for time in times:
             psds, freqs = wrap_mne_call(self.experiment, compute_raw_psd,
                                         raw, tmin=time[0], tmax=time[1],
@@ -1353,8 +1326,8 @@ class Caller(object):
                                         proj=True, verbose=True)
             if params['log']:
                 psds = 10 * np.log10(psds)
-            psdList.append((psds, freqs))
-        return psdList
+            psd_list.append((psds, freqs))
+        return psd_list
 
 #    @threaded
     def plot_power_spectrum_epochs(self, epochs, ch_type, normalize):

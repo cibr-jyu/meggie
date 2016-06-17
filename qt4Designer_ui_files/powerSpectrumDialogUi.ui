@@ -6,241 +6,344 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>377</height>
+    <width>724</width>
+    <height>672</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Power spectrum</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBoxConditions">
-     <property name="title">
-      <string>Conditions</string>
+   <item row="1" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <layout class="QFormLayout" name="formLayout_2">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelFmin">
-            <property name="toolTip">
-             <string>Set the lower limit for the frequencies.</string>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>704</width>
+        <height>607</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>700</width>
+        <height>410</height>
+       </size>
+      </property>
+      <widget class="QGroupBox" name="groupBoxConditions">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>681</width>
+         <height>191</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Conditions</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <layout class="QFormLayout" name="formLayout_2">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
-            <property name="text">
-             <string>Min frequency of interest:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBoxFmin">
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Set the lower limit for the frequencies.</string>
-            </property>
-            <property name="suffix">
-             <string>Hz</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelFmax">
-            <property name="toolTip">
-             <string>Set the upper limit for the frequencies.</string>
-            </property>
-            <property name="text">
-             <string>Max frequency of interest:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="spinBoxFmax">
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Set the upper limit for the frequencies.</string>
-            </property>
-            <property name="suffix">
-             <string>Hz</string>
-            </property>
-            <property name="maximum">
-             <number>150</number>
-            </property>
-            <property name="value">
-             <number>40</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelChannels">
-            <property name="text">
-             <string>Channels</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="comboBoxChannels">
-            <item>
-             <property name="text">
-              <string>MEG</string>
-             </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelFmin">
+              <property name="toolTip">
+               <string>Set the lower limit for the frequencies.</string>
+              </property>
+              <property name="text">
+               <string>Min frequency of interest:</string>
+              </property>
+             </widget>
             </item>
-            <item>
-             <property name="text">
-              <string>EEG</string>
-             </property>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxFmin">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Set the lower limit for the frequencies.</string>
+              </property>
+              <property name="suffix">
+               <string>Hz</string>
+              </property>
+             </widget>
             </item>
-           </widget>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelFmax">
+              <property name="toolTip">
+               <string>Set the upper limit for the frequencies.</string>
+              </property>
+              <property name="text">
+               <string>Max frequency of interest:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="spinBoxFmax">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Set the upper limit for the frequencies.</string>
+              </property>
+              <property name="suffix">
+               <string>Hz</string>
+              </property>
+              <property name="maximum">
+               <number>150</number>
+              </property>
+              <property name="value">
+               <number>40</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="labelChannels">
+              <property name="text">
+               <string>Channels</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QComboBox" name="comboBoxChannels">
+              <item>
+               <property name="text">
+                <string>MEG</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>EEG</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QFormLayout" name="formLayout_6">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelNfft">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <item>
+           <layout class="QFormLayout" name="formLayout_6">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
-            <property name="text">
-             <string>Length of the tapers (ie. the windows):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxNfft">
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="value">
-             <number>2048</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelOverlap">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of overlapping points between the blocks.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Overlap</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBoxOverlap">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of overlapping points between the blocks.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="value">
-             <number>1024</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBoxLogarithm">
-            <property name="toolTip">
-             <string>Use logarithmic scale.</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Use logarithmic scale</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="checkBoxSaveData">
-            <property name="text">
-             <string>Save data to file</string>
-            </property>
-           </widget>
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelNfft">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Length of the tapers (ie. the windows):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="spinBoxNfft">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The length of the tapers ie. the windows (hanning). The smaller it is the smoother are the PSDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="value">
+               <number>2048</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelOverlap">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of overlapping points between the blocks.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Overlap</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxOverlap">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of overlapping points between the blocks.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="value">
+               <number>1024</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="checkBoxLogarithm">
+              <property name="toolTip">
+               <string>Use logarithmic scale.</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Use logarithmic scale</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="checkBoxSaveData">
+              <property name="text">
+               <string>Save data to file</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
        </layout>
-      </item>
-      <item row="6" column="0">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>200</y>
+         <width>671</width>
+         <height>251</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLabel" name="labelTmin">
-          <property name="text">
-           <string>Start time:</string>
+         <widget class="QGroupBox" name="groupBoxIntervals">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxTmin"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="labelTmax">
-          <property name="text">
-           <string>End time:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxTmax"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+          <property name="maximumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>260</width>
+            <height>16777215</height>
            </size>
           </property>
-         </spacer>
+          <property name="title">
+           <string>Select time intervals</string>
+          </property>
+          <widget class="QWidget" name="verticalLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>30</y>
+             <width>235</width>
+             <height>171</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="labelTmin">
+                <property name="text">
+                 <string>Start time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
+                <property name="suffix">
+                 <string> s</string>
+                </property>
+                <property name="maximum">
+                 <double>1000000000.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QLabel" name="labelTmax">
+                <property name="text">
+                 <string>End time:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax">
+                <property name="suffix">
+                 <string> s</string>
+                </property>
+                <property name="maximum">
+                 <double>1000000000.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAdd">
+              <property name="text">
+               <string>Add to list &gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonClear">
+              <property name="text">
+               <string>Clear list &lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QCheckBox" name="checkBoxAverage">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>210</y>
+             <width>94</width>
+             <height>26</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Average</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidgetIntervals">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      </widget>
+     </widget>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -268,14 +371,14 @@
      <item>
       <widget class="QPushButton" name="pushButtonReject">
        <property name="text">
-        <string>Start</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonAccept">
        <property name="text">
-        <string>Cancel</string>
+        <string>Start</string>
        </property>
       </widget>
      </item>
@@ -284,11 +387,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>spinBoxFmin</tabstop>
-  <tabstop>spinBoxFmax</tabstop>
-  <tabstop>comboBoxChannels</tabstop>
-  <tabstop>spinBoxNfft</tabstop>
-  <tabstop>checkBoxLogarithm</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -300,11 +398,11 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>877</x>
-     <y>366</y>
+     <x>671</x>
+     <y>467</y>
     </hint>
     <hint type="destinationlabel">
-     <x>885</x>
+     <x>723</x>
      <y>356</y>
     </hint>
    </hints>
@@ -316,11 +414,11 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>786</x>
-     <y>366</y>
+     <x>580</x>
+     <y>467</y>
     </hint>
     <hint type="destinationlabel">
-     <x>885</x>
+     <x>723</x>
      <y>402</y>
     </hint>
    </hints>
