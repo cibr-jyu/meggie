@@ -1272,10 +1272,17 @@ class Caller(object):
         psd_list = self._compute_spectrum(raw, params,
                                           do_meanwhile=self.parent.update_ui)
 
-        # average psds
-        psds = np.mean([psds for psds, freqs in psd_list], axis=0)
         freqs = psd_list[0][1]
-        
+        # average psds
+        if params['average']:
+            psds = np.mean([psds for psds, freqs in psd_list], axis=0)
+        else:
+            psds_ = []
+            #freqs_ = []
+            for psd in psd_list:
+                psds_.append(np.mean(psd[0], axis=0))
+                #psd[1] is freq
+                #freqs_.append(psd[1])
         # TODO
         if save_data:
             pass
@@ -1287,7 +1294,17 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
-            ax.plot(freqs, psds[ch_idx])
+#            ax.plot(freqs, psds[ch_idx])
+            if params['average']:
+                ax.plot(freqs, psds[ch_idx])
+            else:
+                for i in range(2):
+                    print "freqs " + str(len(freqs))
+                    print "psd " + str(len(psds_[i]))
+                    #ax.plot(freqs_[i], psds_[i][ch_idx])
+                    ax.plot(freqs, psds_[i][ch_idx])
+            
+            
             plt.xlabel('Frequency (Hz)')
             if params['log']:
                 plt.ylabel('Power (dB)')
@@ -1304,7 +1321,11 @@ class Caller(object):
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout,
                                        on_pick=my_callback):
-            ax.plot(psds[idx], linewidth=0.2)
+            if params['average']:
+                ax.plot(psds[idx], linewidth=0.2)
+            else:
+                for psd in psds_:
+                    ax.plot(psd, linewidth=0.2)
         plt.show()
 
     @threaded

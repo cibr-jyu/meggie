@@ -83,6 +83,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['ch'] = str(self.ui.comboBoxChannels.currentText()).lower()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+        params['average'] = self.ui.checkBoxAverage.isChecked()
         save_data = self.ui.checkBoxSaveData.isChecked()
 
         try:
