@@ -545,7 +545,7 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    def average_channels(self, instance, lobeName, channelSet=None):
+    def average_channels(self, instance, lobeName):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
         if it is provided.
@@ -558,7 +558,7 @@ class Caller(object):
         """
 
         averageTitleString, dataList = self._average_channels(
-            instance, lobeName, channelSet, do_meanwhile=self.parent.update_ui
+            instance, lobeName, do_meanwhile=self.parent.update_ui
         )
 
         # Plotting:
@@ -591,7 +591,7 @@ class Caller(object):
         fig.show()
 
     @threaded
-    def _average_channels(self, instance, lobeName, channelSet=None):
+    def _average_channels(self, instance, lobeName):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
             epochs = self.experiment.active_subject.epochs.get(instance).raw
@@ -608,26 +608,13 @@ class Caller(object):
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
             evokeds = instance
 
-        if channelSet is None:
-            channelsToAve = wrap_mne_call(self.experiment, mne.selection.read_selection, lobeName)
-            averageTitle = lobeName
-        else:
-            if any([
-                not isinstance(channelSet, set),
-                len(channelSet) < 1,
-                not channelSet.issubset(set(evokeds[0].ch_names))
-            ]):
-                raise ValueError('Please check that you have at least '
-                                 'one channel, the channels are '
-                                 'actual channels in the epochs data '
-                                 'and they are in the right form.')
-            channelsToAve = channelSet
-            averageTitle = str(channelSet).strip('[]')
-
-        averageTitleString = str(averageTitle)
+        channelsToAve = wrap_mne_call(self.experiment, mne.selection.read_selection, lobeName)
+        averageTitleString = str(lobeName)
+        
         # Channel names in Evoked objects may or may not have whitespaces
         # depending on the measurements settings,
         # need to check and adjust channelsToAve accordingly.
+        
         channelNameString = evokeds[0].info['ch_names'][0]
         if re.match("^MEG[0-9]+", channelNameString):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
@@ -902,7 +889,7 @@ class Caller(object):
             baseline = (blstart, blend)
 
         print "Plotting..."
-        self.parent.update_ui()
+        #self.parent.update_ui()
         if reptype == 'average':  # induced
             if color_map == 'auto':
                 cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
@@ -921,7 +908,7 @@ class Caller(object):
                                     show=False, cmap=cmap)
 
             print 'Plotting topology. Please be patient...'
-            self.parent.update_ui()
+            #self.parent.update_ui()
            
             fig = wrap_mne_call(self.experiment, power.plot_topo,
                                 baseline=baseline, mode=mode, fmin=freqs[0],
@@ -966,17 +953,6 @@ class Caller(object):
                                    use_fft=False, return_itc=True,
                                    decim=decim, n_jobs=3)
 
-        tfr_path = os.path.join(self.experiment.active_subject.subject_path,
-                                'TFR')
-        if not os.path.isdir(tfr_path):
-            os.mkdir(tfr_path)
-        print 'Saving files to %s...' % tfr_path
-        # TODO: log mne call
-        power.save(os.path.join(tfr_path, 'power-tfr-' + epochs.name + '.h5'),
-                   overwrite=True)
-        # TODO: log mne call
-        itc.save(os.path.join(tfr_path, 'itc-tfr-' + epochs.name + '.h5'),
-                 overwrite=True)
         return power, itc
 
     def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,

@@ -40,7 +40,6 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
-from meggie.ui.visualization.TFRGroupAverageDialogMain import TFRGroupAverageDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -162,59 +161,59 @@ class TFRTopologyDialog(QtGui.QDialog):
                                      scalp, cmap)
         except Exception as e:
             exc_messagebox(self.parent, e)
-        self.parent.update_power_list()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
         Opens a dialog for group average parameters.
         """
-        if checked is None: return
-        averageDialog = TFRGroupAverageDialog()
-        averageDialog.channels_selected.connect(self.compute_group_average)
-        averageDialog.exec_()
-
-    @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
-    def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
-                              saveMax):
-        """
-        Starts the computation of group average TFR.
-        Parameters:
-        channels - Selected channels of interest.
-        """
-        cmap = self.ui.comboBoxCmap.currentText()
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        decim = self.ui.spinBoxDecim.value()
-        interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles = self.ui.spinBoxNcycles.value()
-        if self.ui.groupBoxBaseline.isChecked():
-            mode = self.ui.comboBoxMode.currentText()
-            if self.ui.checkBoxBaselineStartNone.isChecked():
-                blstart = None
-            else:
-                blstart = self.ui.doubleSpinBoxBaselineStart.value()
-
-            if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-                blend = None
-            else:
-                blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        else:
-            blstart, blend, mode = None, None, None
-        if self.ui.radioButtonInduced.isChecked(): 
-            reptype = 'average'
-        elif self.ui.radioButtonPhase.isChecked(): 
-            reptype = 'itc'
-
-        if saveMax:
-            saveMax = reptype
-        else:
-            saveMax = None
-
-        try:
-            self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
-                                    minfreq, maxfreq, interval, blstart,
-                                    blend, ncycles, decim, channels,
-                                    form, dpi, saveTopo, savePlot, saveMax)
-        except Exception as e:
-            exc_messagebox(self.parent, e)
+        if checked is None: 
+            return
+        
+        messagebox(self.parent, 'Not implemented yet')
+        
+        
+#     @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
+#     def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
+#                               saveMax):
+#         """
+#         Starts the computation of group average TFR.
+#         Parameters:
+#         channels - Selected channels of interest.
+#         """
+#         cmap = self.ui.comboBoxCmap.currentText()
+#         minfreq = self.ui.doubleSpinBoxMinFreq.value()
+#         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+#         decim = self.ui.spinBoxDecim.value()
+#         interval = self.ui.doubleSpinBoxFreqInterval.value()
+#         ncycles = self.ui.spinBoxNcycles.value()
+#         if self.ui.groupBoxBaseline.isChecked():
+#             mode = self.ui.comboBoxMode.currentText()
+#             if self.ui.checkBoxBaselineStartNone.isChecked():
+#                 blstart = None
+#             else:
+#                 blstart = self.ui.doubleSpinBoxBaselineStart.value()
+# 
+#             if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
+#                 blend = None
+#             else:
+#                 blend = self.ui.doubleSpinBoxBaselineEnd.value()
+#         else:
+#             blstart, blend, mode = None, None, None
+#         if self.ui.radioButtonInduced.isChecked(): 
+#             reptype = 'average'
+#         elif self.ui.radioButtonPhase.isChecked(): 
+#             reptype = 'itc'
+# 
+#         if saveMax:
+#             saveMax = reptype
+#         else:
+#             saveMax = None
+# 
+#         try:
+#             self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
+#                                     minfreq, maxfreq, interval, blstart,
+#                                     blend, ncycles, decim, channels,
+#                                     form, dpi, saveTopo, savePlot, saveMax)
+#         except Exception as e:
+#             exc_messagebox(self.parent, e)
 

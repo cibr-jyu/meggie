@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1682</width>
-    <height>883</height>
+    <height>1014</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -71,8 +71,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1313</width>
-          <height>750</height>
+          <width>1326</width>
+          <height>820</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -743,67 +743,14 @@
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_42">
                        <item>
-                        <widget class="QRadioButton" name="radioButtonLobe">
+                        <widget class="QLabel" name="label">
                          <property name="text">
                           <string>Lobe:</string>
-                         </property>
-                         <property name="checked">
-                          <bool>true</bool>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QComboBox" name="comboBoxLobes"/>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_43">
-                       <item>
-                        <layout class="QVBoxLayout" name="verticalLayout_35">
-                         <item>
-                          <widget class="QRadioButton" name="radioButtonCustomChannels">
-                           <property name="text">
-                            <string>Custom channels:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QPushButton" name="pushButtonModifyChannels">
-                           <property name="enabled">
-                            <bool>false</bool>
-                           </property>
-                           <property name="text">
-                            <string>Modify...</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <widget class="QListWidget" name="listWidgetChannels">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>50</height>
-                          </size>
-                         </property>
-                         <property name="toolTip">
-                          <string>Displays the selected bad channels.</string>
-                         </property>
-                         <property name="flow">
-                          <enum>QListView::LeftToRight</enum>
-                         </property>
-                        </widget>
                        </item>
                       </layout>
                      </item>
@@ -1953,39 +1900,6 @@
                    <property name="title">
                     <string/>
                    </property>
-                   <widget class="QWidget" name="layoutWidget">
-                    <property name="geometry">
-                     <rect>
-                      <x>20</x>
-                      <y>20</y>
-                      <width>501</width>
-                      <height>109</height>
-                     </rect>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_14">
-                     <item>
-                      <widget class="QListWidget" name="listWidgetPowerItems"/>
-                     </item>
-                     <item>
-                      <layout class="QVBoxLayout" name="verticalLayout_22">
-                       <item>
-                        <widget class="QPushButton" name="pushButtonTFRTopology_2">
-                         <property name="text">
-                          <string>TFR topology vizualization</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="pushButtonDeletePower">
-                         <property name="text">
-                          <string>Delete</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </widget>
                   </widget>
                  </item>
                 </layout>
@@ -3733,11 +3647,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>textBrowserWorkingFile</tabstop>
   <tabstop>pushButtonVisualizeEpochChannels</tabstop>
   <tabstop>pushButtonEpochsPlot</tabstop>
-  <tabstop>radioButtonLobe</tabstop>
   <tabstop>comboBoxLobes</tabstop>
-  <tabstop>radioButtonCustomChannels</tabstop>
-  <tabstop>listWidgetChannels</tabstop>
-  <tabstop>pushButtonModifyChannels</tabstop>
   <tabstop>pushButtonChannelAverages</tabstop>
   <tabstop>pushButtonCreateEvoked</tabstop>
   <tabstop>pushButtonDeleteEvoked</tabstop>
@@ -3753,25 +3663,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonMNE_Browse_Raw</tabstop>
   <tabstop>listViewSubjects</tabstop>
  </tabstops>
- <resources>
-  <include location="../icons/mainWindowIcons.qrc"/>
- </resources>
- <connections>
-  <connection>
-   <sender>radioButtonCustomChannels</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonModifyChannels</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>549</x>
-     <y>785</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>549</x>
-     <y>809</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <resources/>
+ <connections/>
 </ui>

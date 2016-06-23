@@ -63,7 +63,6 @@ from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
 from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
 from meggie.ui.visualization import visualizeEpochChannelDialogMain
 from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
@@ -107,7 +106,6 @@ from meggie.code_meggie.general.mvcModels import SubjectListModel
 from meggie.code_meggie.general.mvcModels import _initializeForwardSolutionList
 from meggie.code_meggie.general.mvcModels import _initializeInverseOperatorList
 from meggie.code_meggie.general.caller import Caller
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.epoching.evoked import Evoked
 
 
@@ -1160,8 +1158,17 @@ class MainWindow(QtGui.QMainWindow):
             message = 'You must create epochs before TFR.'
             messagebox(self, message)
             return
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject.epochs.get(name)
+        
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+        if len(selected_items) == 1:
+            collection_name = selected_items[0].text()
+        else:
+            message = 'Select exactly one epoch collection.'
+            messagebox(self, message)
+            return
+        
+        epochs = self.caller.experiment.active_subject.epochs.get(collection_name)
 
         self.tfr_dialog = TFRDialog(self, epochs)
         self.tfr_dialog.finished.connect(self.on_close)
@@ -1177,9 +1184,18 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must select the epochs for TFR.'
             messagebox(self, message)
+            return 
+        
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+        if len(selected_items) == 1:
+            collection_name = selected_items[0].text()
+        else:
+            message = 'Select exactly one epoch collection.'
+            messagebox(self, message)
             return
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        self.tfrTop_dialog = TFRTopologyDialog(self, name)
+        
+        self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
@@ -1223,59 +1239,11 @@ class MainWindow(QtGui.QMainWindow):
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         
-        if self.ui.radioButtonLobe.isChecked():
-            try:
-                self.caller.average_channels(name,
-                                             self.ui.comboBoxLobes.currentText(),
-                                             None)
-            except Exception as e:
-                exc_messagebox(self, e)
-            #TODO: visualizing actions logged or not?
-            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
-            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
-            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, self.ui.comboBoxLobes.currentText(), None)
-        else:
-            channels = []
-            for i in xrange(self.ui.listWidgetChannels.count()):
-                item = self.ui.listWidgetChannels.item(i)
-                channels.append(str(item.text()))
-            try:
-                self.caller.average_channels(name, None, set(channels))
-            except Exception as e:
-                exc_messagebox(self, e)
-            #TODO: visualizing actions logged or not?
-            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
-            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
-            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, None, set(channels))
-
-    def on_pushButtonModifyChannels_clicked(self, checked=None):
-        """
-        Slot for adding channels to the list for averaging epochs.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        channels = list()
-        for i in xrange(self.ui.listWidgetChannels.count()):
-            item = self.ui.listWidgetChannels.item(i)
-            channels.append(str(item.text()))
-
-        channelDialog = ChannelSelectionDialog(channels, 'Select channels')
-        channelDialog.channelsChanged.connect(self.channels_modified)
-        channelDialog.exec_()
-
-    @QtCore.pyqtSlot(list)
-    def channels_modified(self, channels):
-        """
-        Slot for signal from channelSelectionDialog.
-        Adds selected channels to the list for averaging.
-        Keyword arguments:
-        channels -- Channels to add to the list.
-        """
-        self.ui.listWidgetChannels.clear()
-        self.ui.listWidgetChannels.addItems(channels)
+        try:
+            self.caller.average_channels(name,
+                                         self.ui.comboBoxLobes.currentText())
+        except Exception as e:
+            exc_messagebox(self, e)
 
     def on_pushButtonFilter_clicked(self, checked=None):
         """
@@ -1698,8 +1666,6 @@ class MainWindow(QtGui.QMainWindow):
                                      'continuing.')
             return
         
-        self.update_power_list()
-
         name = self.caller.experiment.active_subject.working_file_name
         status = "Current working file: " + name
         
@@ -1791,15 +1757,6 @@ class MainWindow(QtGui.QMainWindow):
                                        active_subject)
         self.update_covariance_info_box()
         self._update_source_estimates()
-
-    def update_power_list(self):
-        """Updates the TFR list."""
-        self.ui.listWidgetPowerItems.clear()
-        active_sub = self.caller.experiment.active_subject
-        power_items = fileManager.load_powers(active_sub)
-        if len(power_items) > 0:
-            for item in power_items:
-                self.ui.listWidgetPowerItems.addItem(item)
 
     def update_covariance_info_box(self):
         """
@@ -1953,7 +1910,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         elif index == 3:
-            mode = QtGui.QAbstractItemView.SingleSelection
+            mode = QtGui.QAbstractItemView.MultiSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
         elif index == 10:
