@@ -38,6 +38,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxTmax.setValue(tmax)
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
+        self.ui.spinBoxNfft.setValue(1024)
+        self.ui.spinBoxOverlap.setValue(512)
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
@@ -69,12 +71,25 @@ class PowerSpectrumDialog(QtGui.QDialog):
         
         if not times:
             messagebox(self.parent, "Must have at least one interval")
+            return
 
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
         if fmin >= fmax:
             messagebox(self.parent, "End frequency must be higher than the starting frequency")
             return
+        
+        subject = self.caller.experiment.active_subject
+        sfreq = subject.get_working_file().info['sfreq']
+    
+        valid = True
+        for interval in times:
+            if (interval[1] - interval[0]) * sfreq < float(self.ui.spinBoxNfft.value()):
+                valid = False
+        if not valid:
+            messagebox(self.parent, "Sampling rate times shortest interval should be more than window size")
+            return
+        
         params = dict()
         params['times'] = times
         params['fmin'] = fmin

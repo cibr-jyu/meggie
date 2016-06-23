@@ -525,20 +525,16 @@ class Caller(object):
         layout   - The desired layout as a string.
         """
         layout = self.read_layout(self.experiment.active_subject.layout)
-
-        colors = ['y', 'm', 'c', 'r', 'g', 'b', 'w', 'k']
-
-        #mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
-
+        colors = self.colors(len(evokeds))
         title = self.experiment.active_subject.subject_name
-
+            
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
-                            color=colors[:len(evokeds)], title=title)
+                            color=colors, title=title)
 
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
-        for cond, col, pos in zip(conditions, colors[:len(evokeds)],
-                                  positions):
+        
+        for cond, col, pos in zip(conditions, colors, positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
         fig.show()
@@ -1268,25 +1264,21 @@ class Caller(object):
                                    exclude=[])
         
         params['picks'] = picks
-
         psd_list = self._compute_spectrum(raw, params,
                                           do_meanwhile=self.parent.update_ui)
-
         freqs = psd_list[0][1]
+        
         # average psds
         if params['average']:
             psds = np.mean([psds for psds, freqs in psd_list], axis=0)
         else:
-            psds_ = []
-            #freqs_ = []
-            for psd in psd_list:
-                psds_.append(np.mean(psd[0], axis=0))
-                #psd[1] is freq
-                #freqs_.append(psd[1])
+            psds = [psd[0] for psd in psd_list]
+
         # TODO
         if save_data:
             pass
-
+        
+        colors = self.colors(len(params['times']))
         print "Plotting power spectrum..."
 
         def my_callback(ax, ch_idx):
@@ -1294,15 +1286,20 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
-#            ax.plot(freqs, psds[ch_idx])
+            
+            conditions = [str(condition) for condition in params['times']]
+            positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+            
+            for cond, col, pos in zip(conditions, colors, positions):
+                ax.figtext(0.775, pos, cond, color=col, fontsize=12)
+
             if params['average']:
-                ax.plot(freqs, psds[ch_idx])
+                ax.plot(freqs, psds[ch_idx], color=colors[0])
             else:
-                for i in range(2):
-                    print "freqs " + str(len(freqs))
-                    print "psd " + str(len(psds_[i]))
-                    #ax.plot(freqs_[i], psds_[i][ch_idx])
-                    ax.plot(freqs, psds_[i][ch_idx])
+                color_idx = 0
+                for psd in psds:
+                    ax.plot(freqs, psd[ch_idx], color=colors[color_idx])
+                    color_idx += 1
             
             
             plt.xlabel('Frequency (Hz)')
@@ -1324,8 +1321,10 @@ class Caller(object):
             if params['average']:
                 ax.plot(psds[idx], linewidth=0.2)
             else:
-                for psd in psds_:
-                    ax.plot(psd, linewidth=0.2)
+                color_idx = 0
+                for psd in psds:
+                    ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
+                    color_idx += 1
         plt.show()
 
     @threaded
@@ -1340,6 +1339,7 @@ class Caller(object):
 
         psd_list = []
         for time in times:
+            print time
             psds, freqs = wrap_mne_call(self.experiment, compute_raw_psd,
                                         raw, tmin=time[0], tmax=time[1],
                                         fmin=fmin, fmax=fmax, n_fft=nfft,
@@ -1994,6 +1994,7 @@ class Caller(object):
         ax.imshow(np.mean(power, axis=0),
                   extent=(stc.times[tmin_i], stc.times[tmax_i], freqs[0],
                           freqs[-1]), aspect="auto", origin="lower")
+        
 
         stc.times = stc.times[tmin_i:tmax_i]
         click_callback = partial(self.tfr_clicked, data=power, stc=stc,
@@ -2002,3 +2003,8 @@ class Caller(object):
         fig.suptitle('Average power over all sources.')
         plt.show(block=True)
         return fig
+
+    def colors(self, n):
+        import itertools
+        cycler = itertools.cycle('brgymck')
+        return list(itertools.islice(cycler, n))
