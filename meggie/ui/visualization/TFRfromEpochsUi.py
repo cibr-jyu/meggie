@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'TFRfromEpochs.ui'
+# Form implementation generated from reading ui file 'TFRfromEpochsUi.ui'
 #
-# Created: Thu Sep 17 03:28:58 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -44,7 +43,6 @@ class Ui_DialogEpochsTFR(object):
         self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 251, 273))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_6.setMargin(0)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.comboBoxChannels = QtGui.QComboBox(self.layoutWidget)
         self.comboBoxChannels.setObjectName(_fromUtf8("comboBoxChannels"))
@@ -92,7 +90,7 @@ class Ui_DialogEpochsTFR(object):
         self.horizontalLayout_2.addWidget(self.labelNcycles)
         self.spinBoxNcycles = QtGui.QSpinBox(self.layoutWidget)
         self.spinBoxNcycles.setMinimum(1)
-        self.spinBoxNcycles.setProperty("value", 7)
+        self.spinBoxNcycles.setProperty("value", 3)
         self.spinBoxNcycles.setObjectName(_fromUtf8("spinBoxNcycles"))
         self.horizontalLayout_2.addWidget(self.spinBoxNcycles)
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)

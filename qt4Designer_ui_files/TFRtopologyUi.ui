@@ -98,6 +98,9 @@
             </item>
             <item>
              <widget class="QComboBox" name="comboBoxCmap">
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
               <item>
                <property name="text">
                 <string>auto</string>
@@ -313,7 +316,7 @@
                  <double>100.000000000000000</double>
                 </property>
                 <property name="value">
-                 <double>7.000000000000000</double>
+                 <double>3.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -527,6 +530,9 @@
        </item>
        <item row="3" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxBaseline">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -540,7 +546,7 @@
           <bool>true</bool>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
@@ -924,7 +930,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>
