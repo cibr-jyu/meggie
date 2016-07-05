@@ -1328,7 +1328,30 @@ class Caller(object):
 
 #    @threaded
     def plot_power_spectrum_epochs(self, epochs, ch_type, normalize):
+        epochs.raw.plot_psd(fmin=2, fmax=200)
         epochs.raw.plot_psd_topomap(ch_type=ch_type, normalize=normalize)
+
+#         raw = self.experiment.active_subject.get_working_file()
+#         picks = mne.pick_types(raw.info, meg='grad', eeg=False, eog=False,
+#             stim=False, exclude='bads')
+#         
+#         from mne.time_frequency.multitaper import multitaper_psd;
+#         sfreq = raw.info['sfreq']
+#         a = epochs.raw 
+#         psds, freqs = multitaper_psd(epochs.raw, sfreq, fmin=2, fmax=200, n_jobs=1)
+# 
+# 
+#         f, ax = plt.subplots()
+#         psds = 10 * np.log10(psds)
+#         psds_mean = psds.mean(0).mean(0)
+#         psds_std = psds.mean(0).std(0)
+#          
+#         ax.plot(freqs, psds_mean, color='k')
+#         ax.fill_between(freqs, psds_mean - psds_std, psds_mean + psds_std,
+#                         color='k', alpha=.5)
+#         ax.set(title='Multitaper PSD (gradiometers)', xlabel='Frequency',
+#                ylabel='Power Spectral Density (dB)')
+#         plt.show()        
 
     @threaded
     def filter(self, dic, subject, preview=False):
