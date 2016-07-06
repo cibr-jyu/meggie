@@ -6,7 +6,8 @@ Created on 26.2.2015
 from PyQt4 import QtGui, QtCore
 
 import numpy as np
-from mne import find_events
+
+from mne import Epochs
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
@@ -90,21 +91,33 @@ class PowerSpectrumDialog(QtGui.QDialog):
             messagebox(self.parent, "Sampling rate times shortest interval should be more than window size")
             return
         
+        raw = self.caller.experiment.active_subject.get_working_file()
+        
+        epochs = []
+        for interval in times:
+            events = np.array([[raw.first_samp + interval[0]*sfreq, 0, 1]], dtype=np.int16)
+            tmin = 0
+            tmax = interval[1] - interval[0]
+            epoch = Epochs(raw, events=events, tmin=tmin, tmax=tmax, 
+                           preload=True)
+            epoch.comment = str(interval)
+
+            epochs.append(epoch)
+        
         params = dict()
-        params['times'] = times
         params['fmin'] = fmin
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
-        params['ch'] = str(self.ui.comboBoxChannels.currentText()).lower()
         params['overlap'] = self.ui.spinBoxOverlap.value()
         params['average'] = self.ui.checkBoxAverage.isChecked()
         save_data = self.ui.checkBoxSaveData.isChecked()
 
+        
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-            self.caller.plot_power_spectrum(params, save_data)
+            self.caller.plot_power_spectrum(params, save_data, epochs)
         except Exception as e:
             exc_messagebox(self.parent, e)
         QtGui.QApplication.restoreOverrideCursor()

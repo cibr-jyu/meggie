@@ -27,9 +27,8 @@ from mne.viz import plot_evoked_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt, _preproc_tfr
-from mne.time_frequency import compute_raw_psd
+from mne.time_frequency import psd_welch
 from mne.preprocessing import compute_proj_ecg, compute_proj_eog
-from mne.filter import low_pass_filter, high_pass_filter, band_stop_filter
 
 import numpy as np
 import pylab as pl
@@ -1221,7 +1220,7 @@ class Caller(object):
                   layout=lout, mode='logratio')
 
 
-    def plot_power_spectrum(self, params, save_data):
+    def plot_power_spectrum(self, params, save_data, epochs):
         """
         Method for plotting power spectrum.
         Parameters:
@@ -1230,31 +1229,28 @@ class Caller(object):
                          Only data from channels of interest is saved.
         """
         lout = self.read_layout(self.experiment.active_subject.layout)
-        raw = self.experiment.active_subject.get_working_file()
-
-        if params['ch'] == 'meg':
-            picks = mne.pick_types(raw.info, meg=True, eeg=False,
-                                   exclude=[])
-        elif params['ch'] == 'eeg':
-            picks = mne.pick_types(raw.info, meg=False, eeg=True,
+            
+            
+        picks = mne.pick_types(epochs[0].info, meg=True, eeg=True,
                                    exclude=[])
         
         params['picks'] = picks
-        psd_list = self._compute_spectrum(raw, params,
+        psd_list = self._compute_spectrum(epochs, params,
                                           do_meanwhile=self.parent.update_ui)
         freqs = psd_list[0][1]
         
         # average psds
         if params['average']:
             psds = np.mean([psds for psds, freqs in psd_list], axis=0)
+            colors = ['b']*len(epochs)
         else:
             psds = [psd[0] for psd in psd_list]
-
+            colors = self.colors(len(epochs))
+            
         # TODO
         if save_data:
             pass
-        
-        colors = self.colors(len(params['times']))
+
         print "Plotting power spectrum..."
 
         def my_callback(ax, ch_idx):
@@ -1263,7 +1259,7 @@ class Caller(object):
             Opens a channel specific plot.
             """
             
-            conditions = [str(condition) for condition in params['times']]
+            conditions = [epoch.comment for epoch in epochs]
             positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
             
             for cond, col, pos in zip(conditions, colors, positions):
@@ -1285,8 +1281,7 @@ class Caller(object):
                 plt.ylabel('(uV)')
             plt.show()
 
-        info = deepcopy(raw.info)
-
+        info = deepcopy(epochs[0].info)
         info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
                             if idx in picks]
 
@@ -1294,6 +1289,7 @@ class Caller(object):
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout,
                                        on_pick=my_callback):
+            
             if params['average']:
                 ax.plot(psds[idx], linewidth=0.2)
             else:
@@ -1304,9 +1300,8 @@ class Caller(object):
         plt.show()
 
     @threaded
-    def _compute_spectrum(self, raw, params):
+    def _compute_spectrum(self, epochs, params):
         """Performed in a worker thread."""
-        times = params['times']
         fmin = params['fmin']
         fmax = params['fmax']
         nfft = params['nfft']
@@ -1314,13 +1309,13 @@ class Caller(object):
         picks = params['picks']
 
         psd_list = []
-        for time in times:
-            print time
-            psds, freqs = wrap_mne_call(self.experiment, compute_raw_psd,
-                                        raw, tmin=time[0], tmax=time[1],
-                                        fmin=fmin, fmax=fmax, n_fft=nfft,
-                                        n_overlap=overlap, picks=picks,
-                                        proj=True, verbose=True)
+        
+        for epoch in epochs:
+            psds, freqs = wrap_mne_call(self.experiment, psd_welch,
+                                        epoch, fmin=fmin, fmax=fmax, 
+                                        n_fft=nfft, n_overlap=overlap, 
+                                        picks=picks, proj=True, verbose=True)
+            psds = np.average(psds, axis=0)
             if params['log']:
                 psds = 10 * np.log10(psds)
             psd_list.append((psds, freqs))

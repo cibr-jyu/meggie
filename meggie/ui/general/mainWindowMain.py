@@ -1099,8 +1099,13 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, message)
             return
 
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject.epochs.get(name)
+        collection_names = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+
+        epochs = []
+        for collection_name in collection_names:
+            epochs.append(self.caller.experiment.active_subject.epochs.get(str(collection_name.text())))
+
         self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
         self.spectrumDialogEpochs.show()
         

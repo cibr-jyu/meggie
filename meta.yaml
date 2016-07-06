@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.2.9"
+  version: "0.3.0"
 
 source:
   path: .
@@ -9,7 +9,7 @@ requirements:
   build:
     - python
     - setuptools
-    - mne ==0.11.0
+    - mne ==0.12.0
 
   run:
     - python
@@ -19,7 +19,7 @@ requirements:
     - mayavi
     - h5py
     - joblib
-    - mne ==0.11.0
+    - mne ==0.12.0
 
 about:
   license: BSD (3-clause)

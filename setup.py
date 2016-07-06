@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='meggie',
-    version='0.2.9',
+    version='0.3.0',
     description="",
     author='Erkka Heinila, Janne Pesonen',
     author_email='erkka.heinila@jyu.fi',
@@ -13,7 +13,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'mne==0.11.0',
+        'mne==0.12.0',
     ],
     entry_points = {
         'console_scripts': ['meggie=meggie.run:main'],

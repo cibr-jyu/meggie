@@ -8,7 +8,11 @@ epochs
 * Eventtilistan luominen 
 * Epokkien luominen
 
-- TFR preprocessing välilehdelle, power spetrcum dialogista turhaa pois
-- Jonnekin Epoching/Averaging/TFR/"Fourier Analysis" paikkaan spektrit laskettavaks epokkikokoelmista (joita voi olla useampia)
-- Show evoked stats: tallennuksen hienosäätöä ja kanavavalinnatkin mukaan
-- Pohdi epokkien kanavavalintaa vielä.
+-TFR:
+* default arvojen muuttaminen
+
+- Yleistä:
+* mieti interesting channelsia epokkeja luodessa
+* n_jobs meggie prefsiin
+* n_jobs käyttöön kaikkialla
+* save data to file kaikkialle (katso mallia evoked statsien tallennuksesta)
