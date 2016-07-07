@@ -66,6 +66,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.epoch_name = epoch_name
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
+
         if tfr is None:
             self.tfr = None
             subject = self.caller.experiment.active_subject
@@ -80,6 +81,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
             self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
             self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+            self.ui.doubleSpinBoxBaselineEnd.setValue(epochs.tmax)
         else:
             self.tfr = tfr
             if tfr.method == 'morlet-power':
