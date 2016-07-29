@@ -207,7 +207,6 @@ class Caller(object):
 
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        njobs = dic.get('n-jobs')
         eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
@@ -223,11 +222,12 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
+        n_jobs = self.parent.preferencesHandler.n_jobs
         projs, events = wrap_mne_call(self.experiment, 
                                       compute_proj_ecg, 
                                       raw_in, None, tmin, tmax, grad,
                                       mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, njobs, ch_name,
+                                      comp_ssp, taps, n_jobs, ch_name,
                                       reject, flat, bads, eeg_proj,
                                       excl_ssp, event_id, ecg_low_freq,
                                       ecg_high_freq, start,
@@ -280,7 +280,6 @@ class Caller(object):
             bads = []
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        njobs = dic.get('n-jobs')
         eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
@@ -296,10 +295,11 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
 
+        n_jobs = self.parent.preferencesHandler.n_jobs
         projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
                                       raw_in, None, tmin, tmax, grad,
                                       mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, njobs, reject,
+                                      comp_ssp, taps, n_jobs, reject,
                                       flat, bads, eeg_proj, excl_ssp,
                                       event_id, eog_low_freq,
                                       eog_high_freq, start)
@@ -827,11 +827,12 @@ class Caller(object):
 
         data = data[:, ch_index:(ch_index+1), :]
         evoked_data = evoked_data[ch_index:(ch_index+1), :]
-
+        n_jobs = self.parent.preferencesHandler.n_jobs
         power, itc = wrap_mne_call(self.experiment, _induced_power_cwt,
                                    data, epochs.info['sfreq'], frequencies,
                                    n_cycles=ncycles, decim=decim,
-                                   use_fft=False, n_jobs=1, zero_mean=True)
+                                   use_fft=False, n_jobs=n_jobs,
+                                   zero_mean=True)
 
         if epochs.times[0] < 0:
             baseline = (epochs.times[0], 0)
@@ -947,10 +948,11 @@ class Caller(object):
         """
         Performed in a worker thread.
         """
+        n_jobs = self.parent.preferencesHandler.n_jobs
         power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
                                    freqs=frequencies, n_cycles=ncycles,
                                    use_fft=False, return_itc=True,
-                                   decim=decim, n_jobs=3)
+                                   decim=decim, n_jobs=n_jobs)
 
         return power, itc
 
@@ -1022,10 +1024,11 @@ class Caller(object):
         for f in files2ave:
             epochs = mne.read_epochs(join(directory, f))
             bads = bads + list(set(epochs.info['bads']) - set(bads))
+            n_jobs = self.parent.preferencesHandler.n_jobs
             power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
                                        freqs=frequencies, n_cycles=ncycles,
                                        use_fft=False, return_itc=True,
-                                       decim=decim, n_jobs=3)
+                                       decim=decim, n_jobs=n_jobs)
 
             if save_max is not None:
                 # Write file for maxima
@@ -1246,10 +1249,19 @@ class Caller(object):
         else:
             psds = [psd[0] for psd in psd_list]
             colors = self.colors(len(epochs))
-            
-        # TODO
+
         if save_data:
-            pass
+            subject_name = self.experiment.active_subject.subject_name
+            if params['average']:
+                filename = subject_name + '_' + 'raw' + '_' + 'spectrum.txt'
+                fileManager.save_np_array(self.experiment, filename, 
+                                          freqs, psds, epochs[0].info)
+            else:
+                for idx, psd in enumerate(psds):
+                    filename = ''.join([subject_name, '_', 'raw', '_', 'spectrum',
+                                        '_', str(colors[idx]), '.txt'])
+                    fileManager.save_np_array(self.experiment, filename, 
+                                              freqs, psd, epochs[0].info)
 
         print "Plotting power spectrum..."
 
@@ -1309,12 +1321,14 @@ class Caller(object):
         picks = params['picks']
 
         psd_list = []
+        n_jobs = self.parent.preferencesHandler.n_jobs
         
         for epoch in epochs:
             psds, freqs = wrap_mne_call(self.experiment, psd_welch,
                                         epoch, fmin=fmin, fmax=fmax, 
                                         n_fft=nfft, n_overlap=overlap, 
-                                        picks=picks, proj=True, verbose=True)
+                                        picks=picks, proj=True, verbose=True,
+                                        n_jobs=n_jobs)
             psds = np.average(psds, axis=0)
             if params['log']:
                 psds = 10 * np.log10(psds)
@@ -1333,7 +1347,7 @@ class Caller(object):
 #         from mne.time_frequency.multitaper import multitaper_psd;
 #         sfreq = raw.info['sfreq']
 #         a = epochs.raw 
-#         psds, freqs = multitaper_psd(epochs.raw, sfreq, fmin=2, fmax=200, n_jobs=1)
+#         psds, freqs = multitaper_psd(epochs.raw, sfreq, fmin=2, fmax=200, n_jobs=n_jobs)
 # 
 # 
 #         f, ax = plt.subplots()
@@ -1377,12 +1391,13 @@ class Caller(object):
         lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
         length = dic['length']
         trans_bw = dic['trans_bw']
+        n_jobs = self.parent.preferencesHandler.n_jobs
 
         print "Filtering..."
         wrap_mne_call(self.experiment, dataToFilter.filter,
                       l_freq=lfreq, h_freq=hfreq, filter_length=length,
                       l_trans_bandwidth=trans_bw,
-                      h_trans_bandwidth=trans_bw, n_jobs=2,
+                      h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
                       method='fft', verbose=True)
 
         freqs = list()
@@ -1398,7 +1413,7 @@ class Caller(object):
             wrap_mne_call(self.experiment, dataToFilter.notch_filter,
                           freqs, picks=None, filter_length=length,
                           notch_widths=dic['bandstop_bw'],
-                          trans_bandwidth=trans_bw, n_jobs=2,
+                          trans_bandwidth=trans_bw, n_jobs=n_jobs,
                           verbose=True)
             
         print 'Saving to file...'
@@ -1682,6 +1697,7 @@ class Caller(object):
 
         targetFileName = os.path.join(fmdir, 'reconFiles',
                                       'reconFiles-fwd.fif')
+        n_jobs = self.parent.preferencesHandler.n_jobs
 
         try:
             mne.make_forward_solution(rawInfo, transFilePath, srcFilePath,
@@ -1689,7 +1705,7 @@ class Caller(object):
                                       fsdict['includeMEG'],
                                       fsdict['includeEEG'], fsdict['mindist'],
                                       fsdict['ignoreref'], True,
-                                      fsdict['njobs'])
+                                      n_jobs)
             fileManager.write_forward_solution_parameters(fmdir, fsdict)
             self.parent.forwardModelModel.initialize_model()
         except Exception as e:
@@ -1780,11 +1796,12 @@ class Caller(object):
         tmax = params['tmax']
         keep_sample_mean = params['keep_sample_mean']
         method = params['method']
+        n_jobs = self.parent.preferencesHandler.n_jobs
         
         try:
             cov = mne.compute_covariance(epochs,
                 keep_sample_mean=keep_sample_mean, tmin=tmin, tmax=tmax,
-                method=method)            
+                method=method, n_jobs=n_jobs)            
         except ValueError as e:
             raise ValueError('Error while computing covariance. ' + str(e))
         
@@ -1958,7 +1975,7 @@ class Caller(object):
         stc.plot(subject='', subjects_dir=subjects_dir, time_label=label,
                  time_viewer=True)
 
-    def plot_stc_freq(self, stc, data, freqs, tmin, tmax, ncycles, njobs):
+    def plot_stc_freq(self, stc, data, freqs, tmin, tmax, ncycles):
         """
         Computes morlet tfr over set of stcs over epochs. Operates on stc
         instance in place.
@@ -1970,7 +1987,6 @@ class Caller(object):
             tmin: Float. Minimum time of interest.
             tmax: Float. Maximum time of interest.
             ncycles: Float or list of float. Number of cycles for the wavelet.
-            njobs: Int. Number of cores to use for the computation.
 
         Returns: Instance of figure.
         Matplotlib figure containing average TFR over the epoch stcs.
@@ -1978,11 +1994,12 @@ class Caller(object):
         """
         import matplotlib.pyplot as plt
 
+        n_jobs = self.parent.preferencesHandler.n_jobs
         tmin_i = np.argmin([abs(tmin - t) for t in stc.times])
         tmax_i = np.argmin([abs(tmax - t) for t in stc.times])
         data = np.array(data)[:, :, tmin_i:tmax_i]
         power, _ = mne.time_frequency.tfr._induced_power_cwt(data,
-            sfreq=stc.sfreq, frequencies=freqs, n_cycles=ncycles, n_jobs=njobs)
+            sfreq=stc.sfreq, frequencies=freqs, n_cycles=ncycles, n_jobs=n_jobs)
 
         fig, ax = plt.subplots(1, 1)
         ax.imshow(np.mean(power, axis=0),

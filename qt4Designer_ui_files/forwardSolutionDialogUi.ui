@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>210</height>
+    <width>497</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="labelIncludeMEG">
         <property name="text">
@@ -107,23 +110,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="labelNJobs">
-        <property name="text">
-         <string>Number of processor cores to use:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QSpinBox" name="spinBoxNJobs">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>64</number>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

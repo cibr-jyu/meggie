@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>625</width>
-    <height>356</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -134,26 +134,6 @@
        </item>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="njobsLabel">
-       <property name="text">
-        <string>njobs</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QSpinBox" name="spinBoxNjobs">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="value">
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="1">
@@ -278,7 +258,6 @@ in the plot to show the power on the surfaces.</string>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
   <tabstop>comboBoxHemisphere</tabstop>
-  <tabstop>spinBoxNjobs</tabstop>
   <tabstop>radioButtonFixed</tabstop>
   <tabstop>doubleSpinBoxNcycles</tabstop>
   <tabstop>radioButtonAdapted</tabstop>

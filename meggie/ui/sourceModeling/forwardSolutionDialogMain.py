@@ -26,8 +26,6 @@ class ForwardSolutionDialog(QtGui.QDialog):
         self.ui.setupUi(self) 
         
         cores = multiprocessing.cpu_count()
-        self.ui.spinBoxNJobs.setMaximum = cores
-        self.ui.spinBoxNJobs.setValue(cores - 1)
         
         tableView = self.parent.ui.tableViewFModelsForSolution
         selectedRowIndexes = tableView.selectedIndexes()
@@ -61,7 +59,6 @@ class ForwardSolutionDialog(QtGui.QDialog):
         else:
             paramdict['ignoreref'] = False
             
-        paramdict['njobs'] = self.ui.spinBoxNJobs.value()
         caller = Caller.Instance()
         try:
             caller.create_forward_solution(paramdict)

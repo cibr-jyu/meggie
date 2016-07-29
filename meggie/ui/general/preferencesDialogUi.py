@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/preferencesDialog.ui'
+# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
 #
-# Created: Wed Oct 15 18:43:20 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +25,7 @@ except AttributeError:
 class Ui_DialogPreferences(object):
     def setupUi(self, DialogPreferences):
         DialogPreferences.setObjectName(_fromUtf8("DialogPreferences"))
-        DialogPreferences.resize(493, 404)
+        DialogPreferences.resize(494, 500)
         self.gridLayout_3 = QtGui.QGridLayout(DialogPreferences)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.groupBoxWorkingDirectory = QtGui.QGroupBox(DialogPreferences)
@@ -97,10 +96,24 @@ class Ui_DialogPreferences(object):
         self.label_2 = QtGui.QLabel(self.groupBox)
         self.label_2.setText(_fromUtf8(""))
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.gridLayout_4.addWidget(self.label_2, 2, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_2, 6, 0, 1, 1)
         self.checkBoxConfirmQuit = QtGui.QCheckBox(self.groupBox)
         self.checkBoxConfirmQuit.setObjectName(_fromUtf8("checkBoxConfirmQuit"))
         self.gridLayout_4.addWidget(self.checkBoxConfirmQuit, 1, 0, 1, 1)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.labelNJobs = QtGui.QLabel(self.groupBox)
+        self.labelNJobs.setObjectName(_fromUtf8("labelNJobs"))
+        self.horizontalLayout_3.addWidget(self.labelNJobs)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
+        self.spinBoxNJobs = QtGui.QSpinBox(self.groupBox)
+        self.spinBoxNJobs.setMinimum(1)
+        self.spinBoxNJobs.setMaximum(1000000000)
+        self.spinBoxNJobs.setProperty("value", 10)
+        self.spinBoxNJobs.setObjectName(_fromUtf8("spinBoxNJobs"))
+        self.horizontalLayout_3.addWidget(self.spinBoxNJobs)
+        self.gridLayout_4.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox, 2, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(DialogPreferences)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -127,4 +140,5 @@ class Ui_DialogPreferences(object):
         self.groupBox.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:", None))
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup", None))
         self.checkBoxConfirmQuit.setText(_translate("DialogPreferences", "Show confirmation dialog on Meggie quit", None))
+        self.labelNJobs.setText(_translate("DialogPreferences", "Number of jobs to run in parallel:", None))
 

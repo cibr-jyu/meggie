@@ -13,6 +13,10 @@ epochs
 
 - Yleistä:
 * mieti interesting channelsia epokkeja luodessa
-* n_jobs meggie prefsiin
-* n_jobs käyttöön kaikkialla
 * save data to file kaikkialle (katso mallia evoked statsien tallennuksesta)
+
+
+
+
+- Misc:
+* group average spektreille?

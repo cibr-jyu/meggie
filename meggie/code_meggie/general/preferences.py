@@ -23,6 +23,7 @@ class PreferencesHandler(object):
     def __init__(self):
         '''Constructor'''
         self.working_directory = ''
+        self.n_jobs = 3
         self.MNERoot = ''
         self.FreeSurferHome = ''
         self.auto_load_last_open_experiment = False
@@ -43,7 +44,8 @@ class PreferencesHandler(object):
         # (should only be preferencesDialog).
         config.set('MiscOptions', 'previous_experiment_name', 
                    self.previous_experiment_name)
-        config.set('Workspace', 'workspaceDir', self.working_directory)           
+        config.set('MiscOptions', 'n_jobs', self.n_jobs)       
+        config.set('Workspace', 'workspaceDir', self.working_directory)
         config.set('EnvVariables','MNERootDir', self.MNERoot)
         config.set('EnvVariables', 'FreeSurferHomeDir', self.FreeSurferHome)
 
@@ -89,6 +91,7 @@ class PreferencesHandler(object):
             
             self.previous_experiment_name = config.get('MiscOptions', 
                                                      'previous_experiment_name')
+            self.n_jobs = int(config.get('MiscOptions', 'n_jobs'))
         except NoOptionError:
             pass
             
