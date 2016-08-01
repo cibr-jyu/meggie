@@ -14,6 +14,20 @@
    <string>Meggie - Show TFR topologies </string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="2" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
@@ -28,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>526</width>
-        <height>546</height>
+        <height>639</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -38,13 +52,6 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelEpochName">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxTopogpraphyType">
          <property name="sizePolicy">
@@ -91,11 +98,9 @@
             </item>
             <item>
              <widget class="QComboBox" name="comboBoxCmap">
-              <item>
-               <property name="text">
-                <string>auto</string>
-               </property>
-              </item>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
               <item>
                <property name="text">
                 <string>RdBu_r</string>
@@ -139,6 +144,13 @@
            </spacer>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelEpochName">
+         <property name="text">
+          <string/>
+         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -299,7 +311,7 @@
                  <double>100.000000000000000</double>
                 </property>
                 <property name="value">
-                 <double>7.000000000000000</double>
+                 <double>3.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -513,6 +525,9 @@
        </item>
        <item row="3" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBoxBaseline">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -526,7 +541,7 @@
           <bool>true</bool>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
@@ -579,7 +594,7 @@
               <item>
                <widget class="QLabel" name="labelBaselineStart">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Baseline start:</string>
@@ -589,7 +604,7 @@
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="suffix">
                  <string>s</string>
@@ -608,7 +623,7 @@
                  <string>None</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -623,7 +638,7 @@
               <item>
                <widget class="QLabel" name="labelBaselineEnd">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text">
                  <string>Baseline end:</string>
@@ -633,7 +648,7 @@
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="suffix">
                  <string>s</string>
@@ -652,7 +667,7 @@
                  <string>None</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -694,104 +709,26 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_27">
+    <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_35">
-       <item>
-        <widget class="QRadioButton" name="radioButtonSelectLayout">
-         <property name="text">
-          <string>Select layout</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBoxLayout">
-         <item>
-          <property name="text">
-           <string>Infer from data</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_36">
-       <item>
-        <widget class="QRadioButton" name="radioButtonLayoutFromFile">
-         <property name="text">
-          <string>Layout from file</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonBrowseLayout">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelLayout">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+      <widget class="QPushButton" name="pushButtonGroupAverage">
        <property name="text">
-        <string>No layout selected</string>
+        <string>Group average for all subjects</string>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <item>
-        <widget class="QPushButton" name="pushButtonGroupAverage">
-         <property name="text">
-          <string>Group average for all subjects</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
        </property>
-      </widget>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -822,10 +759,6 @@
   <tabstop>checkBoxBaselineStartNone</tabstop>
   <tabstop>doubleSpinBoxBaselineEnd</tabstop>
   <tabstop>checkBoxBaselineEndNone</tabstop>
-  <tabstop>radioButtonSelectLayout</tabstop>
-  <tabstop>comboBoxLayout</tabstop>
-  <tabstop>radioButtonLayoutFromFile</tabstop>
-  <tabstop>pushButtonBrowseLayout</tabstop>
   <tabstop>pushButtonGroupAverage</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
@@ -870,12 +803,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>486</y>
+     <x>293</x>
+     <y>572</y>
     </hint>
     <hint type="destinationlabel">
-     <x>117</x>
-     <y>489</y>
+     <x>129</x>
+     <y>576</y>
     </hint>
    </hints>
   </connection>
@@ -886,12 +819,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>486</y>
+     <x>293</x>
+     <y>572</y>
     </hint>
     <hint type="destinationlabel">
-     <x>190</x>
-     <y>489</y>
+     <x>223</x>
+     <y>576</y>
     </hint>
    </hints>
   </connection>
@@ -902,12 +835,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>523</y>
+     <x>293</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
-     <x>186</x>
-     <y>526</y>
+     <x>216</x>
+     <y>619</y>
     </hint>
    </hints>
   </connection>
@@ -918,60 +851,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>523</y>
+     <x>293</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
-     <x>113</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonSelectLayout</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>589</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>369</x>
-     <y>569</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pushButtonBrowseLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>110</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>369</x>
-     <y>604</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonLayoutFromFile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelLayout</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>91</x>
-     <y>654</y>
+     <x>122</x>
+     <y>619</y>
     </hint>
    </hints>
   </connection>
@@ -982,12 +867,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>322</y>
+     <x>100</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
-     <x>136</x>
-     <y>323</y>
+     <x>170</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -998,12 +883,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>314</y>
+     <x>78</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
-     <x>233</x>
-     <y>327</y>
+     <x>257</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -1014,12 +899,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>40</x>
-     <y>357</y>
+     <x>67</x>
+     <y>450</y>
     </hint>
     <hint type="destinationlabel">
-     <x>185</x>
-     <y>362</y>
+     <x>187</x>
+     <y>454</y>
     </hint>
    </hints>
   </connection>
@@ -1030,17 +915,14 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>68</x>
-     <y>354</y>
+     <x>95</x>
+     <y>450</y>
     </hint>
     <hint type="destinationlabel">
-     <x>224</x>
-     <y>358</y>
+     <x>257</x>
+     <y>454</y>
     </hint>
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>

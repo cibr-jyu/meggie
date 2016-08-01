@@ -82,6 +82,7 @@ class PreferencesDialog(QtGui.QDialog):
         self._MNERootPath = MNERootPath
         self._FreeSurferHome = FreeSurferHome
         
+        self.ui.spinBoxNJobs.setValue(self.parent.preferencesHandler.n_jobs)
         self.ui.LineEditFilePath.setText(self._workFilepath)
         self.ui.lineEditMNERoot.setText(self._MNERootPath)
         self.ui.lineEditFreeSurferHome.setText(self._FreeSurferHome)
@@ -132,6 +133,8 @@ class PreferencesDialog(QtGui.QDialog):
             confirmQuit = True
         else: confirmQuit = False
         
+        n_jobs = self.ui.spinBoxNJobs.value()
+        
         # MNE Root path can be empty or wrong here, we can annoy user about
         # it if he really tries to use something MNE-related. Same goes for
         # FreeSurfer.
@@ -139,6 +142,7 @@ class PreferencesDialog(QtGui.QDialog):
         FreeSurferPath = self._FreeSurferHome
         
         self.parent.preferencesHandler.working_directory = workFilePath
+        self.parent.preferencesHandler.n_jobs = n_jobs
         self.parent.preferencesHandler.MNERoot = MNERootPath
         self.parent.preferencesHandler.FreeSurferHome = FreeSurferPath
         self.parent.preferencesHandler.auto_load_last_open_experiment = \

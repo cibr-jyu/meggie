@@ -373,22 +373,6 @@ def load_evoked(fname):
     return evokeds
 
 
-def load_powers(subject):
-    """
-    Loads power files from the subject folder.
-    Returns a list of AverageTFR names.
-    """
-    powers = list()
-    path = os.path.join(subject.subject_path, 'TFR')
-    if not os.path.exists(path):
-        return list()
-    files = os.listdir(path)
-    for fname in files:
-        if fname.endswith('.h5'):
-            powers.append(fname)
-    return powers
-
-
 def open_raw(fname, preload=True):
     """
     Opens a raw file.
@@ -621,3 +605,37 @@ def _read_epoch_stcs(subject):
         if os.path.isdir(os.path.join(stc_dir, epochs_dir)):
             stcs.append(epochs_dir)
     return stcs
+
+def save_np_array(experiment, filename, freqs, data, epochs_info):
+    
+    folder = os.path.join(experiment.workspace,
+                    experiment.experiment_name, 'output')
+    import errno;
+    try:
+        os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    
+    # gather all the data to list of rows
+    all_data = []
+
+    # freqs data, assume same lengths for all evokeds
+    all_data.append(['freqs'] + freqs.tolist())
+
+    for idx in range(data.shape[0]):
+        row_name = epochs_info['ch_names'][idx]
+        
+        # mark bad channels
+        if epochs_info['ch_names'][idx] in epochs_info['bads']:
+            row_name += ' (bad)'        
+        
+        row = [row_name] + data[idx].tolist()
+        all_data.append(row)
+ 
+    # save to file
+    all_data = np.array(all_data)
+    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+    
+    
+        

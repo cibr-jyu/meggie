@@ -94,7 +94,7 @@ class Epochs(QObject):
         collection_name    -- the name of the collection
         """
         # TODO: Add name checks, see experiment_name setter. At
-        # this moment UI probably handles the name check.
+        # this moment UI probably handlet interval s the name check.
         self._collection_name = collection_name
         
     @property

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/kari/Opinnot/gradu/lahdekoodit/lahdekoodit/meggie_batch/ui/qt4Designer_ui_files/forwardSolutionDialog.ui'
+# Form implementation generated from reading ui file 'forwardSolutionDialogUi.ui'
 #
-# Created: Fri Dec 19 15:39:49 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +25,7 @@ except AttributeError:
 class Ui_DialogCreateFSolution(object):
     def setupUi(self, DialogCreateFSolution):
         DialogCreateFSolution.setObjectName(_fromUtf8("DialogCreateFSolution"))
-        DialogCreateFSolution.resize(495, 210)
+        DialogCreateFSolution.resize(497, 200)
         self.gridLayout = QtGui.QGridLayout(DialogCreateFSolution)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.frame = QtGui.QFrame(DialogCreateFSolution)
@@ -34,6 +33,7 @@ class Ui_DialogCreateFSolution(object):
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.formLayout = QtGui.QFormLayout(self.frame)
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.labelIncludeMEG = QtGui.QLabel(self.frame)
         self.labelIncludeMEG.setObjectName(_fromUtf8("labelIncludeMEG"))
@@ -75,14 +75,6 @@ class Ui_DialogCreateFSolution(object):
         self.buttonGroupIgnoreRef.addButton(self.radioButtonIgnoreYes)
         self.horizontalLayout.addWidget(self.radioButtonIgnoreYes)
         self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
-        self.labelNJobs = QtGui.QLabel(self.frame)
-        self.labelNJobs.setObjectName(_fromUtf8("labelNJobs"))
-        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.labelNJobs)
-        self.spinBoxNJobs = QtGui.QSpinBox(self.frame)
-        self.spinBoxNJobs.setMinimum(1)
-        self.spinBoxNJobs.setMaximum(64)
-        self.spinBoxNJobs.setObjectName(_fromUtf8("spinBoxNJobs"))
-        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.spinBoxNJobs)
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(DialogCreateFSolution)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -104,5 +96,4 @@ class Ui_DialogCreateFSolution(object):
         self.labelIgnoreRef.setText(_translate("DialogCreateFSolution", "Ignore reference channels for compensation:", None))
         self.radioButtonIgnoreNo.setText(_translate("DialogCreateFSolution", "no (default)", None))
         self.radioButtonIgnoreYes.setText(_translate("DialogCreateFSolution", "yes", None))
-        self.labelNJobs.setText(_translate("DialogCreateFSolution", "Number of processor cores to use:", None))
 

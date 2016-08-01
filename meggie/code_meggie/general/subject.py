@@ -35,8 +35,6 @@ Created on Oct 22, 2013
 """
 
 from PyQt4.QtCore import QObject
-from PyQt4 import QtGui
-from PyQt4 import QtCore
 
 import os
 import glob
@@ -45,9 +43,6 @@ import numpy as np
 import mne
 
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.evoked import Evoked
-from meggie.code_meggie.sourceModeling.forwardModels import ForwardModels
 
 class Subject(QObject):
     
@@ -67,6 +62,7 @@ class Subject(QObject):
         self._working_file = None
         self._working_file_name = working_file_name
 
+        self._layout = "Infer from data"
         # Dictionary for epochs where key is the name of the collection
         # and value is the epochs object. Similar approach with evoked and
         # forward model objects.
@@ -154,6 +150,14 @@ class Subject(QObject):
             if not temporary:
                 self._working_file = raw
             return raw
+
+    @property
+    def layout(self):
+        return self._layout
+    
+    @layout.setter
+    def layout(self, layout):
+        self._layout = layout
 
     @property
     def epochs(self):

@@ -90,7 +90,7 @@
          <x>0</x>
          <y>0</y>
          <width>553</width>
-         <height>481</height>
+         <height>471</height>
         </rect>
        </property>
        <property name="currentIndex">
@@ -523,32 +523,6 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="horizontalLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>160</y>
-           <width>285</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QLabel" name="labelJobs">
-            <property name="text">
-             <string>Number of jobs to run in parallel:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBoxJobs">
-            <property name="value">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
@@ -604,7 +578,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>210</y>
+           <y>160</y>
            <width>371</width>
            <height>101</height>
           </rect>
@@ -640,7 +614,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>310</y>
+           <y>270</y>
            <width>491</width>
            <height>131</height>
           </rect>
@@ -819,7 +793,6 @@
   <tabstop>lineEditBad</tabstop>
   <tabstop>spinBoxStart</tabstop>
   <tabstop>spinBoxTaps</tabstop>
-  <tabstop>spinBoxJobs</tabstop>
   <tabstop>checkBoxEEGProj</tabstop>
   <tabstop>checkBoxSSPProj</tabstop>
   <tabstop>checkBoxSSPCompute</tabstop>

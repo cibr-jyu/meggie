@@ -98,12 +98,6 @@ class EventSelectionDialog(QtGui.QDialog):
         self.batching_widget = BatchingWidget(self, 
             self.ui.scrollAreaWidgetContents)
 
-        for ch_name in ch_names:
-            item = QtGui.QListWidgetItem(ch_name)
-            self.ui.listWidgetChannels.addItem(item)
-            self.ui.listWidgetChannels.setItemSelected(item, True)
-
-        
     def update_events(self):
         """Add a list of events or a single event to the ui's eventlist.
         """
@@ -290,18 +284,12 @@ class EventSelectionDialog(QtGui.QDialog):
         events = deepcopy(self.event_data['events'])
         fle = deepcopy(self.event_data['fixed_length_events'])
         
-        items = self.ui.listWidgetChannels.selectedItems()
-        channels = []
-        for item in items:
-            channels.append(str(item.text()))
-        
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'stim' : stim, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 
                       'collection_name' : collection_name,
-                      'events' : events, 'fixed_length_events' : fle, 
-                      'channels' : channels}
+                      'events' : events, 'fixed_length_events' : fle}
         return param_dict
 
     def create_eventlist(self, subject, event_params):

@@ -279,6 +279,7 @@ class Experiment(QObject):
             subject_dict = {
                 'subject_name': subject.subject_name,
                 'working_file_name': subject.working_file_name,
+                'layout': subject.layout,
                 'epochs': [], 
                 'evokeds': []
             }
@@ -415,14 +416,20 @@ class ExperimentHandler(QObject):
         if len(data['subjects']) > 0:
                 
             for subject_data in data['subjects']:
+                
                 subject = Subject(experiment, subject_data['subject_name'],
-                    subject_data['working_file_name'])
+                                  subject_data['working_file_name'])
+                
+                if subject_data.get('layout'):
+                    subject.layout = subject_data['layout']
+                
                 for epoch_data in subject_data['epochs']:
                     epochs = Epochs(epoch_data['collection_name'], subject,
                         epoch_data['params'])
                     epochs.collection_name = epoch_data['collection_name']
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
+                
                 for evoked_data in subject_data['evokeds']:
                     mne_evokeds = dict([(name, None) for name in evoked_data['event_names']])
                     evoked = Evoked(evoked_data['name'], subject, mne_evokeds)

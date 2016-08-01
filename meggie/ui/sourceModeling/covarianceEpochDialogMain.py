@@ -83,7 +83,6 @@ class CovarianceEpochDialog(QtGui.QDialog):
             #only 'empirical' supports False
             params['keep_sample_mean'] = True
         
-        params['n_jobs'] = self.ui.spinBoxNjobs.value()
         
         #if None, starts at first sample
         params['tmin'] = self.ui.doubleSpinBoxTmin.value()

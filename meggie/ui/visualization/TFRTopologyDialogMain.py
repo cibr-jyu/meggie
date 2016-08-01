@@ -40,7 +40,6 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
 
 from meggie.ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
-from meggie.ui.visualization.TFRGroupAverageDialogMain import TFRGroupAverageDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -67,8 +66,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.epoch_name = epoch_name
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
+
         if tfr is None:
             self.tfr = None
             subject = self.caller.experiment.active_subject
@@ -83,6 +81,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
             self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
             self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+            self.ui.doubleSpinBoxBaselineEnd.setValue(epochs.tmax)
         else:
             self.tfr = tfr
             if tfr.method == 'morlet-power':
@@ -100,17 +99,6 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.ui.doubleSpinBoxBaselineEnd.setMinimum(tfr.times[0])
             self.ui.doubleSpinBoxBaselineEnd.setMaximum(tfr.times[-1])
 
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """
-        Opens a dialog for selecting a layout file.
-        """
-        if checked is None:
-            return
-        fName = str(QtGui.QFileDialog.getOpenFileName(self,
-                            "Select a layout file", '/home/', 
-                            "Layout-files (*.lout *.lay);;All files (*.*)"))
-        self.ui.labelLayout.setText(fName)
-
     def accept(self):
         """
         Collects the parameter values from the dialog window and passes them
@@ -118,13 +106,6 @@ class TFRTopologyDialog(QtGui.QDialog):
         feedback to the user.
         """
         cmap = self.ui.comboBoxCmap.currentText()
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == 'No layout selected' or layout == '':
-            messagebox(self.parent, 'No layout selected')
-            return
         if self.ui.groupBoxBaseline.isChecked():
             mode = self.ui.comboBoxMode.currentText()
             if self.ui.checkBoxBaselineStartNone.isChecked():
@@ -144,9 +125,9 @@ class TFRTopologyDialog(QtGui.QDialog):
             reptype = 'itc'
         if self.tfr is not None:
             try:
-                 self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
-                                          blstart, blend, None, None, layout, None,
-                                          None, cmap)
+                self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
+                                         blstart, blend, None, None, None,
+                                         None, cmap)
             except Exception as e:
                 exc_messagebox(self.parent, e)
             return
@@ -178,71 +159,63 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp = None
         try:
             self.caller.TFR_topology(epochs, reptype, freqs, decim, mode,
-                                     blstart, blend, ncycles, layout, ch_type,
+                                     blstart, blend, ncycles, ch_type,
                                      scalp, cmap)
         except Exception as e:
             exc_messagebox(self.parent, e)
-        self.parent.update_power_list()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
         Opens a dialog for group average parameters.
         """
-        if checked is None: return
-        averageDialog = TFRGroupAverageDialog()
-        averageDialog.channels_selected.connect(self.compute_group_average)
-        averageDialog.exec_()
-
-    @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
-    def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
-                              saveMax):
-        """
-        Starts the computation of group average TFR.
-        Parameters:
-        channels - Selected channels of interest.
-        """
-        cmap = self.ui.comboBoxCmap.currentText()
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        decim = self.ui.spinBoxDecim.value()
-        interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles = self.ui.spinBoxNcycles.value()
-        if self.ui.groupBoxBaseline.isChecked():
-            mode = self.ui.comboBoxMode.currentText()
-            if self.ui.checkBoxBaselineStartNone.isChecked():
-                blstart = None
-            else:
-                blstart = self.ui.doubleSpinBoxBaselineStart.value()
-
-            if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-                blend = None
-            else:
-                blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        else:
-            blstart, blend, mode = None, None, None
-        if self.ui.radioButtonInduced.isChecked(): 
-            reptype = 'average'
-        elif self.ui.radioButtonPhase.isChecked(): 
-            reptype = 'itc'
-
-        if saveMax:
-            saveMax = reptype
-        else:
-            saveMax = None
-
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == 'No layout selected' or layout == '':
-            messagebox(self.parent, 'No layout selected')
+        if checked is None: 
             return
-
-        try:
-            self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
-                                    minfreq, maxfreq, interval, blstart,
-                                    blend, ncycles, decim, layout, channels,
-                                    form, dpi, saveTopo, savePlot, saveMax)
-        except Exception as e:
-            exc_messagebox(self.parent, e)
+        
+        messagebox(self.parent, 'Not implemented yet')
+        
+        
+#     @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
+#     def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
+#                               saveMax):
+#         """
+#         Starts the computation of group average TFR.
+#         Parameters:
+#         channels - Selected channels of interest.
+#         """
+#         cmap = self.ui.comboBoxCmap.currentText()
+#         minfreq = self.ui.doubleSpinBoxMinFreq.value()
+#         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+#         decim = self.ui.spinBoxDecim.value()
+#         interval = self.ui.doubleSpinBoxFreqInterval.value()
+#         ncycles = self.ui.spinBoxNcycles.value()
+#         if self.ui.groupBoxBaseline.isChecked():
+#             mode = self.ui.comboBoxMode.currentText()
+#             if self.ui.checkBoxBaselineStartNone.isChecked():
+#                 blstart = None
+#             else:
+#                 blstart = self.ui.doubleSpinBoxBaselineStart.value()
+# 
+#             if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
+#                 blend = None
+#             else:
+#                 blend = self.ui.doubleSpinBoxBaselineEnd.value()
+#         else:
+#             blstart, blend, mode = None, None, None
+#         if self.ui.radioButtonInduced.isChecked(): 
+#             reptype = 'average'
+#         elif self.ui.radioButtonPhase.isChecked(): 
+#             reptype = 'itc'
+# 
+#         if saveMax:
+#             saveMax = reptype
+#         else:
+#             saveMax = None
+# 
+#         try:
+#             self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
+#                                     minfreq, maxfreq, interval, blstart,
+#                                     blend, ncycles, decim, channels,
+#                                     form, dpi, saveTopo, savePlot, saveMax)
+#         except Exception as e:
+#             exc_messagebox(self.parent, e)
 

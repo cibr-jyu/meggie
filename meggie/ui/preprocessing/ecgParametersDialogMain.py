@@ -120,7 +120,6 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.lineEditBad.setProperty("value", dic.get('bads'))
         self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
         self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-        self.ui.spinBoxJobs.setProperty("value", dic.get('n-jobs'))
         self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
         self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
         self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
@@ -146,7 +145,6 @@ class EcgParametersDialog(QtGui.QDialog):
             'bads': '',
             'tstart': 5,
             'filtersize': 2048,
-            'n-jobs': 1,
             'avg-ref': False,
             'no-proj': True,
             'average': True        
@@ -228,7 +226,6 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['bads'] = map(str.strip, str(self.ui.lineEditBad.text()).split(',')) # noqa
         dictionary['tstart'] = self.ui.spinBoxStart.value()
         dictionary['filtersize'] = self.ui.spinBoxTaps.value()
-        dictionary['n-jobs'] = self.ui.spinBoxJobs.value()
         dictionary['avg-ref'] = self.ui.checkBoxEEGProj.isChecked()
         dictionary['no-proj'] = self.ui.checkBoxSSPProj.isChecked()
         dictionary['average'] = self.ui.checkBoxSSPCompute.isChecked()

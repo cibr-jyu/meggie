@@ -61,8 +61,8 @@ matplotlib.use('Qt4Agg')
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
+from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.general.channelSelectionDialogMain import ChannelSelectionDialog
 from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
 from meggie.ui.visualization import visualizeEpochChannelDialogMain
 from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
@@ -74,7 +74,9 @@ from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.visualization.TFRDialogMain import TFRDialog
 from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
+from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
 from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.ui.visualization.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.filtering.filterDialogMain import FilterDialog
@@ -104,7 +106,6 @@ from meggie.code_meggie.general.mvcModels import SubjectListModel
 from meggie.code_meggie.general.mvcModels import _initializeForwardSolutionList
 from meggie.code_meggie.general.mvcModels import _initializeInverseOperatorList
 from meggie.code_meggie.general.caller import Caller
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.epoching.evoked import Evoked
 
 
@@ -120,6 +121,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        self.layoutDialog = None
         self.spectrumDialog = None
         self.filterDialog = None
         self.epochParameterDialog = None
@@ -238,9 +240,6 @@ class MainWindow(QtGui.QMainWindow):
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
 
-        # Populate layouts combobox.
-        layouts = fileManager.get_layouts()
-        self.ui.comboBoxLayout.addItems(layouts)
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
@@ -779,15 +778,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
-        layout = ''
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = str(self.ui.comboBoxLayout.currentText())
-        elif self.ui.radioButtonLayoutFromFile.isChecked():
-            layout = str(self.ui.labelLayout.text())
-        if layout == '':
-            messagebox(self, 'No layout selected!')
-            return
-
+        
         self.ui.pushButtonVisualizeEvokedDataset.setText('      Visualizing...'
                                                          '      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
@@ -798,9 +789,9 @@ class MainWindow(QtGui.QMainWindow):
 
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
         try:
-	    QtGui.QApplication.setOverrideCursor(
+            QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-            self.caller.draw_evoked_potentials(mne_evokeds.values(), layout)
+            self.caller.draw_evoked_potentials(mne_evokeds.values())
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)
@@ -827,13 +818,8 @@ class MainWindow(QtGui.QMainWindow):
 
         evoked_name = str(item.text())
 
-        if self.ui.radioButtonSelectLayout.isChecked():
-            layout = self.ui.comboBoxLayout.currentText()
-        else:
-            layout = str(self.ui.labelLayout.text())
-
         try:
-            evokeds, group_epoch_info = self.caller.group_average(evoked_name, layout)
+            evokeds, group_epoch_info = self.caller.group_average(evoked_name)
         except Exception as e:
             exc_messagebox(self, e)
             return
@@ -842,18 +828,14 @@ class MainWindow(QtGui.QMainWindow):
 
         self.initialize_ui()
 
-    def on_pushButtonBrowseLayout_clicked(self, checked=None):
-        """Opens a dialog for selecting a layout file."""
+    def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
             return
-
-        fName = str(QtGui.QFileDialog.
-                    getOpenFileName(self, "Select a layout file", '/home/',
-                                    "Layout-files (*.lout *.lay);;All files "
-                                    "(*.*)"))
-        self.ui.labelLayout.setText(fName)
+        
+        self.layoutDialog = LayoutDialog(self)
+        self.layoutDialog.show()
 
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch collection."""
@@ -1017,14 +999,8 @@ class MainWindow(QtGui.QMainWindow):
                 exc_messagebox(self, e)
         else:
             return
-
-    def on_pushButtonRawPlot_clicked(self, checked=None):
-        """Call ``raw.plot``."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
+        
+    def plot_raw(self):
         def handle_close(event):
             raw = self.caller.experiment.active_subject.get_working_file()
             fname = self.caller.experiment.active_subject.get_working_file().info['filename']
@@ -1045,6 +1021,15 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, err)
             return
 
+    def on_pushButtonRawPlot_clicked(self, checked=None):
+        """Call ``raw.plot``."""
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+
+        self.plot_raw()
+
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""
         if checked is None:
@@ -1052,12 +1037,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
         
-        info = self.caller.experiment.active_subject.get_working_file().info
-        try:
-            self.caller.call_mne_browse_raw(info['filename'])
-        except Exception, err:
-            exc_messagebox(self, err)
-            return
+        self.plot_raw()
 
     def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
         """Call mne_browse_raw."""
@@ -1106,7 +1086,29 @@ class MainWindow(QtGui.QMainWindow):
         self.spectrumDialog = PowerSpectrumDialog(self)
         self.spectrumDialog.finished.connect(self.on_close)
         self.spectrumDialog.show()
+        
+    def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
+        """Open the power spectrum visualization dialog."""
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
 
+        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+            message = 'You must select the epochs for Power spectrum.'
+            messagebox(self, message)
+            return
+
+        collection_names = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+
+        epochs = []
+        for collection_name in collection_names:
+            epochs.append(self.caller.experiment.active_subject.epochs.get(str(collection_name.text())))
+
+        self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
+        self.spectrumDialogEpochs.show()
+        
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
@@ -1114,7 +1116,6 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
-        
         self.eogDialog = EogParametersDialog(self)
         self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
@@ -1162,13 +1163,22 @@ class MainWindow(QtGui.QMainWindow):
             message = 'You must create epochs before TFR.'
             messagebox(self, message)
             return
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject.epochs.get(name)
+        
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+        if len(selected_items) == 1:
+            collection_name = selected_items[0].text()
+        else:
+            message = 'Select exactly one epoch collection.'
+            messagebox(self, message)
+            return
+        
+        epochs = self.caller.experiment.active_subject.epochs.get(collection_name)
 
         self.tfr_dialog = TFRDialog(self, epochs)
         self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
-
+        
     def on_pushButtonTFRTopology_clicked(self, checked=None):
         """Opens the dialog for plotting TFR topology."""
         if checked is None:
@@ -1179,9 +1189,18 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'You must select the epochs for TFR.'
             messagebox(self, message)
+            return 
+        
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        
+        if len(selected_items) == 1:
+            collection_name = selected_items[0].text()
+        else:
+            message = 'Select exactly one epoch collection.'
+            messagebox(self, message)
             return
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        self.tfrTop_dialog = TFRTopologyDialog(self, name)
+        
+        self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
@@ -1203,6 +1222,14 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
+        
+    def on_pushButtonTFRraw_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        self.tfr_raw_dialog = TFRRawDialog(self) 
+        self.tfr_raw_dialog.show()       
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""
@@ -1217,59 +1244,11 @@ class MainWindow(QtGui.QMainWindow):
             return
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         
-        if self.ui.radioButtonLobe.isChecked():
-            try:
-                self.caller.average_channels(name,
-                                             self.ui.comboBoxLobes.currentText(),
-                                             None)
-            except Exception as e:
-                exc_messagebox(self, e)
-            #TODO: visualizing actions logged or not?
-            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
-            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
-            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, self.ui.comboBoxLobes.currentText(), None)
-        else:
-            channels = []
-            for i in xrange(self.ui.listWidgetChannels.count()):
-                item = self.ui.listWidgetChannels.item(i)
-                channels.append(str(item.text()))
-            try:
-                self.caller.average_channels(name, None, set(channels))
-            except Exception as e:
-                exc_messagebox(self, e)
-            #TODO: visualizing actions logged or not?
-            #TODO: this actually works, but user must know this is only a visualization call and a non-MNE method
-            #TODO: weird error occurred, not sure if it was this code or something else, couldnt replicate
-            #wrap_mne_call(self.caller.experiment, self.caller.average_channels, name, None, set(channels))
-
-    def on_pushButtonModifyChannels_clicked(self, checked=None):
-        """
-        Slot for adding channels to the list for averaging epochs.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        channels = list()
-        for i in xrange(self.ui.listWidgetChannels.count()):
-            item = self.ui.listWidgetChannels.item(i)
-            channels.append(str(item.text()))
-
-        channelDialog = ChannelSelectionDialog(channels, 'Select channels')
-        channelDialog.channelsChanged.connect(self.channels_modified)
-        channelDialog.exec_()
-
-    @QtCore.pyqtSlot(list)
-    def channels_modified(self, channels):
-        """
-        Slot for signal from channelSelectionDialog.
-        Adds selected channels to the list for averaging.
-        Keyword arguments:
-        channels -- Channels to add to the list.
-        """
-        self.ui.listWidgetChannels.clear()
-        self.ui.listWidgetChannels.addItems(channels)
+        try:
+            self.caller.average_channels(name,
+                                         self.ui.comboBoxLobes.currentText())
+        except Exception as e:
+            exc_messagebox(self, e)
 
     def on_pushButtonFilter_clicked(self, checked=None):
         """
@@ -1692,8 +1671,6 @@ class MainWindow(QtGui.QMainWindow):
                                      'continuing.')
             return
         
-        self.update_power_list()
-
         name = self.caller.experiment.active_subject.working_file_name
         status = "Current working file: " + name
         
@@ -1785,15 +1762,6 @@ class MainWindow(QtGui.QMainWindow):
                                        active_subject)
         self.update_covariance_info_box()
         self._update_source_estimates()
-
-    def update_power_list(self):
-        """Updates the TFR list."""
-        self.ui.listWidgetPowerItems.clear()
-        active_sub = self.caller.experiment.active_subject
-        power_items = fileManager.load_powers(active_sub)
-        if len(power_items) > 0:
-            for item in power_items:
-                self.ui.listWidgetPowerItems.addItem(item)
 
     def update_covariance_info_box(self):
         """
@@ -1911,23 +1879,25 @@ class MainWindow(QtGui.QMainWindow):
                                     "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabTFR, "TFR")
-        self.ui.tabWidget.insertTab(5, self.ui.tabSourcePreparation,
+        self.ui.tabWidget.insertTab(4, self.ui.tabFourierAnalysis, "Fourier Analysis")
+        self.ui.tabWidget.insertTab(5, self.ui.tabSourceAnalysis, "Source Analysis")
+        
+        self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation,
                                     "Source modelling preparation")
-        self.ui.tabWidget.insertTab(6, self.ui.tabForwardModel,
+        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabForwardModel,
                                     "Forward model creation")
-        self.ui.tabWidget.insertTab(7, self.ui.tabCoregistration,
+        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabCoregistration,
                                     "Coregistration")
-        self.ui.tabWidget.insertTab(8, self.ui.tabForwardSolution,
+        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabForwardSolution,
                                     "Forward solution creation")
-        self.ui.tabWidget.insertTab(9, self.ui.tabNoiseCovariance,
+        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabNoiseCovariance,
                                     "Noise covariance")
-        self.ui.tabWidget.insertTab(10, self.ui.tabInverseOperator,
+        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabInverseOperator,
                                     "Inverse operator")
-        self.ui.tabWidget.insertTab(11, self.ui.tabSourceEstimate,
+        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabSourceEstimate,
                                     "Source estimate")
-        self.ui.tabWidget.insertTab(12, self.ui.tabSourceAnalysis,
-                                    "Source analysis")
+        self.ui.tabWidgetSourceAnalysis.insertTab(8, self.ui.tabAnalysis,
+                                    "Analysis")
 
     def on_currentChanged(self):
         """
@@ -1945,7 +1915,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         elif index == 3:
-            mode = QtGui.QAbstractItemView.SingleSelection
+            mode = QtGui.QAbstractItemView.MultiSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
         elif index == 10:

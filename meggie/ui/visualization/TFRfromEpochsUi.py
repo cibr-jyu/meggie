@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'TFRfromEpochs.ui'
+# Form implementation generated from reading ui file 'TFRfromEpochsUi.ui'
 #
-# Created: Thu Sep 17 03:28:58 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +25,7 @@ except AttributeError:
 class Ui_DialogEpochsTFR(object):
     def setupUi(self, DialogEpochsTFR):
         DialogEpochsTFR.setObjectName(_fromUtf8("DialogEpochsTFR"))
-        DialogEpochsTFR.resize(297, 391)
+        DialogEpochsTFR.resize(290, 391)
         self.gridLayout = QtGui.QGridLayout(DialogEpochsTFR)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.scrollArea = QtGui.QScrollArea(DialogEpochsTFR)
@@ -34,7 +33,7 @@ class Ui_DialogEpochsTFR(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 279, 334))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 272, 334))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(197, 134))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.groupBoxFrequencies = QtGui.QGroupBox(self.scrollAreaWidgetContents)
@@ -44,7 +43,6 @@ class Ui_DialogEpochsTFR(object):
         self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 251, 273))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_6.setMargin(0)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.comboBoxChannels = QtGui.QComboBox(self.layoutWidget)
         self.comboBoxChannels.setObjectName(_fromUtf8("comboBoxChannels"))
@@ -92,7 +90,7 @@ class Ui_DialogEpochsTFR(object):
         self.horizontalLayout_2.addWidget(self.labelNcycles)
         self.spinBoxNcycles = QtGui.QSpinBox(self.layoutWidget)
         self.spinBoxNcycles.setMinimum(1)
-        self.spinBoxNcycles.setProperty("value", 7)
+        self.spinBoxNcycles.setProperty("value", 3)
         self.spinBoxNcycles.setObjectName(_fromUtf8("spinBoxNcycles"))
         self.horizontalLayout_2.addWidget(self.spinBoxNcycles)
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)
@@ -113,7 +111,6 @@ class Ui_DialogEpochsTFR(object):
         self.horizontalLayout_3.addWidget(self.labelCmap)
         self.comboBoxCmap = QtGui.QComboBox(self.layoutWidget)
         self.comboBoxCmap.setObjectName(_fromUtf8("comboBoxCmap"))
-        self.comboBoxCmap.addItem(_fromUtf8(""))
         self.comboBoxCmap.addItem(_fromUtf8(""))
         self.comboBoxCmap.addItem(_fromUtf8(""))
         self.comboBoxCmap.addItem(_fromUtf8(""))
@@ -156,10 +153,9 @@ class Ui_DialogEpochsTFR(object):
         self.labelNcycles.setText(_translate("DialogEpochsTFR", "Number of cycles:", None))
         self.label_2.setText(_translate("DialogEpochsTFR", "Temporal decim factor:", None))
         self.labelCmap.setText(_translate("DialogEpochsTFR", "Color map:", None))
-        self.comboBoxCmap.setItemText(0, _translate("DialogEpochsTFR", "auto", None))
-        self.comboBoxCmap.setItemText(1, _translate("DialogEpochsTFR", "RdBu_r", None))
-        self.comboBoxCmap.setItemText(2, _translate("DialogEpochsTFR", "Reds", None))
-        self.comboBoxCmap.setItemText(3, _translate("DialogEpochsTFR", "YlOrRd", None))
-        self.comboBoxCmap.setItemText(4, _translate("DialogEpochsTFR", "seismic", None))
-        self.comboBoxCmap.setItemText(5, _translate("DialogEpochsTFR", "bwr", None))
+        self.comboBoxCmap.setItemText(0, _translate("DialogEpochsTFR", "RdBu_r", None))
+        self.comboBoxCmap.setItemText(1, _translate("DialogEpochsTFR", "Reds", None))
+        self.comboBoxCmap.setItemText(2, _translate("DialogEpochsTFR", "YlOrRd", None))
+        self.comboBoxCmap.setItemText(3, _translate("DialogEpochsTFR", "seismic", None))
+        self.comboBoxCmap.setItemText(4, _translate("DialogEpochsTFR", "bwr", None))
 

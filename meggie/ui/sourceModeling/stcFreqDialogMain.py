@@ -42,7 +42,6 @@ class StcFreqDialog(QtGui.QDialog):
         interval = self.ui.doubleSpinBoxInterval.value()
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
-        njobs = self.ui.spinBoxNjobs.value()
         hemi = str(self.ui.comboBoxHemisphere.currentText())
         if hemi == 'left':
             hemi = '-lh.stc'
@@ -60,8 +59,7 @@ class StcFreqDialog(QtGui.QDialog):
                 stc = mne.read_source_estimate(os.path.join(full_path, f))
                 data.append(stc.data)
         try:
-            self.caller.plot_stc_freq(stc, data, freqs, tmin, tmax, ncycles,
-                njobs)  # operates on instance of stc in place
+            self.caller.plot_stc_freq(stc, data, freqs, tmin, tmax, ncycles)
         except Exception as e:
             exc_messagebox(self, e)
         finally:
