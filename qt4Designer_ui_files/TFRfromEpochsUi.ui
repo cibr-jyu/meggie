@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
+    <width>290</width>
     <height>391</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>279</width>
+        <width>272</width>
         <height>334</height>
        </rect>
       </property>
@@ -193,11 +193,6 @@
            </item>
            <item>
             <widget class="QComboBox" name="comboBoxCmap">
-             <item>
-              <property name="text">
-               <string>auto</string>
-              </property>
-             </item>
              <item>
               <property name="text">
                <string>RdBu_r</string>

@@ -103,11 +103,6 @@
               </property>
               <item>
                <property name="text">
-                <string>auto</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>RdBu_r</string>
                </property>
               </item>

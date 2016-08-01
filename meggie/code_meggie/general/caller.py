@@ -450,35 +450,18 @@ class Caller(object):
             eeg=params_copy['eeg'], stim=params_copy['stim'], 
             eog=params_copy['eog'])
         
-        # filter to only interesting ones
-        picks = [idx for idx, name in enumerate(raw.info['ch_names'])
-                 if name in params['channels'] and
-                 idx in picks]
-        
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
                              'checking the checkboxes.')
 
-        # copy and apply projections beforehand, as projections are
-        # not valid anymore for a subselection of channels
-        # see: https://github.com/mne-tools/mne-python/issues/3138
-        proj_raw = raw.copy()
-        proj_raw.info['projs'] = [proj for proj in proj_raw.info['projs'] 
-                      if proj.get('active') != True]
-        proj_raw.apply_proj()
-        proj_raw.info['projs'] = []
-
         epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            proj_raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
-            picks=picks, reject=params_copy['reject'], add_eeg_ref=False)
-        
-        del proj_raw    
-    
+            raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
+            picks=picks, reject=params_copy['reject'])
+            
         if len(epochs.get_data()) == 0:
             raise ValueError('Could not find any data. Perhaps the ' + 
                              'rejection thresholds are too strict...')
         
-        params.pop('channels')
         epochs_object = Epochs(params['collection_name'], subject, params, epochs)
         fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
@@ -791,6 +774,8 @@ class Caller(object):
             cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
         else:
             cmap = color_map
+            
+        print cmap
 
         img = plt.imshow(power[0], extent=[times[0], times[-1],
                                            frequencies[0], frequencies[-1]],
@@ -1209,7 +1194,6 @@ class Caller(object):
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
         
         tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
-
         
         if (not fmin and raw.info['highpass'] and 
                 not math.isnan(raw.info['highpass'])):
@@ -1217,13 +1201,13 @@ class Caller(object):
 
         if (not fmax and raw.info['lowpass'] and 
                 not math.isnan(raw.info['lowpass'])):
-            fmax = raw.info['lowpass']       
+            fmax = raw.info['lowpass']
         
-        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, #baseline=[None, None],
+        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax,
                   layout=lout, mode='logratio')
 
 
-    def plot_power_spectrum(self, params, save_data, epochs):
+    def plot_power_spectrum(self, params, save_data, epochs, basename='raw'):
         """
         Method for plotting power spectrum.
         Parameters:
@@ -1253,12 +1237,12 @@ class Caller(object):
         if save_data:
             subject_name = self.experiment.active_subject.subject_name
             if params['average']:
-                filename = subject_name + '_' + 'raw' + '_' + 'spectrum.txt'
+                filename = subject_name + '_' + basename + '_' + 'spectrum.txt'
                 fileManager.save_np_array(self.experiment, filename, 
                                           freqs, psds, epochs[0].info)
             else:
                 for idx, psd in enumerate(psds):
-                    filename = ''.join([subject_name, '_', 'raw', '_', 'spectrum',
+                    filename = ''.join([subject_name, '_', basename, '_', 'spectrum',
                                         '_', str(colors[idx]), '.txt'])
                     fileManager.save_np_array(self.experiment, filename, 
                                               freqs, psd, epochs[0].info)

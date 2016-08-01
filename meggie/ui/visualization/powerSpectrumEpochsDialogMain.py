@@ -95,8 +95,8 @@ class PowerSpectrumEpochsDialog(QtGui.QDialog):
             mne_epoch = epoch.raw
             mne_epoch.comment = epoch.collection_name
             mne_epochs.append(mne_epoch)
-        
+            
         try:
-            self.caller.plot_power_spectrum(params, save_data, mne_epochs)
+            self.caller.plot_power_spectrum(params, save_data, mne_epochs, basename='epochs')
         except Exception as e:
             exc_messagebox(self, e)
