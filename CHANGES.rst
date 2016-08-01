@@ -1,10 +1,22 @@
 Changelog
 =========
 
-0.2.10 (unreleased)
+0.3.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.0 (2016-08-01)
+------------------
+
+- New Fourier analysis tab
+- Source analysis tabs gathered to same place
+- Simplify tfr and spectrum calculations on raw data
+- Allow spectrums to be calculated for epoched data
+- Better save data functionality
+- Cleaner dialogs
+- Update MNE to 0.12.0
+- Global n_jobs setting
 
 0.2.9 (2016-04-27)
 ------------------
