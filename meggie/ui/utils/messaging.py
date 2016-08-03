@@ -4,11 +4,16 @@ from meggie.ui.general import messageBoxes
 def exc_messagebox(parent, e):
     # print traceback to console
     traceback.print_exc()
+    
+    try:
+        error_message = str(e.args[0])
+    except:
+        error_message = str(e)
 
     # create messagebox for user
     message = '\n\n'.join([
         'There has been an error with following message: ',
-        str(e.args[0]),
+        error_message,
         'More information can be found from console below.',
     ])
 
