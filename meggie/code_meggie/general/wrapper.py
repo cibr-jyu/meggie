@@ -24,8 +24,12 @@ def wrap_mne_call(experiment, mne_func, *args, **kwargs):
     except:
         logger.logger.info('ERROR: ' + mne_instance_name)
         exc = exc_info()
-        #TODO: terminate pool also?
-        raise exc[0], exc[1].args[0], exc[2]
+        
+        try:
+            message = str(exc[1].args[0])
+        except:
+            message = str(exc[1])
+        raise exc[0], message, exc[2]
     success_msg = 'SUCCESS: ' + mne_instance_name
     try:
         if isclass(mne_func):

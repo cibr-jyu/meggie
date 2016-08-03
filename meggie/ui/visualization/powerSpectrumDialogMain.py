@@ -95,13 +95,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
         
         epochs = []
         for interval in times:
-            events = np.array([[raw.first_samp + interval[0]*sfreq, 0, 1]], dtype=np.int16)
+            events = np.array([[raw.first_samp + interval[0]*sfreq, 0, 1]], dtype=np.int)
             tmin = 0
             tmax = interval[1] - interval[0]
-            epoch = Epochs(raw, events=events, tmin=tmin, tmax=tmax, 
-                           preload=True)
+            epoch = Epochs(raw, events=events, tmin=tmin, tmax=tmax)
             epoch.comment = str(interval)
-
             epochs.append(epoch)
         
         params = dict()
@@ -112,7 +110,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['overlap'] = self.ui.spinBoxOverlap.value()
         params['average'] = self.ui.checkBoxAverage.isChecked()
         save_data = self.ui.checkBoxSaveData.isChecked()
-
         
         try:
             QtGui.QApplication.setOverrideCursor(
