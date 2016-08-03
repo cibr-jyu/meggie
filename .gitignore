@@ -14,3 +14,4 @@ preferences.cfg
 .project
 .pydevproject
 .settings/
+.eggs
