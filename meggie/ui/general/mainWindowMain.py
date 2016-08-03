@@ -1570,6 +1570,12 @@ class MainWindow(QtGui.QMainWindow):
             _update_source_estimates)
         self.sourceEstimateDialog.show()
 
+    def on_pushButtonCheckSurfaces_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subject = self.caller.experiment.active_subject
+        mne.viz.plot_bem(subject='', subjects_dir=subject.reconFiles_directory, orientation='coronal')
 
     def _update_source_estimates(self):
         """Helper for updating source estimates to list."""
