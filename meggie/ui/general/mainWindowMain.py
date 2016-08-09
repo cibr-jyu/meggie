@@ -218,7 +218,9 @@ class MainWindow(QtGui.QMainWindow):
                                                                       True)
 
         tvfs = self.ui.tableViewFModelsForSolution
-        tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)
+        tvfs.setModel(self.forwardModelModel)
+        
+        #tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)
         for colnum in range(1, 16):
             tvfs.setColumnHidden(colnum, True)
 
