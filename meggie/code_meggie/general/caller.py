@@ -1866,25 +1866,16 @@ class Caller(object):
                                 'solution:\n' + str(err))
         elif type == 'evoked':
             evoked = subject.evokeds[inst_name]
-            evoked_raw = evoked._raw
+            stc = list()
 
-            if isinstance(evoked_raw, list):
-                stc = list()
-                for inst in evoked_raw:
-                    try:
-                        stc.append(mne.minimum_norm.apply_inverse(inst, inv,
-                            lambda2=lmbd, method=method))
-                    except Exception as err:
-                        raise Exception('Exception while computing inverse '
-                                        'solution:\n' + str(err))
-            else:
+            for mne_evoked in evoked.mne_evokeds.values():
                 try:
-                    stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
-                                                         lambda2=lmbd,
-                                                         method=method)
+                    stc.append(mne.minimum_norm.apply_inverse(mne_evoked, inv,
+                        lambda2=lmbd, method=method))
                 except Exception as err:
                     raise Exception('Exception while computing inverse '
                                     'solution:\n' + str(err))
+
         stc_fname = os.path.split(inv_file)[-1]
         if isinstance(stc, list):  # epochs and evoked saved individually
             if type == 'epochs':

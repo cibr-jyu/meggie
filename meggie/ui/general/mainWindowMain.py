@@ -181,6 +181,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
+        self.ui.tabWidgetSourceAnalysis.currentChanged.connect(self.on_currentChanged_source_analysis)
 
         # Models for several views in the UI, e.g. in the forward model setup
         # tab.
@@ -1926,7 +1927,24 @@ class MainWindow(QtGui.QMainWindow):
             mode = QtGui.QAbstractItemView.MultiSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
-        elif index == 10:
+#         elif index == 10:
+#             mode = QtGui.QAbstractItemView.SingleSelection
+#             self.epochList.ui.groupBoxEvents.setVisible(False)
+#             self.epochList.setParent(self.ui.frameInverseEpochs)
+        else:
+            self.epochList.hide()
+            return
+        self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
+        self.epochList.show()
+
+#         if index == 10:
+#             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_23)
+#         elif index == 11:
+#             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_24)
+
+    def on_currentChanged_source_analysis(self):
+        index_source = self.ui.tabWidgetSourceAnalysis.currentIndex()
+        if index_source == 6:
             mode = QtGui.QAbstractItemView.SingleSelection
             self.epochList.ui.groupBoxEvents.setVisible(False)
             self.epochList.setParent(self.ui.frameInverseEpochs)
@@ -1936,11 +1954,10 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
         self.epochList.show()
 
-        if index == 10:
+        if index_source == 6:
             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_23)
-        elif index == 11:
+        elif index_source == 7:
             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_24)
-
 
     def reinitialize_models(self):
         """
