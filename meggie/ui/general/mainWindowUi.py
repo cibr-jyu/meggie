@@ -1592,7 +1592,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidgetSourceAnalysis.setCurrentIndex(6)
+        self.tabWidgetSourceAnalysis.setCurrentIndex(0)
         QtCore.QObject.connect(self.radioButtonEpoch, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.frameInverseEpochs.setEnabled)
         QtCore.QObject.connect(self.radioButtonEvoked, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.groupBoxInverseEvoked.setEnabled)
         QtCore.QObject.connect(self.radioButtonEvoked, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.listWidgetInverseEvoked.setEnabled)
