@@ -545,6 +545,27 @@
                  </layout>
                 </item>
                 <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QPushButton" name="pushButtonEEG">
+                    <property name="text">
+                     <string>Calculate EEG projections...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonApplyEEG">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Apply EEG projections...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
                  <widget class="QGroupBox" name="groupBoxVisualization_2">
                   <property name="title">
                    <string>Visualization:</string>

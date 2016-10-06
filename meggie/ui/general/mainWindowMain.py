@@ -68,6 +68,7 @@ from meggie.ui.visualization import visualizeEpochChannelDialogMain
 from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
+from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
@@ -1132,6 +1133,16 @@ class MainWindow(QtGui.QMainWindow):
 
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
+
+    def on_pushButtonEEG_clicked(self, checked=None):
+        """Open the dialog for calculating the EEG PCA."""
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+
+        self.eegDialog = EegParametersDialog(self)
+        self.eegDialog.show()
 
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """Open the dialog for applying the EOG-projections to the data."""
