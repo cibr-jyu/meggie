@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>621</width>
-    <height>631</height>
+    <width>618</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>603</width>
-        <height>574</height>
+        <width>600</width>
+        <height>623</height>
        </rect>
       </property>
       <widget class="QGroupBox" name="groupBoxEvents">
@@ -366,6 +366,9 @@
              <property name="text">
               <string>Number of projection vectors for EEG channels:</string>
              </property>
+             <property name="scaledContents">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -388,6 +391,32 @@
          </item>
         </layout>
        </widget>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>530</y>
+         <width>221</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QPushButton" name="pushButtonPlotEpochs">
+          <property name="text">
+           <string>Plot average epochs</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonShowEvents">
+          <property name="text">
+           <string>Show event locations</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>
@@ -415,7 +444,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonAddProjs">
+      <widget class="QPushButton" name="pushButtonCompute">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -423,7 +452,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Add SSP projections</string>
+        <string>Compute</string>
        </property>
       </widget>
      </item>
@@ -450,7 +479,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonAddProjs</sender>
+   <sender>pushButtonCompute</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>accept()</slot>

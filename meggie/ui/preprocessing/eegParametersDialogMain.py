@@ -7,6 +7,7 @@ from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
 import mne
+import numpy as np
 
 from meggie.code_meggie.general.caller import Caller
 
@@ -22,7 +23,8 @@ class EegParametersDialog(QtGui.QDialog):
         
         raw = self.caller.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.info.get('ch_names'))
-
+        
+        self.event_id = None
         self.ui.tableWidgetEvents.currentItemChanged.connect(self.\
                                             on_currentChanged)
         self.ui.tableWidgetEvents.setSortingEnabled(False)
@@ -44,8 +46,8 @@ class EegParametersDialog(QtGui.QDialog):
         QtGui.QApplication.setOverrideCursor(QtGui.\
                                              QCursor(QtCore.Qt.WaitCursor))
         params = dict()
-        event_id = int(self.ui.labelBlinkId.text())
-        params['event_id'] = event_id
+        self.event_id = int(self.ui.labelBlinkId.text())
+        params['event_id'] = self.event_id
         params['ch_name'] = str(self.ui.comboBoxChannelSelect.currentText())
         params['l_freq'] = float(self.ui.doubleSpinBoxLowPass.value())
         params['h_freq'] = float(self.ui.doubleSpinBoxHighPass.value())
@@ -53,9 +55,7 @@ class EegParametersDialog(QtGui.QDialog):
         params['tstart'] = float(self.ui.doubleSpinBoxStart.value())
         
         try:
-            #sfreq = self.caller.raw.info['sfreq']
             eog_events = self.findEogEvents(params) #self.caller.findEogEvents(params)
-            #eog_events = self.caller.raw.index_as_time(eog_events)
             self.ui.tableWidgetEvents.clear()
             self.ui.tableWidgetEvents.setRowCount(0)
             for i in range(0, len(eog_events)):
@@ -93,6 +93,29 @@ class EegParametersDialog(QtGui.QDialog):
             return []
         return eog_events
 
+    def get_events(self):
+        """
+        A convenience function for fetching all the events from
+        the tableWidgetEvents as a numpy array.
+        returns:
+        eog_events as numpy array
+        """
+        events = list()
+        rowCount = self.ui.tableWidgetEvents.rowCount()
+        for i in xrange(0, rowCount):
+            time = int(self.ui.tableWidgetEvents.item(i, 1).text().toFloat()[0])
+            prev = int(self.ui.tableWidgetEvents.item(i, 2).text().toFloat()[0])
+            curr = int(self.ui.tableWidgetEvents.item(i, 3).text().toFloat()[0])
+             
+#            time = int(self.ui.tableWidgetEvents.item(i, 1).text()[0])
+#            prev = int(self.ui.tableWidgetEvents.item(i, 2).text()[0])
+#            curr = int(self.ui.tableWidgetEvents.item(i, 3).text()[0])
+            
+            events.append([time, prev, curr])
+        #events = self.caller.raw.time_as_index(events)
+        return np.array(events)
+
+
     def on_pushButtonRemove_clicked(self, checked=None):
         if checked is None: return
         index = self.ui.tableWidgetEvents.currentRow()
@@ -108,5 +131,38 @@ class EegParametersDialog(QtGui.QDialog):
             self.ui.pushButtonDelete.setEnabled(False)
         else:
             self.ui.pushButtonDelete.setEnabled(True)
+
+    def on_pushButtonPlotEpochs_clicked(self, checked=None):
+        """
+        Plots the averaged epochs.
+        """
+        if checked is None: return
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.
+                                                           Qt.WaitCursor))
+        #events = self.getEvents()
+        events = self.get_events()
+        print events
+        tmin = self.ui.doubleSpinBoxTmin.value()
+        tmax = self.ui.doubleSpinBoxTmax.value()
+
+        self.caller.plot_average_epochs(events, tmin, tmax, self.event_id)
+        QtGui.QApplication.restoreOverrideCursor()
+
+    def on_pushButtonShowEvents_clicked(self, checked=None):
+        """
+        Plots the events on mne_browse_raw.
+        """
+        if checked is None: return
+        events = self.get_events()
+        self.caller.plot_events(events)
+
+    def on_pushButtonCompute_clicked(self):
+        params = dict()
+        params['events'] = self.get_events
+        params['event_id'] = 998
+        params['tmin'] = self.ui.doubleSpinBoxTmin.value()
+        params['tmax'] = self.ui.doubleSpinBoxTmax.value()
+        params['n_eeg'] = self.ui.spinBoxVectors.value()
+        self.caller.call_eeg_ssp(params, self.caller.experiment.active_subject)
 
         

@@ -48,6 +48,7 @@ from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
+from astropy.units import Tmin
 
 
 @Singleton
@@ -316,6 +317,44 @@ class Caller(object):
         print "Writing EOG events in %s" % eog_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
 
+    def call_eeg_ssp(self, dic, subject):
+        """
+        Creates EEG projections using SSP for given data.
+        Keyword arguments:
+        dic           -- dictionary of parameters including the MEG-data.
+        subject       -- The subject to perform action on.
+        """
+        self._call_eeg_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
+        
+    #threaded
+    def _call_eeg_ssp(self, dic, subject):
+        raw = subject.get_working_file()
+        events = dic['events']
+        event_id = dic['event_id']
+        tmin = dic['tmin']
+        tmax = dic['tmax']
+        n_eeg = dic['n_eeg']
+        try:
+            eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+                                tmin=tmin, tmax=tmax)
+        except Exception as e:
+            print "Could not create epochs.\n"
+            print str(e)
+            return []
+        
+        # Average EOG epochs
+        try:
+            eog_evoked = eog_epochs.average()
+        
+            # Compute SSPs
+            proj = mne.compute_proj_evoked(eog_evoked, n_eeg=n_eeg)
+            #TODO: self.raw.add_proj(proj) in apply_exg method
+        except Exception as e:
+            print "Error while computing projections.\n"
+            print str(e)
+            return []
+        #return proj        
+
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
         Applies ECG or EOG projections for MEG-data.  
@@ -370,6 +409,47 @@ class Caller(object):
 
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
+
+    def plot_average_epochs(self, events, tmin, tmax, event_id):
+        """
+        Method for plotting average epochs.
+        """
+        raw = self.experiment.active_subject.get_working_file()
+        print "Plotting averages...\n"
+        try:
+            print event_id
+            eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+                                tmin=tmin, tmax=tmax)
+        except Exception as e:
+            print "Could not create epochs.\n"
+            print str(e)
+            return
+
+        # Average EOG epochs
+        eog_evoked = eog_epochs.average()
+        try:
+            eog_evoked.plot()
+        except:# PyDeadObjectError:
+            #For PyDeadObjectError bug:
+            pass
+        print "Finished\n"
+
+    def plot_events(self, events):
+        """
+        Method for plotting the event locations in mne_browse_raw.
+        Parameters:
+        events - A list of events
+        """
+        raw = self.experiment.active_subject.get_working_file()
+        print "Plotting events...\n"
+        try:
+            raw.plot(events=events, scalings=dict(eeg=40e-6))
+            plt.show()
+        except Exception as e:
+            print "Exception while plotting events."
+            print str(e)
+        print "Finished"
+
 
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
