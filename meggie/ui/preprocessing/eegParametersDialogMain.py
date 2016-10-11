@@ -10,6 +10,7 @@ import mne
 import numpy as np
 
 from meggie.code_meggie.general.caller import Caller
+from meggie.ui.utils.messaging import exc_messagebox
 
 class EegParametersDialog(QtGui.QDialog):
     
@@ -25,16 +26,18 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.comboBoxChannelSelect.addItems(raw.info.get('ch_names'))
         
         self.event_id = None
-        self.ui.tableWidgetEvents.currentItemChanged.connect(self.\
-                                            on_currentChanged)
+        self.ui.tableWidgetEvents.currentItemChanged.connect(
+            self.on_currentChanged
+        )
         self.ui.tableWidgetEvents.setSortingEnabled(False)
         self.ui.tableWidgetEvents.setSelectionBehavior(1)        
         self.ui.tableWidgetEvents.setColumnCount(4)
-        self.ui.tableWidgetEvents.setHorizontalHeaderLabels(["Time (s)",
-                                                             "Sample",
-                                                             "Prev. id",
-                                                             "Current id"])
-
+        self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
+            "Time (s)",
+            "Sample",
+            "Prev. id",
+            "Current id"
+        ])
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -43,8 +46,7 @@ class EegParametersDialog(QtGui.QDialog):
         """
         raw = self.caller.experiment.active_subject.get_working_file()
         if checked is None or not raw: return
-        QtGui.QApplication.setOverrideCursor(QtGui.\
-                                             QCursor(QtCore.Qt.WaitCursor))
+        
         params = dict()
         self.event_id = int(self.ui.labelBlinkId.text())
         params['event_id'] = self.event_id
@@ -55,44 +57,34 @@ class EegParametersDialog(QtGui.QDialog):
         params['tstart'] = float(self.ui.doubleSpinBoxStart.value())
         
         try:
-            eog_events = self.findEogEvents(params) #self.caller.findEogEvents(params)
+            eog_events = self.caller.find_eog_events(params)
             self.ui.tableWidgetEvents.clear()
             self.ui.tableWidgetEvents.setRowCount(0)
             for i in range(0, len(eog_events)):
                 self.ui.tableWidgetEvents.insertRow(i)
-                self.ui.tableWidgetEvents.setItem(i,0,QtGui.\
-                            QTableWidgetItem(str(raw.index_as_time(eog_events[i][0])[0])))
-                self.ui.tableWidgetEvents.setItem(i,1,QtGui.\
-                            QTableWidgetItem(str(int(eog_events[i][0]))))
-                self.ui.tableWidgetEvents.setItem(i,2,QtGui.\
-                            QTableWidgetItem(str(eog_events[i][1])))
-                self.ui.tableWidgetEvents.setItem(i,3,QtGui.\
-                            QTableWidgetItem(str(eog_events[i][2])))
+                self.ui.tableWidgetEvents.setItem(
+                    i,0,QtGui.QTableWidgetItem(
+                        str(raw.index_as_time(eog_events[i][0])[0])
+                    )
+                )
+                self.ui.tableWidgetEvents.setItem(i,1,QtGui.
+                    QTableWidgetItem(str(int(eog_events[i][0])))
+                )
+                self.ui.tableWidgetEvents.setItem(
+                    i,2,QtGui.QTableWidgetItem(str(eog_events[i][1]))
+                )
+                self.ui.tableWidgetEvents.setItem(
+                    i,3,QtGui.QTableWidgetItem(str(eog_events[i][2]))
+                )
         except Exception as e:
-            print str(e)
-        finally:
-            self.ui.tableWidgetEvents.setHorizontalHeaderLabels(["Time (s)",
-                                                                 "Sample",
-                                                                 "Prev. id",
-                                                                 "Current id"])
-            QtGui.QApplication.restoreOverrideCursor()
+            exc_messagebox(self, e)
+        self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
+            "Time (s)",
+            "Sample",
+            "Prev. id",
+            "Current id"
+        ])
             
-    def findEogEvents(self, params):
-        #TODO: move to caller
-        try:
-            print type(params['event_id'])
-            raw = self.caller.experiment.active_subject.get_working_file()
-            eog_events = mne.preprocessing.find_eog_events(raw, event_id=params['event_id'],
-                        l_freq=params['l_freq'], h_freq=params['h_freq'],
-                        filter_length=params['filter_length'],
-                        ch_name=params['ch_name'], verbose=True,
-                        tstart=params['tstart'])
-        except Exception as e:
-            print "Exception while finding events.\n"
-            print str(e)
-            return []
-        return eog_events
-
     def get_events(self):
         """
         A convenience function for fetching all the events from
@@ -102,19 +94,15 @@ class EegParametersDialog(QtGui.QDialog):
         """
         events = list()
         rowCount = self.ui.tableWidgetEvents.rowCount()
+        
         for i in xrange(0, rowCount):
-            time = int(self.ui.tableWidgetEvents.item(i, 1).text().toFloat()[0])
-            prev = int(self.ui.tableWidgetEvents.item(i, 2).text().toFloat()[0])
-            curr = int(self.ui.tableWidgetEvents.item(i, 3).text().toFloat()[0])
-             
-#            time = int(self.ui.tableWidgetEvents.item(i, 1).text()[0])
-#            prev = int(self.ui.tableWidgetEvents.item(i, 2).text()[0])
-#            curr = int(self.ui.tableWidgetEvents.item(i, 3).text()[0])
-            
+            #time = float(self.ui.tableWidgetEvents.item(i, 1).text())
+            time = int(self.ui.tableWidgetEvents.item(i, 1).text())
+            prev = int(self.ui.tableWidgetEvents.item(i, 2).text())
+            curr = int(self.ui.tableWidgetEvents.item(i, 3).text())
             events.append([time, prev, curr])
-        #events = self.caller.raw.time_as_index(events)
-        return np.array(events)
 
+        return np.array(events)
 
     def on_pushButtonRemove_clicked(self, checked=None):
         if checked is None: return
@@ -128,26 +116,20 @@ class EegParametersDialog(QtGui.QDialog):
         """
         index = self.ui.tableWidgetEvents.currentIndex().row()
         if index < 0:
-            self.ui.pushButtonDelete.setEnabled(False)
+            self.ui.pushButtonRemove.setEnabled(False)
         else:
-            self.ui.pushButtonDelete.setEnabled(True)
+            self.ui.pushButtonRemove.setEnabled(True)
 
     def on_pushButtonPlotEpochs_clicked(self, checked=None):
         """
         Plots the averaged epochs.
         """
         if checked is None: return
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.
-                                                           Qt.WaitCursor))
-        #events = self.getEvents()
         events = self.get_events()
-        print events
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
-
         self.caller.plot_average_epochs(events, tmin, tmax, self.event_id)
-        QtGui.QApplication.restoreOverrideCursor()
-
+        
     def on_pushButtonShowEvents_clicked(self, checked=None):
         """
         Plots the events on mne_browse_raw.
@@ -158,11 +140,13 @@ class EegParametersDialog(QtGui.QDialog):
 
     def on_pushButtonCompute_clicked(self):
         params = dict()
-        params['events'] = self.get_events
+        params['events'] = self.get_events()
         params['event_id'] = 998
         params['tmin'] = self.ui.doubleSpinBoxTmin.value()
         params['tmax'] = self.ui.doubleSpinBoxTmax.value()
         params['n_eeg'] = self.ui.spinBoxVectors.value()
         self.caller.call_eeg_ssp(params, self.caller.experiment.active_subject)
-
+        self.close()
+        self.parent.initialize_ui()
+        
         

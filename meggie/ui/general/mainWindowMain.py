@@ -73,6 +73,7 @@ from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
+from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.visualization.TFRDialogMain import TFRDialog
 from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
 from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
@@ -1166,6 +1167,17 @@ class MainWindow(QtGui.QMainWindow):
         self.addEcgProjs = AddECGProjections(self, info['projs'])
         self.addEcgProjs.exec_()
         
+    def on_pushButtonApplyEEG_clicked(self, checked=None):
+        """Open the dialog for applying the ECG-projections to the data."""
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        
+        info = self.caller.experiment.active_subject.get_working_file().info
+        self.addEegProjs = AddEEGProjections(self, info['projs'])
+        self.addEegProjs.exec_()        
+        
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
@@ -1670,6 +1682,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
+        self.ui.checkBoxEEGComputed.setChecked(False)
+        self.ui.checkBoxEEGApplied.setChecked(False)
+
         self.ui.checkBoxConvertedToMNE.setChecked(False)
         self.ui.lineEditRecon.setText('')
 
@@ -1677,6 +1692,7 @@ class MainWindow(QtGui.QMainWindow):
         # activated later if prerequisites are met.
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
+        self.ui.pushButtonApplyEEG.setEnabled(False)
         self.ui.pushButtonConvertToMNE.setEnabled(False)
         self.ui.pushButtonCheckTalairach.setEnabled(False)
         self.ui.pushButtonSkullStrip.setEnabled(False)
@@ -1709,6 +1725,11 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.checkBoxEOGComputed.setChecked(True)
         
+        # Check whether EEG projections are calculated
+        if active_subject.check_eeg_projs():
+            self.ui.pushButtonApplyEEG.setEnabled(True)
+            self.ui.checkBoxEEGComputed.setChecked(True)        
+        
         # Check whether ECG projections are applied
         if all([
             active_subject.check_ecg_applied(), 
@@ -1722,6 +1743,13 @@ class MainWindow(QtGui.QMainWindow):
             'eog_applied' in active_subject.working_file_name
         ]):
             self.ui.checkBoxEOGApplied.setChecked(True)
+
+        # Check whether EEG projections are applied
+        if all([
+            active_subject.check_eeg_applied(),
+            'eeg_applied' in active_subject.working_file_name
+        ]):
+            self.ui.checkBoxEEGApplied.setChecked(True)
         
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():

@@ -19,7 +19,7 @@ from functools import partial
 from PyQt4 import QtCore, QtGui
 
 import mne
-from mne import make_fixed_length_events
+from mne import make_fixed_length_events, compute_proj_evoked
 from mne.channels.layout import read_layout
 from mne.channels.layout import _pair_grad_sensors_from_ch_names
 from mne.channels.layout import _merge_grad_data
@@ -28,7 +28,7 @@ from mne.viz import iter_topography
 from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt, _preproc_tfr
 from mne.time_frequency import psd_welch
-from mne.preprocessing import compute_proj_ecg, compute_proj_eog
+from mne.preprocessing import compute_proj_ecg, compute_proj_eog, find_eog_events
 
 import numpy as np
 import pylab as pl
@@ -311,7 +311,6 @@ class Caller(object):
             os.remove(preload)
 
         print "Writing EOG projections in %s" % eog_proj_fname
-        #log mne call
         wrap_mne_call(self.experiment, mne.write_proj, eog_proj_fname, projs)
 
         print "Writing EOG events in %s" % eog_event_fname
@@ -326,7 +325,7 @@ class Caller(object):
         """
         self._call_eeg_ssp(dic, subject, do_meanwhile=self.parent.update_ui)
         
-    #threaded
+    @threaded
     def _call_eeg_ssp(self, dic, subject):
         raw = subject.get_working_file()
         events = dic['events']
@@ -334,26 +333,30 @@ class Caller(object):
         tmin = dic['tmin']
         tmax = dic['tmax']
         n_eeg = dic['n_eeg']
-        try:
-            eog_epochs = mne.Epochs(raw, events, event_id=event_id,
-                                tmin=tmin, tmax=tmax)
-        except Exception as e:
-            print "Could not create epochs.\n"
-            print str(e)
-            return []
+        #eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+        #                tmin=tmin, tmax=tmax)
+        #events = np.array(events)
+        
+        eog_epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
+            raw, events, event_id=event_id, tmin=tmin, tmax=tmax)
+        
         
         # Average EOG epochs
-        try:
-            eog_evoked = eog_epochs.average()
+        eog_evoked = eog_epochs.average()
         
-            # Compute SSPs
-            proj = mne.compute_proj_evoked(eog_evoked, n_eeg=n_eeg)
-            #TODO: self.raw.add_proj(proj) in apply_exg method
-        except Exception as e:
-            print "Error while computing projections.\n"
-            print str(e)
-            return []
-        #return proj        
+        # Compute SSPs
+        projs = wrap_mne_call(self.experiment, compute_proj_evoked, eog_evoked, n_eeg=n_eeg)
+
+        prefix = os.path.join(subject.subject_path, subject.subject_name) 
+        eeg_event_fname = prefix + '_eeg-eve.fif'
+        eeg_proj_fname = prefix + '_eeg_proj.fif'
+        
+        print "Writing EOG projections in %s" % eeg_proj_fname
+        wrap_mne_call(self.experiment, mne.write_proj, eeg_proj_fname, projs)
+
+        print "Writing EOG events in %s" % eeg_event_fname
+        wrap_mne_call(self.experiment, mne.write_events, eeg_event_fname, events)
+        #TODO: self.raw.add_proj(proj) in apply_exg method
 
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
@@ -390,6 +393,12 @@ class Caller(object):
                 fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
             else:
                 fname = raw.info.get('filename')
+        elif kind == 'eeg':
+            if len(filter(os.path.isfile,
+                      glob.glob(directory + '/*-eeg_applied.fif'))) > 0:
+                fname = glob.glob(directory + '/*-eeg_applied.fif')[0]
+            else:
+                fname = raw.info.get('filename')
 
         for new_proj in projs:  # first remove projs
             for idx, proj in enumerate(raw.info['projs']):
@@ -410,30 +419,23 @@ class Caller(object):
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
+    @threaded
     def plot_average_epochs(self, events, tmin, tmax, event_id):
         """
         Method for plotting average epochs.
         """
         raw = self.experiment.active_subject.get_working_file()
         print "Plotting averages...\n"
-        try:
-            print event_id
-            eog_epochs = mne.Epochs(raw, events, event_id=event_id,
-                                tmin=tmin, tmax=tmax)
-        except Exception as e:
-            print "Could not create epochs.\n"
-            print str(e)
-            return
-
+        print event_id
+        eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+                        tmin=tmin, tmax=tmax)
+        
         # Average EOG epochs
         eog_evoked = eog_epochs.average()
-        try:
-            eog_evoked.plot()
-        except:# PyDeadObjectError:
-            #For PyDeadObjectError bug:
-            pass
+        eog_evoked.plot()
         print "Finished\n"
 
+    @threaded
     def plot_events(self, events):
         """
         Method for plotting the event locations in mne_browse_raw.
@@ -442,17 +444,25 @@ class Caller(object):
         """
         raw = self.experiment.active_subject.get_working_file()
         print "Plotting events...\n"
-        try:
-            raw.plot(events=events, scalings=dict(eeg=40e-6))
-            plt.show()
-        except Exception as e:
-            print "Exception while plotting events."
-            print str(e)
+        raw.plot(events=events, scalings=dict(eeg=40e-6))
+        plt.show()
         print "Finished"
 
 
     def plot_projs_topomap(self, raw):
         wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+
+    @threaded
+    def find_eog_events(self, params):
+        print type(params['event_id'])
+        raw = self.experiment.active_subject.get_working_file()
+        eog_events = wrap_mne_call(self.experiment, find_eog_events, raw,
+                        event_id=params['event_id'],
+                        l_freq=params['l_freq'], h_freq=params['h_freq'],
+                        filter_length=params['filter_length'],
+                        ch_name=params['ch_name'], verbose=True,
+                        tstart=params['tstart'])
+        return eog_events
 
     def create_epochs(self, params, subject):
         """ Epochs are created in a way that one collection consists of such 

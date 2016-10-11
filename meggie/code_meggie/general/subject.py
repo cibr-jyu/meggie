@@ -352,6 +352,19 @@ class Subject(QObject):
         if len(files) > 1:
             return True
         return False
+    
+    def check_eeg_projs(self):
+        """
+        Checks the subject folder for EEG projection files.
+        Returns True if projections found.
+        """
+        path = self.subject_path
+        #Check whether EEG projections are calculated
+        files =  filter(os.path.isfile, glob.glob(path + '/*_eeg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_eeg-eve*'))
+        if len(files) > 1:
+            return True
+        return False
         
     def check_ecg_applied(self):
         """
@@ -373,6 +386,18 @@ class Subject(QObject):
         path = self.subject_path
         #Check whether EOG projections are applied
         files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
+        if len(files) > 0:
+            return True
+        return False
+
+    def check_eeg_applied(self):
+        """
+        Checks the subject folder for EEG applied file.
+        Returns True if eeg_applied found.
+        """
+        path = self.subject_path
+        #Check whether EEG projections are applied
+        files = filter(os.path.isfile, glob.glob(path + '/*eeg_applied*'))
         if len(files) > 0:
             return True
         return False
