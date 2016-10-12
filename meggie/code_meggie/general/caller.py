@@ -381,24 +381,16 @@ class Caller(object):
     @threaded
     def _apply_exg(self, kind, raw, directory, projs, applied):
         """Performed in a worker thread."""
+        fname = os.path.join(directory, self.experiment.active_subject.working_file_name)
         if kind == 'ecg':
-            if len(filter(os.path.isfile,
-                      glob.glob(directory + '/*-eog_applied.fif'))) > 0:
-                fname = glob.glob(directory + '/*-eog_applied.fif')[0]
-            else:
-                fname = raw.info.get('filename')
-        elif kind == 'eog':
-            if len(filter(os.path.isfile,
-                      glob.glob(directory + '/*-ecg_applied.fif'))) > 0:
-                fname = glob.glob(directory + '/*-ecg_applied.fif')[0]
-            else:
-                fname = raw.info.get('filename')
-        elif kind == 'eeg':
-            if len(filter(os.path.isfile,
-                      glob.glob(directory + '/*-eeg_applied.fif'))) > 0:
-                fname = glob.glob(directory + '/*-eeg_applied.fif')[0]
-            else:
-                fname = raw.info.get('filename')
+            if '-ecg_applied' not in fname:
+                fname = fname.split('.')[0] + '-ecg_applied.fif'
+        if kind == 'eog':
+            if '-eog_applied' not in fname:
+                fname = fname.split('.')[0] + '-eog_applied.fif'
+        if kind == 'eeg':
+            if '-eeg_applied' not in fname:
+                fname = fname.split('.')[0] + '-eeg_applied.fif'
 
         for new_proj in projs:  # first remove projs
             for idx, proj in enumerate(raw.info['projs']):
@@ -412,9 +404,6 @@ class Caller(object):
             applied = np.array(applied)
 
         wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
-
-        if kind + '_applied' not in fname:
-            fname = fname.split('.')[-2] + '-' + kind + '_applied.fif'
 
         #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
