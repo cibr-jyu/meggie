@@ -404,8 +404,18 @@ class Caller(object):
             applied = np.array(applied)
 
         wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
-
-        #wrap_mne_call(self.experiment, raw.save, fname, overwrite=True)
+        
+        """
+        #Removes older raw files with applied projs
+        directory = os.path.dirname(fname)
+        files = glob.glob(directory + '/*g_applied.fif')
+    
+        for f in files:
+            if f == fname:
+                continue
+            fileManager.delete_file_at(directory, f)
+            print 'Removed previous working file: ' + f
+        """
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
     @threaded

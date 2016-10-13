@@ -394,12 +394,14 @@ def open_raw(fname, preload=True):
 
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
-    print fname
-    print os.path.basename(fname)
-    print experiment.active_subject.working_file_name
     experiment.active_subject.working_file_name = os.path.basename(fname)
     
-
+    """
+    #Needs to be done if removed old raw files with projs
+    raw = open_raw(fname)
+    experiment.active_subject.set_working_file(raw)
+    """
+    
 def group_save_evokeds(filename, evokeds, names):
     """ Combine data from multiple evokeds to one big csv """
 
