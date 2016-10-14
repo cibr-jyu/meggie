@@ -165,8 +165,8 @@ class EcgParametersDialog(QtGui.QDialog):
                 self.caller.experiment.active_subject, str(e)))
             
         self.batching_widget.cleanup()
-        self.close()
         self.parent.initialize_ui()
+        self.close()
         
     def acceptBatch(self):
         
@@ -192,10 +192,10 @@ class EcgParametersDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 self.caller.activate_subject(name)
-            try:
-                self.calculate_ecg(subject)    
-            except Exception as e:
-                self.batching_widget.failed_subjects.append((subject, str(e)))              
+                try:
+                    self.calculate_ecg(subject)    
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject, str(e)))              
 
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()        
