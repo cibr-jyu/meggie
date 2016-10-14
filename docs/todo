@@ -15,8 +15,13 @@ epochs
 * mieti interesting channelsia epokkeja luodessa
 * save data to file kaikkialle (katso mallia evoked statsien tallennuksesta)
 
+- Doris:
+* Customize channels -button?
+* create epochs by specifying intervals and leaving out some subintervals
 
 
 
 - Misc:
 * group average spektreille?
+
+pakettiin mayavi ja pysurfer

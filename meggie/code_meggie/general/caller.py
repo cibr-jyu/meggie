@@ -527,7 +527,7 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    def average_channels(self, instance, lobeName):
+    def average_channels(self, instance, lobeName, channelSet=[]):
         """
         Shows the averages for averaged channels in lobeName, or channelSet
         if it is provided.
@@ -538,18 +538,27 @@ class Caller(object):
         lobename     -- the lobe over which to average.
         channelSet   -- manually input list of channels. 
         """
+        
+        if channelSet:
+            channels = channelSet
+            title = 'selected set of channels.'
+        else:
+            channels = wrap_mne_call(
+                self.experiment, mne.selection.read_selection, lobeName)
+            title = lobeName
+            
+        print "Calculating channel averages for " + title
 
-        averageTitleString, dataList = self._average_channels(
-            instance, lobeName, do_meanwhile=self.parent.update_ui
-        )
+        dataList = self._average_channels(
+            instance, channels, do_meanwhile=self.parent.update_ui)
 
         # Plotting:
         plt.clf()
         fig = plt.figure()
         mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
         fig.canvas.set_window_title(mi.subject_name + 
-             '-- channel average for ' + averageTitleString)
-        fig.suptitle('Channel average for ' + averageTitleString, y=1.0025)
+             '-- channel average for ' + title)
+        fig.suptitle('Channel average for ' + title, y=1.0025)
 
         # Draw a separate plot for each event type
         for index, (times, eventName, data) in enumerate(dataList):
@@ -573,7 +582,7 @@ class Caller(object):
         fig.show()
 
     @threaded
-    def _average_channels(self, instance, lobeName):
+    def _average_channels(self, instance, channelsToAve):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
             epochs = self.experiment.active_subject.epochs.get(instance).raw
@@ -589,9 +598,6 @@ class Caller(object):
             evokeds = [instance]
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
             evokeds = instance
-
-        channelsToAve = wrap_mne_call(self.experiment, mne.selection.read_selection, lobeName)
-        averageTitleString = str(lobeName)
         
         # Channel names in Evoked objects may or may not have whitespaces
         # depending on the measurements settings,
@@ -618,8 +624,6 @@ class Caller(object):
     
             eegIdxs = mne.pick_types(evokedToAve.info, meg=False, eeg=True,
                                        ref_meg=False)
-        
-            print "Calculating channel averages for " + averageTitleString
 
             # Merges the grad channel pairs in evokedToAve
             if len(gradsIdxs) > 0:
@@ -651,7 +655,7 @@ class Caller(object):
                     averagedEegData
                 ))
 
-        return averageTitleString, dataList
+        return dataList
 
     def group_average(self, evoked_name, layout):
         """
@@ -1866,25 +1870,16 @@ class Caller(object):
                                 'solution:\n' + str(err))
         elif type == 'evoked':
             evoked = subject.evokeds[inst_name]
-            evoked_raw = evoked._raw
+            stc = list()
 
-            if isinstance(evoked_raw, list):
-                stc = list()
-                for inst in evoked_raw:
-                    try:
-                        stc.append(mne.minimum_norm.apply_inverse(inst, inv,
-                            lambda2=lmbd, method=method))
-                    except Exception as err:
-                        raise Exception('Exception while computing inverse '
-                                        'solution:\n' + str(err))
-            else:
+            for mne_evoked in evoked.mne_evokeds.values():
                 try:
-                    stc = mne.minimum_norm.apply_inverse(evoked_raw, inv,
-                                                         lambda2=lmbd,
-                                                         method=method)
+                    stc.append(mne.minimum_norm.apply_inverse(mne_evoked, inv,
+                        lambda2=lmbd, method=method))
                 except Exception as err:
                     raise Exception('Exception while computing inverse '
                                     'solution:\n' + str(err))
+
         stc_fname = os.path.split(inv_file)[-1]
         if isinstance(stc, list):  # epochs and evoked saved individually
             if type == 'epochs':

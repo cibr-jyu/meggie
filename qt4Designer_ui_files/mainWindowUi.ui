@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -3664,5 +3664,54 @@ p, li { white-space: pre-wrap; }
   <tabstop>listViewSubjects</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>radioButtonEpoch</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameInverseEpochs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>500</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>530</x>
+     <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>480</x>
+     <y>506</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>529</x>
+     <y>535</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetInverseEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>579</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>612</x>
+     <y>571</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
