@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>938</height>
+    <width>631</width>
+    <height>956</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,8 +71,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>608</width>
-        <height>881</height>
+        <width>613</width>
+        <height>899</height>
        </rect>
       </property>
       <widget class="QGroupBox" name="groupBoxEvents">
@@ -324,7 +324,7 @@
          <x>0</x>
          <y>370</y>
          <width>621</width>
-         <height>181</height>
+         <height>141</height>
         </rect>
        </property>
        <property name="title">
@@ -335,8 +335,8 @@
          <rect>
           <x>0</x>
           <y>30</y>
-          <width>481</width>
-          <height>150</height>
+          <width>601</width>
+          <height>111</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
@@ -421,22 +421,56 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="pushButtonPlotEpochs">
-           <property name="text">
-            <string>Plot average epochs</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QPushButton" name="pushButtonShowEvents">
-           <property name="text">
-            <string>Show event locations</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
+      </widget>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>520</y>
+         <width>301</width>
+         <height>371</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>520</y>
+         <width>291</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pushButtonShowEvents">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Show event locations</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonPlotEpochs">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Plot average epochs</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>
@@ -484,12 +518,12 @@
    <slot>acceptBatch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>462</x>
-     <y>904</y>
+     <x>437</x>
+     <y>929</y>
     </hint>
     <hint type="destinationlabel">
-     <x>44</x>
-     <y>910</y>
+     <x>104</x>
+     <y>921</y>
     </hint>
    </hints>
   </connection>

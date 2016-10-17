@@ -6,11 +6,11 @@ Created on 6.10.2016
 from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
-import mne
 import numpy as np
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 class EegParametersDialog(QtGui.QDialog):
     
@@ -22,8 +22,10 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
+        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        
         raw = self.caller.experiment.active_subject.get_working_file()
-        self.ui.comboBoxChannelSelect.addItems(raw.info.get('ch_names'))
+        self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
         
         self.event_id = None
         self.ui.tableWidgetEvents.currentItemChanged.connect(
@@ -32,12 +34,7 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.tableWidgetEvents.setSortingEnabled(False)
         self.ui.tableWidgetEvents.setSelectionBehavior(1)        
         self.ui.tableWidgetEvents.setColumnCount(4)
-        self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
-            "Time (s)",
-            "Sample",
-            "Prev. id",
-            "Current id"
-        ])
+        self.set_event_table_headers()
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -78,12 +75,8 @@ class EegParametersDialog(QtGui.QDialog):
                 )
         except Exception as e:
             exc_messagebox(self, e)
-        self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
-            "Time (s)",
-            "Sample",
-            "Prev. id",
-            "Current id"
-        ])
+
+        self.set_event_table_headers()
             
     def get_events(self):
         """
@@ -138,15 +131,138 @@ class EegParametersDialog(QtGui.QDialog):
         events = self.get_events()
         self.caller.plot_events(events)
 
-    def on_pushButtonCompute_clicked(self):
-        params = dict()
-        params['events'] = self.get_events()
-        params['event_id'] = 998
-        params['tmin'] = self.ui.doubleSpinBoxTmin.value()
-        params['tmax'] = self.ui.doubleSpinBoxTmax.value()
-        params['n_eeg'] = self.ui.spinBoxVectors.value()
-        self.caller.call_eeg_ssp(params, self.caller.experiment.active_subject)
-        self.close()
+    def set_event_table_headers(self):
+        #TODO:
+        self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
+            "Time (s)",
+            "Sample",
+            "Prev. id",
+            "Current id"
+        ])
+
+    def update_events(self):
+        #TODO:
+        self.ui.tableWidgetEvents.clear()
+        self.ui.tableWidgetEvents.setRowCount(0)
+        self.set_event_table_headers()
+
+
+    def selection_changed(self, subject_name, params_dict):
+        """
+        Unpickles parameter file from subject path and updates the values
+        on dialog.
+        """
+        #TODO:
+
+        #self.ui.comboBoxChannelSelect
+        
+        if len(params_dict) > 0:
+            dic = params_dict  
+        else:
+            dic = self.get_default_values()
+        
+        #channel_list = self.batching_widget.data[subject_name + ' channels']
+        subject = self.caller.experiment.subjects.get(subject_name)
+        raw = subject.get_working_file(preload=False, temporary=True)
+        channel_list = raw.ch_names
+        self.ui.comboBoxChannelSelect.addItems(channel_list)
+        channel_name = dic.get('ch_name')
+        
+        if channel_name is None:
+            channel_name = channel_list[0]
+        
+        if channel_name == '':
+            pass
+        else:
+            ch_idx = self.ui.comboBoxChannelSelect.findText(channel_name,
+                            QtCore.Qt.MatchContains)
+        
+        self.ui.comboBoxChannelSelect.setCurrentIndex(ch_idx)
+        self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+        self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+        #self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+        self.ui.spinBoxVectors.setProperty("value", dic.get('n_eeg'))
+        self.update_events()
+
+    def get_default_values(self):
+        """Sets default values for dialog."""
+        #TODO:
+        return {
+            'tmin': -0.200,
+            'tmax': 0.500,
+            'event_id': 998,
+            'n_eeg': 2,
+            #'events': None,
+        }
+    
+    def collect_parameter_values(self):
+        """Collects parameter values from dialog.
+        """
+        dictionary = dict()
+        dictionary['tmin'] = self.ui.doubleSpinBoxTmin.value()
+        dictionary['tmax'] = self.ui.doubleSpinBoxTmax.value()
+        dictionary['event_id'] = 998
+        dictionary['events'] = self.get_events()
+        dictionary['n_eeg'] = self.ui.spinBoxVectors.value()
+        return dictionary
+
+    def accept(self):
+        """
+        Collects the parameters for calculating PCA projections and pass them
+        to the caller class.
+        """
+        #TODO:
+        parameter_values = self.collect_parameter_values()
+        active_subject_name =  self.caller.experiment.active_subject.subject_name
+        self.batching_widget.data[active_subject_name] = parameter_values
+        try:
+            self.calculate_ecg(self.caller.experiment.active_subject)    
+        except Exception as e:
+            self.batching_widget.failed_subjects.append((
+                self.caller.experiment.active_subject, str(e)))
+            
+        self.batching_widget.cleanup()
         self.parent.initialize_ui()
+        self.close()
+        
+    def acceptBatch(self):
+        #TODO:
+        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        subject_names = []
+        for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
+            item = self.batching_widget.ui.listWidgetSubjects.item(i)
+            if item.checkState() == QtCore.Qt.Checked:
+                subject_names.append(item.text())
+        # In case of batch process:
+        # 1. Calculation is first done for the active subject to prevent an
+        #    excessive reading of a raw file.
+        if recently_active_subject in subject_names:
+            try:
+                self.calculate_ecg(self.caller.experiment.active_subject)    
+            except Exception as e:
+                self.batching_widget.failed_subjects.append((
+                    self.caller.experiment.active_subject, str(e)))
+        
+        # 2. Calculation is done for the rest of the subjects
+        for name, subject in self.caller.experiment.subjects.items():
+            if name in subject_names:
+                if name == recently_active_subject:
+                    continue
+                self.caller.activate_subject(name)
+                try:
+                    self.calculate_ecg(subject)    
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject, str(e)))              
+
+        self.caller.activate_subject(recently_active_subject)
+        self.batching_widget.cleanup()        
+        self.parent.initialize_ui()
+        self.close()
+
+
+
+
+    
+    
         
         
