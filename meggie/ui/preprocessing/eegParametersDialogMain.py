@@ -11,6 +11,7 @@ import numpy as np
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+from PyQt4.Qt import pyqtSlot
 
 class EegParametersDialog(QtGui.QDialog):
     
@@ -23,6 +24,7 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget.ui.checkBoxBatch.stateChanged.connect(self.disable_event_table())
         
         raw = self.caller.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
@@ -35,6 +37,10 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.tableWidgetEvents.setSelectionBehavior(1)        
         self.ui.tableWidgetEvents.setColumnCount(4)
         self.set_event_table_headers()
+        
+    @pyqtSlot(int)
+    def disable_event_table(self, value):
+        self.ui.tableWidgetEvents.setEnabled(False)
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -77,6 +83,7 @@ class EegParametersDialog(QtGui.QDialog):
             exc_messagebox(self, e)
 
         self.set_event_table_headers()
+        self.batching_widget.data['event_params'] = params
             
     def get_events(self):
         """
@@ -165,6 +172,7 @@ class EegParametersDialog(QtGui.QDialog):
         subject = self.caller.experiment.subjects.get(subject_name)
         raw = subject.get_working_file(preload=False, temporary=True)
         channel_list = raw.ch_names
+        self.ui.comboBoxChannelSelect.clear()
         self.ui.comboBoxChannelSelect.addItems(channel_list)
         channel_name = dic.get('ch_name')
         
@@ -216,7 +224,7 @@ class EegParametersDialog(QtGui.QDialog):
         active_subject_name =  self.caller.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         try:
-            self.calculate_ecg(self.caller.experiment.active_subject)    
+            self.calculate_eeg(self.caller.experiment.active_subject)    
         except Exception as e:
             self.batching_widget.failed_subjects.append((
                 self.caller.experiment.active_subject, str(e)))
@@ -238,7 +246,10 @@ class EegParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                self.calculate_ecg(self.caller.experiment.active_subject)    
+                #eog_events = self.caller.find_eog_events(
+                #    self.batching_widget['event_params'])
+                #self.batching_widget.data[recently_active_subject]['events'] = eog_events
+                self.calculate_eeg(self.caller.experiment.active_subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
                     self.caller.experiment.active_subject, str(e)))
@@ -250,7 +261,10 @@ class EegParametersDialog(QtGui.QDialog):
                     continue
                 self.caller.activate_subject(name)
                 try:
-                    self.calculate_ecg(subject)    
+                    eog_events = self.caller.find_eog_events(
+                        self.batching_widget.data['event_params'])
+                    self.batching_widget.data[recently_active_subject]['events'] = eog_events
+                    self.calculate_eeg(subject)    
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, str(e)))              
 
@@ -260,6 +274,9 @@ class EegParametersDialog(QtGui.QDialog):
         self.close()
 
 
+    def calculate_eeg(self, subject):
+        self.caller.call_eeg_ssp(
+            self.batching_widget.data[subject.subject_name], subject)
 
 
     
