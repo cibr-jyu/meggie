@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>621</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
         <x>0</x>
         <y>0</y>
         <width>704</width>
-        <height>556</height>
+        <height>600</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -234,7 +234,7 @@
          <x>10</x>
          <y>200</y>
          <width>671</width>
-         <height>281</height>
+         <height>321</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -261,7 +261,7 @@
              <x>20</x>
              <y>30</y>
              <width>235</width>
-             <height>244</height>
+             <height>281</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
@@ -391,6 +391,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="pushButtonClearRow">
+              <property name="text">
+               <string>Clear row &lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="pushButtonClear">
               <property name="text">
                <string>Clear list &lt;&lt;</string>
@@ -417,7 +424,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>520</y>
+         <y>550</y>
          <width>128</width>
          <height>26</height>
         </rect>
@@ -430,7 +437,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>500</y>
+         <y>530</y>
          <width>681</width>
          <height>16</height>
         </rect>

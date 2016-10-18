@@ -32,6 +32,9 @@ Created on 30.5.2016
 
 @author: jaolpeso
 """
+
+from collections import OrderedDict
+
 from PyQt4 import QtGui
 
 from meggie.ui.visualization.powerSpectrumEpochsDialogUi import Ui_Dialog
@@ -87,14 +90,21 @@ class PowerSpectrumEpochsDialog(QtGui.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
-        params['average'] = self.ui.checkBoxAverage.isChecked()
+        # params['average'] = self.ui.checkBoxAverage.isChecked()
         save_data = self.ui.checkBoxSaveData.isChecked()
              
-        mne_epochs = []
+        average = self.ui.checkBoxAverage.isChecked()
+        
+        mne_epochs = OrderedDict()
         for epoch in self.epochs:
             mne_epoch = epoch.raw
             mne_epoch.comment = epoch.collection_name
-            mne_epochs.append(mne_epoch)
+            if average:
+                if 'average' not in mne_epochs:
+                    mne_epochs['average'] = []
+                mne_epochs['average'].append(mne_epoch)                
+            else:
+                mne_epochs[epoch.collection_name] = [mne_epoch]
             
         try:
             self.caller.plot_power_spectrum(params, save_data, mne_epochs, basename='epochs')

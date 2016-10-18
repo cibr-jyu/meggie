@@ -3,6 +3,9 @@ Created on 26.2.2015
 
 @author: Jaakko Leppakangas
 '''
+
+from collections import OrderedDict
+
 from PyQt4 import QtGui, QtCore
 
 import numpy as np
@@ -52,21 +55,33 @@ class PowerSpectrumDialog(QtGui.QDialog):
         if tmin >= tmax:
             messagebox(self.parent, "End time must be higher than the starting time")
             return
-        interval = (group, tmin, tmax)
-        self.intervals.append(interval)
-        item = QtGui.QListWidgetItem(
-            '%s: %s - %s s' % (
-            interval[0],
-            interval[1],
-            interval[2]
-        ))
-        self.ui.listWidgetIntervals.addItem(item)
+        
+        self.add_intervals([(group, tmin, tmax)])
+
+                
+    def add_intervals(self, intervals):
+        for interval in intervals:
+            self.intervals.append(interval)
+            item = QtGui.QListWidgetItem(
+                '%s: %s - %s s' % (
+                interval[0],
+                round(interval[1], 4),
+                round(interval[2], 4)
+            ))
+            self.ui.listWidgetIntervals.addItem(item)
 
     def on_pushButtonClear_clicked(self, checked=None):
         if checked is None:
             return
         self.intervals = []
         self.ui.listWidgetIntervals.clear()
+        
+    def on_pushButtonClearRow_clicked(self, checked=None):
+        if checked is None:
+            return
+        current_row = self.ui.listWidgetIntervals.currentRow()
+        self.ui.listWidgetIntervals.takeItem(current_row)
+        self.intervals.pop(current_row)
         
     def on_pushButtonAddEvents_clicked(self, checked=None):
         if checked is None:
@@ -102,7 +117,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         
         raw = self.caller.experiment.active_subject.get_working_file()
         
-        epochs = dict()
+        # epochs = dict()
+        epochs = OrderedDict()
         for interval in times:
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin = 0
