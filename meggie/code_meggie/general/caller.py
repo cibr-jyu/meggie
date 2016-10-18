@@ -15,6 +15,7 @@ import shutil
 import copy
 import math
 from functools import partial
+from collections import OrderedDict
 
 from PyQt4 import QtCore, QtGui
 
@@ -1211,7 +1212,7 @@ class Caller(object):
                   layout=lout, mode='logratio')
 
 
-    def plot_power_spectrum(self, params, save_data, epochs, basename='raw'):
+    def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """
         Method for plotting power spectrum.
         Parameters:
@@ -1221,35 +1222,33 @@ class Caller(object):
         """
         lout = self.read_layout(self.experiment.active_subject.layout)
             
+        for epochs in epoch_groups.values():
+            info = epochs[0].info
+            break
             
-        picks = mne.pick_types(epochs[0].info, meg=True, eeg=True,
-                                   exclude=[])
-        
+        picks = mne.pick_types(info, meg=True, eeg=True,
+                               exclude=[])
         params['picks'] = picks
-        psd_list = self._compute_spectrum(epochs, params,
-                                          do_meanwhile=self.parent.update_ui)
-        freqs = psd_list[0][1]
+        psd_groups = self._compute_spectrum(epoch_groups, params,
+                                            do_meanwhile=self.parent.update_ui)
+    
+        for psd_list in psd_groups.values():
+            freqs = psd_list[0][1]
+            break
         
-        # average psds
-        if params['average']:
-            psds = np.mean([psds for psds, freqs in psd_list], axis=0)
-            colors = ['b']*len(epochs)
-        else:
-            psds = [psd[0] for psd in psd_list]
-            colors = self.colors(len(epochs))
+        psds = []
+        for psd_list in psd_groups.values():
+            psds.append(np.mean([psds_ for psds_, freqs in psd_list], axis=0))
+            
+        colors = self.colors(len(psds))
 
         if save_data:
             subject_name = self.experiment.active_subject.subject_name
-            if params['average']:
-                filename = subject_name + '_' + basename + '_' + 'spectrum.txt'
+            for idx, psd in enumerate(psds):
+                filename = ''.join([subject_name, '_', basename, '_',
+                                    'spectrum', '_', str(colors[idx]), '.txt'])
                 fileManager.save_np_array(self.experiment, filename, 
-                                          freqs, psds, epochs[0].info)
-            else:
-                for idx, psd in enumerate(psds):
-                    filename = ''.join([subject_name, '_', basename, '_', 'spectrum',
-                                        '_', str(colors[idx]), '.txt'])
-                    fileManager.save_np_array(self.experiment, filename, 
-                                              freqs, psd, epochs[0].info)
+                                          freqs, psd, info)
 
         print "Plotting power spectrum..."
 
@@ -1258,21 +1257,16 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
-            
-            conditions = [epoch.comment for epoch in epochs]
+            conditions = [str(key) for key in psd_groups]
             positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
             
             for cond, col, pos in zip(conditions, colors, positions):
                 ax.figtext(0.775, pos, cond, color=col, fontsize=12)
 
-            if params['average']:
-                ax.plot(freqs, psds[ch_idx], color=colors[0])
-            else:
-                color_idx = 0
-                for psd in psds:
-                    ax.plot(freqs, psd[ch_idx], color=colors[color_idx])
-                    color_idx += 1
-            
+            color_idx = 0
+            for psd in psds:
+                ax.plot(freqs, psd[ch_idx], color=colors[color_idx])
+                color_idx += 1
             
             plt.xlabel('Frequency (Hz)')
             if params['log']:
@@ -1281,7 +1275,7 @@ class Caller(object):
                 plt.ylabel('(uV)')
             plt.show()
 
-        info = deepcopy(epochs[0].info)
+        info = deepcopy(info)
         info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
                             if idx in picks]
 
@@ -1290,17 +1284,14 @@ class Caller(object):
                                        axis_facecolor='white', layout=lout,
                                        on_pick=my_callback):
             
-            if params['average']:
-                ax.plot(psds[idx], linewidth=0.2)
-            else:
-                color_idx = 0
-                for psd in psds:
-                    ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
-                    color_idx += 1
+            color_idx = 0
+            for psd in psds:
+                ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
+                color_idx += 1
         plt.show()
 
     @threaded
-    def _compute_spectrum(self, epochs, params):
+    def _compute_spectrum(self, epoch_groups, params):
         """Performed in a worker thread."""
         fmin = params['fmin']
         fmax = params['fmax']
@@ -1308,47 +1299,24 @@ class Caller(object):
         overlap = params['overlap']
         picks = params['picks']
 
-        psd_list = []
+        psd_groups = OrderedDict()
         n_jobs = self.parent.preferencesHandler.n_jobs
         
-        for epoch in epochs:
-            psds, freqs = wrap_mne_call(self.experiment, psd_welch,
-                                        epoch, fmin=fmin, fmax=fmax, 
-                                        n_fft=nfft, n_overlap=overlap, 
-                                        picks=picks, proj=True, verbose=True,
-                                        n_jobs=n_jobs)
-            psds = np.average(psds, axis=0)
-            if params['log']:
-                psds = 10 * np.log10(psds)
-            psd_list.append((psds, freqs))
-        return psd_list
-
-#    @threaded
-    def plot_power_spectrum_epochs(self, epochs, ch_type, normalize):
-        epochs.raw.plot_psd(fmin=2, fmax=200)
-        epochs.raw.plot_psd_topomap(ch_type=ch_type, normalize=normalize)
-
-#         raw = self.experiment.active_subject.get_working_file()
-#         picks = mne.pick_types(raw.info, meg='grad', eeg=False, eog=False,
-#             stim=False, exclude='bads')
-#         
-#         from mne.time_frequency.multitaper import multitaper_psd;
-#         sfreq = raw.info['sfreq']
-#         a = epochs.raw 
-#         psds, freqs = multitaper_psd(epochs.raw, sfreq, fmin=2, fmax=200, n_jobs=n_jobs)
-# 
-# 
-#         f, ax = plt.subplots()
-#         psds = 10 * np.log10(psds)
-#         psds_mean = psds.mean(0).mean(0)
-#         psds_std = psds.mean(0).std(0)
-#          
-#         ax.plot(freqs, psds_mean, color='k')
-#         ax.fill_between(freqs, psds_mean - psds_std, psds_mean + psds_std,
-#                         color='k', alpha=.5)
-#         ax.set(title='Multitaper PSD (gradiometers)', xlabel='Frequency',
-#                ylabel='Power Spectral Density (dB)')
-#         plt.show()        
+        for key, epochs in epoch_groups.items():
+            for epoch in epochs:
+                psds, freqs = wrap_mne_call(self.experiment, psd_welch,
+                                            epoch, fmin=fmin, fmax=fmax, 
+                                            n_fft=nfft, n_overlap=overlap, 
+                                            picks=picks, proj=True, verbose=True,
+                                            n_jobs=n_jobs)
+                psds = np.average(psds, axis=0)
+                if params['log']:
+                    psds = 10 * np.log10(psds)
+                
+                if key not in psd_groups:
+                    psd_groups[key] = []
+                psd_groups[key].append((psds, freqs))
+        return psd_groups
 
     @threaded
     def filter(self, dic, subject, preview=False):
@@ -1996,5 +1964,5 @@ class Caller(object):
 
     def colors(self, n):
         import itertools
-        cycler = itertools.cycle('brgymck')
+        cycler = itertools.cycle(['b', 'r', 'g', 'y', 'm', 'c', 'k', 'pink'])
         return list(itertools.islice(cycler, n))

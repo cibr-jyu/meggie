@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>621</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
         <x>0</x>
         <y>0</y>
         <width>704</width>
-        <height>556</height>
+        <height>600</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -234,7 +234,7 @@
          <x>10</x>
          <y>200</y>
          <width>671</width>
-         <height>251</height>
+         <height>321</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -261,10 +261,65 @@
              <x>20</x>
              <y>30</y>
              <width>235</width>
-             <height>171</height>
+             <height>281</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="labelGroup">
+                <property name="text">
+                 <string>Average group:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBoxAvgGroup">
+                <item>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>6</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>7</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>8</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
@@ -315,6 +370,34 @@
              </widget>
             </item>
             <item>
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAddEvents">
+              <property name="text">
+               <string>Add from events... &gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonClearRow">
+              <property name="text">
+               <string>Clear row &lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="pushButtonClear">
               <property name="text">
                <string>Clear list &lt;&lt;</string>
@@ -341,7 +424,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>520</y>
+         <y>550</y>
          <width>128</width>
          <height>26</height>
         </rect>
@@ -354,29 +437,13 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>500</y>
+         <y>530</y>
          <width>681</width>
          <height>16</height>
         </rect>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkBoxAverage">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>470</y>
-         <width>94</width>
-         <height>26</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Average</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -396,8 +463,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>671</x>
-     <y>467</y>
+     <x>713</x>
+     <y>610</y>
     </hint>
     <hint type="destinationlabel">
      <x>723</x>
@@ -412,8 +479,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>580</x>
-     <y>467</y>
+     <x>622</x>
+     <y>610</y>
     </hint>
     <hint type="destinationlabel">
      <x>723</x>

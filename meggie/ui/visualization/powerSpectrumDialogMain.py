@@ -3,6 +3,9 @@ Created on 26.2.2015
 
 @author: Jaakko Leppakangas
 '''
+
+from collections import OrderedDict
+
 from PyQt4 import QtGui, QtCore
 
 import numpy as np
@@ -13,6 +16,7 @@ from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from meggie.ui.visualization.PowerSpectrumEventsDialogMain import PowerSpectrumEvents
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -45,25 +49,45 @@ class PowerSpectrumDialog(QtGui.QDialog):
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
             return
+        group = int(self.ui.comboBoxAvgGroup.currentText())
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
         if tmin >= tmax:
             messagebox(self.parent, "End time must be higher than the starting time")
             return
-        interval = (tmin, tmax)
-        self.intervals.append(interval)
-        item = QtGui.QListWidgetItem(
-            '%s - %s s' % (
-            interval[0],
-            interval[1]
-        ))
-        self.ui.listWidgetIntervals.addItem(item)
+        
+        self.add_intervals([(group, tmin, tmax)])
+
+                
+    def add_intervals(self, intervals):
+        for interval in intervals:
+            self.intervals.append(interval)
+            item = QtGui.QListWidgetItem(
+                '%s: %s - %s s' % (
+                interval[0],
+                round(interval[1], 4),
+                round(interval[2], 4)
+            ))
+            self.ui.listWidgetIntervals.addItem(item)
 
     def on_pushButtonClear_clicked(self, checked=None):
         if checked is None:
             return
         self.intervals = []
         self.ui.listWidgetIntervals.clear()
+        
+    def on_pushButtonClearRow_clicked(self, checked=None):
+        if checked is None:
+            return
+        current_row = self.ui.listWidgetIntervals.currentRow()
+        self.ui.listWidgetIntervals.takeItem(current_row)
+        self.intervals.pop(current_row)
+        
+    def on_pushButtonAddEvents_clicked(self, checked=None):
+        if checked is None:
+            return
+        self.event_dialog = PowerSpectrumEvents(self)
+        self.event_dialog.show()
 
     def accept(self, *args, **kwargs):
         """Starts the computation."""
@@ -85,7 +109,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
     
         valid = True
         for interval in times:
-            if (interval[1] - interval[0]) * sfreq < float(self.ui.spinBoxNfft.value()):
+            if (interval[2] - interval[1]) * sfreq < float(self.ui.spinBoxNfft.value()):
                 valid = False
         if not valid:
             messagebox(self.parent, "Sampling rate times shortest interval should be more than window size")
@@ -93,14 +117,17 @@ class PowerSpectrumDialog(QtGui.QDialog):
         
         raw = self.caller.experiment.active_subject.get_working_file()
         
-        epochs = []
+        # epochs = dict()
+        epochs = OrderedDict()
         for interval in times:
-            events = np.array([[raw.first_samp + interval[0]*sfreq, 0, 1]], dtype=np.int)
+            events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin = 0
-            tmax = interval[1] - interval[0]
+            tmax = interval[2] - interval[1]
             epoch = Epochs(raw, events=events, tmin=tmin, tmax=tmax)
             epoch.comment = str(interval)
-            epochs.append(epoch)
+            if interval[0] not in epochs:
+                epochs[interval[0]] = []
+            epochs[interval[0]].append(epoch)
         
         params = dict()
         params['fmin'] = fmin
@@ -108,7 +135,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
-        params['average'] = self.ui.checkBoxAverage.isChecked()
         save_data = self.ui.checkBoxSaveData.isChecked()
         
         try:
