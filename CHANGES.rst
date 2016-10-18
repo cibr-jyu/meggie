@@ -1,11 +1,19 @@
 Changelog
 =========
 
-
-0.3.2 (unreleased)
+0.3.3 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.2 (2016-10-18)
+------------------
+
+- Do event based power spectrum calculation
+- Fix evoked stats channel visualization.
+- Set correct default tab on source analysis.
+- Fix bug of end time equaling length of data crashing the spectrum calculation
+- Fix bug where ECG batching didnt work for a set of subjects in experiment
 
 0.3.1 (2016-08-03)
 ------------------
