@@ -11,7 +11,7 @@ import numpy as np
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
-from PyQt4.Qt import pyqtSlot
+from PyQt4.Qt import pyqtSlot, pyqtSignal
 
 class EegParametersDialog(QtGui.QDialog):
     
@@ -24,7 +24,8 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
-        self.batching_widget.ui.checkBoxBatch.stateChanged.connect(self.disable_event_table())
+        #self.batching_widget.ui.checkBoxBatch.stateChanged.connect(lambda: self.disable_event_table(pyqtSignal([int])))
+        self.batching_widget.ui.checkBoxBatch.stateChanged.connect(lambda: self.disable_event_table(self.batching_widget.ui.checkBoxBatch.isChecked()))
         
         raw = self.caller.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
@@ -38,9 +39,14 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.tableWidgetEvents.setColumnCount(4)
         self.set_event_table_headers()
         
-    @pyqtSlot(int)
+    @pyqtSlot(bool)
     def disable_event_table(self, value):
-        self.ui.tableWidgetEvents.setEnabled(False)
+        #self.ui.tableWidgetEvents.setDisabled(value)
+        if value:
+            self.ui.tableWidgetEvents.hide()
+        else:
+            self.ui.tableWidgetEvents.show()
+        #self.ui.tableWidgetEvents.setEnabled(not value)
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
