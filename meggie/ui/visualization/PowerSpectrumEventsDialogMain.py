@@ -9,13 +9,13 @@ import mne
 
 from meggie.ui.visualization.powerSpectrumEventsUi import Ui_Advanced 
 from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
 
 class PowerSpectrumEvents(QtGui.QDialog):
     
     def __init__(self, parent):
         """
         Init method for the dialog.
-        Constructs a set of time series from the given parameters.
         Parameters:
         parent     - The parent window for this dialog.
         """
@@ -25,10 +25,22 @@ class PowerSpectrumEvents(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         
+    def on_pushButtonMaskStart_clicked(self, checked=None):
+        if checked is None:
+            return
+        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditStart)
+        self.bitDialog.show()
+
+    def on_pushButtonMaskEnd_clicked(self, checked=None):
+        if checked is None:
+            return
+        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditEnd)
+        self.bitDialog.show()
+        
     def accept(self):
         try:
-            event_min = int(self.ui.lineEditStart.text())
-            event_max = int(self.ui.lineEditEnd.text())
+            event_min = self.ui.lineEditStart.text()
+            event_max = self.ui.lineEditEnd.text()
             group = int(self.ui.comboBoxAvgGroup.currentText())
         except:
             exc_messagebox(self, "Please check your inputs")
@@ -36,10 +48,22 @@ class PowerSpectrumEvents(QtGui.QDialog):
         
         raw = self.parent.caller.experiment.active_subject.get_working_file()
         
-        triggers = mne.find_events(raw)
+        def find_triggers(event_code):
+            try:
+                id_, mask = event_code.split('|')
+            except ValueError:
+                id_, mask = event_code, 0
+            from meggie.code_meggie.utils.debug import debug_trace; debug_trace()
+            triggers = mne.find_events(raw, mask=int(mask))
+            triggers = [trigger for trigger in triggers if trigger[2] == id_]
         
-        min_triggers = [trigger for trigger in triggers if trigger[2] == event_min]
-        max_triggers = [trigger for trigger in triggers if trigger[2] == event_max]
+        min_triggers = find_triggers(event_min)
+        max_triggers = find_triggers(event_max)
+        
+        # triggers = mne.find_events(raw)
+        
+        # min_triggers = [trigger for trigger in triggers if trigger[2] == event_min]
+        # max_triggers = [trigger for trigger in triggers if trigger[2] == event_max]
         
         if len(min_triggers) != len(max_triggers):
             exc_messagebox(self, "Amount of start events should equal to amount of end events")
