@@ -22,9 +22,7 @@ class EegParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
-        #self.batching_widget.ui.checkBoxBatch.stateChanged.connect(lambda: self.disable_event_table(pyqtSignal([int])))
         self.batching_widget.ui.checkBoxBatch.stateChanged.connect(lambda: self.disable_event_table(self.batching_widget.ui.checkBoxBatch.isChecked()))
         
         raw = self.caller.experiment.active_subject.get_working_file()
@@ -41,12 +39,10 @@ class EegParametersDialog(QtGui.QDialog):
         
     @pyqtSlot(bool)
     def disable_event_table(self, value):
-        #self.ui.tableWidgetEvents.setDisabled(value)
-        if value:
-            self.ui.tableWidgetEvents.hide()
-        else:
-            self.ui.tableWidgetEvents.show()
-        #self.ui.tableWidgetEvents.setEnabled(not value)
+        self.ui.tableWidgetEvents.setDisabled(value)
+        self.ui.tableWidgetEvents.setCurrentItem(None)
+        self.ui.pushButtonAdd.setDisabled(value)
+        self.ui.pushButtonRemove.setDisabled(value)
         
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -165,7 +161,7 @@ class EegParametersDialog(QtGui.QDialog):
         Unpickles parameter file from subject path and updates the values
         on dialog.
         """
-        #TODO:
+        #TODO: channel selection
 
         #self.ui.comboBoxChannelSelect
         
@@ -194,8 +190,15 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui.comboBoxChannelSelect.setCurrentIndex(ch_idx)
         self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
         self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-        #self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+        #self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))
         self.ui.spinBoxVectors.setProperty("value", dic.get('n_eeg'))
+        
+        
+        self.ui.doubleSpinBoxLowPass.setProperty("value", dic.get('low_pass'))
+        self.ui.doubleSpinBoxHighPass.setProperty("value", dic.get('high_pass'))
+        self.ui.spinBoxFilterLength.setProperty("value", dic.get('filter_length'))
+        self.ui.doubleSpinBoxStart.setProperty("value", dic.get('start_time'))
+        
         self.update_events()
 
     def get_default_values(self):
@@ -207,6 +210,11 @@ class EegParametersDialog(QtGui.QDialog):
             'event_id': 998,
             'n_eeg': 2,
             #'events': None,
+
+            'low_pass': 1.00,
+            'high_pass': 10.00,
+            'filter_length': 10,
+            'start_time': 5.00,    
         }
     
     def collect_parameter_values(self):
@@ -215,9 +223,15 @@ class EegParametersDialog(QtGui.QDialog):
         dictionary = dict()
         dictionary['tmin'] = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmax'] = self.ui.doubleSpinBoxTmax.value()
-        dictionary['event_id'] = 998
         dictionary['events'] = self.get_events()
         dictionary['n_eeg'] = self.ui.spinBoxVectors.value()
+        
+        dictionary['event_id'] = 998
+        dictionary['low_pass'] = self.ui.doubleSpinBoxLowPass.value()
+        dictionary['high_pass'] = self.ui.doubleSpinBoxHighPass.value()
+        dictionary['filter_length'] = self.ui.spinBoxFilterLength.value()
+        dictionary['start_time'] = self.ui.doubleSpinBoxStart.value()
+         
         return dictionary
 
     def accept(self):
@@ -252,9 +266,9 @@ class EegParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                #eog_events = self.caller.find_eog_events(
-                #    self.batching_widget['event_params'])
-                #self.batching_widget.data[recently_active_subject]['events'] = eog_events
+                eog_events = self.find_events(
+                    self.caller.experiment.active_subject)
+                self.batching_widget.data[recently_active_subject]['events'] = eog_events # noqa
                 self.calculate_eeg(self.caller.experiment.active_subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
@@ -267,9 +281,9 @@ class EegParametersDialog(QtGui.QDialog):
                     continue
                 self.caller.activate_subject(name)
                 try:
-                    eog_events = self.caller.find_eog_events(
-                        self.batching_widget.data['event_params'])
-                    self.batching_widget.data[recently_active_subject]['events'] = eog_events
+                    eog_events = self.find_events(
+                        self.caller.experiment.active_subject)
+                    self.batching_widget.data[name]['events'] = eog_events
                     self.calculate_eeg(subject)    
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, str(e)))              
@@ -279,6 +293,8 @@ class EegParametersDialog(QtGui.QDialog):
         self.parent.initialize_ui()
         self.close()
 
+    def find_events(self, subject):
+        return self.caller.find_eog_events(self.batching_widget.data[subject.subject_name])
 
     def calculate_eeg(self, subject):
         self.caller.call_eeg_ssp(
