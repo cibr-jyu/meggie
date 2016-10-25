@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>177</height>
+    <width>395</width>
+    <height>166</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,12 +16,11 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelGroup">
-       <property name="text">
-        <string>Average group:</string>
-       </property>
-      </widget>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEditStart"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEditEnd"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
@@ -74,6 +73,13 @@
        </item>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelGroup">
+       <property name="text">
+        <string>Average group:</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -81,11 +87,19 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEditStart"/>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="pushButtonMaskStart">
+       <property name="text">
+        <string>Edit...</string>
+       </property>
+      </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditEnd"/>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="pushButtonMaskEnd">
+       <property name="text">
+        <string>Edit...</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -131,8 +145,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>133</x>
-     <y>146</y>
+     <x>293</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
      <x>18</x>
@@ -147,8 +161,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>141</y>
+     <x>384</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
      <x>47</x>

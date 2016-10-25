@@ -1246,7 +1246,7 @@ class Caller(object):
             subject_name = self.experiment.active_subject.subject_name
             for idx, psd in enumerate(psds):
                 filename = ''.join([subject_name, '_', basename, '_',
-                                    'spectrum', '_', str(colors[idx]), '.txt'])
+                    'spectrum', '_', str(psd_groups.keys()[idx]), '.txt'])
                 fileManager.save_np_array(self.experiment, filename, 
                                           freqs, psd, info)
 
