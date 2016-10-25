@@ -1,10 +1,17 @@
 Changelog
 =========
 
-0.3.3 (unreleased)
+0.3.4 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.3 (2016-10-25)
+------------------
+
+- Do bit selection dialog
+- Finetune spectrum interval finding
+- Use min_duration==2 and shortest_event=1 when finding events
 
 0.3.2 (2016-10-18)
 ------------------
