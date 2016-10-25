@@ -418,7 +418,6 @@ class Caller(object):
         
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
-    @threaded
     def plot_average_epochs(self, events, tmin, tmax, event_id):
         """
         Method for plotting average epochs.
@@ -434,7 +433,6 @@ class Caller(object):
         eog_evoked.plot()
         print "Finished\n"
 
-    @threaded
     def plot_events(self, events):
         """
         Method for plotting the event locations in mne_browse_raw.
