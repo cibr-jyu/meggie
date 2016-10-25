@@ -5,22 +5,14 @@ Created on Aug 20, 2013
 @author: kpaliran
 '''
 
-import traceback
-
-import mne
 from PyQt4 import QtCore,QtGui
 
 from meggie.ui.filtering.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general.caller import Caller
-from meggie.code_meggie.general.measurementInfo import MeasurementInfo
-from meggie.code_meggie.general import fileManager
 
 from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.messaging import exc_messagebox
-
-from copy import deepcopy
 
 class FilterDialog(QtGui.QDialog):
     """

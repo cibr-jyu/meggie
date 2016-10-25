@@ -1,6 +1,6 @@
 # coding: utf-8
 
-#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen and Atte Rautio>
+#Copyright (c) <2013>, <Kari Aliranta, Jaakko Leppï¿½kangas, Janne Pesonen and Atte Rautio>
 #All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,12 @@ class Events(object):
         stim_ch       -- Name of the stimulus channel
         mask          -- Mask for excluding bits.
         """
+        
+        # use combination of shortest_event=1 and 
+        # min_duration=2/sfreq to avoid spurious events
+        # without being caught to exceptions
         self._events = mne.find_events(raw, stim_channel=stim_ch,
-                                       shortest_event=1, mask=mask)
+            shortest_event=1, min_duration=2.0/raw.info['sfreq'], mask=mask)
         
     @property    
     def events(self):

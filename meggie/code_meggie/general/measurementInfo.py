@@ -170,20 +170,6 @@ class MeasurementInfo(object):
             return [s for s in chNames if not 'STI' in s]
 
     @property    
-    def events(self, STIChannel):
-        """
-        Returns events from a certain stimulus channel.
-
-        Keyword arguments:
-        STIChannel    -- name of the channel
-        Raises an exception if an error occurs while finding events.
-        """
-        if mne.find_events(self._raw, stim_channel=STIChannel) is None:
-            raise Exception('No stimulus channel found.')
-        else:
-            return mne.find_events(self._raw, stim_channel=STIChannel)
-
-    @property    
     def subject_name(self):
         """
         Returns the subjects name. If some of the name fields are nonexistent

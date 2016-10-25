@@ -43,6 +43,7 @@ import numpy as np
 import mne
 
 from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.epoching.events import Events
 
 class Subject(QObject):
     
@@ -234,16 +235,8 @@ class Subject(QObject):
         stim_channel = self.find_stim_channel()
         if not stim_channel:
             return
-        try:
-            events = mne.find_events(self.get_working_file(),
-                stim_channel=stim_channel)
-        except Exception as e:
-            print 'Warning: %s' % e
-            print 'Reading events with minimum length of 1...'
-            events = mne.find_events(self.get_working_file(),
-                                     stim_channel=stim_channel,
-                                     shortest_event=1)
-        return events
+        
+        return Events(self.get_working_file(), stim_ch=stim_channel).events
 
     def get_cov(self):
         """Helper method for getting the current covariance matrix."""

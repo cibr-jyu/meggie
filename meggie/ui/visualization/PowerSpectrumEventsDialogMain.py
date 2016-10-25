@@ -11,6 +11,8 @@ from meggie.ui.visualization.powerSpectrumEventsUi import Ui_Advanced
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
 
+from meggie.code_meggie.epoching.events import Events
+
 class PowerSpectrumEvents(QtGui.QDialog):
     
     def __init__(self, parent):
@@ -48,26 +50,38 @@ class PowerSpectrumEvents(QtGui.QDialog):
         
         raw = self.parent.caller.experiment.active_subject.get_working_file()
         
+        def should_take(id_, mask, event):
+            """ check if event has same non-masked bits as id_
+            """
+            id_bin = '{0:010b}'.format(id_)
+            mask_bin = '{0:010b}'.format(mask)
+            event_bin = '{0:010b}'.format(event[2])
+            
+            take_event = True
+            for i in range(len(mask_bin)):
+                if int(mask_bin[i]) == 1:
+                    continue
+                if int(id_bin[i]) != int(event_bin[i]):
+                    take_event = False
+                    break
+                
+            return take_event
+            
+        
         def find_triggers(event_code):
             try:
-                id_, mask = event_code.split('|')
+                id_, mask = map(int, event_code.split('|'))
             except ValueError:
-                id_, mask = event_code, 0
-            from meggie.code_meggie.utils.debug import debug_trace; debug_trace()
-            triggers = mne.find_events(raw, mask=int(mask))
-            triggers = [trigger for trigger in triggers if trigger[2] == id_]
+                id_, mask = int(event_code), 0
+
+            triggers = mne.find_events(raw)
+            triggers = Events(raw).events
+            triggers = filter(
+                lambda trigger: should_take(id_, mask, trigger), triggers)
+            return triggers
         
         min_triggers = find_triggers(event_min)
         max_triggers = find_triggers(event_max)
-        
-        # triggers = mne.find_events(raw)
-        
-        # min_triggers = [trigger for trigger in triggers if trigger[2] == event_min]
-        # max_triggers = [trigger for trigger in triggers if trigger[2] == event_max]
-        
-        if len(min_triggers) != len(max_triggers):
-            exc_messagebox(self, "Amount of start events should equal to amount of end events")
-            return
         
         if len(min_triggers) == 0:
             exc_messagebox(self, 'No start events found')
@@ -81,7 +95,17 @@ class PowerSpectrumEvents(QtGui.QDialog):
         
         for idx in range(len(min_triggers)):
             min_trigger_seconds = (min_triggers[idx][0] - raw.first_samp) / raw.info['sfreq']
-            max_trigger_seconds = (max_triggers[idx][0] - raw.first_samp) / raw.info['sfreq']
+
+            
+            try:
+                next_max_trigger = [trigger for trigger in max_triggers 
+                                    if trigger[0] > min_triggers[idx][0]][0][0]
+            except IndexError:
+                exc_messagebox(self, "One of the found start triggers" 
+                                     "didn't have corresponding end trigger")
+                return
+            
+            max_trigger_seconds = (next_max_trigger - raw.first_samp) / raw.info['sfreq']
             
             if max_trigger_seconds < min_trigger_seconds:
                 exc_messagebox(self, "Selected events seem not be valid. Start and end events need to alternate.")

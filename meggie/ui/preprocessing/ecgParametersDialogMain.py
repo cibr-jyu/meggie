@@ -34,12 +34,6 @@ Created on Apr 16, 2013
 Contains the EcgParametersDialog-class used for collecting parameter values
 for calculating ECG projections.
 """
-import os
-import ast
-import gc
-import traceback
-
-import mne
 
 from PyQt4 import QtCore,QtGui
 
