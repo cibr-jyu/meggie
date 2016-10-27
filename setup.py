@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='meggie',
-    version='0.3.4',
+    version='0.3.5',
     description="",
     author='Erkka Heinila, Janne Pesonen',
     author_email='erkka.heinila@jyu.fi',

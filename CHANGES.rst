@@ -1,11 +1,15 @@
 Changelog
 =========
 
-0.3.5 (unreleased)
+0.3.6 (unreleased)
 ------------------
 
 - Nothing changed yet.
 
+0.3.5 (2015-10-27)
+------------------
+
+- Fix mask length on spectrum events dialog
 
 0.3.4 (2015-10-27)
 ------------------
