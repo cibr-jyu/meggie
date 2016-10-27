@@ -583,8 +583,9 @@ def save_subject(subject, path):
     except OSError as e:
         raise OSError("Couldn't create all the necessary folders. "
                       "Do you have the necessary permissions?")
-    
-    copyfile(path, subject.working_file_path)
+    raw = mne.io.Raw(path)
+    raw.save(subject.working_file_path)
+    #copyfile(path, subject.working_file_path)
 
 
 def _read_epoch_stcs(subject):
