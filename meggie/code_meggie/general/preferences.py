@@ -58,7 +58,7 @@ class PreferencesHandler(object):
             config.set('MiscOptions', 'confirmQuit', 'True')
         else:
             config.set('MiscOptions', 'confirmQuit', 'False')
-    
+
         with open(home_filepath('.meggieprefs'), 'wb') as configfile:
             config.write(configfile)
         
