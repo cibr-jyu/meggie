@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.3.4 (unreleased)
+0.3.5 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+
+0.3.4 (2015-10-27)
+------------------
+
+- Update bit selection dialog
 
 0.3.3 (2016-10-25)
 ------------------
