@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.3.6 (unreleased)
+0.3.7 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.6 (2015-10-27)
+------------------
+
+- Fix preferences dialog
 
 0.3.5 (2015-10-27)
 ------------------
