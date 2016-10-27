@@ -56,9 +56,9 @@ class PowerSpectrumEvents(QtGui.QDialog):
         def should_take(id_, mask, event):
             """ check if event has same non-masked bits as id_
             """
-            id_bin = '{0:010b}'.format(id_)
-            mask_bin = '{0:010b}'.format(mask)
-            event_bin = '{0:010b}'.format(event[2])
+            id_bin = '{0:016b}'.format(id_)
+            mask_bin = '{0:016b}'.format(mask)
+            event_bin = '{0:016b}'.format(event[2])
             
             take_event = True
             for i in range(len(mask_bin)):
