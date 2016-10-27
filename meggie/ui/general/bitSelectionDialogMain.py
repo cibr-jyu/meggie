@@ -19,15 +19,16 @@ class BitSelectionDialog(QtGui.QDialog):
         """
         QtGui.QDialog.__init__(self)
         self.intervals = []
+        self.button_count = 16
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.parent = parent
         self.target = target
         
         self.ui.labelID.setText('0')
-        self.ui.labelMask.setText('1023') # 2^0 + 2^1 + ... + 2^9
+        self.ui.labelMask.setText(str(pow(2, self.button_count) - 1)) # 2^0 + 2^1 + ... + 2^(button_count - 1)
         
-        for i in range(1, 11):
+        for i in range(1, self.button_count + 1):
             getattr(self.ui, "pushButton" + str(i)).setText(" ")
             (lambda x: getattr(self.ui, "pushButton" + str(x)).clicked.connect(
                 lambda: self.bit_clicked(getattr(self.ui, 

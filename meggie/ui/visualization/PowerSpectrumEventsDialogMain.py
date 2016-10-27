@@ -44,10 +44,13 @@ class PowerSpectrumEvents(QtGui.QDialog):
             event_min = self.ui.lineEditStart.text()
             event_max = self.ui.lineEditEnd.text()
             group = int(self.ui.comboBoxAvgGroup.currentText())
+
+            if not event_min or not event_max:
+                raise Exception("No min and max events set")
         except:
             exc_messagebox(self, "Please check your inputs")
             return
-        
+
         raw = self.parent.caller.experiment.active_subject.get_working_file()
         
         def should_take(id_, mask, event):
