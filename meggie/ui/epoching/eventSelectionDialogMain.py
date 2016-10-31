@@ -211,7 +211,7 @@ class EventSelectionDialog(QtGui.QDialog):
         return self.caller.experiment.subjects[subject_name]
     
     def get_default_values(self, subject):
-        stim_channel = subject.find_stim_channel
+        stim_channel = subject.find_stim_channel()
         rejections = {
             'grad': 3000.00,
             'mag': 4000.00
