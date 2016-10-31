@@ -77,8 +77,8 @@ class PowerSpectrumEvents(QtGui.QDialog):
             except ValueError:
                 id_, mask = int(event_code), 0
 
-            triggers = mne.find_events(raw)
-            triggers = Events(raw).events
+            subject = self.parent.caller.experiment.active_subject
+            triggers = Events(raw, stim_ch=subject.find_stim_channel()).events
             triggers = filter(
                 lambda trigger: should_take(id_, mask, trigger), triggers)
             return triggers
