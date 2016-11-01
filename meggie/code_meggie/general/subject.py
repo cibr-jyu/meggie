@@ -235,9 +235,9 @@ class Subject(QObject):
         stim_channel = self.find_stim_channel()
         if not stim_channel:
             return
-        
-        return Events(self.get_working_file(), stim_ch=stim_channel).events
 
+        return Events(self.get_working_file(), stim_ch=stim_channel).events
+        
     def get_cov(self):
         """Helper method for getting the current covariance matrix."""
         sa_dir = self._source_analysis_directory
@@ -345,6 +345,19 @@ class Subject(QObject):
         if len(files) > 1:
             return True
         return False
+    
+    def check_eeg_projs(self):
+        """
+        Checks the subject folder for EEG projection files.
+        Returns True if projections found.
+        """
+        path = self.subject_path
+        #Check whether EEG projections are calculated
+        files =  filter(os.path.isfile, glob.glob(path + '/*_eeg_proj*'))
+        files += filter(os.path.isfile, glob.glob(path + '/*_eeg-eve*'))
+        if len(files) > 1:
+            return True
+        return False
         
     def check_ecg_applied(self):
         """
@@ -370,6 +383,18 @@ class Subject(QObject):
             return True
         return False
 
+    def check_eeg_applied(self):
+        """
+        Checks the subject folder for EEG applied file.
+        Returns True if eeg_applied found.
+        """
+        path = self.subject_path
+        #Check whether EEG projections are applied
+        files = filter(os.path.isfile, glob.glob(path + '/*eeg_applied*'))
+        if len(files) > 0:
+            return True
+        return False
+
     def check_sss_applied(self):
         """
         Checks the subject folder for sss/tsss applied file.
@@ -377,7 +402,9 @@ class Subject(QObject):
         """
         path = self.subject_path
         #Check whether sss/tsss method is applied.
+        files = []
         files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
+        files.extend(filter(os.path.isfile, glob.glob(path + '/*_mc*')))
         if len(files) > 0:
             return True
         return False

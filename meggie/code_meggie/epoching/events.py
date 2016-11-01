@@ -34,6 +34,7 @@ Created on Mar 12, 2013
 Contains the Events-class that gets events from a raw file.
 """
 import mne
+import numpy as np
 
 class Events(object):
     """
@@ -48,12 +49,21 @@ class Events(object):
         stim_ch       -- Name of the stimulus channel
         mask          -- Mask for excluding bits.
         """
+
+        events = mne.find_events(raw, stim_channel=stim_ch, 
+                                 shortest_event=1, mask=mask)
+
+        # remove spurious events
+        counter = 0
+        for idx in reversed(range(1, len(events))):
+            if events[idx][0] - events[idx-1][0] < 2:
+                events = np.delete(events, idx-1, axis=0)
+                counter += 1
+
+        if counter > 0:
+            print str(counter) + " events dropped because they seem spurious (only one sample difference to next event)"
         
-        # use combination of shortest_event=1 and 
-        # min_duration=2/sfreq to avoid spurious events
-        # without being caught to exceptions
-        self._events = mne.find_events(raw, stim_channel=stim_ch,
-            shortest_event=1, min_duration=2.0/raw.info['sfreq'], mask=mask)
+        self._events = events
         
     @property    
     def events(self):

@@ -85,16 +85,6 @@ class EventSelectionDialog(QtGui.QDialog):
             'fixed_length_events': []
         }
         
-        ch_names = self.caller.experiment.active_subject.get_working_file().ch_names
-        stim_channels = [x for x in ch_names if x.startswith('STI')]
-
-        active = 0
-        for idx, channel in enumerate(stim_channels):
-            self.ui.comboBoxStimChannel.addItem(channel)
-            if channel == self.caller.experiment.active_subject.find_stim_channel():
-                active = idx
-        self.ui.comboBoxStimChannel.setCurrentIndex(active)
-        
         self.batching_widget = BatchingWidget(self, 
             self.ui.scrollAreaWidgetContents)
 
@@ -109,10 +99,9 @@ class EventSelectionDialog(QtGui.QDialog):
             events = event_data['events']
             for event in events:
                 item = QtGui.QListWidgetItem(
-                    '%s, %s, %s' % (
+                    '%s, %s' % (
                     'ID ' + str(event['event_id']),
-                    'mask=' + str(event['mask']),
-                    'stim=' + str(event['stim'])
+                    'mask=' + str(event['mask'])
                 ))
                 self.ui.listWidgetEvents.addItem(item)
  
@@ -131,7 +120,6 @@ class EventSelectionDialog(QtGui.QDialog):
     def selection_changed(self, subject_name, params_dict):
         """
         """
-        self.ui.comboBoxStimChannel.clear()
         subject = self.caller.experiment.subjects.get(subject_name)
         
         # Empty params_dict includes 'events' and 'fixed_length_events' keys.
@@ -166,20 +154,6 @@ class EventSelectionDialog(QtGui.QDialog):
         else:
             self.ui.checkBoxEog.setChecked(False)
         
-        raw = subject.get_working_file(preload=False)
-        ch_names = raw.ch_names
-        stim_channels = [x for x in ch_names if x.startswith('STI')]
-        
-        active = 0
-        for idx, channel in enumerate(stim_channels):
-            self.ui.comboBoxStimChannel.addItem(channel)
-            if channel == dic['stim']:
-                active = idx
-            elif channel == subject.find_stim_channel():
-                active = idx
-            
-        self.ui.comboBoxStimChannel.setCurrentIndex(active)
-        
         if 'event_id' in dic.keys():
             self.ui.spinBoxEventID.setValue(dic['event_id'])
         else:
@@ -211,7 +185,6 @@ class EventSelectionDialog(QtGui.QDialog):
         return self.caller.experiment.subjects[subject_name]
     
     def get_default_values(self, subject):
-        stim_channel = subject.find_stim_channel()
         rejections = {
             'grad': 3000.00,
             'mag': 4000.00
@@ -222,7 +195,6 @@ class EventSelectionDialog(QtGui.QDialog):
             'tmax': 0.500,
             'include_stim': True,
             'event_id': 1,
-            'stim': stim_channel,
             'mask': 0,
             'reject': rejections
         }
@@ -296,7 +268,7 @@ class EventSelectionDialog(QtGui.QDialog):
         """
         """
         raw = subject.get_working_file(temporary=True)
-        e = Events(raw, event_params['stim'], event_params['mask'])
+        e = Events(raw, subject.find_stim_channel(), event_params['mask'])
         mask = np.bitwise_not(event_params['mask'])
         events = e.pick(np.bitwise_and(event_params['event_id'], mask))
         return events
@@ -309,7 +281,6 @@ class EventSelectionDialog(QtGui.QDialog):
             return
 
         event_params = {
-            'stim': str(self.ui.comboBoxStimChannel.currentText()),
             'mask': self.ui.spinBoxMask.value(),
             'event_id': self.ui.spinBoxEventID.value(),
         }

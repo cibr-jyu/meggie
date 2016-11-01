@@ -394,12 +394,10 @@ def open_raw(fname, preload=True):
 
 def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, fname, overwrite=True)
-    print fname
-    print os.path.basename(fname)
-    print experiment.active_subject.working_file_name
     experiment.active_subject.working_file_name = os.path.basename(fname)
+    raw.info['filename'] = fname
+    raw._filenames[0] = fname
     
-
 def group_save_evokeds(filename, evokeds, names):
     """ Combine data from multiple evokeds to one big csv """
 
@@ -586,8 +584,16 @@ def save_subject(subject, path):
         raise OSError("Couldn't create all the necessary folders. "
                       "Do you have the necessary permissions?")
     
-    copyfile(path, subject.working_file_path)
+    filename = os.path.basename(path)
+    os.chdir(os.path.dirname(path))
+    files = glob.glob(filename[:-4] + '*.fif')
+    
+    for file in files:
+        copyfile(file, os.path.join(subject.subject_path, os.path.basename(file)))
 
+    #raw = mne.io.Raw(path)
+    #raw.save(subject.working_file_path)
+    #copyfile(path, subject.working_file_path)
 
 def _read_epoch_stcs(subject):
     """
