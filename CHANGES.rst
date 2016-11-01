@@ -1,22 +1,32 @@
 Changelog
 =========
 
-0.3.7 (unreleased)
+0.3.8 (unreleased)
 ------------------
 
 - Nothing changed yet.
 
-0.3.6 (2015-10-27)
+0.3.7 (2016-11-01)
+------------------
+
+- Add uint_cast=True when finding events
+- Check movement correction
+- fix spurious event detection
+- remove stimulus channel selection in eventselectiondialog
+- Use stim channel when finding events in power spectrum dialog
+- Fix default stim channel in event selection dialog
+
+0.3.6 (2016-10-27)
 ------------------
 
 - Fix preferences dialog
 
-0.3.5 (2015-10-27)
+0.3.5 (2016-10-27)
 ------------------
 
 - Fix mask length on spectrum events dialog
 
-0.3.4 (2015-10-27)
+0.3.4 (2016-10-27)
 ------------------
 
 - Update bit selection dialog
