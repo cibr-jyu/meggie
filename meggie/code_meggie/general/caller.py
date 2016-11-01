@@ -496,8 +496,8 @@ class Caller(object):
             for event_params_dic in event_params:
                 event_id = event_params_dic['event_id']
                 category['id_' + str(event_id)] = event_id_counter
-                new_events = np.array(self.create_eventlist(event_params_dic, 
-                                                            raw))
+                new_events = np.array(self.create_eventlist(event_params_dic,
+                                                            subject))
                 if len(new_events) == 0:
                     raise ValueError('No events found with selected id.')
                 new_events[:, 2] = event_id_counter
@@ -561,11 +561,13 @@ class Caller(object):
         
         return subject.subject_name + ', ' + params['collection_name'] + ':\n' + events_str
 
-    def create_eventlist(self, params, raw):
+    def create_eventlist(self, params, subject):
         """
         Pick desired events from the raw data.
         """
-        e = Events(raw, params['stim'], params['mask'])
+        stim_channel = subject.find_stim_channel()
+        raw = subject.get_working_file()
+        e = Events(raw, stim_channel, params['mask'])
         mask = np.bitwise_not(params['mask'])
         events = e.pick(np.bitwise_and(params['event_id'], mask))
         return events
