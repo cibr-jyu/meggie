@@ -51,7 +51,7 @@ class Events(object):
         """
 
         events = mne.find_events(raw, stim_channel=stim_ch, 
-                                 shortest_event=1, mask=mask)
+                                 shortest_event=1, mask=mask, uint_cast=True)
 
         # remove spurious events
         counter = 0
