@@ -18,6 +18,42 @@ epochs
 - tiinan kanssa meggiepalaveri: metodikoulutus
 - eeg projektionsZzz event id piiloon, käytettävä id vaikka satunnaisesti ja tarkistus ettei kukaan muu käytä
 
+12:28:00 < Zairex> joo
+12:30:00 < Zairex> oishan sit kaikkea jännää niinkun järjestää kansiohierarkiaa uudelleen 8-- )
+12:30:00 < Zairex> vois tehä taas hirveästi lisää bugeja :P
+12:31:00 < Zairex> bittidialogia vois eventSelectionDialogiin
+12:31:00 < talli> niin joo
+12:31:00 < Zairex> sitä etusivun tfr:ää vois korjata niin että se osais eeg-datastakin tehdä oletusarvoilla kaunin tfr:n
+12:32:00 < Zairex> baseline- ja desibeliasteikkojuttuja ne varmaan on
+12:32:00 < Zairex> ICA:n vois tuoda preprosessointimahdollisuudeksi
+12:32:00 < Zairex> sen sais ehkä tosi helposti jos päivittäs mnen 0.13.0:ks
+12:33:00 < Zairex> sen vois yrittää päivittää
+12:33:00 < talli> niin se tosiaan
+12:33:00 < talli> parempi päivittää ajoissa aina ettei tule turhia töitä tehtyä
+12:34:00 < Zairex> joo
+12:34:00 < Zairex> pitää lukea tarkkaan se changelogi tällä kertaa, kun tuntuu että oli niitä deprekointijuttuja aika 
+                paljon mitkä:00 vaan muuttaa oletustoiminnallisuutta 8 )
+12:34:00 < Zairex> että ei hajoa sovellus välttämättä siinä funktiokutsussa mut myöhemmin voi tapahtua outoa
+12:36:00 < Zairex> projektiotarina pitäs miettiä kunnolla läpi, että ei käy sitä että on projektiot laskettu koko 
+                datalle ja:00 sitten bad channelien tai picksien vuoks tapahtuu sitä että sitten ne projektiot 
+                applytaankin dataan:00 jossa on vähemmän kanavia
+12:36:00 < Zairex> sit sille vois kehittää paremman vaihtoehdon sille eventSelectiondialogissa olevalle "valitse 
+                kiinnostavat kanava:00t"-jutulle
+12:37:00 < Zairex> joku missä kanavat kulkee mukana vaikka niitä ei tarviskaan, niin sit esim nuo projektiojutut on 
+                paljon selkeämpiä
+12:38:00 < Zairex> source analysis pitäs saada toimimaan oikein, mutta ehkä ei kosketa siihen D:
+12:39:00 < Zairex> sam lupas jossain vaiheessa antaa omia mri-kuviaan ja sit mulla on dataa samista meditoimassa
+12:39:00 < Zairex> niin niitä ja sample-dataa esimerkkeinä käyttäenv
+12:39:00 < Zairex> vois yrittää saada sen source analysis putken toimimaan jotenkin tosi helposti
+12:39:00 < Zairex> mutta ehkä nyt on vielä muuta tekemistä..
+12:41:00 < Zairex> näin unen jossa mulle joku kertoi että mistä se fif-tiedostojen hajoaminen johtuu
+12:41:00 < Zairex> harmi etten muista enää
+12:41:00 < talli> hah
+12:41:00 < talli> mehän poistettiin eventselectiondialogista kanavien valinta
+12:42:00 < talli> että selkeyttää juttuja
+12:42:00 < Zairex> ok, no se on hyvä
+12:42:00 < talli> jotain muutakin muutettiin samalla mutten muista mitä
+...
 13:52:30 < talli> mne.time_frequency.tfr_morlet(): uusi parametri average : bool, defaults to True
 13:52:30 < talli> If True average across Epochs.
 13:52:30 < talli> New in version 0.13.0.
