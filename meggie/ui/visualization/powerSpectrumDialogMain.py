@@ -38,7 +38,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         raw = self.caller.experiment.active_subject.get_working_file()
-        tmax = np.floor(raw.index_as_time(raw.n_times)) - 0.1
+        tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)

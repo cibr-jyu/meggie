@@ -1100,7 +1100,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select the epochs for Power spectrum.'
+            message = 'You must select epochs for Power spectrum.'
             messagebox(self, message)
             return
 
@@ -1186,7 +1186,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must create epochs before TFR.'
+            message = 'You must select epochs before TFR.'
             messagebox(self, message)
             return
         
@@ -1213,7 +1213,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select the epochs for TFR.'
+            message = 'You must select epochs for TFR.'
             messagebox(self, message)
             return 
         

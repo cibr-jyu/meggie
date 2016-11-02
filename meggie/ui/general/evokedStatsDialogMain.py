@@ -194,6 +194,8 @@ class EvokedStatsDialog(QtGui.QDialog):
         try:
             caller.average_channels(evoked_to_viz, None,
                                     set(self.selected_channels[event_name]))
+        except TypeError as e:
+            exc_messagebox(self, "Please set selections")
         except Exception as e:
             exc_messagebox(self, e)
 

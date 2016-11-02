@@ -27,7 +27,7 @@ from mne.channels.layout import _merge_grad_data
 from mne.viz import plot_evoked_topo
 from mne.viz import iter_topography
 from mne.utils import _clean_names
-from mne.time_frequency.tfr import tfr_morlet, _induced_power_cwt, _preproc_tfr
+from mne.time_frequency.tfr import tfr_morlet
 from mne.time_frequency import psd_welch
 from mne.preprocessing import compute_proj_ecg, compute_proj_eog, find_eog_events
 
@@ -92,18 +92,6 @@ class Caller(object):
 
         self.experiment.activate_subject(name)
     
-    def index_as_time(self, sample):
-        """
-        Aux function for converting sample to time.
-        Keyword arguments:
-        sample      -- Sample to convert to time.
-        Returns time as seconds.
-        """
-        raw = self.experiment.active_subject.get_working_file()
-        
-        #log mne call
-        return raw.index_as_time(sample - raw.first_samp)[0]
-
     def call_mne_browse_raw(self, filename):
         """
         Opens mne_browse_raw with the given file as a parameter
@@ -834,11 +822,20 @@ class Caller(object):
         plt.close()
 
         # Find intervals for given frequency band
-        frequencies = np.arange(minfreq, maxfreq, interval)
+        freqs = np.arange(minfreq, maxfreq, interval)
+        n_jobs = self.parent.preferencesHandler.n_jobs
         
-        result = self._TFR(epochs, ch_index, frequencies, ncycles, decim,
-                           do_meanwhile=self.parent.update_ui)
-        power, phase_lock, times, evoked, evoked_data = result
+        @threaded
+        def calculate_tfrs():
+            power, itc = tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, 
+                                    decim=decim, n_jobs=n_jobs)
+            evoked = epochs.average()
+            return power, itc, evoked
+            
+        power, itc, evoked = calculate_tfrs()
+        
+        evoked_data = evoked.data[ch_index:(ch_index+1), :]
+        evoked_times = 1e3 * evoked.times
 
         print 'Plotting TFR...'
         fig = plt.figure()
@@ -858,33 +855,33 @@ class Caller(object):
             raise TypeError('TFR plotting for %s channels not supported.' % 
                             ch_type)
 
-        plt.plot(times, evoked_data.T)
+        plt.plot(evoked_times, evoked_data.T)
         plt.title('Evoked response (%s)' % evoked.ch_names[ch_index])
-        plt.xlabel('time (ms)')
-        plt.xlim(times[0], times[-1])
+        plt.xlabel('Time (ms)')
+        plt.xlim(evoked_times[0], evoked_times[-1])
+
+        data = power.data[0]
+
+        if color_map == 'auto':
+            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
+        else:
+            cmap = color_map    
 
         plt.subplot2grid((3, 15), (1, 0), colspan=14)
-        if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(power[0] < 0) else 'Reds'
-        else:
-            cmap = color_map
-            
-        print cmap
-
-        img = plt.imshow(power[0], extent=[times[0], times[-1],
-                                           frequencies[0], frequencies[-1]],
-                         aspect='auto', origin='lower', cmap=cmap)
+        img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
+            freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
         plt.xlabel('Time (ms)')
         plt.ylabel('Frequency (Hz)')
         plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
         plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
+
+        data = itc.data[0]
+
         if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(phase_lock[0] < 0) else 'Reds'
+            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
         plt.subplot2grid((3, 15), (2, 0), colspan=14)
-        img = plt.imshow(phase_lock[0], extent=[times[0], times[-1],
-                                                frequencies[0],
-                                                frequencies[-1]],
-                         aspect='auto', origin='lower', cmap=cmap)
+        img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
+            freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
         plt.xlabel('Time (ms)')
         plt.ylabel('Frequency (Hz)')
         plt.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
@@ -893,37 +890,6 @@ class Caller(object):
         plt.tight_layout()
         fig.show()
 
-    @threaded
-    def _TFR(self, epochs, ch_index, frequencies, ncycles, decim):
-        """
-        Performed in a worker thread.
-        """
-        print 'Computing induced power...'
-        evoked = epochs.average()
-        data = epochs.get_data()
-        times = 1e3 * epochs.times  # s to ms
-        evoked_data = evoked.data
-
-        data = data[:, ch_index:(ch_index+1), :]
-        evoked_data = evoked_data[ch_index:(ch_index+1), :]
-        n_jobs = self.parent.preferencesHandler.n_jobs
-        power, itc = wrap_mne_call(self.experiment, _induced_power_cwt,
-                                   data, epochs.info['sfreq'], frequencies,
-                                   n_cycles=ncycles, decim=decim,
-                                   use_fft=False, n_jobs=n_jobs,
-                                   zero_mean=True)
-
-        if epochs.times[0] < 0:
-            baseline = (epochs.times[0], 0)
-        else:
-            baseline = None
-        # TODO: log mne call
-        power = mne.baseline.rescale(power, epochs.times[::decim], baseline,
-                                     mode='ratio', copy=True)
-        # TODO: log mne call
-        itc = mne.baseline.rescale(itc, epochs.times[::decim], baseline,
-                                   mode='ratio', copy=True)
-        return power, itc, times, evoked, evoked_data
 
     def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
                      ncycles, ch_type, scalp, color_map='auto'):

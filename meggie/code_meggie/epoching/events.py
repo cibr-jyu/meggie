@@ -50,8 +50,8 @@ class Events(object):
         mask          -- Mask for excluding bits.
         """
 
-        events = mne.find_events(raw, stim_channel=stim_ch, 
-                                 shortest_event=1, mask=mask, uint_cast=True)
+        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, 
+                                 mask=mask, uint_cast=True, mask_type='not_and')
 
         # remove spurious events
         counter = 0
