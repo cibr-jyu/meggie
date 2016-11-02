@@ -59,7 +59,7 @@ class EegParametersDialog(QtGui.QDialog):
                 self.ui.tableWidgetEvents.insertRow(i)
                 self.ui.tableWidgetEvents.setItem(
                     i,0,QtGui.QTableWidgetItem(
-                        str(raw.times[eog_events[i][0]])
+                        str(raw.times[eog_events[i][0] - raw.first_samp])
                     )
                 )
                 self.ui.tableWidgetEvents.setItem(i,1,QtGui.
