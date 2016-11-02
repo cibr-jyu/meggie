@@ -10,7 +10,7 @@ Changelog
 ------------------
 
 - Add uint_cast=True when finding events
-- Check movement correction
+- Check if file has movement corrections
 - fix spurious event detection
 - remove stimulus channel selection in eventselectiondialog
 - Use stim channel when finding events in power spectrum dialog
@@ -36,7 +36,6 @@ Changelog
 
 - Do bit selection dialog
 - Finetune spectrum interval finding
-- Use min_duration==2 and shortest_event=1 when finding events
 
 0.3.2 (2016-10-18)
 ------------------
