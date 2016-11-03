@@ -281,7 +281,7 @@ class EventSelectionDialog(QtGui.QDialog):
             return
 
         event_params = {
-            'mask': self.ui.lineEditMask.value(),
+            'mask': int(self.ui.lineEditMask.text()),
             'event_id': self.ui.spinBoxEventID.value(),
         }
         
