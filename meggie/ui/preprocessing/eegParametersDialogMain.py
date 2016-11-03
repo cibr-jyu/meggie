@@ -24,7 +24,7 @@ class EegParametersDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
         
-        self.event_id = None
+        self.event_id = 998
         self.ui.tableWidgetEvents.currentItemChanged.connect(
             self.on_currentChanged
         )
@@ -43,7 +43,6 @@ class EegParametersDialog(QtGui.QDialog):
         if checked is None or not raw: return
         
         params = dict()
-        self.event_id = int(self.ui.labelBlinkId.text())
         params['event_id'] = self.event_id
         params['ch_name'] = str(self.ui.comboBoxChannelSelect.currentText())
         params['l_freq'] = float(self.ui.doubleSpinBoxLowPass.value())
@@ -87,7 +86,6 @@ class EegParametersDialog(QtGui.QDialog):
         rowCount = self.ui.tableWidgetEvents.rowCount()
         
         for i in xrange(0, rowCount):
-            #time = float(self.ui.tableWidgetEvents.item(i, 1).text())
             time = int(self.ui.tableWidgetEvents.item(i, 1).text())
             prev = int(self.ui.tableWidgetEvents.item(i, 2).text())
             curr = int(self.ui.tableWidgetEvents.item(i, 3).text())

@@ -1165,7 +1165,9 @@ class MainWindow(QtGui.QMainWindow):
         
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
-        self.addEcgProjs.exec_()
+        #self.addEcgProjs.exec_()
+        self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEcgProjs.show()
         
     def on_pushButtonApplyEEG_clicked(self, checked=None):
         """Open the dialog for applying the ECG-projections to the data."""
