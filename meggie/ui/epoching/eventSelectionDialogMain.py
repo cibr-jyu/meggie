@@ -55,7 +55,7 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
-
+from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
 
 class EventSelectionDialog(QtGui.QDialog):
     """
@@ -281,7 +281,7 @@ class EventSelectionDialog(QtGui.QDialog):
             return
 
         event_params = {
-            'mask': self.ui.spinBoxMask.value(),
+            'mask': self.ui.lineEditMask.value(),
             'event_id': self.ui.spinBoxEventID.value(),
         }
         
@@ -417,6 +417,12 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.fixedLengthDialog is None:
             self.fixedLengthDialog = FixedLengthEpochDialog(self)
         self.fixedLengthDialog.show()
+
+    def on_pushButtonEdit_clicked(self, checked=None):
+        if checked is None:
+            return
+        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditMask)
+        self.bitDialog.show()
 
     def calculate_epochs(self, subject):
         events_str = self.caller.create_epochs(
