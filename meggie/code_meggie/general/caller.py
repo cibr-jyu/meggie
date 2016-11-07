@@ -318,7 +318,6 @@ class Caller(object):
     def _call_eeg_ssp(self, dic, subject):
         raw = subject.get_working_file()
         events = dic['events']
-        event_id = dic['event_id']
         tmin = dic['tmin']
         tmax = dic['tmax']
         n_eeg = dic['n_eeg']
@@ -327,7 +326,7 @@ class Caller(object):
         #events = np.array(events)
         
         eog_epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, events, event_id=event_id, tmin=tmin, tmax=tmax)
+            raw, events, tmin=tmin, tmax=tmax)
         
         
         # Average EOG epochs
@@ -407,14 +406,13 @@ class Caller(object):
         
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
-    def plot_average_epochs(self, events, tmin, tmax, event_id):
+    def plot_average_epochs(self, events, tmin, tmax):
         """
         Method for plotting average epochs.
         """
         raw = self.experiment.active_subject.get_working_file()
         print "Plotting averages...\n"
-        print event_id
-        eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+        eog_epochs = mne.Epochs(raw, events,
                         tmin=tmin, tmax=tmax)
         
         # Average EOG epochs
@@ -440,10 +438,8 @@ class Caller(object):
 
     @threaded
     def find_eog_events(self, params):
-        print type(params['event_id'])
         raw = self.experiment.active_subject.get_working_file()
         eog_events = wrap_mne_call(self.experiment, find_eog_events, raw,
-                        event_id=params['event_id'],
                         l_freq=params['l_freq'], h_freq=params['h_freq'],
                         filter_length=params['filter_length'],
                         ch_name=params['ch_name'], verbose=True,

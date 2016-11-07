@@ -83,12 +83,11 @@ class AddECGProjections(QtGui.QDialog):
         
         raw = self.caller.experiment.active_subject.get_working_file()
         applied = self.create_applied_list()
+   
+        raw = raw.copy()
 
-#         for new_proj in self.projs:  # first remove projs
-#             for idx, proj in enumerate(raw.info['projs']):
-#                 if str(new_proj) == str(proj):
-#                     raw.info['projs'].pop(idx)
-#                     break
+        raw.apply_proj()
+        raw.info['projs'] = []
         
         if not isinstance(self.projs, np.ndarray):
             self.projs = np.array(self.projs)
