@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.3.8 (unreleased)
+0.3.9 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.8 (2016-11-07)
+------------------
+
+- Update MNE to 0.13.0
+- Fix error of meggie not starting because of random import
 
 0.3.7 (2016-11-01)
 ------------------
