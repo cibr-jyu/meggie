@@ -34,9 +34,13 @@ Created on Apr 25, 2013
 Contains the AddECGProjections-class used for adding ECG projections.
 """
 
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+
 import glob
 import mne
 import numpy as np
+from pylab import get_current_fig_manager
+
 
 from PyQt4 import QtCore,QtGui
 
@@ -95,7 +99,8 @@ class AddECGProjections(QtGui.QDialog):
             applied = np.array(applied)
 
         raw.add_proj(self.projs[applied])
-        raw.plot()
+        fig = raw.plot()
+        #self.hide()
         
     def create_applied_list(self):
         applied = list()

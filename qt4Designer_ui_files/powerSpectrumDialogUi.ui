@@ -176,7 +176,7 @@
                <number>10000</number>
               </property>
               <property name="value">
-               <number>2048</number>
+               <number>512</number>
               </property>
              </widget>
             </item>
@@ -199,7 +199,7 @@
                <number>10000</number>
               </property>
               <property name="value">
-               <number>1024</number>
+               <number>256</number>
               </property>
              </widget>
             </item>

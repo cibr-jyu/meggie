@@ -368,18 +368,21 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
             rows_to_remove = []
+            failures = []
             for index in selIndexes:
                 subject_name = index.data()
         
                 try:
-                    self.caller.experiment.remove_subject(subject_name, self)
                     rows_to_remove.append(index.row())
+                    self.caller.experiment.remove_subject(subject_name, self)
                 except Exception:
-                    msg = 'Could not remove the contents of the subject folder.'
-                    messagebox(self, msg)
+                    failures.append(subject_name)
     
             self.subjectListModel.removeRows(rows_to_remove)
-
+        if failures:
+            msg = 'Could not remove the contents of the subject folder for following subjects: ' + '\n'.join(failures)
+            messagebox(self, msg)
+        self.caller.experiment.save_experiment_settings()
         self.initialize_ui()
 
     def show_epoch_collection_parameters(self, epochs):
@@ -1004,27 +1007,34 @@ class MainWindow(QtGui.QMainWindow):
                 exc_messagebox(self, e)
         else:
             return
-        
-    def plot_raw(self):
-        def handle_close(event):
-            raw = self.caller.experiment.active_subject.get_working_file()
-            fname = self.caller.experiment.active_subject.get_working_file().info['filename']
-            fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
+    
+    class RawBadsPlot(object):
+        def __init__(self, parent):
+            self.parent = parent
             
-            self.initialize_ui()
-            bads = self.caller.experiment.active_subject.get_working_file().info['bads']
-            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
-        if self.ui.checkBoxShowEvents.isChecked():
-            events = self.caller.experiment.active_subject.get_events()
-        else:
-            events = None
-        try:
-            raw = self.caller.experiment.active_subject.get_working_file()
-            fig = raw.plot(block=True, show=True, events=events)
-            fig.canvas.mpl_connect('close_event', handle_close)
-        except Exception, err:
-            exc_messagebox(self, err)
-            return
+            if parent.ui.checkBoxShowEvents.isChecked():
+                events = parent.caller.experiment.active_subject.get_events()
+            else:
+                events = None
+            try:
+                raw = parent.caller.experiment.active_subject.get_working_file()
+                self.bads = raw.info.copy()['bads']
+                fig = raw.plot(block=True, show=True, events=events)
+                fig.canvas.mpl_connect('close_event', self.handle_close)
+            except Exception, err:
+                exc_messagebox(parent, err)
+                return
+        
+        def handle_close(self, event):
+            experiment = self.parent.caller.experiment
+            raw = experiment.active_subject.get_working_file()
+            bads = raw.info['bads']
+            if set(bads) != set(self.bads):            
+                print "Saving raw file as bads have changed"
+                fname = raw.info['filename']
+                fileManager.save_raw(experiment, raw, fname, overwrite=True)
+                experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
+            self.parent.initialize_ui()
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
         """Call ``raw.plot``."""
@@ -1033,7 +1043,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
-        self.plot_raw()
+        self.plot = MainWindow.RawBadsPlot(self)
 
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""

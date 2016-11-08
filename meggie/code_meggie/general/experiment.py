@@ -236,8 +236,6 @@ class Experiment(QObject):
         
         remove_data()
 
-        self.save_experiment_settings()
-
     def activate_subject(self, subject_name):
         """Activates a subject from the existing Subjects. Reads the working
         file under the directory of the given subject name and sets it

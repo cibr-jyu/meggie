@@ -198,14 +198,21 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="pushButtonEdit">
-              <property name="text">
-               <string>Edit...</string>
-              </property>
-             </widget>
-            </item>
            </layout>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pushButtonEdit">
+            <property name="text">
+             <string>Edit...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pushButtonHelp">
+            <property name="text">
+             <string>Help...</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -477,19 +484,6 @@
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="QCheckBox" name="checkBoxStim">
-            <property name="toolTip">
-             <string>Include or exclude stim channels</string>
-            </property>
-            <property name="text">
-             <string>Include stim channel in collection</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -510,7 +504,6 @@
   <tabstop>lineEditCollectionName</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
-  <tabstop>checkBoxStim</tabstop>
   <tabstop>checkBoxGrad</tabstop>
   <tabstop>doubleSpinBoxGradReject_3</tabstop>
   <tabstop>checkBoxMag</tabstop>

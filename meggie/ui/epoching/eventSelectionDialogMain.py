@@ -421,8 +421,13 @@ class EventSelectionDialog(QtGui.QDialog):
     def on_pushButtonEdit_clicked(self, checked=None):
         if checked is None:
             return
-        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditMask)
+        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditMask, self.ui.spinBoxEventID)
         self.bitDialog.show()
+
+    def on_pushButtonHelp_clicked(self, checked=None):
+        if checked is None:
+            return
+        messagebox(self.parent, 'kissa auttaa', 'Mask help')
 
     def calculate_epochs(self, subject):
         events_str = self.caller.create_epochs(
