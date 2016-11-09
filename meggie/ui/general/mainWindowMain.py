@@ -1164,8 +1164,9 @@ class MainWindow(QtGui.QMainWindow):
 
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEogProjs = AddEOGProjections(self, info['projs'])
-        self.addEogProjs.exec_()
-
+        self.addEogProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEogProjs.show()
+        
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
@@ -1175,7 +1176,6 @@ class MainWindow(QtGui.QMainWindow):
         
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
-        #self.addEcgProjs.exec_()
         self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEcgProjs.show()
         
@@ -1188,7 +1188,8 @@ class MainWindow(QtGui.QMainWindow):
         
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEegProjs = AddEEGProjections(self, info['projs'])
-        self.addEegProjs.exec_()        
+        self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEegProjs.show()
         
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""

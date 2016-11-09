@@ -519,8 +519,7 @@ class Caller(object):
         
         # find all proper picks
         picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-            eeg=params_copy['eeg'], stim=params_copy['stim'], 
-            eog=params_copy['eog'])
+            eeg=params_copy['eeg'], eog=params_copy['eog'])
         
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 

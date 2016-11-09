@@ -193,7 +193,6 @@ class EventSelectionDialog(QtGui.QDialog):
             'collection_name': 'Epochs',
             'tmin': -0.200,
             'tmax': 0.500,
-            'include_stim': True,
             'event_id': 1,
             'mask': 0,
             'reject': rejections
@@ -211,7 +210,6 @@ class EventSelectionDialog(QtGui.QDialog):
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
         grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
-        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
 
         collection_name = str(self.ui.lineEditCollectionName.text())
@@ -247,7 +245,7 @@ class EventSelectionDialog(QtGui.QDialog):
 
         info = subject.get_working_file(preload=False).info
 
-        picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
+        picks = mne.pick_types(info, meg=meg, eeg=eeg, eog=eog)
         if len(picks) == 0:
             message = 'No picks found with current parameter values' 
             messagebox(self.parent, message)
@@ -257,7 +255,7 @@ class EventSelectionDialog(QtGui.QDialog):
         fle = deepcopy(self.event_data['fixed_length_events'])
         
         param_dict = {'mag' : mag, 'grad' : grad,
-                      'eeg' : eeg, 'stim' : stim, 'eog' : eog,
+                      'eeg' : eeg, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 
                       'collection_name' : collection_name,
