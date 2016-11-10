@@ -170,30 +170,30 @@ class EogParametersDialog(QtGui.QDialog):
         """
 
         subject = self.caller.experiment.subjects[subject_name]
-	if len(params_dict) > 0:
-	    dic = params_dict  
-	else:
-	    dic = self.get_default_values()
-	self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
-	self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-	self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
-	self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
-	self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
-	self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
-	self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
-	self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
-	self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
-	self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
-	self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
-	self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
-	self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
-	self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-	self.ui.lineEditBad.setProperty("value", dic.get('bads'))
-	self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
-	self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-	self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
-	self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
-	self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
+        if len(params_dict) > 0:
+            dic = params_dict  
+        else:
+            dic = self.get_default_values()
+        self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
+        self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
+        self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
+        self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
+        self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
+        self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
+        self.ui.spinBoxMag.setProperty("value", dic.get('n-mag'))
+        self.ui.spinBoxEeg.setProperty("value", dic.get('n-eeg'))
+        self.ui.spinBoxLow.setProperty("value", dic.get('l-freq'))
+        self.ui.spinBoxHigh.setProperty("value", dic.get('h-freq'))
+        self.ui.doubleSpinBoxGradReject.setProperty("value", dic.get('rej-grad'))  # noqa
+        self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
+        self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
+        self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
+        self.ui.lineEditBad.setProperty("value", dic.get('bads'))
+        self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
+        self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
+        self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
+        self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
+        self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
     def get_default_values(self):
         """Sets default values for dialog."""
