@@ -1052,14 +1052,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
         
-        self.plot_raw()
-
-    def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
-        """Call mne_browse_raw."""
-        if self.caller.experiment.active_subject is None:
-            return
-
-        self.on_pushButtonMNE_Browse_Raw_clicked(checked)
+        self.on_pushButtonRawPlot_clicked(checked)
 
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""

@@ -82,7 +82,7 @@ class Ui_EventSelectionDialog(object):
         self.gridLayout_5 = QtGui.QGridLayout()
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
         self.spinBoxEventID = QtGui.QSpinBox(self.groupBoxEvent)
-        self.spinBoxEventID.setMinimum(1)
+        self.spinBoxEventID.setMinimum(0)
         self.spinBoxEventID.setMaximum(999999)
         self.spinBoxEventID.setObjectName(_fromUtf8("spinBoxEventID"))
         self.gridLayout_5.addWidget(self.spinBoxEventID, 0, 1, 1, 1)

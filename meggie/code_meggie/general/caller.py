@@ -480,11 +480,17 @@ class Caller(object):
         if len(event_params) > 0:
             for event_params_dic in event_params:
                 event_id = event_params_dic['event_id']
-                category['id_' + str(event_id)] = event_id_counter
+                
+                category_id = 'id_' + str(event_id)
+                if event_params_dic['mask']:
+                    category_id += '_mask_' + str(event_params_dic['mask'])
+                
+                category[category_id] = event_id_counter
                 new_events = np.array(self.create_eventlist(event_params_dic,
                                                             subject))
                 if len(new_events) == 0:
                     raise ValueError('No events found with selected id.')
+                
                 new_events[:, 2] = event_id_counter
                 events.extend([event for event in new_events])
                 event_id_counter += 1
@@ -551,10 +557,8 @@ class Caller(object):
         """
         stim_channel = subject.find_stim_channel()
         raw = subject.get_working_file()
-        e = Events(raw, stim_channel, params['mask'])
-        mask = np.bitwise_not(params['mask'])
-        events = e.pick(np.bitwise_and(params['event_id'], mask))
-        return events
+        e = Events(raw, stim_channel, params['mask'], params['event_id'])
+        return e.events
 
     def read_layout(self, layout):
         if not layout or layout == "Infer from data":

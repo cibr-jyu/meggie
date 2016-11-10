@@ -681,13 +681,6 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="pushButtonMNE_Browse_Raw_2">
-                       <property name="text">
-                        <string>MNE_Browse_Raw</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
                       <widget class="QPushButton" name="pushButtonPlotProjections">
                        <property name="text">
                         <string>Plot projections</string>
@@ -3745,7 +3738,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonRawPlot</tabstop>
   <tabstop>checkBoxShowEvents</tabstop>
   <tabstop>pushButtonSpectrum</tabstop>
-  <tabstop>pushButtonMNE_Browse_Raw_2</tabstop>
   <tabstop>pushButtonPlotProjections</tabstop>
   <tabstop>listWidgetBads</tabstop>
   <tabstop>listWidgetProjs</tabstop>
