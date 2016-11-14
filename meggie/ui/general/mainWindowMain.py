@@ -1017,9 +1017,9 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 events = None
             try:
-                raw = parent.caller.experiment.active_subject.get_working_file()
-                self.bads = raw.info.copy()['bads']
-                fig = raw.plot(block=True, show=True, events=events)
+                raw = parent.caller.experiment.active_subject.get_working_file()  # noqa
+                self.raw = raw.copy()
+                fig = self.raw.plot(events=events)
                 fig.canvas.mpl_connect('close_event', self.handle_close)
             except Exception, err:
                 exc_messagebox(parent, err)
@@ -1028,12 +1028,19 @@ class MainWindow(QtGui.QMainWindow):
         def handle_close(self, event):
             experiment = self.parent.caller.experiment
             raw = experiment.active_subject.get_working_file()
-            bads = raw.info['bads']
-            if set(bads) != set(self.bads):            
-                print "Saving raw file as bads have changed"
-                fname = raw.info['filename']
-                fileManager.save_raw(experiment, raw, fname, overwrite=True)
-                experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
+            save = self.parent.preferencesHandler.save_bads
+
+            if set(raw.info['bads']) != set(self.raw.info['bads']):
+                if save:            
+                    print "Saving raw file as bads have changed"
+                    fname = raw.info['filename']
+                    raw.info['bads'] = self.raw.info['bads']
+                    fileManager.save_raw(experiment, raw, fname, overwrite=True)
+                    experiment.action_logger.log_message(''.join([
+                        'Raw plot bad channels selected for file: ',
+                        fname, '\n', str(raw.info['bads'])]))
+            
+            self.raw = None
             self.parent.initialize_ui()
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
@@ -1044,7 +1051,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.plot = MainWindow.RawBadsPlot(self)
-
+        
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""
         if checked is None:

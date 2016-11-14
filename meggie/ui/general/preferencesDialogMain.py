@@ -73,6 +73,9 @@ class PreferencesDialog(QtGui.QDialog):
         
         if self.parent.preferencesHandler.confirm_quit == True:
             self.ui.checkBoxConfirmQuit.setChecked(True)       
+            
+        if self.parent.preferencesHandler.save_bads == True:
+            self.ui.checkBoxPlotClose.setChecked(True)
         
         self.ui.spinBoxNJobs.setValue(self.parent.preferencesHandler.n_jobs)
         self.ui.LineEditFilePath.setText(workDirectory)
@@ -131,6 +134,10 @@ class PreferencesDialog(QtGui.QDialog):
             confirmQuit = True
         else: confirmQuit = False
         
+        if self.ui.checkBoxPlotClose.isChecked() == True:
+            saveBads = True
+        else: saveBads = False
+        
         n_jobs = self.ui.spinBoxNJobs.value()
         
         self.parent.preferencesHandler.working_directory = workFilepath
@@ -139,6 +146,7 @@ class PreferencesDialog(QtGui.QDialog):
         self.parent.preferencesHandler.FreeSurferHome = FreeSurferPath
         self.parent.preferencesHandler.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
         self.parent.preferencesHandler.confirm_quit = confirmQuit
+        self.parent.preferencesHandler.save_bads = saveBads
         self.parent.preferencesHandler.write_preferences_to_disk()
         self.parent.preferencesHandler.set_env_variables()
         self.close()
