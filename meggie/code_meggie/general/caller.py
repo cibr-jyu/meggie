@@ -393,6 +393,19 @@ class Caller(object):
 
         wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
         
+        if kind == 'eeg':
+            projs = raw.info['projs']
+            for idx, proj in enumerate(projs):
+                names = ['ECG', 'EOG', 'EEG']
+                if filter(lambda x: x in proj['desc'], names):
+                    continue
+                #if 'ECG' in proj['desc']:
+                #    continue
+                #if 'EOG' in proj['desc']:
+                #    continue
+                #if 'EEG' in proj['desc']:
+                #    continue
+                raw.info['projs'][idx]['desc'] = 'Ocular-' + proj['desc'] 
         
         #Removes older raw files with applied projs
         directory = os.path.dirname(fname)

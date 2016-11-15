@@ -248,7 +248,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
-        self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
+        #self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
         
     def update_ui(self):
         """
@@ -1190,7 +1190,38 @@ class MainWindow(QtGui.QMainWindow):
         self.addEegProjs = AddEEGProjections(self, info['projs'])
         self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEegProjs.show()
+
+    def on_pushButtonRemoveProj_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
         
+        if self.ui.listWidgetProjs.currentItem() is None:
+            message = 'Select projection to remove.'
+            messagebox(self, message)
+            return
+        
+        selected_items = self.ui.listWidgetProjs.selectedItems()
+        raw = self.caller.experiment.active_subject.get_working_file()
+        str_projs = [str(proj) for proj in raw.info['projs']]
+        
+        for item in selected_items:
+            proj_name = item.text()
+            if proj_name in str_projs:
+                index = str_projs.index(proj_name)
+                str_projs.pop(index)
+                raw.info['projs'].pop(index)
+                row = self.ui.listWidgetProjs.row(item)
+                self.ui.listWidgetProjs.takeItem(row)
+
+        directory = self.caller.experiment.active_subject.subject_path
+        subject_name = self.caller.experiment.active_subject.working_file_name
+        fname = os.path.join(directory, subject_name)        
+        from meggie.code_meggie.general import fileManager 
+        fileManager.save_raw(self.caller.experiment, raw, fname)
+        self.initialize_ui()
+
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:

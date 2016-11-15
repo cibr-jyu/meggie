@@ -364,36 +364,27 @@ class Subject(QObject):
         Checks the subject folder for ECG applied file.
         Returns True if ecg_applied found.
         """
-        path = self.subject_path
-        #Check whether ECG projections are applied
-        files = filter(os.path.isfile, glob.glob(path + '/*ecg_applied*'))
-        if len(files) > 0:
-            return True
-        return False
+        raw = self.get_working_file()
+        projs = raw.info['projs']
+        return any('ECG' in str(proj) for proj in projs)
         
     def check_eog_applied(self):
         """
         Checks the subject folder for EOG applied file.
         Returns True if eog_applied found.
         """
-        path = self.subject_path
-        #Check whether EOG projections are applied
-        files = filter(os.path.isfile, glob.glob(path + '/*eog_applied*'))
-        if len(files) > 0:
-            return True
-        return False
+        raw = self.get_working_file()
+        projs = raw.info['projs']
+        return any('EOG' in str(proj) for proj in projs)
 
     def check_eeg_applied(self):
         """
         Checks the subject folder for EEG applied file.
         Returns True if eeg_applied found.
         """
-        path = self.subject_path
-        #Check whether EEG projections are applied
-        files = filter(os.path.isfile, glob.glob(path + '/*eeg_applied*'))
-        if len(files) > 0:
-            return True
-        return False
+        raw = self.get_working_file()
+        projs = raw.info['projs']
+        return any('Ocular' in str(proj) for proj in projs)
 
     def check_sss_applied(self):
         """
