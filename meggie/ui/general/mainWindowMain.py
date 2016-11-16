@@ -69,6 +69,7 @@ from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
+from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
@@ -1051,6 +1052,16 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.plot = MainWindow.RawBadsPlot(self)
+        
+    def on_pushButtonCustomChannels_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        
+        self.badChannelsDialog = BadChannelsDialog(self)
+        self.badChannelsDialog.show()
+        
         
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""
