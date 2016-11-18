@@ -59,6 +59,7 @@ class BadChannelsDialog(QtGui.QDialog):
         bads = raw.info['bads']
         for bad in bads:
             chnls = self.ui.listWidgetBads.findItems(bad, QtCore.Qt.MatchExactly)
+            #TODO: what to do if listwidgetbads selection changed before closing plot
             for itm in chnls:
                 itm.setSelected(True)        
 
