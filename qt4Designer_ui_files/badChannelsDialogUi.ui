@@ -74,6 +74,13 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonPlot">
+       <property name="text">
+        <string>Select from plot...</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

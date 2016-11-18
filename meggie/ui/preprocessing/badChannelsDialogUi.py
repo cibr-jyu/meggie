@@ -50,6 +50,9 @@ class Ui_Dialog(object):
         self.horizontalLayout_2.addWidget(self.pushButtonSelectAll)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
+        self.pushButtonPlot = QtGui.QPushButton(Dialog)
+        self.pushButtonPlot.setObjectName(_fromUtf8("pushButtonPlot"))
+        self.horizontalLayout_2.addWidget(self.pushButtonPlot)
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -62,4 +65,5 @@ class Ui_Dialog(object):
         self.pushButtonReject.setText(_translate("Dialog", "Cancel", None))
         self.pushButtonAccept.setText(_translate("Dialog", "Ok", None))
         self.pushButtonSelectAll.setText(_translate("Dialog", "Select all", None))
+        self.pushButtonPlot.setText(_translate("Dialog", "Select from plot...", None))
 
