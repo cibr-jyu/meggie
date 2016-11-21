@@ -1438,9 +1438,9 @@ class Caller(object):
                           notch_widths=dic['bandstop_bw'],
                           trans_bandwidth=trans_bw, n_jobs=n_jobs,
                           verbose=True)
-            
-        print 'Saving to file...'
+           
         if not preview:
+            print 'Saving to file...'
             fileManager.save_raw(self.experiment, dataToFilter, info['filename'], overwrite=True)
         
         return dataToFilter

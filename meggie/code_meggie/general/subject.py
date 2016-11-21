@@ -186,7 +186,12 @@ class Subject(QObject):
         """Releases memory from previously processed subject by removing
         references from raw files.
         """
-        if self.get_working_file() is not None:
+        try:
+            working_file = self.get_working_file()
+        except:
+            working_file = None
+        
+        if working_file is not None:
             self.set_working_file(None)
             if len(self.epochs) > 0:
                 for value in self.epochs.values():

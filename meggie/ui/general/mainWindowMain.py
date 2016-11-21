@@ -1027,22 +1027,7 @@ class MainWindow(QtGui.QMainWindow):
                 return
         
         def handle_close(self, event):
-            experiment = self.parent.caller.experiment
-            raw = experiment.active_subject.get_working_file()
-            save = self.parent.preferencesHandler.save_bads
-
-            if set(raw.info['bads']) != set(self.raw.info['bads']):
-                if save:            
-                    print "Saving raw file as bads have changed"
-                    fname = raw.info['filename']
-                    raw.info['bads'] = self.raw.info['bads']
-                    fileManager.save_raw(experiment, raw, fname, overwrite=True)
-                    experiment.action_logger.log_message(''.join([
-                        'Raw plot bad channels selected for file: ',
-                        fname, '\n', str(raw.info['bads'])]))
-            
             self.raw = None
-            self.parent.initialize_ui()
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
         """Call ``raw.plot``."""
@@ -1367,11 +1352,18 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
+        
+        previous_subject = self.caller.experiment.active_subject
         try:
             self.caller.activate_subject(subject_name)
+            self.initialize_ui()
         except Exception as e:
-            exc_messagebox(self, e)
-        self.initialize_ui()
+            self.caller.experiment.active_subject = None
+            exc_messagebox(self, "Couldn't activate the subject.")
+            if previous_subject:
+                print "Couldn't activate the subject, resuming to previous one."
+                self.caller.activate_subject(previous_subject.subject_name)
+                self.initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
@@ -1757,18 +1749,21 @@ class MainWindow(QtGui.QMainWindow):
                 
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
 
-        if self.caller.experiment.active_subject is None:
+        active_subject = self.caller.experiment.active_subject
+        
+        if active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
                                      'continuing.')
-            return
+            return        
         
-        name = self.caller.experiment.active_subject.working_file_name
+        raw = active_subject.get_working_file()
+        
+        name = active_subject.working_file_name
         status = "Current working file: " + name
         
         self.statusLabel.setText(status)
         #self.ui.
 
-        active_subject = self.caller.experiment.active_subject
 
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
@@ -1816,7 +1811,7 @@ class MainWindow(QtGui.QMainWindow):
         # in mainwindow
         
         # Populate epoch and evoked lists        
-        raw = active_subject.get_working_file()
+
 
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
