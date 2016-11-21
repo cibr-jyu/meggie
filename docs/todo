@@ -35,3 +35,7 @@ epochs
 12:41:00 < talli> hah
 13:54:40 < Zairex> sitä eeg projektio-juttuakin vois vielä kahtoa jos siinä ois mitään mitä vois hioa vähän helpommaks
 
+
+
+- add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
+- open_rawiin mahdollisuus konkatenoida tiedostoja
