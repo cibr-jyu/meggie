@@ -1,10 +1,27 @@
 Changelog
 =========
 
-0.3.9 (unreleased)
+0.3.10 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.3.9 (2016-11-21)
+------------------
+
+- Fix subject activation bug
+- Clean up logging code a bit
+- Do bad channel selection dialog
+- change logic that checks if projs are applied
+- Fix bitselectiondialog
+- fix meggie events
+- fix filter batch
+- fix projs previews
+- remove mne_browse_raw
+- Remove tabs from code
+- Remove stim in eventselectiondialog
+- Remake epoch masking
+- Do not change bad channels when normally plotting raw
 
 0.3.8 (2016-11-07)
 ------------------
