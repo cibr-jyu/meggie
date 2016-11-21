@@ -9,7 +9,7 @@ epochs
 * Epokkien luominen
 
 
-- not implemented yet
+- not implemented yet, spectrums
 - ica
 - kansiohierarkia
 - add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
@@ -27,6 +27,6 @@ epochs
 *- tfr-datan tallennus
 *- baselinet
 - lokikoodin siivousta ehkä, ehkä käydä läpi
-- scripting ( kiva merge...)
 - wrap_mne_callin koodin voisi myös katsoa..
+- scripting ( kiva merge...)
 - korjaa testit 
