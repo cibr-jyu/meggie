@@ -53,24 +53,6 @@ class PowerSpectrumEvents(QtGui.QDialog):
 
         raw = self.parent.caller.experiment.active_subject.get_working_file()
         
-        def should_take(id_, mask, event):
-            """ check if event has same non-masked bits as id_
-            """
-            id_bin = '{0:016b}'.format(id_)
-            mask_bin = '{0:016b}'.format(mask)
-            event_bin = '{0:016b}'.format(event[2])
-            
-            take_event = True
-            for i in range(len(mask_bin)):
-                if int(mask_bin[i]) == 1:
-                    continue
-                if int(id_bin[i]) != int(event_bin[i]):
-                    take_event = False
-                    break
-                
-            return take_event
-            
-        
         def find_triggers(event_code):
             try:
                 id_, mask = map(int, event_code.split('|'))
@@ -78,9 +60,9 @@ class PowerSpectrumEvents(QtGui.QDialog):
                 id_, mask = int(event_code), 0
 
             subject = self.parent.caller.experiment.active_subject
-            triggers = Events(raw, stim_ch=subject.find_stim_channel()).events
-            triggers = filter(
-                lambda trigger: should_take(id_, mask, trigger), triggers)
+            triggers = Events(raw, stim_ch=subject.find_stim_channel(), 
+                              mask=mask, id_=id_).events
+
             return triggers
         
         min_triggers = find_triggers(event_min)

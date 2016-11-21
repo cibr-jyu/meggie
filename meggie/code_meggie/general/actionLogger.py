@@ -8,20 +8,15 @@ import logging
 
 class ActionLogger(object):
     """
-    classdocs
     """
-
 
     def __init__(self):
         """
         Constructor
         """
-        #copied stuff from MNE-Python utils.py
-        self._logger = None  #logging.getLogger('meggie')  # one selection here used across Meggie
-        #self._logger.propagate = False  # don't propagate (in case of multiple imports)
+        self._logger = None
         self._actionCounter = 1;
         self._notifications = []
-        #self.initialize_logger()
         
     @property
     def logger(self):
@@ -44,10 +39,9 @@ class ActionLogger(object):
         """
         self._logger = logging.getLogger(path)
         handler = logging.FileHandler(os.path.join(path, 'meggie.log'))
-        #handler = RotatingFileHandler(os.path.join(path, 'meggie.log'))
         handler.setLevel(logging.INFO)
         
-        #see: https://docs.python.org/2/library/logging.html#logrecord-attributes
+        # see: https://docs.python.org/2/library/logging.html#logrecord-attributes
         formatter = logging.Formatter('%(asctime)s - %(message)s', '%Y-%m-%d %H:%M:%S')
         handler.setFormatter(formatter)
         for handler in self._logger.handlers:
@@ -71,7 +65,6 @@ class ActionLogger(object):
         callargs          -- dictionary of args to clean
         """
         
-#         #TODO: remove unnecessary params
 #         if (mne_instance_name == 'filter'):
 #             callargs = self.clean_filter_args(mne_instance_name, callargs)
 #         if (mne_instance_name == 'notch_filter'):
@@ -139,15 +132,6 @@ class ActionLogger(object):
     def clean_epochs_args(self, mne_instance_name, callargs):
         
         """
-        TODO:
-        
-        Log Mask? (mne.events.find_events
-        mask : int
-        The value of the digital mask to apply to the stim channel values.
-        The default value is 0.
-        
-        dict _channel_type_idx includes 'stim' key for stim channel selection
-        if it's not empty should it be logged?
         """
         if '_channel_type_idx' in callargs.keys():
             del callargs['_channel_type_idx']

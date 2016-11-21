@@ -11,7 +11,7 @@ from PyQt4.Qt import QPushButton, pyqtSlot
 class BitSelectionDialog(QtGui.QDialog):
     
     
-    def __init__(self, parent, target):
+    def __init__(self, parent, target, target_spinbox=None):
         """
         Init method for the dialog.
         Parameters:
@@ -24,6 +24,7 @@ class BitSelectionDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.target = target
+        self.target_spinbox = target_spinbox
         
         self.ui.labelID.setText('0')
         self.ui.labelMask.setText(str(pow(2, self.button_count) - 1)) # 2^0 + 2^1 + ... + 2^(button_count - 1)
@@ -70,6 +71,10 @@ class BitSelectionDialog(QtGui.QDialog):
         self.ui.labelMask.setText(str(new_mask))
         
     def accept(self):
-        self.target.setText(self.ui.labelID.text() + '|' + self.ui.labelMask.text())
+        if self.target_spinbox is None:
+            self.target.setText(self.ui.labelID.text() + '|' + self.ui.labelMask.text())
+        else:
+            self.target_spinbox.setValue(int(self.ui.labelID.text()))
+            self.target.setText(self.ui.labelMask.text())
         self.close()
         

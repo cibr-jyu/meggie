@@ -55,7 +55,7 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
-
+from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
 
 class EventSelectionDialog(QtGui.QDialog):
     """
@@ -193,7 +193,6 @@ class EventSelectionDialog(QtGui.QDialog):
             'collection_name': 'Epochs',
             'tmin': -0.200,
             'tmax': 0.500,
-            'include_stim': True,
             'event_id': 1,
             'mask': 0,
             'reject': rejections
@@ -211,7 +210,6 @@ class EventSelectionDialog(QtGui.QDialog):
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
         grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
-        stim = self.ui.checkBoxStim.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
 
         collection_name = str(self.ui.lineEditCollectionName.text())
@@ -247,31 +245,16 @@ class EventSelectionDialog(QtGui.QDialog):
 
         info = subject.get_working_file(preload=False).info
 
-        picks = mne.pick_types(info, meg=meg, eeg=eeg, stim=stim, eog=eog)
-        if len(picks) == 0:
-            message = 'No picks found with current parameter values' 
-            messagebox(self.parent, message)
-            return
-
         events = deepcopy(self.event_data['events'])
         fle = deepcopy(self.event_data['fixed_length_events'])
         
         param_dict = {'mag' : mag, 'grad' : grad,
-                      'eeg' : eeg, 'stim' : stim, 'eog' : eog,
+                      'eeg' : eeg, 'eog' : eog,
                       'reject' : reject, 'tmin' : float(tmin),
                       'tmax' : float(tmax), 
                       'collection_name' : collection_name,
                       'events' : events, 'fixed_length_events' : fle}
         return param_dict
-
-    def create_eventlist(self, subject, event_params):
-        """
-        """
-        raw = subject.get_working_file(temporary=True)
-        e = Events(raw, subject.find_stim_channel(), event_params['mask'])
-        mask = np.bitwise_not(event_params['mask'])
-        events = e.pick(np.bitwise_and(event_params['event_id'], mask))
-        return events
 
     def on_pushButtonAdd_clicked(self, checked=None):
         """
@@ -281,17 +264,13 @@ class EventSelectionDialog(QtGui.QDialog):
             return
 
         event_params = {
-            'mask': self.ui.spinBoxMask.value(),
+            'mask': int(self.ui.lineEditMask.text()),
             'event_id': self.ui.spinBoxEventID.value(),
         }
         
-        subject = self.get_selected_subject()
-        events = self.create_eventlist(subject, event_params)
-        if len(events) != 0:
+        if event_params not in self.event_data['events']:
             self.event_data['events'].append(event_params)
             self.update_events()
-        else:
-            messagebox(self.parent, "No events found.")
 
     def on_pushButtonClear_clicked(self, checked=None):
         if checked is None:
@@ -333,10 +312,6 @@ class EventSelectionDialog(QtGui.QDialog):
             ))
             import traceback; traceback.print_exc()
         
-        # if not self.calculate_epochs(self.caller.experiment.active_subject):
-        #     self.batching_widget.failed_subjects.append(
-        #         self.caller.experiment.active_subject)
-
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.caller.experiment.save_experiment_settings()
@@ -417,6 +392,32 @@ class EventSelectionDialog(QtGui.QDialog):
         if self.fixedLengthDialog is None:
             self.fixedLengthDialog = FixedLengthEpochDialog(self)
         self.fixedLengthDialog.show()
+
+    def on_pushButtonEdit_clicked(self, checked=None):
+        if checked is None:
+            return
+        self.bitDialog = BitSelectionDialog(self, self.ui.lineEditMask, self.ui.spinBoxEventID)
+        self.bitDialog.show()
+
+    def on_pushButtonHelp_clicked(self, checked=None):
+        if checked is None:
+            return
+        help_message = ("Events are found in a following way. If only event " 
+            "id is set, events with exactly the same binary representation as "
+            "event id are included in the final event list. If also mask is " 
+            "set, event list will also include events where binary digits in "
+            "the places specified by the mask are not the same as in the "
+            "event id, or in other words, only events where the digits we "
+            "are interested in are the same as in the list of all events, "
+            "are included. Binary representations are assumed to be 16 digits "
+            "long. \n\nFor example event id of 0000010000010000 = 1040 and "
+            "mask of 0000000000000011 = 3 would mean that first (rightmost) "
+            "two digits can be 1 or 0, but anything else must be exactly as "
+            "in the event id. Thus events with following id's would be allowed:"
+            "\n\n0000010000010000 = 1040\n0000010000010001 = 1041\n"
+            "0000010000010010 = 1042\n0000010000010011 = 1043")
+        
+        messagebox(self.parent, help_message, 'Mask help')
 
     def calculate_epochs(self, subject):
         events_str = self.caller.create_epochs(

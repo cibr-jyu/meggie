@@ -69,6 +69,7 @@ from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
+from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
@@ -248,7 +249,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
-        self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
+        #self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
         
     def update_ui(self):
         """
@@ -368,18 +369,21 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
             rows_to_remove = []
+            failures = []
             for index in selIndexes:
                 subject_name = index.data()
         
                 try:
-                    self.caller.experiment.remove_subject(subject_name, self)
                     rows_to_remove.append(index.row())
+                    self.caller.experiment.remove_subject(subject_name, self)
                 except Exception:
-                    msg = 'Could not remove the contents of the subject folder.'
-                    messagebox(self, msg)
+                    failures.append(subject_name)
     
             self.subjectListModel.removeRows(rows_to_remove)
-
+        if failures:
+            msg = 'Could not remove the contents of the subject folder for following subjects: ' + '\n'.join(failures)
+            messagebox(self, msg)
+        self.caller.experiment.save_experiment_settings()
         self.initialize_ui()
 
     def show_epoch_collection_parameters(self, epochs):
@@ -1004,27 +1008,26 @@ class MainWindow(QtGui.QMainWindow):
                 exc_messagebox(self, e)
         else:
             return
-        
-    def plot_raw(self):
-        def handle_close(event):
-            raw = self.caller.experiment.active_subject.get_working_file()
-            fname = self.caller.experiment.active_subject.get_working_file().info['filename']
-            fileManager.save_raw(self.caller.experiment, raw, fname, overwrite=True)
+    
+    class RawBadsPlot(object):
+        def __init__(self, parent):
+            self.parent = parent
             
-            self.initialize_ui()
-            bads = self.caller.experiment.active_subject.get_working_file().info['bads']
-            self.caller.experiment.action_logger.log_message('Raw plot bad channels selected for file: ' + fname + '\n' + str(bads))
-        if self.ui.checkBoxShowEvents.isChecked():
-            events = self.caller.experiment.active_subject.get_events()
-        else:
-            events = None
-        try:
-            raw = self.caller.experiment.active_subject.get_working_file()
-            fig = raw.plot(block=True, show=True, events=events)
-            fig.canvas.mpl_connect('close_event', handle_close)
-        except Exception, err:
-            exc_messagebox(self, err)
-            return
+            if parent.ui.checkBoxShowEvents.isChecked():
+                events = parent.caller.experiment.active_subject.get_events()
+            else:
+                events = None
+            try:
+                raw = parent.caller.experiment.active_subject.get_working_file()  # noqa
+                self.raw = raw.copy()
+                fig = self.raw.plot(events=events)
+                fig.canvas.mpl_connect('close_event', self.handle_close)
+            except Exception, err:
+                exc_messagebox(parent, err)
+                return
+        
+        def handle_close(self, event):
+            self.raw = None
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
         """Call ``raw.plot``."""
@@ -1033,8 +1036,18 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
-        self.plot_raw()
-
+        self.plot = MainWindow.RawBadsPlot(self)
+        
+    def on_pushButtonCustomChannels_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+        
+        self.badChannelsDialog = BadChannelsDialog(self)
+        self.badChannelsDialog.show()
+        
+        
     def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
         """Call mne_browse_raw."""
         if checked is None:
@@ -1042,14 +1055,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
         
-        self.plot_raw()
-
-    def on_pushButtonMNE_Browse_Raw_2_clicked(self, checked=None):
-        """Call mne_browse_raw."""
-        if self.caller.experiment.active_subject is None:
-            return
-
-        self.on_pushButtonMNE_Browse_Raw_clicked(checked)
+        self.on_pushButtonRawPlot_clicked(checked)
 
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""
@@ -1154,8 +1160,9 @@ class MainWindow(QtGui.QMainWindow):
 
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEogProjs = AddEOGProjections(self, info['projs'])
-        self.addEogProjs.exec_()
-
+        self.addEogProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEogProjs.show()
+        
     def on_pushButtonApplyECG_clicked(self, checked=None):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
@@ -1165,7 +1172,8 @@ class MainWindow(QtGui.QMainWindow):
         
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
-        self.addEcgProjs.exec_()
+        self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEcgProjs.show()
         
     def on_pushButtonApplyEEG_clicked(self, checked=None):
         """Open the dialog for applying the ECG-projections to the data."""
@@ -1176,8 +1184,40 @@ class MainWindow(QtGui.QMainWindow):
         
         info = self.caller.experiment.active_subject.get_working_file().info
         self.addEegProjs = AddEEGProjections(self, info['projs'])
-        self.addEegProjs.exec_()        
+        self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.addEegProjs.show()
+
+    def on_pushButtonRemoveProj_clicked(self, checked=None):
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
         
+        if self.ui.listWidgetProjs.currentItem() is None:
+            message = 'Select projection to remove.'
+            messagebox(self, message)
+            return
+        
+        selected_items = self.ui.listWidgetProjs.selectedItems()
+        raw = self.caller.experiment.active_subject.get_working_file()
+        str_projs = [str(proj) for proj in raw.info['projs']]
+        
+        for item in selected_items:
+            proj_name = item.text()
+            if proj_name in str_projs:
+                index = str_projs.index(proj_name)
+                str_projs.pop(index)
+                raw.info['projs'].pop(index)
+                row = self.ui.listWidgetProjs.row(item)
+                self.ui.listWidgetProjs.takeItem(row)
+
+        directory = self.caller.experiment.active_subject.subject_path
+        subject_name = self.caller.experiment.active_subject.working_file_name
+        fname = os.path.join(directory, subject_name)        
+        from meggie.code_meggie.general import fileManager 
+        fileManager.save_raw(self.caller.experiment, raw, fname)
+        self.initialize_ui()
+
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
@@ -1312,11 +1352,18 @@ class MainWindow(QtGui.QMainWindow):
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
+        
+        previous_subject = self.caller.experiment.active_subject
         try:
             self.caller.activate_subject(subject_name)
+            self.initialize_ui()
         except Exception as e:
-            exc_messagebox(self, e)
-        self.initialize_ui()
+            self.caller.experiment.active_subject = None
+            exc_messagebox(self, "Couldn't activate the subject.")
+            if previous_subject:
+                print "Couldn't activate the subject, resuming to previous one."
+                self.caller.activate_subject(previous_subject.subject_name)
+                self.initialize_ui()
 
         # To tell the MVC models that the active subject has changed.
         self.reinitialize_models()
@@ -1702,18 +1749,21 @@ class MainWindow(QtGui.QMainWindow):
                 
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
 
-        if self.caller.experiment.active_subject is None:
+        active_subject = self.caller.experiment.active_subject
+        
+        if active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
                                      'continuing.')
-            return
+            return        
         
-        name = self.caller.experiment.active_subject.working_file_name
+        raw = active_subject.get_working_file()
+        
+        name = active_subject.working_file_name
         status = "Current working file: " + name
         
         self.statusLabel.setText(status)
         #self.ui.
 
-        active_subject = self.caller.experiment.active_subject
 
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
@@ -1761,7 +1811,7 @@ class MainWindow(QtGui.QMainWindow):
         # in mainwindow
         
         # Populate epoch and evoked lists        
-        raw = active_subject.get_working_file()
+
 
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds

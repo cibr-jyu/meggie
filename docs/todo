@@ -9,72 +9,24 @@ epochs
 * Epokkien luominen
 
 
-- Misc:
-* group average spektreille?
-
-----MNE 0.13----
-
-- apply projektioihin preview
-- tiinan kanssa meggiepalaveri: metodikoulutus
-- eeg projektionsZzz event id piiloon, käytettävä id vaikka satunnaisesti ja tarkistus ettei kukaan muu käytä
-
-12:28:00 < Zairex> joo
-12:30:00 < Zairex> oishan sit kaikkea jännää niinkun järjestää kansiohierarkiaa uudelleen 8-- )
-12:30:00 < Zairex> vois tehä taas hirveästi lisää bugeja :P
-12:31:00 < Zairex> bittidialogia vois eventSelectionDialogiin
-12:31:00 < talli> niin joo
-12:31:00 < Zairex> sitä etusivun tfr:ää vois korjata niin että se osais eeg-datastakin tehdä oletusarvoilla kaunin tfr:n
-12:32:00 < Zairex> baseline- ja desibeliasteikkojuttuja ne varmaan on
-12:32:00 < Zairex> ICA:n vois tuoda preprosessointimahdollisuudeksi
-12:32:00 < Zairex> sen sais ehkä tosi helposti jos päivittäs mnen 0.13.0:ks
-12:33:00 < Zairex> sen vois yrittää päivittää
-12:33:00 < talli> niin se tosiaan
-12:33:00 < talli> parempi päivittää ajoissa aina ettei tule turhia töitä tehtyä
-12:34:00 < Zairex> joo
-12:34:00 < Zairex> pitää lukea tarkkaan se changelogi tällä kertaa, kun tuntuu että oli niitä deprekointijuttuja aika 
-                paljon mitkä:00 vaan muuttaa oletustoiminnallisuutta 8 )
-12:34:00 < Zairex> että ei hajoa sovellus välttämättä siinä funktiokutsussa mut myöhemmin voi tapahtua outoa
-12:36:00 < Zairex> projektiotarina pitäs miettiä kunnolla läpi, että ei käy sitä että on projektiot laskettu koko 
-                datalle ja:00 sitten bad channelien tai picksien vuoks tapahtuu sitä että sitten ne projektiot 
-                applytaankin dataan:00 jossa on vähemmän kanavia
-12:36:00 < Zairex> sit sille vois kehittää paremman vaihtoehdon sille eventSelectiondialogissa olevalle "valitse 
-                kiinnostavat kanava:00t"-jutulle
-12:37:00 < Zairex> joku missä kanavat kulkee mukana vaikka niitä ei tarviskaan, niin sit esim nuo projektiojutut on 
-                paljon selkeämpiä
-12:38:00 < Zairex> source analysis pitäs saada toimimaan oikein, mutta ehkä ei kosketa siihen D:
-12:39:00 < Zairex> sam lupas jossain vaiheessa antaa omia mri-kuviaan ja sit mulla on dataa samista meditoimassa
-12:39:00 < Zairex> niin niitä ja sample-dataa esimerkkeinä käyttäenv
-12:39:00 < Zairex> vois yrittää saada sen source analysis putken toimimaan jotenkin tosi helposti
-12:39:00 < Zairex> mutta ehkä nyt on vielä muuta tekemistä..
-12:41:00 < Zairex> näin unen jossa mulle joku kertoi että mistä se fif-tiedostojen hajoaminen johtuu
-12:41:00 < Zairex> harmi etten muista enää
-12:41:00 < talli> hah
-12:41:00 < talli> mehän poistettiin eventselectiondialogista kanavien valinta
-12:42:00 < talli> että selkeyttää juttuja
-12:42:00 < Zairex> ok, no se on hyvä
-12:42:00 < talli> jotain muutakin muutettiin samalla mutten muista mitä
-...
-13:52:30 < talli> mne.time_frequency.tfr_morlet(): uusi parametri average : bool, defaults to True
-13:52:30 < talli> If True average across Epochs.
-13:52:30 < talli> New in version 0.13.0.
-13:52:57 < talli> filter: New recommended defaults for l_trans_bandwidth='auto', h_trans_bandwidth='auto', and filter_length='auto'
-13:53:50 < Zairex> 8 ) mhmm
-13:53:52 < Zairex> ei auta kun kokeilla
-13:54:12 < Zairex> average true ok kyllä
-13:54:40 < Zairex> sitä eeg projektio-juttuakin vois vielä kahtoa jos siinä ois mitään mitä vois hioa vähän helpommaks
-13:55:21 < talli> joo
-13:55:32 < talli> plot_raw tullut muutoksia
-13:55:59 < talli> hmm ei vissiin käytetä mne:n plot_raw:ta
-13:56:11 < talli> mainwindowissa meillä joku oma plot_raw funktio näköjään
-13:57:37 < talli> joku EpochsTFR funktiokin tullut
-13:57:43 < Zairex> luulen että raw.plot käyttää sisäisesti plot_raw
-13:58:21 < talli> ok
-13:58:39 < talli> mietinkin usein että miten pelkkä plot tekee niin hienon kuvan defaulttina
-14:01:09 < talli> Add argument mask_type to func:mne.read_events and func:mne.find_events to support MNE-C style of trigger masking
-14:01:17 < talli> tuommoinen maskijuttu kanssa
-14:10:15 < Zairex> joo
-14:11:31 < Zairex> luulen että vois tuoda kaiken eventtikoodin sen meiän oman maskaamisen piiriin
-14:11:41 < Zairex> ja olla käyttämättä tuota mne:n maskia
-14:11:43 < Zairex> 8 )
-14:12:45 < Zairex> en muista miten oli mutta toistaseks tuo mne:n maski ehkä toimi oletuksena niinkun aiemminkin mutta on vaan enemmän valinnanvaraa ja neljääntoist aehkä muuttu sitten oletus
-
+- not implemented yet, spectrums
+- ica
+- kansiohierarkia
+- add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
+- open_rawiin mahdollisuus konkatenoida tiedostoja
+*- tee jotain maxfilter-napille
+*- okulaari-nimi nappiin
+*- korjaa muutkin plotit olemaan tallentamatta badseja (esim filter)
+*- poista ysiysikasit
+*- piilota advancedin alle turhat valinnat projektiodialogeista, ja ehkä siivoa advancedeistakin jotain pois ( EOG ECG)
+*- korjaa TFR preprocessing-välilehdellä
+*- tarkista että selection-napit on hyviä ja toimii
+*- nappi jolla tallentaa data evokedeista, ehkä tuonne statsidialogin sisään, nimiä voi miettiä
+- ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
+*- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
+*- tfr-datan tallennus
+*- baselinet
+- lokikoodin siivousta ehkä, ehkä käydä läpi
+- wrap_mne_callin koodin voisi myös katsoa..
+- scripting ( kiva merge...)
+- korjaa testit 

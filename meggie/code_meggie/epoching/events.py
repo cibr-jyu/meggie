@@ -41,7 +41,7 @@ class Events(object):
     Class for getting events from the raw file, by type if need be.
     """
 
-    def __init__(self, raw, stim_ch=None, mask=0):
+    def __init__(self, raw, stim_ch=None, mask=0, id_=None):
         """
         Constructor    
         Keyword arguments:
@@ -50,8 +50,12 @@ class Events(object):
         mask          -- Mask for excluding bits.
         """
 
-        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, 
-                                 mask=mask, uint_cast=True, mask_type='not_and')
+        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, uint_cast=True)
+        
+        if mask or id_:
+            events = filter(
+                lambda event: self._should_take(id_, mask, event), events)
+            events = np.array(events)
 
         # remove spurious events
         counter = 0
@@ -65,22 +69,26 @@ class Events(object):
         
         self._events = events
         
+    def _should_take(self, id_, mask, event):
+        """ check if event has same non-masked bits as id_
+        """
+        id_bin = '{0:016b}'.format(id_)
+        mask_bin = '{0:016b}'.format(mask)
+        event_bin = '{0:016b}'.format(event[2])
+        
+        take_event = True
+        for i in range(len(mask_bin)):
+            if int(mask_bin[i]) == 1:
+                continue
+            if int(id_bin[i]) != int(event_bin[i]):
+                take_event = False
+                break
+            
+        return take_event        
+    
     @property    
     def events(self):
         """
         Property for events.
         """
         return self._events
-    
-    def pick(self, event_id):
-        """
-        Method for picking events with selected id.
-        Keyword arguments:
-        event_id      -- Id of the event.
-        Raises an exception if the events haven't been initialized.
-        Returns events matching the event_id.
-        """
-        if self._events is None:
-            raise Exception('No events found.')
-        return [x for x in self._events if x[2] == event_id]
-        #self._events = mne.pick_events(self._events, include=event_id)

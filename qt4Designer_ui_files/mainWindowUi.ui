@@ -681,13 +681,6 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="pushButtonMNE_Browse_Raw_2">
-                       <property name="text">
-                        <string>MNE_Browse_Raw</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
                       <widget class="QPushButton" name="pushButtonPlotProjections">
                        <property name="text">
                         <string>Plot projections</string>
@@ -794,12 +787,39 @@
                     <bool>true</bool>
                    </property>
                    <property name="editTriggers">
-                    <set>QAbstractItemView::NoEditTriggers</set>
+                    <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
                    </property>
                    <property name="sortingEnabled">
                     <bool>false</bool>
                    </property>
                   </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QPushButton" name="pushButtonRemoveProj">
+                     <property name="text">
+                      <string>Remove</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
@@ -3745,7 +3765,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonRawPlot</tabstop>
   <tabstop>checkBoxShowEvents</tabstop>
   <tabstop>pushButtonSpectrum</tabstop>
-  <tabstop>pushButtonMNE_Browse_Raw_2</tabstop>
   <tabstop>pushButtonPlotProjections</tabstop>
   <tabstop>listWidgetBads</tabstop>
   <tabstop>listWidgetProjs</tabstop>

@@ -24,13 +24,12 @@ class EegParametersDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
         
-        self.event_id = None
         self.ui.tableWidgetEvents.currentItemChanged.connect(
             self.on_currentChanged
         )
         self.ui.tableWidgetEvents.setSortingEnabled(False)
         self.ui.tableWidgetEvents.setSelectionBehavior(1)        
-        self.ui.tableWidgetEvents.setColumnCount(4)
+        self.ui.tableWidgetEvents.setColumnCount(2)
         self.set_event_table_headers()
         
         
@@ -43,8 +42,6 @@ class EegParametersDialog(QtGui.QDialog):
         if checked is None or not raw: return
         
         params = dict()
-        self.event_id = int(self.ui.labelBlinkId.text())
-        params['event_id'] = self.event_id
         params['ch_name'] = str(self.ui.comboBoxChannelSelect.currentText())
         params['l_freq'] = float(self.ui.doubleSpinBoxLowPass.value())
         params['h_freq'] = float(self.ui.doubleSpinBoxHighPass.value())
@@ -65,12 +62,6 @@ class EegParametersDialog(QtGui.QDialog):
                 self.ui.tableWidgetEvents.setItem(i,1,QtGui.
                     QTableWidgetItem(str(int(eog_events[i][0])))
                 )
-                self.ui.tableWidgetEvents.setItem(
-                    i,2,QtGui.QTableWidgetItem(str(eog_events[i][1]))
-                )
-                self.ui.tableWidgetEvents.setItem(
-                    i,3,QtGui.QTableWidgetItem(str(eog_events[i][2]))
-                )
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -87,11 +78,8 @@ class EegParametersDialog(QtGui.QDialog):
         rowCount = self.ui.tableWidgetEvents.rowCount()
         
         for i in xrange(0, rowCount):
-            #time = float(self.ui.tableWidgetEvents.item(i, 1).text())
             time = int(self.ui.tableWidgetEvents.item(i, 1).text())
-            prev = int(self.ui.tableWidgetEvents.item(i, 2).text())
-            curr = int(self.ui.tableWidgetEvents.item(i, 3).text())
-            events.append([time, prev, curr])
+            events.append([time, 0, 1])
 
         return np.array(events)
 
@@ -119,7 +107,7 @@ class EegParametersDialog(QtGui.QDialog):
         events = self.get_events()
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
-        self.caller.plot_average_epochs(events, tmin, tmax, self.event_id)
+        self.caller.plot_average_epochs(events, tmin, tmax)
         
     def on_pushButtonShowEvents_clicked(self, checked=None):
         """
@@ -132,9 +120,7 @@ class EegParametersDialog(QtGui.QDialog):
     def set_event_table_headers(self):
         self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
             "Time (s)",
-            "Sample",
-            "Prev. id",
-            "Current id"
+            "Sample"
         ])
     
     def collect_parameter_values(self):
@@ -143,7 +129,6 @@ class EegParametersDialog(QtGui.QDialog):
         dictionary = dict()
         dictionary['tmin'] = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmax'] = self.ui.doubleSpinBoxTmax.value()
-        dictionary['event_id'] = 998
         dictionary['events'] = self.get_events()
         dictionary['n_eeg'] = self.ui.spinBoxVectors.value()
         return dictionary

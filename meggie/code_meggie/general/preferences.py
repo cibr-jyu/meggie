@@ -26,9 +26,10 @@ class PreferencesHandler(object):
         self.n_jobs = 3
         self.MNERoot = ''
         self.FreeSurferHome = ''
-        self.auto_load_last_open_experiment = False
         self.previous_experiment_name = ''
+        self.auto_load_last_open_experiment = False
         self.confirm_quit = False
+        self.save_bads = False
         self.read_preferences_from_disk()
 
     def write_preferences_to_disk(self):
@@ -58,6 +59,12 @@ class PreferencesHandler(object):
             config.set('MiscOptions', 'confirmQuit', 'True')
         else:
             config.set('MiscOptions', 'confirmQuit', 'False')
+            
+        if self.save_bads == True:
+            config.set('MiscOptions', 'saveBads', 'True')
+        else:
+            config.set('MiscOptions', 'saveBads', 'False')
+
 
         with open(home_filepath('.meggieprefs'), 'wb') as configfile:
             config.write(configfile)
@@ -89,8 +96,12 @@ class PreferencesHandler(object):
                 self.confirm_quit = True
             else: self.confirm_quit = False
             
-            self.previous_experiment_name = config.get('MiscOptions', 
-                                                     'previous_experiment_name')
+            if config.get('MiscOptions', 'saveBads') == 'True':
+                self.save_bads = True
+            else: self.save_bads = False
+            
+            self.previous_experiment_name = config.get(
+                'MiscOptions', 'previous_experiment_name')
             self.n_jobs = int(config.get('MiscOptions', 'n_jobs'))
         except NoOptionError:
             pass

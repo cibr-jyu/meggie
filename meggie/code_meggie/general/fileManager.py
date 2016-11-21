@@ -385,11 +385,11 @@ def open_raw(fname, preload=True):
     try:
         return mne.io.Raw(fname, preload=preload, allow_maxshield=True)
     except IOError as e:
-        raise IOError('File does not exist or is not a raw-file.' + str(e))
+        raise IOError(str(e))
     except OSError as e:
-        raise OSError('You do not have permission to read the file.' + str(e))
+        raise OSError('You do not have permission to read the file. ' + str(e))
     except ValueError as e:
-        raise ValueError('File is not a raw-file.' + str(e))
+        raise ValueError('File is not a raw-file. ' + str(e))
 
 
 def save_raw(experiment, raw, fname, overwrite=True):

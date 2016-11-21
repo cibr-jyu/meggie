@@ -317,7 +317,6 @@ class Caller(object):
     def _call_eeg_ssp(self, dic, subject):
         raw = subject.get_working_file()
         events = dic['events']
-        event_id = dic['event_id']
         tmin = dic['tmin']
         tmax = dic['tmax']
         n_eeg = dic['n_eeg']
@@ -326,7 +325,7 @@ class Caller(object):
         #events = np.array(events)
         
         eog_epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, events, event_id=event_id, tmin=tmin, tmax=tmax)
+            raw, events, tmin=tmin, tmax=tmax)
         
         
         # Average EOG epochs
@@ -393,6 +392,19 @@ class Caller(object):
 
         wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
         
+        if kind == 'eeg':
+            projs = raw.info['projs']
+            for idx, proj in enumerate(projs):
+                names = ['ECG', 'EOG', 'EEG']
+                if filter(lambda x: x in proj['desc'], names):
+                    continue
+                #if 'ECG' in proj['desc']:
+                #    continue
+                #if 'EOG' in proj['desc']:
+                #    continue
+                #if 'EEG' in proj['desc']:
+                #    continue
+                raw.info['projs'][idx]['desc'] = 'Ocular-' + proj['desc'] 
         
         #Removes older raw files with applied projs
         directory = os.path.dirname(fname)
@@ -406,14 +418,13 @@ class Caller(object):
         
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
-    def plot_average_epochs(self, events, tmin, tmax, event_id):
+    def plot_average_epochs(self, events, tmin, tmax):
         """
         Method for plotting average epochs.
         """
         raw = self.experiment.active_subject.get_working_file()
         print "Plotting averages...\n"
-        print event_id
-        eog_epochs = mne.Epochs(raw, events, event_id=event_id,
+        eog_epochs = mne.Epochs(raw, events,
                         tmin=tmin, tmax=tmax)
         
         # Average EOG epochs
@@ -439,10 +450,8 @@ class Caller(object):
 
     @threaded
     def find_eog_events(self, params):
-        print type(params['event_id'])
         raw = self.experiment.active_subject.get_working_file()
         eog_events = wrap_mne_call(self.experiment, find_eog_events, raw,
-                        event_id=params['event_id'],
                         l_freq=params['l_freq'], h_freq=params['h_freq'],
                         filter_length=params['filter_length'],
                         ch_name=params['ch_name'], verbose=True,
@@ -483,11 +492,17 @@ class Caller(object):
         if len(event_params) > 0:
             for event_params_dic in event_params:
                 event_id = event_params_dic['event_id']
-                category['id_' + str(event_id)] = event_id_counter
+                
+                category_id = 'id_' + str(event_id)
+                if event_params_dic['mask']:
+                    category_id += '_mask_' + str(event_params_dic['mask'])
+                
+                category[category_id] = event_id_counter
                 new_events = np.array(self.create_eventlist(event_params_dic,
                                                             subject))
                 if len(new_events) == 0:
                     raise ValueError('No events found with selected id.')
+                
                 new_events[:, 2] = event_id_counter
                 events.extend([event for event in new_events])
                 event_id_counter += 1
@@ -522,8 +537,7 @@ class Caller(object):
         
         # find all proper picks
         picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-            eeg=params_copy['eeg'], stim=params_copy['stim'], 
-            eog=params_copy['eog'])
+            eeg=params_copy['eeg'], eog=params_copy['eog'])
         
         if len(picks) == 0:
             raise ValueError('Picks cannot be empty. Select picks by ' + 
@@ -555,10 +569,8 @@ class Caller(object):
         """
         stim_channel = subject.find_stim_channel()
         raw = subject.get_working_file()
-        e = Events(raw, stim_channel, params['mask'])
-        mask = np.bitwise_not(params['mask'])
-        events = e.pick(np.bitwise_and(params['event_id'], mask))
-        return events
+        e = Events(raw, stim_channel, params['mask'], params['event_id'])
+        return e.events
 
     def read_layout(self, layout):
         if not layout or layout == "Infer from data":
@@ -1425,9 +1437,9 @@ class Caller(object):
                           notch_widths=dic['bandstop_bw'],
                           trans_bandwidth=trans_bw, n_jobs=n_jobs,
                           verbose=True)
-            
-        print 'Saving to file...'
+           
         if not preview:
+            print 'Saving to file...'
             fileManager.save_raw(self.experiment, dataToFilter, info['filename'], overwrite=True)
         
         return dataToFilter

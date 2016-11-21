@@ -93,8 +93,8 @@ class EcgParametersDialog(QtGui.QDialog):
         if channel_name == '':
             pass
         else:
-            ch_idx = self.ui.comboBoxECGChannel.findText(channel_name,
-        				    QtCore.Qt.MatchContains)
+            ch_idx = self.ui.comboBoxECGChannel.findText(channel_name, 
+                QtCore.Qt.MatchContains)
         
         self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
         self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))

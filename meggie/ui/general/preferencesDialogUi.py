@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_DialogPreferences(object):
     def setupUi(self, DialogPreferences):
         DialogPreferences.setObjectName(_fromUtf8("DialogPreferences"))
-        DialogPreferences.resize(494, 500)
+        DialogPreferences.resize(494, 532)
         self.gridLayout_3 = QtGui.QGridLayout(DialogPreferences)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.groupBoxWorkingDirectory = QtGui.QGroupBox(DialogPreferences)
@@ -90,9 +90,6 @@ class Ui_DialogPreferences(object):
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_4 = QtGui.QGridLayout(self.groupBox)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
-        self.checkBoxAutomaticOpenPreviousExperiment = QtGui.QCheckBox(self.groupBox)
-        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName(_fromUtf8("checkBoxAutomaticOpenPreviousExperiment"))
-        self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox)
         self.label_2.setText(_fromUtf8(""))
         self.label_2.setObjectName(_fromUtf8("label_2"))
@@ -114,6 +111,9 @@ class Ui_DialogPreferences(object):
         self.spinBoxNJobs.setObjectName(_fromUtf8("spinBoxNJobs"))
         self.horizontalLayout_3.addWidget(self.spinBoxNJobs)
         self.gridLayout_4.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
+        self.checkBoxAutomaticOpenPreviousExperiment = QtGui.QCheckBox(self.groupBox)
+        self.checkBoxAutomaticOpenPreviousExperiment.setObjectName(_fromUtf8("checkBoxAutomaticOpenPreviousExperiment"))
+        self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox, 2, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(DialogPreferences)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -138,7 +138,7 @@ class Ui_DialogPreferences(object):
         self.labelFreeSurferHome.setText(_translate("DialogPreferences", "Select FREESURFER_HOME directory (needed for source analysis):", None))
         self.pushButtonBrowseFreeSurferHome.setText(_translate("DialogPreferences", "Browse...", None))
         self.groupBox.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:", None))
-        self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup", None))
         self.checkBoxConfirmQuit.setText(_translate("DialogPreferences", "Show confirmation dialog on Meggie quit", None))
         self.labelNJobs.setText(_translate("DialogPreferences", "Number of jobs to run in parallel:", None))
+        self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup", None))
 

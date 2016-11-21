@@ -148,77 +148,75 @@
         <rect>
          <x>10</x>
          <y>200</y>
-         <width>332</width>
-         <height>231</height>
+         <width>331</width>
+         <height>181</height>
         </rect>
        </property>
        <property name="title">
         <string>Select events to include in epoch collection</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QLabel" name="labelEventID">
-              <property name="text">
-               <string>Event ID:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBoxEventID">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>999999</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QLabel" name="labelMask">
-              <property name="text">
-               <string>Mask</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="spinBoxMask">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mask bit used for finding events. For example, if mask is set to 1, first bit is ignored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="minimum">
-               <number>0</number>
-              </property>
-              <property name="maximum">
-               <number>9999</number>
-              </property>
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QPushButton" name="pushButtonAdd">
           <property name="text">
            <string>Add to list &gt;&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="spinBoxEventID">
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelEventID">
+            <property name="text">
+             <string>Event ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelMask">
+            <property name="text">
+             <string>Mask:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLineEdit" name="lineEditMask">
+              <property name="text">
+               <string>0</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pushButtonEdit">
+            <property name="text">
+             <string>Edit...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pushButtonHelp">
+            <property name="text">
+             <string>Help...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
          <widget class="QPushButton" name="pushButtonClear">
           <property name="text">
            <string>Clear list &lt;&lt;</string>
@@ -486,19 +484,6 @@
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="QCheckBox" name="checkBoxStim">
-            <property name="toolTip">
-             <string>Include or exclude stim channels</string>
-            </property>
-            <property name="text">
-             <string>Include stim channel in collection</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -519,9 +504,6 @@
   <tabstop>lineEditCollectionName</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
-  <tabstop>checkBoxStim</tabstop>
-  <tabstop>spinBoxEventID</tabstop>
-  <tabstop>spinBoxMask</tabstop>
   <tabstop>checkBoxGrad</tabstop>
   <tabstop>doubleSpinBoxGradReject_3</tabstop>
   <tabstop>checkBoxMag</tabstop>

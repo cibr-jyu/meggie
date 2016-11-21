@@ -43,8 +43,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxTmax.setValue(tmax)
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
-        self.ui.spinBoxNfft.setValue(1024)
-        self.ui.spinBoxOverlap.setValue(512)
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:

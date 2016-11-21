@@ -73,7 +73,7 @@ class PreferencesDialog(QtGui.QDialog):
         
         if self.parent.preferencesHandler.confirm_quit == True:
             self.ui.checkBoxConfirmQuit.setChecked(True)       
-        
+            
         self.ui.spinBoxNJobs.setValue(self.parent.preferencesHandler.n_jobs)
         self.ui.LineEditFilePath.setText(workDirectory)
         self.ui.lineEditMNERoot.setText(MNERootPath)

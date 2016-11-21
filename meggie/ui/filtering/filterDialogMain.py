@@ -121,11 +121,11 @@ class FilterDialog(QtGui.QDialog):
                 params = self.batching_widget.data[name]
                 info = subject.get_working_file().info
 
-            try:
-                self._validateFilterFreq(params, info['sfreq'])
-                self.filter(subject)
-            except Exception as e:
-                self.batching_widget.failed_subjects.append((subject, str(e)))
+                try:
+                    self._validateFilterFreq(params, info['sfreq'])
+                    self.filter(subject)
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject, str(e)))
                 
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
