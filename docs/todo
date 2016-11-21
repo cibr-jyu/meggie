@@ -26,6 +26,7 @@ epochs
 *- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
 *- tfr-datan tallennus
 *- baselinet
+* self.raw.copy vasta kun bads-plot avataan
 - lokikoodin siivousta ehkä, ehkä käydä läpi
 - wrap_mne_callin koodin voisi myös katsoa..
 - scripting ( kiva merge...)
