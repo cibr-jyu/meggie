@@ -9,33 +9,24 @@ epochs
 * Epokkien luominen
 
 
-- Misc:
-* group average spektreille?
-
-----MNE 0.13----
-
-- tiinan kanssa meggiepalaveri: metodikoulutus
-
-12:28:00 < Zairex> joo
-12:30:00 < Zairex> oishan sit kaikkea jännää niinkun järjestää kansiohierarkiaa uudelleen 8-- )
-12:30:00 < Zairex> vois tehä taas hirveästi lisää bugeja :P
-12:31:00 < talli> niin joo
-12:31:00 < Zairex> sitä etusivun tfr:ää vois korjata niin että se osais eeg-datastakin tehdä oletusarvoilla kaunin tfr:n
-12:32:00 < Zairex> baseline- ja desibeliasteikkojuttuja ne varmaan on
-12:32:00 < Zairex> ICA:n vois tuoda preprosessointimahdollisuudeksi
-12:33:00 < talli> niin se tosiaan
-12:36:00 < Zairex> projektiotarina pitäs miettiä kunnolla läpi, että ei käy sitä että on projektiot laskettu koko 
-                datalle ja:00 sitten bad channelien tai picksien vuoks tapahtuu sitä että sitten ne projektiot 
-                applytaankin dataan:00 jossa on vähemmän kanavia
-12:38:00 < Zairex> source analysis pitäs saada toimimaan oikein, mutta ehkä ei kosketa siihen D:
-12:39:00 < Zairex> sam lupas jossain vaiheessa antaa omia mri-kuviaan ja sit mulla on dataa samista meditoimassa
-12:39:00 < Zairex> niin niitä ja sample-dataa esimerkkeinä käyttäenv
-12:39:00 < Zairex> vois yrittää saada sen source analysis putken toimimaan jotenkin tosi helposti
-12:39:00 < Zairex> mutta ehkä nyt on vielä muuta tekemistä..
-12:41:00 < talli> hah
-13:54:40 < Zairex> sitä eeg projektio-juttuakin vois vielä kahtoa jos siinä ois mitään mitä vois hioa vähän helpommaks
-
-
-
+- not implemented yet
+- ica
+- kansiohierarkia
 - add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
 - open_rawiin mahdollisuus konkatenoida tiedostoja
+*- tee jotain maxfilter-napille
+*- okulaari-nimi nappiin
+*- korjaa muutkin plotit olemaan tallentamatta badseja (esim filter)
+*- poista ysiysikasit
+*- piilota advancedin alle turhat valinnat projektiodialogeista, ja ehkä siivoa advancedeistakin jotain pois ( EOG ECG)
+*- korjaa TFR preprocessing-välilehdellä
+*- tarkista että selection-napit on hyviä ja toimii
+*- nappi jolla tallentaa data evokedeista, ehkä tuonne statsidialogin sisään, nimiä voi miettiä
+- ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
+*- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
+*- tfr-datan tallennus
+*- baselinet
+- lokikoodin siivousta ehkä, ehkä käydä läpi
+- scripting ( kiva merge...)
+- wrap_mne_callin koodin voisi myös katsoa..
+- korjaa testit 
