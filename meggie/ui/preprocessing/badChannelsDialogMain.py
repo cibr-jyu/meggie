@@ -33,23 +33,20 @@ class BadChannelsDialog(QtGui.QDialog):
     def on_pushButtonSelectAll_clicked(self, checked=None):
         if checked is None:
             return
-        
-        for idx in range(self.ui.listWidgetBads.count()):
-            item = self.ui.listWidgetBads.item(idx)
-            item.setSelected(True)
+#         for idx in range(self.ui.listWidgetBads.count()):
+#             item = self.ui.listWidgetBads.item(idx)
+#             item.setSelected(True)
+        [self.ui.listWidgetBads.item(idx).setSelected(True) for idx in range(self.ui.listWidgetBads.count())]
 
     def on_pushButtonPlot_clicked(self, checked=None):
         if checked is None:
             return
-        
         items = self.ui.listWidgetBads.selectedItems()
         self.raw.info['bads'] = [unicode(item.text()) for item in items]
         fig = self.raw.plot()
-        
         fig.canvas.mpl_connect('close_event', self.handle_close)
         
     def handle_close(self, event):
-        #raw = self.parent.caller.experiment.active_subject.get_working_file()
         bads = self.raw.info['bads']
         for idx in range(self.ui.listWidgetBads.count()):
             item = self.ui.listWidgetBads.item(idx)
@@ -57,7 +54,6 @@ class BadChannelsDialog(QtGui.QDialog):
                 item.setSelected(True)
             else:
                 item.setSelected(False)
-     
 
     def accept(self):
         items = self.ui.listWidgetBads.selectedItems()

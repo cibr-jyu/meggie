@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Compute ocular projections</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -410,10 +410,6 @@
            </layout>
           </item>
          </layout>
-         <zorder>layoutWidget_2</zorder>
-         <zorder>verticalLayoutWidget</zorder>
-         <zorder>tableWidgetEvents</zorder>
-         <zorder>groupBoxProjection</zorder>
         </widget>
        </item>
       </layout>

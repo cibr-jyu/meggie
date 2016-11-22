@@ -770,11 +770,15 @@ class MainWindow(QtGui.QMainWindow):
 
         epochs_name = str(item.text())
         epochs = self.caller.experiment.active_subject.epochs.get(epochs_name)
-
+        bads = epochs.raw.info['bads']
+        
         def handle_close(event):
+            epochs.raw.info['bads'] = bads
             fileManager.save_epoch(epochs, overwrite=True)
             self.epochList.selection_changed()
+       
         fig = epochs.raw.plot(block=True, show=True)
+        
         fig.canvas.mpl_connect('close_event', handle_close)
 
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
@@ -1065,7 +1069,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         raw = self.caller.experiment.active_subject.get_working_file()
-
+        if not raw.info['projs']:
+            exc_messagebox(self, "No added projections.")
+            return
+        
         try:
             self.caller.plot_projs_topomap(raw)
         except Exception as e:

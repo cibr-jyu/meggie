@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1682</width>
+    <width>1683</width>
     <height>1014</height>
    </rect>
   </property>
@@ -71,7 +71,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1326</width>
+          <width>1327</width>
           <height>820</height>
          </rect>
         </property>
@@ -126,17 +126,108 @@
               <attribute name="title">
                <string>Preprocessing</string>
               </attribute>
-              <widget class="QWidget" name="layoutWidget">
+              <widget class="QWidget" name="gridLayoutWidget_3">
                <property name="geometry">
                 <rect>
-                 <x>9</x>
-                 <y>9</y>
-                 <width>551</width>
-                 <height>596</height>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>959</width>
+                 <height>531</height>
                 </rect>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_21">
-                <item>
+               <layout class="QGridLayout" name="gridLayout_19">
+                <item row="1" column="0">
+                 <widget class="QGroupBox" name="groupBoxAvailablePreprocessing">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Available actions:</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_13">
+                   <item row="0" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout_18">
+                     <item>
+                      <layout class="QGridLayout" name="gridLayout_14">
+                       <item row="2" column="0">
+                        <widget class="QPushButton" name="pushButtonEOG">
+                         <property name="text">
+                          <string>Calculate EOG projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="1">
+                        <widget class="QPushButton" name="pushButtonApplyEEG">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string>Apply ocular projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="1">
+                        <widget class="QPushButton" name="pushButtonApplyEOG">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string>Apply EOG projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="pushButtonApplyECG">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string>Apply ECG projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="3" column="0">
+                        <widget class="QPushButton" name="pushButtonEEG">
+                         <property name="text">
+                          <string>Calculate ocular projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButtonECG">
+                         <property name="text">
+                          <string>Calculate ECG projections...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pushButtonFilter">
+                         <property name="text">
+                          <string>Filter...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButtonMaxFilter">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string>MaxFilter...</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="0" column="0">
                  <widget class="QGroupBox" name="groupBoxPreprocessingCheckBoxes">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -258,16 +349,6 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="0" column="2">
-                      <widget class="QLabel" name="labelEOGApplied_2">
-                       <property name="text">
-                        <string>Applied</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="1" column="0">
                       <widget class="QLabel" name="labelMaxFilter_2">
                        <property name="text">
@@ -367,16 +448,6 @@
                         </spacer>
                        </item>
                       </layout>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QLabel" name="labelECGApplied_2">
-                       <property name="text">
-                        <string>Computed</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
                      </item>
                      <item row="2" column="2">
                       <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -557,273 +628,223 @@
                        </item>
                       </layout>
                      </item>
+                     <item row="0" column="2">
+                      <widget class="QLabel" name="labelEOGApplied_2">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Applied</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLabel" name="labelECGApplied_2">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Computed</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </item>
                   </layout>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBoxAvailablePreprocessing">
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Available actions:</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_13">
-                   <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_18">
-                     <item>
-                      <widget class="QPushButton" name="pushButtonMaxFilter">
-                       <property name="text">
-                        <string>MaxFilter...</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButtonFilter">
-                       <property name="text">
-                        <string>Filter...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <widget class="QPushButton" name="pushButtonECG">
-                    <property name="text">
-                     <string>Calculate ECG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButtonApplyECG">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Apply ECG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_12">
-                  <item>
-                   <widget class="QPushButton" name="pushButtonEOG">
-                    <property name="text">
-                     <string>Calculate EOG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButtonApplyEOG">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Apply EOG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QPushButton" name="pushButtonEEG">
-                    <property name="text">
-                     <string>Calculate EEG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButtonApplyEEG">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Apply EEG projections...</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
+                <item row="2" column="0">
                  <widget class="QGroupBox" name="groupBoxVisualization_2">
                   <property name="title">
                    <string>Visualization:</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_3">
-                   <item row="1" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_11">
-                     <item>
-                      <widget class="QPushButton" name="pushButtonSpectrum">
-                       <property name="text">
-                        <string>Power spectrum</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButtonTFRraw">
-                       <property name="text">
-                        <string>TFR</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButtonPlotProjections">
-                       <property name="text">
-                        <string>Plot projections</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
                    <item row="0" column="0">
                     <layout class="QHBoxLayout" name="horizontalLayout_32">
                      <item>
-                      <widget class="QPushButton" name="pushButtonRawPlot">
-                       <property name="text">
-                        <string>Raw plot</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QCheckBox" name="checkBoxShowEvents">
-                       <property name="text">
-                        <string>Show events</string>
-                       </property>
-                      </widget>
+                      <layout class="QGridLayout" name="gridLayout_16">
+                       <item row="0" column="1">
+                        <widget class="QCheckBox" name="checkBoxShowEvents">
+                         <property name="text">
+                          <string>Show events</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="pushButtonTFRraw">
+                         <property name="text">
+                          <string>TFR</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButtonSpectrum">
+                         <property name="text">
+                          <string>Power spectrum</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButtonRawPlot">
+                         <property name="text">
+                          <string>Raw plot</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="2">
+                        <widget class="QPushButton" name="pushButtonPlotProjections">
+                         <property name="text">
+                          <string>Plot projections</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </item>
                     </layout>
                    </item>
                   </layout>
                  </widget>
                 </item>
+                <item row="0" column="1">
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="labelBads">
+                    <property name="text">
+                     <string>Bad channels</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QListWidget" name="listWidgetBads">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout">
+                    <item>
+                     <widget class="QPushButton" name="pushButtonCustomChannels">
+                      <property name="text">
+                       <string>Customize channels...</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_2">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="1">
+                 <layout class="QVBoxLayout" name="verticalLayout_2">
+                  <item>
+                   <widget class="QLabel" name="labelProjs">
+                    <property name="text">
+                     <string>Added projection items</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QListWidget" name="listWidgetProjs">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::ExtendedSelection</enum>
+                    </property>
+                    <property name="sortingEnabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                    <item>
+                     <widget class="QPushButton" name="pushButtonRemoveProj">
+                      <property name="text">
+                       <string>Remove</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_3">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>78</width>
+                        <height>28</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
                </layout>
               </widget>
-              <widget class="QSplitter" name="splitter_2">
-               <property name="geometry">
-                <rect>
-                 <x>570</x>
-                 <y>10</y>
-                 <width>481</width>
-                 <height>591</height>
-                </rect>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <widget class="QWidget" name="layoutWidget">
-                <layout class="QVBoxLayout" name="verticalLayout_29">
-                 <item>
-                  <widget class="QLabel" name="labelBads">
-                   <property name="text">
-                    <string>Bad channels</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QListWidget" name="listWidgetBads">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="editTriggers">
-                    <set>QAbstractItemView::NoEditTriggers</set>
-                   </property>
-                   <property name="sortingEnabled">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
-                   <item>
-                    <widget class="QPushButton" name="pushButtonCustomChannels">
-                     <property name="text">
-                      <string>Customize channels...</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_2">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="layoutWidget">
-                <layout class="QVBoxLayout" name="verticalLayout_28">
-                 <item>
-                  <widget class="QLabel" name="labelProjs">
-                   <property name="text">
-                    <string>Added projection items</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QListWidget" name="listWidgetProjs">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="editTriggers">
-                    <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
-                   </property>
-                   <property name="selectionMode">
-                    <enum>QAbstractItemView::ExtendedSelection</enum>
-                   </property>
-                   <property name="sortingEnabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_4">
-                   <item>
-                    <widget class="QPushButton" name="pushButtonRemoveProj">
-                     <property name="text">
-                      <string>Remove</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_3">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-              </widget>
+              <zorder>gridLayoutWidget_3</zorder>
+              <zorder>verticalLayoutWidget</zorder>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">
@@ -3064,7 +3085,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1682</width>
+     <width>1683</width>
      <height>27</height>
     </rect>
    </property>
@@ -3756,18 +3777,6 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>pushButtonMaxFilter</tabstop>
-  <tabstop>pushButtonFilter</tabstop>
-  <tabstop>pushButtonECG</tabstop>
-  <tabstop>pushButtonApplyECG</tabstop>
-  <tabstop>pushButtonEOG</tabstop>
-  <tabstop>pushButtonApplyEOG</tabstop>
-  <tabstop>pushButtonRawPlot</tabstop>
-  <tabstop>checkBoxShowEvents</tabstop>
-  <tabstop>pushButtonSpectrum</tabstop>
-  <tabstop>pushButtonPlotProjections</tabstop>
-  <tabstop>listWidgetBads</tabstop>
-  <tabstop>listWidgetProjs</tabstop>
   <tabstop>pushButtonCreateEpochs</tabstop>
   <tabstop>pushButtonDeleteEpochs</tabstop>
   <tabstop>textBrowserTmin</tabstop>

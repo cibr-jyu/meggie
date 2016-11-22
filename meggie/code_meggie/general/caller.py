@@ -171,7 +171,6 @@ class Caller(object):
         raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
-        event_id = dic.get('event-id')
         ecg_low_freq = dic.get('ecg-l-freq')
         ecg_high_freq = dic.get('ecg-h-freq')
         grad = dic.get('n-grad')
@@ -190,14 +189,8 @@ class Caller(object):
                       eeg=1e-6 * float(rej_eeg),
                       eog=1e-6 * float(rej_eog))
         qrs_threshold = dic.get('qrs')
-        flat = None
-        bads = dic.get('bads')
-        if bads is None or bads == ['']:
-            bads = []
-
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
         preload = True  # TODO File
@@ -214,14 +207,12 @@ class Caller(object):
 
         n_jobs = self.parent.preferencesHandler.n_jobs
         projs, events = wrap_mne_call(self.experiment, 
-                                      compute_proj_ecg, 
-                                      raw_in, None, tmin, tmax, grad,
-                                      mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, n_jobs, ch_name,
-                                      reject, flat, bads, eeg_proj,
-                                      excl_ssp, event_id, ecg_low_freq,
-                                      ecg_high_freq, start,
-                                      qrs_threshold)
+            compute_proj_ecg, raw=raw_in, tmin=tmin, tmax=tmax,
+            n_grad=grad, n_mag=mag, n_eeg=eeg, l_freq=filter_low, 
+            h_freq=filter_high, average=comp_ssp, filter_length=taps, 
+            n_jobs=n_jobs, ch_name=ch_name, reject=reject,
+            no_proj=excl_ssp, ecg_l_freq=ecg_low_freq,
+            ecg_h_freq=ecg_high_freq, tstart=start, qrs_threshold=qrs_threshold)
 
         if len(events) == 0:
             raise Exception('No ECG events found. Change settings.')
@@ -250,7 +241,6 @@ class Caller(object):
         raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
-        event_id = dic.get('event-id')
         eog_low_freq = dic.get('eog-l-freq')
         eog_high_freq = dic.get('eog-h-freq')
         grad = dic.get('n-grad')
@@ -264,13 +254,8 @@ class Caller(object):
         rej_eeg = dic.get('rej-eeg')
         rej_eog = dic.get('rej-eog')
 
-        flat = None
-        bads = dic.get('bads')
-        if bads is None or bads == ['']:
-            bads = []
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
         preload = True  # TODO File
@@ -287,12 +272,10 @@ class Caller(object):
 
         n_jobs = self.parent.preferencesHandler.n_jobs
         projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
-                                      raw_in, None, tmin, tmax, grad,
-                                      mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, n_jobs, reject,
-                                      flat, bads, eeg_proj, excl_ssp,
-                                      event_id, eog_low_freq,
-                                      eog_high_freq, start)
+            raw=raw_in, tmin=tmin, tmax=tmax, n_grad=grad, n_mag=mag, 
+            n_eeg=eeg, l_freq=filter_low, h_freq=filter_high, average=comp_ssp, 
+            filter_length=taps, n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
+            eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
 
 
         # TODO Reading a file

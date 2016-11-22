@@ -137,7 +137,6 @@ class EogParametersDialog(QtGui.QDialog):
 
         dictionary['tmin'] = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmax'] = self.ui.doubleSpinBoxTmax.value()
-        dictionary['event-id'] = self.ui.spinBoxEventsID.value()
         dictionary['eog-l-freq'] = self.ui.spinBoxLowPass.value()
         dictionary['eog-h-freq'] = self.ui.spinBoxHighPass.value()
         dictionary['n-grad'] = self.ui.spinBoxGrad.value()
@@ -149,12 +148,8 @@ class EogParametersDialog(QtGui.QDialog):
         dictionary['rej-mag'] = self.ui.doubleSpinBoxMagReject.value()
         dictionary['rej-eeg'] = self.ui.doubleSpinBoxEEGReject.value()
         dictionary['rej-eog'] = self.ui.doubleSpinBoxEOGReject.value()
-        dictionary['bads'] = map(str.strip, str(self.ui.lineEditBad.text()).split(','))  # noqa
         dictionary['tstart'] = self.ui.spinBoxStart.value()
         dictionary['filtersize'] = self.ui.spinBoxTaps.value()
-
-        eeg_proj = self.ui.checkBoxEEGProj.checkState() == QtCore.Qt.Checked
-        dictionary['avg-ref'] = eeg_proj
 
         excl_ssp = self.ui.checkBoxSSPProj.checkState() == QtCore.Qt.Checked
         dictionary['no-proj'] = excl_ssp
@@ -176,7 +171,6 @@ class EogParametersDialog(QtGui.QDialog):
             dic = self.get_default_values()
         self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
         self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-        self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
         self.ui.spinBoxLowPass.setProperty("value", dic.get('eog-l-freq'))  # noqa
         self.ui.spinBoxHighPass.setProperty("value", dic.get('eog-h-freq'))  # noqa
         self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
@@ -188,10 +182,8 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
         self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
         self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-        self.ui.lineEditBad.setProperty("value", dic.get('bads'))
         self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
         self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-        self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
         self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
         self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
@@ -200,7 +192,6 @@ class EogParametersDialog(QtGui.QDialog):
         return {
             'tmin': -0.200,
             'tmax': 0.200, 
-            'event-id': 998,
             'eog-l-freq': 1,
             'eog-h-freq': 10,
             'n-grad': 2,
@@ -212,10 +203,8 @@ class EogParametersDialog(QtGui.QDialog):
             'rej-mag': 4000.00,
             'reg-eeg': 100.00,
             'rej-eog': 1000000000.00,
-            'bads': None,
             'tstart': 0,
             'filtersize': 2048,
-            'avg-ref': False,
             'no-proj': True,
             'average': False        
         }

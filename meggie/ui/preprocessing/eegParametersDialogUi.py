@@ -191,8 +191,6 @@ class Ui_Dialog(object):
         self.pushButtonRemove.setObjectName(_fromUtf8("pushButtonRemove"))
         self.verticalLayout.addWidget(self.pushButtonRemove)
         self.gridLayout_3.addLayout(self.verticalLayout, 1, 0, 1, 1)
-        self.tableWidgetEvents.raise_()
-        self.groupBoxProjection.raise_()
         self.gridLayout_5.addWidget(self.groupBoxEvents, 0, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
@@ -203,7 +201,7 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Compute ocular projections", None))
         self.pushButtonCancel.setText(_translate("Dialog", "Cancel", None))
         self.pushButtonCompute.setText(_translate("Dialog", "Compute", None))
         self.pushButtonShowEvents.setText(_translate("Dialog", "Show event locations", None))
