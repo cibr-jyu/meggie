@@ -1632,13 +1632,6 @@ MEG 2211</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="2">
-        <widget class="QPushButton" name="pushButtonGroupSaveCSV">
-         <property name="text">
-          <string>Group Save All</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </widget>
@@ -1693,28 +1686,12 @@ MEG 2211</string>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>760</x>
-     <y>745</y>
+     <x>769</x>
+     <y>861</y>
     </hint>
     <hint type="destinationlabel">
      <x>473</x>
      <y>392</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonClearSelections</sender>
-   <signal>clicked()</signal>
-   <receiver>listWidgetChannels</receiver>
-   <slot>clearSelection()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>506</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>112</x>
-     <y>446</y>
     </hint>
    </hints>
   </connection>

@@ -735,6 +735,57 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
         self.evokedStatsDialog.show()
 
+    def save_evoked_data(self, subjects):
+        default_dir = os.path.join(self.caller.experiment.workspace,
+            self.caller.experiment.experiment_name, 'output', )
+        
+        if not os.path.isdir(default_dir):
+            os.mkdir(default_dir)
+        
+        try:    
+            evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
+        except AttributeError:
+            exc_messagebox(self, "Please select evoked data from the list")
+            return
+
+        for sub_name, subject in subjects.items():
+            names = []
+            evokeds = []
+            meggie_evoked = subject.evokeds.get(evoked_name)
+            if meggie_evoked:
+                for name, evoked in meggie_evoked.mne_evokeds.items():
+                    if evoked:
+                        evokeds.append(evoked)
+                        names.append(name)
+            if evokeds:
+                cleaned_evoked_name = evoked_name.split('.')[0]
+                filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
+                path = os.path.join(default_dir, filename)
+                fileManager.group_save_evokeds(path, evokeds, names)
+                
+                
+    def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subjects = self.caller.experiment.subjects
+        
+        self.save_evoked_data(subjects)
+        
+
+
+    def on_pushButtonSaveEvoked_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subjects = dict([
+            (self.caller.experiment.active_subject.subject_name, 
+             self.caller.experiment.active_subject),
+        ])
+        
+        self.save_evoked_data(subjects)
+
+
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel"""
         if checked is None:

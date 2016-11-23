@@ -730,13 +730,12 @@ class Caller(object):
 
         return dataList
 
-    def group_average(self, evoked_name, layout):
+    def group_average(self, evoked_name):
         """
         Plots group average of all subjects in the experiment. Also saves group
         average data to ``output`` folder.
         Keyword arguments:
         evoked_name        -- name of the evoked objects
-        layout        -- Layout used for plotting channels.
         """
         #subjects_averaged = []
         count = 0
@@ -750,6 +749,7 @@ class Caller(object):
 
         if count == 0:
             raise ValueError('No evoked responses found from any subject.')
+        
         if count > 0 and count < len(self.experiment.subjects):
             reply = QtGui.QMessageBox.question(
                 self.parent, 

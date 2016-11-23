@@ -143,7 +143,22 @@ class EvokedStatsDialog(QtGui.QDialog):
     def on_pushButtonClearSelections_clicked(self):
         """Reset the values in the dialog's spinboxes."""
         self.reset_data_values()
+    
+    def reset_data_values(self):
+        self.ui.listWidgetChannels.clearSelection()
+        self.selected_channels = {}
+        children = self.findChildren(QtGui.QDoubleSpinBox)
+        
+        for child in children:
+            child.setValue(0)
 
+        subject = self.parent.caller.experiment.active_subject
+        evokeds = subject.evokeds[self.evoked_name].mne_evokeds
+        for evoked in evokeds.values():
+            self.selected_channels[evoked.comment] = list()
+            if self.ui.comboBoxEvoked.currentText() == evoked.comment:
+                self.update_start_stop(evoked)      
+        
     def on_pushButtonSetSelected_clicked(self, checked=None):
         """Save selected channels to selected_channels dictionary."""
         if checked is None: return
@@ -198,40 +213,6 @@ class EvokedStatsDialog(QtGui.QDialog):
             exc_messagebox(self, "Please set selections")
         except Exception as e:
             exc_messagebox(self, e)
-
-    def on_pushButtonGroupSaveCSV_clicked(self, checked=None):
-        if checked is None:
-            return
-        
-        default_dir = os.path.join(self.parent.caller.experiment.workspace,
-            self.parent.caller.experiment.experiment_name, 'output', )
-        
-        if not os.path.isdir(default_dir):
-            os.mkdir(default_dir)
-            
-        collection_name = str(self.ui.comboBoxEvoked.currentText())
-
-        name = collection_name + '_group_stats.csv'
-        path = os.path.join(default_dir, name)
-        filename = str(QtGui.QFileDialog.getSaveFileName(parent=self,
-                       caption='Save csv file.', directory=path))
-        
-        if filename == '':
-            return
-        
-        subjects = self.parent.caller.experiment.subjects
-        
-        names = []
-        evokeds = []
-        for name, subject in subjects.items():
-            meggie_evoked = subject.evokeds.get(self.evoked_name)
-            if meggie_evoked:
-                evoked = meggie_evoked.mne_evokeds.get(collection_name)
-                if evoked:
-                    evokeds.append(evoked)
-                    names.append(name)
-        
-        fileManager.group_save_evokeds(filename, evokeds, names)
 
     def on_pushButtonCSV_clicked(self, checked=None):
         """
@@ -392,15 +373,14 @@ class EvokedStatsDialog(QtGui.QDialog):
         if ch_type == 'grad':
             suffix = 'fT/cm'
             scaler = 1e13
-            if len(names) > 1:
-                gradsIdxs = _pair_grad_sensors_from_ch_names(names)
-                this_data = np.array(this_data)
-                try:
-                    this_data = _merge_grad_data(this_data[gradsIdxs])
-                except ValueError as err:
-                    msg = 'Please select gradiometers as pairs for RMS.'
-                    messagebox(self, msg)
-                    return
+            gradsIdxs = _pair_grad_sensors_from_ch_names(names)
+            this_data = np.array(this_data)
+            try:
+                this_data = _merge_grad_data(this_data[gradsIdxs])
+            except ValueError as err:
+                msg = 'Please select gradiometers as pairs for RMS.'
+                messagebox(self, msg)
+                return
         elif ch_type == 'mag':
             suffix = 'fT'
             scaler = 1e15

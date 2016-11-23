@@ -843,8 +843,6 @@
                 </item>
                </layout>
               </widget>
-              <zorder>gridLayoutWidget_3</zorder>
-              <zorder>verticalLayoutWidget</zorder>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">
@@ -1888,23 +1886,32 @@
                      <string>Available actions for evoked datasets:</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_4">
-                     <item row="2" column="0">
-                      <layout class="QHBoxLayout" name="horizontalLayout_10">
-                       <item>
-                        <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
-                         <property name="text">
-                          <string>Visualize selected dataset(s)</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
-                         <property name="text">
-                          <string>Show evoked stats</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
+                     <item row="1" column="0">
+                      <widget class="QGroupBox" name="groupBox_2">
+                       <property name="title">
+                        <string>Visualization:</string>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_21">
+                        <item row="0" column="0">
+                         <layout class="QHBoxLayout" name="horizontalLayout_2">
+                          <item>
+                           <widget class="QPushButton" name="pushButtonVisualizeEvokedDataset">
+                            <property name="text">
+                             <string>Visualize selected dataset(s)</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
+                            <property name="text">
+                             <string>Show evoked stats...</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
                      </item>
                      <item row="0" column="0">
                       <layout class="QGridLayout" name="gridLayout">
@@ -1931,34 +1938,35 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="1" column="0">
-                      <spacer name="verticalSpacer_6">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
+                     <item row="2" column="0">
+                      <widget class="QGroupBox" name="groupBox_5">
+                       <property name="title">
+                        <string>Saving:</string>
                        </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
+                       <layout class="QGridLayout" name="gridLayout_20">
+                        <item row="0" column="0">
+                         <layout class="QHBoxLayout" name="horizontalLayout_3">
+                          <item>
+                           <widget class="QPushButton" name="pushButtonSaveEvoked">
+                            <property name="text">
+                             <string>Save evoked data</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonGroupSaveEvoked">
+                            <property name="text">
+                             <string>Group save evoked data</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
                      </item>
                     </layout>
                    </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                  </layout>
                 </item>
@@ -3793,8 +3801,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonChannelAverages</tabstop>
   <tabstop>pushButtonCreateEvoked</tabstop>
   <tabstop>pushButtonDeleteEvoked</tabstop>
-  <tabstop>pushButtonVisualizeEvokedDataset</tabstop>
-  <tabstop>pushButtonOpenEvokedStatsDialog</tabstop>
   <tabstop>pushButtonTFR</tabstop>
   <tabstop>pushButtonTFRTopology</tabstop>
   <tabstop>textEditConsole</tabstop>

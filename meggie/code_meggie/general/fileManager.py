@@ -404,7 +404,7 @@ def group_save_evokeds(filename, evokeds, names):
     if len(evokeds) == 0:
         raise ValueError("At least one evoked object is needed.")
 
-    print "Writing " + str(len(evokeds)) + " subject's evoked data to csv."
+    print "Writing " + str(len(evokeds)) + " evokeds to " + filename
 
     # gather all the data to list of rows
     all_data = []
@@ -413,10 +413,10 @@ def group_save_evokeds(filename, evokeds, names):
     all_data.append(['times'] + evokeds[0].times.tolist())
 
     # time series data
-    for sub_idx, evoked in enumerate(evokeds):
+    for idx, evoked in enumerate(evokeds):
         for ch_idx in range(len(evoked.data)):
             ch_name = evoked.info['ch_names'][ch_idx].replace(' ', '')
-            row_name = names[sub_idx] + ' ' + ch_name
+            row_name = names[idx] + ' ' + ch_name
 
             # mark bad channels
             if evoked.info['ch_names'][ch_idx] in evoked.info['bads']:
