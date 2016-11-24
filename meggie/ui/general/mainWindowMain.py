@@ -895,8 +895,6 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
-            return
         
         self.layoutDialog = LayoutDialog(self)
         self.layoutDialog.show()
@@ -2035,7 +2033,7 @@ class MainWindow(QtGui.QMainWindow):
                                     "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabFourierAnalysis, "Fourier Analysis")
+        self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
         self.ui.tabWidget.insertTab(5, self.ui.tabSourceAnalysis, "Source Analysis")
         
         self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation,

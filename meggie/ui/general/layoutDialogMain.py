@@ -21,7 +21,7 @@ class LayoutDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
-        self.ui.labelLayoutActive.setText(self.parent.caller.experiment.active_subject.layout)
+        self.ui.labelLayoutActive.setText(self.parent.caller.experiment.layout)
         
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
@@ -41,6 +41,6 @@ class LayoutDialog(QtGui.QDialog):
         self.ui.labelLayout.setText(self.ui.comboBoxLayout.currentText())
 
     def accept(self):
-        self.parent.caller.experiment.active_subject.layout = self.ui.labelLayout.text()
+        self.parent.caller.experiment.layout = self.ui.labelLayout.text()
         self.parent.caller.experiment.save_experiment_settings()
         self.close()

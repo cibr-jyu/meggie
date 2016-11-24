@@ -83,6 +83,7 @@ class Experiment(QObject):
         self._active_subject = None
         self._action_logger = None
         self._workspace = None
+        self._layout = 'Infer from data'
 
         
 
@@ -172,6 +173,14 @@ class Experiment(QObject):
                                  "numbers in your _description")
         else:
             raise ValueError("Too long _description")
+
+    @property
+    def layout(self):
+        return self._layout
+    
+    @layout.setter
+    def layout(self, layout):
+        self._layout = layout
 
     @property
     def active_subject(self):
@@ -277,9 +286,8 @@ class Experiment(QObject):
             subject_dict = {
                 'subject_name': subject.subject_name,
                 'working_file_name': subject.working_file_name,
-                'layout': subject.layout,
                 'epochs': [], 
-                'evokeds': []
+                'evokeds': [],
             }
             for epoch in subject.epochs.values():
                 epoch_dict = {
@@ -306,6 +314,7 @@ class Experiment(QObject):
             #'workspace': self.workspace,
             'author': self.author,
             'description': self.description,
+            'layout': self.layout,
         }
 
         try:
@@ -405,6 +414,12 @@ class ExperimentHandler(QObject):
         experiment.author = data['author']
         experiment.experiment_name = data['name']
         experiment.description = data['description']
+        
+        if 'layout' in data.keys():
+            experiment.layout = data['layout']
+        else:
+            experiment.layout = 'Infer from data'
+        
         if path:
             experiment.workspace = os.path.dirname(path)
         else:
@@ -417,9 +432,6 @@ class ExperimentHandler(QObject):
                 
                 subject = Subject(experiment, subject_data['subject_name'],
                                   subject_data['working_file_name'])
-                
-                if subject_data.get('layout'):
-                    subject.layout = subject_data['layout']
                 
                 for epoch_data in subject_data['epochs']:
                     epochs = Epochs(epoch_data['collection_name'], subject,

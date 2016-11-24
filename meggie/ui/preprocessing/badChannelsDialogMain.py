@@ -18,8 +18,8 @@ class BadChannelsDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         self.initialized = False
+        self.raw = None
         raw = parent.caller.experiment.active_subject.get_working_file()
-        self.raw = raw.copy()
         channels = raw.ch_names
         
         for channel in channels:
@@ -33,14 +33,14 @@ class BadChannelsDialog(QtGui.QDialog):
     def on_pushButtonSelectAll_clicked(self, checked=None):
         if checked is None:
             return
-#         for idx in range(self.ui.listWidgetBads.count()):
-#             item = self.ui.listWidgetBads.item(idx)
-#             item.setSelected(True)
-        [self.ui.listWidgetBads.item(idx).setSelected(True) for idx in range(self.ui.listWidgetBads.count())]
+
+        [self.ui.listWidgetBads.item(idx).setSelected(True) 
+         for idx in range(self.ui.listWidgetBads.count())]
 
     def on_pushButtonPlot_clicked(self, checked=None):
         if checked is None:
             return
+        self.raw = self.parent.caller.experiment.active_subject.get_working_file().copy()
         items = self.ui.listWidgetBads.selectedItems()
         self.raw.info['bads'] = [unicode(item.text()) for item in items]
         fig = self.raw.plot()
@@ -57,17 +57,23 @@ class BadChannelsDialog(QtGui.QDialog):
 
     def accept(self):
         items = self.ui.listWidgetBads.selectedItems()
-        self.raw.info['bads'] = [unicode(item.text()) for item in items]
-         
+        
+        if self.raw is None:
+            raw = self.parent.caller.experiment.active_subject.get_working_file()
+        else:
+            raw = self.raw
+        
+        raw.info['bads'] = [unicode(item.text()) for item in items]        
         experiment = self.parent.caller.experiment
-        fname = self.raw.info['filename']
-        fileManager.save_raw(experiment, self.raw, fname, overwrite=True)
+        fname = raw.info['filename']
+        fileManager.save_raw(experiment, raw, fname, overwrite=True)
         experiment.action_logger.log_message(''.join([
             'Raw plot bad channels selected for file: ',
-            fname, '\n', str(self.raw.info['bads'])]))
+            fname, '\n', str(raw.info['bads'])]))
         
-        original_raw = self.parent.caller.experiment.active_subject.get_working_file()
-        original_raw.info['bads'] = self.raw.info['bads']
+        if self.raw is not None:
+            original_raw = self.parent.caller.experiment.active_subject.get_working_file()
+            original_raw.info['bads'] = raw.info['bads']
 
         self.parent.initialize_ui()
         self.close()

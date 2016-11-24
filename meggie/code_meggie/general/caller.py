@@ -579,7 +579,7 @@ class Caller(object):
         evokeds  - Evoked object or list of evokeds.
         layout   - The desired layout as a string.
         """
-        layout = self.read_layout(self.experiment.active_subject.layout)
+        layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
         title = self.experiment.active_subject.subject_name
             
@@ -921,7 +921,7 @@ class Caller(object):
         elif reptype == 'itc':  # TFR from averageTFR
             itc = inst
 
-        layout = self.read_layout(self.experiment.active_subject.layout)
+        layout = self.read_layout(self.experiment.layout)
         
         if blstart is None and blend is None:
             baseline = None
@@ -1004,7 +1004,7 @@ class Caller(object):
         Method for computing average TFR over all subjects in the experiment.
         Creates data and picture files to output folder of the experiment.
         """
-        layout = self.read_layout(self.experiment.active_subject.layout)
+        layout = self.read_layout(self.experiment.layout)
 
         frequencies = np.arange(minfreq, maxfreq, interval)
 
@@ -1237,7 +1237,7 @@ class Caller(object):
             plt.show()
 
     def TFR_raw(self, wsize, tstep, channel, fmin, fmax):
-        lout = self.read_layout(self.experiment.active_subject.layout)
+        lout = self.read_layout(self.experiment.layout)
         
         raw = self.experiment.active_subject.get_working_file()
         
@@ -1270,7 +1270,7 @@ class Caller(object):
         save_data      - Boolean indicating whether to save psd data to files.
                          Only data from channels of interest is saved.
         """
-        lout = self.read_layout(self.experiment.active_subject.layout)
+        lout = self.read_layout(self.experiment.layout)
             
         for epochs in epoch_groups.values():
             info = epochs[0].info

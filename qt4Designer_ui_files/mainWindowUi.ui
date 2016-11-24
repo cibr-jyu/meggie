@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>3</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -1973,7 +1973,7 @@
                </layout>
               </widget>
              </widget>
-             <widget class="QWidget" name="tabFourierAnalysis">
+             <widget class="QWidget" name="tabSpectralAnalysis">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -1981,7 +1981,7 @@
                </sizepolicy>
               </property>
               <attribute name="title">
-               <string>Fourier analysis</string>
+               <string>Spectral analysis</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="0" column="0">
