@@ -8,18 +8,15 @@ epochs
 * Eventtilistan luominen 
 * Epokkien luominen
 
-*- layoutit experiment kohtaiseksi
-*- self.raw.copy vasta kun bads-plot avataan
 *- tfr-datan tallennus
 *- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
-*- fourier analysis -välilehti spectral analysis -välilehdeksi
-*- korjaa TFR preprocessing-välilehdellä
 *- baselinet
 - tiedostonimet
 - lokikoodin siivousta ehkä, ehkä käydä läpi
 - wrap_mne_callin koodin voisi myös katsoa..
 - scripting ( kiva merge...)
 - projektiotarina
+- spektrien värit määritettäviksi?
 - ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
 - not implemented yet, spectrums
 - ica

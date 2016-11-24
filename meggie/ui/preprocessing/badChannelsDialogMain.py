@@ -17,7 +17,6 @@ class BadChannelsDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
-        self.initialized = False
         self.raw = None
         raw = parent.caller.experiment.active_subject.get_working_file()
         channels = raw.ch_names
@@ -27,8 +26,6 @@ class BadChannelsDialog(QtGui.QDialog):
             self.ui.listWidgetBads.addItem(item)
             if channel in raw.info['bads']:
                 item.setSelected(True)
-                
-        self.initialized = True
 
     def on_pushButtonSelectAll_clicked(self, checked=None):
         if checked is None:
@@ -54,15 +51,14 @@ class BadChannelsDialog(QtGui.QDialog):
                 item.setSelected(True)
             else:
                 item.setSelected(False)
+                
+        self.raw = None
 
     def accept(self):
         items = self.ui.listWidgetBads.selectedItems()
         
-        if self.raw is None:
-            raw = self.parent.caller.experiment.active_subject.get_working_file()
-        else:
-            raw = self.raw
-        
+        raw = self.parent.caller.experiment.active_subject.get_working_file()
+            
         raw.info['bads'] = [unicode(item.text()) for item in items]        
         experiment = self.parent.caller.experiment
         fname = raw.info['filename']
@@ -71,9 +67,5 @@ class BadChannelsDialog(QtGui.QDialog):
             'Raw plot bad channels selected for file: ',
             fname, '\n', str(raw.info['bads'])]))
         
-        if self.raw is not None:
-            original_raw = self.parent.caller.experiment.active_subject.get_working_file()
-            original_raw.info['bads'] = raw.info['bads']
-
         self.parent.initialize_ui()
         self.close()

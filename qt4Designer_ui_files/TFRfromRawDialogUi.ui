@@ -142,13 +142,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBoxFrequency">
-       <property name="text">
-        <string>Limit frequencies</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="label_3">
@@ -160,7 +153,7 @@
        <item>
         <widget class="QSpinBox" name="spinBoxFmin">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="minimum">
           <number>0</number>
@@ -187,7 +180,7 @@
        <item>
         <widget class="QSpinBox" name="spinBoxFmax">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="minimum">
           <number>0</number>
@@ -206,6 +199,16 @@
       <widget class="Line" name="line_5">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxLogaritmicScale">
+       <property name="text">
+        <string>Use logarithmic scale</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -264,44 +267,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>138</y>
+     <x>151</x>
+     <y>165</y>
     </hint>
     <hint type="destinationlabel">
      <x>483</x>
      <y>185</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxFrequency</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>spinBoxFmin</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>81</x>
-     <y>221</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>303</x>
-     <y>257</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxFrequency</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>spinBoxFmax</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>165</x>
-     <y>217</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>325</x>
-     <y>295</y>
     </hint>
    </hints>
   </connection>

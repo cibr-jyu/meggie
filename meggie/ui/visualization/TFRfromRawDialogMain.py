@@ -76,15 +76,14 @@ class TFRRawDialog(QtGui.QDialog):
             tstep = self.ui.spinBoxTstep.value()
             
         channel_idx = self.ui.comboBoxChannel.currentIndex()
-        #a = self.ui.comboBoxChannel.itemText(channel_idx)
-        fmin, fmax = None, None
 
-        if self.ui.checkBoxFrequency.isChecked():
-            fmin = self.ui.spinBoxFmin.value()
-            fmax = self.ui.spinBoxFmax.value()
+        fmin = self.ui.spinBoxFmin.value()
+        fmax = self.ui.spinBoxFmax.value()
+            
+        log_scale = self.ui.checkBoxLogaritmicScale.isChecked()
         
         try:
-            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax)
+            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax, log_scale)
         except Exception as e:
             exc_messagebox(self, e)
             

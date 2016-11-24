@@ -1236,7 +1236,7 @@ class Caller(object):
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
-    def TFR_raw(self, wsize, tstep, channel, fmin, fmax):
+    def TFR_raw(self, wsize, tstep, channel, fmin, fmax, log_scale):
         lout = self.read_layout(self.experiment.layout)
         
         raw = self.experiment.active_subject.get_working_file()
@@ -1248,18 +1248,12 @@ class Caller(object):
         freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
         
+        if log_scale:
+            tfr = 10 * np.log10(tfr)
+        
         tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
         
-        if (not fmin and raw.info['highpass'] and 
-                not math.isnan(raw.info['highpass'])):
-            fmin = raw.info['highpass']
-
-        if (not fmax and raw.info['lowpass'] and 
-                not math.isnan(raw.info['lowpass'])):
-            fmax = raw.info['lowpass']
-        
-        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax,
-                  layout=lout, mode='logratio')
+        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, baseline=(None, None), mode='mean')
 
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
