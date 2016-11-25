@@ -587,9 +587,12 @@ def save_subject(subject, path):
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
     files = glob.glob(filename[:-4] + '*.fif')
+    import re;
+    p = re.compile(filename[:-4] + '(.fif|-\d{1,}.fif)')
     
-    for file in files:
-        copyfile(file, os.path.join(subject.subject_path, os.path.basename(file)))
+    for f in files:
+        if p.match(f):
+            copyfile(f, os.path.join(subject.subject_path, os.path.basename(f)))
 
     #raw = mne.io.Raw(path)
     #raw.save(subject.working_file_path)

@@ -1837,24 +1837,15 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxEEGComputed.setChecked(True)        
         
         # Check whether ECG projections are applied
-        if all([
-            active_subject.check_ecg_applied(), 
-            'ecg_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_ecg_applied():
             self.ui.checkBoxECGApplied.setChecked(True)
         
         # Check whether EOG projections are applied
-        if all([
-            active_subject.check_eog_applied(),
-            'eog_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_eog_applied():
             self.ui.checkBoxEOGApplied.setChecked(True)
 
         # Check whether EEG projections are applied
-        if all([
-            active_subject.check_eeg_applied(),
-            'eeg_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_eeg_applied():
             self.ui.checkBoxEEGApplied.setChecked(True)
         
         # Check whether sss/tsss method is applied.

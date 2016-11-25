@@ -205,7 +205,8 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
-        n_jobs = self.parent.preferencesHandler.n_jobs
+        # To avoid casualities
+        n_jobs = 1
         projs, events = wrap_mne_call(self.experiment, 
             compute_proj_ecg, raw=raw_in, tmin=tmin, tmax=tmax,
             n_grad=grad, n_mag=mag, n_eeg=eeg, l_freq=filter_low, 
@@ -214,7 +215,7 @@ class Caller(object):
             no_proj=excl_ssp, ecg_l_freq=ecg_low_freq,
             ecg_h_freq=ecg_high_freq, tstart=start, qrs_threshold=qrs_threshold)
 
-        if len(events) == 0:
+        if not projs:
             raise Exception('No ECG events found. Change settings.')
 
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -270,13 +271,13 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
 
-        n_jobs = self.parent.preferencesHandler.n_jobs
+        # To avoid casualities
+        n_jobs = 1        
         projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
             raw=raw_in, tmin=tmin, tmax=tmax, n_grad=grad, n_mag=mag, 
             n_eeg=eeg, l_freq=filter_low, h_freq=filter_high, average=comp_ssp, 
             filter_length=taps, n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
             eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
-
 
         # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -353,15 +354,6 @@ class Caller(object):
     def _apply_exg(self, kind, raw, directory, projs, applied):
         """Performed in a worker thread."""
         fname = os.path.join(directory, self.experiment.active_subject.working_file_name)
-        if kind == 'ecg':
-            if '-ecg_applied' not in fname:
-                fname = fname.split('.')[0] + '-ecg_applied.fif'
-        if kind == 'eog':
-            if '-eog_applied' not in fname:
-                fname = fname.split('.')[0] + '-eog_applied.fif'
-        if kind == 'eeg':
-            if '-eeg_applied' not in fname:
-                fname = fname.split('.')[0] + '-eeg_applied.fif'
 
         for new_proj in projs:  # first remove projs
             for idx, proj in enumerate(raw.info['projs']):
@@ -382,23 +374,7 @@ class Caller(object):
                 names = ['ECG', 'EOG', 'EEG']
                 if filter(lambda x: x in proj['desc'], names):
                     continue
-                #if 'ECG' in proj['desc']:
-                #    continue
-                #if 'EOG' in proj['desc']:
-                #    continue
-                #if 'EEG' in proj['desc']:
-                #    continue
                 raw.info['projs'][idx]['desc'] = 'Ocular-' + proj['desc'] 
-        
-        #Removes older raw files with applied projs
-        directory = os.path.dirname(fname)
-        files = glob.glob(directory + '/*e*g_applied.fif')
-    
-        for f in files:
-            if f == fname:
-                continue
-            fileManager.delete_file_at(directory, f)
-            print 'Removed previous working file: ' + f
         
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
