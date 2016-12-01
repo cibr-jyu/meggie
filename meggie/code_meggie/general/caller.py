@@ -1230,7 +1230,10 @@ class Caller(object):
         tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
         
         tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, baseline=(None, None), mode='mean')
-
+        
+#         filename = os.path.join(self.experiment.workspace, self.experiment.experiment_name,
+#             'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR')
+#         fileManager.save_tfr_raw(filename, tfr[channel], times)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """

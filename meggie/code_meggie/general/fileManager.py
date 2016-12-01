@@ -428,7 +428,19 @@ def group_save_evokeds(filename, evokeds, names):
     # save to file
     all_data = np.array(all_data)
     np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
+
+def save_tfr_raw(filename, tfr, times):
+    all_data = []
+    all_data.append(['times'] + times.tolist())
     
+    for i in range(tfr.shape[0]):
+        row_list = [i]
+        for value in tfr[i]:
+            row_list.append(value)
+        all_data.append(row_list) 
+    
+    all_data = np.array(all_data)
+    np.savetxt(filename, all_data, fmt='%s', delimiter=', ')
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
