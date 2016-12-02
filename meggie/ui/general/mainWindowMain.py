@@ -1326,24 +1326,6 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
-    def on_pushButtonTFRTopology_2_clicked(self, checked=None):
-        """Visualize existing AVGPower as topology."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        item = self.ui.listWidgetPowerItems.currentItem()
-        if item is None:
-            return
-        power_name = item.text()
-        subject = self.caller.experiment.active_subject
-        path = os.path.join(subject.subject_path, 'TFR')
-        fname = os.path.join(path, power_name)
-        tfr = fileManager.load_tfr(fname)
-        self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
-        self.tfrTop_dialog.finished.connect(self.on_close)
-        self.tfrTop_dialog.show()
         
     def on_pushButtonTFRraw_clicked(self, checked=None):
         if checked is None:

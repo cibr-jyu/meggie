@@ -9,9 +9,11 @@ epochs
 * Epokkien luominen
 
 *- tfr-datan tallennus
-*- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
-*- baselinet
-*- n_jobs
+*- korjaa one-channel tfr ja sitten kaikki logscalet
+*- output kansioon datat aikaleimattuihin kansioihin
+
+- älä sulje dialogeja välttämättä ok:lla
+- n_jobs
 - lokikoodin siivousta ehkä, ehkä käydä läpi
 - wrap_mne_callin koodin voisi myös katsoa..
 - scripting ( kiva merge...)
@@ -25,4 +27,5 @@ epochs
 - open_rawiin mahdollisuus konkatenoida tiedostoja
 - korjaa testit 
 - kansiohierarkia
+- group tfr, katso versionhalilnta
 

@@ -79,11 +79,12 @@ class TFRRawDialog(QtGui.QDialog):
 
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
-            
+        
+        save_data = self.ui.checkBoxSaveData.isChecked()    
         log_scale = self.ui.checkBoxLogaritmicScale.isChecked()
         
         try:
-            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax, log_scale)
+            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax, log_scale, save_data)
         except Exception as e:
             exc_messagebox(self, e)
             

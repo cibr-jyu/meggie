@@ -429,15 +429,16 @@ def group_save_evokeds(filename, evokeds, names):
     all_data = np.array(all_data)
     np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
 
-def save_tfr_raw(filename, tfr, times):
+def save_tfr_raw(filename, tfr, times, freqs):
     all_data = []
-    all_data.append(['times'] + times.tolist())
+    all_data.append([''] + times.tolist())
     
     for i in range(tfr.shape[0]):
-        row_list = [i]
+        row = []
+        row.append(freqs[i])
         for value in tfr[i]:
-            row_list.append(value)
-        all_data.append(row_list) 
+            row.append(value)
+        all_data.append(row) 
     
     all_data = np.array(all_data)
     np.savetxt(filename, all_data, fmt='%s', delimiter=', ')
