@@ -8,10 +8,9 @@ epochs
 * Eventtilistan luominen 
 * Epokkien luominen
 
-*- tfr-datan tallennus
-*- korjaa one-channel tfr ja sitten kaikki logscalet
 *- output kansioon datat aikaleimattuihin kansioihin
 
+- one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
 - älä sulje dialogeja välttämättä ok:lla
 - n_jobs
 - lokikoodin siivousta ehkä, ehkä käydä läpi

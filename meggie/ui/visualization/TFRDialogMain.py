@@ -35,6 +35,8 @@ Contains the TFRDialog-class used for creating TFRs.
 """
 from PyQt4 import QtCore, QtGui
 
+import numpy as np
+
 from meggie.ui.visualization.TFRfromEpochsUi import Ui_DialogEpochsTFR
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
@@ -61,6 +63,14 @@ class TFRDialog(QtGui.QDialog):
         self.ui = Ui_DialogEpochsTFR()
         self.ui.setupUi(self)
         self.ui.comboBoxChannels.addItems(ch_names)
+        
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.raw.tmax)
+        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.raw.tmax)
+        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
+        
 
     def accept(self):
         """
@@ -70,13 +80,30 @@ class TFRDialog(QtGui.QDialog):
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         ch_index = self.ui.comboBoxChannels.currentIndex()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles =  self.ui.spinBoxNcycles.value()
+        ncycles =  self.ui.doubleSpinBoxNcycles.value()
+        freqs = np.arange(minfreq, maxfreq, interval)        
+        
+        if self.ui.radioButtonFixed.isChecked():
+            ncycles = self.ui.doubleSpinBoxNcycles.value()
+        elif self.ui.radioButtonAdapted.isChecked():
+            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()        
+        
+        if self.ui.groupBoxBaseline.isChecked():
+            mode = str(self.ui.comboBoxMode.currentText())
+            blstart = self.ui.doubleSpinBoxBaselineStart.value()
+            blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        else:
+            blstart, blend, mode = None, None, None
+        
         decim = self.ui.spinBoxDecim.value()
         cmap = str(self.ui.comboBoxCmap.currentText())
+        
+        save_data = self.ui.checkBoxSaveData.isChecked()
 
         caller = Caller.Instance()
         try:
-            caller.TFR(self.epochs.raw, ch_index, minfreq, maxfreq, interval,
-                       ncycles, decim, cmap)
+            caller.TFR(epochs=self.epochs.raw, ch_index=ch_index, freqs=freqs,
+                ncycles=ncycles, decim=decim, mode=mode, blstart=blstart,
+                blend=blend, save_data=save_data, color_map=cmap)
         except Exception as e:
             exc_messagebox(self, e)

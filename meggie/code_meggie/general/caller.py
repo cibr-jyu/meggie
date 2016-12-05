@@ -772,8 +772,8 @@ class Caller(object):
 
         return grand_averages
 
-    def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
-            decim, color_map='auto'):
+    def TFR(self, epochs, ch_index, freqs, ncycles, decim, mode, blstart, blend, save_data,
+            color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
@@ -781,9 +781,7 @@ class Caller(object):
         Keyword arguments:
         epochs        -- Epochs extracted from the data.
         ch_index      -- Index of the channel to be used.
-        minfreq       -- Starting frequency for the representation.
-        maxfreq       -- Ending frequency for the representation.
-        interval      -- Interval to use for the frequencies of interest.
+        freqs         -- Frequencies for the representation as a numpy array.
         ncycles       -- Value used to count the number of cycles.
         decim         -- Temporal decimation factor.
         color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
@@ -791,9 +789,8 @@ class Caller(object):
                          positive values exist in the data.
         """
 
-        # Find intervals for given frequency band
-        freqs = np.arange(minfreq, maxfreq, interval)
         n_jobs = self.parent.preferencesHandler.n_jobs
+        baseline = (blstart, blend)
         
         @threaded
         def calculate_tfrs():
@@ -804,7 +801,32 @@ class Caller(object):
             
         power, itc, evoked = calculate_tfrs()
         
-        evoked_data = evoked.data[ch_index:(ch_index+1), :]
+        if mode:
+            power.data = mne.baseline.rescale(power.data, power.times, 
+                baseline=baseline, mode=mode)
+            itc.data = mne.baseline.rescale(itc.data, itc.times, 
+                baseline=baseline, mode=mode)          
+        
+        if save_data:
+            folder = os.path.join(self.experiment.workspace, 
+                self.experiment.experiment_name, 'output')
+            subject = self.experiment.active_subject.subject_name
+            ch_name = power.ch_names[ch_index]
+            
+            power_fname = os.path.join(folder, 
+                ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv']))
+            
+            fileManager.save_tfr(power_fname, power.data[ch_index], 
+                                 power.times, freqs)
+            
+            itc_fname = os.path.join(folder, 
+                ''.join([subject, '_', ch_name, '_TFR_epochs_itc.csv']))
+            
+            fileManager.save_tfr(itc_fname, itc.data[ch_index], 
+                                 itc.times, freqs)            
+
+        
+        evoked_data = evoked.data[ch_index]
         evoked_times = 1e3 * evoked.times
 
         print 'Plotting TFR...'
@@ -825,17 +847,17 @@ class Caller(object):
             raise TypeError('TFR plotting for %s channels not supported.' % 
                             ch_type)
 
-        plt.plot(evoked_times, evoked_data.T)
+        plt.plot(evoked_times, evoked_data)
         plt.title('Evoked response (%s)' % evoked.ch_names[ch_index])
         plt.xlabel('Time (ms)')
         plt.xlim(evoked_times[0], evoked_times[-1])
 
-        data = power.data[0]
-
         if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
+            cmap = 'RdBu_r'
         else:
             cmap = color_map    
+
+        data = power.data[ch_index]
 
         plt.subplot2grid((3, 15), (1, 0), colspan=14)
         img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
@@ -845,10 +867,8 @@ class Caller(object):
         plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
         plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
 
-        data = itc.data[0]
-
-        if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
+        data = itc.data[ch_index]
+            
         plt.subplot2grid((3, 15), (2, 0), colspan=14)
         img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
             freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
@@ -885,8 +905,14 @@ class Caller(object):
                          positive values exist in the data.
         """
 
-        power, itc = self._TFR_topology(inst, freqs, ncycles, decim,
-                                        do_meanwhile=self.parent.update_ui)
+        @threaded
+        def calculate_tfrs():
+            n_jobs = self.parent.preferencesHandler.n_jobs
+            power, itc = tfr_morlet(inst, freqs=freqs, n_cycles=ncycles, 
+                                    decim=decim, n_jobs=n_jobs)
+            return power, itc
+        
+        power, itc = calculate_tfrs()
         
         baseline = (blstart, blend)
 
@@ -916,9 +942,11 @@ class Caller(object):
                           show=False, cmap=cmap)
 
         print "Plotting..."
-        fig = wrap_mne_call(self.experiment, inst.plot_topo,
-                            fmin=freqs[0], fmax=freqs[-1], layout=layout, 
-                            cmap=cmap, title=title)
+        print np.max(inst.data)
+        print np.min(inst.data)
+        fig = wrap_mne_call(self.experiment, inst.plot_topo, 
+            fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
+            title=title)
 
         fig.show()
 
@@ -927,21 +955,9 @@ class Caller(object):
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    @threaded
-    def _TFR_topology(self, epochs, frequencies, ncycles, decim):
-        """
-        Performed in a worker thread.
-        """
-        n_jobs = self.parent.preferencesHandler.n_jobs
-        power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
-                                   freqs=frequencies, n_cycles=ncycles,
-                                   use_fft=False, return_itc=True,
-                                   decim=decim, n_jobs=n_jobs)
 
-        return power, itc
-
-
-    def TFR_raw(self, wsize, tstep, channel, fmin, fmax, log_scale, save_data):
+    def TFR_raw(self, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
+                save_data):
         lout = self.read_layout(self.experiment.layout)
         
         raw = self.experiment.active_subject.get_working_file()
@@ -952,23 +968,20 @@ class Caller(object):
         tfr = np.abs(mne.time_frequency.stft(raw._data, wsize, tstep=tstep))
         freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
-        
-
+        baseline = (blstart, blend)
         
         tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
         
-        tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=(None, None), 
-                                         mode='mean')
-        
-        if log_scale:
-            tfr_.data = 10 * np.log10(tfr_.data)
+        if mode:
+            tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=baseline, 
+                                             mode=mode)
         
         tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
         
         if save_data:
             filename = os.path.join(self.experiment.workspace, self.experiment.experiment_name,
-                'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR')
-            fileManager.save_tfr_raw(filename, tfr[channel], times, freqs)
+                'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR.csv')
+            fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """

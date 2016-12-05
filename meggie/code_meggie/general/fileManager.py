@@ -429,7 +429,7 @@ def group_save_evokeds(filename, evokeds, names):
     all_data = np.array(all_data)
     np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
 
-def save_tfr_raw(filename, tfr, times, freqs):
+def save_tfr(filename, tfr, times, freqs):
     all_data = []
     all_data.append([''] + times.tolist())
     
