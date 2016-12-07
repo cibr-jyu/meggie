@@ -561,9 +561,6 @@ class Ui_EvokedStatsDialog(object):
         self.pushButtonCSV = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.pushButtonCSV.setObjectName(_fromUtf8("pushButtonCSV"))
         self.gridLayout_2.addWidget(self.pushButtonCSV, 12, 2, 1, 1)
-        self.pushButtonGroupSaveCSV = QtGui.QPushButton(self.scrollAreaWidgetContents)
-        self.pushButtonGroupSaveCSV.setObjectName(_fromUtf8("pushButtonGroupSaveCSV"))
-        self.gridLayout_2.addWidget(self.pushButtonGroupSaveCSV, 13, 2, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_3.addWidget(self.scrollArea)
         self.buttonBox = QtGui.QDialogButtonBox(EvokedStatsDialog)
@@ -574,7 +571,6 @@ class Ui_EvokedStatsDialog(object):
 
         self.retranslateUi(EvokedStatsDialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), EvokedStatsDialog.reject)
-        QtCore.QObject.connect(self.pushButtonClearSelections, QtCore.SIGNAL(_fromUtf8("clicked()")), self.listWidgetChannels.clearSelection)
         QtCore.QMetaObject.connectSlotsByName(EvokedStatsDialog)
         EvokedStatsDialog.setTabOrder(self.scrollArea, self.comboBoxEvoked)
         EvokedStatsDialog.setTabOrder(self.comboBoxEvoked, self.listWidgetChannels)
@@ -719,5 +715,4 @@ class Ui_EvokedStatsDialog(object):
         self.labelHalfMax.setText(_translate("EvokedStatsDialog", "Half maximum:", None))
         self.doubleSpinBoxHalfMaxBefore.setSuffix(_translate("EvokedStatsDialog", "s", None))
         self.pushButtonCSV.setText(_translate("EvokedStatsDialog", "Save CSV", None))
-        self.pushButtonGroupSaveCSV.setText(_translate("EvokedStatsDialog", "Group Save All", None))
 

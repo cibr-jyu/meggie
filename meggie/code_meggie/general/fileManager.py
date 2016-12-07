@@ -404,7 +404,7 @@ def group_save_evokeds(filename, evokeds, names):
     if len(evokeds) == 0:
         raise ValueError("At least one evoked object is needed.")
 
-    print "Writing " + str(len(evokeds)) + " subject's evoked data to csv."
+    print "Writing " + str(len(evokeds)) + " evokeds to " + filename
 
     # gather all the data to list of rows
     all_data = []
@@ -413,10 +413,10 @@ def group_save_evokeds(filename, evokeds, names):
     all_data.append(['times'] + evokeds[0].times.tolist())
 
     # time series data
-    for sub_idx, evoked in enumerate(evokeds):
+    for idx, evoked in enumerate(evokeds):
         for ch_idx in range(len(evoked.data)):
             ch_name = evoked.info['ch_names'][ch_idx].replace(' ', '')
-            row_name = names[sub_idx] + ' ' + ch_name
+            row_name = names[idx] + ' ' + ch_name
 
             # mark bad channels
             if evoked.info['ch_names'][ch_idx] in evoked.info['bads']:
@@ -428,7 +428,20 @@ def group_save_evokeds(filename, evokeds, names):
     # save to file
     all_data = np.array(all_data)
     np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
+
+def save_tfr(filename, tfr, times, freqs):
+    all_data = []
+    all_data.append([''] + times.tolist())
     
+    for i in range(tfr.shape[0]):
+        row = []
+        row.append(freqs[i])
+        for value in tfr[i]:
+            row.append(value)
+        all_data.append(row) 
+    
+    all_data = np.array(all_data)
+    np.savetxt(filename, all_data, fmt='%s', delimiter=', ')
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
@@ -587,9 +600,12 @@ def save_subject(subject, path):
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
     files = glob.glob(filename[:-4] + '*.fif')
+    import re;
+    p = re.compile(filename[:-4] + '(.fif|-\d{1,}.fif)')
     
-    for file in files:
-        copyfile(file, os.path.join(subject.subject_path, os.path.basename(file)))
+    for f in files:
+        if p.match(f):
+            copyfile(f, os.path.join(subject.subject_path, os.path.basename(f)))
 
     #raw = mne.io.Raw(path)
     #raw.save(subject.working_file_path)

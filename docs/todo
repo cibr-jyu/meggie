@@ -8,25 +8,23 @@ epochs
 * Eventtilistan luominen 
 * Epokkien luominen
 
+*- output kansioon datat aikaleimattuihin kansioihin
 
-- not implemented yet, spectrums
-- ica
-- kansiohierarkia
-- add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
-- open_rawiin mahdollisuus konkatenoida tiedostoja
-*- tee jotain maxfilter-napille
-*- okulaari-nimi nappiin
-*- korjaa muutkin plotit olemaan tallentamatta badseja (esim filter)
-*- poista ysiysikasit
-*- piilota advancedin alle turhat valinnat projektiodialogeista, ja ehkä siivoa advancedeistakin jotain pois ( EOG ECG)
-*- korjaa TFR preprocessing-välilehdellä
-*- tarkista että selection-napit on hyviä ja toimii
-*- nappi jolla tallentaa data evokedeista, ehkä tuonne statsidialogin sisään, nimiä voi miettiä
-- ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
-*- TFR-valikot fourier analysis -välilehdellä selkeämmäks, turhat pois
-*- tfr-datan tallennus
-*- baselinet
+- one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
+- älä sulje dialogeja välttämättä ok:lla
+- n_jobs
 - lokikoodin siivousta ehkä, ehkä käydä läpi
 - wrap_mne_callin koodin voisi myös katsoa..
 - scripting ( kiva merge...)
+- projektiotarina
+- spektrien värit määritettäviksi?
+- ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
+- not implemented yet, spectrums
+- ica
+- jos mahdollista niin samankaltaista stats/selection juttua spektreille
+- add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
+- open_rawiin mahdollisuus konkatenoida tiedostoja
 - korjaa testit 
+- kansiohierarkia
+- group tfr, katso versionhalilnta
+

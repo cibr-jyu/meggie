@@ -735,6 +735,57 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
         self.evokedStatsDialog.show()
 
+    def save_evoked_data(self, subjects):
+        default_dir = os.path.join(self.caller.experiment.workspace,
+            self.caller.experiment.experiment_name, 'output', )
+        
+        if not os.path.isdir(default_dir):
+            os.mkdir(default_dir)
+        
+        try:    
+            evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
+        except AttributeError:
+            exc_messagebox(self, "Please select evoked data from the list")
+            return
+
+        for sub_name, subject in subjects.items():
+            names = []
+            evokeds = []
+            meggie_evoked = subject.evokeds.get(evoked_name)
+            if meggie_evoked:
+                for name, evoked in meggie_evoked.mne_evokeds.items():
+                    if evoked:
+                        evokeds.append(evoked)
+                        names.append(name)
+            if evokeds:
+                cleaned_evoked_name = evoked_name.split('.')[0]
+                filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
+                path = os.path.join(default_dir, filename)
+                fileManager.group_save_evokeds(path, evokeds, names)
+                
+                
+    def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subjects = self.caller.experiment.subjects
+        
+        self.save_evoked_data(subjects)
+        
+
+
+    def on_pushButtonSaveEvoked_clicked(self, checked=None):
+        if checked is None:
+            return
+        
+        subjects = dict([
+            (self.caller.experiment.active_subject.subject_name, 
+             self.caller.experiment.active_subject),
+        ])
+        
+        self.save_evoked_data(subjects)
+
+
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel"""
         if checked is None:
@@ -770,11 +821,15 @@ class MainWindow(QtGui.QMainWindow):
 
         epochs_name = str(item.text())
         epochs = self.caller.experiment.active_subject.epochs.get(epochs_name)
-
+        bads = epochs.raw.info['bads']
+        
         def handle_close(event):
+            epochs.raw.info['bads'] = bads
             fileManager.save_epoch(epochs, overwrite=True)
             self.epochList.selection_changed()
+       
         fig = epochs.raw.plot(block=True, show=True)
+        
         fig.canvas.mpl_connect('close_event', handle_close)
 
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
@@ -839,8 +894,6 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
             return
         
         self.layoutDialog = LayoutDialog(self)
@@ -1065,7 +1118,10 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         raw = self.caller.experiment.active_subject.get_working_file()
-
+        if not raw.info['projs']:
+            exc_messagebox(self, "No added projections.")
+            return
+        
         try:
             self.caller.plot_projs_topomap(raw)
         except Exception as e:
@@ -1270,24 +1326,6 @@ class MainWindow(QtGui.QMainWindow):
         self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
-    def on_pushButtonTFRTopology_2_clicked(self, checked=None):
-        """Visualize existing AVGPower as topology."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        item = self.ui.listWidgetPowerItems.currentItem()
-        if item is None:
-            return
-        power_name = item.text()
-        subject = self.caller.experiment.active_subject
-        path = os.path.join(subject.subject_path, 'TFR')
-        fname = os.path.join(path, power_name)
-        tfr = fileManager.load_tfr(fname)
-        self.tfrTop_dialog = TFRTopologyDialog(self, None, tfr)
-        self.tfrTop_dialog.finished.connect(self.on_close)
-        self.tfrTop_dialog.show()
         
     def on_pushButtonTFRraw_clicked(self, checked=None):
         if checked is None:
@@ -1781,24 +1819,15 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxEEGComputed.setChecked(True)        
         
         # Check whether ECG projections are applied
-        if all([
-            active_subject.check_ecg_applied(), 
-            'ecg_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_ecg_applied():
             self.ui.checkBoxECGApplied.setChecked(True)
         
         # Check whether EOG projections are applied
-        if all([
-            active_subject.check_eog_applied(),
-            'eog_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_eog_applied():
             self.ui.checkBoxEOGApplied.setChecked(True)
 
         # Check whether EEG projections are applied
-        if all([
-            active_subject.check_eeg_applied(),
-            'eeg_applied' in active_subject.working_file_name
-        ]):
+        if active_subject.check_eeg_applied():
             self.ui.checkBoxEEGApplied.setChecked(True)
         
         # Check whether sss/tsss method is applied.
@@ -1977,7 +2006,7 @@ class MainWindow(QtGui.QMainWindow):
                                     "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabFourierAnalysis, "Fourier Analysis")
+        self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
         self.ui.tabWidget.insertTab(5, self.ui.tabSourceAnalysis, "Source Analysis")
         
         self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation,

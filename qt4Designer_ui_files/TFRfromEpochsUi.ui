@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>391</height>
+    <width>484</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,204 +27,383 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>272</width>
-        <height>334</height>
+        <width>466</width>
+        <height>630</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>197</width>
-        <height>134</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
-      <widget class="QGroupBox" name="groupBoxFrequencies">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>291</width>
-         <height>361</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Frequency window</string>
-       </property>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>251</width>
-          <height>273</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <widget class="QComboBox" name="comboBoxChannels"/>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_13">
-           <item>
-            <widget class="QLabel" name="labelMinFreq">
-             <property name="text">
-              <string>Minimum frequency:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
-             <property name="suffix">
-              <string> Hz</string>
-             </property>
-             <property name="minimum">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>200.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>7.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <widget class="QLabel" name="labelMaxFreq">
-             <property name="text">
-              <string>Maximum frequency:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
-             <property name="suffix">
-              <string> Hz</string>
-             </property>
-             <property name="minimum">
-              <double>7.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>600.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>30.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="labelFrequencyInterval">
-             <property name="text">
-              <string>Frequency interval:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
-             <property name="suffix">
-              <string> Hz</string>
-             </property>
-             <property name="minimum">
-              <double>0.100000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>99.989999999999995</double>
-             </property>
-             <property name="value">
-              <double>3.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QLabel" name="labelNcycles">
-             <property name="text">
-              <string>Number of cycles:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxNcycles">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>3</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Temporal decim factor:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxDecim">
-             <property name="value">
-              <number>3</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="labelCmap">
-             <property name="text">
-              <string>Color map:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBoxCmap">
-             <item>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBoxBaseline">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Baseline rescaling and correction</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0" colspan="2">
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelRescaling">
               <property name="text">
-               <string>RdBu_r</string>
+               <string>Rescaling mode:</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelBaselineStart">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
-               <string>Reds</string>
+               <string>Baseline start:</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboBoxMode">
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>ratio</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>logratio</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>mean</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>zscore</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>percent</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelBaselineEnd">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
-               <string>YlOrRd</string>
+               <string>Baseline end:</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBoxFrequencies">
+         <property name="title">
+          <string>Frequency window</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item>
+               <widget class="QLabel" name="labelMinFreq">
+                <property name="text">
+                 <string>Minimum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+                <property name="suffix">
+                 <string> Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>200.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>7.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <widget class="QLabel" name="labelMaxFreq">
+                <property name="text">
+                 <string>Maximum frequency:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+                <property name="suffix">
+                 <string> Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>7.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>600.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>30.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="labelFrequencyInterval">
+                <property name="text">
+                 <string>Frequency interval:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxFreqInterval">
+                <property name="suffix">
+                 <string> Hz</string>
+                </property>
+                <property name="minimum">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>99.989999999999995</double>
+                </property>
+                <property name="value">
+                 <double>3.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string>seismic</string>
+               <string>Number of cycles</string>
               </property>
-             </item>
-             <item>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="radioButtonFixed">
+                <property name="text">
+                 <string>Fixed</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="value">
+                 <double>3.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QRadioButton" name="radioButtonAdapted">
+                <property name="text">
+                 <string>Freqs divided by</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxCycleFactor">
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>10.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>3.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="groupBoxMisc">
+         <property name="title">
+          <string>Miscellaneous</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="1" column="0">
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxDecim">
+              <property name="value">
+               <number>2</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelCmap">
               <property name="text">
-               <string>bwr</string>
+               <string>Color map:</string>
               </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </widget>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboBoxCmap">
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RdBu_r</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Reds</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>YlOrRd</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>seismic</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>bwr</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelDecim">
+              <property name="text">
+               <string>Decimation factor:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="comboBoxChannels"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="checkBoxSaveData">
+         <property name="text">
+          <string>Save data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -246,12 +425,9 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>comboBoxChannels</tabstop>
   <tabstop>doubleSpinBoxMinFreq</tabstop>
   <tabstop>doubleSpinBoxMaxFreq</tabstop>
   <tabstop>doubleSpinBoxFreqInterval</tabstop>
-  <tabstop>spinBoxNcycles</tabstop>
-  <tabstop>spinBoxDecim</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -263,8 +439,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>303</y>
+     <x>268</x>
+     <y>824</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -279,12 +455,44 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>282</x>
-     <y>303</y>
+     <x>279</x>
+     <y>824</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonAdapted</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxCycleFactor</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>399</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxNcycles</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>160</x>
+     <y>364</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>

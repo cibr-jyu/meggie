@@ -99,7 +99,6 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.comboBoxECGChannel.setCurrentIndex(ch_idx)
         self.ui.doubleSpinBoxTmin.setProperty("value", dic.get('tmin'))
         self.ui.doubleSpinBoxTmax.setProperty("value", dic.get('tmax'))
-        self.ui.spinBoxEventsID.setProperty("value", dic.get('event-id'))  # noqa
         self.ui.spinBoxLowPass.setProperty("value", dic.get('ecg-l-freq'))  # noqa
         self.ui.spinBoxHighPass.setProperty("value", dic.get('ecg-h-freq'))  # noqa
         self.ui.spinBoxGrad.setProperty("value", dic.get('n-grad'))
@@ -111,10 +110,8 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxMagReject.setProperty("value", dic.get('rej-mag'))  # noqa
         self.ui.doubleSpinBoxEEGReject.setProperty("value", dic.get('rej-eeg'))  # noqa
         self.ui.doubleSpinBoxEOGReject.setProperty("value", dic.get('rej-eog'))  # noqa
-        self.ui.lineEditBad.setProperty("value", dic.get('bads'))
         self.ui.spinBoxStart.setProperty("value", dic.get('tstart'))
         self.ui.spinBoxTaps.setProperty("value", dic.get('filtersize'))
-        self.ui.checkBoxEEGProj.setChecked(dic.get('avg-ref'))
         self.ui.checkBoxSSPProj.setChecked(dic.get('no-proj'))
         self.ui.checkBoxSSPCompute.setChecked(dic.get('average'))
 
@@ -124,7 +121,6 @@ class EcgParametersDialog(QtGui.QDialog):
         return {
             'tmin': -0.200,
             'tmax': 0.400,
-            'event-id': 998,
             'eog-l-freq': 1,
             'eog-h-freq': 40,
             'n-grad': 2,
@@ -136,10 +132,8 @@ class EcgParametersDialog(QtGui.QDialog):
             'rej-mag': 4000.00,
             'reg-eeg': 100.00,
             'rej-eog': 250.00,
-            'bads': '',
             'tstart': 5,
             'filtersize': 2048,
-            'avg-ref': False,
             'no-proj': True,
             'average': True        
         }
@@ -155,6 +149,8 @@ class EcgParametersDialog(QtGui.QDialog):
         try:
             self.calculate_ecg(self.caller.experiment.active_subject)    
         except Exception as e:
+            import traceback;
+            traceback.print_exc()
             self.batching_widget.failed_subjects.append((
                 self.caller.experiment.active_subject, str(e)))
             
@@ -204,7 +200,6 @@ class EcgParametersDialog(QtGui.QDialog):
 
         dictionary['tmin'] = self.ui.doubleSpinBoxTmin.value()
         dictionary['tmax'] = self.ui.doubleSpinBoxTmax.value()
-        dictionary['event-id'] = self.ui.spinBoxEventsID.value()
         dictionary['ecg-l-freq'] = self.ui.spinBoxLowPass.value()
         dictionary['ecg-h-freq'] = self.ui.spinBoxHighPass.value()
         dictionary['n-grad'] = self.ui.spinBoxGrad.value()
@@ -217,10 +212,8 @@ class EcgParametersDialog(QtGui.QDialog):
         dictionary['rej-eeg'] = self.ui.doubleSpinBoxEEGReject.value()
         dictionary['rej-eog'] = self.ui.doubleSpinBoxEOGReject.value()
         dictionary['qrs'] = self.ui.doubleSpinBoxQrs.value()
-        dictionary['bads'] = map(str.strip, str(self.ui.lineEditBad.text()).split(',')) # noqa
         dictionary['tstart'] = self.ui.spinBoxStart.value()
         dictionary['filtersize'] = self.ui.spinBoxTaps.value()
-        dictionary['avg-ref'] = self.ui.checkBoxEEGProj.isChecked()
         dictionary['no-proj'] = self.ui.checkBoxSSPProj.isChecked()
         dictionary['average'] = self.ui.checkBoxSSPCompute.isChecked()
         dictionary['ch_name'] = self.ui.comboBoxECGChannel.currentText()

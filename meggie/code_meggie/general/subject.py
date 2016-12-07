@@ -63,7 +63,6 @@ class Subject(QObject):
         self._working_file = None
         self._working_file_name = working_file_name
 
-        self._layout = "Infer from data"
         # Dictionary for epochs where key is the name of the collection
         # and value is the epochs object. Similar approach with evoked and
         # forward model objects.

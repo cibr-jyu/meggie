@@ -170,7 +170,6 @@ class Caller(object):
         raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
-        event_id = dic.get('event-id')
         ecg_low_freq = dic.get('ecg-l-freq')
         ecg_high_freq = dic.get('ecg-h-freq')
         grad = dic.get('n-grad')
@@ -189,14 +188,8 @@ class Caller(object):
                       eeg=1e-6 * float(rej_eeg),
                       eog=1e-6 * float(rej_eog))
         qrs_threshold = dic.get('qrs')
-        flat = None
-        bads = dic.get('bads')
-        if bads is None or bads == ['']:
-            bads = []
-
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
         preload = True  # TODO File
@@ -211,18 +204,17 @@ class Caller(object):
         else:
             ecg_proj_fname = prefix + '_ecg_proj.fif'
 
-        n_jobs = self.parent.preferencesHandler.n_jobs
+        # To avoid casualities
+        n_jobs = 1
         projs, events = wrap_mne_call(self.experiment, 
-                                      compute_proj_ecg, 
-                                      raw_in, None, tmin, tmax, grad,
-                                      mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, n_jobs, ch_name,
-                                      reject, flat, bads, eeg_proj,
-                                      excl_ssp, event_id, ecg_low_freq,
-                                      ecg_high_freq, start,
-                                      qrs_threshold)
+            compute_proj_ecg, raw=raw_in, tmin=tmin, tmax=tmax,
+            n_grad=grad, n_mag=mag, n_eeg=eeg, l_freq=filter_low, 
+            h_freq=filter_high, average=comp_ssp, filter_length=taps, 
+            n_jobs=n_jobs, ch_name=ch_name, reject=reject,
+            no_proj=excl_ssp, ecg_l_freq=ecg_low_freq,
+            ecg_h_freq=ecg_high_freq, tstart=start, qrs_threshold=qrs_threshold)
 
-        if len(events) == 0:
+        if not projs:
             raise Exception('No ECG events found. Change settings.')
 
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -249,7 +241,6 @@ class Caller(object):
         raw_in = subject.get_working_file()
         tmin = dic.get('tmin')
         tmax = dic.get('tmax')
-        event_id = dic.get('event-id')
         eog_low_freq = dic.get('eog-l-freq')
         eog_high_freq = dic.get('eog-h-freq')
         grad = dic.get('n-grad')
@@ -263,13 +254,8 @@ class Caller(object):
         rej_eeg = dic.get('rej-eeg')
         rej_eog = dic.get('rej-eog')
 
-        flat = None
-        bads = dic.get('bads')
-        if bads is None or bads == ['']:
-            bads = []
         start = dic.get('tstart')
         taps = dic.get('filtersize')
-        eeg_proj = dic.get('avg-ref')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
         preload = True  # TODO File
@@ -284,15 +270,13 @@ class Caller(object):
         else:
             eog_proj_fname = prefix + '_eog_proj.fif'
 
-        n_jobs = self.parent.preferencesHandler.n_jobs
+        # To avoid casualities
+        n_jobs = 1        
         projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
-                                      raw_in, None, tmin, tmax, grad,
-                                      mag, eeg, filter_low, filter_high,
-                                      comp_ssp, taps, n_jobs, reject,
-                                      flat, bads, eeg_proj, excl_ssp,
-                                      event_id, eog_low_freq,
-                                      eog_high_freq, start)
-
+            raw=raw_in, tmin=tmin, tmax=tmax, n_grad=grad, n_mag=mag, 
+            n_eeg=eeg, l_freq=filter_low, h_freq=filter_high, average=comp_ssp, 
+            filter_length=taps, n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
+            eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
 
         # TODO Reading a file
         if isinstance(preload, basestring) and os.path.exists(preload):
@@ -369,15 +353,6 @@ class Caller(object):
     def _apply_exg(self, kind, raw, directory, projs, applied):
         """Performed in a worker thread."""
         fname = os.path.join(directory, self.experiment.active_subject.working_file_name)
-        if kind == 'ecg':
-            if '-ecg_applied' not in fname:
-                fname = fname.split('.')[0] + '-ecg_applied.fif'
-        if kind == 'eog':
-            if '-eog_applied' not in fname:
-                fname = fname.split('.')[0] + '-eog_applied.fif'
-        if kind == 'eeg':
-            if '-eeg_applied' not in fname:
-                fname = fname.split('.')[0] + '-eeg_applied.fif'
 
         for new_proj in projs:  # first remove projs
             for idx, proj in enumerate(raw.info['projs']):
@@ -398,23 +373,7 @@ class Caller(object):
                 names = ['ECG', 'EOG', 'EEG']
                 if filter(lambda x: x in proj['desc'], names):
                     continue
-                #if 'ECG' in proj['desc']:
-                #    continue
-                #if 'EOG' in proj['desc']:
-                #    continue
-                #if 'EEG' in proj['desc']:
-                #    continue
                 raw.info['projs'][idx]['desc'] = 'Ocular-' + proj['desc'] 
-        
-        #Removes older raw files with applied projs
-        directory = os.path.dirname(fname)
-        files = glob.glob(directory + '/*e*g_applied.fif')
-    
-        for f in files:
-            if f == fname:
-                continue
-            fileManager.delete_file_at(directory, f)
-            print 'Removed previous working file: ' + f
         
         fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
 
@@ -595,7 +554,7 @@ class Caller(object):
         evokeds  - Evoked object or list of evokeds.
         layout   - The desired layout as a string.
         """
-        layout = self.read_layout(self.experiment.active_subject.layout)
+        layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
         title = self.experiment.active_subject.subject_name
             
@@ -746,13 +705,12 @@ class Caller(object):
 
         return dataList
 
-    def group_average(self, evoked_name, layout):
+    def group_average(self, evoked_name):
         """
         Plots group average of all subjects in the experiment. Also saves group
         average data to ``output`` folder.
         Keyword arguments:
         evoked_name        -- name of the evoked objects
-        layout        -- Layout used for plotting channels.
         """
         #subjects_averaged = []
         count = 0
@@ -766,6 +724,7 @@ class Caller(object):
 
         if count == 0:
             raise ValueError('No evoked responses found from any subject.')
+        
         if count > 0 and count < len(self.experiment.subjects):
             reply = QtGui.QMessageBox.question(
                 self.parent, 
@@ -812,8 +771,8 @@ class Caller(object):
 
         return grand_averages
 
-    def TFR(self, epochs, ch_index, minfreq, maxfreq, interval, ncycles,
-            decim, color_map='auto'):
+    def TFR(self, epochs, ch_index, freqs, ncycles, decim, mode, blstart, blend, save_data,
+            color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
@@ -821,20 +780,16 @@ class Caller(object):
         Keyword arguments:
         epochs        -- Epochs extracted from the data.
         ch_index      -- Index of the channel to be used.
-        minfreq       -- Starting frequency for the representation.
-        maxfreq       -- Ending frequency for the representation.
-        interval      -- Interval to use for the frequencies of interest.
+        freqs         -- Frequencies for the representation as a numpy array.
         ncycles       -- Value used to count the number of cycles.
         decim         -- Temporal decimation factor.
         color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
                          which case ``RdBu_r`` is used or ``Reds`` if only
                          positive values exist in the data.
         """
-        plt.close()
 
-        # Find intervals for given frequency band
-        freqs = np.arange(minfreq, maxfreq, interval)
         n_jobs = self.parent.preferencesHandler.n_jobs
+        baseline = (blstart, blend)
         
         @threaded
         def calculate_tfrs():
@@ -845,7 +800,32 @@ class Caller(object):
             
         power, itc, evoked = calculate_tfrs()
         
-        evoked_data = evoked.data[ch_index:(ch_index+1), :]
+        if mode:
+            power.data = mne.baseline.rescale(power.data, power.times, 
+                baseline=baseline, mode=mode)
+            itc.data = mne.baseline.rescale(itc.data, itc.times, 
+                baseline=baseline, mode=mode)          
+        
+        if save_data:
+            folder = os.path.join(self.experiment.workspace, 
+                self.experiment.experiment_name, 'output')
+            subject = self.experiment.active_subject.subject_name
+            ch_name = power.ch_names[ch_index]
+            
+            power_fname = os.path.join(folder, 
+                ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv']))
+            
+            fileManager.save_tfr(power_fname, power.data[ch_index], 
+                                 power.times, freqs)
+            
+            itc_fname = os.path.join(folder, 
+                ''.join([subject, '_', ch_name, '_TFR_epochs_itc.csv']))
+            
+            fileManager.save_tfr(itc_fname, itc.data[ch_index], 
+                                 itc.times, freqs)            
+
+        
+        evoked_data = evoked.data[ch_index]
         evoked_times = 1e3 * evoked.times
 
         print 'Plotting TFR...'
@@ -866,17 +846,17 @@ class Caller(object):
             raise TypeError('TFR plotting for %s channels not supported.' % 
                             ch_type)
 
-        plt.plot(evoked_times, evoked_data.T)
+        plt.plot(evoked_times, evoked_data)
         plt.title('Evoked response (%s)' % evoked.ch_names[ch_index])
         plt.xlabel('Time (ms)')
         plt.xlim(evoked_times[0], evoked_times[-1])
 
-        data = power.data[0]
-
         if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
+            cmap = 'RdBu_r'
         else:
             cmap = color_map    
+
+        data = power.data[ch_index]
 
         plt.subplot2grid((3, 15), (1, 0), colspan=14)
         img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
@@ -886,10 +866,8 @@ class Caller(object):
         plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
         plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
 
-        data = itc.data[0]
-
-        if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(data < 0) else 'Reds'
+        data = itc.data[ch_index]
+            
         plt.subplot2grid((3, 15), (2, 0), colspan=14)
         img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
             freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
@@ -918,7 +896,6 @@ class Caller(object):
         blstart       -- Starting point for baseline correction.
         blend         -- Ending point for baseline correction.
         ncycles       -- Value used to count the number of cycles.
-        layout        -- Layout to use.
         ch_type       -- Channel type (mag | grad | eeg).
         scalp         -- Parameter dictionary for scalp plot. If None, no scalp
                          plot is drawn.
@@ -927,333 +904,60 @@ class Caller(object):
                          positive values exist in the data.
         """
 
-        plt.close()
-        if isinstance(inst, mne.epochs._BaseEpochs):  # TFR from epochs
-            power, itc = self._TFR_topology(inst, freqs, ncycles, decim,
-                                            do_meanwhile=self.parent.update_ui)
-
-        elif reptype == 'average':  # TFR from averageTFR
-            power = inst
-        elif reptype == 'itc':  # TFR from averageTFR
-            itc = inst
-
-        layout = self.read_layout(self.experiment.active_subject.layout)
+        @threaded
+        def calculate_tfrs():
+            n_jobs = self.parent.preferencesHandler.n_jobs
+            power, itc = tfr_morlet(inst, freqs=freqs, n_cycles=ncycles, 
+                                    decim=decim, n_jobs=n_jobs)
+            return power, itc
         
-        if blstart is None and blend is None:
-            baseline = None
+        power, itc = calculate_tfrs()
+        
+        baseline = (blstart, blend)
+
+        layout = self.read_layout(self.experiment.layout)
+        
+        if reptype == 'average':
+            inst = power
+            title = 'Average power'
+        elif reptype == 'itc':
+            inst = itc
+            title = 'Inter-trial coherence'
+            
+        if color_map == 'auto':
+            cmap = 'RdBu_r'
         else:
-            baseline = (blstart, blend)
+            cmap = color_map
+
+        if mode:
+            inst.data = mne.baseline.rescale(inst.data, inst.times, 
+                baseline=baseline, mode=mode)    
+
+        if scalp is not None:
+            wrap_mne_call(self.experiment, inst.plot_topomap,
+                          tmin=scalp['tmin'], tmax=scalp['tmax'],
+                          fmin=scalp['fmin'], fmax=scalp['fmax'],
+                          ch_type=ch_type, layout=layout,
+                          show=False, cmap=cmap)
 
         print "Plotting..."
-        #self.parent.update_ui()
-        if reptype == 'average':  # induced
-            if color_map == 'auto':
-                cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
-            else:
-                cmap = color_map
+        print np.max(inst.data)
+        print np.min(inst.data)
+        fig = wrap_mne_call(self.experiment, inst.plot_topo, 
+            fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
+            title=title)
 
-            if scalp is not None:
-                fig = wrap_mne_call(self.experiment,
-                                    power.plot_topomap,
-                                    tmin=scalp['tmin'],
-                                    tmax=scalp['tmax'],
-                                    fmin=scalp['fmin'],
-                                    fmax=scalp['fmax'],
-                                    ch_type=ch_type, layout=layout,
-                                    baseline=baseline, mode=mode,
-                                    show=False, cmap=cmap)
-
-            print 'Plotting topology. Please be patient...'
-            #self.parent.update_ui()
-           
-            fig = wrap_mne_call(self.experiment, power.plot_topo,
-                                baseline=baseline, mode=mode, fmin=freqs[0],
-                                fmax=freqs[-1], layout=layout, cmap=cmap,
-                                title='Average power')
-
-        elif reptype == 'itc':  # phase locked
-            if color_map == 'auto':
-                cmap = 'RdBu_r' if np.min(itc.data < 0) else 'Reds'
-            else:
-                cmap = color_map
-
-            print 'Plotting topology. Please be patient...'
-            title = 'Inter-Trial coherence'
-            if scalp is not None:
-                fig = wrap_mne_call(self.experiment, itc.plot_topomap,
-                                    tmin=scalp['tmin'], tmax=scalp['tmax'],
-                                    fmin=scalp['fmin'], fmax=scalp['fmax'],
-                                    ch_type=ch_type, layout=layout,
-                                    baseline=baseline, mode=mode,
-                                    show=False)
-                
-            fig = wrap_mne_call(self.experiment, itc.plot_topo,
-                                baseline=baseline, mode=mode, fmin=freqs[0],
-                                fmax=freqs[-1], layout=layout, cmap=cmap,
-                                title=title)
-
-            fig.show()
+        fig.show()
 
         def onclick(event):
             pl.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
-    @threaded
-    def _TFR_topology(self, epochs, frequencies, ncycles, decim):
-        """
-        Performed in a worker thread.
-        """
-        n_jobs = self.parent.preferencesHandler.n_jobs
-        power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
-                                   freqs=frequencies, n_cycles=ncycles,
-                                   use_fft=False, return_itc=True,
-                                   decim=decim, n_jobs=n_jobs)
 
-        return power, itc
-
-    def TFR_average(self, epochs_name, reptype, color_map, mode, minfreq,
-                    maxfreq, interval, blstart, blend, ncycles, decim,
-                    selected_channels, form, dpi, save_topo, save_plot,
-                    save_max):
-        """
-        Method for computing average TFR over all subjects in the experiment.
-        Creates data and picture files to output folder of the experiment.
-        """
-        layout = self.read_layout(self.experiment.active_subject.layout)
-
-        frequencies = np.arange(minfreq, maxfreq, interval)
-
-        power, itc = self._TFR_average(epochs_name, selected_channels, reptype,
-                                       frequencies, ncycles, decim, save_max,
-                                       do_meanwhile=self.parent.update_ui)
-
-        if blstart is None and blend is None:
-            baseline = None
-        else:
-            baseline = (blstart, blend)
-
-        print 'Plotting topology...'
-        if reptype == 'average':
-            title = 'Average power ' + epochs_name
-            self._plot_TFR_topology(power, baseline, mode, minfreq, maxfreq,
-                                    layout, title, save_topo, save_plot,
-                                    selected_channels, dpi, form, epochs_name,
-                                    color_map)
-        elif reptype == 'itc':
-            title = 'Inter-trial coherence ' + epochs_name
-            self._plot_TFR_topology(itc, baseline, mode, minfreq, maxfreq,
-                                    layout, title, save_topo, save_plot,
-                                    selected_channels, dpi, form, epochs_name,
-                                    color_map)
-
-    @threaded
-    def _TFR_average(self, epochs_name, selected_channels, reptype,
-                     frequencies, ncycles, decim, save_max=False):
-        """Performed in a working thread."""
-        chs = self.experiment.active_subject.get_working_file().info['ch_names']
-        subjects = self.experiment.subjects.values()
-        directory = ''
-        files2ave = []
-        for subject in subjects:
-            directory = subject._epochs_directory
-            fName = join(directory, epochs_name + '.fif')
-            if isfile(fName):
-                files2ave.append(fName)
-
-        print ('Found ' + str(len(files2ave)) + ' subjects with epochs ' + 
-               'labeled ' + epochs_name + '.')
-        if len(files2ave) < len(subjects):
-            raise Warning("Found only " + str(len(files2ave)) +
-                          " subjects of " + str(len(subjects)) +
-                          " with epochs labeled: " +
-                          epochs_name + "!\n")
-        powers = []
-        itcs = []
-        weights = []
-        bads = []
-        if save_max:
-            exp_path = os.path.join(self.experiment.workspace,
-                                    self.experiment.experiment_name)
-            max_file = open(exp_path + '/output/' + save_max + '_maxima.txt',
-                            'w')
-        for f in files2ave:
-            epochs = mne.read_epochs(join(directory, f))
-            bads = bads + list(set(epochs.info['bads']) - set(bads))
-            n_jobs = self.parent.preferencesHandler.n_jobs
-            power, itc = wrap_mne_call(self.experiment, tfr_morlet, epochs,
-                                       freqs=frequencies, n_cycles=ncycles,
-                                       use_fft=False, return_itc=True,
-                                       decim=decim, n_jobs=n_jobs)
-
-            if save_max is not None:
-                # Write file for maxima
-                p = None
-                if save_max == 'itc':
-                    p = itc
-                elif save_max == 'average':
-                    p = power
-                max_file.write(f)
-                max_file.write('\n')
-                for ch in selected_channels:
-                    max_file.write(ch + '\n')
-                    idx = p.ch_names.index(ch)
-                    ch_data = p.data[idx]
-                    i = np.argmax(ch_data)
-                    f = i / len(ch_data[0])
-                    t = i % len(ch_data[0])
-                    f = p.freqs[f]
-                    t = p.times[t]
-                    string = 'freq: ' + str(f) + '; time: ' + str(t) + '\n'
-                    max_file.write(string)
-                max_file.write('\n')
-            powers.append(power)
-            itcs.append(itc)
-            weights.append(len(epochs))
-
-        if save_max:
-            print 'Closing file'
-            max_file.close()
-
-        bads = set(bads)
-        usedPowers = dict()
-        usedItcs = dict()
-        usedChannels = []
-
-        print 'Populating the dictionaries'
-        for ch in chs:
-            if ch in bads:
-                continue
-            elif ch not in powers[0].ch_names:
-                continue
-            else:
-                usedChannels.append(ch)
-            if not usedPowers.has_key(ch):
-                usedPowers[ch] = []
-                usedItcs[ch] = []
-            for i in xrange(len(powers)):
-                cidx = powers[i].ch_names.index(ch)
-                usedPowers[ch].append(powers[i].data[cidx])
-                usedItcs[ch].append(itcs[i].data[cidx])
-        averagePower = []
-        averageItc = []
-
-        print 'Averaging the values'
-        for ch in usedChannels:
-            averagePower.append(np.average(usedPowers[ch], axis=0,
-                                           weights=weights))
-            averageItc.append(np.average(usedItcs[ch], axis=0,
-                                         weights=weights))
-
-        ch_names = [x[:3] + ' ' + x[3:] 
-                    if ' ' not in x 
-                    else x for x in usedChannels]  # pre-set layouts have spaces
-        ch_types = list()
-        for name in ch_names:
-            if name.startswith('MEG'):
-                if name.endswith('1'):
-                    ch_types.append('mag')
-                else:
-                    ch_types.append('grad')
-            else:
-                ch_types.append('eeg')
-
-        #log mne call
-        info = wrap_mne_call(self.experiment, mne.create_info,
-                             ch_names=ch_names, ch_types=ch_types,
-                             sfreq=powers[0].info['sfreq'])
-
-        times = powers[0].times
-        nave = sum(weights)
-        averagePower = np.array(averagePower)
-        averageItc = np.array(averageItc)
-
-        power = wrap_mne_call(self.experiment,
-                              mne.time_frequency.AverageTFR, info,
-                              averagePower, times, frequencies, nave)
-
-        itc = wrap_mne_call(self.experiment, mne.time_frequency.AverageTFR,
-                            info, averageItc, times, frequencies, nave)
-
-        return power, itc
-
-    def _plot_TFR_topology(self, power, baseline, mode, fmin, fmax, layout,
-                           title, save_topo=False, save_plot=False,
-                           channels=[], dpi=200, form='png', epoch_name='',
-                           color_map='auto'):
-        """
-        Convenience method for plotting TFR topologies.
-        Parameters:
-        power     - Average or itc power for plotting.
-        baseline  - Baseline for the image.
-        mode      -
-        fmin      - Minimum frequency of interest.
-        fmax      - Maximum frequency of interest.
-        layout    - Layout for the image.
-        title     - Title to show on the plot.
-        save_topo - Boolean to indicate whether the figure is to be saved.
-        save_plot -
-        channels  - Channels of interest.
-        dpi       - Dots per inch for the figures.
-        form      - File format for the figures.
-        epoch_name- Name of the epochs used for the TFR
-        color_map - 
-        """
-        if color_map == 'auto':
-            cmap = 'RdBu_r' if np.min(power.data < 0) else 'Reds'
-        else:
-            cmap = color_map
-        exp_path = os.path.join(self.experiment.workspace,
-                                self.experiment.experiment_name)
-        if not os.path.isdir(exp_path + '/output'):
-            os.mkdir(exp_path + '/output')
-        if save_plot:
-            for channel in channels:
-                if not channel in power.ch_names:
-                    print 'Channel ' + channel + ' not found!'
-                    continue
-                print ('Saving channel ' + channel + ' figure to ' + exp_path + 
-                       '/output...')
-                self.parent.update_ui()
-                plt.clf()
-                idx = power.ch_names.index(channel)
-                try:
-                    power.plot([idx], baseline=baseline, mode=mode, show=False)
-                    plt.savefig(exp_path + '/output/average_tfr_channel_' + 
-                                channel + '_' + epoch_name + '.' + form,
-                                dpi=dpi, format=form)
-                except Exception as e:
-                    print 'Error while saving figure for channel ' + channel
-                finally:
-                    plt.close()
-
-        plt.clf()
-        fig = wrap_mne_call(self.experiment, power.plot_topo,
-                            baseline=baseline, mode=mode, fmin=fmin,
-                            fmax=fmax, layout=layout, title=title,
-                            show=False, cmap=cmap)
-        if save_topo:
-            print 'Saving topology figure to  ' + exp_path + '/output...'
-            fig_title= ''
-            if title.startswith('Inter-trial'):
-                fig_title = "".join([
-                    exp_path, '/output/group_tfr_', epoch_name, '_itc.', form
-                ])
-            elif title.startswith('Average'):
-                fig_title = "".join([
-                    exp_path, '/output/group_tfr_', epoch_name, '_average.', 
-                    form
-                ])
-            plt.savefig(fig_title, dpi=dpi, format=form)
-            plt.close()
-        else:
-            def onclick(event):
-                plt.show(block=False)
-            fig.canvas.mpl_connect('button_press_event', onclick)
-            plt.show()
-
-    def TFR_raw(self, wsize, tstep, channel, fmin, fmax):
-        lout = self.read_layout(self.experiment.active_subject.layout)
+    def TFR_raw(self, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
+                save_data):
+        lout = self.read_layout(self.experiment.layout)
         
         raw = self.experiment.active_subject.get_working_file()
         
@@ -1263,20 +967,20 @@ class Caller(object):
         tfr = np.abs(mne.time_frequency.stft(raw._data, wsize, tstep=tstep))
         freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
+        baseline = (blstart, blend)
         
         tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
         
-        if (not fmin and raw.info['highpass'] and 
-                not math.isnan(raw.info['highpass'])):
-            fmin = raw.info['highpass']
-
-        if (not fmax and raw.info['lowpass'] and 
-                not math.isnan(raw.info['lowpass'])):
-            fmax = raw.info['lowpass']
+        if mode:
+            tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=baseline, 
+                                             mode=mode)
         
-        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax,
-                  layout=lout, mode='logratio')
-
+        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
+        
+        if save_data:
+            filename = os.path.join(self.experiment.workspace, self.experiment.experiment_name,
+                'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR.csv')
+            fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """
@@ -1286,7 +990,7 @@ class Caller(object):
         save_data      - Boolean indicating whether to save psd data to files.
                          Only data from channels of interest is saved.
         """
-        lout = self.read_layout(self.experiment.active_subject.layout)
+        lout = self.read_layout(self.experiment.layout)
             
         for epochs in epoch_groups.values():
             info = epochs[0].info

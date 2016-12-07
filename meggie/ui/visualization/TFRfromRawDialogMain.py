@@ -64,6 +64,14 @@ class TFRRawDialog(QtGui.QDialog):
         raw = self.caller.experiment.active_subject.get_working_file()
         channels = raw.info['ch_names']
         self.ui.comboBoxChannel.addItems(channels)
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(raw.times[0])
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(raw.times[-1])
+        self.ui.doubleSpinBoxBaselineStart.setValue(raw.times[0])
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(raw.times[0])
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(raw.times[-1])
+        self.ui.doubleSpinBoxBaselineEnd.setValue(raw.times[-1])
+
+        
         
     def accept(self):
         """
@@ -76,16 +84,22 @@ class TFRRawDialog(QtGui.QDialog):
             tstep = self.ui.spinBoxTstep.value()
             
         channel_idx = self.ui.comboBoxChannel.currentIndex()
-        #a = self.ui.comboBoxChannel.itemText(channel_idx)
-        fmin, fmax = None, None
+        fmin = self.ui.spinBoxFmin.value()
+        fmax = self.ui.spinBoxFmax.value()
+        save_data = self.ui.checkBoxSaveData.isChecked()    
+        
+        if self.ui.groupBoxBaseline.isChecked():
+            mode = str(self.ui.comboBoxMode.currentText())
+            blstart = self.ui.doubleSpinBoxBaselineStart.value()
+            blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        else:
+            blstart, blend, mode = None, None, None
 
-        if self.ui.checkBoxFrequency.isChecked():
-            fmin = self.ui.spinBoxFmin.value()
-            fmax = self.ui.spinBoxFmax.value()
         
         try:
-            self.caller.TFR_raw(wsize, tstep, channel_idx, fmin, fmax)
+            self.caller.TFR_raw(wsize=wsize, tstep=tstep, channel=channel_idx,
+                fmin=fmin, fmax=fmax, blstart=blstart, blend=blend, mode=mode,
+                save_data=save_data)
         except Exception as e:
             exc_messagebox(self, e)
             
-        self.close()

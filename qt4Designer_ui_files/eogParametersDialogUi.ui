@@ -89,8 +89,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>553</width>
-         <height>471</height>
+         <width>561</width>
+         <height>481</height>
         </rect>
        </property>
        <property name="currentIndex">
@@ -117,7 +117,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>261</width>
+            <width>271</width>
             <height>61</height>
            </rect>
           </property>
@@ -196,14 +196,14 @@
           </rect>
          </property>
          <property name="title">
-          <string>Filtering EOG channel</string>
+          <string>Filter cut-off frequencies for EOG channel</string>
          </property>
          <widget class="QFrame" name="frame_6">
           <property name="geometry">
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>471</width>
+            <width>391</width>
             <height>61</height>
            </rect>
           </property>
@@ -218,7 +218,7 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>455</width>
+             <width>371</width>
              <height>41</height>
             </rect>
            </property>
@@ -227,8 +227,14 @@
              <layout class="QHBoxLayout" name="horizontalLayout_23">
               <item>
                <widget class="QLabel" name="labelLowPass">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
-                 <string>Low pass frequency:</string>
+                 <string>Low:</string>
                 </property>
                </widget>
               </item>
@@ -248,8 +254,14 @@
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QLabel" name="labelHighPass">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
-                 <string>High pass frequency:</string>
+                 <string>High:</string>
                 </property>
                </widget>
               </item>
@@ -277,7 +289,7 @@
           <rect>
            <x>10</x>
            <y>230</y>
-           <width>351</width>
+           <width>361</width>
            <height>101</height>
           </rect>
          </property>
@@ -289,7 +301,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>331</width>
+            <width>341</width>
             <height>61</height>
            </rect>
           </property>
@@ -384,7 +396,7 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>521</width>
+            <width>531</width>
             <height>61</height>
            </rect>
           </property>
@@ -464,27 +476,6 @@
               </item>
              </layout>
             </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="labelEventID">
-                <property name="text">
-                 <string>Events ID:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="spinBoxEventsID">
-                <property name="maximum">
-                 <number>10000</number>
-                </property>
-                <property name="value">
-                 <number>998</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
            </layout>
           </widget>
          </widget>
@@ -494,127 +485,11 @@
         <attribute name="title">
          <string>Advanced</string>
         </attribute>
-        <widget class="QWidget" name="horizontalLayoutWidget_17">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>60</y>
-           <width>351</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_21">
-          <item>
-           <widget class="QLabel" name="labelStart1">
-            <property name="text">
-             <string>Start artifact detection after</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBoxStart"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelStart2">
-            <property name="text">
-             <string>seconds.</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>531</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_28">
-          <item>
-           <widget class="QLabel" name="labelBad">
-            <property name="text">
-             <string>Bad channels (eg. MEG 2443, MEG 1531):</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEditBad"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="layoutWidget_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>110</y>
-           <width>310</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_22">
-          <item>
-           <widget class="QLabel" name="labelTaps">
-            <property name="text">
-             <string>Number of taps to use for filtering:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBoxTaps">
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="value">
-             <number>2048</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="verticalLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>160</y>
-           <width>371</width>
-           <height>101</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QCheckBox" name="checkBoxEEGProj">
-            <property name="text">
-             <string>Add EEG average reference proj.</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBoxSSPProj">
-            <property name="text">
-             <string>Exclude the SSP projectors currently in the fiff file</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBoxSSPCompute">
-            <property name="text">
-             <string>Compute SSP after averaging</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QGroupBox" name="groupBox">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>270</y>
+           <y>150</y>
            <width>491</width>
            <height>131</height>
           </rect>
@@ -761,6 +636,72 @@
           </widget>
          </widget>
         </widget>
+        <widget class="QWidget" name="gridLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>481</width>
+           <height>138</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="spinBoxStart"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="checkBoxSSPCompute">
+            <property name="text">
+             <string>Compute SSP after averaging</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelTaps">
+            <property name="text">
+             <string>Number of taps to use for filtering:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="labelStart2">
+            <property name="text">
+             <string>seconds.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="spinBoxTaps">
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+            <property name="value">
+             <number>2048</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelStart1">
+            <property name="text">
+             <string>Start artifact detection after</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBoxSSPProj">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Exclude SSP projections currently in the file</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="widget" native="true">
@@ -782,7 +723,6 @@
   <tabstop>scrollArea</tabstop>
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
-  <tabstop>spinBoxEventsID</tabstop>
   <tabstop>spinBoxLowPass</tabstop>
   <tabstop>spinBoxHighPass</tabstop>
   <tabstop>spinBoxGrad</tabstop>
@@ -790,12 +730,6 @@
   <tabstop>spinBoxEeg</tabstop>
   <tabstop>spinBoxLow</tabstop>
   <tabstop>spinBoxHigh</tabstop>
-  <tabstop>lineEditBad</tabstop>
-  <tabstop>spinBoxStart</tabstop>
-  <tabstop>spinBoxTaps</tabstop>
-  <tabstop>checkBoxEEGProj</tabstop>
-  <tabstop>checkBoxSSPProj</tabstop>
-  <tabstop>checkBoxSSPCompute</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCompute</tabstop>
   <tabstop>tabWidgetEOGSettings</tabstop>

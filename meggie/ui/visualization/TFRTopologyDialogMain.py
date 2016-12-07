@@ -51,7 +51,7 @@ class TFRTopologyDialog(QtGui.QDialog):
     """
     caller = Caller.Instance()    
     
-    def __init__(self, parent, epoch_name, tfr=None):
+    def __init__(self, parent, epoch_name):
         """
         Initializes the TFR topology dialog.
         
@@ -67,37 +67,19 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
 
-        if tfr is None:
-            self.tfr = None
-            subject = self.caller.experiment.active_subject
-            epochs = subject.epochs[epoch_name].raw
-            self.ui.labelEpochName.setText(epoch_name)
-            self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
-            self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
-            self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
-            self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
-            self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
-            self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
-            self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
-            self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
-            self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
-            self.ui.doubleSpinBoxBaselineEnd.setValue(epochs.tmax)
-        else:
-            self.tfr = tfr
-            if tfr.method == 'morlet-power':
-                self.ui.radioButtonInduced.setChecked(True)
-            elif tfr.method == 'morlet-itc':
-                self.ui.radioButtonPhase.setChecked(True)
-            self.ui.radioButtonInduced.setEnabled(False)
-            self.ui.radioButtonPhase.setEnabled(False)
-            self.ui.groupBoxFrequencies.setVisible(False)
-            self.ui.groupBoxScalp.setVisible(False)
-            self.ui.pushButtonGroupAverage.setVisible(False)
-            self.ui.doubleSpinBoxBaselineStart.setMinimum(tfr.times[0])
-            self.ui.doubleSpinBoxBaselineStart.setMaximum(tfr.times[-1])
-            self.ui.doubleSpinBoxBaselineStart.setValue(tfr.times[0])
-            self.ui.doubleSpinBoxBaselineEnd.setMinimum(tfr.times[0])
-            self.ui.doubleSpinBoxBaselineEnd.setMaximum(tfr.times[-1])
+        subject = self.caller.experiment.active_subject
+        epochs = subject.epochs[epoch_name].raw
+        self.ui.labelEpochName.setText(epoch_name)
+        self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxScalpTmax.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxScalpTmin.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxScalpTmax.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
+        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
 
     def accept(self):
         """
@@ -105,50 +87,39 @@ class TFRTopologyDialog(QtGui.QDialog):
         to the caller. Also checks for erroneus parameter values and gives 
         feedback to the user.
         """
-        cmap = self.ui.comboBoxCmap.currentText()
+        cmap = str(self.ui.comboBoxCmap.currentText())
+        
         if self.ui.groupBoxBaseline.isChecked():
-            mode = self.ui.comboBoxMode.currentText()
-            if self.ui.checkBoxBaselineStartNone.isChecked():
-                blstart = None
-            else:
-                blstart = self.ui.doubleSpinBoxBaselineStart.value()
-
-            if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-                blend = None
-            else:
-                blend = self.ui.doubleSpinBoxBaselineEnd.value()
+            mode = str(self.ui.comboBoxMode.currentText())
+            blstart = self.ui.doubleSpinBoxBaselineStart.value()
+            blend = self.ui.doubleSpinBoxBaselineEnd.value()
         else:
             blstart, blend, mode = None, None, None
+            
         if self.ui.radioButtonInduced.isChecked():
             reptype = 'average'
         elif self.ui.radioButtonPhase.isChecked():
             reptype = 'itc'
-        if self.tfr is not None:
-            try:
-                self.caller.TFR_topology(self.tfr, reptype, None, None, None, mode,
-                                         blstart, blend, None, None, None,
-                                         None, cmap)
-            except Exception as e:
-                exc_messagebox(self.parent, e)
-            return
-
 
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         freqs = np.arange(minfreq, maxfreq, interval)
+        
         if self.ui.radioButtonFixed.isChecked():
             ncycles = self.ui.doubleSpinBoxNcycles.value()
         elif self.ui.radioButtonAdapted.isChecked():
-            ncycles = self.ui.doubleSpinBoxCycleFactor.value() * freqs
+            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
         ch_type = str(self.ui.comboBoxChannels.currentText())
 
-        epochs = self.caller.experiment.active_subject.epochs[self.
-                                                              epoch_name].raw
-                                                              
-        epochs.name = self.epoch_name  # not stored in epochs when saved
+        subject = self.caller.experiment.active_subject
+        epochs = subject.epochs[self.epoch_name].raw
+        
+        # not stored in epochs when saved                             
+        epochs.name = self.epoch_name  
+        
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
             scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()
@@ -157,65 +128,12 @@ class TFRTopologyDialog(QtGui.QDialog):
             scalp['fmax'] = self.ui.doubleSpinBoxScalpFmax.value()
         else:
             scalp = None
-        try:
-            self.caller.TFR_topology(epochs, reptype, freqs, decim, mode,
-                                     blstart, blend, ncycles, ch_type,
-                                     scalp, cmap)
+        try:             
+            self.caller.TFR_topology(inst=epochs, reptype=reptype, freqs=freqs, 
+                decim=decim, mode=mode, blstart=blstart, blend=blend, 
+                ncycles=ncycles, ch_type=ch_type, scalp=scalp, 
+                color_map=cmap)
         except Exception as e:
             exc_messagebox(self.parent, e)
 
-    def on_pushButtonGroupAverage_clicked(self, checked=None):
-        """
-        Opens a dialog for group average parameters.
-        """
-        if checked is None: 
-            return
-        
-        messagebox(self.parent, 'Not implemented yet')
-        
-        
-#     @QtCore.pyqtSlot(list, str, int, bool, bool, bool)
-#     def compute_group_average(self, channels, form, dpi, saveTopo, savePlot,
-#                               saveMax):
-#         """
-#         Starts the computation of group average TFR.
-#         Parameters:
-#         channels - Selected channels of interest.
-#         """
-#         cmap = self.ui.comboBoxCmap.currentText()
-#         minfreq = self.ui.doubleSpinBoxMinFreq.value()
-#         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-#         decim = self.ui.spinBoxDecim.value()
-#         interval = self.ui.doubleSpinBoxFreqInterval.value()
-#         ncycles = self.ui.spinBoxNcycles.value()
-#         if self.ui.groupBoxBaseline.isChecked():
-#             mode = self.ui.comboBoxMode.currentText()
-#             if self.ui.checkBoxBaselineStartNone.isChecked():
-#                 blstart = None
-#             else:
-#                 blstart = self.ui.doubleSpinBoxBaselineStart.value()
-# 
-#             if ( self.ui.checkBoxBaselineEndNone.isChecked() ):
-#                 blend = None
-#             else:
-#                 blend = self.ui.doubleSpinBoxBaselineEnd.value()
-#         else:
-#             blstart, blend, mode = None, None, None
-#         if self.ui.radioButtonInduced.isChecked(): 
-#             reptype = 'average'
-#         elif self.ui.radioButtonPhase.isChecked(): 
-#             reptype = 'itc'
-# 
-#         if saveMax:
-#             saveMax = reptype
-#         else:
-#             saveMax = None
-# 
-#         try:
-#             self.caller.TFR_average(self.epoch_name, reptype, cmap, mode,
-#                                     minfreq, maxfreq, interval, blstart,
-#                                     blend, ncycles, decim, channels,
-#                                     form, dpi, saveTopo, savePlot, saveMax)
-#         except Exception as e:
-#             exc_messagebox(self.parent, e)
 
