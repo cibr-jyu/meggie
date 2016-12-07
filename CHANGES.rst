@@ -1,10 +1,25 @@
 Changelog
 =========
 
-0.3.10 (unreleased)
+0.4.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.4.0 (2016-12-07)
+------------------
+
+- Remove window scaling from dialog parameters in epoch channel visualization
+- Fix batching widget error when collect_parameter_values returned empty list
+- Update TFR dialogs and allow saving
+- Change file naming
+- Fix TFR in preprocessing tab
+- Do experiment specific layout selection
+- Do not make copy of raw when open customize bads dialog
+- Rename fourier analysis -tab to spectral analysis -tab
+- Make changes in averaging tab including stats dialog
+- Fix ecg/eog dialogs
+- Fix epoch plot to not save bads
 
 0.3.9 (2016-11-21)
 ------------------
