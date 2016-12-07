@@ -115,7 +115,9 @@ class BatchingWidget(QtGui.QWidget):
         item.setCheckState(QtCore.Qt.Checked)
         
         subject = self.caller.experiment.subjects[str(item.text())]
-        self.data[subject.subject_name] = self.collect_parameter_values()
+        params = self.collect_parameter_values()
+        if params:
+            self.data[subject.subject_name] = params
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
         """Saves parameters to selected subjects' eog parameters dictionaries.
