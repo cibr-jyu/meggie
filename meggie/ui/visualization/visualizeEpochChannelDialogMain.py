@@ -41,12 +41,3 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         fig = mne.viz.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
                                         colorbar=True,
                                         order=None, show=True)
-        
-        title = ''
-
-        for event in self.epochs.params['events']:
-            if title == '':
-                title += event['event_name']
-            else:
-                title += ' - ' + event['event_name']
-        fig[0].canvas.set_window_title(title)
