@@ -1,10 +1,17 @@
 Changelog
 =========
 
-0.4.1 (unreleased)
+0.4.2 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.4.1 (2016-12-09)
+------------------
+
+- Add polarity inversion feature to ocular projections dialog
+- Do plot for exg events
+- Fix epoch channel visualization error
 
 0.4.0 (2016-12-07)
 ------------------
