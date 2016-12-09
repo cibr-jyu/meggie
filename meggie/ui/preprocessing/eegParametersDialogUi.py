@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'eegParametersDialogUi.ui'
+# Form implementation generated from reading ui file 'qt4Designer_ui_files/eegParametersDialogUi.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -49,7 +49,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 507, 556))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 507, 554))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_5 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
@@ -163,6 +163,13 @@ class Ui_Dialog(object):
         self.doubleSpinBoxStart.setProperty("value", 5.0)
         self.doubleSpinBoxStart.setObjectName(_fromUtf8("doubleSpinBoxStart"))
         self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.doubleSpinBoxStart)
+        self.labelInvertPolarity = QtGui.QLabel(self.groupBoxEvents)
+        self.labelInvertPolarity.setObjectName(_fromUtf8("labelInvertPolarity"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.labelInvertPolarity)
+        self.checkBoxInvertPolarity = QtGui.QCheckBox(self.groupBoxEvents)
+        self.checkBoxInvertPolarity.setText(_fromUtf8(""))
+        self.checkBoxInvertPolarity.setObjectName(_fromUtf8("checkBoxInvertPolarity"))
+        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.checkBoxInvertPolarity)
         self.verticalLayout_3.addLayout(self.formLayout)
         self.gridLayout_3.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
         self.tableWidgetEvents = QtGui.QTableWidget(self.groupBoxEvents)
@@ -234,6 +241,7 @@ class Ui_Dialog(object):
         self.labelStart.setText(_translate("Dialog", "Start time:", None))
         self.doubleSpinBoxStart.setToolTip(_translate("Dialog", "Set starting time for blink detection.", None))
         self.doubleSpinBoxStart.setSuffix(_translate("Dialog", "s", None))
+        self.labelInvertPolarity.setText(_translate("Dialog", "Invert polarity:", None))
         self.tableWidgetEvents.setToolTip(_translate("Dialog", "Found events.", None))
         self.pushButtonAdd.setToolTip(_translate("Dialog", "Start blink detection. The previous event list will be deleted!", None))
         self.pushButtonAdd.setText(_translate("Dialog", "Add to list >>", None))
