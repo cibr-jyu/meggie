@@ -7,6 +7,7 @@ from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
 import numpy as np
+import mne
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox, messagebox
@@ -47,7 +48,21 @@ class EegParametersDialog(QtGui.QDialog):
         params['h_freq'] = float(self.ui.doubleSpinBoxHighPass.value())
         params['filter_length'] = str(self.ui.spinBoxFilterLength.value())+'s'
         params['tstart'] = float(self.ui.doubleSpinBoxStart.value())
-        
+
+        invert = self.ui.checkBoxInvertPolarity.isChecked()
+
+        # monkey patch peak finder temporarily in the eog module
+        # to allow inverting polarity
+        original_peak_finder = mne.preprocessing.eog.peak_finder
+
+        def new_peak_finder(x0, thresh=None, extrema=1, verbose=None):
+            if invert:
+                return original_peak_finder(x0, thresh, -extrema, 
+                                            verbose)
+            return original_peak_finder(x0, thresh, extrema, verbose)
+
+        mne.preprocessing.eog.peak_finder = new_peak_finder
+
         try:
             eog_events = self.caller.find_eog_events(params)
             self.ui.tableWidgetEvents.clear()
@@ -64,6 +79,8 @@ class EegParametersDialog(QtGui.QDialog):
                 )
         except Exception as e:
             exc_messagebox(self, e)
+
+        mne.preprocessing.eog.peak_finder = original_peak_finder
 
         self.set_event_table_headers()
             
