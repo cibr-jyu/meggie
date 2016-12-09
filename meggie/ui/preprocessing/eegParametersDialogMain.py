@@ -84,7 +84,8 @@ class EegParametersDialog(QtGui.QDialog):
         return np.array(events)
 
     def on_pushButtonRemove_clicked(self, checked=None):
-        if checked is None: return
+        if checked is None: 
+            return
         index = self.ui.tableWidgetEvents.currentRow()
         self.ui.tableWidgetEvents.removeRow(index)
 
@@ -103,7 +104,8 @@ class EegParametersDialog(QtGui.QDialog):
         """
         Plots the averaged epochs.
         """
-        if checked is None: return
+        if checked is None: 
+            return
         events = self.get_events()
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
@@ -113,7 +115,8 @@ class EegParametersDialog(QtGui.QDialog):
         """
         Plots the events on mne_browse_raw.
         """
-        if checked is None: return
+        if checked is None: 
+            return
         events = self.get_events()
         self.caller.plot_events(events)
 

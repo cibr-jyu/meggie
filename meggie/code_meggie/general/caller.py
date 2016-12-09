@@ -227,6 +227,27 @@ class Caller(object):
         print "Writing ECG events in %s" % ecg_event_fname
         wrap_mne_call(self.experiment, mne.write_events, ecg_event_fname, events)
 
+    def plot_ecg_events(self, params):
+        raw = self.experiment.active_subject.get_working_file()
+        
+        events, _, _ = mne.preprocessing.find_ecg_events(raw,
+            ch_name=params['ch_name'], event_id=1, l_freq=params['ecg-l-freq'],
+            h_freq=params['ecg-h-freq'], tstart=params['tstart'],
+            qrs_threshold=params['qrs'], filter_length=params['filtersize'])
+        
+        picks = mne.pick_types(raw.info, meg=False, eeg=False, stim=False,
+            eog=False, include=[params['ch_name']])
+        epochs = mne.Epochs(raw, events=events, event_id=1,
+            tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
+        
+        data = epochs.get_data()
+        print "Number of detected ECG artifacts : %d" % len(data)
+        
+        plt.plot(1e3 * epochs.times, np.squeeze(data).T)
+        plt.xlabel('Times (ms)')
+        plt.ylabel('ECG')
+        plt.show()
+
     def call_eog_ssp(self, dic, subject):
         """
         Creates EOG projections using SSP for given data.
@@ -288,6 +309,31 @@ class Caller(object):
 
         print "Writing EOG events in %s" % eog_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
+
+    def plot_eog_events(self, params):
+        raw = self.experiment.active_subject.get_working_file()
+        
+        picks = mne.pick_types(raw.info, meg=False, eeg=False, stim=False,
+            eog=True)
+        ch_name = [ch_name for idx, ch_name in enumerate(raw.info['ch_names']) 
+                   if idx in picks][0]
+        
+        events = mne.preprocessing.find_eog_events(raw,
+            event_id=1, l_freq=params['eog-l-freq'],
+            h_freq=params['eog-h-freq'], filter_length=params['filtersize'],
+            ch_name=ch_name, tstart=params['tstart'])
+
+        epochs = mne.Epochs(raw, events=events, event_id=1,
+            tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
+        
+        data = epochs.get_data()
+        print "Number of detected ECG artifacts : %d" % len(data)
+        
+        plt.plot(1e3 * epochs.times, np.squeeze(data).T)
+        plt.xlabel('Times (ms)')
+        plt.ylabel('EOG')
+        plt.show()
+
 
     def call_eeg_ssp(self, dic, subject):
         """

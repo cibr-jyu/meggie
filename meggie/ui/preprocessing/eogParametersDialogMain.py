@@ -71,6 +71,13 @@ class EogParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
 
+    def on_pushButtonPlotEvents_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        parameter_values = self.collect_parameter_values()
+        self.caller.plot_eog_events(parameter_values)    
+
     def accept(self):
         """
         Collects the parameters for calculating PCA projections and passes 

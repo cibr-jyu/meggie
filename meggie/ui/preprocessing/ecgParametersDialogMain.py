@@ -158,6 +158,13 @@ class EcgParametersDialog(QtGui.QDialog):
         self.parent.initialize_ui()
         self.close()
         
+    def on_pushButtonPlotEvents_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        parameter_values = self.collect_parameter_values()
+        self.caller.plot_ecg_events(parameter_values)    
+        
     def acceptBatch(self):
         
         recently_active_subject = self.caller.experiment.active_subject.subject_name
