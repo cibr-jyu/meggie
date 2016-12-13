@@ -605,7 +605,8 @@ class Caller(object):
         title = self.experiment.active_subject.subject_name
             
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
-                            color=colors, title=title)
+            color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
+            font_color='k')
 
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
