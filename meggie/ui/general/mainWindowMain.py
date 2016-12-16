@@ -736,17 +736,14 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog.show()
 
     def save_evoked_data(self, subjects):
-        default_dir = os.path.join(self.caller.experiment.workspace,
-            self.caller.experiment.experiment_name, 'output', )
-        
-        if not os.path.isdir(default_dir):
-            os.mkdir(default_dir)
-        
         try:    
             evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
         except AttributeError:
             exc_messagebox(self, "Please select evoked data from the list")
             return
+
+        default_dir = fileManager.create_timestamped_folder(
+            self.caller.experiment)
 
         for sub_name, subject in subjects.items():
             names = []
@@ -763,16 +760,12 @@ class MainWindow(QtGui.QMainWindow):
                 path = os.path.join(default_dir, filename)
                 fileManager.group_save_evokeds(path, evokeds, names)
                 
-                
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
         
         subjects = self.caller.experiment.subjects
-        
         self.save_evoked_data(subjects)
-        
-
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         if checked is None:

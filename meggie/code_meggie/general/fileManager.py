@@ -13,6 +13,7 @@ import shutil
 import glob
 import re
 import sys
+import datetime
 
 from os.path import isfile, join
 from shutil import copyfile
@@ -597,7 +598,21 @@ def load_tfr(fname):
 def create_folders(paths):
     for path in paths:
         os.makedirs(path)
+        
+def create_timestamped_folder(experiment):
+    current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    path = os.path.join(experiment.workspace,
+                        experiment.experiment_name, 'output')
+    timestamped_folder = os.path.join(path, current_time_str)
 
+    import errno;
+    try:
+        os.makedirs(timestamped_folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    return timestamped_folder
 
 def save_subject(subject, path):
     try:
@@ -624,10 +639,6 @@ def save_subject(subject, path):
         if p.match(f):
             copyfile(f, os.path.join(subject.subject_path, os.path.basename(f)))
 
-    #raw = mne.io.Raw(path)
-    #raw.save(subject.working_file_path)
-    #copyfile(path, subject.working_file_path)
-
 def _read_epoch_stcs(subject):
     """
     Helper for getting stc epoch dirs for a subject.
@@ -645,16 +656,7 @@ def _read_epoch_stcs(subject):
             stcs.append(epochs_dir)
     return stcs
 
-def save_np_array(experiment, filename, freqs, data, epochs_info):
-    
-    folder = os.path.join(experiment.workspace,
-                    experiment.experiment_name, 'output')
-    import errno;
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
+def save_np_array(folder, filename, freqs, data, epochs_info):
     
     # gather all the data to list of rows
     all_data = []

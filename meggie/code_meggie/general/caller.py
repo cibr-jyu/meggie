@@ -854,8 +854,7 @@ class Caller(object):
                 baseline=baseline, mode=mode)          
         
         if save_data:
-            folder = os.path.join(self.experiment.workspace, 
-                self.experiment.experiment_name, 'output')
+            folder = fileManager.create_timestamped_folder(self.experiment)
             subject = self.experiment.active_subject.subject_name
             ch_name = power.ch_names[ch_index]
             
@@ -1025,8 +1024,10 @@ class Caller(object):
         tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
         
         if save_data:
-            filename = os.path.join(self.experiment.workspace, self.experiment.experiment_name,
-                'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR.csv')
+            path = fileManager.create_timestamped_folder(self.experiment)
+            filename = os.path.join(path, ''.join([
+                self.experiment.active_subject.subject_name, '_',
+                raw.ch_names[channel], '_TFR.csv']))
             fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
@@ -1061,11 +1062,11 @@ class Caller(object):
 
         if save_data:
             subject_name = self.experiment.active_subject.subject_name
+            path = fileManager.create_timestamped_folder(self.experiment)
             for idx, psd in enumerate(psds):
                 filename = ''.join([subject_name, '_', basename, '_',
                     'spectrum', '_', str(psd_groups.keys()[idx]), '.txt'])
-                fileManager.save_np_array(self.experiment, filename, 
-                                          freqs, psd, info)
+                fileManager.save_np_array(path, filename, freqs, psd, info)
 
         print "Plotting power spectrum..."
 
