@@ -384,7 +384,9 @@ def open_raw(fname, preload=True):
     Raises an exception if the file cannot be opened.
     """
     try:
-        return mne.io.Raw(fname, preload=preload, allow_maxshield=True)
+        print 'Reading ' + fname 
+        return mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
+                          verbose='warning')
     except IOError as e:
         raise IOError(str(e))
     except OSError as e:
@@ -400,7 +402,8 @@ def save_raw(experiment, raw, fname, overwrite=True):
     
     # be protective and save with other name first and move afterwards
     temp_fname = os.path.join(folder, '_' + bname) 
-    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True)
+    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True,
+        verbose='warning')
     
     old_files = glob.glob(os.path.join(folder, bname[:-4] + '*'))
     new_files = glob.glob(os.path.join(folder, "_" + bname[:-4] + '*'))

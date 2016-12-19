@@ -35,13 +35,14 @@ Contains the Events-class that gets events from a raw file.
 """
 import mne
 import numpy as np
+from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 class Events(object):
     """
     Class for getting events from the raw file, by type if need be.
     """
 
-    def __init__(self, raw, stim_ch=None, mask=0, id_=None):
+    def __init__(self, experiment, raw, stim_ch=None, mask=0, id_=None):
         """
         Constructor    
         Keyword arguments:
@@ -50,7 +51,10 @@ class Events(object):
         mask          -- Mask for excluding bits.
         """
 
-        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, uint_cast=True)
+        #events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, uint_cast=True)
+        events = wrap_mne_call(experiment, mne.find_events, raw,
+            stim_channel=stim_ch, shortest_event=1, uint_cast=True,
+            verbose='warning')
         
         if mask or id_:
             events = filter(
@@ -66,6 +70,8 @@ class Events(object):
 
         if counter > 0:
             print str(counter) + " events dropped because they seem spurious (only one sample difference to next event)"
+
+        print str(len(events)) + " events found."
         
         self._events = events
         

@@ -574,7 +574,7 @@ class Caller(object):
         """
         stim_channel = subject.find_stim_channel()
         raw = subject.get_working_file()
-        e = Events(raw, stim_channel, params['mask'], params['event_id'])
+        e = Events(self.experiment, raw, stim_channel, params['mask'], params['event_id'])
         return e.events
 
     def read_layout(self, layout):

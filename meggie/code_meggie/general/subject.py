@@ -80,7 +80,9 @@ class Subject(QObject):
         self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
 
         # Models for various types of data stored in subject
-        self._forwardModelModel = None   
+        self._forwardModelModel = None
+        
+        self._experiment = experiment
 
     @property
     def epochs_directory(self):
@@ -240,7 +242,8 @@ class Subject(QObject):
         if not stim_channel:
             return
 
-        return Events(self.get_working_file(), stim_ch=stim_channel).events
+        return Events(self._experiment, self.get_working_file(),
+                      stim_ch=stim_channel).events
         
     def get_cov(self):
         """Helper method for getting the current covariance matrix."""
