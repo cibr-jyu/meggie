@@ -123,9 +123,8 @@ class EogParametersDialog(QtGui.QDialog):
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
-                self.caller.activate_subject(name)
-
                 try:
+                    self.caller.activate_subject(name)
                     self.calculate_eog(subject)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((

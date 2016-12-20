@@ -119,11 +119,11 @@ class FilterDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 
-                self.caller.activate_subject(name)
                 params = self.batching_widget.data[name]
-                info = subject.get_working_file().info
 
                 try:
+                    self.caller.activate_subject(name)
+                    info = subject.get_working_file().info
                     self._validateFilterFreq(params, info['sfreq'])
                     self.filter(subject)
                 except Exception as e:

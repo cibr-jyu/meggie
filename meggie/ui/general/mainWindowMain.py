@@ -708,8 +708,8 @@ class MainWindow(QtGui.QMainWindow):
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
-                subject = self.caller.experiment.activate_subject(subject_name)
                 try:
+                    subject = self.caller.experiment.activate_subject(subject_name)
                     self._calculate_evokeds(subject, collection_names)
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects

@@ -384,7 +384,7 @@ def open_raw(fname, preload=True):
     Raises an exception if the file cannot be opened.
     """
     try:
-        print 'Reading ' + fname 
+        print 'Reading ' + fname
         return mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
                           verbose='warning')
     except IOError as e:
@@ -628,15 +628,15 @@ def save_subject(subject, path):
             subject.reconFiles_directory,
             subject.stc_directory
         ])
-    except OSError as e:
+    except OSError:
         raise OSError("Couldn't create all the necessary folders. "
                       "Do you have the necessary permissions?")
     
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
     files = glob.glob(filename[:-4] + '*.fif')
-    import re;
-    p = re.compile(filename[:-4] + '(.fif|-\d{1,}.fif)')
+   
+    p = re.compile(re.escape(filename[:-4]) + '(.fif|-\d{1,}.fif)')
     
     for f in files:
         if p.match(f):

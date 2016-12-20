@@ -201,10 +201,6 @@ class Subject(QObject):
                 for value in self.evokeds.values():
                     value.forget_evokeds()
 
-                    
-                    
-                     
-
     def find_stim_channel(self):
         """
         Finds the correct stimulus channel for the data.

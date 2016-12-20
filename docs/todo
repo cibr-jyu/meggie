@@ -9,12 +9,9 @@ epochs
 * Epokkien luominen
 
 *- batch spektrien tallentamiseen
-*- filtteröinnin default arvot
-*- ecg/eog filtteröinnin low ja high pass arvot pois jotka liittyy dataan
 - spektrien keskiarvoistus koehenkilöiden välillä
 - evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan
 - titlet figureihin että tallentaa oikealla nimellä levylle
-- batchin jatkaminen vaikka ei pystyisi aktivoimaan jotain subjektia
 - one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
 - älä sulje dialogeja välttämättä ok:lla
 - dialogien accept buttonien nimet yhtenäisiksi
