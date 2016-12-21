@@ -434,7 +434,9 @@ class Caller(object):
         
         # Average EOG epochs
         eog_evoked = eog_epochs.average()
-        eog_evoked.plot()
+        fig = eog_evoked.plot()
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title('Avg_epochs_' + subject_name)
         print "Finished\n"
 
     def plot_events(self, events):
@@ -451,7 +453,9 @@ class Caller(object):
 
 
     def plot_projs_topomap(self, raw):
-        wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+        fig = wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+        name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title('Projections_' + name)
 
     @threaded
     def find_eog_events(self, params):
@@ -636,7 +640,7 @@ class Caller(object):
         
         if channelSet:
             channels = channelSet
-            title = 'selected set of channels.'
+            title = 'selected set of channels'
         else:
             channels = wrap_mne_call(
                 self.experiment, mne.selection.read_selection, lobeName)
@@ -644,15 +648,15 @@ class Caller(object):
             
         print "Calculating channel averages for " + title
 
-        dataList = self._average_channels(
+        dataList, epochs_name = self._average_channels(
             instance, channels, do_meanwhile=self.parent.update_ui)
 
         # Plotting:
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
-        fig.canvas.set_window_title(mi.subject_name + 
-             '-- channel average for ' + title)
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title(''.join([epochs_name, 
+            ' channel avg ', title]))
         fig.suptitle('Channel average for ' + title, y=1.0025)
 
         # Draw a separate plot for each event type
@@ -680,10 +684,11 @@ class Caller(object):
     def _average_channels(self, instance, channelsToAve):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
-            epochs = self.experiment.active_subject.epochs.get(instance).raw
+            _epochs = self.experiment.active_subject.epochs.get(instance)
+            epochs = _epochs.raw
+            epochs_name = _epochs.collection_name
             if epochs is None:
                 raise Exception('No epochs found.')
-
             category = epochs.event_id
 
             # Creates evoked potentials from the given events (variable 'name' 
@@ -691,9 +696,10 @@ class Caller(object):
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
+            epochs_name = evokeds[0].comment
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
             evokeds = instance
-        
+            epochs_name = 'List_of_epochs'
         # Channel names in Evoked objects may or may not have whitespaces
         # depending on the measurements settings,
         # need to check and adjust channelsToAve accordingly.
@@ -750,7 +756,7 @@ class Caller(object):
                     averagedEegData
                 ))
 
-        return dataList
+        return dataList, epochs_name
 
     def group_average(self, evoked_name):
         """
@@ -1021,7 +1027,11 @@ class Caller(object):
             tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=baseline, 
                                              mode=mode)
         
-        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
+        fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout,
+            verbose='error')
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title(''.join(['TFR_raw_', subject_name, '_',
+                                    raw.ch_names[channel]]))
         
         if save_data:
             path = fileManager.create_timestamped_folder(self.experiment)
@@ -1060,8 +1070,8 @@ class Caller(object):
             
         colors = self.colors(len(psds))
 
+        subject_name = self.experiment.active_subject.subject_name
         if save_data:
-            subject_name = self.experiment.active_subject.subject_name
             path = fileManager.create_timestamped_folder(self.experiment)
             for idx, psd in enumerate(psds):
                 filename = ''.join([subject_name, '_', basename, '_',
@@ -1075,15 +1085,19 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
+            fig = plt.gcf()
+            fig.canvas.set_window_title(''.join(['Spectrum_', subject_name,
+                                        '_', info['ch_names'][ch_idx]]))
+            
             conditions = [str(key) for key in psd_groups]
             positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
             
             for cond, col, pos in zip(conditions, colors, positions):
-                ax.figtext(0.775, pos, cond, color=col, fontsize=12)
+                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
             color_idx = 0
             for psd in psds:
-                ax.plot(freqs, psd[ch_idx], color=colors[color_idx])
+                plt.plot(freqs, psd[ch_idx], color=colors[color_idx])
                 color_idx += 1
             
             plt.xlabel('Frequency (Hz)')
@@ -1106,6 +1120,7 @@ class Caller(object):
             for psd in psds:
                 ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
                 color_idx += 1
+        plt.gcf().canvas.set_window_title('Spectrum_' + subject_name)
         plt.show()
 
     @threaded
