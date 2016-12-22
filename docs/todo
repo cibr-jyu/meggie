@@ -8,10 +8,9 @@ epochs
 * Eventtilistan luominen 
 * Epokkien luominen
 
-*- batch spektrien tallentamiseen
+- batch spektrien tallentamiseen
 - spektrien keskiarvoistus koehenkilöiden välillä
 - evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan
-- titlet figureihin että tallentaa oikealla nimellä levylle
 - one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
 - älä sulje dialogeja välttämättä ok:lla
 - dialogien accept buttonien nimet yhtenäisiksi
@@ -22,12 +21,13 @@ epochs
 - projektiotarina
 - spektrien värit määritettäviksi?
 - ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
-- not implemented yet, spectrums
+- maxfilter-nappi pois
 - ica
 - jos mahdollista niin samankaltaista stats/selection juttua spektreille
 - add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
 - open_rawiin mahdollisuus konkatenoida tiedostoja
 - korjaa testit 
-- kansiohierarkia
-- group tfr, katso versionhalilnta
 
+välttämätön ehto githubille:
+- kansiohierarkia
+- source analysis omaan haaraan 8-- )
