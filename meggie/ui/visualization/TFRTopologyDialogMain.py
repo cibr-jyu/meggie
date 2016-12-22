@@ -116,10 +116,7 @@ class TFRTopologyDialog(QtGui.QDialog):
 
         subject = self.caller.experiment.active_subject
         epochs = subject.epochs[self.epoch_name].raw
-        
-        # not stored in epochs when saved                             
-        epochs.name = self.epoch_name  
-        
+                
         scalp = dict()
         if self.ui.groupBoxScalp.isChecked():
             scalp['tmin'] = self.ui.doubleSpinBoxScalpTmin.value()
@@ -129,7 +126,8 @@ class TFRTopologyDialog(QtGui.QDialog):
         else:
             scalp = None
         try:             
-            self.caller.TFR_topology(inst=epochs, reptype=reptype, freqs=freqs, 
+            self.caller.TFR_topology(inst=epochs,
+                collection_name=self.epoch_name, reptype=reptype, freqs=freqs, 
                 decim=decim, mode=mode, blstart=blstart, blend=blend, 
                 ncycles=ncycles, ch_type=ch_type, scalp=scalp, 
                 color_map=cmap)

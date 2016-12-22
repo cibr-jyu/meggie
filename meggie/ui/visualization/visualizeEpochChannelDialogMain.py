@@ -41,7 +41,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         fig = mne.viz.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
                                         colorbar=True,
                                         order=None, show=True)
-        fig[0].canvas.set_window_title(''.join(['Viz_channel_',
-                                       self.epochs.collection_name, '_',
+        fig[0].canvas.set_window_title('_'.join(['Viz_channel',
+                                       self.epochs.collection_name,
                                        self.epochs.raw.ch_names[pick]]))
                                       

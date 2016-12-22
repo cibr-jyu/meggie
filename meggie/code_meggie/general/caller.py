@@ -245,6 +245,9 @@ class Caller(object):
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
         plt.ylabel('ECG')
+        subject_name = self.experiment.active_subject.subject_name
+        plt.gcf().canvas.set_window_title('_'.join(['ECG_events', subject_name,
+                                                    params['ch_name']]))
         plt.show()
 
     def call_eog_ssp(self, dic, subject):
@@ -331,6 +334,8 @@ class Caller(object):
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
         plt.ylabel('EOG')
+        subject_name = self.experiment.active_subject.subject_name
+        plt.gcf().canvas.set_window_title('EOG_events_' + subject_name)
         plt.show()
 
 
@@ -607,21 +612,25 @@ class Caller(object):
         layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
         title = self.experiment.active_subject.subject_name
-            
+        
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
             color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
             font_color='k')
 
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
-        
+                
         for cond, col, pos in zip(conditions, colors, positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
+            
+        window_title = '_'.join(conditions)
+        fig.canvas.set_window_title(window_title)
         fig.show()
         
         # TODO: log info about the clicked channels
         def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join([window_title, channel]))
             plt.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -655,8 +664,8 @@ class Caller(object):
         plt.clf()
         fig = plt.figure()
         subject_name = self.experiment.active_subject.subject_name
-        fig.canvas.set_window_title(''.join([epochs_name, 
-            ' channel avg ', title]))
+        fig.canvas.set_window_title('_'.join([epochs_name, 
+            'channel_avg', title]))
         fig.suptitle('Channel average for ' + title, y=1.0025)
 
         # Draw a separate plot for each event type
@@ -824,8 +833,8 @@ class Caller(object):
 
         return grand_averages
 
-    def TFR(self, epochs, ch_index, freqs, ncycles, decim, mode, blstart, blend, save_data,
-            color_map='auto'):
+    def TFR(self, epochs, collection_name, ch_index, freqs, ncycles, decim,
+            mode, blstart, blend, save_data, color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
@@ -859,10 +868,12 @@ class Caller(object):
             itc.data = mne.baseline.rescale(itc.data, itc.times, 
                 baseline=baseline, mode=mode)          
         
+        ch_name = power.ch_names[ch_index]
+        
         if save_data:
             folder = fileManager.create_timestamped_folder(self.experiment)
             subject = self.experiment.active_subject.subject_name
-            ch_name = power.ch_names[ch_index]
+            #ch_name = power.ch_names[ch_index]
             
             power_fname = os.path.join(folder, 
                 ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv']))
@@ -929,10 +940,12 @@ class Caller(object):
         plt.colorbar(cax=plt.subplot2grid((3, 15), (2, 14)), mappable=img)
 
         plt.tight_layout()
+        fig.canvas.set_window_title('_'.join(['TFR', collection_name,
+                                              ch_name]))
         fig.show()
 
 
-    def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
+    def TFR_topology(self, inst, collection_name, reptype, freqs, decim, mode, blstart, blend,
                      ncycles, ch_type, scalp, color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
@@ -940,6 +953,7 @@ class Caller(object):
         Keyword arguments:
         inst          -- Epochs extracted from the data or previously computed
                          AverageTFR object to plot.
+        collection_name -- Name of the epoch collection.
         reptype       -- Type of representation (average or itc).
         freqs         -- Frequencies for the representation as a numpy array.
         decim         -- Temporal decimation factor.
@@ -964,11 +978,9 @@ class Caller(object):
             return power, itc
         
         power, itc = calculate_tfrs()
-        
         baseline = (blstart, blend)
-
         layout = self.read_layout(self.experiment.layout)
-        
+                
         if reptype == 'average':
             inst = power
             title = 'Average power'
@@ -999,9 +1011,13 @@ class Caller(object):
             fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
             title=title)
 
+        fig.canvas.set_window_title('TFR' + '_' + collection_name)
         fig.show()
 
         def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join(['TFR', collection_name,
+                                                        channel]))
             pl.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)

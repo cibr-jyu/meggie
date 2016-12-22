@@ -102,8 +102,10 @@ class TFRDialog(QtGui.QDialog):
 
         caller = Caller.Instance()
         try:
-            caller.TFR(epochs=self.epochs.raw, ch_index=ch_index, freqs=freqs,
-                ncycles=ncycles, decim=decim, mode=mode, blstart=blstart,
-                blend=blend, save_data=save_data, color_map=cmap)
+            caller.TFR(epochs=self.epochs.raw,
+                collection_name=self.epochs.collection_name, ch_index=ch_index,
+                freqs=freqs, ncycles=ncycles, decim=decim, mode=mode,
+                blstart=blstart, blend=blend, save_data=save_data,
+                color_map=cmap)
         except Exception as e:
             exc_messagebox(self, e)
