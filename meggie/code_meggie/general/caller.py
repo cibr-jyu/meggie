@@ -110,51 +110,6 @@ class Caller(object):
         retval = proc.wait()
         print "the program return code was %d" % retval
 
-    @threaded
-    def call_maxfilter(self, params, custom):
-        """
-        Performs maxfiltering with the given parameters.
-        Keyword arguments:
-        raw    -- Raw object.
-        params -- Dictionary of parameters
-        custom -- Additional parameters as a string
-        """
-        self._call_maxfilter(params, custom)
-
-    def _call_maxfilter(self, params, custom):
-        """Aux function for maxfiltering data. """
-        if os.environ.get('NEUROMAG_ROOT') is None:
-            os.environ['NEUROMAG_ROOT'] = '/neuro'
-        bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
-        for i in range(len(params)):
-            bs += params.keys()[i] + ' ' + str(params.values()[i]) + ' '
-        # Add user defined parameters from the "custom" tab
-        bs += custom
-        print bs
-        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        while True:
-            line = proc.stdout.readline()
-            if not line: 
-                break
-            print line
-        retval = proc.wait()      
-
-        print "the program return code was %d" % retval
-        if retval != 0:
-            print 'Error while maxfiltering data!'
-            raise RuntimeError('Error while maxfiltering the data. '
-                               'Check console.')
-
-        outputfile = params.get('-o')
-        # TODO: log mne call
-        #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
-        raw = mne.io.Raw(outputfile, preload=True)
-
-        self.experiment.active_subject.set_working_file(raw)
-
-        self.experiment.save_experiment_settings()
-
     def call_ecg_ssp(self, dic, subject):
         """
         Creates ECG projections using SSP for given data.
