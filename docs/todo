@@ -17,11 +17,10 @@ epochs
 - n_jobs
 - lokikoodin siivousta ehkä, ehkä käydä läpi
 - wrap_mne_callin koodin voisi myös katsoa..
-- scripting ( kiva merge...)
+- scripting ( kiva merge...) (disabloi kaikki paitsi skriptiä tukevat?)
 - projektiotarina
 - spektrien värit määritettäviksi?
 - ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
-- maxfilter-nappi pois
 - ica
 - jos mahdollista niin samankaltaista stats/selection juttua spektreille
 - add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
