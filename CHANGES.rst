@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.4.2 (unreleased)
+0.4.3 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.4.2 (2017-04-04)
+------------------
+
+- Don't crash on MNE-python's show_fiff-bug
 
 0.4.1 (2016-12-09)
 ------------------

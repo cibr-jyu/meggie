@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.4.1"
+  version: "0.4.2"
 
 source:
   path: .
