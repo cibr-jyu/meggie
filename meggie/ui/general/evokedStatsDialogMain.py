@@ -22,7 +22,6 @@ from meggie.ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.code_meggie.general import fileManager
-from scipy.weave.catalog import default_dir
 
 class EvokedStatsDialog(QtGui.QDialog):
 
