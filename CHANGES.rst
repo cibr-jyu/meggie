@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.4.3 (unreleased)
+0.4.4 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.4.3 (2017-04-04)
+------------------
+
+- Remove unnecessary import that crashed after scipy updated
 
 0.4.2 (2017-04-04)
 ------------------
