@@ -175,7 +175,10 @@ class MeasurementInfo(object):
         Returns the subjects name. If some of the name fields are nonexistent
         or empty, substitutes information with emptry strings.
         """
-        subj_info = mne.io.show_fiff(self._info.get('filename'))
+        try:
+            subj_info = mne.io.show_fiff(self._info.get('filename'))
+        except:
+            subj_info = ''
         if not isinstance(subj_info, string_types) or subj_info == '':
             raise TypeError('Personal info not found.')
         last_name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
