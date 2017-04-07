@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>593</width>
-        <height>663</height>
+        <height>661</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -619,6 +619,13 @@
            </spacer>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QCheckBox" name="checkBoxSaveData">
+         <property name="text">
+          <string>Save data</string>
+         </property>
         </widget>
        </item>
       </layout>

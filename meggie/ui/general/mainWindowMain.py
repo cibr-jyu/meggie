@@ -736,11 +736,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog.show()
 
     def save_evoked_data(self, subjects):
-        default_dir = os.path.join(self.caller.experiment.workspace,
-            self.caller.experiment.experiment_name, 'output', )
-        
-        if not os.path.isdir(default_dir):
-            os.mkdir(default_dir)
         
         try:    
             evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
@@ -760,8 +755,7 @@ class MainWindow(QtGui.QMainWindow):
             if evokeds:
                 cleaned_evoked_name = evoked_name.split('.')[0]
                 filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
-                path = os.path.join(default_dir, filename)
-                fileManager.group_save_evokeds(path, evokeds, names)
+                fileManager.group_save_evokeds(self.caller.experiment, filename, evokeds, names)
                 
                 
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):

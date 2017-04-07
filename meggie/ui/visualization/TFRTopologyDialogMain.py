@@ -101,6 +101,8 @@ class TFRTopologyDialog(QtGui.QDialog):
         elif self.ui.radioButtonPhase.isChecked():
             reptype = 'itc'
 
+        save_data = self.ui.checkBoxSaveData.isChecked()
+
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
@@ -132,7 +134,7 @@ class TFRTopologyDialog(QtGui.QDialog):
             self.caller.TFR_topology(inst=epochs, reptype=reptype, freqs=freqs, 
                 decim=decim, mode=mode, blstart=blstart, blend=blend, 
                 ncycles=ncycles, ch_type=ch_type, scalp=scalp, 
-                color_map=cmap)
+                color_map=cmap, save_data=save_data)
         except Exception as e:
             exc_messagebox(self.parent, e)
 

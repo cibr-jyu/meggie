@@ -853,21 +853,17 @@ class Caller(object):
                 baseline=baseline, mode=mode)          
         
         if save_data:
-            folder = os.path.join(self.experiment.workspace, 
-                self.experiment.experiment_name, 'output')
             subject = self.experiment.active_subject.subject_name
             ch_name = power.ch_names[ch_index]
             
-            power_fname = os.path.join(folder, 
-                ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv']))
+            power_fname = ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv'])
             
-            fileManager.save_tfr(power_fname, power.data[ch_index], 
+            fileManager.save_tfr(self.experiment, power_fname, power.data[ch_index], 
                                  power.times, freqs)
             
-            itc_fname = os.path.join(folder, 
-                ''.join([subject, '_', ch_name, '_TFR_epochs_itc.csv']))
+            itc_fname = ''.join([subject, '_', ch_name, '_TFR_epochs_itc.csv'])
             
-            fileManager.save_tfr(itc_fname, itc.data[ch_index], 
+            fileManager.save_tfr(self.experiment, itc_fname, itc.data[ch_index], 
                                  itc.times, freqs)            
 
         
@@ -927,13 +923,12 @@ class Caller(object):
 
 
     def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
-                     ncycles, ch_type, scalp, color_map='auto'):
+                     ncycles, ch_type, scalp, save_data=False, color_map='auto'):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
         Keyword arguments:
-        inst          -- Epochs extracted from the data or previously computed
-                         AverageTFR object to plot.
+        inst          -- Epochs extracted from the data
         reptype       -- Type of representation (average or itc).
         freqs         -- Frequencies for the representation as a numpy array.
         decim         -- Temporal decimation factor.
@@ -948,6 +943,7 @@ class Caller(object):
         color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
                          which case ``RdBu_r`` is used or ``Reds`` if only
                          positive values exist in the data.
+        save_data     -- save data to file or not
         """
 
         @threaded
@@ -979,6 +975,22 @@ class Caller(object):
             inst.data = mne.baseline.rescale(inst.data, inst.times, 
                 baseline=baseline, mode=mode)    
 
+        if save_data:
+            subject = self.experiment.active_subject.subject_name
+            
+            fname = ''.join([subject, '_TFR_epochs_allchannels.csv'])
+
+            labels = []
+            for ch_name in inst.info['ch_names']:
+                if ch_name in inst.info['bads']:
+                    ch_name += ' (bad)'
+                labels.append(ch_name)
+
+            print "Saving data.."
+            fileManager.save_tfr_topology(self.experiment, fname, inst.data, 
+                                inst.times, freqs, labels)
+            
+
         if scalp is not None:
             wrap_mne_call(self.experiment, inst.plot_topomap,
                           tmin=scalp['tmin'], tmax=scalp['tmax'],
@@ -987,8 +999,6 @@ class Caller(object):
                           show=False, cmap=cmap)
 
         print "Plotting..."
-        print np.max(inst.data)
-        print np.min(inst.data)
         fig = wrap_mne_call(self.experiment, inst.plot_topo, 
             fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
             title=title)
@@ -1024,9 +1034,9 @@ class Caller(object):
         tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
         
         if save_data:
-            filename = os.path.join(self.experiment.workspace, self.experiment.experiment_name,
-                'output', self.experiment.active_subject.subject_name + '_' + raw.ch_names[channel] + '_TFR.csv')
-            fileManager.save_tfr(filename, tfr[channel], times, freqs)
+            filename = ''.join([self.experiment.active_subject.subject_name, 
+                                '_', raw.ch_names[channel], '_TFR.csv'])
+            fileManager.save_tfr(self.experiment, filename, tfr[channel], times, freqs)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """

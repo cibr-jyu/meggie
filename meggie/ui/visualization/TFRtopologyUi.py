@@ -41,7 +41,7 @@ class Ui_DialogTFRTopology(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 593, 663))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 593, 661))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_4 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
@@ -293,6 +293,9 @@ class Ui_DialogTFRTopology(object):
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_6.addItem(spacerItem, 1, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBoxScalp, 5, 1, 1, 1)
+        self.checkBoxSaveData = QtGui.QCheckBox(self.scrollAreaWidgetContents)
+        self.checkBoxSaveData.setObjectName(_fromUtf8("checkBoxSaveData"))
+        self.gridLayout_4.addWidget(self.checkBoxSaveData, 8, 0, 1, 1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
 
@@ -365,4 +368,5 @@ class Ui_DialogTFRTopology(object):
         self.doubleSpinBoxScalpFmax.setSuffix(_translate("DialogTFRTopology", "Hz", None))
         self.label.setText(_translate("DialogTFRTopology", "Start time:", None))
         self.label_3.setText(_translate("DialogTFRTopology", "End time:", None))
+        self.checkBoxSaveData.setText(_translate("DialogTFRTopology", "Save data", None))
 

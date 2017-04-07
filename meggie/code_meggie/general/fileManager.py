@@ -398,7 +398,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
     raw.info['filename'] = fname
     raw._filenames[0] = fname
     
-def group_save_evokeds(filename, evokeds, names):
+def group_save_evokeds(experiment, filename, evokeds, names):
     """ Combine data from multiple evokeds to one big csv """
 
     if len(evokeds) == 0:
@@ -426,10 +426,21 @@ def group_save_evokeds(filename, evokeds, names):
             all_data.append(row)
 
     # save to file
-    all_data = np.array(all_data)
-    np.savetxt(filename, all_data, fmt='%s', delimiter=', ')    
+    folder = os.path.join(experiment.workspace,
+                    experiment.experiment_name, 'output')
+    import errno;
+    try:
+        os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
-def save_tfr(filename, tfr, times, freqs):
+    all_data = np.array(all_data)
+    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+
+
+def save_tfr(experiment, filename, tfr, times, freqs):
+
     all_data = []
     all_data.append([''] + times.tolist())
     
@@ -439,9 +450,45 @@ def save_tfr(filename, tfr, times, freqs):
         for value in tfr[i]:
             row.append(value)
         all_data.append(row) 
-    
+
+    # save to file
+    folder = os.path.join(experiment.workspace,
+                    experiment.experiment_name, 'output')
+    import errno;
+    try:
+        os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
     all_data = np.array(all_data)
-    np.savetxt(filename, all_data, fmt='%s', delimiter=', ')
+    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+
+
+def save_tfr_topology(experiment, filename, tfrs, times, freqs, labels):
+    all_data = []
+    all_data.append([''] + times.tolist())
+    for idx, tfr in enumerate(tfrs):
+        for i in range(tfr.shape[0]):
+            row = []
+            row.append('[' + labels[idx] + '] ' +  str(freqs[i]))
+            for value in tfr[i]:
+                row.append(value)
+            all_data.append(row)
+
+    # save to file
+    folder = os.path.join(experiment.workspace,
+                    experiment.experiment_name, 'output')
+    import errno;
+    try:
+        os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    all_data = np.array(all_data)
+    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+
 
 def pickleObjectToFile(picklable, fpath):
     """pickle a picklable object to a file indicated by fpath
