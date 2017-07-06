@@ -65,7 +65,6 @@ from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
 from meggie.ui.visualization import visualizeEpochChannelDialogMain
-from meggie.ui.preprocessing.maxFilterDialogMain import MaxFilterDialog
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
@@ -1120,22 +1119,6 @@ class MainWindow(QtGui.QMainWindow):
             self.caller.plot_projs_topomap(raw)
         except Exception as e:
             exc_messagebox(self, e)
-
-    def on_pushButtonMaxFilter_clicked(self, checked=None):
-        """
-        Call Elekta's MaxFilter.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        try:
-            self.maxFilterDialog = MaxFilterDialog(self)
-        except Exception, err:
-            exc_messagebox(self, err)
-            return
-        self.maxFilterDialog.show()
 
     def on_pushButtonSpectrum_clicked(self, checked=None):
         """Open the power spectrum visualization dialog."""
