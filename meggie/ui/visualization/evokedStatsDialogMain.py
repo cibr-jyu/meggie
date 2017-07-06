@@ -17,7 +17,7 @@ from mne.utils import _clean_names
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.statistic import Statistic
-from meggie.ui.general.evokedStatsDialogUi import Ui_EvokedStatsDialog
+from meggie.ui.visualization.evokedStatsDialogUi import Ui_EvokedStatsDialog
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox

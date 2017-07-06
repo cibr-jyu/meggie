@@ -70,7 +70,7 @@ from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
 from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
+from meggie.ui.visualization.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
