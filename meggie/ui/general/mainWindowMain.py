@@ -75,6 +75,7 @@ from meggie.ui.general.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
+from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.visualization.TFRDialogMain import TFRDialog
 from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
 from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
@@ -82,7 +83,6 @@ from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.ui.visualization.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
-from meggie.ui.filtering.filterDialogMain import FilterDialog
 from meggie.ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
 from meggie.ui.sourceModeling.sourceEstimateDialogMain import SourceEstimateDialog
 from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog

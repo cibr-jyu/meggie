@@ -7,7 +7,7 @@ Created on Aug 20, 2013
 
 from PyQt4 import QtCore,QtGui
 
-from meggie.ui.filtering.filterDialogUi import Ui_DialogFilter
+from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.general.caller import Caller
