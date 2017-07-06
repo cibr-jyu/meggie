@@ -5,7 +5,7 @@ Created on 20.10.2016
 '''
 from PyQt4 import QtGui
 
-from meggie.ui.general.bitSelectionDialogUi import Ui_Dialog
+from meggie.ui.epoching.bitSelectionDialogUi import Ui_Dialog
 from PyQt4.Qt import QPushButton, pyqtSlot
 
 class BitSelectionDialog(QtGui.QDialog):

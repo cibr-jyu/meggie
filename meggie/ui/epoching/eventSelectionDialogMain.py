@@ -55,7 +55,7 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
-from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
+from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
 class EventSelectionDialog(QtGui.QDialog):
     """

@@ -9,7 +9,7 @@ import mne
 
 from meggie.ui.visualization.powerSpectrumEventsUi import Ui_Advanced 
 from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.general.bitSelectionDialogMain import BitSelectionDialog
+from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
 from meggie.code_meggie.epoching.events import Events
 
