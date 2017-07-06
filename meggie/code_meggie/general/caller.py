@@ -7,6 +7,7 @@ This module contains caller class which calls third party software.
 """
 
 import subprocess
+import itertools
 import os
 import glob
 import fnmatch
@@ -1790,6 +1791,5 @@ class Caller(object):
         return fig
 
     def colors(self, n):
-        import itertools
         cycler = itertools.cycle(['b', 'r', 'g', 'y', 'm', 'c', 'k', 'pink'])
         return list(itertools.islice(cycler, n))
