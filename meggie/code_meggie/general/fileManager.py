@@ -393,7 +393,24 @@ def open_raw(fname, preload=True):
 
 
 def save_raw(experiment, raw, fname, overwrite=True):
-    wrap_mne_call(experiment, raw.save, fname, overwrite=True)
+    
+    folder = os.path.dirname(fname)
+    bname = os.path.basename(fname)
+    
+    # be protective and save with other name first and move afterwards
+    temp_fname = os.path.join(folder, '_' + bname) 
+    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True)
+    
+    old_files = glob.glob(os.path.join(folder, bname[:-4] + '*'))
+    new_files = glob.glob(os.path.join(folder, "_" + bname[:-4] + '*'))
+    
+    if len(old_files) != len(new_files):
+        print "Be warned, amount of parts has changed!"
+        
+    for file_ in new_files:
+        shutil.move(os.path.join(folder, os.path.basename(file_)), 
+                    os.path.join(folder, os.path.basename(file_)[1:]))
+    
     experiment.active_subject.working_file_name = os.path.basename(fname)
     raw.info['filename'] = fname
     raw._filenames[0] = fname

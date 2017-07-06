@@ -9,6 +9,10 @@ epochs
 * Epokkien luominen
 
 *- output kansioon datat aikaleimattuihin kansioihin
+*- tarkista että filemanagerin raw_save:n kautta tallennetaan kaikki raw:it
+- batch spektrien tallentamiseen
+- titlet figureihin että tallentaa oikealla nimellä levylle
+- batchin jatkaminen vaikka ei pystyisi aktivoimaan jotain subjektia
 
 - one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
 - älä sulje dialogeja välttämättä ok:lla
