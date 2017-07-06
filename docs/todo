@@ -27,4 +27,11 @@ epochs
 - korjaa testit 
 - kansiohierarkia
 - group tfr, katso versionhalilnta
+- korja meggieen power spectrumin yksikkö
+- meggien painotettu spektrikeskiarvo
+
+
+----
+tee testit
+iso kuva paremmaksi
 
