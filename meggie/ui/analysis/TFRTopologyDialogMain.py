@@ -39,7 +39,7 @@ import numpy as np
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
 
-from meggie.ui.visualization.TFRtopologyUi import Ui_DialogTFRTopology
+from meggie.ui.analysis.TFRtopologyUi import Ui_DialogTFRTopology
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox

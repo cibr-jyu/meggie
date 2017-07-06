@@ -64,22 +64,22 @@ from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
 from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
-from meggie.ui.visualization import visualizeEpochChannelDialogMain
+from meggie.ui.analysis import visualizeEpochChannelDialogMain
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
 from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.visualization.evokedStatsDialogMain import EvokedStatsDialog
+from meggie.ui.analysis.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
-from meggie.ui.visualization.TFRDialogMain import TFRDialog
-from meggie.ui.visualization.TFRTopologyDialogMain import TFRTopologyDialog
-from meggie.ui.visualization.TFRfromRawDialogMain import TFRRawDialog
-from meggie.ui.visualization.powerSpectrumDialogMain import PowerSpectrumDialog
-from meggie.ui.visualization.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
+from meggie.ui.analysis.TFRDialogMain import TFRDialog
+from meggie.ui.analysis.TFRTopologyDialogMain import TFRTopologyDialog
+from meggie.ui.analysis.TFRfromRawDialogMain import TFRRawDialog
+from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
+from meggie.ui.analysis.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
@@ -1121,7 +1121,7 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, e)
 
     def on_pushButtonSpectrum_clicked(self, checked=None):
-        """Open the power spectrum visualization dialog."""
+        """Open the power spectrum dialog."""
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
@@ -1132,7 +1132,7 @@ class MainWindow(QtGui.QMainWindow):
         self.spectrumDialog.show()
         
     def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
-        """Open the power spectrum visualization dialog."""
+        """Open the power spectrum dialog."""
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:

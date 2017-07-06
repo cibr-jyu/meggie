@@ -15,8 +15,8 @@ from mne import Epochs
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
-from meggie.ui.visualization.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
-from meggie.ui.visualization.PowerSpectrumEventsDialogMain import PowerSpectrumEvents
+from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox

@@ -9,7 +9,7 @@ from PyQt4 import QtCore, QtGui
 import mne
 import numpy as np
 
-from meggie.ui.visualization.visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
+from meggie.ui.analysis.visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
 
 
 class VisualizeEpochChannelDialog(QtGui.QDialog):

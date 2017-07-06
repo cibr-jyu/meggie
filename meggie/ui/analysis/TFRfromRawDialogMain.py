@@ -34,7 +34,7 @@ Created on 24.5.2016
 """
 from PyQt4 import QtGui
 
-from meggie.ui.visualization.TFRfromRawDialogUi import Ui_DialogRawTFR
+from meggie.ui.analysis.TFRfromRawDialogUi import Ui_DialogRawTFR
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.ui.utils.messaging import exc_messagebox

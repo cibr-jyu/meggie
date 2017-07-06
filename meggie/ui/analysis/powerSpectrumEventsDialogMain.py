@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 
 import mne
 
-from meggie.ui.visualization.powerSpectrumEventsUi import Ui_Advanced 
+from meggie.ui.analysis.powerSpectrumEventsUi import Ui_Advanced 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 

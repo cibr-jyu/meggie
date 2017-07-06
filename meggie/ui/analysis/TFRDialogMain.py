@@ -28,24 +28,24 @@
 #either expressed or implied, of the FreeBSD Project.
 
 """
-Created on 30.5.2016
+Created on Apr 26, 2013
 
-@author: jaolpeso
+@author: Jaakko Leppakangas
+Contains the TFRDialog-class used for creating TFRs.
 """
+from PyQt4 import QtCore, QtGui
 
-from collections import OrderedDict
+import numpy as np
 
-from PyQt4 import QtGui
-
-from meggie.ui.visualization.powerSpectrumEpochsDialogUi import Ui_Dialog
+from meggie.ui.analysis.TFRfromEpochsUi import Ui_DialogEpochsTFR
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.messaging import messagebox
 
-class PowerSpectrumEpochsDialog(QtGui.QDialog):
+class TFRDialog(QtGui.QDialog):
     """
+    Class containing the logic for TFRDialog. Collects the necessary parameter
+    values and passes them to the Caller-class.
     """
-    caller = Caller.Instance()
     
     def __init__(self, parent, epochs):
         """
@@ -54,59 +54,56 @@ class PowerSpectrumEpochsDialog(QtGui.QDialog):
         Keyword arguments:
         
         parent    --    Parent of the dialog
+        epochs    --    a collection of epochs
         """
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self)
         self.epochs = epochs
+        ch_names = self.epochs.raw.ch_names
+        self.ui = Ui_DialogEpochsTFR()
+        self.ui.setupUi(self)
+        self.ui.comboBoxChannels.addItems(ch_names)
         
-        self.ui.spinBoxNfft.setValue(128)
-        self.ui.spinBoxOverlap.setValue(64)
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.raw.tmax)
+        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.raw.tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.raw.tmax)
+        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
         
+
     def accept(self):
         """
         Collects parameters and calls the caller class to create a TFR.
         """
-        fmin = self.ui.spinBoxFmin.value()
-        fmax = self.ui.spinBoxFmax.value()
-        if fmin >= fmax:
-            messagebox(self.parent, 
-                "End frequency must be higher than the starting frequency")
-            return
-
-        valid = True
-        for epoch in self.epochs:
-            length = len(epoch.raw[0].times)
-            if length < float(self.ui.spinBoxNfft.value()):
-                valid = False
-        if not valid:
-            messagebox(self.parent, "Sampling rate times shortest epoch length should be more than window size")  # noqa
-            return
+        minfreq = self.ui.doubleSpinBoxMinFreq.value()
+        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+        ch_index = self.ui.comboBoxChannels.currentIndex()
+        interval = self.ui.doubleSpinBoxFreqInterval.value()
+        ncycles =  self.ui.doubleSpinBoxNcycles.value()
+        freqs = np.arange(minfreq, maxfreq, interval)        
         
-        params = dict()
-        params['fmin'] = fmin
-        params['fmax'] = fmax
-        params['nfft'] = self.ui.spinBoxNfft.value()
-        params['log'] = self.ui.checkBoxLogarithm.isChecked()
-        params['overlap'] = self.ui.spinBoxOverlap.value()
-        # params['average'] = self.ui.checkBoxAverage.isChecked()
+        if self.ui.radioButtonFixed.isChecked():
+            ncycles = self.ui.doubleSpinBoxNcycles.value()
+        elif self.ui.radioButtonAdapted.isChecked():
+            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()        
+        
+        if self.ui.groupBoxBaseline.isChecked():
+            mode = str(self.ui.comboBoxMode.currentText())
+            blstart = self.ui.doubleSpinBoxBaselineStart.value()
+            blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        else:
+            blstart, blend, mode = None, None, None
+        
+        decim = self.ui.spinBoxDecim.value()
+        cmap = str(self.ui.comboBoxCmap.currentText())
+        
         save_data = self.ui.checkBoxSaveData.isChecked()
-             
-        average = self.ui.checkBoxAverage.isChecked()
-        
-        mne_epochs = OrderedDict()
-        for epoch in self.epochs:
-            mne_epoch = epoch.raw
-            mne_epoch.comment = epoch.collection_name
-            if average:
-                if 'average' not in mne_epochs:
-                    mne_epochs['average'] = []
-                mne_epochs['average'].append(mne_epoch)                
-            else:
-                mne_epochs[epoch.collection_name] = [mne_epoch]
-            
+
+        caller = Caller.Instance()
         try:
-            self.caller.plot_power_spectrum(params, save_data, mne_epochs, basename='epochs')
+            caller.TFR(epochs=self.epochs.raw, ch_index=ch_index, freqs=freqs,
+                ncycles=ncycles, decim=decim, mode=mode, blstart=blstart,
+                blend=blend, save_data=save_data, color_map=cmap)
         except Exception as e:
             exc_messagebox(self, e)
