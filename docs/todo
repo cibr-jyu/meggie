@@ -9,7 +9,7 @@ priority:
 - tee testejä
 
 
-- batch spektrien tallentamiseen
+- batch spektrien tallentamiseen (omassa haarassa aloitus tälle)
 - spektrien keskiarvoistus koehenkilöiden välillä
 - evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan
 - one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
@@ -20,6 +20,7 @@ priority:
 - jos mahdollista niin samankaltaista stats/selection juttua spektreille
 - add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
 - open_rawiin mahdollisuus konkatenoida tiedostoja?
+- siivota batch mainwindown sisällä?
 
 Mitä tehdä sourceanalysiksille:
 - source analysis omaan haaraan 8-- ) tai tarkistus että se toimii
