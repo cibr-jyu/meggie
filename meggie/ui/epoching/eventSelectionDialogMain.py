@@ -365,9 +365,8 @@ class EventSelectionDialog(QtGui.QDialog):
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
-                self.caller.activate_subject(name)
-                
                 try:
+                    self.caller.activate_subject(name)
                     events_str = self.calculate_epochs(subject)
                     epoch_info.append(events_str)
                 except Exception as e:

@@ -2,8 +2,8 @@
 """
 Created on Apr 11, 2013
 
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
-This module contains caller class which calls third party software.
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Erkka Heinilä
+This module contains caller class that contains the main state of the software
 """
 
 import subprocess
@@ -15,12 +15,21 @@ import re
 import shutil
 import copy
 import math
+from os.path import isfile
+from os.path import join
+from subprocess import CalledProcessError
+from copy import deepcopy
+
 from functools import partial
 from collections import OrderedDict
 
 from PyQt4 import QtCore, QtGui
 
 import mne
+import numpy as np
+import pylab as pl
+import matplotlib.pyplot as plt
+
 from mne import make_fixed_length_events, compute_proj_evoked
 from mne.channels.layout import read_layout
 from mne.channels.layout import _pair_grad_sensors_from_ch_names
@@ -31,14 +40,6 @@ from mne.utils import _clean_names
 from mne.time_frequency.tfr import tfr_morlet
 from mne.time_frequency import psd_welch
 from mne.preprocessing import compute_proj_ecg, compute_proj_eog, find_eog_events
-
-import numpy as np
-import pylab as pl
-import matplotlib.pyplot as plt
-
-from os.path import isfile, join
-from subprocess import CalledProcessError
-from copy import deepcopy
 
 from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
@@ -55,11 +56,6 @@ from meggie.code_meggie.general.singleton import Singleton
 @Singleton
 class Caller(object):
     """
-    Class for calling third party software. Includes methods that
-    require input from single source (usually a dialog) and produce simple
-    output (usually a single matplotlib window). 
-    More complicated functionality like epoching can be found in separate
-    classes.
     """
     parent = None
     _experiment = None
@@ -91,70 +87,6 @@ class Caller(object):
             return
 
         self.experiment.activate_subject(name)
-    
-    def call_mne_browse_raw(self, filename):
-        """
-        Opens mne_browse_raw with the given file as a parameter
-        Keyword arguments:
-        filename      -- file to open mne_browse_raw with
-        Raises an exception if MNE_ROOT is not set.
-        """
-        if os.environ.get('MNE_ROOT') is None:
-            raise Exception('Environment variable MNE_ROOT not set.')
-
-        proc = subprocess.Popen('$MNE_ROOT/bin/mne_browse_raw --cd ' + 
-                                filename.rsplit('/', 1)[0] + ' --raw ' + 
-                                filename, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        for line in proc.stdout.readlines():
-            print line
-        retval = proc.wait()
-        print "the program return code was %d" % retval
-
-    @threaded
-    def call_maxfilter(self, params, custom):
-        """
-        Performs maxfiltering with the given parameters.
-        Keyword arguments:
-        raw    -- Raw object.
-        params -- Dictionary of parameters
-        custom -- Additional parameters as a string
-        """
-        self._call_maxfilter(params, custom)
-
-    def _call_maxfilter(self, params, custom):
-        """Aux function for maxfiltering data. """
-        if os.environ.get('NEUROMAG_ROOT') is None:
-            os.environ['NEUROMAG_ROOT'] = '/neuro'
-        bs = '$NEUROMAG_ROOT/bin/util/maxfilter '
-        for i in range(len(params)):
-            bs += params.keys()[i] + ' ' + str(params.values()[i]) + ' '
-        # Add user defined parameters from the "custom" tab
-        bs += custom
-        print bs
-        proc = subprocess.Popen(bs, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
-        while True:
-            line = proc.stdout.readline()
-            if not line: 
-                break
-            print line
-        retval = proc.wait()      
-
-        print "the program return code was %d" % retval
-        if retval != 0:
-            print 'Error while maxfiltering data!'
-            raise RuntimeError('Error while maxfiltering the data. '
-                               'Check console.')
-
-        outputfile = params.get('-o')
-        # TODO: log mne call
-        #self.experiment.action_logger.log_mne_func_call_decorated(wrap_mne_call(self.experiment, mne.io.Raw, outputfile, preload=True))
-        raw = mne.io.Raw(outputfile, preload=True)
-
-        self.experiment.active_subject.set_working_file(raw)
-
-        self.experiment.save_experiment_settings()
 
     def call_ecg_ssp(self, dic, subject):
         """
@@ -193,7 +125,6 @@ class Caller(object):
         taps = dic.get('filtersize')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
-        preload = True  # TODO File
         ch_name = dic.get('ch_name')
 
         prefix = os.path.join(subject.subject_path, subject.subject_name)
@@ -217,9 +148,6 @@ class Caller(object):
 
         if not projs:
             raise Exception('No ECG events found. Change settings.')
-
-        if isinstance(preload, basestring) and os.path.exists(preload):
-            os.remove(preload)
 
         print "Writing ECG projections in %s" % ecg_proj_fname
         wrap_mne_call(self.experiment, mne.write_proj, ecg_proj_fname, projs)
@@ -246,6 +174,9 @@ class Caller(object):
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
         plt.ylabel('ECG')
+        subject_name = self.experiment.active_subject.subject_name
+        plt.gcf().canvas.set_window_title('_'.join(['ECG_events', subject_name,
+                                                    params['ch_name']]))
         plt.show()
 
     def call_eog_ssp(self, dic, subject):
@@ -280,7 +211,6 @@ class Caller(object):
         taps = dic.get('filtersize')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
-        preload = True  # TODO File
         reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
                       eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
 
@@ -300,10 +230,6 @@ class Caller(object):
             filter_length=taps, n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
             eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
 
-        # TODO Reading a file
-        if isinstance(preload, basestring) and os.path.exists(preload):
-            os.remove(preload)
-
         print "Writing EOG projections in %s" % eog_proj_fname
         wrap_mne_call(self.experiment, mne.write_proj, eog_proj_fname, projs)
 
@@ -315,6 +241,7 @@ class Caller(object):
         
         picks = mne.pick_types(raw.info, meg=False, eeg=False, stim=False,
             eog=True)
+
         ch_name = [ch_name for idx, ch_name in enumerate(raw.info['ch_names']) 
                    if idx in picks][0]
         
@@ -332,6 +259,8 @@ class Caller(object):
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
         plt.ylabel('EOG')
+        subject_name = self.experiment.active_subject.subject_name
+        plt.gcf().canvas.set_window_title('EOG_events_' + subject_name)
         plt.show()
 
 
@@ -351,15 +280,11 @@ class Caller(object):
         tmin = dic['tmin']
         tmax = dic['tmax']
         n_eeg = dic['n_eeg']
-        #eog_epochs = mne.Epochs(raw, events, event_id=event_id,
-        #                tmin=tmin, tmax=tmax)
-        #events = np.array(events)
         
         eog_epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
             raw, events, tmin=tmin, tmax=tmax)
         
         
-        # Average EOG epochs
         eog_evoked = eog_epochs.average()
         
         # Compute SSPs
@@ -374,7 +299,6 @@ class Caller(object):
 
         print "Writing EOG events in %s" % eeg_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eeg_event_fname, events)
-        #TODO: self.raw.add_proj(proj) in apply_exg method
 
     def apply_exg(self, kind, raw, directory, projs, applied):
         """
@@ -435,7 +359,9 @@ class Caller(object):
         
         # Average EOG epochs
         eog_evoked = eog_epochs.average()
-        eog_evoked.plot()
+        fig = eog_evoked.plot()
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title('Avg_epochs_' + subject_name)
         print "Finished\n"
 
     def plot_events(self, events):
@@ -445,14 +371,17 @@ class Caller(object):
         events - A list of events
         """
         raw = self.experiment.active_subject.get_working_file()
+
         print "Plotting events...\n"
         raw.plot(events=events, scalings=dict(eeg=40e-6))
         plt.show()
+
         print "Finished"
 
-
     def plot_projs_topomap(self, raw):
-        wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+        fig = wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+        name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title('Projections_' + name)
 
     @threaded
     def find_eog_events(self, params):
@@ -561,7 +490,6 @@ class Caller(object):
         fileManager.save_epoch(epochs_object, overwrite=True)
         subject.add_epochs(epochs_object)
         
-        #event info for batch
         events = epochs.event_id
         events_str = ''
         for event_name, event_id in events.items():
@@ -575,7 +503,7 @@ class Caller(object):
         """
         stim_channel = subject.find_stim_channel()
         raw = subject.get_working_file()
-        e = Events(raw, stim_channel, params['mask'], params['event_id'])
+        e = Events(self.experiment, raw, stim_channel, params['mask'], params['event_id'])
         return e.events
 
     def read_layout(self, layout):
@@ -597,28 +525,28 @@ class Caller(object):
         """
         Draws a topography representation of the evoked potentials.
 
-        Keyword arguments:
-        evokeds  - Evoked object or list of evokeds.
-        layout   - The desired layout as a string.
         """
         layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
         title = self.experiment.active_subject.subject_name
-            
+        
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
             color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
             font_color='k')
 
         conditions = [e.comment for e in evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
-        
+                
         for cond, col, pos in zip(conditions, colors, positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
+            
+        window_title = '_'.join(conditions)
+        fig.canvas.set_window_title(window_title)
         fig.show()
         
-        # TODO: log info about the clicked channels
         def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join([window_title, channel]))
             plt.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -637,7 +565,7 @@ class Caller(object):
         
         if channelSet:
             channels = channelSet
-            title = 'selected set of channels.'
+            title = 'selected set of channels'
         else:
             channels = wrap_mne_call(
                 self.experiment, mne.selection.read_selection, lobeName)
@@ -645,15 +573,15 @@ class Caller(object):
             
         print "Calculating channel averages for " + title
 
-        dataList = self._average_channels(
+        dataList, epochs_name = self._average_channels(
             instance, channels, do_meanwhile=self.parent.update_ui)
 
         # Plotting:
         plt.clf()
         fig = plt.figure()
-        mi = MeasurementInfo(self.experiment.active_subject.get_working_file())
-        fig.canvas.set_window_title(mi.subject_name + 
-             '-- channel average for ' + title)
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title('_'.join([epochs_name, 
+            'channel_avg', title]))
         fig.suptitle('Channel average for ' + title, y=1.0025)
 
         # Draw a separate plot for each event type
@@ -681,10 +609,11 @@ class Caller(object):
     def _average_channels(self, instance, channelsToAve):
         """Performed in a worker thread."""
         if isinstance(instance, str):  # epoch name
-            epochs = self.experiment.active_subject.epochs.get(instance).raw
+            _epochs = self.experiment.active_subject.epochs.get(instance)
+            epochs = _epochs.raw
+            epochs_name = _epochs.collection_name
             if epochs is None:
                 raise Exception('No epochs found.')
-
             category = epochs.event_id
 
             # Creates evoked potentials from the given events (variable 'name' 
@@ -692,9 +621,10 @@ class Caller(object):
             evokeds = [epochs[name].average() for name in category.keys()]
         elif isinstance(instance, mne.Evoked):
             evokeds = [instance]
+            epochs_name = evokeds[0].comment
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
             evokeds = instance
-        
+            epochs_name = 'List_of_epochs'
         # Channel names in Evoked objects may or may not have whitespaces
         # depending on the measurements settings,
         # need to check and adjust channelsToAve accordingly.
@@ -704,15 +634,14 @@ class Caller(object):
             channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
 
         dataList = []
-        # Picks only the desired channels from the evokeds.
+
         for evoked in evokeds:
             evokedToAve = wrap_mne_call(
                 self.experiment,
                 mne.pick_channels_evoked, evoked,
                 list(channelsToAve)
             )
-            # TODO: log something from below?
-            # Returns channel indices for grad channel pairs in evokedToAve.
+
             ch_names = evokedToAve.ch_names
             gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
     
@@ -751,22 +680,20 @@ class Caller(object):
                     averagedEegData
                 ))
 
-        return dataList
+        return dataList, epochs_name
 
     def group_average(self, evoked_name):
         """
-        Plots group average of all subjects in the experiment. Also saves group
+        Plots group average of all subjects in the experiment. 
         average data to ``output`` folder.
         Keyword arguments:
         evoked_name        -- name of the evoked objects
         """
-        #subjects_averaged = []
         count = 0
         group_info = {}
         for subject in self.experiment.subjects.values():
             if subject.evokeds.get(evoked_name):
                 count += 1
-                #subjects_averaged.append(subject.subject_name)
                 evoked = subject.evokeds.get(evoked_name)
                 group_info[subject.subject_name] = evoked.info
 
@@ -790,7 +717,7 @@ class Caller(object):
            evoked_name, do_meanwhile=self.parent.update_ui
         )
 
-        return evokeds, group_info #subjects_averaged, group_info
+        return evokeds, group_info
 
     @threaded
     def _group_average(self, evoked_name):
@@ -819,21 +746,11 @@ class Caller(object):
 
         return grand_averages
 
-    def TFR(self, epochs, ch_index, freqs, ncycles, decim, mode, blstart, blend, save_data,
-            color_map='auto'):
+    def TFR(self, epochs, collection_name, ch_index, freqs, ncycles, decim,
+            mode, blstart, blend, save_data, color_map='auto'):
         """
         Plots a time-frequency representation of the data for a selected
         channel. Modified from example by Alexandre Gramfort.
-        TODO should use dictionary like most other dialogs.
-        Keyword arguments:
-        epochs        -- Epochs extracted from the data.
-        ch_index      -- Index of the channel to be used.
-        freqs         -- Frequencies for the representation as a numpy array.
-        ncycles       -- Value used to count the number of cycles.
-        decim         -- Temporal decimation factor.
-        color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
-                         which case ``RdBu_r`` is used or ``Reds`` if only
-                         positive values exist in the data.
         """
 
         n_jobs = self.parent.preferencesHandler.n_jobs
@@ -854,21 +771,28 @@ class Caller(object):
             itc.data = mne.baseline.rescale(itc.data, itc.times, 
                 baseline=baseline, mode=mode)          
         
-        if save_data:
-            subject = self.experiment.active_subject.subject_name
-            ch_name = power.ch_names[ch_index]
-            
-            power_fname = ''.join([subject, '_', ch_name, '_TFR_epochs_induced.csv'])
-            
-            fileManager.save_tfr(self.experiment, power_fname, power.data[ch_index], 
-                                 power.times, freqs)
-            
-            itc_fname = ''.join([subject, '_', ch_name, '_TFR_epochs_itc.csv'])
-            
-            fileManager.save_tfr(self.experiment, itc_fname, itc.data[ch_index], 
-                                 itc.times, freqs)            
-
+        ch_name = power.ch_names[ch_index]
         
+        if save_data:
+
+            subject = self.experiment.active_subject.subject_name
+            path = fileManager.create_timestamped_folder(self.experiment)
+            ch_name = power.ch_names[ch_index]
+
+            power_fname = os.path.join(
+                path,
+                subject + '_' + ch_name + '_TFR_epochs_induced.csv'
+            )
+
+            fileManager.save_tfr(power_fname, power.data[ch_index], power.times, freqs)
+
+            itc_fname = os.path.join(
+                path,
+                subject + '_' + ch_name + '_TFR_epochs_itc.csv'
+            )
+
+            fileManager.save_tfr(itc_fname, itc.data[ch_index], itc.times, freqs)
+
         evoked_data = evoked.data[ch_index]
         evoked_times = 1e3 * evoked.times
 
@@ -921,31 +845,36 @@ class Caller(object):
         plt.colorbar(cax=plt.subplot2grid((3, 15), (2, 14)), mappable=img)
 
         plt.tight_layout()
+        fig.canvas.set_window_title('_'.join(['TFR', collection_name,
+                                              ch_name]))
         fig.show()
 
 
-    def TFR_topology(self, inst, reptype, freqs, decim, mode, blstart, blend,
-                     ncycles, ch_type, scalp, save_data=False, color_map='auto'):
+    def TFR_topology(self, inst, collection_name, reptype, freqs, decim, mode, 
+                     blstart, blend, ncycles, ch_type, scalp, color_map='auto',
+                     save_data=False):
         """
         Plots time-frequency representations on topographies for MEG sensors.
         Modified from example by Alexandre Gramfort and Denis Engemann.
         Keyword arguments:
-        inst          -- Epochs extracted from the data
-        reptype       -- Type of representation (average or itc).
-        freqs         -- Frequencies for the representation as a numpy array.
-        decim         -- Temporal decimation factor.
-        mode          -- Rescaling mode (logratio | ratio | zscore |
-                         mean | percent).
-        blstart       -- Starting point for baseline correction.
-        blend         -- Ending point for baseline correction.
-        ncycles       -- Value used to count the number of cycles.
-        ch_type       -- Channel type (mag | grad | eeg).
-        scalp         -- Parameter dictionary for scalp plot. If None, no scalp
-                         plot is drawn.
-        color_map     -- Matplotlib color map to use. Defaults to ``auto``, in
-                         which case ``RdBu_r`` is used or ``Reds`` if only
-                         positive values exist in the data.
-        save_data     -- save data to file or not
+        inst            -- Epochs extracted from the data or previously computed
+                           AverageTFR object to plot.
+        collection_name -- Name of the epoch collection.
+        reptype         -- Type of representation (average or itc).
+        freqs           -- Frequencies for the representation as a numpy array.
+        decim           -- Temporal decimation factor.
+        mode            -- Rescaling mode (logratio | ratio | zscore |
+                           mean | percent).
+        blstart         -- Starting point for baseline correction.
+        blend           -- Ending point for baseline correction.
+        ncycles         -- Value used to count the number of cycles.
+        ch_type         -- Channel type (mag | grad | eeg).
+        scalp           -- Parameter dictionary for scalp plot. If None, no scalp
+                           plot is drawn.
+        color_map       -- Matplotlib color map to use. Defaults to ``auto``, in
+                           which case ``RdBu_r`` is used or ``Reds`` if only
+                           positive values exist in the data.
+        save_data       -- save data to file or not
         """
 
         @threaded
@@ -956,11 +885,9 @@ class Caller(object):
             return power, itc
         
         power, itc = calculate_tfrs()
-        
         baseline = (blstart, blend)
-
         layout = self.read_layout(self.experiment.layout)
-        
+                
         if reptype == 'average':
             inst = power
             title = 'Average power'
@@ -979,8 +906,12 @@ class Caller(object):
 
         if save_data:
             subject = self.experiment.active_subject.subject_name
-            
-            fname = ''.join([subject, '_TFR_epochs_allchannels.csv'])
+            path = fileManager.create_timestamped_folder(self.experiment)
+
+            fname = os.path.join(
+                path,
+                subject + '_TFR_epochs_allchannels.csv'
+            )
 
             labels = []
             for ch_name in inst.info['ch_names']:
@@ -989,7 +920,7 @@ class Caller(object):
                 labels.append(ch_name)
 
             print "Saving data.."
-            fileManager.save_tfr_topology(self.experiment, fname, inst.data, 
+            fileManager.save_tfr_topology(fname, inst.data, 
                                 inst.times, freqs, labels)
             
 
@@ -1005,9 +936,13 @@ class Caller(object):
             fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
             title=title)
 
+        fig.canvas.set_window_title('TFR' + '_' + collection_name)
         fig.show()
 
         def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join(['TFR', collection_name,
+                                                        channel]))
             pl.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -1033,12 +968,18 @@ class Caller(object):
             tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=baseline, 
                                              mode=mode)
         
-        tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout, verbose='error')
+        fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout,
+            verbose='error')
+        subject_name = self.experiment.active_subject.subject_name
+        fig.canvas.set_window_title(''.join(['TFR_raw_', subject_name, '_',
+                                    raw.ch_names[channel]]))
         
         if save_data:
-            filename = ''.join([self.experiment.active_subject.subject_name, 
-                                '_', raw.ch_names[channel], '_TFR.csv'])
-            fileManager.save_tfr(self.experiment, filename, tfr[channel], times, freqs)
+            path = fileManager.create_timestamped_folder(self.experiment)
+            filename = os.path.join(path, ''.join([
+                self.experiment.active_subject.subject_name, '_',
+                raw.ch_names[channel], '_TFR.csv']))
+            fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
     def plot_power_spectrum(self, params, save_data, epoch_groups, basename='raw'):
         """
@@ -1070,12 +1011,13 @@ class Caller(object):
             
         colors = self.colors(len(psds))
 
+        subject_name = self.experiment.active_subject.subject_name
         if save_data:
-            subject_name = self.experiment.active_subject.subject_name
+            path = fileManager.create_timestamped_folder(self.experiment)
             for idx, psd in enumerate(psds):
                 filename = ''.join([subject_name, '_', basename, '_',
-                    'spectrum', '_', str(psd_groups.keys()[idx]), '.txt'])
-                fileManager.save_np_array(self.experiment, filename, 
+                    'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
+                fileManager.save_np_array(os.path.join(path, filename), 
                                           freqs, psd, info)
 
         print "Plotting power spectrum..."
@@ -1085,15 +1027,19 @@ class Caller(object):
             Callback for the interactive plot.
             Opens a channel specific plot.
             """
+            fig = plt.gcf()
+            fig.canvas.set_window_title(''.join(['Spectrum_', subject_name,
+                                        '_', info['ch_names'][ch_idx]]))
+            
             conditions = [str(key) for key in psd_groups]
             positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
             
             for cond, col, pos in zip(conditions, colors, positions):
-                ax.figtext(0.775, pos, cond, color=col, fontsize=12)
+                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
             color_idx = 0
             for psd in psds:
-                ax.plot(freqs, psd[ch_idx], color=colors[color_idx])
+                plt.plot(freqs, psd[ch_idx], color=colors[color_idx])
                 color_idx += 1
             
             plt.xlabel('Frequency (Hz)')
@@ -1116,6 +1062,7 @@ class Caller(object):
             for psd in psds:
                 ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
                 color_idx += 1
+        plt.gcf().canvas.set_window_title('Spectrum_' + subject_name)
         plt.show()
 
     @threaded
@@ -1202,7 +1149,8 @@ class Caller(object):
            
         if not preview:
             print 'Saving to file...'
-            fileManager.save_raw(self.experiment, dataToFilter, info['filename'], overwrite=True)
+            fileManager.save_raw(self.experiment, dataToFilter, 
+                info['filename'], overwrite=True)
         
         return dataToFilter
 

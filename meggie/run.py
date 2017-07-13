@@ -50,6 +50,5 @@ from meggie.ui.general import mainWindowMain
 def main():
     mainWindowMain.main()
 
-
 if __name__ == '__main__':
     main()

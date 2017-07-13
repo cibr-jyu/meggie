@@ -13,6 +13,7 @@ import shutil
 import glob
 import re
 import sys
+import datetime
 
 from os.path import isfile, join
 from shutil import copyfile
@@ -383,7 +384,9 @@ def open_raw(fname, preload=True):
     Raises an exception if the file cannot be opened.
     """
     try:
-        return mne.io.Raw(fname, preload=preload, allow_maxshield=True)
+        print 'Reading ' + fname
+        return mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
+                          verbose='warning')
     except IOError as e:
         raise IOError(str(e))
     except OSError as e:
@@ -399,7 +402,8 @@ def save_raw(experiment, raw, fname, overwrite=True):
     
     # be protective and save with other name first and move afterwards
     temp_fname = os.path.join(folder, '_' + bname) 
-    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True)
+    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True,
+        verbose='warning')
     
     old_files = glob.glob(os.path.join(folder, bname[:-4] + '*'))
     new_files = glob.glob(os.path.join(folder, "_" + bname[:-4] + '*'))
@@ -415,13 +419,13 @@ def save_raw(experiment, raw, fname, overwrite=True):
     raw.info['filename'] = fname
     raw._filenames[0] = fname
     
-def group_save_evokeds(experiment, filename, evokeds, names):
+def group_save_evokeds(path, evokeds, names):
     """ Combine data from multiple evokeds to one big csv """
 
     if len(evokeds) == 0:
         raise ValueError("At least one evoked object is needed.")
 
-    print "Writing " + str(len(evokeds)) + " evokeds to " + filename
+    print "Writing " + str(len(evokeds)) + " evokeds to " + path
 
     # gather all the data to list of rows
     all_data = []
@@ -442,21 +446,11 @@ def group_save_evokeds(experiment, filename, evokeds, names):
             row = [row_name] + evoked.data[ch_idx, :].tolist()
             all_data.append(row)
 
-    # save to file
-    folder = os.path.join(experiment.workspace,
-                    experiment.experiment_name, 'output')
-    import errno;
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-
     all_data = np.array(all_data)
-    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
-def save_tfr(experiment, filename, tfr, times, freqs):
+def save_tfr(path, tfr, times, freqs):
 
     all_data = []
     all_data.append([''] + times.tolist())
@@ -468,21 +462,11 @@ def save_tfr(experiment, filename, tfr, times, freqs):
             row.append(value)
         all_data.append(row) 
 
-    # save to file
-    folder = os.path.join(experiment.workspace,
-                    experiment.experiment_name, 'output')
-    import errno;
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-
     all_data = np.array(all_data)
-    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
-def save_tfr_topology(experiment, filename, tfrs, times, freqs, labels):
+def save_tfr_topology(path, tfrs, times, freqs, labels):
     all_data = []
     all_data.append([''] + times.tolist())
     for idx, tfr in enumerate(tfrs):
@@ -493,18 +477,8 @@ def save_tfr_topology(experiment, filename, tfrs, times, freqs, labels):
                 row.append(value)
             all_data.append(row)
 
-    # save to file
-    folder = os.path.join(experiment.workspace,
-                    experiment.experiment_name, 'output')
-    import errno;
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-
     all_data = np.array(all_data)
-    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
 def pickleObjectToFile(picklable, fpath):
@@ -550,18 +524,7 @@ def unpickle(fpath):
 
 
 def save_epoch(epoch, overwrite=False):
-    """Save epochs and the parameter values used to create them.
-    
-    The epochs are saved to fpath.fif. the parameter values are saved
-    to fpath.param.
-    
-    Keyword arguments:
-    
-    fpath     -- The full path and base name of the files without suffix
-    epoch     -- mne.Epochs object
-    params    -- Parameter of the epochs.
-    overwrite -- A boolean telling whether existing files should be
-                 replaced. False by default. 
+    """
     """
     if os.path.exists(epoch.path) and overwrite is False:
         return
@@ -608,8 +571,6 @@ def read_surface_names_into_list(subject):
     
 def get_layouts():
     """
-    Finds the layout files from MNE_ROOT.
-    Returns a list of strings of found files. 
     """
     from pkg_resources import resource_filename
     
@@ -633,18 +594,24 @@ def get_layouts():
     return files
 
 
-def load_tfr(fname):
-    """
-    Function for loading AverageTFR from a file.
-    Returns AverageTFR object.
-    """
-    return mne.time_frequency.tfr.read_tfrs(fname)[0]
-
-
 def create_folders(paths):
     for path in paths:
         os.makedirs(path)
+        
+def create_timestamped_folder(experiment):
+    current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    path = os.path.join(experiment.workspace,
+                        experiment.experiment_name, 'output')
+    timestamped_folder = os.path.join(path, current_time_str)
 
+    import errno;
+    try:
+        os.makedirs(timestamped_folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    return timestamped_folder
 
 def save_subject(subject, path):
     try:
@@ -657,23 +624,19 @@ def save_subject(subject, path):
             subject.reconFiles_directory,
             subject.stc_directory
         ])
-    except OSError as e:
+    except OSError:
         raise OSError("Couldn't create all the necessary folders. "
                       "Do you have the necessary permissions?")
     
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
     files = glob.glob(filename[:-4] + '*.fif')
-    import re;
-    p = re.compile(filename[:-4] + '(.fif|-\d{1,}.fif)')
+   
+    p = re.compile(re.escape(filename[:-4]) + '(.fif|-\d{1,}.fif)')
     
     for f in files:
         if p.match(f):
             copyfile(f, os.path.join(subject.subject_path, os.path.basename(f)))
-
-    #raw = mne.io.Raw(path)
-    #raw.save(subject.working_file_path)
-    #copyfile(path, subject.working_file_path)
 
 def _read_epoch_stcs(subject):
     """
@@ -692,16 +655,7 @@ def _read_epoch_stcs(subject):
             stcs.append(epochs_dir)
     return stcs
 
-def save_np_array(experiment, filename, freqs, data, epochs_info):
-    
-    folder = os.path.join(experiment.workspace,
-                    experiment.experiment_name, 'output')
-    import errno;
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
+def save_np_array(path, freqs, data, epochs_info):
     
     # gather all the data to list of rows
     all_data = []
@@ -721,7 +675,5 @@ def save_np_array(experiment, filename, freqs, data, epochs_info):
  
     # save to file
     all_data = np.array(all_data)
-    np.savetxt(os.path.join(folder, filename), all_data, fmt='%s', delimiter=', ')    
+    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
     
-    
-        

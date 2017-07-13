@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>3</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -203,20 +203,10 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="0" column="1">
+                       <item row="0" column="0">
                         <widget class="QPushButton" name="pushButtonFilter">
                          <property name="text">
                           <string>Filter...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="0">
-                        <widget class="QPushButton" name="pushButtonMaxFilter">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="text">
-                          <string>MaxFilter...</string>
                          </property>
                         </widget>
                        </item>

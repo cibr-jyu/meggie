@@ -108,6 +108,12 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="2" column="0">
          <widget class="QFrame" name="frameBandPass">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -132,6 +138,9 @@
               </property>
               <item row="0" column="1">
                <widget class="QDoubleSpinBox" name="doubleSpinBoxBandstopFreq">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
@@ -161,7 +170,7 @@
               <string>BandStop filter (notch)</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -170,6 +179,12 @@
         </item>
         <item row="2" column="1">
          <widget class="QFrame" name="frameBandStop_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -594,34 +609,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>checkBoxBandstop</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frame_3</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>242</x>
-     <y>353</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>242</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>checkBoxBandstop2</sender>
    <signal>toggled(bool)</signal>
    <receiver>frame_4</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>532</x>
-     <y>353</y>
+     <x>584</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
-     <x>532</x>
-     <y>416</y>
+     <x>584</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>
@@ -664,8 +663,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>568</x>
-     <y>654</y>
+     <x>611</x>
+     <y>968</y>
     </hint>
     <hint type="destinationlabel">
      <x>505</x>
@@ -680,8 +679,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>353</x>
-     <y>654</y>
+     <x>395</x>
+     <y>968</y>
     </hint>
     <hint type="destinationlabel">
      <x>508</x>
@@ -696,12 +695,28 @@
    <slot>acceptBatch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>444</x>
-     <y>656</y>
+     <x>520</x>
+     <y>968</y>
     </hint>
     <hint type="destinationlabel">
      <x>332</x>
      <y>6</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxBandstop</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxBandstopFreq</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>105</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>298</y>
     </hint>
    </hints>
   </connection>

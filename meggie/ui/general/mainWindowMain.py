@@ -183,7 +183,8 @@ class MainWindow(QtGui.QMainWindow):
 
         # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.ui.tabWidgetSourceAnalysis.currentChanged.connect(self.on_currentChanged_source_analysis)
+        self.ui.tabWidgetSourceAnalysis.currentChanged.connect(
+            self.on_currentChanged_source_analysis)
 
         # Models for several views in the UI, e.g. in the forward model setup
         # tab.
@@ -232,7 +233,8 @@ class MainWindow(QtGui.QMainWindow):
             exp = None
             
             try:
-                exp = self.experimentHandler.open_existing_experiment(self.preferencesHandler)
+                exp = self.experimentHandler.open_existing_experiment(
+                    self.preferencesHandler)
             except Exception as e:
                 exc_messagebox(self, e)
             
@@ -247,8 +249,10 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
+
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
-        #self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
+
+        # self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
         
     def update_ui(self):
         """
@@ -257,7 +261,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         QApplication.processEvents()
 
-# Code for catching signals and reacting to them:
     def on_actionQuit_triggered(self, checked=None):
         """Closes the program, possibly after a confirmation by the user."""
         if checked is None:
@@ -305,7 +308,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Open an existing _experiment.
 
-        TODO actual experiment opening code should be in ExperimentHandler
         """
         # Standard workaround for file dialog opening twice
         if checked is None:
@@ -380,7 +382,9 @@ class MainWindow(QtGui.QMainWindow):
     
             self.subjectListModel.removeRows(rows_to_remove)
         if failures:
-            msg = 'Could not remove the contents of the subject folder for following subjects: ' + '\n'.join(failures)
+            msg = ''.join(['Could not remove the contents of the subject ',
+                           'folder for following subjects: ',
+                           '\n'.join(failures)])
             messagebox(self, msg)
         self.caller.experiment.save_experiment_settings()
         self.initialize_ui()
@@ -395,13 +399,10 @@ class MainWindow(QtGui.QMainWindow):
         # Set default/empty values for epoch parameters.
         self.clear_epoch_collection_parameters()
         params = epochs.params
+
         if params is None:
             print 'Epochs parameters not found!'
             return
-            # TODO: Fill source file field if no parameters for epochs
-            # collection. 'filename' is the current location of the collection,
-            # so add some other information here?
-        #events = params['events']
         
         events = epochs.raw.event_id
         
@@ -411,9 +412,6 @@ class MainWindow(QtGui.QMainWindow):
             item.setText(events_str)
             self.epochList.ui.listWidgetEvents.addItem(item)
         
-        
-        
-       # TODO: create category items to add on the listWidgetEvents widget.
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
         # Creates dictionary of strings instead of qstrings for rejections.
@@ -707,8 +705,8 @@ class MainWindow(QtGui.QMainWindow):
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
-                subject = self.caller.experiment.activate_subject(subject_name)
                 try:
+                    subject = self.caller.experiment.activate_subject(subject_name)
                     self._calculate_evokeds(subject, collection_names)
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
@@ -735,12 +733,14 @@ class MainWindow(QtGui.QMainWindow):
         self.evokedStatsDialog.show()
 
     def save_evoked_data(self, subjects):
-        
         try:    
             evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
         except AttributeError:
             exc_messagebox(self, "Please select evoked data from the list")
             return
+
+        path = fileManager.create_timestamped_folder(
+            self.caller.experiment)
 
         for sub_name, subject in subjects.items():
             names = []
@@ -754,18 +754,15 @@ class MainWindow(QtGui.QMainWindow):
             if evokeds:
                 cleaned_evoked_name = evoked_name.split('.')[0]
                 filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
-                fileManager.group_save_evokeds(self.caller.experiment, filename, evokeds, names)
-                
+                fileManager.group_save_evokeds(os.path.join(path, filename), 
+                                               evokeds, names)
                 
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
         
         subjects = self.caller.experiment.subjects
-        
         self.save_evoked_data(subjects)
-        
-
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         if checked is None:
@@ -778,7 +775,6 @@ class MainWindow(QtGui.QMainWindow):
         
         self.save_evoked_data(subjects)
 
-
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel"""
         if checked is None:
@@ -789,10 +785,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             messagebox(self, 'Create epochs before visualizing.')
             return
+
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
             message = 'Please select an epoch collection on the list.'
             messagebox(self, message)
             return
+
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         epochs = self.caller.experiment.active_subject.epochs.get(name)
         self.visualizeEpochs = (visualizeEpochChannelDialogMain.
@@ -835,7 +833,7 @@ class MainWindow(QtGui.QMainWindow):
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
-        
+
         self.ui.pushButtonVisualizeEvokedDataset.setText('      Visualizing...'
                                                          '      ')
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
@@ -1093,16 +1091,6 @@ class MainWindow(QtGui.QMainWindow):
         self.badChannelsDialog = BadChannelsDialog(self)
         self.badChannelsDialog.show()
         
-        
-    def on_pushButtonMNE_Browse_Raw_clicked(self, checked=None):
-        """Call mne_browse_raw."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-        
-        self.on_pushButtonRawPlot_clicked(checked)
-
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""
         if checked is None:
@@ -1586,7 +1574,6 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
         if checked is None:
             return
-        # TODO: Implement this last if needed.
         return
 
     def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
@@ -1608,7 +1595,6 @@ class MainWindow(QtGui.QMainWindow):
         Open a dialog for computing noise covariance matrix based on data
         before epochs.
         """
-        # TODO:
         if checked is None:
             return
         if self.caller.experiment.active_subject is None:
@@ -1952,7 +1938,6 @@ class MainWindow(QtGui.QMainWindow):
         Fill the raw tab event list with info about event IDs and
         amount of events with those IDs.
         """
-        # TODO: trigger ---> event, also in the UI
         events = self.caller.experiment.active_subject.create_event_set()
         if events is None:
             return
@@ -2005,7 +1990,6 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_currentChanged(self):
         """
-        TODO: should use a proper mcv system to avoid this crap.
         Keep track of the active tab.
         Show the epoch collection list epochList when in appropriate tabs.
         """
@@ -2068,12 +2052,11 @@ class MainWindow(QtGui.QMainWindow):
                 self.caller.experiment.active_subject)
 
     def collect_parameter_values(self):
-        #TODO: clear batchingWidget data after group average
         collection_names = [str(item.text()) for item 
                 in self.epochList.ui.listWidgetEpochs.selectedItems()]
         return collection_names        
 
-# Miscellaneous code:
+    # Miscellaneous code:
 
     def directOutput(self):
         """

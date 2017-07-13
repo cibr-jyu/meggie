@@ -42,11 +42,11 @@ class PowerSpectrumEvents(QtGui.QDialog):
     def accept(self):
         try:
             event_min = self.ui.lineEditStart.text()
-            event_max = self.ui.lineEditEnd.text()
+            event_end = self.ui.lineEditEnd.text()
             group = int(self.ui.comboBoxAvgGroup.currentText())
 
-            if not event_min or not event_max:
-                raise Exception("No min and max events set")
+            if not event_min or not event_end:
+                raise Exception("No min and end events set")
         except:
             exc_messagebox(self, "Please check your inputs")
             return
@@ -60,19 +60,22 @@ class PowerSpectrumEvents(QtGui.QDialog):
                 id_, mask = int(event_code), 0
 
             subject = self.parent.caller.experiment.active_subject
-            triggers = Events(raw, stim_ch=subject.find_stim_channel(), 
+            triggers = Events(self.parent.caller.experiment, raw,
+                              stim_ch=subject.find_stim_channel(),
                               mask=mask, id_=id_).events
 
             return triggers
         
+        print "Finding min triggers"
         min_triggers = find_triggers(event_min)
-        max_triggers = find_triggers(event_max)
+        print "Finding end triggers"
+        end_triggers = find_triggers(event_end)
         
         if len(min_triggers) == 0:
             exc_messagebox(self, 'No start events found')
             return
             
-        if len(max_triggers) == 0:
+        if len(end_triggers) == 0:
             exc_messagebox(self, 'No end events found')
             return
 
@@ -83,19 +86,19 @@ class PowerSpectrumEvents(QtGui.QDialog):
 
             
             try:
-                next_max_trigger = [trigger for trigger in max_triggers 
+                next_end_trigger = [trigger for trigger in end_triggers 
                                     if trigger[0] > min_triggers[idx][0]][0][0]
             except IndexError:
                 exc_messagebox(self, "One of the found start triggers" 
                                      "didn't have corresponding end trigger")
                 return
             
-            max_trigger_seconds = (next_max_trigger - raw.first_samp) / raw.info['sfreq']
+            end_trigger_seconds = (next_end_trigger - raw.first_samp) / raw.info['sfreq']
             
-            if max_trigger_seconds < min_trigger_seconds:
+            if end_trigger_seconds < min_trigger_seconds:
                 exc_messagebox(self, "Selected events seem not be valid. Start and end events need to alternate.")
                 return
             
-            intervals.append((group, min_trigger_seconds, max_trigger_seconds))
+            intervals.append((group, min_trigger_seconds, end_trigger_seconds))
 
         self.parent.add_intervals(intervals)

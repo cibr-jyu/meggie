@@ -22,8 +22,11 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         self.ui = Ui_VisualizeEpochChannelDialog()
         self.ui.setupUi(self)
         self.epochs = epochs
-        if epochs is None: return
-        # Fills channels list with epoch collection channel names.
+
+        if epochs is None: 
+            return
+
+        # fills channels list with epoch collection channel names.
         for channel in epochs.raw.ch_names:
             item = QtGui.QListWidgetItem()
             item.setText(channel)
@@ -31,13 +34,17 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
         
     def on_pushButtonVisualizeChannel_clicked(self, checked=None):
         
-        if checked is None: return
+        if checked is None: 
+            return
         
-        # TODO: Add possibility for multiple channel picks if needed
         pick = self.epochs.raw.ch_names.index(
             self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
-        # plot_image_epochs averages the epochs before visualizing. 
+
         fig = mne.viz.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
                                         colorbar=True,
                                         order=None, show=True)
+
+        fig[0].canvas.set_window_title('_'.join(['Viz_channel',
+                                       self.epochs.collection_name,
+                                       self.epochs.raw.ch_names[pick]]))

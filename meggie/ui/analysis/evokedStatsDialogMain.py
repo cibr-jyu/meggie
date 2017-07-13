@@ -221,23 +221,14 @@ class EvokedStatsDialog(QtGui.QDialog):
             return
         
         caller = self.parent.caller
-        
-        exp_path = os.path.join(caller.experiment.workspace,
-                                caller.experiment.experiment_name)
-        
-        path = os.path.join(exp_path, 'output')
-        
-        if not os.path.isdir(path):
-            os.mkdir(path)
-        
+        path = fileManager.create_timestamped_folder(caller.experiment)
         collection_name = str(self.ui.comboBoxEvoked.currentText())
-        
         filename = collection_name + '_stats.csv'
         path = os.path.join(path, filename)
-        
         fname = str(QFileDialog.getSaveFileName(parent=self, 
                                                 caption='Save csv file.',
                                                 directory=path))
+
         if fname == '':
             return
         
