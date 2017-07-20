@@ -1,7 +1,7 @@
 TODO:
 
 high priority:
-- korja meggieen power spectrumin yksikkö, samalla kaikki muutkin yksiköt voisi tarkistaa (HUOM megit on tesloja, eeg:t voltteja)
+- selvitä miksi eventselection-dialogin sulkeminen lataa kaikenlaisia evokkikokoelmia uudestaan.
 - meggien painotettu spektrikeskiarvo
 - preprocess ica
 - tee difference plot icalle
