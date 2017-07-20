@@ -120,10 +120,13 @@ class Caller(object):
         rej_eeg = dic.get('rej-eeg')
         rej_eog = dic.get('rej-eog')
 
-        reject = dict(grad=1e-13 * float(rej_grad),
-                      mag=1e-15 * float(rej_mag),
-                      eeg=1e-6 * float(rej_eeg),
-                      eog=1e-6 * float(rej_eog))
+        reject = {
+            'grad': float(rej_grad) / get_scaling('grad'), 
+            'mag': float(rej_mag) / get_scaling('mag'),
+            'eeg': float(rej_eeg) / get_scaling('eeg'), 
+            'eog': float(rej_eog) / get_scaling('eog'),
+        }
+
         qrs_threshold = dic.get('qrs')
         start = dic.get('tstart')
         taps = dic.get('filtersize')
