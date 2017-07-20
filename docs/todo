@@ -1,14 +1,20 @@
 TODO:
 
-priority:
+high priority:
 - korja meggieen power spectrumin yksikkö, samalla kaikki muutkin yksiköt voisi tarkistaa (HUOM megit on tesloja, eeg:t voltteja)
 - meggien painotettu spektrikeskiarvo
+- preprocess ica
+- tee difference plot icalle
+- migraatiokoodi reject parametereille. 
+  * tällä saadaan myös aikaan yleisempi migraatiomekanismi
+  * exp-filuihin voisi laittaa versiot, että millä versiolla luotu, tällöin version pitäisi olla myös meggien tiedossa aina joka on hyvä, toivottavasti se on kaivettavissa jotenkin dynaamisesti
+
+mid priority:
 - valinnaiseksi flatti output-kansio
 - lokikoodin siivousta ehkä, ehkä käydä läpi, wrap_mne_call-jutut
-- preprocess ica
 - tee testejä
 
-
+low priority:
 - batch spektrien tallentamiseen (omassa haarassa aloitus tälle)
 - spektrien keskiarvoistus koehenkilöiden välillä
 - evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan

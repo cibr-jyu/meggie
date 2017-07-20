@@ -30,7 +30,7 @@
 """
 Created on Mar 12, 2013
 
-@author: Jaakko Leppakangas
+@author: Jaakko Leppakangas, Erkka Heinila
 Contains the Events-class that gets events from a raw file.
 """
 import mne
@@ -70,8 +70,6 @@ class Events(object):
         if counter > 0:
             print str(counter) + " events dropped because they seem spurious (only one sample difference to next event)"
 
-        print str(len(events)) + " events found."
-        
         self._events = events
         
     def _should_take(self, id_, mask, event):

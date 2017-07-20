@@ -23,6 +23,9 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.code_meggie.general import fileManager
 
+from meggie.code_meggie.utils.units import get_unit
+from meggie.code_meggie.utils.units import get_scaling
+
 class EvokedStatsDialog(QtGui.QDialog):
 
     """A Window for displaying statistical information of averaged epochs."""
@@ -259,17 +262,16 @@ class EvokedStatsDialog(QtGui.QDialog):
             for ch_name in self.selected_channels[collection_name]:
                 pick = evoked.ch_names.index(ch_name)
                 this_data = data[pick]
+
                 ch_type = mne.channels.channels.channel_type(evoked.info, pick)
-                if ch_type == 'grad':
-                    scaler = 1e13
-                elif ch_type == 'mag':
-                    scaler = 1e15
-                elif ch_type == 'eeg':
-                    scaler = 1e6
-                else:
+
+                if ch_type not in ['grad', 'mag', 'eeg']:
                     print ('Statistics not supported for %s channels. Skipping'
                            ' channel %s.') % (ch_type, ch_name)
                     continue
+
+                scaler = get_scaling(ch_type)
+
                 self._write_csv_row(writer, ch_name, this_data, times, tmin,
                                     tmax, min_idx, max_idx, scaler)
 
@@ -360,9 +362,14 @@ class EvokedStatsDialog(QtGui.QDialog):
                                                              ch_index)
             this_data.append(data[ch_index])
 
+        if ch_type not in ['grad', 'mag', 'eeg']:
+            messagebox(self, 'Could not find data.')
+            return
+
+        suffix = get_unit(ch_type)
+        scaler = get_scaling(ch_type)
+
         if ch_type == 'grad':
-            suffix = 'fT/cm'
-            scaler = 1e13
             gradsIdxs = _pair_grad_sensors_from_ch_names(names)
             this_data = np.array(this_data)
             try:
@@ -371,16 +378,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                 msg = 'Please select gradiometers as pairs for RMS.'
                 messagebox(self, msg)
                 return
-        elif ch_type == 'mag':
-            suffix = 'fT'
-            scaler = 1e15
-        elif ch_type == 'eeg':
-            suffix = 'uV'
-            scaler = 1e6
-        else:
-            msg = 'Could not find data.'
-            messagebox(self, msg)
-            return
+
         data = np.mean(this_data, axis=0)
         self.ui.doubleSpinBoxMinAmplitude.setSuffix(suffix)
         self.ui.doubleSpinBoxMaxAmplitude.setSuffix(suffix)

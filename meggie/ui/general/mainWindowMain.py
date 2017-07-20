@@ -109,6 +109,7 @@ from meggie.code_meggie.general.mvcModels import _initializeForwardSolutionList
 from meggie.code_meggie.general.mvcModels import _initializeInverseOperatorList
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.evoked import Evoked
+from meggie.code_meggie.utils.units import get_unit
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -407,38 +408,57 @@ class MainWindow(QtGui.QMainWindow):
         events = epochs.raw.event_id
         
         for event_name, event_id in events.items():
-            events_str = event_name + ' [' + str(len(epochs.raw[event_name])) + ' events found]'
+            events_str = ''.join([
+                event_name,
+                ' [' + str(len(epochs.raw[event_name])) + ' events found]'
+            ])
+
             item = QtGui.QListWidgetItem()
             item.setText(events_str)
             self.epochList.ui.listWidgetEvents.addItem(item)
         
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
+
         # Creates dictionary of strings instead of qstrings for rejections.
         params_rejections_str = dict((str(key), value) for key, value in
                                      params['reject'].iteritems())
+
         if 'mag' in params_rejections_str:
-            self.ui.textBrowserMag.setText(str(params_rejections_str['mag']) + ' fT')
+            factor = params_rejections_str['mag']
+            self.ui.textBrowserMag.setText(
+                str(factor) + ' ' + get_unit('mag'))
         else:
             self.ui.textBrowserMag.setText('-1')
+
         if 'grad' in params_rejections_str:
-            self.ui.textBrowserGrad.setText(str(params_rejections_str['grad']) + ' fT/cm')
+            factor = params_rejections_str['grad']
+            self.ui.textBrowserGrad.setText(
+                str(factor) + ' ' + get_unit('grad'))
         else:
             self.ui.textBrowserGrad.setText('-1')
+
         if 'eeg' in params_rejections_str:
-            self.ui.textBrowserEEG.setText(str(params_rejections_str['eeg']) + 'uV')
+            factor = params_rejections_str['eeg']
+            self.ui.textBrowserEEG.setText(
+                str(factor) + ' ' + get_unit('eeg'))
         else:
             self.ui.textBrowserEEG.setText('-1')
+
+        if 'eog' in params_rejections_str:
+            factor = params_rejections_str['eog']
+            self.ui.textBrowserEOG.setText(
+                str(factor) + ' ' + get_unit('eog'))
+        else:
+            self.ui.textBrowserEOG.setText('-1')
+
         if 'stim' in params_rejections_str:
             self.ui.textBrowserStim.setText('Yes')
         else:
             self.ui.textBrowserStim.setText('-1')
-        if 'eog' in params_rejections_str:
-            self.ui.textBrowserEOG.setText(str(params_rejections_str['eog'] / 
-                                               1e-6) + 'uV')
-        else:
-            self.ui.textBrowserEOG.setText('-1')
-        self.ui.textBrowserWorkingFile.setText(os.path.basename(epochs.raw.info['filename']))
+
+        self.ui.textBrowserWorkingFile.setText(
+            os.path.basename(epochs.raw.info['filename']))
 
     def clear_epoch_collection_parameters(self):
         """

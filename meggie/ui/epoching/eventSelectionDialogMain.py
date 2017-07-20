@@ -57,6 +57,8 @@ from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
+from meggie.code_meggie.utils.units import get_scaling
+
 class EventSelectionDialog(QtGui.QDialog):
     """
     Class containing the logic for EventSelectionDialog. It is used for
@@ -218,19 +220,19 @@ class EventSelectionDialog(QtGui.QDialog):
         if mag:
             value = self.ui.doubleSpinBoxMagReject_3.value()
             if value != -1:
-                reject['mag'] = value # 1e-15 * value
+                reject['mag'] = value
         if grad:
             value = self.ui.doubleSpinBoxGradReject_3.value()
             if value != -1:
-                reject['grad'] = value # 1e-13 * value
+                reject['grad'] = value
         if eeg:
             value = self.ui.doubleSpinBoxEEGReject_3.value()
             if value != -1:
-                reject['eeg'] = value # 1e-6 * value
+                reject['eeg'] = value
         if eog:
             value = self.ui.doubleSpinBoxEOGReject_3.value()
             if value != -1:
-                reject['eog'] = value # 1e-6 * value
+                reject['eog'] = value
 
         if mag and grad:
             meg = True

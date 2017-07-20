@@ -52,6 +52,10 @@ from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
 
+from meggie.code_meggie.utils.units import get_scaling
+from meggie.code_meggie.utils.units import get_unit
+from meggie.code_meggie.utils.units import get_power_unit
+
 
 @Singleton
 class Caller(object):
@@ -211,8 +215,12 @@ class Caller(object):
         taps = dic.get('filtersize')
         excl_ssp = dic.get('no-proj')
         comp_ssp = dic.get('average')
-        reject = dict(grad=1e-13 * float(rej_grad), mag=1e-15 * float(rej_mag),
-                      eeg=1e-6 * float(rej_eeg), eog=1e-6 * float(rej_eog))
+        reject = {
+            'grad': float(rej_grad) / get_scaling('grad'), 
+            'mag': float(rej_mag) / get_scaling('mag'),
+            'eeg': float(rej_eeg) / get_scaling('eeg'), 
+            'eog': float(rej_eog) / get_scaling('eog'),
+        }
 
         prefix = os.path.join(subject.subject_path, subject.subject_name) 
         eog_event_fname = prefix + '_eog-eve.fif'
@@ -402,22 +410,17 @@ class Caller(object):
         """
         params_copy = copy.deepcopy(params)
         reject_data = params_copy['reject']
-        
-        if 'grad' in reject_data:
-            reject_data['grad'] *= 1e-13
-        if 'mag' in reject_data:
-            reject_data['mag'] *= 1e-15
-        if 'eeg' in reject_data:
-            reject_data['eeg'] *= 1e-6
-        if 'eog' in reject_data:
-            reject_data['eog'] *= 1e-6
+
+        # convert data from human readable units to standard units
+        for key in ['grad', 'mag', 'eog', 'eeg']:
+            if key in reject_data:
+                reject_data[key] /= get_scaling(key)
         
         raw = subject.get_working_file()
              
         events = []
         event_params = params_copy['events']
         fixed_length_event_params = params_copy['fixed_length_events']
-       
         category = {}
 
         # event_id should not matter after epochs are created.
@@ -504,6 +507,7 @@ class Caller(object):
         stim_channel = subject.find_stim_channel()
         raw = subject.get_working_file()
         e = Events(self.experiment, raw, stim_channel, params['mask'], params['event_id'])
+
         return e.events
 
     def read_layout(self, layout):
@@ -588,20 +592,22 @@ class Caller(object):
         for index, (times, eventName, data) in enumerate(dataList):
             ca = fig.add_subplot(len(dataList), 1, index + 1) 
             ca.set_title(eventName)
-            # Times information is the same as in original evokeds
+
             if eventName.endswith('grad'):
-                label = ('fT/cm')
-                data *= 1e13
+                ch_type = 'grad'
             elif eventName.endswith('mag'):
-                label = ('fT')
-                data *= 1e15
+                ch_type = 'mag'
             elif eventName.endswith('eeg'):
-                label = ('uV')
-                data *= 1e6
+                ch_type = 'eeg'
+
+            label = get_unit(ch_type)
+            data *= get_scaling(ch_type)
 
             ca.plot(times, data)
+
             ca.set_xlabel('Time (s)')
             ca.set_ylabel(label)
+
         plt.tight_layout()
         fig.show()
 
@@ -800,17 +806,13 @@ class Caller(object):
         fig = plt.figure()
 
         plt.subplot2grid((3, 15), (0, 0), colspan=14)
+
         ch_type = mne.channels.channels.channel_type(evoked.info, ch_index)
-        if ch_type == 'grad':
-            plt.ylabel('Magnetic Field (fT/cm)')
-            evoked_data *= 1e13
-        elif ch_type == 'mag':
-            plt.ylabel('Magnetic Field (fT)')
-            evoked_data *= 1e15
-        elif ch_type == 'eeg' or type == 'eog':
-            plt.ylabel('Evoked potential (uV)')
-            evoked_data *= 1e6
-        else:
+
+        try:
+            plt.ylabel(get_unit(ch_type))
+            evoked_data *= get_scaling(ch_type)
+        except:
             raise TypeError('TFR plotting for %s channels not supported.' % 
                             ch_type)
 
@@ -1043,10 +1045,12 @@ class Caller(object):
                 color_idx += 1
             
             plt.xlabel('Frequency (Hz)')
-            if params['log']:
-                plt.ylabel('Power (dB)')
-            else:
-                plt.ylabel('(uV)')
+
+            plt.ylabel('Power ({})'.format(get_power_unit(
+                mne.channels.channels.channel_type(info, ch_idx),
+                params['log'] 
+            )))
+
             plt.show()
 
         info = deepcopy(info)

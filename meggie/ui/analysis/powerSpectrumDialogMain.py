@@ -115,7 +115,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         
         raw = self.caller.experiment.active_subject.get_working_file()
         
-        # epochs = dict()
         epochs = OrderedDict()
         for interval in times:
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
