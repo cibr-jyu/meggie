@@ -275,11 +275,9 @@ class Experiment(QObject):
 
     def save_experiment_settings(self):
         """
-        Saves (pickles) the experiment settings into a file in the root of
+        Saves the experiment settings into a file in the root of
         the experiment directory structure.
         """        
-        # save to file:
-        # construct save dict
         subjects = []
 
         for subject in self.subjects.values():
@@ -316,6 +314,15 @@ class Experiment(QObject):
             'description': self.description,
             'layout': self.layout,
         }
+
+        version = ''
+        try:
+            import pkg_resources
+            version = pkg_resources.get_distribution("meggie").version
+        except:
+            pass
+
+        save_dict['version'] = version
 
         try:
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
