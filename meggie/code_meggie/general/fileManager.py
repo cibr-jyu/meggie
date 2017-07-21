@@ -343,19 +343,15 @@ def delete_file_at(folder, files):
     os.remove(os.path.join(folder, files))
     
     
-def load_epochs(fname, load_object=False):
+def load_epochs(fname):
     """Load epochs from a folder.
     
     Keyword arguments:
     fname         -- the name of the fif-file containing epochs.
-    load_object   -- boolean to indicate whether to load epoch objects to
-                     memory.
     
-    # TODO: fix this.
-    Return a tuple with an Epochs instance and 
     """
     try:
-        epochs = mne.read_epochs(fname)
+        epochs = mne.read_epochs(fname, verbose='error')
     except IOError:
         raise Exception('Reading epochs failed.')
     return epochs
@@ -368,7 +364,7 @@ def load_evoked(fname):
     fName -- the name of the fif-file containing evokeds.
     """
     try:
-        evokeds = mne.read_evokeds(fname)
+        evokeds = mne.read_evokeds(fname, verbose='error')
     except IOError:
         raise IOError('Reading evokeds failed.')
     return evokeds
@@ -385,8 +381,14 @@ def open_raw(fname, preload=True):
     """
     try:
         print 'Reading ' + fname
-        return mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
-                          verbose='warning')
+        raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
+                          verbose='warning', add_eeg_ref=False)
+
+        # this was default till mne-python 0.13, so have it for consistency
+        if not mne.io.proj._has_eeg_average_ref_proj(raw.info['projs']):
+            raw.set_eeg_reference()
+
+        return raw
     except IOError as e:
         raise IOError(str(e))
     except OSError as e:

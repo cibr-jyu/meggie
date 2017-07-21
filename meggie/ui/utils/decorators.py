@@ -51,7 +51,5 @@ def threaded(func):
         # everything went fine and control should return to user
         QtGui.QApplication.restoreOverrideCursor()
 
-        print "Done."
-
         return result
     return decorated

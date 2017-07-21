@@ -78,8 +78,3 @@ class Evoked(QObject):
     def info(self, info):
         self._info = info
 
-#     def load_working_file(self):
-#         if self._raw is None:
-#             self._raw = load_evoked(self._path)
-#         return self._raw
-

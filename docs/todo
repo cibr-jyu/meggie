@@ -1,20 +1,17 @@
 TODO:
 
 high priority:
-- selvitä miksi eventselection-dialogin sulkeminen lataa kaikenlaisia evokkikokoelmia uudestaan.
 - meggien painotettu spektrikeskiarvo
 - preprocess ica
 - tee difference plot icalle
-- migraatiokoodi reject parametereille. 
-  * tällä saadaan myös aikaan yleisempi migraatiomekanismi
-  * exp-filuihin voisi laittaa versiot, että millä versiolla luotu, tällöin version pitäisi olla myös meggien tiedossa aina joka on hyvä, toivottavasti se on kaivettavissa jotenkin dynaamisesti
 
 mid priority:
-- valinnaiseksi flatti output-kansio
 - lokikoodin siivousta ehkä, ehkä käydä läpi, wrap_mne_call-jutut
 - tee testejä
 
 low priority:
+- valinnaiseksi flatti output-kansio
+- tee exp-saving paremmin skaalautuvaksi, nykyään se lataa jokaisen evokedin joka subjektilta
 - batch spektrien tallentamiseen (omassa haarassa aloitus tälle)
 - spektrien keskiarvoistus koehenkilöiden välillä
 - evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan
