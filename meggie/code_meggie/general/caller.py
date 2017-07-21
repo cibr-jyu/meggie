@@ -1009,10 +1009,16 @@ class Caller(object):
         for psd_list in psd_groups.values():
             freqs = psd_list[0][1]
             break
+
         
         psds = []
         for psd_list in psd_groups.values():
-            psds.append(np.mean([psds_ for psds_, freqs in psd_list], axis=0))
+            # do a weighted (epoch lengths as weights) average of psds inside a group
+            weights = np.array([length for psds_, freqs, length in psd_list])
+            weights = weights.astype(float) / np.sum(weights)
+            psd = np.average([psds_ for psds_, freqs, length in psd_list], 
+                             weights=weights, axis=0)
+            psds.append(psd)
             
         colors = self.colors(len(psds))
 
@@ -1086,18 +1092,24 @@ class Caller(object):
         
         for key, epochs in epoch_groups.items():
             for epoch in epochs:
+
+                epoch.load_data()
+                length = epoch._data.shape[-1]
+                
                 psds, freqs = wrap_mne_call(self.experiment, psd_welch,
-                                            epoch, fmin=fmin, fmax=fmax, 
-                                            n_fft=nfft, n_overlap=overlap, 
-                                            picks=picks, proj=True, verbose=True,
-                                            n_jobs=n_jobs)
+                    epoch, fmin=fmin, fmax=fmax, n_fft=nfft, n_overlap=overlap,
+                    picks=picks, proj=True, verbose=True, n_jobs=n_jobs)
+
                 psds = np.average(psds, axis=0)
+
                 if params['log']:
                     psds = 10 * np.log10(psds)
                 
                 if key not in psd_groups:
                     psd_groups[key] = []
-                psd_groups[key].append((psds, freqs))
+
+                psd_groups[key].append((psds, freqs, length))
+
         return psd_groups
 
     @threaded
