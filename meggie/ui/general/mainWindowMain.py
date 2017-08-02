@@ -1339,6 +1339,18 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as e:
             exc_messagebox(self, e)
 
+    def on_pushButtonICA_clicked(self, checked=None):
+        """
+        Show the dialog for ICA preprocessing.
+        """
+        if checked is None:
+            return
+        if self.caller.experiment.active_subject is None:
+            return
+
+        self.icaDialog = ICADialog(self)
+        self.icaDialog.show()
+
     def on_pushButtonFilter_clicked(self, checked=None):
         """
         Show the dialog for filtering.
