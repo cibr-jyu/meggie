@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>343</height>
+    <width>470</width>
+    <height>647</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_19">
+    <layout class="QHBoxLayout" name="bottomLayout">
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -37,7 +37,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonCompute">
+      <widget class="QPushButton" name="pushButtonApply">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -45,7 +45,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Compute</string>
+        <string>Apply</string>
        </property>
       </widget>
      </item>
@@ -64,28 +64,21 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>525</width>
-        <height>283</height>
+        <width>452</width>
+        <height>587</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBoxParameters">
+        <widget class="QGroupBox" name="groupBoxComputation">
          <property name="title">
-          <string>ICA parameters</string>
+          <string>ICA computation</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <layout class="QGridLayout" name="parametersLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelTmin">
-              <property name="text">
-               <string>Start time:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QSpinBox" name="spinBoxVectors">
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxMaxIter">
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
@@ -95,68 +88,135 @@
               <property name="minimum">
                <number>1</number>
               </property>
+              <property name="maximum">
+               <number>10000000</number>
+              </property>
               <property name="value">
-               <number>2</number>
+               <number>2000</number>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelTmax">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelNComponents">
               <property name="text">
-               <string>End time:</string>
+               <string>Number of components:</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxTmax">
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxNComponents">
               <property name="suffix">
-               <string> s</string>
+               <string/>
               </property>
               <property name="decimals">
                <number>3</number>
               </property>
               <property name="maximum">
-               <double>9.900000000000000</double>
+               <double>1000.000000000000000</double>
               </property>
               <property name="singleStep">
                <double>0.100000000000000</double>
               </property>
               <property name="value">
-               <double>0.200000000000000</double>
+               <double>0.950000000000000</double>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxTmin">
-              <property name="suffix">
-               <string> s</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="minimum">
-               <double>-10.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-              <property name="value">
-               <double>-0.200000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelVectors">
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelMaxIter">
               <property name="toolTip">
                <string>Number of projections calculated for events. Try increasing this if the artefact is not completely removed.</string>
               </property>
               <property name="text">
-               <string>Number of projection vectors for EEG channels:</string>
+               <string>Maximum number of iterations: </string>
               </property>
               <property name="scaledContents">
                <bool>false</bool>
               </property>
              </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButtonCompute">
+            <property name="text">
+             <string>Compute</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBoxComponents">
+         <property name="title">
+          <string>ICA components</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelNotRemoved">
+                <property name="text">
+                 <string>Not removed</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QListWidget" name="listWidgetNotRemoved"/>
+              </item>
+              <item row="4" column="0">
+               <widget class="QListWidget" name="listWidgetRemoved"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelRemoved">
+                <property name="text">
+                 <string>Removed</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="pushButtonTransfer">
+                <property name="text">
+                 <string>Transfer</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="2" column="0">
+               <widget class="QPushButton" name="pushButtonPlotProperties">
+                <property name="text">
+                 <string>Plot properties</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="pushButtonPlotOverlay">
+                <property name="text">
+                 <string>Plot overlay</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="pushButtonPlotSources">
+                <property name="text">
+                 <string>Plot sources</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="pushButtonPlotTopographies">
+                <property name="text">
+                 <string>Plot topographies</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -188,7 +248,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonCompute</sender>
+   <sender>pushButtonApply</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>accept()</slot>

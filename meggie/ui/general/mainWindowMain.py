@@ -75,6 +75,7 @@ from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
+from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.analysis.TFRDialogMain import TFRDialog
 from meggie.ui.analysis.TFRTopologyDialogMain import TFRTopologyDialog
 from meggie.ui.analysis.TFRfromRawDialogMain import TFRRawDialog
