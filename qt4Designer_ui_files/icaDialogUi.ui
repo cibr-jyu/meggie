@@ -82,9 +82,6 @@
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
-              <property name="toolTip">
-               <string>Number of projections calculated for events. Try increasing this if the artefact is not completely removed.</string>
-              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -99,7 +96,7 @@
             <item row="0" column="0">
              <widget class="QLabel" name="labelNComponents">
               <property name="text">
-               <string>Number of components:</string>
+               <string>Explained variance:</string>
               </property>
              </widget>
             </item>
@@ -124,9 +121,6 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelMaxIter">
-              <property name="toolTip">
-               <string>Number of projections calculated for events. Try increasing this if the artefact is not completely removed.</string>
-              </property>
               <property name="text">
                <string>Maximum number of iterations: </string>
               </property>

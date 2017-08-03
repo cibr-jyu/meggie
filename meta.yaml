@@ -1,6 +1,6 @@
 package:
   name: meggie
-  version: "0.4.3"
+  version: "0.5.0"
 
 source:
   path: .
@@ -19,6 +19,7 @@ requirements:
     - mayavi
     - h5py
     - joblib
+    - scikit-learn
     - mne ==0.13.0
 
 about:
