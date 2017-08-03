@@ -386,7 +386,8 @@ def open_raw(fname, preload=True):
 
         # this was default till mne-python 0.13, so have it for consistency
         if not mne.io.proj._has_eeg_average_ref_proj(raw.info['projs']):
-            raw.set_eeg_reference()
+            if mne.pick_types(raw.info, meg=False, eeg=True):
+                raw.set_eeg_reference()
 
         return raw
     except IOError as e:
@@ -394,7 +395,7 @@ def open_raw(fname, preload=True):
     except OSError as e:
         raise OSError('You do not have permission to read the file. ' + str(e))
     except ValueError as e:
-        raise ValueError('File is not a raw-file. ' + str(e))
+        raise ValueError('A problem occurred while opening: ' + str(e))
 
 
 def save_raw(experiment, raw, fname, overwrite=True):
