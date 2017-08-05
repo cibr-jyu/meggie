@@ -4,14 +4,18 @@ Created on Aug 02, 2017
 
 @author: erpipehe
 '''
+from copy import deepcopy
 
 import mne
+import numpy as np
 
 from PyQt4 import QtCore,QtGui
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.preprocessing.icaDialogUi import Ui_Dialog
 from meggie.ui.utils.messaging import messagebox
+
+import meggie.code_meggie.general.fileManager as fileManager
 
 class ICADialog(QtGui.QDialog):
     """
@@ -62,6 +66,7 @@ class ICADialog(QtGui.QDialog):
         self.ica.fit(raw)
 
         # TODO: what if ica does not converge?
+        # TODO: what happens to different type of channels?
 
         for idx in range(self.ica.n_components_):
             label = 'Component ' + str(idx+1)
@@ -176,18 +181,61 @@ class ICADialog(QtGui.QDialog):
                     idx += 1
                 break
 
-    def on_pushButtonPlotOverlay_clicked(self, checked=None):
+    def on_pushButtonPlotChanges_clicked(self, checked=None):
         """
         """
         if checked is None:
             return
 
-        picks = self.get_picks()
-
         raw = self.caller.experiment.active_subject.get_working_file()
+        
+        raw_removed = raw.copy()
+        indices = [self.component_info[name] for name in self.removed]
+        self.ica.apply(raw_removed, exclude=indices)
+        
+        changes_raw = self.prepare_raw_for_changes(raw_removed, raw)
+        changes_raw.plot(color='red', bad_color='blue')
 
-        # TODO: implement overlay, maybe try to utilize the raw plot
+    def prepare_raw_for_changes(self, raw_new, raw_old):
+        """ modifies first raw object in place so that the second raw object is 
+        interleaved to first one
+        """
 
+        new_info = raw_old.info.copy()
+        new_info['nchan'] = 2*raw_old.info['nchan']
+
+        ch_names = []
+        for ch_name in raw_old.info['ch_names']:
+            ch_names.append(ch_name + ' (old)')
+            ch_names.append(ch_name + ' (new)')
+        new_info['ch_names'] = ch_names
+
+        chs = []
+        for idx, ch in enumerate(raw_old.info['chs']):
+            ch_1 = deepcopy(ch)
+            ch_1['ch_name'] = new_info['ch_names'][idx*2]
+            chs.append(ch_1)
+
+            ch_2 = deepcopy(ch)
+            ch_2['ch_name'] = new_info['ch_names'][idx*2+1]
+            chs.append(ch_2)
+        new_info['chs'] = chs
+
+        new_info['bads'] = [name for idx, name in enumerate(new_info['ch_names'])
+                            if idx%2 == 0]
+
+        raw_new.info = new_info
+
+        raw_old_data = raw_old._data
+        raw_new_data = raw_new._data
+
+        data = np.zeros((raw_old_data.shape[0]*2, raw_old_data.shape[1]))
+        data[0::2, :] = raw_old_data
+        data[1::2, :] = raw_new_data
+
+        raw_new._data = data
+
+        return raw_new
 
     def get_picks(self):
         not_removed_selected = [item.text() for item in 
@@ -205,10 +253,16 @@ class ICADialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Apply the zeroing.
+        Transform and save the data.
         """
 
-        print "Miau"
+        raw = self.caller.experiment.active_subject.get_working_file()
+        
+        indices = [self.component_info[name] for name in self.removed]
+        self.ica.apply(raw, exclude=indices)
+        
+        fileManager.save_raw(self.caller.experiment, raw,
+                            raw.info['filename'], overwrite=True)
 
-        self.ica = None
+        self.initialize()
         self.close()
