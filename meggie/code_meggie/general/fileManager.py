@@ -407,12 +407,25 @@ def save_raw(experiment, raw, fname, overwrite=True):
     temp_fname = os.path.join(folder, '_' + bname) 
     wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True,
         verbose='warning')
+
+    pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
+    pat_new = re.compile('_' + bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
     
-    old_files = glob.glob(os.path.join(folder, bname[:-4] + '*'))
-    new_files = glob.glob(os.path.join(folder, "_" + bname[:-4] + '*'))
+    from meggie.code_meggie.utils.debug import debug_trace;
+    debug_trace()
+    
+    contents = os.listdir(folder)
+    old_files = [fname for fname in contents if pat_old.match(fname)]
+    new_files = [fname for fname in contents if pat_new.match(fname)]
     
     if len(old_files) != len(new_files):
         print "Be warned, amount of parts has changed!"
+        print "Old parts: "
+        for part in old_files:
+            print part
+        print "New parts: "
+        for part in new_files:
+            print part
         
     for file_ in new_files:
         shutil.move(os.path.join(folder, os.path.basename(file_)), 
