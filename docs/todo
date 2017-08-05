@@ -6,6 +6,7 @@ high priority:
 
 mid priority:
 - lokikoodin siivousta ehkä, ehkä käydä läpi, wrap_mne_call-jutut
+- tutki wrap_mne_callsit ja muuta mne-kutsut semmosiks jos niikseen
 - tee testejä
 
 low priority:
