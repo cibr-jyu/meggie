@@ -328,7 +328,6 @@ class Caller(object):
 
         self._apply_exg(kind, raw, directory, projs, applied,
                         do_meanwhile=self.parent.update_ui)
-        self.experiment.save_experiment_settings()
         return True
 
     @threaded
