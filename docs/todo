@@ -1,15 +1,12 @@
 TODO:
 
-high priority:
-- preprocess ica
-- tee difference plot icalle
-
-mid priority:
 - lokikoodin siivousta ehkä, ehkä käydä läpi, wrap_mne_call-jutut
 - tutki wrap_mne_callsit ja muuta mne-kutsut semmosiks jos niikseen
-- tee testejä
 
 low priority:
+- ala pikkuhiljaa tyhjätä calleria siirtämällä asioita loogisiin kokonaisuuksiin eri tiedostoihin
+- pylint mukaan
+- tee testejä
 - valinnaiseksi flatti output-kansio
 - tee exp-saving paremmin skaalautuvaksi, nykyään se lataa jokaisen evokedin joka subjektilta
 - batch spektrien tallentamiseen (omassa haarassa aloitus tälle)
@@ -21,14 +18,14 @@ low priority:
 - spektrien värit määritettäviksi?
 - ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
 - jos mahdollista niin samankaltaista stats/selection juttua spektreille
-- add_eeg_ref valinnaiseksi, oletuksena falseksi kuten mne:n uuteen versioonkin tulee
 - open_rawiin mahdollisuus konkatenoida tiedostoja?
 - siivota batch mainwindown sisällä?
 
 Mitä tehdä sourceanalysiksille:
 - source analysis omaan haaraan 8-- ) tai tarkistus että se toimii
+- ja vie callerista ne pois, ja pikkuhiljaa muutkin
 
-- Mitä tehdä scriptingille:
+Mitä tehdä scriptingille:
 * nyt omassa haarassaan
 * Poistetaanko kun osoittautui niin vaikeasti toteutettavaksi?
 * vanha todo:
