@@ -1,4 +1,4 @@
-""" je suis un chat """
+""" This module provides tools for doing tasks in worker threads """
 
 from Queue import Queue
 from Queue import Empty
@@ -9,10 +9,11 @@ from multiprocessing.pool import ThreadPool
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import traceback
 
 def threaded(func):
+    """ Outer function for threaded-decoration """
     def decorated(*args, **kwargs):
+        """ Inner function for threaded-decoration """
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
         QtGui.QApplication.setOverrideCursor(
@@ -25,6 +26,7 @@ def threaded(func):
         # exceptions are carried over from worker thread
         # to main thread
         def exception_wrapper():
+            """ Helper to get exception info out of thread """
             try:
                 result = func(*args, **kwargs)
             except:

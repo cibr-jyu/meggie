@@ -1,3 +1,5 @@
+""" This module provides tools to finding paths """
+
 def filepath(filename):
     """ Tries to find correct path for file with pkg_resources """
     try:
