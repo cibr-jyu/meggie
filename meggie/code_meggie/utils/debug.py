@@ -8,5 +8,4 @@ def debug_trace():
     from PyQt4.QtCore import pyqtRemoveInputHook
     pyqtRemoveInputHook()
 
-    import pdb
-    pdb.set_trace()
+    import pdb; pdb.set_trace()

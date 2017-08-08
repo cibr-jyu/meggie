@@ -5,7 +5,7 @@ Created on Aug 20, 2013
 @author: kpaliran
 '''
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtCore, QtGui
 
 from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -25,7 +25,7 @@ class FilterDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
-        
+
         self.filterParameterDictionary = None
         self.caller = Caller.Instance()
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
@@ -34,11 +34,11 @@ class FilterDialog(QtGui.QDialog):
         """
         Draws the preview.
         """
-        if checked is None: 
+        if checked is None:
             return
 
         paramDict = self.collect_parameter_values()
-        if paramDict.get('isEmpty') == True:
+        if paramDict.get('isEmpty'):
             message = 'Please select filter(s) to preview'
             messagebox(self.parent, message)
             return
@@ -51,19 +51,19 @@ class FilterDialog(QtGui.QDialog):
         subject = self.caller.experiment.active_subject
         params = self.collect_parameter_values()
         info = subject.get_working_file().info
-        
+
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
-        
+
         try:
             self._validateFilterFreq(params, info['sfreq'])
-            raw = self.caller.filter(params, subject, 
+            raw = self.caller.filter(params, subject,
                                      do_meanwhile=self.parent.update_ui,
                                      preview=True)
             raw.plot(block=True)
-        except Exception as e:
+        except:
             pass
-        
+
         self.parent.initialize_ui()
 
     def accept(self):
@@ -75,28 +75,29 @@ class FilterDialog(QtGui.QDialog):
         parameter_values = self.collect_parameter_values()
         info = subject.get_working_file().info
         self.batching_widget.data[subject.subject_name] = parameter_values
-        
+
         try:
             self._validateFilterFreq(parameter_values, info['sfreq'])
             self.filter(subject)
-        except Exception as e:
+        except Exception as exc:
             import traceback; traceback.print_exc()
-            self.batching_widget.failed_subjects.append((subject, str(e)))
+            self.batching_widget.failed_subjects.append((subject, str(exc)))
 
         self.batching_widget.cleanup()
         self.close()
         self.parent.initialize_ui()
-        
+
     def acceptBatch(self):
-        
+        """
+        """
         recently_active_subject = self.caller.experiment.active_subject.subject_name
         subject_names = []
-        
+
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
             if item.checkState() == QtCore.Qt.Checked:
                 subject_names.append(item.text())
-        
+
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
         #    excessive reading of a raw file.
@@ -105,20 +106,20 @@ class FilterDialog(QtGui.QDialog):
             info = self.caller.experiment.active_subject.get_working_file().info
             subject = self.caller.experiment.active_subject
             # Check if the filter frequency values are sane or not.
-            
+
             try:
                 self._validateFilterFreq(params, info['sfreq'])
                 self.filter(subject)
-            except Exception as e:
+            except Exception as exc:
                 import traceback; traceback.print_exc()
-                self.batching_widget.failed_subjects.append((subject, str(e)))
-        
+                self.batching_widget.failed_subjects.append((subject, str(exc)))
+
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
-                
+
                 params = self.batching_widget.data[name]
 
                 try:
@@ -126,87 +127,81 @@ class FilterDialog(QtGui.QDialog):
                     info = subject.get_working_file().info
                     self._validateFilterFreq(params, info['sfreq'])
                     self.filter(subject)
-                except Exception as e:
+                except Exception as exc:
                     import traceback; traceback.print_exc()
-                    self.batching_widget.failed_subjects.append((subject, str(e)))
-                
+                    self.batching_widget.failed_subjects.append((subject, str(exc)))
+
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.close()
-    
+
     def _validateFilterFreq(self, paramDict, samplerate):
         """
         Checks the validity of filter cutoff frequency values.
         """
-        if 'lowpass' in paramDict and paramDict['lowpass'] == True:
-            if ( paramDict['low_cutoff_freq'] > samplerate/2 ):
+        if paramDict.get('lowpass'):
+            if paramDict['low_cutoff_freq'] > samplerate/2:
                 self._show_filter_freq_error(samplerate)
 
-        if ( 'highpass' in paramDict and paramDict['highpass'] == True ):
-            if ( paramDict['high_cutoff_freq'] > samplerate/2 ):
+        if paramDict.get('highpass'):
+            if paramDict['high_cutoff_freq'] > samplerate/2:
                 self._show_filter_freq_error(samplerate)
 
     def _show_filter_freq_error(self, samplerate):
         message = ('Cutoff frequencies should be lower than samplerate/2 ' +
                    '(' + 'current samplerate is ' + str(samplerate) + ' Hz)')
         raise ValueError(message)
-        
-    def _showLengthError(self, filterSource):
-        """
-        Show the error for wrong type of filter length string.
 
-        Keyword arguments:
-
-        filterSource     -- which filter UI box is the source of error.
-        """
-        message = 'Check filter length for ' + filterSource + \
-        '. It should end with \'s\' or \'ms\''
-        messagebox(self.parent, message)
-        
     def selection_changed(self, subject_name, params_dict):
-        subject = self.caller.experiment.subjects[subject_name]
+        """
+        """
         if len(params_dict) > 0:
-            dic = params_dict  
+            dic = params_dict
         else:
             dic = self.get_default_values()
         self.ui.doubleSpinBoxLength.setProperty("value", dic.get('length'))
         self.ui.doubleSpinBoxTransBandwidth.setProperty("value", dic.get('trans_bw'))
-    
+
         if dic.get('lowpass'):
-            self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq'))
+            self.ui.doubleSpinBoxLowpassCutoff.setProperty(
+                "value", dic.get('low_cutoff_freq'))
         else:
-            self.ui.doubleSpinBoxLowpassCutoff.setProperty("value", dic.get('low_cutoff_freq_false'))
+            self.ui.doubleSpinBoxLowpassCutoff.setProperty(
+                "value", dic.get('low_cutoff_freq_false'))
         self.ui.checkBoxLowpass.setChecked(dic.get('lowpass'))
-    
+
         self.ui.checkBoxHighpass.setChecked(dic.get('highpass'))
         if dic.get('highpass'):
-            self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq'))
+            self.ui.doubleSpinBoxHighpassCutoff.setProperty(
+                "value", dic.get('high_cutoff_freq'))
         else:
-            self.ui.doubleSpinBoxHighpassCutoff.setProperty("value", dic.get('high_cutoff_freq_false'))
-        
+            self.ui.doubleSpinBoxHighpassCutoff.setProperty(
+                "value", dic.get('high_cutoff_freq_false'))
+
         self.ui.checkBoxBandstop.setChecked(dic.get('bandstop1'))
         if dic.get('bandstop1'):
-            self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq'))
+            self.ui.doubleSpinBoxBandstopFreq.setProperty(
+                "value", dic.get('bandstop1_freq'))
         else:
             self.ui.doubleSpinBoxBandstopFreq.setProperty("value", dic.get('bandstop1_freq_false'))
-        
+
         self.ui.checkBoxBandstop2.setChecked(dic.get('bandstop2'))
         if dic.get('bandstop2'):
             self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq'))
         else:
             self.ui.doubleSpinBoxBandstopFreq2.setProperty("value", dic.get('bandstop2_freq_false'))
-        
+
         self.ui.doubleSpinBoxBandstopWidth.setProperty("value", dic.get('bandstop_bw'))
         self.ui.doubleSpinBoxNotchTransBw.setProperty("value", dic.get('bandstop_transbw'))
         self.ui.doubleSpinBoxBandStopLength.setProperty("value", dic.get('bandstop_length'))
         self.update()
-    
+
     def get_default_values(self):
         """Sets default values for dialog."""
         return {
             'length': 10.00,
-            'trans_bw': 0.500, 
+            'trans_bw': 0.500,
             'lowpass': True,
             'low_cutoff_freq': 40.000,
             'highpass': True,
@@ -219,7 +214,7 @@ class FilterDialog(QtGui.QDialog):
             'bandstop_transbw': 0.500,
             'bandstop_length': 10.00
         }
-        
+
     def collect_parameter_values(self):
         """
         Gets the filtering parameters from the UI fields and performs
@@ -233,48 +228,43 @@ class FilterDialog(QtGui.QDialog):
         dictionary['lowpass'] = self.ui.checkBoxLowpass.isChecked()
         if dictionary['lowpass']:
             dictionary['isEmpty'] = False
-            dictionary['low_cutoff_freq'] = self.ui.\
-                                       doubleSpinBoxLowpassCutoff.value()
+            dictionary['low_cutoff_freq'] = self.ui.doubleSpinBoxLowpassCutoff.value()  # noqa
         else:
-            #Only UI needs the value: value set to different key
+            # Only UI needs the value: value set to different key
             dictionary['low_cutoff_freq_false'] = self.ui.doubleSpinBoxLowpassCutoff.value()
 
         dictionary['highpass'] = self.ui.checkBoxHighpass.isChecked()
         if dictionary['highpass']:
             dictionary['isEmpty'] = False
-            dictionary['high_cutoff_freq'] = self.ui.\
-                                        doubleSpinBoxHighpassCutoff.value()
+            dictionary['high_cutoff_freq'] = self.ui.doubleSpinBoxHighpassCutoff.value()  # noqa
         else:
             dictionary['high_cutoff_freq_false'] = self.ui.doubleSpinBoxHighpassCutoff.value()
+
         dictionary['bandstop1'] = self.ui.checkBoxBandstop.isChecked()
         if dictionary['bandstop1']:
             dictionary['isEmpty'] = False
-            dictionary['bandstop1_freq'] = self.ui.\
-                                            doubleSpinBoxBandstopFreq.value()
+            dictionary['bandstop1_freq'] = self.ui.doubleSpinBoxBandstopFreq.value()  # noqa
         else:
             dictionary['bandstop1_freq_false'] = self.ui.doubleSpinBoxBandstopFreq.value()
-
 
         dictionary['bandstop2'] = self.ui.checkBoxBandstop2.isChecked()
         if dictionary['bandstop2']:
             dictionary['isEmpty'] = False
-            dictionary['bandstop2_freq'] = self.ui.\
-                                            doubleSpinBoxBandstopFreq2.value()
+            dictionary['bandstop2_freq'] = self.ui.doubleSpinBoxBandstopFreq2.value()  # noqa
         else:
             dictionary['bandstop2_freq_false'] = self.ui.doubleSpinBoxBandstopFreq2.value()
 
         dictionary['bandstop_bw'] = self.ui.doubleSpinBoxBandstopWidth.value()
-        dictionary['bandstop_transbw'] = self.ui.doubleSpinBoxNotchTransBw.\
-                                                                        value()
+        dictionary['bandstop_transbw'] = self.ui.doubleSpinBoxNotchTransBw.value()  # noqa
         length = str(self.ui.doubleSpinBoxBandStopLength.value())
         dictionary['bandstop_length'] = length
-        if dictionary.get('isEmpty') == True:
+        if dictionary.get('isEmpty'):
             message = 'Please select filter(s) to apply'
             messagebox(self.parent, message)
             return
 
         return dictionary
-    
+
     def filter(self, subject):
         """Calls caller class for filtering the given
         subject and passes errors to accept method.
@@ -286,5 +276,5 @@ class FilterDialog(QtGui.QDialog):
         #MNE wants the lengths to be human-readable values
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
-        
+
         self.caller.filter(params, subject, do_meanwhile=self.parent.update_ui)

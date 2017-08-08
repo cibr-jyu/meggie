@@ -9,16 +9,15 @@ from copy import deepcopy
 import mne
 import numpy as np
 
-from PyQt4 import QtCore,QtGui
+from PyQt4 import QtGui
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.preprocessing.icaDialogUi import Ui_Dialog
-from meggie.ui.utils.messaging import messagebox
 
 import meggie.code_meggie.general.fileManager as fileManager
 
 class ICADialog(QtGui.QDialog):
-    """
+    """ Functionality for ICA dialog UI
     """
 
     def __init__(self, parent):
@@ -26,7 +25,7 @@ class ICADialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        
+
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection)
@@ -38,11 +37,13 @@ class ICADialog(QtGui.QDialog):
         self.caller = Caller.Instance()
 
     def initialize(self):
+        """ Resets all the storage
+        """
         self.ica = None
         self.ui.listWidgetNotRemoved.clear()
         self.ui.listWidgetRemoved.clear()
         self.not_removed = []
-        self.removed = [] 
+        self.removed = []
         self.component_info = {}
 
     def on_pushButtonCompute_clicked(self, checked=None):
@@ -58,7 +59,7 @@ class ICADialog(QtGui.QDialog):
         max_iter = self.ui.spinBoxMaxIter.value()
 
         self.ica = mne.preprocessing.ICA(
-            n_components=n_components, 
+            n_components=n_components,
             method='fastica',
             max_iter=max_iter)
 
@@ -84,9 +85,9 @@ class ICADialog(QtGui.QDialog):
             return
 
         # gather contents of the widgets
-        not_removed_selected = [item.text() for item in 
+        not_removed_selected = [item.text() for item in
                                 self.ui.listWidgetNotRemoved.selectedItems()]
-        removed_selected = [item.text() for item in 
+        removed_selected = [item.text() for item in
                             self.ui.listWidgetRemoved.selectedItems()]
 
         # update the "backend"
@@ -112,14 +113,14 @@ class ICADialog(QtGui.QDialog):
             self.ui.listWidgetNotRemoved.addItem(item)
 
     def on_listWidgetNotRemoved_clicked(self):
-        """ enforce only one list have a selected item
+        """ Enforce only one list have a selected item
         """
         widget = self.ui.listWidgetRemoved
         for i in range(widget.count()):
             widget.item(i).setSelected(False)
 
     def on_listWidgetRemoved_clicked(self):
-        """ enforce only one list have a selected item
+        """ Enforce only one list have a selected item
         """
         widget = self.ui.listWidgetNotRemoved
         for i in range(widget.count()):
@@ -134,6 +135,7 @@ class ICADialog(QtGui.QDialog):
         figs = self.ica.plot_components()
 
         def update_topography_texts():
+            """ Little trick to allow clean return out of nested loops """
             idx = 1
             for fig in figs:
                 for ax in fig.get_axes():
@@ -162,7 +164,7 @@ class ICADialog(QtGui.QDialog):
         sources.plot()
 
     def on_pushButtonPlotProperties_clicked(self, checked=None):
-        """ plot the property windows for all selected items
+        """ Plot the property windows for all selected items
         """
         if checked is None:
             return
@@ -188,16 +190,16 @@ class ICADialog(QtGui.QDialog):
             return
 
         raw = self.caller.experiment.active_subject.get_working_file()
-        
+
         raw_removed = raw.copy()
         indices = [self.component_info[name] for name in self.removed]
         self.ica.apply(raw_removed, exclude=indices)
-        
+
         changes_raw = self.prepare_raw_for_changes(raw_removed, raw)
         changes_raw.plot(color='red', bad_color='blue')
 
     def prepare_raw_for_changes(self, raw_new, raw_old):
-        """ modifies first raw object in place so that the second raw object is 
+        """ Modifies first raw object in place so that the second raw object is
         interleaved to first one
         """
 
@@ -238,14 +240,16 @@ class ICADialog(QtGui.QDialog):
         return raw_new
 
     def get_picks(self):
-        not_removed_selected = [item.text() for item in 
+        """ Finds out the indices off all the selected components
+        """
+        not_removed_selected = [item.text() for item in
                                 self.ui.listWidgetNotRemoved.selectedItems()]
-        removed_selected = [item.text() for item in 
+        removed_selected = [item.text() for item in
                             self.ui.listWidgetRemoved.selectedItems()]
 
-        picks = [self.component_info[label] 
+        picks = [self.component_info[label]
                  for label in not_removed_selected]
-        picks.extend([self.component_info[label] 
+        picks.extend([self.component_info[label]
                       for label in removed_selected])
 
         picks = sorted(picks)
@@ -257,12 +261,12 @@ class ICADialog(QtGui.QDialog):
         """
 
         raw = self.caller.experiment.active_subject.get_working_file()
-        
+
         indices = [self.component_info[name] for name in self.removed]
         self.ica.apply(raw, exclude=indices)
-        
+
         fileManager.save_raw(self.caller.experiment, raw,
-                            raw.info['filename'], overwrite=True)
+                             raw.info['filename'], overwrite=True)
 
         self.initialize()
         self.close()
