@@ -49,7 +49,7 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
                       verbose=True)
 
     if not preview:
-        fileManager.save_raw(experiment, dataToFilter, 
+        fileManager.save_raw(experiment, dataToFilter,
                              dataToFilter.info['filename'], overwrite=True)
 
     return dataToFilter
