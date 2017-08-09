@@ -413,8 +413,8 @@ def save_raw(experiment, raw, fname, overwrite=True):
     pat_new = re.compile('_' + bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
     
     contents = os.listdir(folder)
-    old_files = [fname for fname in contents if pat_old.match(fname)]
-    new_files = [fname for fname in contents if pat_new.match(fname)]
+    old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
+    new_files = [fname_ for fname_ in contents if pat_new.match(fname_)]
     
     if len(old_files) != len(new_files):
         print "Be warned, amount of parts has changed!"
@@ -428,7 +428,6 @@ def save_raw(experiment, raw, fname, overwrite=True):
     for file_ in new_files:
         shutil.move(os.path.join(folder, os.path.basename(file_)), 
                     os.path.join(folder, os.path.basename(file_)[1:]))
-    
     experiment.active_subject.working_file_name = os.path.basename(fname)
     raw.info['filename'] = fname
     raw._filenames[0] = fname
