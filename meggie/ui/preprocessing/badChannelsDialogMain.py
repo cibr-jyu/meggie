@@ -18,7 +18,7 @@ class BadChannelsDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         
         self.raw = None
-        raw = parent.caller.experiment.active_subject.get_working_file()
+        raw = parent.experiment.active_subject.get_working_file()
         channels = raw.ch_names
         
         for channel in channels:
@@ -37,7 +37,7 @@ class BadChannelsDialog(QtGui.QDialog):
     def on_pushButtonPlot_clicked(self, checked=None):
         if checked is None:
             return
-        self.raw = self.parent.caller.experiment.active_subject.get_working_file().copy()
+        self.raw = self.parent.experiment.active_subject.get_working_file().copy()
         items = self.ui.listWidgetBads.selectedItems()
         self.raw.info['bads'] = [unicode(item.text()) for item in items]
         fig = self.raw.plot()
@@ -57,10 +57,10 @@ class BadChannelsDialog(QtGui.QDialog):
     def accept(self):
         items = self.ui.listWidgetBads.selectedItems()
         
-        raw = self.parent.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
             
         raw.info['bads'] = [unicode(item.text()) for item in items]        
-        experiment = self.parent.caller.experiment
+        experiment = self.parent.experiment
         fname = raw.info['filename']
         fileManager.save_raw(experiment, raw, fname, overwrite=True)
         experiment.action_logger.log_message(''.join([

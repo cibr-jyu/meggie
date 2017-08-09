@@ -242,6 +242,7 @@ class MainWindow(QtGui.QMainWindow):
             
             if exp:
                 self.caller.experiment = exp
+                self.experiment = exp
                 self.add_tabs()
                 self.initialize_ui()
                 self.reinitialize_models()
@@ -300,6 +301,7 @@ class MainWindow(QtGui.QMainWindow):
     def setExperiment(self, newExperiment):
         """Temporary setter for experiment."""
         self.caller.experiment = newExperiment
+        self.experiment = newExperiment
         gc.collect()
         
         self.add_tabs()
@@ -329,6 +331,7 @@ class MainWindow(QtGui.QMainWindow):
             exp = self.experimentHandler.open_existing_experiment(
                 self.preferencesHandler, path=path)
             self.caller.experiment = exp
+            self.experiment = exp
             self.add_tabs()
             self.initialize_ui()
             self.reinitialize_models()

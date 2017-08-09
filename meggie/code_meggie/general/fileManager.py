@@ -408,11 +408,9 @@ def save_raw(experiment, raw, fname, overwrite=True):
     wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True,
         verbose='warning')
 
+    # assumes filename ends with .fif 
     pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
     pat_new = re.compile('_' + bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
-    
-    from meggie.code_meggie.utils.debug import debug_trace;
-    debug_trace()
     
     contents = os.listdir(folder)
     old_files = [fname for fname in contents if pat_old.match(fname)]
