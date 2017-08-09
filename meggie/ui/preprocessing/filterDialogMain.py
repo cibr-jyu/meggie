@@ -10,7 +10,7 @@ from PyQt4 import QtCore, QtGui
 from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
-from meggie.code_meggie.general.caller import Caller
+from meggie.code_meggie.preprocessing.filter import filter_data
 
 from meggie.ui.utils.messaging import messagebox
 
@@ -27,7 +27,6 @@ class FilterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
         self.filterParameterDictionary = None
-        self.caller = Caller.Instance()
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
 
     def on_pushButtonPreview_clicked(self, checked=None):
@@ -48,18 +47,23 @@ class FilterDialog(QtGui.QDialog):
     def drawPreview(self):
         """
         """
-        subject = self.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         params = self.collect_parameter_values()
         info = subject.get_working_file().info
 
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
 
+        n_jobs = self.parent.preferencesHandler.n_jobs
+
         try:
             self._validateFilterFreq(params, info['sfreq'])
-            raw = self.caller.filter(params, subject,
-                                     do_meanwhile=self.parent.update_ui,
-                                     preview=True)
+            raw = filter_data(self.parent.experiment,
+                              params,
+                              subject,
+                              n_jobs,
+                              preview=True,
+                              do_meanwhile=self.parent.update_ui)
             raw.plot(block=True)
         except:
             pass
@@ -68,10 +72,10 @@ class FilterDialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Get the parameters dictionary and relay it to caller.filter to
+        Get the parameters dictionary and relay it to filter_data to
         actually do the filtering.
         """
-        subject = self.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         parameter_values = self.collect_parameter_values()
         info = subject.get_working_file().info
         self.batching_widget.data[subject.subject_name] = parameter_values
@@ -90,7 +94,7 @@ class FilterDialog(QtGui.QDialog):
     def acceptBatch(self):
         """
         """
-        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        recently_active_subject = self.parent.experiment.active_subject.subject_name
         subject_names = []
 
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
@@ -100,11 +104,11 @@ class FilterDialog(QtGui.QDialog):
 
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an
-        #    excessive reading of a raw file.
+        #    extra reading of a raw file.
         if recently_active_subject in subject_names:
             params = self.batching_widget.data[recently_active_subject]
-            info = self.caller.experiment.active_subject.get_working_file().info
-            subject = self.caller.experiment.active_subject
+            info = self.parent.experiment.active_subject.get_working_file().info
+            subject = self.parent.experiment.active_subject
             # Check if the filter frequency values are sane or not.
 
             try:
@@ -115,7 +119,7 @@ class FilterDialog(QtGui.QDialog):
                 self.batching_widget.failed_subjects.append((subject, str(exc)))
 
         # 2. Calculation is done for the rest of the subjects.
-        for name, subject in self.caller.experiment.subjects.items():
+        for name, subject in self.parent.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
@@ -123,7 +127,7 @@ class FilterDialog(QtGui.QDialog):
                 params = self.batching_widget.data[name]
 
                 try:
-                    self.caller.activate_subject(name)
+                    self.parent.experiment.activate_subject(name)
                     info = subject.get_working_file().info
                     self._validateFilterFreq(params, info['sfreq'])
                     self.filter(subject)
@@ -131,7 +135,7 @@ class FilterDialog(QtGui.QDialog):
                     import traceback; traceback.print_exc()
                     self.batching_widget.failed_subjects.append((subject, str(exc)))
 
-        self.caller.activate_subject(recently_active_subject)
+        self.parent.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.close()
@@ -266,7 +270,7 @@ class FilterDialog(QtGui.QDialog):
         return dictionary
 
     def filter(self, subject):
-        """Calls caller class for filtering the given
+        """Calls filter_data for filtering the given
         subject and passes errors to accept method.
 
         Keyword arguments:
@@ -277,4 +281,8 @@ class FilterDialog(QtGui.QDialog):
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
 
-        self.caller.filter(params, subject, do_meanwhile=self.parent.update_ui)
+        n_jobs = self.parent.preferencesHandler.n_jobs
+
+        filter_data(self.parent.experiment,
+                    params, subject, n_jobs,
+                    do_meanwhile=self.parent.update_ui)

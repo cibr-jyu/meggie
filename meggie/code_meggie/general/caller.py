@@ -1111,66 +1111,6 @@ class Caller(object):
 
         return psd_groups
 
-    @threaded
-    def filter(self, dic, subject, preview=False):
-        """
-        Filters the data array in place according to parameters in paramDict.
-        Depending on the parameters, the filter is one or more of
-        lowpass, highpass and bandstop (notch) filter.
-
-        Keyword arguments:
-
-        dataToFilter         -- a raw object
-        info                 -- info for the data file to filter
-        dic                  -- Dictionary with filtering parameters
-
-        Returns the filtered array.
-        """
-        return self._filter(dic, subject, preview)
-    
-    def _filter(self, dic, subject, preview):
-        """Performed in a working thread."""
-        dataToFilter = subject.get_working_file()
-        
-        if preview:
-            dataToFilter = dataToFilter.copy()
-            
-        info = dataToFilter.info
-        hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
-        lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
-        length = dic['length']
-        trans_bw = dic['trans_bw']
-        n_jobs = self.parent.preferencesHandler.n_jobs
-
-        print "Filtering..."
-        wrap_mne_call(self.experiment, dataToFilter.filter,
-                      l_freq=lfreq, h_freq=hfreq, filter_length=length,
-                      l_trans_bandwidth=trans_bw,
-                      h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
-                      method='fft', verbose=True)
-
-        freqs = list()
-        if dic['bandstop1']:
-            freqs.append(dic['bandstop1_freq'])
-        if dic['bandstop2']:
-            freqs.append(dic['bandstop2_freq'])
-        if len(freqs) > 0:
-            length = dic['bandstop_length']
-            trans_bw = dic['bandstop_transbw']
-
-            print "Band-stop filtering..."
-            wrap_mne_call(self.experiment, dataToFilter.notch_filter,
-                          freqs, picks=None, filter_length=length,
-                          notch_widths=dic['bandstop_bw'],
-                          trans_bandwidth=trans_bw, n_jobs=n_jobs,
-                          verbose=True)
-           
-        if not preview:
-            print 'Saving to file...'
-            fileManager.save_raw(self.experiment, dataToFilter, 
-                info['filename'], overwrite=True)
-        
-        return dataToFilter
 
 ### Methods needed for source modeling ###    
 
