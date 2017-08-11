@@ -311,53 +311,6 @@ class Caller(object):
         print "Writing EOG events in %s" % eeg_event_fname
         wrap_mne_call(self.experiment, mne.write_events, eeg_event_fname, events)
 
-    def apply_exg(self, kind, raw, directory, projs, applied):
-        """
-        Applies ECG or EOG projections for MEG-data.  
-        Keyword arguments:
-        kind          -- String to indicate type of projectors ('eog, or 'ecg')
-        raw           -- Data to apply to
-        directory     -- Directory of the projection file
-        projs         -- List of projectors.
-        applied       -- Boolean mask (list) of projectors to add to raw.
-                         Trues are added to the object and Falses are not
-        """
-
-        if len(applied) != len(projs):
-            raise Exception('Error while adding projectors. Check selection.')
-
-        self._apply_exg(kind, raw, directory, projs, applied,
-                        do_meanwhile=self.parent.update_ui)
-        return True
-
-    @threaded
-    def _apply_exg(self, kind, raw, directory, projs, applied):
-        """Performed in a worker thread."""
-        fname = os.path.join(directory, self.experiment.active_subject.working_file_name)
-
-        for new_proj in projs:  # first remove projs
-            for idx, proj in enumerate(raw.info['projs']):
-                if str(new_proj) == str(proj):
-                    raw.info['projs'].pop(idx)
-                    break
-
-        if not isinstance(projs, np.ndarray):
-            projs = np.array(projs)
-        if not isinstance(applied, np.ndarray):
-            applied = np.array(applied)
-
-        wrap_mne_call(self.experiment, raw.add_proj, projs[applied])  # then add selected
-        
-        if kind == 'eeg':
-            projs = raw.info['projs']
-            for idx, proj in enumerate(projs):
-                names = ['ECG', 'EOG', 'EEG']
-                if filter(lambda x: x in proj['desc'], names):
-                    continue
-                raw.info['projs'][idx]['desc'] = 'Ocular-' + proj['desc'] 
-        
-        fileManager.save_raw(self.experiment, raw, fname, overwrite=True)
-
     def plot_average_epochs(self, events, tmin, tmax):
         """
         Method for plotting average epochs.
