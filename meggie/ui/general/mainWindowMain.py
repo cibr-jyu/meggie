@@ -373,9 +373,9 @@ class MainWindow(QtGui.QMainWindow):
                                            message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
+        failures = []
         if reply == QtGui.QMessageBox.Yes:
             rows_to_remove = []
-            failures = []
             for index in selIndexes:
                 subject_name = index.data()
         

@@ -1,10 +1,25 @@
 Changelog
 =========
 
-0.4.4 (unreleased)
+0.5.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.5.0 (2017-08-14)
+------------------
+
+- Implement simple ICA for preprocessing
+- Fix bug of pattern matching in file saving validity check
+- Fix open raw problem
+- Use weighted average for averaging in spectrums
+- Hide some misleading warnings
+- Add meggie version number to experiment files
+- Fix power spectrum units label
+- Improve folder structure and code quality of meggie
+- Improve evoked topology colors
+- Do not save raw if saving terminated
+- Add save data tick for tfr topology 
 
 0.4.3 (2017-04-04)
 ------------------
