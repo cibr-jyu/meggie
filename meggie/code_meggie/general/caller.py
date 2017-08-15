@@ -253,9 +253,12 @@ class Caller(object):
         picks = mne.pick_types(raw.info, meg=False, eeg=False, stim=False,
             eog=True)
 
-        ch_name = [ch_name for idx, ch_name in enumerate(raw.info['ch_names']) 
-                   if idx in picks][0]
-        
+        try:
+            ch_name = [ch_name for idx, ch_name 
+                       in enumerate(raw.info['ch_names']) if idx in picks][0]
+        except IndexError:
+            raise Exception("No EOG channel found")
+
         events = mne.preprocessing.find_eog_events(raw,
             event_id=1, l_freq=params['eog-l-freq'],
             h_freq=params['eog-h-freq'], filter_length=params['filtersize'],
