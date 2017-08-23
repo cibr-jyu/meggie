@@ -6,6 +6,7 @@ TODO:
 - refaktoroi
 
 low priority:
+- teeppäs tämmönen kartta joka korostaa käppyröiden eroja topografian päällä
 - ala pikkuhiljaa tyhjätä calleria siirtämällä asioita loogisiin kokonaisuuksiin eri tiedostoihin
 - pylint mukaan
 - tee testejä
