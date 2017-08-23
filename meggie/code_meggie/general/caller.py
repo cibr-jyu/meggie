@@ -483,15 +483,14 @@ class Caller(object):
             return read_layout(layout, path_meggie)
 
 
-    def draw_evoked_potentials(self, evokeds):
+    def draw_evoked_potentials(self, evokeds, title=None):
         """
         Draws a topography representation of the evoked potentials.
 
         """
         layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
-        title = self.experiment.active_subject.subject_name
-        
+
         fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
             color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
             font_color='k')

@@ -870,7 +870,9 @@ class MainWindow(QtGui.QMainWindow):
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-            self.caller.draw_evoked_potentials(mne_evokeds.values())
+            self.caller.draw_evoked_potentials(
+                mne_evokeds.values(),
+                title=evoked_name)
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)
