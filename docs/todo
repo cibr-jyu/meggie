@@ -6,6 +6,7 @@ TODO:
 - refaktoroi
 
 low priority:
+- EEG projections -teksti -> Ocular?
 - projektioita kun tekee eog:lle niin epokkikokoelmaa luodessa voi tulla rejektoiduksi osa muiden kanavien heilahtelujen vuoksi.
 - teeppäs tämmönen kartta joka korostaa käppyröiden eroja topografian päällä
 - ala pikkuhiljaa tyhjätä calleria siirtämällä asioita loogisiin kokonaisuuksiin eri tiedostoihin
