@@ -1,44 +1,30 @@
 TODO:
 
-- manuaali
-- lokikoodin siivousta ehkä, ehkä käydä läpi, wrap_mne_call-jutut
-- tutki wrap_mne_callsit ja muuta mne-kutsut semmosiks jos niikseen
-- refaktoroi
+- should do manual for meggie
+- clean up the log code aka make sense of the actionLogger and wrapper
+- refactoring:
+ * get rid of the caller by
+  - keeping the state inside Experiment-object that is intialized in MainWindow
+  - moving methods of caller to other python files as functions
+  - look into structure of mainWindowUi
+    * separate different tabs to different files?
+    * epochs batching widget code shouldnt just lie there globally
+  - maybe should give up on qt mvc models
+ * check proper style with pylint
+  - make source analysis UI more simple
+- we need tests
 
-low priority:
-- EEG projections -teksti -> Ocular?
-- projektioita kun tekee eog:lle niin epokkikokoelmaa luodessa voi tulla rejektoiduksi osa muiden kanavien heilahtelujen vuoksi.
-- teeppäs tämmönen kartta joka korostaa käppyröiden eroja topografian päällä
-- ala pikkuhiljaa tyhjätä calleria siirtämällä asioita loogisiin kokonaisuuksiin eri tiedostoihin
-- pylint mukaan
-- tee testejä
-- valinnaiseksi flatti output-kansio
-- tee exp-saving paremmin skaalautuvaksi, nykyään se lataa jokaisen evokedin joka subjektilta
-- batch spektrien tallentamiseen (omassa haarassa aloitus tälle)
-- spektrien keskiarvoistus koehenkilöiden välillä
-- evoked stats dialogissa useamman kollektionin piirtäminen samaan kuvaan
-- one channel tfr dialogista avg tfr (säilyttää one channel tfr ominaisuuden)
-- älä sulje dialogeja välttämättä ok:lla
-- dialogien accept buttonien nimet yhtenäisiksi
-- spektrien värit määritettäviksi?
-- ehkä kivemmat average-ryhmät myös fourier analysis -välilehdelle
-- jos mahdollista niin samankaltaista stats/selection juttua spektreille
-- open_rawiin mahdollisuus konkatenoida tiedostoja?
-- siivota batch mainwindown sisällä?
+bugs:
+- there is a bug in epoch collection creation with batching widget that can hide collections from the main window
+- experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
+- fix EEG projections / Ocular projections name mixup
+- when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
-Mitä tehdä sourceanalysiksille:
-- source analysis omaan haaraan 8-- ) tai tarkistus että se toimii
-- ja vie callerista ne pois, ja pikkuhiljaa muutkin
-
-Mitä tehdä scriptingille:
-* nyt omassa haarassaan
-* Poistetaanko kun osoittautui niin vaikeasti toteutettavaksi?
-* vanha todo:
--> Miten tehdään raw.add_proj(projs[applied])?
--> Ei voida tietynlaista applied listaa (esim. [True, True, False, True, False, False]) antaa eri raakatiedostoille, kun ei ehkä vastaa samantyyppistä tilannetta/projektioiden lukumäärää jne?
--> Pitäisikö compute_proj_exg jälkeen kysyä heti käyttäjältä mitkä projektiot lisätään? Tällöin oikeat projs ja events attribuutit olisi yhä helposti saatavilla skriptissä
-epochs
--> Eventtilistan luominen 
--> Epokkien luominen
-
-
+features:
+- batch for saving spectrums ( there is a branch starting this )
+- average spectrums over subjects
+- maybe dont close dialogs with accept-button
+- unify names of accept-buttons
+- allow defining of colors for spectrums
+- average groups for epoch-based spetrums also
+- if possible, similar stats/seletion things as for epochs, for spectrums also
