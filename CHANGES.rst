@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.5.1 (unreleased)
+0.5.2 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.5.1 (2017-10-14)
+------------------
+
+- Fix bug that broke opening of some EEG files
 
 0.5.0 (2017-08-14)
 ------------------
