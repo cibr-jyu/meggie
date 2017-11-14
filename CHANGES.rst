@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.5.2 (unreleased)
+0.5.3 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+
+0.5.2 (2017-10-14)
+------------------
+
+- Add throbber to ICA computation
 
 0.5.1 (2017-10-14)
 ------------------
