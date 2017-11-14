@@ -9,6 +9,7 @@ Created on Aug 02, 2017
 from PyQt4 import QtGui
 
 from meggie.ui.preprocessing.icaDialogUi import Ui_Dialog
+from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.preprocessing.ica import plot_topographies
 from meggie.code_meggie.preprocessing.ica import plot_sources
@@ -61,7 +62,11 @@ class ICADialog(QtGui.QDialog):
 
         raw = self.parent.experiment.active_subject.get_working_file()
 
-        self.ica = compute_ica(raw, n_components, method, max_iter)
+        @threaded
+        def _compute_ica():
+            return compute_ica(raw, n_components, method, max_iter)
+
+        self.ica = _compute_ica()
 
         for idx in range(self.ica.n_components_):
             label = 'Component ' + str(idx+1)
