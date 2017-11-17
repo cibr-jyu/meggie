@@ -268,7 +268,7 @@ class Caller(object):
             tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
         
         data = epochs.get_data()
-        print "Number of detected ECG artifacts : %d" % len(data)
+        print "Number of detected EOG artifacts : %d" % len(data)
         
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
