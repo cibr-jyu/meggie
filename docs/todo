@@ -15,6 +15,7 @@ TODO:
 - we need tests
 
 bugs:
+- in ica, does not use layout file for topography
 - there is a bug in epoch collection creation with batching widget that can hide collections from the main window
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - fix EEG projections / Ocular projections name mixup
