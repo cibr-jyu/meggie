@@ -76,10 +76,6 @@ from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.general.mvcModels import ForwardModelModel
-from meggie.code_meggie.general.mvcModels import SubjectListModel
-from meggie.code_meggie.general.mvcModels import _initializeForwardSolutionList
-from meggie.code_meggie.general.mvcModels import _initializeInverseOperatorList
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.evoked import Evoked
 from meggie.code_meggie.utils.units import get_unit
@@ -143,9 +139,6 @@ class MainWindow(QtGui.QMainWindow):
         self.populate_comboBoxLobes()
 
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-
-        self.subjectListModel = SubjectListModel(self)
-        self.ui.listViewSubjects.setModel(self.subjectListModel)
 
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment:
@@ -257,7 +250,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        selIndexes = self.ui.listViewSubjects.selectedIndexes()
+        selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
 
         if selIndexes == []:
             message = 'No subject selected for removal.'
@@ -272,17 +265,13 @@ class MainWindow(QtGui.QMainWindow):
 
         failures = []
         if reply == QtGui.QMessageBox.Yes:
-            rows_to_remove = []
             for index in selIndexes:
                 subject_name = index.data()
         
                 try:
-                    rows_to_remove.append(index.row())
                     self.caller.experiment.remove_subject(subject_name, self)
                 except Exception:
                     failures.append(subject_name)
-    
-            self.subjectListModel.removeRows(rows_to_remove)
 
         if failures:
             msg = ''.join(['Could not remove the contents of the subject ',
@@ -1056,10 +1045,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
-        if self.ui.listViewSubjects.selectedIndexes() == []:
+
+        if self.ui.listWidgetSubjects.selectedIndexes() == []:
             return
 
-        selIndexes = self.ui.listViewSubjects.selectedIndexes()
+        selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
         
         if len(selIndexes) > 1:
             return
@@ -1302,13 +1292,10 @@ class MainWindow(QtGui.QMainWindow):
 
         self.update_tabs()
 
-        # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
+        self.ui.listWidgetSubjects.clear()
         self.ui.listWidgetEvoked.clear()
-        # self.ui.listWidgetInverseEvoked.clear()
-
-        # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
         self.ui.labelDateValue.clear()
         self.ui.labelLengthValue.clear()
@@ -1329,19 +1316,13 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxEOGApplied.setChecked(False)
         self.ui.checkBoxEEGComputed.setChecked(False)
         self.ui.checkBoxEEGApplied.setChecked(False)
-
-        # self.ui.checkBoxConvertedToMNE.setChecked(False)
-        # self.ui.lineEditRecon.setText('')
-
-        # Deactivate various buttons. They will be
-        # activated later if prerequisites are met.
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyEEG.setEnabled(False)
 
-        #self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
-                
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
+
+        self.populate_subject_list()
 
         active_subject = self.caller.experiment.active_subject
         
@@ -1356,8 +1337,6 @@ class MainWindow(QtGui.QMainWindow):
         status = "Current working file: " + name
         
         self.statusLabel.setText(status)
-        #self.ui.
-
 
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
@@ -1391,7 +1370,6 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
-
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
@@ -1401,7 +1379,6 @@ class MainWindow(QtGui.QMainWindow):
         if evokeds_items is not None:
             for evoked in evokeds_items.values():
                 self.ui.listWidgetEvoked.addItem(evoked.name)
-                # self.ui.listWidgetInverseEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
         try:
@@ -1419,15 +1396,22 @@ class MainWindow(QtGui.QMainWindow):
         for bad in bads:
             self.ui.listWidgetBads.addItem(bad)
 
-        _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
-                                       active_subject)
-        self.update_covariance_info_box()
-        self._update_source_estimates()
+    def populate_subject_list(self):
+        """ """
+        active_subject_name = None
+        if self.experiment and self.experiment.active_subject:
+            active_subject_name = self.experiment.active_subject.subject_name
 
-        # reinitialize subjectlist model
-        self.subjectListModel.initialize_model()
+        for subject_name in self.experiment.subjects:
+            item = QtGui.QListWidgetItem()
+            item.setText(subject_name)
+            if subject_name == active_subject_name:
+                font = item.font()
+                font.setBold(True)
+                item.setFont(font)
+            self.ui.listWidgetSubjects.addItem(item)
 
-
+        
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and

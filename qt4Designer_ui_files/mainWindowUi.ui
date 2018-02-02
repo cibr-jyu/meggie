@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>4</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -2684,7 +2684,7 @@
          </layout>
         </item>
         <item row="0" column="0">
-         <widget class="QListView" name="listViewSubjects">
+         <widget class="QListWidget" name="listWidgetSubjects">
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
@@ -2815,7 +2815,7 @@
   <tabstop>pushButtonAddSubjects</tabstop>
   <tabstop>pushButtonRemoveSubject</tabstop>
   <tabstop>pushButtonMNE_Browse_Raw</tabstop>
-  <tabstop>listViewSubjects</tabstop>
+  <tabstop>listWidgetSubjects</tabstop>
  </tabstops>
  <resources/>
  <connections/>
