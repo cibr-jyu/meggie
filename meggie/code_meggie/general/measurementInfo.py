@@ -28,7 +28,6 @@ class MeasurementInfo(object):
         Raises a TypeError if the raw object is not of type mne.io.Raw.
         """
         if isinstance(raw, mne.io.Raw):
-            self._raw = raw
             self._info = raw.info
         else:
             raise TypeError('Not a Raw object.')
@@ -149,38 +148,11 @@ class MeasurementInfo(object):
         Returns the subjects name. If some of the name fields are nonexistent
         or empty, substitutes information with emptry strings.
         """
-        try:
-            subj_info = mne.io.show_fiff(self._info.get('filename'))
-        except:
-            subj_info = ''
+        subj_info = self._info.get('subject_info')
+        if not subj_info:
+            print "Personal info not found"
 
-        if not isinstance(subj_info, string_types) or subj_info == '':
-            print 'Personal info not found.'
-        last_name_result = re.search('FIFF_SUBJ_LAST_NAME (.*)...', subj_info)
-        middle_name_result = re.search('FIFF_SUBJ_MIDDLE_NAME (.*)...',
-                                        subj_info)
-        first_name_result = re.search('FIFF_SUBJ_FIRST_NAME (.*)...', 
-                                      subj_info)
+        last_name = subj_info.get('last_name', '')
+        first_name = subj_info.get('first_name', '')
 
-        # If the file has no name fields set, don't crash
-        # TODO: test with empty strings as names
-        if ( last_name_result == None or last_name_result.group(1) == None ):
-            last_name = ''
-        else:  
-            last_name_table = last_name_result.group(1).split(' ') 
-            last_name = last_name_table[2]
-
-        if ( middle_name_result == None or
-            middle_name_result.group(1) == None ):
-            middle_name = ''
-        else: 
-            middle_name_table = middle_name_result.group(1).split(' ')
-            middle_name = middle_name_table[2]
-
-        if ( first_name_result == None or first_name_result.group(1) == None ):
-            first_name = ''
-        else: 
-            first_name_table = first_name_result.group(1).split(' ')
-            first_name = first_name_table[2]
-
-        return last_name + ' ' + first_name + ' ' + middle_name
+        return last_name + ' ' + first_name
