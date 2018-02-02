@@ -15,6 +15,7 @@ To develop:
    conda install pyqt==4.11.4
    conda install pyface
    conda install xlrd
+   conda install scikit-learn
 5. "install" meggie as symlinks using anaconda's interpreter:
    for example: ~/anaconda/bin/python /path/to/setup.py develop
 6. run meggie in debug mode:

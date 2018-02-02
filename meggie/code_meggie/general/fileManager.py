@@ -382,7 +382,7 @@ def open_raw(fname, preload=True):
     try:
         print 'Reading ' + fname
         raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
-                          verbose='warning', add_eeg_ref=False)
+                          verbose='warning')
 
         # this was default till mne-python 0.13, so have it for consistency
         if not mne.io.proj._has_eeg_average_ref_proj(raw.info['projs']):

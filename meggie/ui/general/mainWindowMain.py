@@ -1,6 +1,5 @@
 # coding: utf-8
 
-
 """
 Created on Mar 16, 2013
 
@@ -71,6 +70,8 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.utils.decorators import threaded
 
+from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
+
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
@@ -96,17 +97,6 @@ class MainWindow(QtGui.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
-        self.layoutDialog = None
-        self.spectrumDialog = None
-        self.filterDialog = None
-        self.epochParameterDialog = None
-        self.tfr_dialog = None
-        self.tfrTop_dialog = None
-        self.log_dialog = None
-        
-        # List of subprocesses, used for terminating MNE-C processes on Meggie
-        # quit.
-        self.processes = []
 
         # Direct output to console
         if 'debug' not in sys.argv:
@@ -126,9 +116,8 @@ class MainWindow(QtGui.QMainWindow):
         # For handling initialization and switching of experiments.
         self.experimentHandler = experiment.ExperimentHandler(self)
 
-        # No tabs in the tabWidget initially
-        while self.ui.tabWidget.count() > 0:
-            self.ui.tabWidget.removeTab(0)
+        # Create the tab contents
+        self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
 
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtGui.QLabel()
@@ -138,7 +127,6 @@ class MainWindow(QtGui.QMainWindow):
         self.epochList = EpochWidget(self)
         self.epochList.hide()
 
-        #self.ui.listWidgetEvoked.setHorizontalScrollBarPolicy(300)
         self.ui.listWidgetEvoked.setMinimumWidth(346)
         self.ui.listWidgetEvoked.setMaximumWidth(346)
         
@@ -148,61 +136,19 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonCreateEvokedBatch,
             self.evoked_selection_changed,
             self.collect_evoked_parameter_values,
-            lambda: self.initialize_ui()
+            self.initialize_ui
         )
         
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
 
-        # Connect signals and slots.
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
-        self.ui.tabWidgetSourceAnalysis.currentChanged.connect(
-            self.on_currentChanged_source_analysis)
 
-        # Models for several views in the UI, e.g. in the forward model setup
-        # tab.
-        self.forwardModelModel = ForwardModelModel(self)
         self.subjectListModel = SubjectListModel(self)
-
-        # Proxymodels for tuning what is actually shown in the views below.
-        self.proxyModelTableViewForwardSolutionSource = QtGui.\
-            QSortFilterProxyModel(self)
-        self.proxyModelTableViewForwardSolutionSource.setFilterKeyColumn(15)
-        rx = QtCore.QRegExp('yes')
-        self.proxyModelTableViewForwardSolutionSource.setFilterRegExp(rx)
-        self.proxyModelTableViewForwardSolutionSource.\
-            setSourceModel(self.forwardModelModel)
-
-        self.proxyModelTableViewForwardSolutions = QtGui.\
-            QSortFilterProxyModel(self)
-        self.proxyModelTableViewForwardSolutions.setFilterKeyColumn(16)
-        rx2 = QtCore.QRegExp('yes')
-        self.proxyModelTableViewForwardSolutions.setFilterRegExp(rx2)
-        self.proxyModelTableViewForwardSolutions.\
-            setSourceModel(self.forwardModelModel)
-
-        # Linking corresponding views to models above and tuning them
-
         self.ui.listViewSubjects.setModel(self.subjectListModel)
 
-        self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
-        for colnum in range(17, 21):
-            self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
-
-        self.ui.tableViewFModelsForCoregistration.setModel(self.forwardModelModel)
-        for colnum in range(16, 21):
-            self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
-                                                                      True)
-
-        tvfs = self.ui.tableViewFModelsForSolution
-        tvfs.setModel(self.forwardModelModel)
-        
-        #tvfs.setModel(self.proxyModelTableViewForwardSolutionSource)
-        for colnum in range(1, 16):
-            tvfs.setColumnHidden(colnum, True)
-
         # If the user has chosen to open the previous experiment automatically.
-        if self.preferencesHandler.auto_load_last_open_experiment is True:
+        if self.preferencesHandler.auto_load_last_open_experiment:
             exp = None
             
             try:
@@ -214,26 +160,18 @@ class MainWindow(QtGui.QMainWindow):
             if exp:
                 self.caller.experiment = exp
                 self.experiment = exp
-                self.add_tabs()
                 self.initialize_ui()
-                self.reinitialize_models()
             else:
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
 
+        # Select the first item on epoch list
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
 
+        # Set bads not selectable
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
 
-        # self.ui.listWidgetProjs.setSelectionMode(QAbstractItemView.NoSelection)
-        
-    def update_ui(self):
-        """
-        Method for repainting the ui.
-        Used for keeping the ui responsive when threading.
-        """
-        QApplication.processEvents()
 
     def on_actionQuit_triggered(self, checked=None):
         """Closes the program, possibly after a confirmation by the user."""
@@ -242,10 +180,9 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.preferencesHandler.confirm_quit:
             reply = QtGui.QMessageBox.question(self, 'Close Meggie',
-                                               'Are you sure you want to quit '
-                                               'Meggie?', QtGui.QMessageBox.Yes
-                                               | QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
+                'Are you sure you want to quit Meggie?', 
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No)
 
             if reply == QtGui.QMessageBox.Yes:
                 self.close()
@@ -268,31 +205,20 @@ class MainWindow(QtGui.QMainWindow):
                 self.dialog.experimentCreated.connect(self.setExperiment)
                 self.dialog.show()
 
-    @QtCore.pyqtSlot(Experiment)
-    def setExperiment(self, newExperiment):
-        """Temporary setter for experiment."""
-        self.caller.experiment = newExperiment
-        self.experiment = newExperiment
-        gc.collect()
-        
-        self.add_tabs()
-        self.initialize_ui()
-        self.reinitialize_models()
-
     def on_actionOpen_experiment_triggered(self, checked=None):
-        """
-        Open an existing _experiment.
+        """ Open an existing _experiment. """
 
-        """
-        # Standard workaround for file dialog opening twice
         if checked is None:
             return
+
         if self.caller.experiment is not None:
             directory = self.caller.experiment.workspace
         else:
             directory = ''
+
         path = str(QtGui.QFileDialog.getExistingDirectory
                    (self, "Select _experiment directory", directory))
+
         if path == '':
             return
         
@@ -303,17 +229,16 @@ class MainWindow(QtGui.QMainWindow):
                 self.preferencesHandler, path=path)
             self.caller.experiment = exp
             self.experiment = exp
-            self.add_tabs()
             self.initialize_ui()
-            self.reinitialize_models()
         except Exception as e:
             exc_messagebox(self, e)
-        except ValueError as e:
-            messagebox(self, e)
+
+        # Saves at least the previous experiment name
         self.preferencesHandler.write_preferences_to_disk()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
         """Open subject dialog."""
+
         if checked is None:
             return
 
@@ -339,11 +264,12 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, message)
             return
 
-        message = 'Permanently remove the selected subects and the related files?'
-        reply = QtGui.QMessageBox.question(self, 'delete selected subjects',
+        message = 'Permanently remove the selected subjects and the related files?'
+        reply = QtGui.QMessageBox.question(self, 'Delete selected subjects',
                                            message, QtGui.QMessageBox.Yes |
                                            QtGui.QMessageBox.No,
                                            QtGui.QMessageBox.No)
+
         failures = []
         if reply == QtGui.QMessageBox.Yes:
             rows_to_remove = []
@@ -357,135 +283,15 @@ class MainWindow(QtGui.QMainWindow):
                     failures.append(subject_name)
     
             self.subjectListModel.removeRows(rows_to_remove)
+
         if failures:
             msg = ''.join(['Could not remove the contents of the subject ',
                            'folder for following subjects: ',
                            '\n'.join(failures)])
             messagebox(self, msg)
+
         self.caller.experiment.save_experiment_settings()
         self.initialize_ui()
-
-    def show_epoch_collection_parameters(self, epochs):
-        """
-        Shows parameters from the currently chosen epochs.
-
-        Keyword arguments:
-        epochs -- Epochs object
-        """
-        # Set default/empty values for epoch parameters.
-        self.clear_epoch_collection_parameters()
-        params = epochs.params
-
-        if params is None:
-            print 'Epochs parameters not found!'
-            return
-        
-        events = epochs.raw.event_id
-        
-        for event_name, event_id in events.items():
-            events_str = ''.join([
-                event_name,
-                ' [' + str(len(epochs.raw[event_name])) + ' events found]'
-            ])
-
-            item = QtGui.QListWidgetItem()
-            item.setText(events_str)
-            self.epochList.ui.listWidgetEvents.addItem(item)
-        
-        self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
-        self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
-
-        # Creates dictionary of strings instead of qstrings for rejections.
-        params_rejections_str = dict((str(key), value) for key, value in
-                                     params['reject'].iteritems())
-
-        if 'mag' in params_rejections_str:
-            factor = params_rejections_str['mag']
-            self.ui.textBrowserMag.setText(
-                str(factor) + ' ' + get_unit('mag'))
-        else:
-            self.ui.textBrowserMag.setText('-1')
-
-        if 'grad' in params_rejections_str:
-            factor = params_rejections_str['grad']
-            self.ui.textBrowserGrad.setText(
-                str(factor) + ' ' + get_unit('grad'))
-        else:
-            self.ui.textBrowserGrad.setText('-1')
-
-        if 'eeg' in params_rejections_str:
-            factor = params_rejections_str['eeg']
-            self.ui.textBrowserEEG.setText(
-                str(factor) + ' ' + get_unit('eeg'))
-        else:
-            self.ui.textBrowserEEG.setText('-1')
-
-        if 'eog' in params_rejections_str:
-            factor = params_rejections_str['eog']
-            self.ui.textBrowserEOG.setText(
-                str(factor) + ' ' + get_unit('eog'))
-        else:
-            self.ui.textBrowserEOG.setText('-1')
-
-        if 'stim' in params_rejections_str:
-            self.ui.textBrowserStim.setText('Yes')
-        else:
-            self.ui.textBrowserStim.setText('-1')
-
-        self.ui.textBrowserWorkingFile.setText(
-            os.path.basename(epochs.raw.info['filename']))
-
-    def clear_epoch_collection_parameters(self):
-        """
-        Clears epoch collection parameters on mainWindow Epoching tab.
-        """
-        while self.epochList.ui.listWidgetEvents.count() > 0:
-            self.epochList.ui.listWidgetEvents.takeItem(0)
-        self.ui.textBrowserTmin.clear()
-        self.ui.textBrowserTmax.clear()
-        self.ui.textBrowserGrad.clear()
-        self.ui.textBrowserMag.clear()
-        self.ui.textBrowserEEG.clear()
-        self.ui.textBrowserStim.clear()
-        self.ui.textBrowserEOG.clear()
-        self.ui.textBrowserWorkingFile.clear()
-
-    def on_actionSet_workspace_triggered(self, checked=None):
-        """
-        Open the preferences dialog the for specific purpose of initial setting
-        of workspace.
-        """
-        if checked is None:
-            return
-        self.check_workspace()
-
-    def on_actionShow_log_triggered(self, checked=None):
-        if checked is None:
-            return
-        if self.caller.experiment is None:
-            message = 'Please open an experiment first.'
-            messagebox(self, message)
-            return
-        self.log_dialog = LogDialog(self)
-        self.log_dialog.show()
-
-    def on_actionPreferences_triggered(self, checked=None):
-        """Open the preferences-dialog."""
-        if checked is None:
-            return
-        self.dialogPreferences = PreferencesDialog(self)
-        self.dialogPreferences.show()
-
-    def on_pushButtonCreateEpochs_clicked(self, checked=None):
-        """Open the epoch dialog."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.finished.connect(self.on_close)
-        self.epochParameterDialog.show()
 
     def closeEvent(self, event):
         """Redefine window close event to allow confirming on quit."""
@@ -504,21 +310,52 @@ class MainWindow(QtGui.QMainWindow):
         else:
             event.accept()
 
-    def update_epochs(self):
-        """Populates the epochs list.
+    def on_actionSet_workspace_triggered(self, checked=None):
         """
-        self.epochList.clearItems()
-        epochs = self.caller.experiment.active_subject.epochs
-        if epochs is not None:
-            for epoch in epochs.values():
-                print epoch.collection_name
-                item = QtGui.QListWidgetItem(epoch.collection_name)
-                self.epochList.addItem(item)
+        Open the preferences dialog the for specific purpose of initial setting
+        of workspace.
+        """
+        if checked is None:
+            return
+
+        self.check_workspace()
+
+    def on_actionShow_log_triggered(self, checked=None):
+        if checked is None:
+            return
+
+        if self.caller.experiment is None:
+            message = 'Please open an experiment first.'
+            messagebox(self, message)
+            return
+
+        self.log_dialog = LogDialog(self)
+        self.log_dialog.show()
+
+    def on_actionPreferences_triggered(self, checked=None):
+        """Open the preferences-dialog."""
+        if checked is None:
+            return
+
+        self.dialogPreferences = PreferencesDialog(self)
+        self.dialogPreferences.show()
+
+    def on_pushButtonCreateEpochs_clicked(self, checked=None):
+        """Open the epoch dialog."""
+        if checked is None:
+            return
+
+        if self.caller.experiment.active_subject is None:
+            return
+
+        self.epochParameterDialog = EventSelectionDialog(self)
+        self.epochParameterDialog.show()
 
     def on_actionAbout_triggered(self, checked=None):
         """Open the About-dialog."""
         if checked is None:
             return
+
         self.dialogAbout = AboutDialog()
         self.dialogAbout.show()
 
@@ -548,11 +385,6 @@ class MainWindow(QtGui.QMainWindow):
         else:
             QWhatsThis.enterWhatsThisMode()
 
-    def collect_evoked_parameter_values(self):
-        collection_names = [str(item.text()) for item 
-                in self.epochList.ui.listWidgetEpochs.selectedItems()]
-        return collection_names        
-
     def evoked_selection_changed(self, subject_name, data_dict):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
@@ -563,77 +395,7 @@ class MainWindow(QtGui.QMainWindow):
             epoch_widget.addItem(item)
             if name in data_dict:
                 epoch_widget.setItemSelected(item, True)
-
-    def _calculate_evokeds(self, subject, collection_names):
-        
-        evokeds = {}
-        for name in collection_names:
-            collection = subject.epochs[name]
-
-            try:
-                collection = subject.epochs[name]
-            except KeyError:
-                raise KeyError('No epoch collection called ' + str(name))
-
-            epoch = collection.raw
-            
-            @threaded
-            def average():
-                return epoch.average()
-
-            evoked = average()
-
-            evoked.comment = name
-            evokeds[name] = evoked
-
-        evoked_name = (
-            '-'.join(collection_names) +
-            '_evoked.fif'
-        )
-    
-        self._save_evoked(subject, evokeds, evoked_name)
-
-    def _save_evoked(self, subject, evokeds, evoked_name, group_epoch_info={}): #subject_names=[]
-        # Save evoked into evoked (average) directory with name evoked_name
-        saveFolder = subject.evokeds_directory
-        if not os.path.exists(saveFolder):
-            try:
-                os.mkdir(saveFolder)
-            except IOError:
-                message = ('Writing to selected folder is not allowed. You can'
-                           ' still process the evoked file (visualize etc.).')
-                raise IOError(message)
-
-        try:
-            print 'Writing evoked data as ' + evoked_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
-        except IOError:
-            message = ('Writing to selected folder is not allowed. You can '
-                       'still process the evoked file (visualize etc.).')
-            raise IOError(message)
-        
-        new_evoked = Evoked(evoked_name, subject, evokeds)
-
-        epoch_info = {}
-        subject_names = []
-        
-        if not group_epoch_info:
-            for key in evokeds:
-                epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
-                events = epoch.event_id
-                epoch_info[key] = dict([(name, str(len(epoch[name])) + ' events') 
-                                        for name in events])
-            subject_names = [subject.subject_name]
-        else:
-            for subject_name, info in group_epoch_info.items():               
-                epoch_info[subject_name] = info['epoch_collections']
-                subject_names = ['group evoked']
-        
-        new_evoked.info['subjects'] = subject_names
-        new_evoked.info['epoch_collections'] = epoch_info
-        subject.add_evoked(new_evoked)             
-        self.caller.experiment.save_experiment_settings()
-        
+       
     def on_listWidgetEvoked_currentItemChanged(self, item):
         if not item:
             self.ui.textBrowserEvokedInfo.clear()
@@ -667,6 +429,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+
         if self.caller.experiment.active_subject is None:
             return
 
@@ -681,7 +444,7 @@ class MainWindow(QtGui.QMainWindow):
         subject = self.caller.experiment.active_subject
         
         try:
-            self._calculate_evokeds(subject, collection_names)
+            self.calculate_evokeds(subject, collection_names)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -702,7 +465,7 @@ class MainWindow(QtGui.QMainWindow):
             if subject_name in subject_names:
                 try:
                     subject = self.caller.experiment.activate_subject(subject_name)
-                    self._calculate_evokeds(subject, collection_names)
+                    self.calculate_evokeds(subject, collection_names)
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject, str(e)))
@@ -717,41 +480,18 @@ class MainWindow(QtGui.QMainWindow):
         """Open the evokedStatsDialog for viewing statistical data."""
         if checked is None:
             return
+
         if self.caller.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
+
         evoked_name = str(item.text())
         self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
         self.evokedStatsDialog.show()
-
-    def save_evoked_data(self, subjects):
-        try:    
-            evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
-        except AttributeError:
-            exc_messagebox(self, "Please select evoked data from the list")
-            return
-
-        path = fileManager.create_timestamped_folder(
-            self.caller.experiment)
-
-        for sub_name, subject in subjects.items():
-            names = []
-            evokeds = []
-            meggie_evoked = subject.evokeds.get(evoked_name)
-            if meggie_evoked:
-                for name, evoked in meggie_evoked.mne_evokeds.items():
-                    if evoked:
-                        evokeds.append(evoked)
-                        names.append(name)
-            if evokeds:
-                cleaned_evoked_name = evoked_name.split('.')[0]
-                filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
-                fileManager.group_save_evokeds(os.path.join(path, filename), 
-                                               evokeds, names)
-                
+       
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
@@ -841,9 +581,11 @@ class MainWindow(QtGui.QMainWindow):
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
+
             self.caller.draw_evoked_potentials(
                 mne_evokeds.values(),
                 title=evoked_name)
+
             print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)
@@ -861,6 +603,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
+
         if self.caller.experiment.active_subject is None:
             return
 
@@ -876,7 +619,7 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, e)
             return
 
-        self._save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name, group_epoch_info=group_epoch_info)
+        self.save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name, group_epoch_info=group_epoch_info)
 
         self.initialize_ui()
 
@@ -915,9 +658,12 @@ class MainWindow(QtGui.QMainWindow):
                 )
             except Exception as e:
                 exc_messagebox(self, e)
+
             self.epochList.remove_item(self.epochList.currentItem())
+
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
+
         self.caller.experiment.save_experiment_settings()
 
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
@@ -956,6 +702,7 @@ class MainWindow(QtGui.QMainWindow):
         """Delete the selected evoked."""
         if checked is None:
             return
+
         if self.caller.experiment.active_subject is None:
             return
 
@@ -981,10 +728,10 @@ class MainWindow(QtGui.QMainWindow):
                 )
             except Exception as e:
                 exc_messagebox(self, e)
+
             item = self.ui.listWidgetEvoked.currentItem()
             row = self.ui.listWidgetEvoked.row(item)
             self.ui.listWidgetEvoked.takeItem(row)
-            self.ui.listWidgetInverseEvoked.takeItem(row)
             self.caller.experiment.save_experiment_settings()
 
 
@@ -1016,40 +763,6 @@ class MainWindow(QtGui.QMainWindow):
         self.caller.experiment.save_experiment_settings()
 
 
-    def on_pushButtonDeletePower_clicked(self, checked=None):
-        """Delete the selected power item and the files related to it."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.listWidgetPowerItems.count() == 0:
-            return
-
-        elif self.ui.listWidgetPowerItems.currentItem() is None:
-            messagebox(self, 'No power selected.')
-            return
-
-        item_str = self.ui.listWidgetPowerItems.currentItem().text()
-        message = 'Delete power item?'
-        reply = QtGui.QMessageBox.question(self, 'delete power',
-                                           message, QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
-
-        if reply == QtGui.QMessageBox.Yes:
-            item = self.ui.listWidgetPowerItems.currentItem()
-            row = self.ui.listWidgetPowerItems.row(item)
-            self.ui.listWidgetPowerItems.takeItem(row)
-            try:
-                self.caller.experiment.active_subject.remove_power(
-                    item_str,
-                )
-            except Exception as e:
-                exc_messagebox(self, e)
-        else:
-            return
-    
     class RawBadsPlot(object):
         def __init__(self, parent):
             self.parent = parent
@@ -1077,6 +790,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.caller.experiment.active_subject is None:
             return
 
+        # Create a plot where bad channels are not set by clicking them
         self.plot = MainWindow.RawBadsPlot(self)
         
     def on_pushButtonCustomChannels_clicked(self, checked=None):
@@ -1113,7 +827,6 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.spectrumDialog = PowerSpectrumDialog(self)
-        self.spectrumDialog.finished.connect(self.on_close)
         self.spectrumDialog.show()
         
     def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
@@ -1232,7 +945,6 @@ class MainWindow(QtGui.QMainWindow):
         directory = self.caller.experiment.active_subject.subject_path
         subject_name = self.caller.experiment.active_subject.working_file_name
         fname = os.path.join(directory, subject_name)        
-        from meggie.code_meggie.general import fileManager 
         fileManager.save_raw(self.caller.experiment, raw, fname)
         self.initialize_ui()
 
@@ -1260,7 +972,6 @@ class MainWindow(QtGui.QMainWindow):
         epochs = self.caller.experiment.active_subject.epochs.get(collection_name)
 
         self.tfr_dialog = TFRDialog(self, epochs)
-        self.tfr_dialog.finished.connect(self.on_close)
         self.tfr_dialog.show()
         
     def on_pushButtonTFRTopology_clicked(self, checked=None):
@@ -1285,7 +996,6 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
-        self.tfrTop_dialog.finished.connect(self.on_close)
         self.tfrTop_dialog.show()
 
         
@@ -1338,7 +1048,6 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.filterDialog = FilterDialog(self)
-        self.filterDialog.finished.connect(self.on_close)
         self.filterDialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
@@ -1357,10 +1066,10 @@ class MainWindow(QtGui.QMainWindow):
         
         subject_name = selIndexes[0].data()
 
-        # Not much point trying to activate an already active subject.
         if self.caller.experiment.active_subject:
             if subject_name == self.caller.experiment.active_subject.subject_name:
                 return
+
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
@@ -1368,342 +1077,219 @@ class MainWindow(QtGui.QMainWindow):
         previous_subject = self.caller.experiment.active_subject
         try:
             self.caller.activate_subject(subject_name)
-            self.initialize_ui()
         except Exception as e:
             self.caller.experiment.active_subject = None
             exc_messagebox(self, "Couldn't activate the subject.")
             if previous_subject:
                 print "Couldn't activate the subject, resuming to previous one."
                 self.caller.activate_subject(previous_subject.subject_name)
-                self.initialize_ui()
-
-        # To tell the MVC models that the active subject has changed.
-        self.reinitialize_models()
-
-    def on_pushButtonBrowseRecon_clicked(self, checked=None):
-        """
-        Copies reconstructed mri files from the directory supplied by the user
-        to the corresponding directory under the active subject directory
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        activeSubject = self.caller.experiment.active_subject
-
-        if activeSubject.check_reconFiles_copied():
-            reply = QtGui.QMessageBox.question(self, 'Please confirm',
-                                               "Do you really want to change "
-                                               "the reconstructed files? This "
-                                               "will invalidate all later "
-                                               "source analysis work and "
-                                               "clear the results of the "
-                                               "later phases",
-                                               QtGui.QMessageBox.Yes | 
-                                               QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
-
-            if reply == QtGui.QMessageBox.No:
-                return
-
-        path = str(QtGui.QFileDialog.getExistingDirectory(self,
-                                                          "Select directory "
-                                                          "of the "
-                                                          "reconstructed "
-                                                          "MRI image"))
-        if path == '':
-            return
-
-        mriDir = os.path.join(path, 'mri')
-        surfDir = os.path.join(path, 'surf')
-        if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
-            msg = ("Reconstructed image directory should have both 'surf' "
-                   "and 'mri' directories in it.")
-            messagebox(self, msg)
-            return
-
-        try:
-            fileManager.copy_recon_files(activeSubject, path)
-            self.ui.lineEditRecon.setText(path)
-        except Exception:
-            msg = ('Could not copy files. Either the disk is full , you have '
-                   'no rights to read the directory or something weird '
-                   'happened.')
-            messagebox(self, msg)
 
         self.initialize_ui()
 
-    def on_pushButtonConvertToMNE_clicked(self, checked=None):
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
+    #####################
 
-        try:
-            self.caller.convert_mri_to_mne()
-        except Exception as e:
-            exc_messagebox(self, e)
+    def update_ui(self):
+        """
+        Method for repainting the ui.
+        Used for keeping the ui responsive when threading.
+        """
+        QApplication.processEvents()
 
+    @QtCore.pyqtSlot(Experiment)
+    def setExperiment(self, newExperiment):
+        """Temporary setter for experiment."""
+        self.caller.experiment = newExperiment
+        self.experiment = newExperiment
+        gc.collect()
+        
         self.initialize_ui()
 
-    def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
+    def show_epoch_collection_parameters(self, epochs):
         """
-        Open up a dialog for creating a new forward model.
+        Shows parameters from the currently chosen epochs.
+
+        Keyword arguments:
+        epochs -- Epochs object
         """
-        if checked is None:
+        # Set default/empty values for epoch parameters.
+        self.clear_epoch_collection_parameters()
+        params = epochs.params
+
+        if params is None:
+            print 'Epochs parameters not found!'
             return
-        if self.caller.experiment.active_subject is None:
-            return
+        
+        events = epochs.raw.event_id
+        
+        for event_name, event_id in events.items():
+            events_str = ''.join([
+                event_name,
+                ' [' + str(len(epochs.raw[event_name])) + ' events found]'
+            ])
 
-        self.fmodelDialog = ForwardModelDialog(self)
-        self.fmodelDialog.show()
+            item = QtGui.QListWidgetItem()
+            item.setText(events_str)
+            self.epochList.ui.listWidgetEvents.addItem(item)
+        
+        self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
+        self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
 
-    def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
-        """
-        Removes selected forward model from the forward model list and
-        from the disk.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
+        # Creates dictionary of strings instead of qstrings for rejections.
+        params_rejections_str = dict((str(key), value) for key, value in
+                                     params['reject'].iteritems())
 
-        if self.ui.tableViewForwardModels.selectedIndexes() == []:
-            message = 'Please select a forward model to remove.'
-            messagebox(self, message)
-            return
-
-        reply = QtGui.QMessageBox.question(self, 'Removing forward model',
-                                           'Do you really want to remove the '
-                                           'selected forward model, including '
-                                           'the coregistration and forward '
-                                           'solution files related to it?',
-                                           QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
-
-        if reply == QtGui.QMessageBox.No:
-            return
-
-        tableView = self.ui.tableViewForwardModels
-
-        # Selection for the view is SingleSelection / SelectRows, so this
-        # should return indexes for single row.
-        selectedRowIndexes = tableView.selectedIndexes()
-        selectedRowNumber = selectedRowIndexes[0].row()
-        fmname = selectedRowIndexes[0].data()
-        subject = self.caller.experiment.active_subject
-
-        try:
-            fileManager.remove_fModel_directory(fmname, subject)
-            self.forwardModelModel.removeRows(selectedRowNumber)
-            self.reinitialize_models()
-        except Exception:
-            msg = ('There was a problem removing forward model. Nothing was '
-                   'removed.')
-            messagebox(self, msg)
-
-    def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
-        """
-        Open a file browser dialog for the user to choose
-        a translated coordinate file to use with the currently selected forward
-        model.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        activeSubject = self.caller.experiment._active_subject
-        tableView = self.ui.tableViewFModelsForCoregistration
-
-        # Selection for the view is SingleSelection / SelectRows, so this
-        # should return indexes for single row.
-        selectedRowIndexes = tableView.selectedIndexes()
-        selectedFmodelName = selectedRowIndexes[0].data()
-
-        subjectPath = activeSubject._subject_path
-        targetName = os.path.join(subjectPath, 'sourceAnalysis',
-                                  'forwardModels', selectedFmodelName,
-                                  'reconFiles', 'reconFiles-trans.fif')
-
-        path = QtGui.QFileDialog.getOpenFileName(self, 'Select the existing '
-                                                 'coordinate file (the file '
-                                                 'should end with '
-                                                 '"-trans.fif")')
-        if path == '':
-            return
+        if 'mag' in params_rejections_str:
+            factor = params_rejections_str['mag']
+            self.ui.textBrowserMag.setText(
+                str(factor) + ' ' + get_unit('mag'))
         else:
+            self.ui.textBrowserMag.setText('-1')
+
+        if 'grad' in params_rejections_str:
+            factor = params_rejections_str['grad']
+            self.ui.textBrowserGrad.setText(
+                str(factor) + ' ' + get_unit('grad'))
+        else:
+            self.ui.textBrowserGrad.setText('-1')
+
+        if 'eeg' in params_rejections_str:
+            factor = params_rejections_str['eeg']
+            self.ui.textBrowserEEG.setText(
+                str(factor) + ' ' + get_unit('eeg'))
+        else:
+            self.ui.textBrowserEEG.setText('-1')
+
+        if 'eog' in params_rejections_str:
+            factor = params_rejections_str['eog']
+            self.ui.textBrowserEOG.setText(
+                str(factor) + ' ' + get_unit('eog'))
+        else:
+            self.ui.textBrowserEOG.setText('-1')
+
+        if 'stim' in params_rejections_str:
+            self.ui.textBrowserStim.setText('Yes')
+        else:
+            self.ui.textBrowserStim.setText('-1')
+
+        self.ui.textBrowserWorkingFile.setText(
+            os.path.basename(epochs.raw.info['filename']))
+
+    def clear_epoch_collection_parameters(self):
+        """
+        Clears epoch collection parameters on mainWindow Epoching tab.
+        """
+        while self.epochList.ui.listWidgetEvents.count() > 0:
+            self.epochList.ui.listWidgetEvents.takeItem(0)
+        self.ui.textBrowserTmin.clear()
+        self.ui.textBrowserTmax.clear()
+        self.ui.textBrowserGrad.clear()
+        self.ui.textBrowserMag.clear()
+        self.ui.textBrowserEEG.clear()
+        self.ui.textBrowserStim.clear()
+        self.ui.textBrowserEOG.clear()
+        self.ui.textBrowserWorkingFile.clear()
+
+    def collect_evoked_parameter_values(self):
+        collection_names = [str(item.text()) for item 
+                in self.epochList.ui.listWidgetEpochs.selectedItems()]
+        return collection_names        
+
+
+    def calculate_evokeds(self, subject, collection_names):
+        
+        evokeds = {}
+        for name in collection_names:
+            collection = subject.epochs[name]
+
             try:
-                shutil.copyfile(path, targetName)
+                collection = subject.epochs[name]
+            except KeyError:
+                raise KeyError('No epoch collection called ' + str(name))
+
+            epoch = collection.raw
+            
+            @threaded
+            def average():
+                return epoch.average()
+
+            evoked = average()
+
+            evoked.comment = name
+            evokeds[name] = evoked
+
+        evoked_name = (
+            '-'.join(collection_names) +
+            '_evoked.fif'
+        )
+    
+        self.save_evoked(subject, evokeds, evoked_name)
+
+    def save_evoked(self, subject, evokeds, evoked_name, group_epoch_info={}):
+        # Save evoked into evoked (average) directory with name evoked_name
+        saveFolder = subject.evokeds_directory
+        if not os.path.exists(saveFolder):
+            try:
+                os.mkdir(saveFolder)
             except IOError:
-                msg = 'There was a problem while copying the coordinate file.'
-                messagebox(self, msg)
+                message = ('Writing to selected folder is not allowed. You can'
+                           ' still process the evoked file (visualize etc.).')
+                raise IOError(message)
 
-        self.forwardModelModel.initialize_model()
-
-    def on_pushButtonMNECoregistration_clicked(self, checked=None):
-        """
-        Open a dialog for coregistering the currently selected
-        forward model in tableViewFModelsForCoregistration.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
-            msg = 'Please select a forward model to (re-)coregister.'
-            messagebox(self, msg)
-            return
-
-        self.caller.coregister_with_mne_gui_coregistration()
-
-    def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
-        """
-        Open a dialog for creating a forward solution for the currently
-        selected forward model in tableViewFModelsForSolution.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
-            message = ('Please select a forward model to (re)create a forward '
-                       'solution for.')
-            messagebox(self, message)
-            return
-
-        self.fSolutionDialog = ForwardSolutionDialog(self)
-        self.fSolutionDialog.fwd_sol_computed.connect(self.reinitialize_models)
-        self.fSolutionDialog.show()
-
-    def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
-        if checked is None:
-            return
-        return
-
-    def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
-        """
-        Open a dialog for computing noise covariance matrix based on raw file
-        (measurement file with a subject but without epochs, or an empty room
-        measurement).
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        self.covarianceRawDialog = CovarianceRawDialog(self)
-        self.covarianceRawDialog.show()
-
-    def on_pushButtonComputeCovarianceEpochs_clicked(self, checked=None):
-        """
-        Open a dialog for computing noise covariance matrix based on data
-        before epochs.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
+        try:
+            print 'Writing evoked data as ' + evoked_name + ' ...'
+            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+        except IOError:
+            message = ('Writing to selected folder is not allowed. You can '
+                       'still process the evoked file (visualize etc.).')
+            raise IOError(message)
         
-        self.covarianceEpochDialog = CovarianceEpochDialog(self)
-        self.covarianceEpochDialog.show()
+        new_evoked = Evoked(evoked_name, subject, evokeds)
 
-    def on_pushButtonPlotCov_clicked(self, checked=None):
-        """Plots the covariance matrix."""
-        if checked is None:
-            return
-        self.caller.plot_covariance()
-
-    def on_pushButtonComputeInverse_clicked(self, checked=None):
-        """Compute inverse operator clicked."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        fwd_name = str(self.ui.listWidgetForwardSolution.currentItem().text())
-        inv = self.caller.compute_inverse(fwd_name)
-        _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
-                                       self.caller.experiment.active_subject)
-
-    def on_pushButtonMakeSourceEstimate_clicked(self, checked=None):
-        """Make source estimate clicked."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        ui = self.ui
-        if ui.radioButtonRaw.isChecked():
-            inst_name = self.caller.experiment.active_subject.subject_name
-            type = 'raw'
-        elif ui.radioButtonEpoch.isChecked():
-            inst_name = str(self.epochList.currentItem().text())
-            type = 'epochs'
-        elif ui.radioButtonEvoked.isChecked():
-            inst_name = str(ui.listWidgetInverseEvoked.currentItem().text())
-            type = 'evoked'
-        dir = self.caller.experiment.active_subject._source_analysis_directory
-        self.sourceEstimateDialog = SourceEstimateDialog(self, inst_name, type)
-        self.sourceEstimateDialog.stc_computed.connect(self.
-            _update_source_estimates)
-        self.sourceEstimateDialog.show()
-
-    def on_pushButtonCheckSurfaces_clicked(self, checked=None):
-        if checked is None:
-            return
+        epoch_info = {}
+        subject_names = []
         
-        subject = self.caller.experiment.active_subject
-        mne.viz.plot_bem(subject='', subjects_dir=subject.reconFiles_directory, orientation='coronal')
+        if not group_epoch_info:
+            for key in evokeds:
+                epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
+                events = epoch.event_id
+                epoch_info[key] = dict([(name, str(len(epoch[name])) + ' events') 
+                                        for name in events])
+            subject_names = [subject.subject_name]
+        else:
+            for subject_name, info in group_epoch_info.items():               
+                epoch_info[subject_name] = info['epoch_collections']
+                subject_names = ['group evoked']
+        
+        new_evoked.info['subjects'] = subject_names
+        new_evoked.info['epoch_collections'] = epoch_info
+        subject.add_evoked(new_evoked)             
+        self.caller.experiment.save_experiment_settings()
 
-    def _update_source_estimates(self):
-        """Helper for updating source estimates to list."""
-        self.ui.listWidgetSourceEstimate.clear()
-        subject = self.caller.experiment.active_subject
-        dir = subject._stc_directory
-        stcs = [f for f in os.listdir(dir) if
-                os.path.isfile(os.path.join(dir, f)) and f.endswith('lh.stc')]
-        for stc in stcs:
-            if os.path.isfile(os.path.join(dir, stc[:-6] + 'rh.stc')):
-                self.ui.listWidgetSourceEstimate.addItem(stc[:-7])
-
-        for stc_dir in [f for f in os.listdir(dir) if
-                        os.path.isdir(os.path.join(dir, f))]:  # epochs dirs
-            for stc_file in os.listdir(os.path.join(dir, stc_dir)):
-                if stc_file.endswith('lh.stc'):
-                    continue  # don't add duplicates
-                if os.path.isfile(os.path.join(dir, stc_dir,
-                                               stc_file[:-6] + 'rh.stc')):
-                    self.ui.listWidgetSourceEstimate.addItem(os.path.join(
-                        stc_dir, stc_file[:-7]))
-
-
-    def on_pushButtonVisStc_clicked(self, checked=None):
-        """Visualize source estimates."""
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
+    def save_evoked_data(self, subjects):
+        try:    
+            evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
+        except AttributeError:
+            exc_messagebox(self, "Please select evoked data from the list")
             return
 
-        stc = str(self.ui.listWidgetSourceEstimate.currentItem().text())
-        self.plotStcDialog = PlotStcDialog(self, stc)
-        self.plotStcDialog.show()
+        path = fileManager.create_timestamped_folder(
+            self.caller.experiment)
 
-
-    def on_pushButtonStcFreq_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-        self.stcFreqDialog = StcFreqDialog(self)
-        self.stcFreqDialog.show()
-
-# Code for UI initialization (when starting the program) and
-# updating when something changes
+        for sub_name, subject in subjects.items():
+            names = []
+            evokeds = []
+            meggie_evoked = subject.evokeds.get(evoked_name)
+            if meggie_evoked:
+                for name, evoked in meggie_evoked.mne_evokeds.items():
+                    if evoked:
+                        evokeds.append(evoked)
+                        names.append(name)
+            if evokeds:
+                cleaned_evoked_name = evoked_name.split('.')[0]
+                filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
+                fileManager.group_save_evokeds(os.path.join(path, filename), 
+                                               evokeds, names)
+ 
 
     def initialize_ui(self):
         """
@@ -1714,11 +1300,13 @@ class MainWindow(QtGui.QMainWindow):
         reflect the state of the experiment and subject according to them.
         """
 
+        self.update_tabs()
+
         # Clear the lists.
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
         self.ui.listWidgetEvoked.clear()
-        self.ui.listWidgetInverseEvoked.clear()
+        # self.ui.listWidgetInverseEvoked.clear()
 
         # Clears and sets labels, checkboxes etc. on mainwindow.
         self.ui.textBrowserEvents.clear()
@@ -1742,19 +1330,15 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.checkBoxEEGComputed.setChecked(False)
         self.ui.checkBoxEEGApplied.setChecked(False)
 
-        self.ui.checkBoxConvertedToMNE.setChecked(False)
-        self.ui.lineEditRecon.setText('')
+        # self.ui.checkBoxConvertedToMNE.setChecked(False)
+        # self.ui.lineEditRecon.setText('')
 
         # Deactivate various buttons. They will be
         # activated later if prerequisites are met.
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyEEG.setEnabled(False)
-        self.ui.pushButtonConvertToMNE.setEnabled(False)
-        self.ui.pushButtonCheckTalairach.setEnabled(False)
-        self.ui.pushButtonSkullStrip.setEnabled(False)
-        self.ui.pushButtonCheckSurfaces.setEnabled(False)
-        self.ui.pushButtonCheckSegmentations.setEnabled(False)
+
         #self.ui.pushButtonCreateNewForwardModel.setEnabled(False)
                 
         self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
@@ -1807,12 +1391,6 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
 
-        # Populate subject list
-        # Subject list is populated by calling reinitialize_models()
-        # in mainwindow
-        
-        # Populate epoch and evoked lists        
-
 
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
@@ -1823,7 +1401,7 @@ class MainWindow(QtGui.QMainWindow):
         if evokeds_items is not None:
             for evoked in evokeds_items.values():
                 self.ui.listWidgetEvoked.addItem(evoked.name)
-                self.ui.listWidgetInverseEvoked.addItem(evoked.name)
+                # self.ui.listWidgetInverseEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
         try:
@@ -1832,22 +1410,6 @@ class MainWindow(QtGui.QMainWindow):
         except Exception as err:
             exc_messagebox(self, err)
             return
-
-        # Check whether reconstructed mri files have been copied to the recon
-        # files directory under the subject and set up the UI accordingly.
-        if active_subject.check_reconFiles_copied():
-            self.ui.lineEditRecon.setText('Reconstructed mri image already '
-                                          'copied.')
-            self.ui.pushButtonConvertToMNE.setEnabled(True)
-            self.ui.pushButtonCheckTalairach.setEnabled(True)
-            self.ui.pushButtonSkullStrip.setEnabled(True)
-            self.ui.pushButtonCheckSurfaces.setEnabled(True)
-            self.ui.pushButtonCheckSegmentations.setEnabled(True)
-
-        # Check if MRI image has been setup with mne_setup_forward solution
-        if active_subject.check_mne_setup_mri_run():
-            self.ui.checkBoxConvertedToMNE.setChecked(True)
-            self.ui.pushButtonCreateNewForwardModel.setEnabled(True)
 
         projs = raw.info['projs']
         for proj in projs:
@@ -1862,85 +1424,9 @@ class MainWindow(QtGui.QMainWindow):
         self.update_covariance_info_box()
         self._update_source_estimates()
 
-    def update_covariance_info_box(self):
-        """
-        Fills the info box in the covariance tab with info about the
-        current covariance matrix info for the active subject, if said info
-        exists.
-        """
-        path = self.caller.experiment.active_subject._source_analysis_directory
-        cvParamFilePath = os.path.join(path, 'covariance.param')
+        # reinitialize subjectlist model
+        self.subjectListModel.initialize_model()
 
-        cvdict = None
-        if os.path.isfile(cvParamFilePath):
-            try:
-                cvdict = fileManager.unpickle(cvParamFilePath)
-            except Exception:
-                pass
-
-        if self.ui.frameCovarianceInfoWidget.layout() is not None:
-            sip.delete(self.ui.frameCovarianceInfoWidget.layout())
-
-        for child in self.ui.frameCovarianceInfoWidget.children():
-            child.setParent(None)
-
-        covLayout = QtGui.QGridLayout()
-        self.ui.frameCovarianceInfoWidget.setLayout(covLayout)
-
-        if cvdict is None:
-            covarianceWidgetNone = CovarianceWidgetNone()
-            covLayout.addWidget(covarianceWidgetNone)
-            return
-
-        if cvdict['covarianceSource'] == 'raw':
-            covarianceWidgetRaw = CovarianceWidgetRaw()
-            cvwui = covarianceWidgetRaw.ui
-            if cvdict['rawsubjectname'] is not None:
-                cvwui.textBrowserBasedOn.setText(cvdict['rawsubjectname'])
-            else:
-                cvwui.textBrowserBasedOn.setText(cvdict['rawfilepath'])
-            cvwui.textBrowserTmin.setText(str(cvdict['starttime']))
-            cvwui.textBrowserTmax.setText(str(cvdict['endtime']))
-            cvwui.textBrowserTstep.setText(str(cvdict['tstep']))
-            if cvdict['reject'] is not None:
-                txt = str(cvdict.get('reject').get('grad', ''))
-                cvwui.textBrowserGradPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('mag', ''))
-                cvwui.textBrowserMagPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('eeg', ''))
-                cvwui.textBrowserEEGPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('eog', ''))
-                cvwui.textBrowserEOGPeakCovariance.setText(txt)
-            if cvdict['flat'] is not None:
-                txt = str(cvdict.get('flat').get('grad', ''))
-                cvwui.textBrowserFlatGrad.setText(txt)
-                txt = str(cvdict.get('flat').get('mag', ''))
-                cvwui.textBrowserFlatMag.setText(txt)
-                txt = str(cvdict.get('flat').get('eeg', ''))
-                cvwui.textBrowserFlatEEG.setText(txt)
-                txt = str(cvdict.get('flat').get('eog', ''))
-                cvwui.textBrowserFlatEOG.setText(txt)
-                txt = str(cvdict.get('flat').get('ecg', 'Not used'))
-                cvwui.textBrowserFlatECG.setText(txt)
-            covLayout.addWidget(covarianceWidgetRaw)
-
-        if cvdict['covarianceSource'] == 'epochs':
-            covarianceWidgetEpochs = CovarianceWidgetEpochs()
-            cvwui = covarianceWidgetEpochs.ui
-            
-            for collection_name in cvdict['collection_names']:
-                cvwui.listWidgetEpochs.addItem(collection_name)
-            
-            cvwui.textBrowserTmin.setText(str(cvdict['tmin']))
-            cvwui.textBrowserTmax.setText(str(cvdict['tmax']))
-            
-            if cvdict['keep_sample_mean'] == True:
-                cvwui.labelKeepSampleValue.setText('True')
-            else:
-                cvwui.labelKeepSampleValue.setText('False')
-            
-            cvwui.labelMethodValue.setText(cvdict['method'])
-            covLayout.addWidget(covarianceWidgetEpochs)
 
     def populate_raw_tab_event_list(self):
         """
@@ -1948,11 +1434,14 @@ class MainWindow(QtGui.QMainWindow):
         amount of events with those IDs.
         """
         events = self.caller.experiment.active_subject.create_event_set()
+
         if events is None:
             return
+
         events_string = ''
         for key, value in events.iteritems():
             events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+
         self.ui.textBrowserEvents.setText(events_string)
 
     def populate_comboBoxLobes(self):
@@ -1971,37 +1460,25 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.comboBoxLobes.addItem('Left-frontal')
         self.ui.comboBoxLobes.addItem('Right-frontal')
 
-    def add_tabs(self):
+    def update_tabs(self):
         """Method for initializing the tabs."""
-        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing,
-                                    "Preprocessing")
+
+        while self.ui.tabWidget.count() > 0:
+            self.ui.tabWidget.removeTab(0)
+
+        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
-        self.ui.tabWidget.insertTab(5, self.ui.tabSourceAnalysis, "Source Analysis")
+        self.ui.tabWidget.insertTab(5, self.mainWindowTabSourceAnalysis, "Source Analysis")
+        self.mainWindowTabSourceAnalysis.update_tabs()
         
-        self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation,
-                                    "Source modelling preparation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabForwardModel,
-                                    "Forward model creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabCoregistration,
-                                    "Coregistration")
-        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabForwardSolution,
-                                    "Forward solution creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabNoiseCovariance,
-                                    "Noise covariance")
-        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabInverseOperator,
-                                    "Inverse operator")
-        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabSourceEstimate,
-                                    "Source estimate")
-        self.ui.tabWidgetSourceAnalysis.insertTab(8, self.ui.tabAnalysis,
-                                    "Analysis")
-
     def on_currentChanged(self):
         """
         Keep track of the active tab.
         Show the epoch collection list epochList when in appropriate tabs.
         """
+
         index = self.ui.tabWidget.currentIndex()
         if index == 1:
             mode = QtGui.QAbstractItemView.SingleSelection
@@ -2015,57 +1492,17 @@ class MainWindow(QtGui.QMainWindow):
             mode = QtGui.QAbstractItemView.MultiSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsTFR)
-#         elif index == 10:
-#             mode = QtGui.QAbstractItemView.SingleSelection
-#             self.epochList.ui.groupBoxEvents.setVisible(False)
-#             self.epochList.setParent(self.ui.frameInverseEpochs)
         else:
             self.epochList.hide()
             return
+
         self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
         self.epochList.show()
-
-#         if index == 10:
-#             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_23)
-#         elif index == 11:
-#             self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_24)
-
-    def on_currentChanged_source_analysis(self):
-        index_source = self.ui.tabWidgetSourceAnalysis.currentIndex()
-        if index_source == 6:
-            mode = QtGui.QAbstractItemView.SingleSelection
-            self.epochList.ui.groupBoxEvents.setVisible(False)
-            self.epochList.setParent(self.ui.frameInverseEpochs)
-        else:
-            self.epochList.hide()
-            return
-        self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
-        self.epochList.show()
-
-        if index_source == 6:
-            self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_23)
-        elif index_source == 7:
-            self.ui.listWidgetSourceEstimate.setParent(self.ui.groupBox_24)
-
-    def reinitialize_models(self):
-        """
-        Tell all the MVC models of the views in Meggie that they should
-        (re)initialize themselves. Should only be needed when active subject
-        changes, updating the models when items are added to them is based
-        on events.
-        """
-        self.forwardModelModel.initialize_model()
-        self.subjectListModel.initialize_model()
-        if self.caller.experiment.active_subject:
-            _initializeForwardSolutionList(self.ui.listWidgetForwardSolution,
-                self.caller.experiment.active_subject)
 
     def collect_parameter_values(self):
         collection_names = [str(item.text()) for item 
                 in self.epochList.ui.listWidgetEpochs.selectedItems()]
         return collection_names        
-
-    # Miscellaneous code:
 
     def directOutput(self):
         """
@@ -2084,9 +1521,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         preferencesDialog = PreferencesDialog(self)
         preferencesDialog.exec_()
-
-    def hide_workspace_option(self):
-        self.ui.actionSet_workspace.setVisible(False)
 
     def __del__(self):
         """
@@ -2120,28 +1554,6 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
-
-    @QtCore.pyqtSlot(int)
-    def on_close(self, result):
-        """
-        Slot to be called on close of dialogs. Frees the memory by setting the
-        dialog as None.
-        Parameters:
-        result - Integer indicating the result from the dialog (accept,
-                                                                reject).
-        """
-        sender = self.sender()
-        if sender is self.spectrumDialog:
-            self.spectrumDialog = None
-        elif sender is self.filterDialog:
-            self.filterDialog = None
-        elif sender is self.epochParameterDialog:
-            self.epochParameterDialog = None
-        elif sender is self.tfr_dialog:
-            self.tfr_dialog = None
-        elif sender is self.tfrTop_dialog:
-            self.tfrTop_dialog = None
-        sender.deleteLater()
 
 
 class EmittingStream(QtCore.QObject):
