@@ -366,14 +366,6 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.dockWidgetSubjects.show()
 
-    def on_actionToggle_whatsthis_mode_triggered(self, checked=None):
-        if checked is None:
-            return
-        if QWhatsThis.inWhatsThisMode():
-            QWhatsThis.leaveWhatsThisMode()
-        else:
-            QWhatsThis.enterWhatsThisMode()
-
     def evoked_selection_changed(self, subject_name, data_dict):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         

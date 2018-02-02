@@ -72,7 +72,7 @@
           <x>0</x>
           <y>0</y>
           <width>1327</width>
-          <height>849</height>
+          <height>847</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -2100,7 +2100,7 @@
      <x>0</x>
      <y>0</y>
      <width>1683</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -2130,7 +2130,6 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
-    <addaction name="actionToggle_whatsthis_mode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -2151,7 +2150,6 @@
    <addaction name="actionOpen_experiment"/>
    <addaction name="separator"/>
    <addaction name="actionShowExperimentInfo"/>
-   <addaction name="actionToggle_whatsthis_mode"/>
    <addaction name="separator"/>
    <addaction name="actionHide_Show_subject_list_and_info"/>
   </widget>
@@ -2756,19 +2754,6 @@
    </property>
    <property name="toolTip">
     <string>Hide/show subject list and info</string>
-   </property>
-  </action>
-  <action name="actionToggle_whatsthis_mode">
-   <property name="icon">
-    <iconset>
-     <normalon>:/toolBarIcons/images/whatsThisMode.png</normalon>
-    </iconset>
-   </property>
-   <property name="text">
-    <string>Toggle whatsthis mode</string>
-   </property>
-   <property name="toolTip">
-    <string>Click this, then click something in the user interface to get more info about it</string>
    </property>
   </action>
   <action name="actionDirectToConsole">
