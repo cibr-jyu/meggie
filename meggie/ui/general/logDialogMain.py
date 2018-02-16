@@ -25,6 +25,9 @@ class LogDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_LogDialog()
         self.ui.setupUi(self)
-        log_file = open(os.path.join(self.caller.experiment.workspace, self.caller.experiment.experiment_name, 'meggie.log'), 'r')
-        for line in log_file:
-            self.ui.textEdit.append(line)
+        try:
+            log_file = open(os.path.join(self.caller.experiment.workspace, self.caller.experiment.experiment_name, 'meggie.log'), 'r')
+            for line in log_file:
+                self.ui.textEdit.append(line)
+        except:
+            pass

@@ -189,6 +189,9 @@ class ICADialog(QtGui.QDialog):
         Transform and save the data.
         """
 
+        if not self.ica:
+            return
+
         raw = self.parent.experiment.active_subject.get_working_file()
 
         indices = [self.component_info[name] for name in self.removed]

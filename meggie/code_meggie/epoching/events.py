@@ -6,9 +6,9 @@ Created on Mar 12, 2013
 @author: Jaakko Leppakangas, Erkka Heinila
 Contains the Events-class that gets events from a raw file.
 """
-import mne
 import numpy as np
-from meggie.code_meggie.general.wrapper import wrap_mne_call
+
+import meggie.code_meggie.general.mne_wrapper as mne
 
 class Events(object):
     """
@@ -24,9 +24,8 @@ class Events(object):
         mask          -- Mask for excluding bits.
         """
 
-        events = wrap_mne_call(experiment, mne.find_events, raw,
-            stim_channel=stim_ch, shortest_event=1, uint_cast=True,
-            verbose='warning')
+        events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, 
+                                 uint_cast=True, verbose='warning')
         
         if mask or id_:
             events = filter(

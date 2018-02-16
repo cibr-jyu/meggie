@@ -15,18 +15,16 @@ import re
 import sys
 import datetime
 
-from os.path import isfile, join
 from shutil import copyfile
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
 
-import mne
+import meggie.code_meggie.general.mne_wrapper as mne
+
 import numpy as np
 
-from meggie.code_meggie.general.wrapper import wrap_mne_call
-    
 
 def copy_recon_files(activeSubject, sourceDirectory):
     """
@@ -381,11 +379,11 @@ def open_raw(fname, preload=True):
     """
     try:
         print 'Reading ' + fname
-        raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True,
+        raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True,
                           verbose='warning')
 
         # this was default till mne-python 0.13, so have it for consistency
-        if not mne.io.proj._has_eeg_average_ref_proj(raw.info['projs']):
+        if not mne._has_eeg_average_ref_proj(raw.info['projs']):
             if mne.pick_types(raw.info, meg=False, eeg=True).size > 0:
                 raw.set_eeg_reference()
 
@@ -405,8 +403,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
     
     # be protective and save with other name first and move afterwards
     temp_fname = os.path.join(folder, '_' + bname) 
-    wrap_mne_call(experiment, raw.save, temp_fname, overwrite=True,
-        verbose='warning')
+    raw.save(temp_fname, overwrite=True, verbose='warning')
 
     # assumes filename ends with .fif 
     pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
@@ -429,7 +426,6 @@ def save_raw(experiment, raw, fname, overwrite=True):
         shutil.move(os.path.join(folder, os.path.basename(file_)), 
                     os.path.join(folder, os.path.basename(file_)[1:]))
     experiment.active_subject.working_file_name = os.path.basename(fname)
-    raw.info['filename'] = fname
     raw._filenames[0] = fname
     
 def group_save_evokeds(path, evokeds, names):
@@ -600,7 +596,8 @@ def get_layouts():
         path = resource_filename('mne', 'channels/data/layouts')
         
         files.extend([f for f in os.listdir(path) 
-                      if isfile(join(path,f)) and f.endswith('.lout')])
+                      if os.path.isfile(os.path.join(path,f)) 
+                      and f.endswith('.lout')])
     except:
         pass
     

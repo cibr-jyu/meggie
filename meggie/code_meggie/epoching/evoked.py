@@ -6,13 +6,9 @@ Created on 20.2.2014
 
 import os
 
-from PyQt4.QtCore import QObject
-
-import mne
-
 from meggie.code_meggie.general.fileManager import load_evoked
 
-class Evoked(QObject):
+class Evoked(object):
     """
     Class for creating and handling evokeds
     """
@@ -26,7 +22,6 @@ class Evoked(QObject):
         name   -- name of the raw evoked file
         events -- list of events in raw file
         """
-        QObject.__init__(self)
         self._name = name
         self._mne_evokeds = mne_evokeds
         self._path = os.path.join(subject.evokeds_directory, name)

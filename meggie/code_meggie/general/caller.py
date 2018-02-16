@@ -3,55 +3,31 @@
 Created on Apr 11, 2013
 
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Erkka Heinilä
-This module contains caller class that contains the main state of the software
 """
 
-import subprocess
 import itertools
 import os
-import glob
-import fnmatch
 import re
-import shutil
 import copy
-import math
-from os.path import isfile
+
 from os.path import join
-from subprocess import CalledProcessError
 from copy import deepcopy
 
 from functools import partial
 from collections import OrderedDict
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
-import mne
 import numpy as np
-import pylab as pl
 import matplotlib.pyplot as plt
 
-from mne import make_fixed_length_events, compute_proj_evoked
-from mne.channels.layout import read_layout
-from mne.channels.layout import _pair_grad_sensors_from_ch_names
-from mne.channels.layout import _merge_grad_data
-from mne.viz import plot_evoked_topo
-from mne.viz import iter_topography
-from mne.utils import _clean_names
-from mne.time_frequency.tfr import tfr_morlet
-from mne.time_frequency import psd_welch
-from mne.preprocessing import compute_proj_ecg, compute_proj_eog, find_eog_events
+import meggie.code_meggie.general.mne_wrapper as mne
 
-from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
-from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 from meggie.ui.utils.decorators import threaded
-
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.events import Events
-from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.singleton import Singleton
-
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
@@ -145,8 +121,7 @@ class Caller(object):
 
         # To avoid casualities
         n_jobs = 1
-        projs, events = wrap_mne_call(self.experiment, 
-            compute_proj_ecg, raw=raw_in, tmin=tmin, tmax=tmax,
+        projs, events = mne.compute_proj_ecg(raw=raw_in, tmin=tmin, tmax=tmax,
             n_grad=grad, n_mag=mag, n_eeg=eeg, l_freq=filter_low, 
             h_freq=filter_high, average=comp_ssp, filter_length=taps, 
             n_jobs=n_jobs, ch_name=ch_name, reject=reject,
@@ -157,15 +132,15 @@ class Caller(object):
             raise Exception('No ECG events found. Change settings.')
 
         print "Writing ECG projections in %s" % ecg_proj_fname
-        wrap_mne_call(self.experiment, mne.write_proj, ecg_proj_fname, projs)
+        mne.write_proj(ecg_proj_fname, projs)
 
         print "Writing ECG events in %s" % ecg_event_fname
-        wrap_mne_call(self.experiment, mne.write_events, ecg_event_fname, events)
+        mne.write_events(ecg_event_fname, events)
 
     def plot_ecg_events(self, params):
         raw = self.experiment.active_subject.get_working_file()
         
-        events, _, _ = mne.preprocessing.find_ecg_events(raw,
+        events, _, _ = find_ecg_events(raw,
             ch_name=params['ch_name'], event_id=1, l_freq=params['ecg-l-freq'],
             h_freq=params['ecg-h-freq'], tstart=params['tstart'],
             qrs_threshold=params['qrs'], filter_length=params['filtersize'])
@@ -235,17 +210,17 @@ class Caller(object):
 
         # To avoid casualities
         n_jobs = 1        
-        projs, events = wrap_mne_call(self.experiment, compute_proj_eog,
-            raw=raw_in, tmin=tmin, tmax=tmax, n_grad=grad, n_mag=mag, 
-            n_eeg=eeg, l_freq=filter_low, h_freq=filter_high, average=comp_ssp, 
-            filter_length=taps, n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
+        projs, events = mne.compute_proj_eog(raw=raw_in, tmin=tmin, tmax=tmax,
+            n_grad=grad, n_mag=mag, n_eeg=eeg, l_freq=filter_low, 
+            h_freq=filter_high, average=comp_ssp, filter_length=taps, 
+            n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
             eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
 
         print "Writing EOG projections in %s" % eog_proj_fname
-        wrap_mne_call(self.experiment, mne.write_proj, eog_proj_fname, projs)
+        mne.write_proj( eog_proj_fname, projs)
 
         print "Writing EOG events in %s" % eog_event_fname
-        wrap_mne_call(self.experiment, mne.write_events, eog_event_fname, events)
+        mne.write_events(eog_event_fname, events)
 
     def plot_eog_events(self, params):
         raw = self.experiment.active_subject.get_working_file()
@@ -259,10 +234,10 @@ class Caller(object):
         except IndexError:
             raise Exception("No EOG channel found")
 
-        events = mne.preprocessing.find_eog_events(raw,
-            event_id=1, l_freq=params['eog-l-freq'],
-            h_freq=params['eog-h-freq'], filter_length=params['filtersize'],
-            ch_name=ch_name, tstart=params['tstart'])
+        events = mne.find_eog_events(raw, event_id=1, 
+            l_freq=params['eog-l-freq'], h_freq=params['eog-h-freq'], 
+            filter_length=params['filtersize'], ch_name=ch_name, 
+            tstart=params['tstart'])
 
         epochs = mne.Epochs(raw, events=events, event_id=1,
             tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
@@ -295,24 +270,23 @@ class Caller(object):
         tmax = dic['tmax']
         n_eeg = dic['n_eeg']
         
-        eog_epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, events, tmin=tmin, tmax=tmax)
+        eog_epochs = mne.Epochs(raw, events, tmin=tmin, tmax=tmax)
         
         
         eog_evoked = eog_epochs.average()
         
         # Compute SSPs
-        projs = wrap_mne_call(self.experiment, compute_proj_evoked, eog_evoked, n_eeg=n_eeg)
+        projs = mne.compute_proj_evoked(eog_evoked, n_eeg=n_eeg)
 
         prefix = os.path.join(subject.subject_path, subject.subject_name) 
         eeg_event_fname = prefix + '_eeg-eve.fif'
         eeg_proj_fname = prefix + '_eeg_proj.fif'
         
         print "Writing EOG projections in %s" % eeg_proj_fname
-        wrap_mne_call(self.experiment, mne.write_proj, eeg_proj_fname, projs)
+        mne.write_proj(eeg_proj_fname, projs)
 
         print "Writing EOG events in %s" % eeg_event_fname
-        wrap_mne_call(self.experiment, mne.write_events, eeg_event_fname, events)
+        mne.write_events(eeg_event_fname, events)
 
     def plot_average_epochs(self, events, tmin, tmax):
         """
@@ -345,18 +319,16 @@ class Caller(object):
         print "Finished"
 
     def plot_projs_topomap(self, raw):
-        fig = wrap_mne_call(self.experiment, raw.plot_projs_topomap)
+        fig = raw.plot_projs_topomap()
         name = self.experiment.active_subject.subject_name
         fig.canvas.set_window_title('Projections_' + name)
 
     @threaded
     def find_eog_events(self, params):
         raw = self.experiment.active_subject.get_working_file()
-        eog_events = wrap_mne_call(self.experiment, find_eog_events, raw,
-                        l_freq=params['l_freq'], h_freq=params['h_freq'],
-                        filter_length=params['filter_length'],
-                        ch_name=params['ch_name'], verbose=True,
-                        tstart=params['tstart'])
+        eog_events = mne.find_eog_events(raw, l_freq=params['l_freq'], 
+            h_freq=params['h_freq'], filter_length=params['filter_length'],
+            ch_name=params['ch_name'], verbose=True, tstart=params['tstart'])
         return eog_events
 
     def create_epochs(self, params, subject):
@@ -408,7 +380,7 @@ class Caller(object):
             for idx, event_params_dic in enumerate(fixed_length_event_params):
                 category['fixed_' + str(idx + 1)] = event_id_counter
                 event_params_dic['event_id'] = event_id_counter
-                events.extend(make_fixed_length_events(raw, 
+                events.extend(mne.make_fixed_length_events(raw, 
                     event_params_dic['event_id'],
                     event_params_dic['tmin'],
                     event_params_dic['tmax'], 
@@ -419,7 +391,7 @@ class Caller(object):
         if len(events) == 0:
             raise ValueError('Could not create epochs for subject: No events found with given params.')
 
-        if not isinstance(raw, mne.io.Raw):
+        if not isinstance(raw, mne.RAW_TYPE):
             raise TypeError('Not a Raw object')
 
         if params_copy['mag'] and params_copy['grad']:
@@ -439,8 +411,8 @@ class Caller(object):
             raise ValueError('Picks cannot be empty. Select picks by ' + 
                              'checking the checkboxes.')
 
-        epochs = wrap_mne_call(self.experiment, mne.epochs.Epochs,
-            raw, np.array(events), category, params_copy['tmin'], params_copy['tmax'], 
+        epochs = mne.Epochs(raw, np.array(events), 
+            category, params_copy['tmin'], params_copy['tmax'], 
             picks=picks, reject=params_copy['reject'])
             
         if len(epochs.get_data()) == 0:
@@ -477,10 +449,10 @@ class Caller(object):
         path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
         
         if os.path.exists(os.path.join(path_mne, layout)):
-            return read_layout(layout, path_mne)
+            return mne.read_layout(layout, path_mne)
         
         if os.path.exists(os.path.join(path_meggie, layout)):
-            return read_layout(layout, path_meggie)
+            return mne.read_layout(layout, path_meggie)
 
 
     def draw_evoked_potentials(self, evokeds, title=None):
@@ -491,7 +463,7 @@ class Caller(object):
         layout = self.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
 
-        fig = wrap_mne_call(self.experiment, plot_evoked_topo, evokeds, layout,
+        fig = mne.plot_evoked_topo(evokeds, layout,
             color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
             font_color='k')
 
@@ -528,8 +500,7 @@ class Caller(object):
             channels = channelSet
             title = 'selected set of channels'
         else:
-            channels = wrap_mne_call(
-                self.experiment, mne.selection.read_selection, lobeName)
+            channels = mne.read_selection(lobeName)
             title = lobeName
             
         print "Calculating channel averages for " + title
@@ -582,7 +553,7 @@ class Caller(object):
             # Creates evoked potentials from the given events (variable 'name' 
             # refers to different categories).
             evokeds = [epochs[name].average() for name in category.keys()]
-        elif isinstance(instance, mne.Evoked):
+        elif isinstance(instance, mne.EVOKED_TYPE):
             evokeds = [instance]
             epochs_name = evokeds[0].comment
         elif isinstance(instance, list) or isinstance(instance, np.ndarray):
@@ -594,19 +565,15 @@ class Caller(object):
         
         channelNameString = evokeds[0].info['ch_names'][0]
         if re.match("^MEG[0-9]+", channelNameString):
-            channelsToAve = _clean_names(channelsToAve, remove_whitespace=True)
+            channelsToAve = mne._clean_names(channelsToAve, remove_whitespace=True)
 
         dataList = []
 
         for evoked in evokeds:
-            evokedToAve = wrap_mne_call(
-                self.experiment,
-                mne.pick_channels_evoked, evoked,
-                list(channelsToAve)
-            )
+            evokedToAve = mne.pick_channels_evoked(evoked, list(channelsToAve))
 
             ch_names = evokedToAve.ch_names
-            gradsIdxs = _pair_grad_sensors_from_ch_names(ch_names)
+            gradsIdxs = mne._pair_grad_sensors_from_ch_names(ch_names)
     
             magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
     
@@ -615,7 +582,7 @@ class Caller(object):
 
             # Merges the grad channel pairs in evokedToAve
             if len(gradsIdxs) > 0:
-                gradData = _merge_grad_data(evokedToAve.data[gradsIdxs])
+                gradData = mne._merge_grad_data(evokedToAve.data[gradsIdxs])
 
                 # Averages the gradData
                 averagedGradData = np.mean(gradData, axis=0)
@@ -721,17 +688,17 @@ class Caller(object):
         
         @threaded
         def calculate_tfrs():
-            power, itc = tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, 
-                                    decim=decim, n_jobs=n_jobs)
+            power, itc = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, 
+                                        decim=decim, n_jobs=n_jobs)
             evoked = epochs.average()
             return power, itc, evoked
             
         power, itc, evoked = calculate_tfrs()
         
         if mode:
-            power.data = mne.baseline.rescale(power.data, power.times, 
+            power.data = mne.rescale(power.data, power.times, 
                 baseline=baseline, mode=mode)
-            itc.data = mne.baseline.rescale(itc.data, itc.times, 
+            itc.data = mne.rescale(itc.data, itc.times, 
                 baseline=baseline, mode=mode)          
         
         ch_name = power.ch_names[ch_index]
@@ -764,7 +731,7 @@ class Caller(object):
 
         plt.subplot2grid((3, 15), (0, 0), colspan=14)
 
-        ch_type = mne.channels.channels.channel_type(evoked.info, ch_index)
+        ch_type = mne.channel_type(evoked.info, ch_index)
 
         try:
             plt.ylabel(get_unit(ch_type))
@@ -839,8 +806,8 @@ class Caller(object):
         @threaded
         def calculate_tfrs():
             n_jobs = self.parent.preferencesHandler.n_jobs
-            power, itc = tfr_morlet(inst, freqs=freqs, n_cycles=ncycles, 
-                                    decim=decim, n_jobs=n_jobs)
+            power, itc = mne.tfr_morlet(inst, freqs=freqs, n_cycles=ncycles, 
+                                        decim=decim, n_jobs=n_jobs)
             return power, itc
         
         power, itc = calculate_tfrs()
@@ -860,7 +827,7 @@ class Caller(object):
             cmap = color_map
 
         if mode:
-            inst.data = mne.baseline.rescale(inst.data, inst.times, 
+            inst.data = mne.rescale(inst.data, inst.times, 
                 baseline=baseline, mode=mode)    
 
         if save_data:
@@ -884,16 +851,14 @@ class Caller(object):
             
 
         if scalp is not None:
-            wrap_mne_call(self.experiment, inst.plot_topomap,
-                          tmin=scalp['tmin'], tmax=scalp['tmax'],
-                          fmin=scalp['fmin'], fmax=scalp['fmax'],
-                          ch_type=ch_type, layout=layout,
-                          show=False, cmap=cmap)
+            inst.plot_topomap(tmin=scalp['tmin'], tmax=scalp['tmax'],
+                              fmin=scalp['fmin'], fmax=scalp['fmax'],
+                              ch_type=ch_type, layout=layout,
+                              show=False, cmap=cmap)
 
         print "Plotting..."
-        fig = wrap_mne_call(self.experiment, inst.plot_topo, 
-            fmin=freqs[0], fmax=freqs[-1], layout=layout, cmap=cmap, 
-            title=title)
+        fig = inst.plot_topo(fmin=freqs[0], fmax=freqs[-1], layout=layout, 
+            cmap=cmap, title=title)
 
         fig.canvas.set_window_title('TFR' + '_' + collection_name)
         fig.show()
@@ -902,7 +867,7 @@ class Caller(object):
             channel = plt.getp(plt.gca(), 'title')
             plt.gcf().canvas.set_window_title('_'.join(['TFR', collection_name,
                                                         channel]))
-            pl.show(block=False)
+            plt.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 
@@ -916,15 +881,15 @@ class Caller(object):
         raw = raw.copy()
         raw.apply_proj()
         
-        tfr = np.abs(mne.time_frequency.stft(raw._data, wsize, tstep=tstep))
-        freqs = mne.time_frequency.stftfreq(wsize, sfreq=raw.info['sfreq'])
+        tfr = np.abs(mne.stft(raw._data, wsize, tstep=tstep))
+        freqs = mne.stftfreq(wsize, sfreq=raw.info['sfreq'])
         times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
         baseline = (blstart, blend)
         
-        tfr_ = mne.time_frequency.AverageTFR(raw.info, tfr, times, freqs, 1)
+        tfr_ = mne.AverageTFR(raw.info, tfr, times, freqs, 1)
         
         if mode:
-            tfr_.data = mne.baseline.rescale(tfr_.data, times, baseline=baseline, 
+            tfr_.data = mne.rescale(tfr_.data, times, baseline=baseline, 
                                              mode=mode)
         
         fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout,
@@ -1010,7 +975,7 @@ class Caller(object):
             plt.xlabel('Frequency (Hz)')
 
             plt.ylabel('Power ({})'.format(get_power_unit(
-                mne.channels.channels.channel_type(info, ch_idx),
+                mne.channel_type(info, ch_idx),
                 params['log'] 
             )))
 
@@ -1020,10 +985,10 @@ class Caller(object):
         info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
                             if idx in picks]
 
-        for ax, idx in iter_topography(info, fig_facecolor='white',
-                                       axis_spinecolor='white',
-                                       axis_facecolor='white', layout=lout,
-                                       on_pick=my_callback):
+        for ax, idx in mne.iter_topography(info, fig_facecolor='white',
+                                           axis_spinecolor='white',
+                                           axis_facecolor='white', layout=lout,
+                                           on_pick=my_callback):
             
             color_idx = 0
             for psd in psds:
@@ -1050,9 +1015,9 @@ class Caller(object):
                 epoch.load_data()
                 length = epoch._data.shape[-1]
                 
-                psds, freqs = wrap_mne_call(self.experiment, psd_welch,
-                    epoch, fmin=fmin, fmax=fmax, n_fft=nfft, n_overlap=overlap,
-                    picks=picks, proj=True, verbose=True, n_jobs=n_jobs)
+                psds, freqs = mne.psd_welch(epoch, fmin=fmin, fmax=fmax, 
+                    n_fft=nfft, n_overlap=overlap, picks=picks, 
+                    proj=True, verbose=True, n_jobs=n_jobs)
 
                 psds = np.average(psds, axis=0)
 

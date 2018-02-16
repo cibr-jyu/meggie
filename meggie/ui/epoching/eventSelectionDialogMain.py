@@ -11,14 +11,12 @@ EventSelectionDialog-window.
 from PyQt4.Qt import QMimeData
 
 import numpy as np
-import mne
 import traceback
 
 from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 from copy import deepcopy
 
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events

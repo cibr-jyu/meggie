@@ -8,8 +8,7 @@ Created on Mar 6, 2013
 Contains the MeasurementInfo-class used for collecting information from
 MEG-measurement raw files.
 """
-import mne
-from mne.externals.six import string_types
+import meggie.code_meggie.general.mne_wrapper as mne
 
 import datetime
 import re
@@ -27,7 +26,7 @@ class MeasurementInfo(object):
         raw           -- Raw object
         Raises a TypeError if the raw object is not of type mne.io.Raw.
         """
-        if isinstance(raw, mne.io.Raw):
+        if isinstance(raw, mne.RAW_TYPE):
             self._info = raw.info
         else:
             raise TypeError('Not a Raw object.')

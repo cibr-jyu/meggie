@@ -10,10 +10,10 @@ from PyQt4 import QtGui, QtCore
 
 import numpy as np
 
-from mne import Epochs
-
 from meggie.code_meggie.general.caller import Caller
-from meggie.code_meggie.general import fileManager
+
+import meggie.code_meggie.general.fileManager as fileManager
+import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
@@ -120,7 +120,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin = 0
             tmax = interval[2] - interval[1]
-            epoch = Epochs(raw, events=events, tmin=tmin, tmax=tmax)
+            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax)
             epoch.comment = str(interval)
             if interval[0] not in epochs:
                 epochs[interval[0]] = []

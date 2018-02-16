@@ -2,11 +2,10 @@
 """
 import os
 
-import mne
 
+import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.ui.utils.decorators import threaded
 
 
@@ -48,7 +47,7 @@ def apply_exg(kind, experiment, raw, directory, projs):
                 raw.info['projs'].pop(idx)
                 break
 
-    wrap_mne_call(experiment, raw.add_proj, projs)  # then add selected
+    raw.add_proj(projs)
 
     if kind == 'eeg':
         projs = raw.info['projs']

@@ -9,11 +9,9 @@ from PyQt4.Qt import QFileDialog
 import csv
 import os
 import numpy as np
-import mne
 
-from mne.channels.layout import _pair_grad_sensors_from_ch_names
-from mne.channels.layout import _merge_grad_data
-from mne.utils import _clean_names
+import meggie.code_meggie.general.mne_wrapper as mne
+import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.statistic import Statistic
@@ -21,7 +19,6 @@ from meggie.ui.analysis.evokedStatsDialogUi import Ui_EvokedStatsDialog
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
-from meggie.code_meggie.general import fileManager
 
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_scaling
@@ -91,13 +88,13 @@ class EvokedStatsDialog(QtGui.QDialog):
 
         state -- Integer stating whether the checkbox is checked or unchecked.
         """
-        channels = mne.selection.read_selection(str(self.sender().text()))
+        channels = mne.read_selection(str(self.sender().text()))
         if ' ' in channels[0] and (' ' not in
                                    self.ui.listWidgetChannels.item(0).text()):
             remove_spaces = True
         else:
             remove_spaces = False
-        channels = _clean_names(channels, remove_whitespace=remove_spaces)
+        channels = mne._clean_names(channels, remove_whitespace=remove_spaces)
         for channel in channels:
             for i in range(self.ui.listWidgetChannels.count()):
                 item = self.ui.listWidgetChannels.item(i)
@@ -263,7 +260,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                 pick = evoked.ch_names.index(ch_name)
                 this_data = data[pick]
 
-                ch_type = mne.channels.channels.channel_type(evoked.info, pick)
+                ch_type = mne.channel_type(evoked.info, pick)
 
                 if ch_type not in ['grad', 'mag', 'eeg']:
                     print ('Statistics not supported for %s channels. Skipping'
@@ -279,7 +276,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                     if (ch_name[:-1] + '2') in self.selected_channels[collection_name]:
                         # Merge data from pair of grad channels
                         pick2 = evoked.ch_names.index(ch_name[:-1] + '2')
-                        this_data = _merge_grad_data(np.array([this_data,
+                        this_data = mne._merge_grad_data(np.array([this_data,
                                                                data[pick2]]))
                         self._write_csv_row(writer, ch_name[:-1] + 'X',
                                             this_data[0], times, tmin, tmax,
@@ -358,7 +355,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         for name in names:
             ch_index = evoked.ch_names.index(name)
             if ch_type == '':
-                ch_type = mne.channels.channels.channel_type(evoked.info,
+                ch_type = mne.channel_type(evoked.info,
                                                              ch_index)
             this_data.append(data[ch_index])
 
@@ -370,10 +367,10 @@ class EvokedStatsDialog(QtGui.QDialog):
         scaler = get_scaling(ch_type)
 
         if ch_type == 'grad':
-            gradsIdxs = _pair_grad_sensors_from_ch_names(names)
+            gradsIdxs = mne._pair_grad_sensors_from_ch_names(names)
             this_data = np.array(this_data)
             try:
-                this_data = _merge_grad_data(this_data[gradsIdxs])
+                this_data = mne._merge_grad_data(this_data[gradsIdxs])
             except ValueError as err:
                 msg = 'Please select gradiometers as pairs for RMS.'
                 messagebox(self, msg)

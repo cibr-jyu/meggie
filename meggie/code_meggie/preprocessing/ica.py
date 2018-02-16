@@ -2,16 +2,16 @@
 
 from copy import deepcopy
 
-import mne
 import numpy as np
 
+import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
 
 def compute_ica(raw, n_components, method, max_iter):
     """
     """
-    ica = mne.preprocessing.ICA(
+    ica = mne.ICA(
         n_components=n_components,
         method=method,
         max_iter=max_iter)

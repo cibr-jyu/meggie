@@ -7,10 +7,10 @@ from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
 import numpy as np
-import mne
 
 from meggie.code_meggie.general.caller import Caller
-from meggie.ui.utils.messaging import exc_messagebox, messagebox
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 
 class EegParametersDialog(QtGui.QDialog):
     
@@ -53,6 +53,8 @@ class EegParametersDialog(QtGui.QDialog):
 
         # monkey patch peak finder temporarily in the eog module
         # to allow inverting polarity
+        import mne
+
         original_peak_finder = mne.preprocessing.eog.peak_finder
 
         def new_peak_finder(x0, thresh=None, extrema=1, verbose=None):

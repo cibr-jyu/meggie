@@ -1,7 +1,6 @@
 TODO:
 
 - should do manual for meggie
-- clean up the log code aka make sense of the actionLogger and wrapper
 - refactoring:
  * get rid of the caller by
   - keeping the state inside Experiment-object that is intialized in MainWindow
@@ -9,7 +8,6 @@ TODO:
   - look into structure of mainWindowUi
     * separate different tabs to different files?
     * epochs batching widget code shouldnt just lie there globally
-  - maybe should give up on qt mvc models
  * check proper style with pylint
   - make source analysis UI more simple
 - we need tests

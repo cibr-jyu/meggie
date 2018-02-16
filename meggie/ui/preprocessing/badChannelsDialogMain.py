@@ -77,9 +77,5 @@ class BadChannelsDialog(QtGui.QDialog):
         experiment = self.parent.experiment
         fname = raw.info['filename']
         fileManager.save_raw(experiment, raw, fname, overwrite=True)
-        experiment.action_logger.log_message(''.join([
-            'Raw plot bad channels selected for file: ',
-            fname, '\n', str(raw.info['bads'])]))
-
         self.parent.initialize_ui()
         self.close()

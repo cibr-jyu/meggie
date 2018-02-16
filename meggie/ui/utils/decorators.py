@@ -39,7 +39,11 @@ def threaded(func):
                 exc = bucket.get(block=False)
                 pool.terminate()
                 QtGui.QApplication.restoreOverrideCursor()
-                raise exc[0], exc[1].args[0], exc[2]
+                try:
+                    msg = exc[1].args[0]
+                except:
+                    msg = str(exc[1])
+                raise exc[0], msg, exc[2]
             except Empty:
                 pass
             if async_result.ready():

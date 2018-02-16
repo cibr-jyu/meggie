@@ -5,8 +5,6 @@ Created on 17.10.2016
 '''
 from PyQt4 import QtGui
 
-import mne
-
 from meggie.ui.analysis.powerSpectrumEventsUi import Ui_Advanced 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog

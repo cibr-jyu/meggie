@@ -6,8 +6,9 @@ Created on Sep 12, 2013
 
 from PyQt4 import QtCore, QtGui
 
-import mne
 import numpy as np
+
+import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
 
@@ -41,7 +42,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
             self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
 
-        fig = mne.viz.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
+        fig = mne.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
                                         colorbar=True,
                                         order=None, show=True)
 

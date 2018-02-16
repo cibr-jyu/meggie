@@ -18,7 +18,6 @@ from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
-from meggie.code_meggie.general.actionLogger import ActionLogger
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
 
@@ -40,7 +39,6 @@ class Experiment(QObject):
     description        -- A user defined description of the experiment
     subjects           -- The list of the Subject objects in this experiment
     active_subject     -- The subject that is currently processed
-    action_logger      -- logs action
     """
     caller = Caller.Instance()
 
@@ -55,7 +53,6 @@ class Experiment(QObject):
         self._description = 'no description'
         self._subjects = {}
         self._active_subject = None
-        self._action_logger = None
         self._workspace = None
         self._layout = 'Infer from data'
 
@@ -169,14 +166,6 @@ class Experiment(QObject):
         Method for setting active subject.
         """
         self._active_subject = subject
-
-    @property
-    def action_logger(self):
-        return self._action_logger
-
-    @action_logger.setter
-    def action_logger(self, action_logger):
-        self._action_logger = action_logger
 
     def add_subject(self, subject):
         """
@@ -350,8 +339,6 @@ class ExperimentHandler(QObject):
         
         experiment.save_experiment_settings()
         
-        self.initialize_logger(experiment)
-        
         prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
         prefs.write_preferences_to_disk()
         
@@ -429,20 +416,6 @@ class ExperimentHandler(QObject):
                     subject.add_evoked(evoked)
                 experiment.add_subject(subject)
 
-        self.initialize_logger(experiment)
         prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
 
         return experiment
-
-    def initialize_logger(self, experiment):
-
-        print 'Initializing logger' 
-        try:
-            experiment.action_logger = ActionLogger()
-            experiment.action_logger.initialize_logger(os.path.join(experiment.workspace, experiment.experiment_name))
-        except:
-            experiment.action_logger.log_message('Could not initialize logger.')
-            print 'Unable to initialize logger'
-            return
-        experiment.action_logger.log_message('Opened experiment: '+ experiment.experiment_name)
-        print 'Logger initialized'

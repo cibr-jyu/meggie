@@ -6,18 +6,17 @@ Created on Oct 22, 2013
 @author: jaolpeso
 """
 
-from PyQt4.QtCore import QObject
-
 import os
 import glob
 
 import numpy as np
-import mne
 
-from meggie.code_meggie.general import fileManager
+import meggie.code_meggie.general.mne_wrapper as mne
+import meggie.code_meggie.general.fileManager as fileManager
+
 from meggie.code_meggie.epoching.events import Events
 
-class Subject(QObject):
+class Subject(object):
     
     def __init__(self, experiment, subject_name, working_file_name):
         """
@@ -29,7 +28,6 @@ class Subject(QObject):
         working_file_name -- the name of the subject's working file that can be
                              different from subject_name
         """
-        QObject.__init__(self)
         # Either user defined or the name of the data file.
         self._subject_name = subject_name
         self._working_file = None
@@ -115,7 +113,7 @@ class Subject(QObject):
         """
         Returns the current working raw object.
         """
-        if isinstance(self._working_file, mne.io.Raw):
+        if isinstance(self._working_file, mne.RAW_TYPE):
             if preload:
                 self._working_file.load_data()
             return self._working_file

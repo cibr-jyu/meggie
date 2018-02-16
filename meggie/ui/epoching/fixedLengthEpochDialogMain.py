@@ -3,12 +3,12 @@ Created on 10.9.2015
 
 @author: Jaakko Leppakangas
 '''
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 from PyQt4.QtGui import QDialogButtonBox
 
-from mne import make_fixed_length_events
+import meggie.code_meggie.general.mne_wrapper as mne
+import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.caller import Caller
 from meggie.ui.epoching.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
 
@@ -17,7 +17,6 @@ class FixedLengthEpochDialog(QtGui.QDialog):
     Class containing the logic for FixedLengthEpochDialog. It is used for
     creating fixed length events.
     """
-    #fixed_events_ready = QtCore.pyqtSignal(list, str)
     caller = Caller.Instance()
 
     def __init__(self, parent):
@@ -47,7 +46,7 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         subject = self.parent.get_selected_subject()
         working_file = subject.get_working_file(preload=False)
         
-        events = make_fixed_length_events(
+        events = mne.make_fixed_length_events(
             working_file, 0, event_params['tmin'],
             event_params['tmax'], event_params['interval']
         )

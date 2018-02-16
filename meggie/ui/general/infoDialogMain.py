@@ -7,9 +7,8 @@ a raw data file.
 """
 
 import sys
-import mne
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo

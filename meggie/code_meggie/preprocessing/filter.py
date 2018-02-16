@@ -2,7 +2,6 @@
 """
 
 from meggie.ui.utils.decorators import threaded
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 
 import meggie.code_meggie.general.fileManager as fileManager
 
@@ -26,11 +25,9 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
     trans_bw = dic['trans_bw']
 
     print "Filtering..."
-    wrap_mne_call(experiment, dataToFilter.filter,
-                  l_freq=lfreq, h_freq=hfreq, filter_length=length,
-                  l_trans_bandwidth=trans_bw,
-                  h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
-                  method='fft', verbose=True)
+    dataToFilter.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
+        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
+        method='fft', fir_design='firwin', verbose=True)
 
     freqs = list()
     if dic['bandstop1']:
@@ -42,14 +39,13 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
         trans_bw = dic['bandstop_transbw']
 
         print "Band-stop filtering..."
-        wrap_mne_call(experiment, dataToFilter.notch_filter,
-                      freqs, picks=None, filter_length=length,
-                      notch_widths=dic['bandstop_bw'],
-                      trans_bandwidth=trans_bw, n_jobs=n_jobs,
-                      verbose=True)
+        dataToFilter.notch_filter(freqs, picks=None, filter_length=length,
+            notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw, 
+            n_jobs=n_jobs, verbose=True)
 
     if not preview:
+        fname = dataToFilter.filenames[0]
         fileManager.save_raw(experiment, dataToFilter,
-                             dataToFilter.info['filename'], overwrite=True)
+                             fname, overwrite=True)
 
     return dataToFilter

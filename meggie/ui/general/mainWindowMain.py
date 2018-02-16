@@ -10,23 +10,17 @@ Contains the MainWindow-class that holds the main window of the application.
 import os
 import sys
 import traceback
-import shutil
-import sip
 import gc
-import json
 
 import matplotlib
-import mne
+matplotlib.use('Qt4Agg')
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-from PyQt4.QtGui import QWhatsThis
 from PyQt4.QtGui import QAbstractItemView
 from PyQt4.Qt import QApplication
 
-from mne.evoked import write_evokeds
-
-matplotlib.use('Qt4Agg')
+import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
@@ -1153,8 +1147,9 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.textBrowserStim.setText('-1')
 
+
         self.ui.textBrowserWorkingFile.setText(
-            os.path.basename(epochs.raw.info['filename']))
+            os.path.basename(epochs.raw.filename))
 
     def clear_epoch_collection_parameters(self):
         """
@@ -1219,7 +1214,7 @@ class MainWindow(QtGui.QMainWindow):
 
         try:
             print 'Writing evoked data as ' + evoked_name + ' ...'
-            write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+            mne.write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
@@ -1439,6 +1434,7 @@ class MainWindow(QtGui.QMainWindow):
     def update_tabs(self):
         """Method for initializing the tabs."""
 
+        current_tab = self.ui.tabWidget.currentIndex()                                  
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
 
@@ -1447,6 +1443,9 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
         self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
         self.ui.tabWidget.insertTab(5, self.mainWindowTabSourceAnalysis, "Source Analysis")
+
+        self.ui.tabWidget.setCurrentIndex(current_tab)
+
         self.mainWindowTabSourceAnalysis.update_tabs()
         
     def on_currentChanged(self):
