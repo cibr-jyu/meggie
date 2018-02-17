@@ -11,6 +11,7 @@ import os
 import sys
 import traceback
 import gc
+import logging
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -86,7 +87,10 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
+        self.experiment = None
+
+        self.setup_loggers()        
 
         # Direct output to console
         if 'debug' not in sys.argv:
@@ -198,8 +202,8 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment is not None:
-            directory = self.caller.experiment.workspace
+        if self.experiment is not None:
+            directory = self.experiment.workspace
         else:
             directory = ''
 
@@ -214,8 +218,8 @@ class MainWindow(QtGui.QMainWindow):
         try:
             exp = self.experimentHandler.open_existing_experiment(
                 self.preferencesHandler, path=path)
-            self.caller.experiment = exp
             self.experiment = exp
+            self.caller.experiment = exp
             self.initialize_ui()
         except Exception as e:
             exc_messagebox(self, e)
@@ -230,7 +234,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         # Check that we have an experiment that we can add a subject to
-        if self.caller.experiment is None:
+        if self.experiment is None:
             msg = ('No active experiment to add a subject to. Load an '
                    'experiment or make a new one, then try again.')
             messagebox(self, msg)
@@ -263,7 +267,7 @@ class MainWindow(QtGui.QMainWindow):
                 subject_name = index.data()
         
                 try:
-                    self.caller.experiment.remove_subject(subject_name, self)
+                    self.experiment.remove_subject(subject_name, self)
                 except Exception:
                     failures.append(subject_name)
 
@@ -273,7 +277,7 @@ class MainWindow(QtGui.QMainWindow):
                            '\n'.join(failures)])
             messagebox(self, msg)
 
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
         self.initialize_ui()
 
     def closeEvent(self, event):
@@ -307,7 +311,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment is None:
+        if self.experiment is None:
             message = 'Please open an experiment first.'
             messagebox(self, message)
             return
@@ -328,7 +332,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.epochParameterDialog = EventSelectionDialog(self)
@@ -346,7 +350,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the experiment info dialog """
         if checked is None:
             return
-        if self.caller.experiment is None:
+        if self.experiment is None:
             messagebox(self, 'You do not currently have an experiment activated.')  # noqa
             return
         self.expInfoDialog = experimentInfoDialog()
@@ -364,7 +368,7 @@ class MainWindow(QtGui.QMainWindow):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
         epoch_widget.clear()
-        for name in self.caller.experiment.subjects[subject_name].epochs:
+        for name in self.experiment.subjects[subject_name].epochs:
             item = QtGui.QListWidgetItem()
             item.setText(name)
             epoch_widget.addItem(item)
@@ -377,7 +381,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         evoked_name = str(item.text())
-        evoked = self.caller.experiment.active_subject.evokeds.get(evoked_name)
+        evoked = self.experiment.active_subject.evokeds.get(evoked_name)
         info = 'Subjects:\n'
         
         if 'subjects' not in evoked.info:
@@ -405,7 +409,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
@@ -416,7 +420,7 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, 'Please select an epoch collection to average.')
             return
 
-        subject = self.caller.experiment.active_subject
+        subject = self.experiment.active_subject
         
         try:
             self.calculate_evokeds(subject, collection_names)
@@ -429,25 +433,25 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         subject_names = self.evokeds_batching_widget.selected_subjects
         
-        recently_active_subject_name = self.caller.experiment.active_subject.subject_name
+        recently_active_subject_name = self.experiment.active_subject.subject_name
          
         for subject_name, collection_names in self.evokeds_batching_widget.data.items():
             if subject_name in subject_names:
                 try:
-                    subject = self.caller.experiment.activate_subject(subject_name)
+                    subject = self.experiment.activate_subject(subject_name)
                     self.calculate_evokeds(subject, collection_names)
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject, str(e)))
                     traceback.print_exc()
                      
-        self.caller.experiment.activate_subject(recently_active_subject_name)
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.activate_subject(recently_active_subject_name)
+        self.experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
@@ -456,7 +460,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -471,7 +475,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
         
-        subjects = self.caller.experiment.subjects
+        subjects = self.experiment.subjects
         self.save_evoked_data(subjects)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
@@ -479,8 +483,8 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         subjects = dict([
-            (self.caller.experiment.active_subject.subject_name, 
-             self.caller.experiment.active_subject),
+            (self.experiment.active_subject.subject_name, 
+             self.experiment.active_subject),
         ])
         
         self.save_evoked_data(subjects)
@@ -489,7 +493,7 @@ class MainWindow(QtGui.QMainWindow):
         """Plot image over epochs channel"""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         if self.epochList.ui.listWidgetEpochs.count() == 0:
@@ -502,7 +506,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
-        epochs = self.caller.experiment.active_subject.epochs.get(name)
+        epochs = self.experiment.active_subject.epochs.get(name)
         self.visualizeEpochs = (visualizeEpochChannelDialogMain.
                                 VisualizeEpochChannelDialog(epochs))
         self.visualizeEpochs.show()
@@ -511,7 +515,7 @@ class MainWindow(QtGui.QMainWindow):
         """Call ``epochs.plot``."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         item = self.epochList.ui.listWidgetEpochs.currentItem()
@@ -521,7 +525,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         epochs_name = str(item.text())
-        epochs = self.caller.experiment.active_subject.epochs.get(epochs_name)
+        epochs = self.experiment.active_subject.epochs.get(epochs_name)
         bads = epochs.raw.info['bads']
         
         def handle_close(event):
@@ -537,7 +541,7 @@ class MainWindow(QtGui.QMainWindow):
         """Plot the evoked data as a topology."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -549,7 +553,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
 
         evoked_name = str(item.text())
-        evoked = self.caller.experiment.active_subject.evokeds[evoked_name]
+        evoked = self.experiment.active_subject.evokeds[evoked_name]
         mne_evokeds = evoked.mne_evokeds
 
         print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
@@ -579,7 +583,7 @@ class MainWindow(QtGui.QMainWindow):
         if checked is None:
             return
 
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -594,7 +598,7 @@ class MainWindow(QtGui.QMainWindow):
             exc_messagebox(self, e)
             return
 
-        self.save_evoked(self.caller.experiment.active_subject, evokeds, 'group_' + evoked_name, group_epoch_info=group_epoch_info)
+        self.save_evoked(self.experiment.active_subject, evokeds, 'group_' + evoked_name, group_epoch_info=group_epoch_info)
 
         self.initialize_ui()
 
@@ -609,7 +613,7 @@ class MainWindow(QtGui.QMainWindow):
         """Delete the selected epoch collection."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         if self.epochList.isEmpty():
@@ -628,7 +632,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if reply == QtGui.QMessageBox.Yes:
             try:
-                self.caller.experiment.active_subject.remove_epochs(
+                self.experiment.active_subject.remove_epochs(
                     item_str,
                 )
             except Exception as e:
@@ -639,12 +643,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
 
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
 
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
         if self.epochList.currentItem() is None:
@@ -659,7 +663,7 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            for subject in self.caller.experiment.subjects.values():
+            for subject in self.experiment.subjects.values():
                 if collection_name in subject.epochs:
                     subject.remove_epochs(
                         collection_name,
@@ -668,17 +672,17 @@ class MainWindow(QtGui.QMainWindow):
         if self.epochList.ui.listWidgetEpochs.count() == 0:
             self.clear_epoch_collection_parameters()
         
-        if collection_name not in self.caller.experiment.active_subject.epochs:
+        if collection_name not in self.experiment.active_subject.epochs:
             self.epochList.remove_item(self.epochList.currentItem())
         
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
 
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked."""
         if checked is None:
             return
 
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         if self.ui.listWidgetEvoked.count() == 0:
@@ -698,7 +702,7 @@ class MainWindow(QtGui.QMainWindow):
 
         if reply == QtGui.QMessageBox.Yes:
             try:
-                self.caller.experiment.active_subject.remove_evoked(
+                self.experiment.active_subject.remove_evoked(
                     item_str,
                 )
             except Exception as e:
@@ -707,7 +711,7 @@ class MainWindow(QtGui.QMainWindow):
             item = self.ui.listWidgetEvoked.currentItem()
             row = self.ui.listWidgetEvoked.row(item)
             self.ui.listWidgetEvoked.takeItem(row)
-            self.caller.experiment.save_experiment_settings()
+            self.experiment.save_experiment_settings()
 
 
     def on_pushButtonGroupDeleteEvoked_clicked(self, checked=None):
@@ -727,15 +731,15 @@ class MainWindow(QtGui.QMainWindow):
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
-            for subject in self.caller.experiment.subjects.values():
+            for subject in self.experiment.subjects.values():
                 if collection_name in subject.evokeds:
                     subject.remove_evoked(collection_name)
         
-        if collection_name not in self.caller.experiment.active_subject.evokeds:
+        if collection_name not in self.experiment.active_subject.evokeds:
             self.ui.listWidgetEvoked.takeItem(
                 self.ui.listWidgetEvoked.currentRow())
         
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
 
 
     class RawBadsPlot(object):
@@ -762,7 +766,7 @@ class MainWindow(QtGui.QMainWindow):
         """Call ``raw.plot``."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         # Create a plot where bad channels are not set by clicking them
@@ -771,7 +775,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonCustomChannels_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
         self.badChannelsDialog = BadChannelsDialog(self)
@@ -781,10 +785,10 @@ class MainWindow(QtGui.QMainWindow):
         """Plots added projections as topomaps."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         if not raw.info['projs']:
             exc_messagebox(self, "No added projections.")
             return
@@ -798,7 +802,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the power spectrum dialog."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.spectrumDialog = PowerSpectrumDialog(self)
@@ -808,7 +812,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the power spectrum dialog."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
@@ -821,7 +825,7 @@ class MainWindow(QtGui.QMainWindow):
 
         epochs = []
         for collection_name in collection_names:
-            epochs.append(self.caller.experiment.active_subject.epochs.get(str(collection_name.text())))
+            epochs.append(self.experiment.active_subject.epochs.get(str(collection_name.text())))
 
         self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
         self.spectrumDialogEpochs.show()
@@ -830,7 +834,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.eogDialog = EogParametersDialog(self)
@@ -841,7 +845,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for calculating the ECG PCA."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.ecgDialog = EcgParametersDialog(self)
@@ -851,7 +855,7 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for calculating the EEG PCA."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.eegDialog = EegParametersDialog(self)
@@ -861,10 +865,10 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
-        info = self.caller.experiment.active_subject.get_working_file().info
+        info = self.experiment.active_subject.get_working_file().info
         self.addEogProjs = AddEOGProjections(self, info['projs'])
         self.addEogProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEogProjs.show()
@@ -873,10 +877,10 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
-        info = self.caller.experiment.active_subject.get_working_file().info
+        info = self.experiment.active_subject.get_working_file().info
         self.addEcgProjs = AddECGProjections(self, info['projs'])
         self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEcgProjs.show()
@@ -885,10 +889,10 @@ class MainWindow(QtGui.QMainWindow):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
-        info = self.caller.experiment.active_subject.get_working_file().info
+        info = self.experiment.active_subject.get_working_file().info
         self.addEegProjs = AddEEGProjections(self, info['projs'])
         self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEegProjs.show()
@@ -896,7 +900,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonRemoveProj_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
         if self.ui.listWidgetProjs.currentItem() is None:
@@ -905,7 +909,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         selected_items = self.ui.listWidgetProjs.selectedItems()
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         str_projs = [str(proj) for proj in raw.info['projs']]
         
         for item in selected_items:
@@ -917,17 +921,17 @@ class MainWindow(QtGui.QMainWindow):
                 row = self.ui.listWidgetProjs.row(item)
                 self.ui.listWidgetProjs.takeItem(row)
 
-        directory = self.caller.experiment.active_subject.subject_path
-        subject_name = self.caller.experiment.active_subject.working_file_name
+        directory = self.experiment.active_subject.subject_path
+        subject_name = self.experiment.active_subject.working_file_name
         fname = os.path.join(directory, subject_name)        
-        fileManager.save_raw(self.caller.experiment, raw, fname)
+        fileManager.save_raw(self.experiment, raw, fname)
         self.initialize_ui()
 
     def on_pushButtonTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
@@ -944,7 +948,7 @@ class MainWindow(QtGui.QMainWindow):
             messagebox(self, message)
             return
         
-        epochs = self.caller.experiment.active_subject.epochs.get(collection_name)
+        epochs = self.experiment.active_subject.epochs.get(collection_name)
 
         self.tfr_dialog = TFRDialog(self, epochs)
         self.tfr_dialog.show()
@@ -953,7 +957,7 @@ class MainWindow(QtGui.QMainWindow):
         """Opens the dialog for plotting TFR topology."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
@@ -977,7 +981,7 @@ class MainWindow(QtGui.QMainWindow):
     def on_pushButtonTFRraw_clicked(self, checked=None):
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         self.tfr_raw_dialog = TFRRawDialog(self) 
         self.tfr_raw_dialog.show()       
@@ -986,7 +990,7 @@ class MainWindow(QtGui.QMainWindow):
         """Shows the channels average graph."""
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
         
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
@@ -1007,7 +1011,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.icaDialog = ICADialog(self)
@@ -1019,7 +1023,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         if checked is None:
             return
-        if self.caller.experiment.active_subject is None:
+        if self.experiment.active_subject is None:
             return
 
         self.filterDialog = FilterDialog(self)
@@ -1042,19 +1046,19 @@ class MainWindow(QtGui.QMainWindow):
         
         subject_name = selIndexes[0].data()
 
-        if self.caller.experiment.active_subject:
-            if subject_name == self.caller.experiment.active_subject.subject_name:
+        if self.experiment.active_subject:
+            if subject_name == self.experiment.active_subject.subject_name:
                 return
 
         # This prevents taking the epoch list currentItem from the previously
         # open subject when activating another subject.
         self.clear_epoch_collection_parameters()
         
-        previous_subject = self.caller.experiment.active_subject
+        previous_subject = self.experiment.active_subject
         try:
             self.caller.activate_subject(subject_name)
         except Exception as e:
-            self.caller.experiment.active_subject = None
+            self.experiment.active_subject = None
             exc_messagebox(self, "Couldn't activate the subject.")
             if previous_subject:
                 print "Couldn't activate the subject, resuming to previous one."
@@ -1240,7 +1244,7 @@ class MainWindow(QtGui.QMainWindow):
         new_evoked.info['subjects'] = subject_names
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
-        self.caller.experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
 
     def save_evoked_data(self, subjects):
         try:    
@@ -1250,7 +1254,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         path = fileManager.create_timestamped_folder(
-            self.caller.experiment)
+            self.experiment)
 
         for sub_name, subject in subjects.items():
             names = []
@@ -1278,6 +1282,8 @@ class MainWindow(QtGui.QMainWindow):
         """
 
         self.update_tabs()
+
+        self.setup_loggers()
 
         self.clear_epoch_collection_parameters()
         self.epochList.clearItems()
@@ -1307,11 +1313,11 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButtonApplyEOG.setEnabled(False)
         self.ui.pushButtonApplyEEG.setEnabled(False)
 
-        self.setWindowTitle('Meggie - ' + self.caller.experiment.experiment_name)
+        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
         self.populate_subject_list()
 
-        active_subject = self.caller.experiment.active_subject
+        active_subject = self.experiment.active_subject
         
         if active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
@@ -1404,7 +1410,7 @@ class MainWindow(QtGui.QMainWindow):
         Fill the raw tab event list with info about event IDs and
         amount of events with those IDs.
         """
-        events = self.caller.experiment.active_subject.create_event_set()
+        events = self.experiment.active_subject.create_event_set()
 
         if events is None:
             return
@@ -1529,6 +1535,43 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
+
+
+    def setup_loggers(self):
+
+        logging.getLogger().setLevel(logging.DEBUG)
+
+        # logger for mne functions
+        mne_logger = logging.getLogger('mne_logger')
+        formatter = logging.Formatter('%(name)s: %(asctime)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S')
+
+        mne_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            pass
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('INFO')
+        mne_logger.addHandler(stream_handler)
+
+        # logger for other output
+        logger = logging.getLogger('logger')
+        formatter = logging.Formatter('%(name)s: %(asctime)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S')
+
+        logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            pass
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('WARNING')
+        logger.addHandler(stream_handler)
 
 
 class EmittingStream(QtCore.QObject):

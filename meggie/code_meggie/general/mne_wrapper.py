@@ -1,4 +1,5 @@
 import mne
+import logging
 
 
 RAW_TYPE = mne.io.Raw
@@ -8,7 +9,8 @@ EPOCHS_TYPE = mne.Epochs
 
 def logged(func):
     def decorated(*args, **kwargs):
-        print "Calling " + str(func)
+        logger = logging.getLogger("mne_logger")
+        logger.info("Calling " + str(func))
         return func(*args, **kwargs)
     return decorated
 
