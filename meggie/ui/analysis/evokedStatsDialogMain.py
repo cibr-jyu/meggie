@@ -3,9 +3,11 @@ Created on Sep 4, 2013
 
 @author: atmiraut
 '''
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 from PyQt4.Qt import QFileDialog
 
+import logging 
 import csv
 import os
 import numpy as np
@@ -239,7 +241,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         if not evoked:
             return
         
-        print 'Saving csv...'
+        logging.getLogger('ui_logger').info('Saving csv.')
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
         times = evoked.times
@@ -263,8 +265,10 @@ class EvokedStatsDialog(QtGui.QDialog):
                 ch_type = mne.channel_type(evoked.info, pick)
 
                 if ch_type not in ['grad', 'mag', 'eeg']:
-                    print ('Statistics not supported for %s channels. Skipping'
-                           ' channel %s.') % (ch_type, ch_name)
+                    message = ('Statistics not supported for %s channels. '
+                               'Skipping channel %s.') % (ch_type, ch_name)
+
+                    logging.getLogger('ui_logger').warning(message)
                     continue
 
                 scaler = get_scaling(ch_type)

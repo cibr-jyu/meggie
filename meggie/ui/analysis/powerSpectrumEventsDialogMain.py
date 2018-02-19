@@ -1,8 +1,10 @@
 '''
 Created on 17.10.2016
 
-@author: jaolpeso
+@author: jaolpeso, erpipehe
 '''
+import logging
+
 from PyQt4 import QtGui
 
 from meggie.ui.analysis.powerSpectrumEventsUi import Ui_Advanced 
@@ -64,9 +66,9 @@ class PowerSpectrumEvents(QtGui.QDialog):
 
             return triggers
         
-        print "Finding min triggers"
+        logging.getLogger('ui_logger').debug("Finding min triggers")
         min_triggers = find_triggers(event_min)
-        print "Finding end triggers"
+        logging.getLogger('ui_logger').debug("Finding end triggers")
         end_triggers = find_triggers(event_end)
         
         if len(min_triggers) == 0:

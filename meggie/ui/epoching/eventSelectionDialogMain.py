@@ -8,12 +8,10 @@ Contains the EventSelectionDialog-class that holds the logic for
 EventSelectionDialog-window.
 """
 
-from PyQt4.Qt import QMimeData
-
 import numpy as np
+import logging
 import traceback
 
-from xlrd import XLRDError
 from PyQt4 import QtCore,QtGui
 from copy import deepcopy
 
@@ -284,7 +282,7 @@ class EventSelectionDialog(QtGui.QDialog):
                 self.caller.experiment.active_subject,
                 str(e)
             ))
-            import traceback; traceback.print_exc()
+            logging.getLogger('ui_logger').exception(str(e))
         
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -332,7 +330,8 @@ class EventSelectionDialog(QtGui.QDialog):
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
                     self.caller.experiment.active_subject, str(e)))     
-                traceback.print_exc()           
+
+                logging.getLogger('ui_logger').exception(str(e))
         
         # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.caller.experiment.subjects.items():
@@ -346,7 +345,8 @@ class EventSelectionDialog(QtGui.QDialog):
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, 
                                                                  str(e)))
-                    traceback.print_exc()
+
+                    logging.getLogger('ui_logger').exception(str(e))
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -354,7 +354,7 @@ class EventSelectionDialog(QtGui.QDialog):
         
         if len(epoch_info) > 0:
             for info in epoch_info:
-                print info
+                logging.getLogger('ui_logger').info(info)
             
         self.close()
 

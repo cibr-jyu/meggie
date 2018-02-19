@@ -1,3 +1,5 @@
+import logging
+
 from PyQt4 import QtGui
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis
 
@@ -116,27 +118,27 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if checked is None:
             return
 
-        print "Check Talairach clicked"
+        logging.getLogger('ui_logger').info("Check Talairach clicked")
 
 
     def on_pushButtonSkullStrip_clicked(self, checked=None):
         if checked is None:
             return
 
-        print "Skull Strip clicked"
+        logging.getLogger('ui_logger').info("Skull Strip clicked")
 
 
     def on_pushButtonCheckSurfaces_clicked(self, checked=None):
         if checked is None:
             return
 
-        print "Check surfaces clicked"
+        logging.getLogger('ui_logger').info("Check surfaces clicked")
 
     def on_pushButtonCheckSegmentations_clicked(self, checked=None):
         if checked is None:
             return
 
-        print "Check Segmentations clicked"
+        logging.getLogger('ui_logger').info("Check Segmentations clicked")
 
 
     def on_pushButtonConvertToMNE_clicked(self, checked=None):

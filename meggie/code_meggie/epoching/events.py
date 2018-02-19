@@ -6,8 +6,9 @@ Created on Mar 12, 2013
 @author: Jaakko Leppakangas, Erkka Heinila
 Contains the Events-class that gets events from a raw file.
 """
-import numpy as np
+import logging
 
+import numpy as np
 import meggie.code_meggie.general.mne_wrapper as mne
 
 class Events(object):
@@ -25,7 +26,7 @@ class Events(object):
         """
 
         events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1, 
-                                 uint_cast=True, verbose='warning')
+                                 uint_cast=True)
         
         if mask or id_:
             events = filter(
@@ -40,7 +41,10 @@ class Events(object):
                 counter += 1
 
         if counter > 0:
-            print str(counter) + " events dropped because they seem spurious (only one sample difference to next event)"
+            message = (str(counter) + 
+                       " events dropped because they seem spurious "
+                       "(only one sample difference to next event)")
+            logging.getLogger('ui_logger').warning(message)
 
         self._events = events
         

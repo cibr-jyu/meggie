@@ -5,7 +5,10 @@ Created on Aug 20, 2013
 @author: kpaliran
 '''
 
-from PyQt4 import QtCore, QtGui
+import logging
+
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 
 from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -84,7 +87,7 @@ class FilterDialog(QtGui.QDialog):
             self._validateFilterFreq(parameter_values, info['sfreq'])
             self.filter(subject)
         except Exception as exc:
-            import traceback; traceback.print_exc()
+            logging.getLogger('ui_logger').exception(str(exc))
             self.batching_widget.failed_subjects.append((subject, str(exc)))
 
         self.batching_widget.cleanup()
@@ -115,7 +118,8 @@ class FilterDialog(QtGui.QDialog):
                 self._validateFilterFreq(params, info['sfreq'])
                 self.filter(subject)
             except Exception as exc:
-                import traceback; traceback.print_exc()
+
+                logging.getLogger('ui_logger').exception(str(exc))
                 self.batching_widget.failed_subjects.append((subject, str(exc)))
 
         # 2. Calculation is done for the rest of the subjects.
@@ -132,7 +136,7 @@ class FilterDialog(QtGui.QDialog):
                     self._validateFilterFreq(params, info['sfreq'])
                     self.filter(subject)
                 except Exception as exc:
-                    import traceback; traceback.print_exc()
+                    logging.getLogger('ui_logger').exception(str(exc))
                     self.batching_widget.failed_subjects.append((subject, str(exc)))
 
         self.parent.experiment.activate_subject(recently_active_subject)

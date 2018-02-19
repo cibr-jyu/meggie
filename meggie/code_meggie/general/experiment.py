@@ -12,6 +12,7 @@ import os
 import re
 import json
 import shutil
+import logging
 
 from meggie.ui.utils.decorators import threaded
 
@@ -266,7 +267,8 @@ class Experiment(QObject):
                     subject_dict['evokeds'].append(evoked_dict)
                 except IOError:
                     del subject.evokeds[evoked.name]
-                    print 'Missing evoked response file. Experiment updated.'
+                    message = 'Missing evoked response file. Experiment updated.'
+                    logging.getLogger('ui_logger').warning(message)
             subjects.append(subject_dict)
         
         save_dict = {

@@ -9,6 +9,7 @@ import itertools
 import os
 import re
 import copy
+import logging
 
 from os.path import join
 from copy import deepcopy
@@ -131,10 +132,12 @@ class Caller(object):
         if not projs:
             raise Exception('No ECG events found. Change settings.')
 
-        print "Writing ECG projections in %s" % ecg_proj_fname
+        message = "Writing ECG projections in %s" % ecg_proj_fname
+        logging.getLogger('ui_logger').info(message)
         mne.write_proj(ecg_proj_fname, projs)
 
-        print "Writing ECG events in %s" % ecg_event_fname
+        message = "Writing ECG events in %s" % ecg_event_fname
+        logging.getLogger('ui_logger').info(message)
         mne.write_events(ecg_event_fname, events)
 
     def plot_ecg_events(self, params):
@@ -151,7 +154,8 @@ class Caller(object):
             tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
         
         data = epochs.get_data()
-        print "Number of detected ECG artifacts : %d" % len(data)
+        message = "Number of detected ECG artifacts : %d" % len(data)
+        logging.getLogger('ui_logger').info(message)
         
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
@@ -216,10 +220,12 @@ class Caller(object):
             n_jobs=n_jobs, reject=reject, no_proj=excl_ssp, 
             eog_l_freq=eog_low_freq, eog_h_freq=eog_high_freq, tstart=start)
 
-        print "Writing EOG projections in %s" % eog_proj_fname
+        message = "Writing EOG projections in %s" % eog_proj_fname
+        logging.getLogger('ui_logger').info(message)
         mne.write_proj( eog_proj_fname, projs)
 
-        print "Writing EOG events in %s" % eog_event_fname
+        message = "Writing EOG events in %s" % eog_event_fname
+        logging.getLogger('ui_logger').info(message)
         mne.write_events(eog_event_fname, events)
 
     def plot_eog_events(self, params):
@@ -243,7 +249,9 @@ class Caller(object):
             tmin=params['tmin'], tmax=params['tmax'], picks=picks, proj=False)
         
         data = epochs.get_data()
-        print "Number of detected EOG artifacts : %d" % len(data)
+
+        message = "Number of detected EOG artifacts : %d" % len(data)
+        logging.getLogger('ui_logger').info(message)
         
         plt.plot(1e3 * epochs.times, np.squeeze(data).T)
         plt.xlabel('Times (ms)')
@@ -282,10 +290,12 @@ class Caller(object):
         eeg_event_fname = prefix + '_eeg-eve.fif'
         eeg_proj_fname = prefix + '_eeg_proj.fif'
         
-        print "Writing EOG projections in %s" % eeg_proj_fname
+        message = "Writing ocular projections in %s" % eeg_proj_fname
+        logging.getLogger('ui_logger').info(message) 
         mne.write_proj(eeg_proj_fname, projs)
 
-        print "Writing EOG events in %s" % eeg_event_fname
+        message = "Writing ocular events in %s" % eeg_event_fname
+        logging.getLogger('ui_logger').info(message) 
         mne.write_events(eeg_event_fname, events)
 
     def plot_average_epochs(self, events, tmin, tmax):
@@ -293,7 +303,7 @@ class Caller(object):
         Method for plotting average epochs.
         """
         raw = self.experiment.active_subject.get_working_file()
-        print "Plotting averages...\n"
+        logging.getLogger('ui_logger').info("Plotting averages...")
         eog_epochs = mne.Epochs(raw, events,
                         tmin=tmin, tmax=tmax)
         
@@ -301,8 +311,7 @@ class Caller(object):
         eog_evoked = eog_epochs.average()
         fig = eog_evoked.plot()
         subject_name = self.experiment.active_subject.subject_name
-        fig.canvas.set_window_title('Avg_epochs_' + subject_name)
-        print "Finished\n"
+        fig.canvas.set_window_title('avg_epochs_' + subject_name)
 
     def plot_events(self, events):
         """
@@ -312,11 +321,9 @@ class Caller(object):
         """
         raw = self.experiment.active_subject.get_working_file()
 
-        print "Plotting events...\n"
+        logging.getLogger('ui_logger').info("Plotting events...")
         raw.plot(events=events, scalings=dict(eeg=40e-6))
         plt.show()
-
-        print "Finished"
 
     def plot_projs_topomap(self, raw):
         fig = raw.plot_projs_topomap()
@@ -328,7 +335,7 @@ class Caller(object):
         raw = self.experiment.active_subject.get_working_file()
         eog_events = mne.find_eog_events(raw, l_freq=params['l_freq'], 
             h_freq=params['h_freq'], filter_length=params['filter_length'],
-            ch_name=params['ch_name'], verbose=True, tstart=params['tstart'])
+            ch_name=params['ch_name'], tstart=params['tstart'])
         return eog_events
 
     def create_epochs(self, params, subject):
@@ -503,7 +510,8 @@ class Caller(object):
             channels = mne.read_selection(lobeName)
             title = lobeName
             
-        print "Calculating channel averages for " + title
+        message = "Calculating channel averages for " + title
+        logging.getLogger('ui_logger').info(message)
 
         dataList, epochs_name = self._average_channels(
             instance, channels, do_meanwhile=self.parent.update_ui)
@@ -726,7 +734,7 @@ class Caller(object):
         evoked_data = evoked.data[ch_index]
         evoked_times = 1e3 * evoked.times
 
-        print 'Plotting TFR...'
+        logging.getLogger('ui_logger').info('Plotting TFR.')
         fig = plt.figure()
 
         plt.subplot2grid((3, 15), (0, 0), colspan=14)
@@ -845,7 +853,7 @@ class Caller(object):
                     ch_name += ' (bad)'
                 labels.append(ch_name)
 
-            print "Saving data.."
+            logging.getLogger('ui_logger').info("Saving data..")
             fileManager.save_tfr_topology(fname, inst.data, 
                                 inst.times, freqs, labels)
             
@@ -856,7 +864,7 @@ class Caller(object):
                               ch_type=ch_type, layout=layout,
                               show=False, cmap=cmap)
 
-        print "Plotting..."
+        logging.getLogger('ui_logger').info("Plotting.")
         fig = inst.plot_topo(fmin=freqs[0], fmax=freqs[-1], layout=layout, 
             cmap=cmap, title=title)
 
@@ -892,8 +900,7 @@ class Caller(object):
             tfr_.data = mne.rescale(tfr_.data, times, baseline=baseline, 
                                              mode=mode)
         
-        fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout,
-            verbose='error')
+        fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout)
         subject_name = self.experiment.active_subject.subject_name
         fig.canvas.set_window_title(''.join(['TFR_raw_', subject_name, '_',
                                     raw.ch_names[channel]]))
@@ -950,7 +957,7 @@ class Caller(object):
                 fileManager.save_np_array(os.path.join(path, filename), 
                                           freqs, psd, info)
 
-        print "Plotting power spectrum..."
+        logging.getLogger('ui_logger').info("Plotting power spectrum...")
 
         def my_callback(ax, ch_idx):
             """
@@ -1017,7 +1024,7 @@ class Caller(object):
                 
                 psds, freqs = mne.psd_welch(epoch, fmin=fmin, fmax=fmax, 
                     n_fft=nfft, n_overlap=overlap, picks=picks, 
-                    proj=True, verbose=True, n_jobs=n_jobs)
+                    proj=True, n_jobs=n_jobs)
 
                 psds = np.average(psds, axis=0)
 

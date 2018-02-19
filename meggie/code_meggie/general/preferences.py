@@ -9,7 +9,9 @@ Module for code related to handling program wide preferences.
 '''
 
 import os
+import logging
 import ConfigParser
+
 from ConfigParser import NoOptionError
 from meggie.code_meggie.utils.files import home_filepath
 
@@ -112,8 +114,9 @@ class PreferencesHandler(object):
         Set various shell environment variables needed by MNE-C scripts and
         FreeSurfer.
         """
-        print 'Meggie: setting environment variables needed by MNE and ' + \
-              'Freesurfer ... \n'
+        message = ('Setting environment variables needed by MNE and '
+                   'Freesurfer ...')
+        logging.getLogger('ui_logger').info(message)
 
         os.environ['MNE_ROOT'] = self.MNERoot
 
@@ -147,4 +150,3 @@ class PreferencesHandler(object):
         # To make graphical MNE-Python utilities use QT4 backend instead of wx.
         os.environ['ETS_TOOLKIT'] = "qt4"
 
-        print 'Meggie: environment variables set successfully! \n'

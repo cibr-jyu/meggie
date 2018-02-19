@@ -5,6 +5,7 @@ Created on Aug 02, 2017
 @author: erpipehe
 '''
 
+import logging
 
 from PyQt4 import QtGui
 
@@ -17,6 +18,8 @@ from meggie.code_meggie.preprocessing.ica import plot_properties
 from meggie.code_meggie.preprocessing.ica import plot_changes
 from meggie.code_meggie.preprocessing.ica import compute_ica
 from meggie.code_meggie.preprocessing.ica import apply_ica
+
+from meggie.ui.utils.messaging import exc_messagebox
 
 
 class ICADialog(QtGui.QDialog):
@@ -66,7 +69,11 @@ class ICADialog(QtGui.QDialog):
         def _compute_ica():
             return compute_ica(raw, n_components, method, max_iter)
 
-        self.ica = _compute_ica()
+        try:
+            self.ica = _compute_ica()
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         for idx in range(self.ica.n_components_):
             label = 'Component ' + str(idx+1)
@@ -74,7 +81,7 @@ class ICADialog(QtGui.QDialog):
             self.component_info[label] = idx
             self.not_removed.append(label)
 
-        print "ICA finished."
+        logging.getLogger('ui_logger').info('ICA finished.')
 
     def on_pushButtonTransfer_clicked(self, checked=None):
         """ Transfers items from list to another. QListWidgets are the necessary evil

@@ -7,27 +7,20 @@ This module contains caller class that contains the main state of the software
 """
 
 import subprocess
-import itertools
+import logging
 import os
 import glob
 import fnmatch
 import re
 import shutil
 import copy
-import math
-from os.path import isfile
-from os.path import join
+
 from subprocess import CalledProcessError
-from copy import deepcopy
-
 from functools import partial
-from collections import OrderedDict
-
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 import mne
 import numpy as np
-import pylab as pl
 import matplotlib.pyplot as plt
 
 
@@ -35,16 +28,9 @@ from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistra
 from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
 from meggie.ui.utils.decorators import threaded
 
-from meggie.code_meggie.general.wrapper import wrap_mne_call
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.events import Events
-from meggie.code_meggie.general.measurementInfo import MeasurementInfo
-from meggie.code_meggie.general.singleton import Singleton
-
-from meggie.code_meggie.utils.units import get_scaling
-from meggie.code_meggie.utils.units import get_unit
-from meggie.code_meggie.utils.units import get_power_unit
 
 
 ### Methods needed for source modeling ###    
@@ -350,7 +336,7 @@ def compute_inverse(self, fwd_name):
     fwd_file = os.path.join(subject._forwardModels_directory, fwd_name,
                             'reconFiles', 'reconFiles-fwd.fif')
     if os.path.isfile(fwd_file):
-        print 'Reading forward solution...'
+        logging.getLogger('ui_logger').info('Reading forward solution...')
     else:
         raise IOError('Could not find forward solution with name %s.' %
                       fwd_file)
@@ -533,7 +519,8 @@ def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
             except Exception as err:
                 raise Exception('Exception while saving inverse '
                                 'solution:\n' + str(err))
-        print 'Inverse solution computed succesfully.'
+        message = 'Inverse solution computed successfully.'
+        logging.getLogger('ui_logger').info(message)
         return stc
 
     stc_fname = os.path.join(subject._stc_directory,
@@ -543,7 +530,8 @@ def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
     except Exception as err:
         raise Exception('Exception while saving inverse '
                         'solution:\n' + str(err))
-    print 'Inverse solution computed succesfully.'
+    message = 'Inverse solution computed successfully.'
+    logging.getLogger('ui_logger').info(message)
     return stc
 
 def plotStc(self, stc_name, hemi, surface, smoothing_steps, alpha):

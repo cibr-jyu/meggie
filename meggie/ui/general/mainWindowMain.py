@@ -9,7 +9,7 @@ Contains the MainWindow-class that holds the main window of the application.
 
 import os
 import sys
-import traceback
+import warnings
 import gc
 import logging
 
@@ -96,8 +96,6 @@ class MainWindow(QtGui.QMainWindow):
         if 'debug' not in sys.argv:
             self.directOutput()
             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
 
         # One main window (and one _experiment) only needs one caller to do its
         # bidding.
@@ -213,7 +211,7 @@ class MainWindow(QtGui.QMainWindow):
         if path == '':
             return
         
-        print 'Opening experiment ' + path
+        logging.getLogger('ui_logger').info('Opening experiment ' + path)
 
         try:
             exp = self.experimentHandler.open_existing_experiment(
@@ -448,7 +446,7 @@ class MainWindow(QtGui.QMainWindow):
                 except Exception as e:
                     failed_subjects = self.evokeds_batching_widget.failed_subjects
                     failed_subjects.append((subject, str(e)))
-                    traceback.print_exc()
+                    logging.getLogger('ui_logger').exception(str(e))
                      
         self.experiment.activate_subject(recently_active_subject_name)
         self.experiment.save_experiment_settings()
@@ -556,7 +554,9 @@ class MainWindow(QtGui.QMainWindow):
         evoked = self.experiment.active_subject.evokeds[evoked_name]
         mne_evokeds = evoked.mne_evokeds
 
-        print 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
+        message = 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
+        logging.getLogger('ui_logger').info(message)
+
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
@@ -565,7 +565,6 @@ class MainWindow(QtGui.QMainWindow):
                 mne_evokeds.values(),
                 title=evoked_name)
 
-            print 'Meggie: Evoked collection %s visualized!\n' % evoked_name
         except Exception as e:
             exc_messagebox(self, e)
         finally:
@@ -1061,7 +1060,8 @@ class MainWindow(QtGui.QMainWindow):
             self.experiment.active_subject = None
             exc_messagebox(self, "Couldn't activate the subject.")
             if previous_subject:
-                print "Couldn't activate the subject, resuming to previous one."
+                message = "Couldn't activate the subject, resuming to previous one."
+                logging.getLogger('ui_logger').info(message)
                 self.caller.activate_subject(previous_subject.subject_name)
 
         self.initialize_ui()
@@ -1096,7 +1096,10 @@ class MainWindow(QtGui.QMainWindow):
         params = epochs.params
 
         if params is None:
-            print 'Epochs parameters not found!'
+            
+            logging.getLogger('ui_logger').warning(
+                'Epochs parameters not found!')
+
             return
         
         events = epochs.raw.event_id
@@ -1217,7 +1220,9 @@ class MainWindow(QtGui.QMainWindow):
                 raise IOError(message)
 
         try:
-            print 'Writing evoked data as ' + evoked_name + ' ...'
+            message = 'Writing evoked data as ' + evoked_name + ' ...'
+            logging.getLogger('ui_logger').info(message)
+            
             mne.write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
@@ -1539,39 +1544,84 @@ class MainWindow(QtGui.QMainWindow):
 
     def setup_loggers(self):
 
+        # hide warnings-module warnings,
+        # most of these are still contained
+        # in mne-level logging
+        warnings.simplefilter('ignore')
+
         logging.getLogger().setLevel(logging.DEBUG)
 
-        # logger for mne functions
-        mne_logger = logging.getLogger('mne_logger')
-        formatter = logging.Formatter('%(name)s: %(asctime)s %(message)s',
+        # logger for mne wrapper functions
+        mne_wrapper_logger = logging.getLogger('mne_wrapper_logger')
+        formatter = logging.Formatter('MNE call: %(asctime)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S')
+
+        mne_wrapper_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.experiment_name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            mne_wrapper_logger.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('INFO')
+        mne_wrapper_logger.addHandler(stream_handler)
+
+        # logger for ui output
+        ui_logger = logging.getLogger('ui_logger')
+        formatter = logging.Formatter('Meggie: %(asctime)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S')
+
+        ui_logger.handlers = []
+
+        # setup file handler
+        if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.experiment_name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            ui_logger.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        stream_handler.setLevel('INFO')
+        ui_logger.addHandler(stream_handler)
+
+        # logger for real mne
+        mne_logger = logging.getLogger('mne')
+        formatter = logging.Formatter('MNE: %(asctime)s %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S')
 
         mne_logger.handlers = []
 
         # setup file handler
         if self.experiment:
+            logfile = os.path.join(
+                self.experiment.workspace,
+                self.experiment.experiment_name,
+                'meggie.log')
+            file_handler = logging.FileHandler(logfile)
+            file_handler.setLevel('DEBUG')
+            file_handler.setFormatter(formatter)
+            mne_logger.addHandler(file_handler)
+
             pass
 
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-        stream_handler.setLevel('INFO')
+        stream_handler.setLevel('ERROR')
         mne_logger.addHandler(stream_handler)
 
-        # logger for other output
-        logger = logging.getLogger('logger')
-        formatter = logging.Formatter('%(name)s: %(asctime)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
-
-        logger.handlers = []
-
-        # setup file handler
-        if self.experiment:
-            pass
-
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        stream_handler.setLevel('WARNING')
-        logger.addHandler(stream_handler)
 
 
 class EmittingStream(QtCore.QObject):

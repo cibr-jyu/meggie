@@ -8,10 +8,13 @@ Created on Mar 6, 2013
 Contains the MeasurementInfo-class used for collecting information from
 MEG-measurement raw files.
 """
-import meggie.code_meggie.general.mne_wrapper as mne
 
 import datetime
+import logging
 import re
+
+import meggie.code_meggie.general.mne_wrapper as mne
+
 
 class MeasurementInfo(object):
     """
@@ -149,7 +152,7 @@ class MeasurementInfo(object):
         """
         subj_info = self._info.get('subject_info')
         if not subj_info:
-            print "Personal info not found"
+            logging.getLogger('ui_logger').info("Personal info not found.")
 
         last_name = subj_info.get('last_name', '')
         first_name = subj_info.get('first_name', '')

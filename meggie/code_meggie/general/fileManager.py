@@ -14,16 +14,15 @@ import glob
 import re
 import sys
 import datetime
+import logging
 
-from shutil import copyfile
+import numpy as np
 
 # For copy_tree. Because shutil.copytree has restrictions regarding the
 # destination directory (ie. it must not exist beforehand).
 from distutils import dir_util
 
 import meggie.code_meggie.general.mne_wrapper as mne
-
-import numpy as np
 
 
 def copy_recon_files(activeSubject, sourceDirectory):
@@ -48,11 +47,13 @@ def copy_recon_files(activeSubject, sourceDirectory):
         dir_util.remove_tree(reconDir)
     
     dst = activeSubject.reconFiles_directory
+
+    logger = logging.getLogger('ui_logger')
     
     try:
-        print '\n Meggie: Copying recon files... \n'
+        logger.info('Copying recon files...')
         dir_util.copy_tree(sourceDirectory, dst)
-        print '\n Meggie: Recon files copying complete! \n'
+        logger.info('Recon files copying complete!')
     except IOError: raise
     
     
@@ -349,7 +350,7 @@ def load_epochs(fname):
     
     """
     try:
-        epochs = mne.read_epochs(fname, verbose='error')
+        epochs = mne.read_epochs(fname)
     except IOError:
         raise Exception('Reading epochs failed.')
     return epochs
@@ -362,7 +363,7 @@ def load_evoked(fname):
     fName -- the name of the fif-file containing evokeds.
     """
     try:
-        evokeds = mne.read_evokeds(fname, verbose='error')
+        evokeds = mne.read_evokeds(fname)
     except IOError:
         raise IOError('Reading evokeds failed.')
     return evokeds
@@ -378,9 +379,8 @@ def open_raw(fname, preload=True):
     Raises an exception if the file cannot be opened.
     """
     try:
-        print 'Reading ' + fname
-        raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True,
-                          verbose='warning')
+        logging.getLogger('ui_logger').info('Reading ' + fname)
+        raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True)
 
         # this was default till mne-python 0.13, so have it for consistency
         if not mne._has_eeg_average_ref_proj(raw.info['projs']):
@@ -403,7 +403,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
     
     # be protective and save with other name first and move afterwards
     temp_fname = os.path.join(folder, '_' + bname) 
-    raw.save(temp_fname, overwrite=True, verbose='warning')
+    raw.save(temp_fname, overwrite=True)
 
     # assumes filename ends with .fif 
     pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
@@ -412,15 +412,17 @@ def save_raw(experiment, raw, fname, overwrite=True):
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
     new_files = [fname_ for fname_ in contents if pat_new.match(fname_)]
+
     
     if len(old_files) != len(new_files):
-        print "Be warned, amount of parts has changed!"
-        print "Old parts: "
+        logger = logging.getLogger('ui_logger')
+        logger.warning("Be warned, amount of parts has changed!")
+        logger.debug("Old parts: ")
         for part in old_files:
-            print part
-        print "New parts: "
+            logger.debug(part)
+        logger.debug("New parts: ")
         for part in new_files:
-            print part
+            logger.debug(part)
         
     for file_ in new_files:
         shutil.move(os.path.join(folder, os.path.basename(file_)), 
@@ -434,7 +436,8 @@ def group_save_evokeds(path, evokeds, names):
     if len(evokeds) == 0:
         raise ValueError("At least one evoked object is needed.")
 
-    print "Writing " + str(len(evokeds)) + " evokeds to " + path
+    message = "Writing " + str(len(evokeds)) + " evokeds to " + path
+    logging.getLogger('ui_logger').info(message)
 
     # gather all the data to list of rows
     all_data = []
@@ -646,7 +649,8 @@ def save_subject(subject, path):
     
     for f in files:
         if p.match(f):
-            copyfile(f, os.path.join(subject.subject_path, os.path.basename(f)))
+            shutil.copyfile(f, os.path.join(subject.subject_path, 
+                                            os.path.basename(f)))
 
 def _read_epoch_stcs(subject):
     """

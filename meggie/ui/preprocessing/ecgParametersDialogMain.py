@@ -8,7 +8,10 @@ Contains the EcgParametersDialog-class used for collecting parameter values
 for calculating ECG projections.
 """
 
-from PyQt4 import QtCore,QtGui
+import logging
+
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 
 from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
 
@@ -122,8 +125,6 @@ class EcgParametersDialog(QtGui.QDialog):
         try:
             self.calculate_ecg(self.caller.experiment.active_subject)    
         except Exception as e:
-            import traceback;
-            traceback.print_exc()
             self.batching_widget.failed_subjects.append((
                 self.caller.experiment.active_subject, str(e)))
             

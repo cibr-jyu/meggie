@@ -1,6 +1,8 @@
 """ This module provides functions for filtering
 """
 
+import logging
+
 from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.fileManager as fileManager
@@ -24,10 +26,10 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
     length = dic['length']
     trans_bw = dic['trans_bw']
 
-    print "Filtering..."
+    logging.getLogger('ui_logger').info("Filtering.")
     dataToFilter.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
         l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
-        method='fft', fir_design='firwin', verbose=True)
+        method='fft', fir_design='firwin')
 
     freqs = list()
     if dic['bandstop1']:
@@ -38,10 +40,10 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
         length = dic['bandstop_length']
         trans_bw = dic['bandstop_transbw']
 
-        print "Band-stop filtering..."
+        logging.getLogger('ui_logger').info("Band-stop filtering.")
         dataToFilter.notch_filter(freqs, picks=None, filter_length=length,
             notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw, 
-            n_jobs=n_jobs, verbose=True)
+            n_jobs=n_jobs)
 
     if not preview:
         fname = dataToFilter.filenames[0]
