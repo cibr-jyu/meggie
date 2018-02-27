@@ -381,6 +381,16 @@ class Subject(object):
         else: 
             return False
 
+    def check_bem_surfaces(self):
+        rcdir = self.reconFiles_directory
+        if not os.path.isfile(os.path.join(rcdir, 'bem', 'inner_skull.surf')):
+            return False
+        if not os.path.isfile(os.path.join(rcdir, 'bem', 'outer_skull.surf')):
+            return False
+        if not os.path.isfile(os.path.join(rcdir, 'bem', 'outer_skin.surf')):
+            return False
+        return True
+
     def check_mne_setup_mri_run(self):
         reconDir = self.reconFiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 

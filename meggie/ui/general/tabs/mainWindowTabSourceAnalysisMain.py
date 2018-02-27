@@ -1,7 +1,13 @@
+import os
 import logging
 
+import mne
+
 from PyQt4 import QtGui
+
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis
+
+from meggie.ui.utils.messaging import messagebox
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.source_analysis as source_analysis
@@ -16,16 +22,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.ui.tabWidgetSourceAnalysis.currentChanged.connect(
             self.on_currentChanged)
 
-        # self.initialize()
+        self.initialize_ui()
 
-        # self.ui.tableViewForwardModels.setModel(self.forwardModelModel)
-        # for colnum in range(17, 21):
-        #     self.ui.tableViewForwardModels.setColumnHidden(colnum, True)
-
-        # self.ui.tableViewFModelsForCoregistration.setModel(self.forwardModelModel)
-        # for colnum in range(16, 21):
-        #     self.ui.tableViewFModelsForCoregistration.setColumnHidden(colnum,
-        #                                                               True)
 
     def update_tabs(self):
 
@@ -33,8 +31,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             self.ui.tabWidgetSourceAnalysis.removeTab(0)
 
         self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation, "Source modelling preparation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabForwardModel, "Forward model creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabCoregistration, "Coregistration")
+        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabCoregistration, "Coregistration")
+        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardModel, "Forward model creation")
         self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabForwardSolution, "Forward solution creation")
         self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabNoiseCovariance, "Noise covariance")
         self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabInverseOperator, "Inverse operator")
@@ -45,7 +43,10 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
     def on_currentChanged(self):
         pass
 
-    def initialize(self):
+    def initialize_ui(self):
+
+        if not self.parent.experiment:
+            return
 
         active_subject = self.parent.experiment.active_subject
 
@@ -54,13 +55,11 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # Check if the reconstructions have been copied to experiment folder
         if active_subject.check_reconFiles_copied():
-            self.ui.lineEditRecon.setText('Reconstructed mri image already '
-                                          'copied.')
-        
-        # Check if MRI's have been converted
-        if active_subject.check_mne_setup_mri_run():
-            self.ui.checkBoxConvertedToMNE.setChecked(True)
+            self.ui.checkBoxCopyUnderSubject.setChecked(True)
 
+        if active_subject.check_bem_surfaces():
+            self.ui.checkBoxBem.setChecked(True)
+        
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
         Copies reconstructed mri files from the directory supplied by the user
@@ -69,19 +68,27 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if checked is None:
             return
 
-        if self.parent.experiment.active_subject is None:
+        path = str(QtGui.QFileDialog.getExistingDirectory(self,
+            "Select directory of the reconstructed MRI image"))
+
+        if path == '':
             return
 
-        activeSubject = self.parent.experiment.active_subject
+        self.ui.lineEditRecon.setText(path)
 
-        if activeSubject.check_reconFiles_copied():
+    def on_pushButtonCopyUnderSubject_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        if active_subject.check_reconFiles_copied():
             reply = QtGui.QMessageBox.question(self, 'Please confirm',
                                                "Do you really want to change "
-                                               "the reconstructed files? This "
-                                               "will invalidate all later "
-                                               "source analysis work and "
-                                               "clear the results of the "
-                                               "later phases",
+                                               "the reconstructed files?",
                                                QtGui.QMessageBox.Yes |
                                                QtGui.QMessageBox.No,
                                                QtGui.QMessageBox.No)
@@ -89,30 +96,44 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             if reply == QtGui.QMessageBox.No:
                 return
 
-        path = str(QtGui.QFileDialog.getExistingDirectory(self,
-                                                          "Select directory "
-                                                          "of the "
-                                                          "reconstructed "
-                                                          "MRI image"))
-        if path == '':
-            return
+        path = self.ui.lineEditRecon.text()
 
-        mriDir = os.path.join(path, 'mri')
-        surfDir = os.path.join(path, 'surf')
-        if not (os.path.isdir(mriDir) and os.path.isdir(surfDir)):
+        mri_dir = os.path.join(path, 'mri')
+        surf_dir = os.path.join(path, 'surf')
+        if not os.path.isdir(mri_dir) or not os.path.isdir(surf_dir):
             msg = ("Reconstructed image directory should have both 'surf' "
                    "and 'mri' directories in it.")
             messagebox(self, msg)
             return
 
+        # copy files
         try:
-            fileManager.copy_recon_files(activeSubject, path)
-            self.ui.lineEditRecon.setText(path)
-        except Exception:
-            msg = ('Could not copy files.')
-            messagebox(self, msg)
+            fileManager.copy_recon_files(active_subject, path)
+        except Exception as e:
+            exc_messagebox(self, e)
 
-        # initialize_ui
+    def on_pushButtonBem_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        # set environment variables
+        os.environ['SUBJECTS_DIR'] = active_subject.source_analysis_directory
+        os.environ['SUBJECT'] = 'reconFiles'
+
+        use_atlas = self.ui.checkBoxAtlas.isChecked()
+
+        # create bem surfaces for later steps
+        try:
+            mne.bem.make_watershed_bem('reconFiles', atlas=use_atlas)
+        except Exception as e:
+            exc_messagebox(self, e)
+
+# JOSSAIN VAIHEESSA MNE_SETUP_MRI
 
     def on_pushButtonCheckTalairach_clicked(self, checked=None):
         if checked is None:
@@ -141,29 +162,24 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         logging.getLogger('ui_logger').info("Check Segmentations clicked")
 
 
-    def on_pushButtonConvertToMNE_clicked(self, checked=None):
+    def on_pushButtonMNECoregistration_clicked(self, checked=None):
         if checked is None:
             return
 
-        active_subject = self.parent.experiment.active_subject
-        if active_subject is None:
+        experiment = self.parent.experiment
+
+        if experiment and experiment.active_subject:
+            subject = experiment.active_subject
+        else:
             return
 
-        try:
-            source_analysis.convert_mri_to_mne(active_subject)
-        except Exception as e:
-            exc_messagebox(self, e)
+        # set environment variables for coregistration gui
+        os.environ['SUBJECTS_DIR'] = subject.source_analysis_directory
+        os.environ['SUBJECT'] = 'reconFiles'
 
-        # self.initialize_ui()
+        inst = subject.working_file_path
+        mne.gui.coregistration(inst=inst, subject='reconFiles', head_high_res=False)
 
-
-
-    def on_pushButtonCheckSurfaces_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        subject = self.caller.experiment.active_subject
-        mne.viz.plot_bem(subject='', subjects_dir=subject.reconFiles_directory, orientation='coronal')
 
     def _update_source_estimates(self):
         """Helper for updating source estimates to list."""
@@ -249,12 +265,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             _update_source_estimates)
         self.sourceEstimateDialog.show()
 
-
-    def on_pushButtonMNE_AnalyzeCoregistration_clicked(self, checked=None):
-        if checked is None:
-            return
-        return
-
     def on_pushButtonComputeCovarianceRaw_clicked(self, checked=None):
         """
         Open a dialog for computing noise covariance matrix based on raw file
@@ -282,23 +292,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.covarianceEpochDialog = CovarianceEpochDialog(self)
         self.covarianceEpochDialog.show()
 
-
-    def on_pushButtonMNECoregistration_clicked(self, checked=None):
-        """
-        Open a dialog for coregistering the currently selected
-        forward model in tableViewFModelsForCoregistration.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.tableViewFModelsForCoregistration.selectedIndexes() == []:
-            msg = 'Please select a forward model to (re-)coregister.'
-            messagebox(self, msg)
-            return
-
-        self.caller.coregister_with_mne_gui_coregistration()
 
     def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
         """

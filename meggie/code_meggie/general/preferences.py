@@ -118,35 +118,35 @@ class PreferencesHandler(object):
                    'Freesurfer ...')
         logging.getLogger('ui_logger').info(message)
 
-        os.environ['MNE_ROOT'] = self.MNERoot
+        if self.MNERoot:
+            os.environ['MNE_ROOT'] = self.MNERoot
 
-        # Let's set stuff that mne_setup_sh and mne_setup usually handle, to
-        # avoid problems with different shells and passing env variables around
-        # to subprocesses.
-        mneBinPath = os.path.join(self.MNERoot, 'bin')
-        mneLibPath = os.path.join(self.MNERoot, 'lib')
-        mneUserFileSearchPath = os.path.join(self.MNERoot,
-                                             'share/app-defaults/%N')
-        os.environ['PATH'] += os.pathsep + mneBinPath
+            mneBinPath = os.path.join(self.MNERoot, 'bin')
+            mneLibPath = os.path.join(self.MNERoot, 'lib')
+            mneUserFileSearchPath = os.path.join(self.MNERoot,
+                'share/app-defaults/%N')
+            os.environ['PATH'] += os.pathsep + mneBinPath
 
-        if os.environ.get('LD_LIBRARY_PATH') == None:
-            os.environ['LD_LIBRARY_PATH'] = mneLibPath
-        else:
-            os.environ['LD_LIBRARY_PATH'] += os.pathsep + mneLibPath
+            if os.environ.get('LD_LIBRARY_PATH') == None:
+                os.environ['LD_LIBRARY_PATH'] = mneLibPath
+            else:
+                os.environ['LD_LIBRARY_PATH'] += os.pathsep + mneLibPath
 
-        if os.environ.get('XUSERFILESEARCHPATH') == None:
-            os.environ['XUSERFILESEARCHPATH'] = mneUserFileSearchPath
-        else:
-            os.environ['XUSERFILESEARCHPATH'] += os.pathsep + \
-                                                 mneUserFileSearchPath
+            if os.environ.get('XUSERFILESEARCHPATH') == None:
+                os.environ['XUSERFILESEARCHPATH'] = mneUserFileSearchPath
+            else:
+                os.environ['XUSERFILESEARCHPATH'] += (os.pathsep +
+                    mneUserFileSearchPath)
 
         # Also set environment directly for FreeSurfer.
-        freeSurferBinPath = os.path.join(self.FreeSurferHome, 'bin')
-        freeSurferTktoolsPath = os.path.join(self.FreeSurferHome, 'tktools')
-        os.environ['FREESURFER_HOME'] = self.FreeSurferHome
-        os.environ['PATH'] += os.pathsep + freeSurferBinPath
-        os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
+        if self.FreeSurferHome:
+            freeSurferBinPath = os.path.join(self.FreeSurferHome, 'bin')
+            freeSurferTktoolsPath = os.path.join(self.FreeSurferHome, 'tktools')
+            os.environ['FREESURFER_HOME'] = self.FreeSurferHome
+            os.environ['PATH'] += os.pathsep + freeSurferBinPath
+            os.environ['PATH'] += os.pathsep + freeSurferTktoolsPath
 
-        # To make graphical MNE-Python utilities use QT4 backend instead of wx.
+        # to make graphical MNE-Python utilities 
+        # use QT4 backend instead of wx.
         os.environ['ETS_TOOLKIT'] = "qt4"
 

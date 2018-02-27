@@ -1458,6 +1458,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
         self.mainWindowTabSourceAnalysis.update_tabs()
+        self.mainWindowTabSourceAnalysis.initialize_ui()
         
     def on_currentChanged(self):
         """

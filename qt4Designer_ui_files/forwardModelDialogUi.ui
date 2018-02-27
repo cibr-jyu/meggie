@@ -280,6 +280,13 @@
      </layout>
     </widget>
    </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Ehkä tähän voisi laittaa fwd solution creationinkii?!</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
@@ -319,7 +326,5 @@
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroupAtlas"/>
-  <buttongroup name="buttonGroupNosol"/>
-  <buttongroup name="buttonGroupCorticalPatchStats"/>
  </buttongroups>
 </ui>

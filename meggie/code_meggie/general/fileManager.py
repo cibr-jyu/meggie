@@ -46,40 +46,11 @@ def copy_recon_files(activeSubject, sourceDirectory):
     if os.path.isdir(reconDir):
         dir_util.remove_tree(reconDir)
     
-    dst = activeSubject.reconFiles_directory
-
     logger = logging.getLogger('ui_logger')
     
-    try:
-        logger.info('Copying recon files...')
-        dir_util.copy_tree(sourceDirectory, dst)
-        logger.info('Recon files copying complete!')
-    except IOError: raise
-    
-    
-def move_trans_file(subject, fModelName):
-    """
-    Copy the translated coordinated file from the subject root directory
-    to the desired forward model directory. Should only be needed after creating
-    a new forward model for the subject, and requires the directory to exist
-    beforehand.
-    
-    Keyword arguments:
-    
-    subject       -- the subject whose coordinate file and forward model
-                     are in question.
-    fModelName    -- name of the forward model.
-    
-    """
-    original = os.path.join(subject._subject_path, 'reconFiles-trans.fif')
-    targetDirectory = os.path.join(subject._forwardModels_directory,
-                               fModelName, 'reconFiles')
-    
-    try:
-        shutil.copy(original, targetDirectory)
-        os.remove(original)
-    except IOError: raise
-    
+    logger.info('Copying recon files...')
+    dir_util.copy_tree(sourceDirectory, reconDir)
+    logger.info('Recon files copying complete!')
     
 def create_fModel_directory(fmname, subject):
     """

@@ -210,9 +210,7 @@ class Experiment(QObject):
         remove_data()
 
     def activate_subject(self, subject_name):
-        """Activates a subject from the existing Subjects. Reads the working
-        file under the directory of the given subject name and sets it
-        to the corresponding Subject.
+        """Activates a subject from the existing subjects
 
         Keyword arguments:
         subject_name -- name of the subject
@@ -220,6 +218,7 @@ class Experiment(QObject):
         # Remove raw files from memory before activating new subject.
         if self.active_subject:
             self.active_subject.release_memory()
+
         self.active_subject = self.subjects[subject_name]
         return self.active_subject
  
