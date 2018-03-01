@@ -6,7 +6,7 @@ Created on 3.5.2016
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 
-from meggie.ui.sourceModeling.covarianceEpochDialogUi import Ui_covarianceEpochDialog
+from meggie.ui.source_analysis.covarianceEpochDialogUi import Ui_covarianceEpochDialog
 
 from meggie.code_meggie.general.caller import Caller
 

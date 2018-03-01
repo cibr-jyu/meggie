@@ -8,32 +8,19 @@ This module contains caller class that contains the main state of the software
 
 import subprocess
 import logging
+import functools
 import os
-import glob
-import fnmatch
-import re
-import shutil
-import copy
-
-from subprocess import CalledProcessError
-from functools import partial
-from PyQt4 import QtCore
 
 import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-from meggie.ui.sourceModeling.holdCoregistrationDialogMain import holdCoregistrationDialog
-from meggie.ui.sourceModeling.forwardModelSkipDialogMain import ForwardModelSkipDialog
-from meggie.ui.utils.decorators import threaded
-
-from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.events import Events
+import meggie.code_meggie.general.fileManager as fileManager
 
 
-### Methods needed for source modeling ###    
+def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
+    pass
+
 
 def convert_mri_to_mne(active_subject):
     """
@@ -52,274 +39,6 @@ def convert_mri_to_mne(active_subject):
     
     subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
 
-def create_forward_model(self, fmdict):
-    """
-    Creates a single forward model and saves it to an appropriate
-    directory.
-    The steps taken are the following:
-
-    - Run mne_setup_source_space to handle various steps of source space
-    creation
-    - Use mne_watershed_bem to create bem model meshes
-    - Create BEM model with mne_setup_forward_model
-    - Copy the bem files to the directory named according to fmname
-
-    Keyword arguments:
-    
-    fmdict        -- dictionary, including in three dictionaries, the
-                     parameters for three separate mne scripts run
-                     in the forward model creation.
-    """
-    activeSubject = self.experiment._active_subject
-
-    # Set env variables to point to appropriate directories. 
-    os.environ['SUBJECTS_DIR'] = activeSubject._source_analysis_directory
-    os.environ['SUBJECT'] = 'reconFiles'
-    
-    # The scripts call scripts themselves and need environ for path etc.
-    env = os.environ
-    
-    # Some test files for whether setup_source_space has and watershed
-    # have already been run. MNE scripts delete these if something fails,
-    # so it should be save to base tests on these.
-    bemDir = os.path.join(activeSubject._reconFiles_directory, 'bem/')
-    fmDir = activeSubject._forwardModels_directory
-            
-    # Should have the source space description file.
-    sourceSpaceSetupTestList = glob.glob(bemDir + '*src.fif') 
-    
-    waterShedDir = os.path.join(bemDir, 'watershed/')
-    waterShedSurfaceTestFile = os.path.join(waterShedDir,
-                                            'reconFiles_brain_surface')
-    wsCorTestFile = os.path.join(waterShedDir, 'ws/', 'COR-.info')
-    
-    fmname = fmdict['fmname']
-    (setupSourceSpaceArgs, waterShedArgs, setupFModelArgs) = \
-    fileManager.convertFModelParamDictToCmdlineParamTuple(fmdict)
-    
-    # Check if source space is already setup and watershed calculated, and
-    # offer to skip them and only perform setup_forward_model.
-    reply = 'computeAll'
-    if len(sourceSpaceSetupTestList) > 0 and \
-        os.path.exists(waterShedSurfaceTestFile) and \
-        os.path.exists(wsCorTestFile):
-    
-        try: 
-            sSpaceDict = fileManager.unpickle(os.path.join(fmDir,
-                                              'setupSourceSpace.param'))
-            wshedDict = fileManager.unpickle(os.path.join(fmDir,
-                                                          'wshed.param'))
-
-            fModelSkipDialog = ForwardModelSkipDialog(self, sSpaceDict,
-                                                      wshedDict)
-        
-            fModelSkipDialog.exec_()
-            reply = fModelSkipDialog.get_return_value()
-        except:
-            # On error compute all.
-            reply = 'computeAll'
-    
-    if reply == 'cancel':
-        # To keep forward model dialog open
-        return False
-    
-    elif reply == 'bemOnly':
-        # Need to do this to get triangulation files to right place and
-        # naming for mne_setup_forward_model.
-        fileManager.link_triang_files(activeSubject)
-        self._call_mne_setup_forward_model(setupFModelArgs, env)
-    
-        fileManager.create_fModel_directory(fmname, activeSubject)          
-        fileManager.write_forward_model_parameters(fmname,
-            activeSubject, None, None, fmdict['sfmodelArgs'])
-        
-        # These should always exist, should be safe to unpickle.
-        sspaceParamFile = os.path.join(fmDir, 'setupSourceSpace.param')
-        wshedParamFile = os.path.join(fmDir, 'wshed.param')
-        sspaceArgsDict = fileManager.unpickle(sspaceParamFile)
-        wshedArgsDict = fileManager.unpickle(wshedParamFile)
-             
-        mergedDict = dict([('fmname', fmname)] + \
-                          sspaceArgsDict.items() + \
-                          wshedArgsDict.items() + \
-                          fmdict['sfmodelArgs'].items() + \
-                          [('coregistered', 'no')] + \
-                          [('fsolution', 'no')])
-        
-        fmlist = self.parent.forwardModelModel.\
-                 fmodel_dict_to_list(mergedDict)
-        self.parent.forwardModelModel.add_fmodel(fmlist)
-    
-    elif reply == 'computeAll':
-        # To make overwriting unnecessary
-        if os.path.isdir(bemDir):
-            shutil.rmtree(bemDir)
-        self._call_mne_setup_source_space(setupSourceSpaceArgs, env)
-        self._call_mne_watershed_bem(waterShedArgs, env)
-        
-        # Right name and place for triang files, see above.
-        fileManager.link_triang_files(activeSubject)
-        self._call_mne_setup_forward_model(setupFModelArgs, env)    
-    
-        fileManager.create_fModel_directory(fmname, activeSubject)          
-        fileManager.write_forward_model_parameters(fmname, activeSubject,
-            fmdict['sspaceArgs'], fmdict['wsshedArgs'],
-            fmdict['sfmodelArgs'])
-        mergedDict = dict([('fmname', fmname)] + \
-                          fmdict['sspaceArgs'].items() + \
-                          fmdict['wsshedArgs'].items() + \
-                          fmdict['sfmodelArgs'].items() + \
-                          [('coregistered', 'no')] + \
-                          [('fsolution', 'no')])
-            
-        fmlist = self.parent.forwardModelModel.\
-                 fmodel_dict_to_list(mergedDict)
-        self.parent.forwardModelModel.add_fmodel(fmlist)             
-
-    return True
-
-def _call_mne_setup_source_space(self, setupSourceSpaceArgs, env):
-    try:
-        # TODO: this actually has an MNE-Python counterpart, which doesn't
-        # help much, as the others don't (11.10.2014).
-        mne_setup_source_space_commandList = \
-            ['$MNE_ROOT/bin/mne_setup_source_space'] + \
-            setupSourceSpaceArgs
-        mne_setup_source_spaceCommand = ' '.join(
-                                        mne_setup_source_space_commandList)
-        setupSSproc = subprocess.check_output(mne_setup_source_spaceCommand,
-                                shell=True, env=env)
-        self.parent.processes.append(setupSSproc)
-    except CalledProcessError as e:
-        raise Exception('There was a problem with mne_setup_source_space. Script '
-                        'output: \n' + e.output)
-    except Exception as e:
-        message = 'There was a problem with mne_setup_source_space: ' + \
-                  str(e) + \
-                  ' (Are you sure you have your MNE_ROOT set right ' + \
-                  'in Meggie preferences?)'
-        raise Exception(message)
-
-def _call_mne_watershed_bem(self, waterShedArgs, env):
-    try:
-        mne_watershed_bem_commandList = ['$MNE_ROOT/bin/mne_watershed_bem'] + \
-                                waterShedArgs
-        mne_watershed_bemCommand = ' '.join(mne_watershed_bem_commandList)
-        wsProc = subprocess.check_output(mne_watershed_bemCommand,
-                                shell=True, env=env)
-        self.parent.processes.append(wsProc)
-
-    except CalledProcessError as e:
-        title = 'Problem with forward model creation'
-        message = 'There was a problem with mne_watershed_bem. ' + \
-                  'Script output: \n' + e.output
-        raise Exception(message)
-
-    except Exception as e:
-        message = 'There was a problem with mne_watershed_bem: ' + \
-                  str(e) + \
-                  ' (Are you sure you have your MNE_ROOT set right ' + \
-                  'in Meggie preferences?)'
-        raise Exception(message)
-
-def _call_mne_setup_forward_model(self, setupFModelArgs, env):
-    try:
-        mne_setup_forward_modelCommandList = \
-            ['$MNE_ROOT/bin/mne_setup_forward_model'] + setupFModelArgs
-        mne_setup_forward_modelCommand = ' '.join(
-                                    mne_setup_forward_modelCommandList)
-        setupFModelProc = subprocess.check_output(mne_setup_forward_modelCommand, shell=True,
-                                env=env)
-        self.parent.processes.append(setupFModelProc)
-    except CalledProcessError as e:    
-        title = 'Problem with forward model creation'
-        message = 'There was a problem with mne_setup_forward_model. ' + \
-                 'Script output: \n' + e.output
-        raise Exception(message)
-    except Exception as e:
-        message = 'There was a problem with mne_setup_forward_model: ' + \
-                  str(e) + \
-                  ' (Are you sure you have your MNE_ROOT set right ' + \
-                  'in Meggie preferences?)'
-        raise Exception(message)
-
-def coregister_with_mne_gui_coregistration(self):
-    """
-    Uses mne.gui.coregistration for head coordinate coregistration.
-    """
-    activeSubject = self.experiment.active_subject
-    tableView = self.parent.ui.tableViewFModelsForCoregistration
-    
-    # Selection for the view is SingleSelection / SelectRows, so this
-    # should return indexes for single row.
-    selectedRowIndexes = tableView.selectedIndexes()
-    selectedFmodelName = selectedRowIndexes[0].data() 
-                         
-    subjects_dir = os.path.join(activeSubject._forwardModels_directory,
-                                selectedFmodelName)
-    subject = 'reconFiles'
-    rawPath = os.path.join(activeSubject.subject_path,
-                           self.experiment.active_subject.working_file_name)
-
-    gui = mne.gui.coregistration(tabbed=True, split=True, scene_width=300,
-                                 inst=rawPath, subject=subject,
-                                 subjects_dir=subjects_dir)
-    QtCore.QCoreApplication.processEvents()
-
-    # Needed for copying the resulting trans file to the right location.
-    self.coregHowtoDialog = holdCoregistrationDialog(self, activeSubject,
-                                                     selectedFmodelName) 
-    self.coregHowtoDialog.ui.labelTransFileWarning.hide()
-    self.coregHowtoDialog.show()
-
-def create_forward_solution(self, fsdict):
-    """
-    Creates a forward solution based on parameters given in fsdict.
-
-    Keyword arguments:
-
-    fsdict    -- dictionary of parameters for forward solution creation.
-    """
-    activeSubject = self.experiment._active_subject
-    rawInfo = activeSubject.get_working_file().info
-
-    tableView = self.parent.ui.tableViewFModelsForSolution
-    selectedRowIndexes = tableView.selectedIndexes()
-    selectedFmodelName = selectedRowIndexes[0].data()
-
-    fmdir = os.path.join(activeSubject._forwardModels_directory,
-                         selectedFmodelName)
-    transFilePath = os.path.join(fmdir, 'reconFiles',
-                                 'reconFiles-trans.fif')
-
-    srcFileDir = os.path.join(fmdir, 'reconFiles', 'bem')
-    srcFilePath = None
-    for f in os.listdir(srcFileDir):
-        if fnmatch.fnmatch(f, 'reconFiles*src.fif'):
-            srcFilePath = os.path.join(srcFileDir, f)
-
-    bemSolFilePath = None
-    for f in os.listdir(srcFileDir):
-        if fnmatch.fnmatch(f, 'reconFiles*bem-sol.fif'):
-            bemSolFilePath = os.path.join(srcFileDir, f)
-
-    targetFileName = os.path.join(fmdir, 'reconFiles',
-                                  'reconFiles-fwd.fif')
-    n_jobs = self.parent.preferencesHandler.n_jobs
-
-    try:
-        mne.make_forward_solution(rawInfo, transFilePath, srcFilePath,
-                                  bemSolFilePath, targetFileName,
-                                  fsdict['includeMEG'],
-                                  fsdict['includeEEG'], fsdict['mindist'],
-                                  fsdict['ignoreref'], True,
-                                  n_jobs)
-        fileManager.write_forward_solution_parameters(fmdir, fsdict)
-        self.parent.forwardModelModel.initialize_model()
-    except Exception as e:
-        msg = ('There was a problem with forward solution. The MNE-Python '
-               'message was: \n\n' + str(e))
-        raise Exception(msg)
 
 def compute_inverse(self, fwd_name):
     """Computes an inverse operator for the forward solution and saves it
@@ -593,7 +312,6 @@ def plot_stc_freq(self, stc, data, freqs, tmin, tmax, ncycles):
     Matplotlib figure containing average TFR over the epoch stcs.
 
     """
-    import matplotlib.pyplot as plt
 
     n_jobs = self.parent.preferencesHandler.n_jobs
     tmin_i = np.argmin([abs(tmin - t) for t in stc.times])
@@ -609,8 +327,8 @@ def plot_stc_freq(self, stc, data, freqs, tmin, tmax, ncycles):
     
 
     stc.times = stc.times[tmin_i:tmax_i]
-    click_callback = partial(self.tfr_clicked, data=power, stc=stc,
-                             freqs=freqs)
+    click_callback = functools.partial(self.tfr_clicked, data=power, stc=stc,
+                                       freqs=freqs)
     fig.canvas.mpl_connect('button_press_event', click_callback)
     fig.suptitle('Average power over all sources.')
     plt.show(block=True)

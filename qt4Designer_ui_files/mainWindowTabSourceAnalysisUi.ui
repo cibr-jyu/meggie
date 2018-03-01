@@ -469,108 +469,145 @@
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
      <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBoxCoregister">
+      <widget class="QGroupBox" name="groupBoxCoregistration">
        <property name="title">
-        <string>(Re-)coregister the selected forward model:</string>
+        <string>Coregistration of MEG and MRI</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_33">
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_7">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_18">
+         <layout class="QVBoxLayout" name="verticalLayoutCoregistration">
           <item>
-           <widget class="QFrame" name="frame_4">
+           <widget class="QFrame" name="frameCoregistrationGUI">
+            <property name="whatsThis">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QGridLayout" name="gridLayout_34">
+            <layout class="QGridLayout" name="gridLayout_32">
              <item row="0" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_17">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_16">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_58">
-                   <item>
-                    <widget class="QLabel" name="label_9">
-                     <property name="font">
-                      <font>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="whatsThis">
-                      <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                     </property>
-                     <property name="text">
-                      <string>Load pre-existing coordinate file:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_29">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
+                  <widget class="QLabel" name="labelCoregistrationGUI">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string/>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string>Use MNE-python Coregistration GUI to create a coordinate transformation file:</string>
+                   </property>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_59">
-                   <item>
-                    <widget class="QLineEdit" name="lineEditCoregistration">
-                     <property name="whatsThis">
-                      <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="pushButtonBrowseCoregistration">
-                     <property name="whatsThis">
-                      <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                     </property>
-                     <property name="text">
-                      <string>Browse...</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <spacer name="horizontalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>
                <item>
-                <widget class="QLabel" name="label_10">
-                 <property name="font">
-                  <font>
-                   <pointsize>13</pointsize>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>OR</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <item>
+                  <widget class="QPushButton" name="pushButtonCoregistrationGUI">
+                   <property name="whatsThis">
+                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                   </property>
+                   <property name="text">
+                    <string>Open MNE-Python Coregistration...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frameCoregistrationBrowse">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_42">
+             <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_14">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <item>
+                  <widget class="QLabel" name="labelCoregistrationBrowse">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Locate the created or pre-existing coordinate transformation file:</string>
+                   </property>
+                   <property name="margin">
+                    <number>0</number>
+                   </property>
+                   <property name="indent">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonMNECoregistration">
-                 <property name="text">
-                  <string>Use MNE-Python coregistration</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_63">
+                 <item>
+                  <widget class="QLineEdit" name="lineEditCoregistrationBrowse">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="whatsThis">
+                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonCoregistrationBrowse">
+                   <property name="text">
+                    <string>Browse...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>
@@ -578,58 +615,6 @@
            </widget>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="tabForwardModel">
-    <attribute name="title">
-     <string>Forward model setup</string>
-    </attribute>
-    <layout class="QFormLayout" name="formLayout_14">
-     <item row="0" column="0" colspan="2">
-      <widget class="QGroupBox" name="groupBoxRestOfSourcePreparation">
-       <property name="title">
-        <string>Forward models:</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_31">
-        <item row="0" column="0">
-         <widget class="QTableView" name="tableViewForwardModels">
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>4</number>
-          </attribute>
-          <attribute name="horizontalHeaderStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButtonCreateNewForwardModel">
-          <property name="text">
-           <string>Create new forward model...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="pushButtonRemoveSelectedForwardModel">
-          <property name="text">
-           <string>Remove selected forward model</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
@@ -646,10 +631,10 @@
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
-          <string>Forward models ready for forward solution creation:</string>
+          <string>Existing forward solutions</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_35">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QTableView" name="tableViewFModelsForSolution">
             <property name="alternatingRowColors">
              <bool>true</bool>
@@ -668,10 +653,24 @@
             </attribute>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QPushButton" name="pushButtonCreateForwardSolution">
             <property name="text">
-             <string>(Re)create forward solution for selected forward model...</string>
+             <string>Create a forward solution...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="pushButtonRemoveForwardSolution">
+            <property name="text">
+             <string>Remove a forward solution</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="pushButtonImportForwardSolution">
+            <property name="text">
+             <string>Import forward solution...</string>
             </property>
            </widget>
           </item>

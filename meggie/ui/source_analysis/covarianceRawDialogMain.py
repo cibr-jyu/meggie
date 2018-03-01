@@ -7,7 +7,7 @@ Created on 7.1.2015
 from PyQt4 import QtGui
 from PyQt4.QtGui import QApplication
 
-from meggie.ui.sourceModeling.covarianceRawDialogUi import Ui_covarianceRawDialog
+from meggie.ui.source_analysis.covarianceRawDialogUi import Ui_covarianceRawDialog
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 

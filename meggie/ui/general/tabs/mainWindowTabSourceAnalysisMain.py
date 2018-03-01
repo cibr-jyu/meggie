@@ -1,16 +1,19 @@
 import os
 import logging
+import shutil
 
 import mne
 
 from PyQt4 import QtGui
 
-from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis
+from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
+
+from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
 
 from meggie.ui.utils.messaging import messagebox
 
 import meggie.code_meggie.general.fileManager as fileManager
-import meggie.code_meggie.general.source_analysis as source_analysis
+
 
 class MainWindowTabSourceAnalysis(QtGui.QDialog):
     def __init__(self, parent):
@@ -32,12 +35,11 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation, "Source modelling preparation")
         self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabCoregistration, "Coregistration")
-        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardModel, "Forward model creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabForwardSolution, "Forward solution creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabNoiseCovariance, "Noise covariance")
-        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabInverseOperator, "Inverse operator")
-        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabSourceEstimate, "Source estimate")
-        self.ui.tabWidgetSourceAnalysis.insertTab(8, self.ui.tabAnalysis, "Analysis")
+        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardSolution, "Forward solution creation")
+        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabNoiseCovariance, "Noise covariance")
+        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabInverseOperator, "Inverse operator")
+        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabSourceEstimate, "Source estimate")
+        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabAnalysis, "Analysis")
 
 
     def on_currentChanged(self):
@@ -59,6 +61,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         if active_subject.check_bem_surfaces():
             self.ui.checkBoxBem.setChecked(True)
+
+        # populate forward solutions
         
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -162,7 +166,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         logging.getLogger('ui_logger').info("Check Segmentations clicked")
 
 
-    def on_pushButtonMNECoregistration_clicked(self, checked=None):
+    def on_pushButtonCoregistrationGUI_clicked(self, checked=None):
         if checked is None:
             return
 
@@ -180,6 +184,63 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         inst = subject.working_file_path
         mne.gui.coregistration(inst=inst, subject='reconFiles', head_high_res=False)
 
+    def on_pushButtonCoregistrationBrowse_clicked(self, checked=None):
+        """
+        Copies reconstructed mri files from the directory supplied by the user
+        to the corresponding directory under the active subject directory
+        """
+        if checked is None:
+            return
+
+        if self.parent.experiment and self.parent.experiment.active_subject:
+            subject = self.parent.experiment.active_subject
+        else:
+            return
+
+        path = str(QtGui.QFileDialog.getOpenFileName(self,
+            "Select the coordinate MEG-MRI coordinate transformation file"))
+
+        if path == '':
+            return
+
+        src = path
+        dst = subject.transfile_path
+
+        logging.getLogger('ui_logger').info('Copying ' + src + ' to ' + dst)
+        try:
+            shutil.copyfile(src, dst)
+        except Exception as exc:
+            exc_messagebox(exc)
+
+        self.ui.lineEditCoregistrationBrowse.setText(path)
+
+    def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        if not self.parent.experiment.active_subject:
+            return
+
+        self.forwardSolutionDialog = ForwardSolutionDialog(self, 
+            experiment=self.parent.experiment, on_close=self.initialize_ui)
+        self.forwardSolutionDialog.show()
+
+
+    def on_pushButtonImportForwardSolution_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        logging.getlogger('ui_logger').info("Import forward solution clicked")
+
+
+    def on_pushButtonRemoveForwardSolution_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        logging.getlogger('ui_logger').info("Remove forward solution clicked")
 
     def _update_source_estimates(self):
         """Helper for updating source estimates to list."""
@@ -291,28 +352,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.covarianceEpochDialog = CovarianceEpochDialog(self)
         self.covarianceEpochDialog.show()
-
-
-    def on_pushButtonCreateForwardSolution_clicked(self, checked=None):
-        """
-        Open a dialog for creating a forward solution for the currently
-        selected forward model in tableViewFModelsForSolution.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.tableViewFModelsForSolution.selectedIndexes() == []:
-            message = ('Please select a forward model to (re)create a forward '
-                       'solution for.')
-            messagebox(self, message)
-            return
-
-        self.fSolutionDialog = ForwardSolutionDialog(self)
-        self.fSolutionDialog.fwd_sol_computed.connect(self.initialize_ui)
-        self.fSolutionDialog.show()
-
 
 
     def on_pushButtonBrowseCoregistration_clicked(self, checked=None):

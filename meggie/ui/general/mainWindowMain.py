@@ -48,17 +48,7 @@ from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
-from meggie.ui.sourceModeling.forwardModelDialogMain import ForwardModelDialog
-from meggie.ui.sourceModeling.sourceEstimateDialogMain import SourceEstimateDialog
 from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
-from meggie.ui.sourceModeling.forwardSolutionDialogMain import ForwardSolutionDialog
-from meggie.ui.sourceModeling.covarianceRawDialogMain import CovarianceRawDialog
-from meggie.ui.sourceModeling.covarianceEpochDialogMain import CovarianceEpochDialog
-from meggie.ui.sourceModeling.plotStcDialogMain import PlotStcDialog
-from meggie.ui.sourceModeling.stcFreqDialogMain import StcFreqDialog
-from meggie.ui.widgets.covarianceWidgetNoneMain import CovarianceWidgetNone
-from meggie.ui.widgets.covarianceWidgetRawMain import CovarianceWidgetRaw
-from meggie.ui.widgets.covarianceWidgetEpochsMain import CovarianceWidgetEpochs
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -1616,13 +1606,12 @@ class MainWindow(QtGui.QMainWindow):
             file_handler.setFormatter(formatter)
             mne_logger.addHandler(file_handler)
 
-            pass
-
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         stream_handler.setLevel('ERROR')
         mne_logger.addHandler(stream_handler)
 
+        # TODO: trait logger ..
 
 
 class EmittingStream(QtCore.QObject):

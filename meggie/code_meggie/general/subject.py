@@ -49,6 +49,9 @@ class Subject(object):
         self._forwardModels_directory = os.path.join(self._source_analysis_directory, 'forwardModels')  # noqa
         self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
 
+        self._transfile_path = os.path.join(self._source_analysis_directory, 
+                                            'mri_meg-trans.fif')
+
         # Models for various types of data stored in subject
         self._forwardModelModel = None
         
@@ -77,6 +80,10 @@ class Subject(object):
     @property
     def stc_directory(self):
         return self._stc_directory
+
+    @property
+    def transfile_path(self):
+        return self._transfile_path
 
     @property
     def subject_name(self):
