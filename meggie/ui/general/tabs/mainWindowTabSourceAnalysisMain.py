@@ -2,17 +2,15 @@ import os
 import logging
 import shutil
 
-import mne
-
 from PyQt4 import QtGui
 
+
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
-
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
-
 from meggie.ui.utils.messaging import messagebox
 
 import meggie.code_meggie.general.fileManager as fileManager
+import meggie.code_meggie.general.mne_wrapper as mne
 
 
 class MainWindowTabSourceAnalysis(QtGui.QDialog):
@@ -133,7 +131,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # create bem surfaces for later steps
         try:
-            mne.bem.make_watershed_bem('reconFiles', atlas=use_atlas)
+            mne.make_watershed_bem('reconFiles', atlas=use_atlas)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -182,7 +180,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         os.environ['SUBJECT'] = 'reconFiles'
 
         inst = subject.working_file_path
-        mne.gui.coregistration(inst=inst, subject='reconFiles', head_high_res=False)
+        mne.coregistration(inst=inst, subject='reconFiles', head_high_res=False)
 
     def on_pushButtonCoregistrationBrowse_clicked(self, checked=None):
         """

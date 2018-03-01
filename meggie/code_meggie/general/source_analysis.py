@@ -11,7 +11,6 @@ import logging
 import functools
 import os
 
-import mne
 import numpy as np
 import matplotlib.pyplot as plt
 

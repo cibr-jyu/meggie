@@ -6,7 +6,6 @@ from PyQt4 import QtCore, QtGui
 
 import os
 import numpy as np
-import mne
 
 from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.fileManager import _read_epoch_stcs
