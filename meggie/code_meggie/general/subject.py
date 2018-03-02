@@ -51,6 +51,10 @@ class Subject(object):
 
         self._transfile_path = os.path.join(self._source_analysis_directory, 
                                             'mri_meg-trans.fif')
+        self._covfile_path = os.path.join(self._source_analysis_directory, 
+                                            'noise-cov.fif')
+
+
 
         self._experiment = experiment
 
@@ -81,6 +85,10 @@ class Subject(object):
     @property
     def transfile_path(self):
         return self._transfile_path
+
+    @property
+    def covfile_path(self):
+        return self._covfile_path
 
     @property
     def subject_name(self):
@@ -354,12 +362,30 @@ class Subject(object):
         Returns True if sss/tsss found.
         """
         path = self.subject_path
-        #Check whether sss/tsss method is applied.
-        files = []
+
+        # Check whether sss/tsss method is applied.
         files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
         files.extend(filter(os.path.isfile, glob.glob(path + '/*_mc*')))
+
         if len(files) > 0:
             return True
+
+        return False
+
+    def check_transfile_exists(self):
+        path = self.transfile_path
+
+        if os.path.isfile(path):
+            return True
+
+        return False
+
+    def check_covfile_exists(self):
+        path = self.covfile_path
+
+        if os.path.isfile(path):
+            return True
+
         return False
 
     def check_reconFiles_copied(self):

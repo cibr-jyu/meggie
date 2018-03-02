@@ -27,6 +27,9 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.initialize_ui()
 
+    def on_currentChanged(self):
+        pass
+
 
     def update_tabs(self):
 
@@ -41,9 +44,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabSourceEstimate, "Source estimate")
         self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabAnalysis, "Analysis")
 
-
-    def on_currentChanged(self):
-        pass
 
     def initialize_ui(self):
 
@@ -70,7 +70,13 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             self.ui.listWidgetForwardSolutions.addItem(item)
 
         # set transfile state to selected if transfile exists
-        self.ui.checkBoxCoregistrationSelected.setChecked(True)
+        if active_subject.check_transfile_exists():
+            self.ui.checkBoxCoregistrationSelected.setChecked(True)
+
+        # set covariance state to selected if covariance file exists
+        if active_subject.check_covfile_exists():
+            self.ui.checkBoxCovarianceComputed.setChecked(True)
+
         
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -316,7 +322,9 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if not self.parent.experiment.active_subject:
             return
 
-        self.covarianceRawDialog = CovarianceRawDialog(self)
+        self.covarianceRawDialog = CovarianceRawDialog(self.parent.experiment, 
+            on_close=self.initialize_ui)
+
         self.covarianceRawDialog.show()
 
     def on_pushButtonCovarianceEpochs_clicked(self, checked=None):
@@ -333,7 +341,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if not self.parent.experiment.active_subject:
             return
 
-        self.covarianceEpochDialog = CovarianceEpochDialog(self.parent.experiment)
+        self.covarianceEpochDialog = CovarianceEpochDialog(
+            self.parent.experiment, on_close=self.initialize_ui)
 
         self.covarianceEpochDialog.show()
 
