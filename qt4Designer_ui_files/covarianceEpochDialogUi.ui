@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
-    <height>571</height>
+    <width>533</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,14 +24,14 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>504</width>
-        <height>514</height>
+        <width>513</width>
+        <height>503</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>474</width>
-        <height>492</height>
+        <width>500</width>
+        <height>470</height>
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -45,8 +45,8 @@
            <rect>
             <x>10</x>
             <y>30</y>
-            <width>441</width>
-            <height>191</height>
+            <width>461</width>
+            <height>201</height>
            </rect>
           </property>
           <property name="selectionMode">
@@ -123,33 +123,6 @@
               </widget>
              </item>
             </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QLabel" name="labelMethod">
-               <property name="text">
-                <string>Method:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="comboBoxMethod"/>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxKeepSampleMean">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Keep sample mean (not checked enabled for empirical method)</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
