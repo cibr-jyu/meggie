@@ -14,11 +14,42 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+import meggie.code_meggie.general.mne_wrapper as mne
+
 import meggie.code_meggie.general.fileManager as fileManager
 
 
 def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
-    pass
+    """
+    """
+
+    subject_name = 'reconFiles'
+    subjects_dir = subject.source_analysis_directory
+
+    # set up source space
+    src = mne.setup_source_space(subject=subject_name, spacing=decim,
+        subjects_dir=subjects_dir)
+
+    # set up bem solution
+    model = mne.make_bem_model(subject=subject_name, ico=triang_ico,
+			       conductivity=conductivity,
+			       subjects_dir=subjects_dir)
+    bem = mne.make_bem_solution(model)
+
+    # gather parameters
+    trans = subject.transfile_path
+    info = subject.get_working_file().info
+    meg = True
+    eeg = True if len(conductivity) == 3 else False
+    
+    # make forward solution
+    fwd = mne.make_forward_solution(info, trans=trans, src=src, bem=bem,
+        meg=meg, eeg=eeg, mindist=5.0)
+
+    # save the file
+    fname = solution_name + '-' + decim + '-src-fwd.fif'
+    path = os.path.join(subject.forward_solutions_directory, fname)
+    mne.write_forward_solution(path, fwd)
 
 
 def convert_mri_to_mne(active_subject):
@@ -51,7 +82,7 @@ def compute_inverse(self, fwd_name):
     subject = self.experiment.active_subject
     info = subject.get_working_file().info
     sa_dir = subject._source_analysis_directory
-    fwd_file = os.path.join(subject._forwardModels_directory, fwd_name,
+    fwd_file = os.path.join(subject._forwardSolutions_directory, fwd_name,
                             'reconFiles', 'reconFiles-fwd.fif')
     if os.path.isfile(fwd_file):
         logging.getLogger('ui_logger').info('Reading forward solution...')
@@ -268,7 +299,7 @@ def plotStc(self, stc_name, hemi, surface, smoothing_steps, alpha):
     try:
         stc.plot(subject='', surface=surface, hemi=hemi, alpha=alpha,
                  smoothing_steps=smoothing_steps, time_viewer=True,
-                 subjects_dir=subject._reconFiles_directory)
+                 subjects_dir=subject.reconfiles_directory)
     except Exception as e:
         raise Exception('Error while plotting source estimate:\n' + str(e))
 
@@ -289,7 +320,7 @@ def tfr_clicked(self, event, data, stc, freqs):
     #time_idx = np.argmin([abs(x_data / 1000. - t) for t in stc.times])
     freq_idx = np.argmin([abs(y_data - f) for f in freqs])
     stc._data = data[:, freq_idx, :]
-    subjects_dir = self.experiment.active_subject.reconFiles_directory
+    subjects_dir = self.experiment.active_subject.reconfiles_directory
     label = str(freqs[freq_idx]) + ' Hz, time=%0.2f ms'
     stc.plot(subject='', subjects_dir=subjects_dir, time_label=label,
              time_viewer=True)

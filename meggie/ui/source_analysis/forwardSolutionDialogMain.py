@@ -38,7 +38,7 @@ class ForwardSolutionDialog(QtGui.QDialog):
 
         # if single layer
         if self.ui.comboBoxCompartmentModel.currentIndex() == 0:
-            conductivity = inner_skull 
+            conductivity = (inner_skull,)
 
         # three layers
         else:

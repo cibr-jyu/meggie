@@ -277,7 +277,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>Copy</string>
+                      <string>Copy MRI images</string>
                      </property>
                     </widget>
                    </item>
@@ -401,7 +401,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>Create</string>
+                      <string>Create Bem surfaces</string>
                      </property>
                     </widget>
                    </item>
@@ -634,25 +634,6 @@
           <string>Existing forward solutions</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_35">
-          <item row="1" column="0">
-           <widget class="QTableView" name="tableViewFModelsForSolution">
-            <property name="alternatingRowColors">
-             <bool>true</bool>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::SingleSelection</enum>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QPushButton" name="pushButtonCreateForwardSolution">
             <property name="text">
@@ -673,6 +654,9 @@
              <string>Import forward solution...</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QListWidget" name="listWidgetForwardSolutions"/>
           </item>
          </layout>
         </widget>

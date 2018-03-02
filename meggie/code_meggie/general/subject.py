@@ -45,16 +45,13 @@ class Subject(object):
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
         self._evokeds_directory = os.path.join(self._epochs_directory, 'average')  # noqa
         self._source_analysis_directory = os.path.join(self._subject_path, 'sourceAnalysis')  # noqa
-        self._reconFiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
-        self._forwardModels_directory = os.path.join(self._source_analysis_directory, 'forwardModels')  # noqa
+        self._reconfiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
+        self._forward_solutions_directory = os.path.join(self._source_analysis_directory, 'forwardSolutions')  # noqa
         self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
 
         self._transfile_path = os.path.join(self._source_analysis_directory, 
                                             'mri_meg-trans.fif')
 
-        # Models for various types of data stored in subject
-        self._forwardModelModel = None
-        
         self._experiment = experiment
 
     @property
@@ -70,12 +67,12 @@ class Subject(object):
         return self._source_analysis_directory
     
     @property
-    def reconFiles_directory(self):
-        return self._reconFiles_directory
+    def reconfiles_directory(self):
+        return self._reconfiles_directory
     
     @property
-    def forwardModels_directory(self):
-        return self._forwardModels_directory  
+    def forward_solutions_directory(self):
+        return self._forward_solutions_directory  
 
     @property
     def stc_directory(self):
@@ -282,21 +279,6 @@ class Subject(object):
             raise IOError('Evoked could not be deleted from average folder.')
         self._evokeds.pop(str(name), None)
 
-    def remove_power(self, name):
-        """
-        Removes AVGPower object from the TFR dictionary.
-
-        Keyword arguments:
-        name    -- Name of the file as string.
-        """
-        path = os.path.join(self.subject_path, 'TFR')
-        try:
-            fileManager.delete_file_at(path, name)
-        except OSError as err:
-            raise IOError('The file could not be deleted from TFR folder.')
-
-    
-### Code for checking the state of the subject ###   
 
     def check_ecg_projs(self):
         """
@@ -381,7 +363,7 @@ class Subject(object):
         return False
 
     def check_reconFiles_copied(self):
-        reconDir = self.reconFiles_directory
+        reconDir = self.reconfiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 
         if os.path.isdir(mriDir):
             return True
@@ -389,7 +371,7 @@ class Subject(object):
             return False
 
     def check_bem_surfaces(self):
-        rcdir = self.reconFiles_directory
+        rcdir = self.reconfiles_directory
         if not os.path.isfile(os.path.join(rcdir, 'bem', 'inner_skull.surf')):
             return False
         if not os.path.isfile(os.path.join(rcdir, 'bem', 'outer_skull.surf')):
@@ -399,7 +381,7 @@ class Subject(object):
         return True
 
     def check_mne_setup_mri_run(self):
-        reconDir = self.reconFiles_directory
+        reconDir = self.reconfiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 
         T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
         brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')
@@ -407,3 +389,8 @@ class Subject(object):
             return True
         else:
             return False
+
+    def get_forward_solution_names(self):
+        names = filter(lambda x: x.endswith('fwd.fif'), 
+                       os.listdir(self.forward_solutions_directory))
+        return names

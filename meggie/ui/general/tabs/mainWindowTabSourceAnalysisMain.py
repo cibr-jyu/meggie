@@ -61,6 +61,11 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             self.ui.checkBoxBem.setChecked(True)
 
         # populate forward solutions
+        solutions = active_subject.get_forward_solution_names()
+        self.ui.listWidgetForwardSolutions.clear()
+        for solution in solutions:
+            item = QtGui.QListWidgetItem(solution)
+            self.ui.listWidgetForwardSolutions.addItem(item)
         
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
@@ -134,8 +139,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             mne.make_watershed_bem('reconFiles', atlas=use_atlas)
         except Exception as e:
             exc_messagebox(self, e)
-
-# JOSSAIN VAIHEESSA MNE_SETUP_MRI
 
     def on_pushButtonCheckTalairach_clicked(self, checked=None):
         if checked is None:
@@ -231,35 +234,65 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if checked is None:
             return
 
-        logging.getlogger('ui_logger').info("Import forward solution clicked")
+        if self.parent.experiment and self.parent.experiment.active_subject:
+            subject = self.parent.experiment.active_subject
+        else:
+            return
+
+        path = str(QtGui.QFileDialog.getOpenFileName(self,
+            "Select a forward solution file"))
+
+        if not path.endswith('fwd.fif'):
+            messagebox(self, "Forward solution file should end with -fwd.fif")
+            return 
+
+        src = path
+        dst = os.path.join(subject.forward_solutions_directory,
+            os.path.basename(path))
+
+        logging.getLogger('ui_logger').info('Copying ' + src + ' to ' + dst)
+        try:
+            shutil.copyfile(src, dst)
+        except Exception as exc:
+            exc_messagebox(exc)
+
+        self.initialize_ui()
 
 
     def on_pushButtonRemoveForwardSolution_clicked(self, checked=None):
         if checked is None:
             return
 
-        logging.getlogger('ui_logger').info("Remove forward solution clicked")
+        if not self.parent.experiment:
+            return
 
-    def _update_source_estimates(self):
-        """Helper for updating source estimates to list."""
-        self.ui.listWidgetSourceEstimate.clear()
-        subject = self.caller.experiment.active_subject
-        dir = subject._stc_directory
-        stcs = [f for f in os.listdir(dir) if
-                os.path.isfile(os.path.join(dir, f)) and f.endswith('lh.stc')]
-        for stc in stcs:
-            if os.path.isfile(os.path.join(dir, stc[:-6] + 'rh.stc')):
-                self.ui.listWidgetSourceEstimate.addItem(stc[:-7])
+        active_subject = self.parent.experiment.active_subject
 
-        for stc_dir in [f for f in os.listdir(dir) if
-                        os.path.isdir(os.path.join(dir, f))]:  # epochs dirs
-            for stc_file in os.listdir(os.path.join(dir, stc_dir)):
-                if stc_file.endswith('lh.stc'):
-                    continue  # don't add duplicates
-                if os.path.isfile(os.path.join(dir, stc_dir,
-                                               stc_file[:-6] + 'rh.stc')):
-                    self.ui.listWidgetSourceEstimate.addItem(os.path.join(
-                        stc_dir, stc_file[:-7]))
+        try:
+            sol = str(self.ui.listWidgetForwardSolutions.currentItem().text())
+        except AttributeError:
+            return
+
+        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+                                           "Do you really want to remove "
+                                           "the the selected solution?",
+                                           QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.No:
+            return
+
+
+        path = os.path.join(active_subject.forward_solutions_directory,
+                            sol)
+
+        logging.getLogger('ui_logger').info(
+            'Removing solution file from ' + path)
+
+        os.remove(path)
+
+        self.initialize_ui()
 
 
     def on_pushButtonVisStc_clicked(self, checked=None):
@@ -350,107 +383,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.covarianceEpochDialog = CovarianceEpochDialog(self)
         self.covarianceEpochDialog.show()
-
-
-    def on_pushButtonBrowseCoregistration_clicked(self, checked=None):
-        """
-        Open a file browser dialog for the user to choose
-        a translated coordinate file to use with the currently selected forward
-        model.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        activeSubject = self.caller.experiment._active_subject
-        tableView = self.ui.tableViewFModelsForCoregistration
-
-        # Selection for the view is SingleSelection / SelectRows, so this
-        # should return indexes for single row.
-        selectedRowIndexes = tableView.selectedIndexes()
-        selectedFmodelName = selectedRowIndexes[0].data()
-
-        subjectPath = activeSubject._subject_path
-        targetName = os.path.join(subjectPath, 'sourceAnalysis',
-                                  'forwardModels', selectedFmodelName,
-                                  'reconFiles', 'reconFiles-trans.fif')
-
-        path = QtGui.QFileDialog.getOpenFileName(self, 'Select the existing '
-                                                 'coordinate file (the file '
-                                                 'should end with '
-                                                 '"-trans.fif")')
-        if path == '':
-            return
-        else:
-            try:
-                shutil.copyfile(path, targetName)
-            except IOError:
-                msg = 'There was a problem while copying the coordinate file.'
-                messagebox(self, msg)
-
-        self.forwardModelModel.initialize_model()
-
-
-
-    def on_pushButtonRemoveSelectedForwardModel_clicked(self, checked=None):
-        """
-        Removes selected forward model from the forward model list and
-        from the disk.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        if self.ui.tableViewForwardModels.selectedIndexes() == []:
-            message = 'Please select a forward model to remove.'
-            messagebox(self, message)
-            return
-
-        reply = QtGui.QMessageBox.question(self, 'Removing forward model',
-                                           'Do you really want to remove the '
-                                           'selected forward model, including '
-                                           'the coregistration and forward '
-                                           'solution files related to it?',
-                                           QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
-
-        if reply == QtGui.QMessageBox.No:
-            return
-
-        tableView = self.ui.tableViewForwardModels
-
-        # Selection for the view is SingleSelection / SelectRows, so this
-        # should return indexes for single row.
-        selectedRowIndexes = tableView.selectedIndexes()
-        selectedRowNumber = selectedRowIndexes[0].row()
-        fmname = selectedRowIndexes[0].data()
-        subject = self.caller.experiment.active_subject
-
-        try:
-            fileManager.remove_fModel_directory(fmname, subject)
-            self.forwardModelModel.removeRows(selectedRowNumber)
-            self.initialize_ui()
-        except Exception:
-            msg = ('There was a problem removing forward model. Nothing was '
-                   'removed.')
-            messagebox(self, msg)
-
-
-
-    def on_pushButtonCreateNewForwardModel_clicked(self, checked=None):
-        """
-        Open up a dialog for creating a new forward model.
-        """
-        if checked is None:
-            return
-        if self.caller.experiment.active_subject is None:
-            return
-
-        self.fmodelDialog = ForwardModelDialog(self)
-        self.fmodelDialog.show()
 
 
     def update_covariance_info_box(self):
