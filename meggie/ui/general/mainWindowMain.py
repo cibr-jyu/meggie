@@ -341,7 +341,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment is None:
             messagebox(self, 'You do not currently have an experiment activated.')  # noqa
             return
-        self.expInfoDialog = experimentInfoDialog()
+        self.expInfoDialog = experimentInfoDialog(self)
         self.expInfoDialog.show()
 
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
@@ -633,6 +633,7 @@ class MainWindow(QtGui.QMainWindow):
             self.clear_epoch_collection_parameters()
 
         self.experiment.save_experiment_settings()
+        self.initialize_ui()
 
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
         if checked is None:
@@ -665,6 +666,7 @@ class MainWindow(QtGui.QMainWindow):
             self.epochList.remove_item(self.epochList.currentItem())
         
         self.experiment.save_experiment_settings()
+        self.initialize_ui()
 
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked."""
@@ -701,6 +703,7 @@ class MainWindow(QtGui.QMainWindow):
             row = self.ui.listWidgetEvoked.row(item)
             self.ui.listWidgetEvoked.takeItem(row)
             self.experiment.save_experiment_settings()
+            self.initialize_ui()
 
 
     def on_pushButtonGroupDeleteEvoked_clicked(self, checked=None):
@@ -729,6 +732,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.ui.listWidgetEvoked.currentRow())
         
         self.experiment.save_experiment_settings()
+        self.initialize_ui()
 
 
     class RawBadsPlot(object):
@@ -736,11 +740,11 @@ class MainWindow(QtGui.QMainWindow):
             self.parent = parent
             
             if parent.ui.checkBoxShowEvents.isChecked():
-                events = parent.caller.experiment.active_subject.get_events()
+                events = parent.experiment.active_subject.get_events()
             else:
                 events = None
             try:
-                raw = parent.caller.experiment.active_subject.get_working_file()  # noqa
+                raw = parent.experiment.active_subject.get_working_file()  # noqa
                 self.raw = raw.copy()
                 fig = self.raw.plot(events=events)
                 fig.canvas.mpl_connect('close_event', self.handle_close)
@@ -1240,6 +1244,7 @@ class MainWindow(QtGui.QMainWindow):
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
         self.experiment.save_experiment_settings()
+        self.initialize_ui()
 
     def save_evoked_data(self, subjects):
         try:    

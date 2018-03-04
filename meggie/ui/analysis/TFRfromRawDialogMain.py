@@ -34,7 +34,7 @@ class TFRRawDialog(QtGui.QDialog):
         self.ui = Ui_DialogRawTFR()
         self.ui.setupUi(self)
         
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         channels = raw.info['ch_names']
         self.ui.comboBoxChannel.addItems(channels)
         self.ui.doubleSpinBoxBaselineStart.setMinimum(raw.times[0])

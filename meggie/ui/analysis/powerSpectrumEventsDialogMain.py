@@ -51,7 +51,7 @@ class PowerSpectrumEvents(QtGui.QDialog):
             exc_messagebox(self, "Please check your inputs")
             return
 
-        raw = self.parent.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         
         def find_triggers(event_code):
             try:
@@ -59,8 +59,8 @@ class PowerSpectrumEvents(QtGui.QDialog):
             except ValueError:
                 id_, mask = int(event_code), 0
 
-            subject = self.parent.caller.experiment.active_subject
-            triggers = Events(self.parent.caller.experiment, raw,
+            subject = self.parent.experiment.active_subject
+            triggers = Events(self.parent.experiment, raw,
                               stim_ch=subject.find_stim_channel(),
                               mask=mask, id_=id_).events
 

@@ -138,7 +138,9 @@ class ICADialog(QtGui.QDialog):
         if checked is None:
             return
 
-        plot_topographies(self.ica, len(self.component_info))
+        layout = self.parent.experiment.layout
+
+        plot_topographies(self.ica, len(self.component_info), layout)
 
     def on_pushButtonPlotSources_clicked(self, checked=None):
         """

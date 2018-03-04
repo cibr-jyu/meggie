@@ -447,27 +447,13 @@ class Caller(object):
 
         return e.events
 
-    def read_layout(self, layout):
-        if not layout or layout == "Infer from data":
-            return None
-        
-        import pkg_resources
-        path_mne = pkg_resources.resource_filename('mne', 'channels/data/layouts')
-        path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
-        
-        if os.path.exists(os.path.join(path_mne, layout)):
-            return mne.read_layout(layout, path_mne)
-        
-        if os.path.exists(os.path.join(path_meggie, layout)):
-            return mne.read_layout(layout, path_meggie)
-
 
     def draw_evoked_potentials(self, evokeds, title=None):
         """
         Draws a topography representation of the evoked potentials.
 
         """
-        layout = self.read_layout(self.experiment.layout)
+        layout = fileManager.read_layout(self.experiment.layout)
         colors = self.colors(len(evokeds))
 
         fig = mne.plot_evoked_topo(evokeds, layout,
@@ -820,7 +806,7 @@ class Caller(object):
         
         power, itc = calculate_tfrs()
         baseline = (blstart, blend)
-        layout = self.read_layout(self.experiment.layout)
+        layout = fileManager.read_layout(self.experiment.layout)
                 
         if reptype == 'average':
             inst = power
@@ -882,7 +868,7 @@ class Caller(object):
 
     def TFR_raw(self, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
                 save_data):
-        lout = self.read_layout(self.experiment.layout)
+        lout = fileManager.read_layout(self.experiment.layout)
         
         raw = self.experiment.active_subject.get_working_file()
         
@@ -920,7 +906,7 @@ class Caller(object):
         save_data      - Boolean indicating whether to save psd data to files.
                          Only data from channels of interest is saved.
         """
-        lout = self.read_layout(self.experiment.layout)
+        lout = fileManager.read_layout(self.experiment.layout)
             
         for epochs in epoch_groups.values():
             info = epochs[0].info

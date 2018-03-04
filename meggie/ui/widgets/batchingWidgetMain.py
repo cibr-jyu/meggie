@@ -6,8 +6,6 @@ Created on 22.1.2016
 import sys
 from PyQt4 import QtGui, QtCore
 
-from meggie.code_meggie.general.caller import Caller
-
 from meggie.ui.widgets.batchingWidgetUi import Ui_BatchingWidget
 
 from meggie.ui.utils.messaging import messagebox
@@ -25,7 +23,6 @@ class BatchingWidget(QtGui.QWidget):
         - pushButtonCancel           (QPushButton, signal: clicked() -> reject())
         - widget                     (QWidget)
     """
-    caller = Caller.Instance()
     
     def __init__(self, parent, container, pushButtonCompute=None,
                  pushButtonComputeBatch=None, selection_changed=None,
@@ -61,7 +58,7 @@ class BatchingWidget(QtGui.QWidget):
         self.data = {}
         self.failed_subjects = []
         
-        if self.caller.experiment is None:
+        if self.parent.experiment is None:
             return
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
@@ -86,7 +83,7 @@ class BatchingWidget(QtGui.QWidget):
             self.pushButtonCompute.setEnabled(False)
             self.pushButtonComputeBatch.setEnabled(True)
 
-            subject_names = sorted(self.caller.experiment.subjects.keys())
+            subject_names = sorted(self.parent.experiment.subjects.keys())
              
             for name in subject_names:
                 item = QtGui.QListWidgetItem(name)
@@ -114,7 +111,7 @@ class BatchingWidget(QtGui.QWidget):
             return
         item.setCheckState(QtCore.Qt.Checked)
         
-        subject = self.caller.experiment.subjects[str(item.text())]
+        subject = self.parent.experiment.subjects[str(item.text())]
         params = self.collect_parameter_values()
         if params:
             self.data[subject.subject_name] = params
@@ -129,7 +126,7 @@ class BatchingWidget(QtGui.QWidget):
             item = self.ui.listWidgetSubjects.item(i)
             item.setCheckState(QtCore.Qt.Checked)
             name = str(item.text())
-            if name in self.caller.experiment.subjects:
+            if name in self.parent.experiment.subjects:
                 params = self.collect_parameter_values()
                 if params:
                     self.data[name] = params 

@@ -7,7 +7,6 @@ Created on 16.6.2016
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.general.layoutDialogUi import Ui_Layout
@@ -21,7 +20,7 @@ class LayoutDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         layouts = fileManager.get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
-        self.ui.labelLayoutActive.setText(self.parent.caller.experiment.layout)
+        self.ui.labelLayoutActive.setText(self.parent.experiment.layout)
         
     def on_pushButtonBrowseLayout_clicked(self, checked=None):
         """
@@ -41,6 +40,6 @@ class LayoutDialog(QtGui.QDialog):
         self.ui.labelLayout.setText(self.ui.comboBoxLayout.currentText())
 
     def accept(self):
-        self.parent.caller.experiment.layout = self.ui.labelLayout.text()
-        self.parent.caller.experiment.save_experiment_settings()
+        self.parent.experiment.layout = self.ui.labelLayout.text()
+        self.parent.experiment.save_experiment_settings()
         self.close()

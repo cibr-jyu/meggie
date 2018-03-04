@@ -57,14 +57,14 @@ class EogParametersDialog(QtGui.QDialog):
         them to the caller class.
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name = self.caller.experiment.active_subject.subject_name
+        active_subject_name = self.parent.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
 
         try:
-            self.calculate_eog(self.caller.experiment.active_subject)
+            self.calculate_eog(self.parent.experiment.active_subject)
         except Exception as e:
             self.batching_widget.failed_subjects.append((
-                self.caller.experiment.active_subject, str(e)))        
+                self.parent.experiment.active_subject, str(e)))        
         
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -72,7 +72,7 @@ class EogParametersDialog(QtGui.QDialog):
     
     def acceptBatch(self):
         
-        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        recently_active_subject = self.parent.experiment.active_subject.subject_name
         subject_names = []
 
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
@@ -86,13 +86,13 @@ class EogParametersDialog(QtGui.QDialog):
         if recently_active_subject in subject_names:
 
             try:
-                self.calculate_eog(self.caller.experiment.active_subject)
+                self.calculate_eog(self.parent.experiment.active_subject)
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.caller.experiment.active_subject, str(e)))
+                    self.parent.experiment.active_subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects.
-        for name, subject in self.caller.experiment.subjects.items():
+        for name, subject in self.parent.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
@@ -143,7 +143,7 @@ class EogParametersDialog(QtGui.QDialog):
         on dialog.
         """
 
-        subject = self.caller.experiment.subjects[subject_name]
+        subject = self.parent.experiment.subjects[subject_name]
         if len(params_dict) > 0:
             dic = params_dict  
         else:

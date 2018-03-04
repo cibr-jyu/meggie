@@ -6,7 +6,6 @@ Created on 9.4.2014
 
 from PyQt4 import QtCore, QtGui
 from meggie.ui.general.experimentInfoDialogUi import Ui_experimentInfoDialog
-from meggie.code_meggie.general.caller import Caller
 
 class experimentInfoDialog(QtGui.QDialog):
     """
@@ -17,15 +16,15 @@ class experimentInfoDialog(QtGui.QDialog):
         """
         Constructor
         """
-        QtGui.QDialog.__init__(self)
+        QtGui.QDialog.__init__(self, parent)
         self.ui = Ui_experimentInfoDialog() 
         self.ui.setupUi(self)        
-        caller = Caller.Instance()
-        self.ui.lineEditExperimentName.setText(caller.experiment.experiment_name)
+        self.parent = parent
+        self.ui.lineEditExperimentName.setText(parent.experiment.experiment_name)
 
-        self.ui.lineEditExperimentAuthor.setText(caller.experiment.author)
+        self.ui.lineEditExperimentAuthor.setText(parent.experiment.author)
 
-        self.ui.textBrowserExperimentDescription.setText(caller.experiment.description)
+        self.ui.textBrowserExperimentDescription.setText(parent.experiment.description)
         
         
     def on_ButtonClose_clicked(self, checked=None):

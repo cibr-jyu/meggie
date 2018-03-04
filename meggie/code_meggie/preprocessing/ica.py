@@ -24,11 +24,12 @@ def compute_ica(raw, n_components, method, max_iter):
     return ica
 
 
-def plot_topographies(ica, n_components):
+def plot_topographies(ica, n_components, layout):
     """
     """
+    layout = fileManager.read_layout(layout)
 
-    figs = ica.plot_components()
+    figs = ica.plot_components(layout=layout)
 
     def update_topography_texts():
         """ Change texts in the axes to match names in the dialog """

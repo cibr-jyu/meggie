@@ -22,7 +22,7 @@ class EegParametersDialog(QtGui.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
         
         self.ui.tableWidgetEvents.currentItemChanged.connect(
@@ -39,7 +39,7 @@ class EegParametersDialog(QtGui.QDialog):
         Finds EOG-events from the raw data.
         Called when find eog events -button is clicked.
         """
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         if checked is None or not raw: return
         
         params = dict()
@@ -165,7 +165,7 @@ class EegParametersDialog(QtGui.QDialog):
             messagebox(self.parent, 'Add events before computing projects.')
             return
         try:
-            self.calculate_eeg(self.caller.experiment.active_subject, parameter_values)    
+            self.calculate_eeg(self.parent.experiment.active_subject, parameter_values)    
         except Exception as e:
             pass
         self.parent.initialize_ui()

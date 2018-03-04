@@ -151,8 +151,10 @@ class MeasurementInfo(object):
         or empty, substitutes information with emptry strings.
         """
         subj_info = self._info.get('subject_info')
+
         if not subj_info:
             logging.getLogger('ui_logger').info("Personal info not found.")
+            return ''
 
         last_name = subj_info.get('last_name', '')
         first_name = subj_info.get('first_name', '')

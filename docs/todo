@@ -7,9 +7,8 @@ TODO:
   - moving methods of caller to other python files as functions
   - look into structure of mainWindowUi
     * separate different tabs to different files?
-    * epochs batching widget code shouldnt just lie there globally
+    * epochs batching widget code maybe should not lie there globally
  * check proper style with pylint
-  - make source analysis UI more simple
 - we need tests
 
 bugs:
@@ -20,6 +19,7 @@ bugs:
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- ica done? doing ica transform in the source analysis part?
 - batch for saving spectrums ( there is a branch starting this )
 - average spectrums over subjects
 - maybe dont close dialogs with accept-button

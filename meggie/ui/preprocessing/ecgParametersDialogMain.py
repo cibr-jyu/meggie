@@ -38,7 +38,7 @@ class EcgParametersDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents_2)
 
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
@@ -57,7 +57,7 @@ class EcgParametersDialog(QtGui.QDialog):
             dic = self.get_default_values()
         
         #channel_list = self.batching_widget.data[subject_name + ' channels']
-        subject = self.caller.experiment.subjects.get(subject_name)
+        subject = self.parent.experiment.subjects.get(subject_name)
         raw = subject.get_working_file(preload=False, temporary=True)
         channel_list = raw.ch_names
         self.ui.comboBoxECGChannel.addItems(channel_list)
@@ -120,13 +120,13 @@ class EcgParametersDialog(QtGui.QDialog):
         to the caller class.
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name =  self.caller.experiment.active_subject.subject_name
+        active_subject_name =  self.parent.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         try:
-            self.calculate_ecg(self.caller.experiment.active_subject)    
+            self.calculate_ecg(self.parent.experiment.active_subject)    
         except Exception as e:
             self.batching_widget.failed_subjects.append((
-                self.caller.experiment.active_subject, str(e)))
+                self.parent.experiment.active_subject, str(e)))
             
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -141,7 +141,7 @@ class EcgParametersDialog(QtGui.QDialog):
         
     def acceptBatch(self):
         
-        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        recently_active_subject = self.parent.experiment.active_subject.subject_name
         subject_names = []
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
@@ -152,13 +152,13 @@ class EcgParametersDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                self.calculate_ecg(self.caller.experiment.active_subject)    
+                self.calculate_ecg(self.parent.experiment.active_subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.caller.experiment.active_subject, str(e)))
+                    self.parent.experiment.active_subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects
-        for name, subject in self.caller.experiment.subjects.items():
+        for name, subject in self.parent.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue

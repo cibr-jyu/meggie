@@ -26,7 +26,7 @@ class SourceEstimateDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
         self.ui.labelEvoked.setText(evoked_name)
-        dir = self.caller.experiment.active_subject._source_analysis_directory
+        dir = self.parent.experiment.active_subject._source_analysis_directory
         operators = [f for f in listdir(dir) if
                      isfile(join(dir, f)) and f.endswith('-inv.fif') ]
         self.ui.comboBoxInverseOperator.addItems(operators)

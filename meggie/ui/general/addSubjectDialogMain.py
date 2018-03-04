@@ -11,7 +11,6 @@ from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.utils.messaging import exc_messagebox
@@ -28,7 +27,6 @@ class AddSubjectDialog(QtGui.QDialog):
     Properties:
     parent    -- mainWindowMain is the parent class
     """
-    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -48,13 +46,13 @@ class AddSubjectDialog(QtGui.QDialog):
             subject_name = basename.split('.')[0]
 
             # Check if the subject is already added to the experiment.
-            if subject_name in self.caller.experiment.subjects:
+            if subject_name in self.parent.experiment.subjects:
                 failed_subjects.append(subject_name)
                 continue
 
             try:
-                self.caller.experiment.create_subject(subject_name,
-                                                      self.caller.experiment,
+                self.parent.experiment.create_subject(subject_name,
+                                                      self.parent.experiment,
                                                       basename,
                                                       raw_path=raw_path)
             except Exception as e:
@@ -69,7 +67,7 @@ class AddSubjectDialog(QtGui.QDialog):
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.
 
-        self.caller.experiment.save_experiment_settings()
+        self.parent.experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
         self.close()

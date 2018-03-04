@@ -25,7 +25,7 @@ class StcFreqDialog(QtGui.QDialog):
         self.ui = Ui_stcFreqDialog()
         self.ui.setupUi(self)
 
-        stcs = _read_epoch_stcs(self.caller.experiment.active_subject)
+        stcs = _read_epoch_stcs(self.parent.experiment.active_subject)
         self.ui.listWidgetStcs.addItems(stcs)
 
     def accept(self):
@@ -33,7 +33,7 @@ class StcFreqDialog(QtGui.QDialog):
         """
         QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-        stc_dir = self.caller.experiment.active_subject.stc_directory
+        stc_dir = self.parent.experiment.active_subject.stc_directory
         stc_name = str(self.ui.listWidgetStcs.currentItem().text())
         full_path = os.path.join(stc_dir, stc_name)
         fmin = self.ui.doubleSpinBoxFmin.value()

@@ -9,7 +9,6 @@ from PyQt4.QtGui import QDialogButtonBox
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.ui.epoching.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
 
 class FixedLengthEpochDialog(QtGui.QDialog):
@@ -17,7 +16,6 @@ class FixedLengthEpochDialog(QtGui.QDialog):
     Class containing the logic for FixedLengthEpochDialog. It is used for
     creating fixed length events.
     """
-    caller = Caller.Instance()
 
     def __init__(self, parent):
         """Initialize the event selection dialog.
@@ -31,7 +29,7 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')
-        self.raw = self.caller.experiment.active_subject.get_working_file(temporary=True)
+        self.raw = self.parent.experiment.active_subject.get_working_file(temporary=True)
         tmax = int(self.raw.times[-1])
         self.ui.spinBoxStart.setMaximum(tmax)
         self.ui.spinBoxEnd.setMaximum(tmax)

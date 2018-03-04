@@ -38,7 +38,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         self.parent = parent
         self.evoked_name = evoked_name
 
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
 
         #Selected_items is a dictionary containing all the channels selected
@@ -106,7 +106,7 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def evoked_set_changed(self):
         """Updates the channel list with current evoked's channels."""
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         
         for evoked_value in evokeds.values():
@@ -153,7 +153,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         for child in children:
             child.setValue(0)
 
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         for evoked in evokeds.values():
             self.selected_channels[evoked.comment] = list()
@@ -165,7 +165,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         if checked is None: return
         if len(self.ui.listWidgetChannels.selectedItems()) == 0: return
 
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
 
         for evoked_value in evokeds.values():
@@ -199,7 +199,7 @@ class EvokedStatsDialog(QtGui.QDialog):
             return
         caller = Caller.Instance()
         
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         
         for evoked in evokeds.values():
@@ -222,8 +222,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         if checked is None:
             return
         
-        caller = self.parent.caller
-        path = fileManager.create_timestamped_folder(caller.experiment)
+        path = fileManager.create_timestamped_folder(self.parent.experiment)
         collection_name = str(self.ui.comboBoxEvoked.currentText())
         filename = collection_name + '_stats.csv'
         path = os.path.join(path, filename)
@@ -234,7 +233,7 @@ class EvokedStatsDialog(QtGui.QDialog):
         if fname == '':
             return
         
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         evoked = evokeds.get(collection_name)
         
@@ -314,7 +313,7 @@ class EvokedStatsDialog(QtGui.QDialog):
     def populateComboBoxEvoked(self):
         """Populate the combo box above the channel list with evoked set names.
         """
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         
         for evoked in evokeds:
@@ -334,7 +333,7 @@ class EvokedStatsDialog(QtGui.QDialog):
 
     def update_info(self):
         """Update the info widgets with data based on item."""
-        subject = self.parent.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
         
         for evoked_value in evokeds.values():

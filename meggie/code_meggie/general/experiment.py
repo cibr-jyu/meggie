@@ -16,7 +16,6 @@ import logging
 
 from meggie.ui.utils.decorators import threaded
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.epoching.epochs import Epochs
@@ -41,8 +40,6 @@ class Experiment(QObject):
     subjects           -- The list of the Subject objects in this experiment
     active_subject     -- The subject that is currently processed
     """
-    caller = Caller.Instance()
-
 
     def __init__(self):
         """
@@ -297,9 +294,6 @@ class Experiment(QObject):
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f, sort_keys=True, indent=4)
             
-        if self.caller.experiment: 
-            self.caller.parent.initialize_ui()
-
 
 class ExperimentHandler(QObject):
     """

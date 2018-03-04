@@ -92,7 +92,7 @@ class EventSelectionDialog(QtGui.QDialog):
     def selection_changed(self, subject_name, params_dict):
         """
         """
-        subject = self.caller.experiment.subjects.get(subject_name)
+        subject = self.parent.experiment.subjects.get(subject_name)
         
         # Empty params_dict includes 'events' and 'fixed_length_events' keys.
         if len(params_dict) > 2:
@@ -150,11 +150,11 @@ class EventSelectionDialog(QtGui.QDialog):
             item = self.batching_widget.ui.listWidgetSubjects.currentItem()
 
         if item is None:
-            subject_name = self.caller.experiment.active_subject.subject_name
+            subject_name = self.parent.experiment.active_subject.subject_name
         else:
             subject_name = str(item.text())
 
-        return self.caller.experiment.subjects[subject_name]
+        return self.parent.experiment.subjects[subject_name]
     
     def get_default_values(self, subject):
         rejections = {
@@ -262,7 +262,7 @@ class EventSelectionDialog(QtGui.QDialog):
 
         param_dict = self.collect_parameter_values()
         
-        epochs = self.parent.caller.experiment.active_subject.epochs
+        epochs = self.parent.experiment.active_subject.epochs
         if param_dict['collection_name'] in epochs:
             header = 'Epoch collection name exists. '
             message = ''.join([
@@ -273,27 +273,29 @@ class EventSelectionDialog(QtGui.QDialog):
                 QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.No:
                 return
+
+        subject_name = self.parent.experiment.active_subject.subject_name
         
-        self.batching_widget.data[self.caller.experiment.active_subject.subject_name] = param_dict
+        self.batching_widget.data[subject_name] = param_dict
         try:
-            self.calculate_epochs(self.caller.experiment.active_subject)
+            self.calculate_epochs(self.parent.experiment.active_subject)
         except Exception as e:
             self.batching_widget.failed_subjects.append((
-                self.caller.experiment.active_subject,
+                self.parent.experiment.active_subject,
                 str(e)
             ))
             logging.getLogger('ui_logger').exception(str(e))
         
         self.batching_widget.cleanup()
+        self.parent.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-        self.caller.experiment.save_experiment_settings()
         self.close()
 
     def acceptBatch(self):
 
         found = False
         for name, subject_data in self.batching_widget.data.items():
-            for epoch_name in self.caller.experiment.subjects[name].epochs:
+            for epoch_name in self.parent.experiment.subjects[name].epochs:
                 if 'collection_name' not in subject_data:
                     continue
                 if epoch_name == subject_data['collection_name']:
@@ -311,7 +313,7 @@ class EventSelectionDialog(QtGui.QDialog):
             if reply == QtGui.QMessageBox.No:
                 return 
             
-        recently_active_subject = self.caller.experiment.active_subject.subject_name
+        recently_active_subject = self.parent.experiment.active_subject.subject_name
         subject_names = []
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
@@ -325,16 +327,16 @@ class EventSelectionDialog(QtGui.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                events_str = self.calculate_epochs(self.caller.experiment.active_subject)
+                events_str = self.calculate_epochs(self.parent.experiment.active_subject)
                 epoch_info.append(events_str) 
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.caller.experiment.active_subject, str(e)))     
+                    self.parent.experiment.active_subject, str(e)))     
 
                 logging.getLogger('ui_logger').exception(str(e))
         
         # 2. Calculation is done for the rest of the subjects.
-        for name, subject in self.caller.experiment.subjects.items():
+        for name, subject in self.parent.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
@@ -349,8 +351,8 @@ class EventSelectionDialog(QtGui.QDialog):
                     logging.getLogger('ui_logger').exception(str(e))
         self.caller.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
+        self.parent.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-        self.caller.experiment.save_experiment_settings()
         
         if len(epoch_info) > 0:
             for info in epoch_info:

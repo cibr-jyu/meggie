@@ -37,7 +37,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
         self.parent = parent
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
@@ -102,7 +102,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             messagebox(self.parent, "End frequency must be higher than the starting frequency")
             return
         
-        subject = self.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         sfreq = subject.get_working_file().info['sfreq']
     
         valid = True
@@ -113,7 +113,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             messagebox(self.parent, "Sampling rate times shortest interval should be more than window size")
             return
         
-        raw = self.caller.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_working_file()
         
         epochs = OrderedDict()
         for interval in times:

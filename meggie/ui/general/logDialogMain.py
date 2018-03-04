@@ -7,7 +7,6 @@ import os
 
 from PyQt4 import QtCore,QtGui
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.ui.general.logDialogUi import Ui_LogDialog
 
 class LogDialog(QtGui.QDialog):
@@ -15,8 +14,6 @@ class LogDialog(QtGui.QDialog):
     Class containing the logic for logDialogUi. It is used for displaying the
     MNE calls and params of the current experiment.
     """
-    caller = Caller.Instance()
-
     def __init__(self, parent):
         """
         Constructor
@@ -26,8 +23,9 @@ class LogDialog(QtGui.QDialog):
         self.ui = Ui_LogDialog()
         self.ui.setupUi(self)
         try:
-            log_file = open(os.path.join(self.caller.experiment.workspace, self.caller.experiment.experiment_name, 'meggie.log'), 'r')
+            log_file = open(os.path.join(self.parent.experiment.workspace, 
+                self.parent.experiment.experiment_name, 'meggie.log'), 'r')
             for line in log_file:
-                self.ui.textEdit.append(line)
+                self.ui.textEdit.append(line.strip('\n'))
         except:
             pass

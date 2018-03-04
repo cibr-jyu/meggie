@@ -40,7 +40,7 @@ class TFRTopologyDialog(QtGui.QDialog):
         self.ui = Ui_DialogTFRTopology()
         self.ui.setupUi(self)
 
-        subject = self.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         epochs = subject.epochs[epoch_name].raw
         self.ui.labelEpochName.setText(epoch_name)
         self.ui.doubleSpinBoxScalpTmin.setMinimum(epochs.tmin)
@@ -89,7 +89,7 @@ class TFRTopologyDialog(QtGui.QDialog):
 
         ch_type = str(self.ui.comboBoxChannels.currentText())
 
-        subject = self.caller.experiment.active_subject
+        subject = self.parent.experiment.active_subject
         epochs = subject.epochs[self.epoch_name].raw
                 
         scalp = dict()
