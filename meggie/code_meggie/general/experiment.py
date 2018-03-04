@@ -229,7 +229,8 @@ class Experiment(QObject):
         """
         subject = Subject(experiment, subject_name, working_file_name)
         if raw_path:
-            fileManager.save_subject(subject, raw_path)
+            subject.ensure_folders()
+            fileManager.save_subject_raw(subject, raw_path)
         self.add_subject(subject)
 
 
@@ -312,11 +313,8 @@ class ExperimentHandler(QObject):
 
     def initialize_new_experiment(self, expDict):
         """
-        Initializes the experiment object with the given data. Assumes that
-        Meggie is currently devoid of a current experiment.
+        Initializes the experiment object with the given data.
         
-        TODO: Keyword arguments:
-           
         """
         prefs = self.parent.preferencesHandler
       
@@ -324,13 +322,11 @@ class ExperimentHandler(QObject):
             experiment = Experiment()
             experiment.author = expDict['author']
             experiment.experiment_name = os.path.basename(expDict['name'])
-            #experiment.experiment_name = expDict['name']
             experiment.description = expDict['description']
         except AttributeError:
             raise Exception('Cannot assign attribute to experiment.')
         
         experiment.workspace = prefs.working_directory
-        #experiment.workspace = os.path.join(prefs.working_directory, expDict['name'])
         
         experiment.save_experiment_settings()
         
@@ -392,6 +388,7 @@ class ExperimentHandler(QObject):
         if len(data['subjects']) > 0:
                 
             for subject_data in data['subjects']:
+
                 
                 subject = Subject(experiment, subject_data['subject_name'],
                                   subject_data['working_file_name'])
@@ -410,6 +407,10 @@ class ExperimentHandler(QObject):
                         evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
                 experiment.add_subject(subject)
+
+                # ensure that the folder structure exists 
+                # (to not crash on updates)
+                subject.ensure_folders()
 
         prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
 

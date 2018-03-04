@@ -48,6 +48,7 @@ class Subject(object):
         self._reconfiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
         self._forward_solutions_directory = os.path.join(self._source_analysis_directory, 'forwardSolutions')  # noqa
         self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
+        self._inverse_operators_directory = os.path.join(self._source_analysis_directory, 'inverseOperators')  # noqa
 
         self._transfile_path = os.path.join(self._source_analysis_directory, 
                                             'mri_meg-trans.fif')
@@ -77,6 +78,10 @@ class Subject(object):
     @property
     def forward_solutions_directory(self):
         return self._forward_solutions_directory  
+
+    @property
+    def inverse_operators_directory(self):
+        return self._inverse_operators_directory  
 
     @property
     def stc_directory(self):
@@ -420,3 +425,24 @@ class Subject(object):
         names = filter(lambda x: x.endswith('fwd.fif'), 
                        os.listdir(self.forward_solutions_directory))
         return names
+
+    def get_inverse_operator_names(self):
+        names = filter(lambda x: x.endswith('inv.fif'), 
+                       os.listdir(self.inverse_operators_directory))
+        return names
+
+    def ensure_folders(self):
+        try:
+            fileManager.ensure_folders([
+                self.subject_path,
+                self.epochs_directory,
+                self.evokeds_directory,
+                self.source_analysis_directory,
+                self.forward_solutions_directory,
+                self.inverse_operators_directory,
+                self.reconfiles_directory,
+                self.stc_directory
+            ])
+        except OSError:
+            raise OSError("Couldn't create all the necessary folders. "
+                          "Do you have the necessary permissions?")

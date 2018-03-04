@@ -10,6 +10,7 @@ TODO:
     * epochs batching widget code maybe should not lie there globally
  * check proper style with pylint
 - we need tests
+- have to check what happens if mne and freesurfer cant be found in the paths
 
 bugs:
 - in ica, does not use layout file for topography
@@ -19,6 +20,7 @@ bugs:
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- open experiment also by specifying the exp file
 - ica done? doing ica transform in the source analysis part?
 - batch for saving spectrums ( there is a branch starting this )
 - average spectrums over subjects

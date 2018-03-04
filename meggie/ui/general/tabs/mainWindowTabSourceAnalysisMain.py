@@ -6,6 +6,7 @@ from PyQt4 import QtGui
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
+from meggie.ui.source_analysis.inverseOperatorDialogMain import InverseOperatorDialog  # noqa
 from meggie.ui.source_analysis.covarianceRawDialogMain import CovarianceRawDialog  # noqa
 from meggie.ui.source_analysis.covarianceEpochDialogMain import CovarianceEpochDialog  # noqa
 
@@ -62,12 +63,26 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if active_subject.check_bem_surfaces():
             self.ui.checkBoxBem.setChecked(True)
 
-        # populate forward solutions
+        # populate forward solutions in forward solutions tab
         solutions = active_subject.get_forward_solution_names()
-        self.ui.listWidgetForwardSolutions.clear()
+        self.ui.listWidgetForwardSolutionsFwd.clear()
         for solution in solutions:
             item = QtGui.QListWidgetItem(solution)
-            self.ui.listWidgetForwardSolutions.addItem(item)
+            self.ui.listWidgetForwardSolutionsFwd.addItem(item)
+
+        # populate forward solutions in inverse operator tab
+        solutions = active_subject.get_forward_solution_names()
+        self.ui.listWidgetForwardSolutionsInv.clear()
+        for solution in solutions:
+            item = QtGui.QListWidgetItem(solution)
+            self.ui.listWidgetForwardSolutionsInv.addItem(item)
+
+        # populate inverse operators in inverse operator tab
+        operators = active_subject.get_inverse_operator_names()
+        self.ui.listWidgetInverseOperatorsInv.clear()
+        for operator in operators:
+            item = QtGui.QListWidgetItem(operator)
+            self.ui.listWidgetInverseOperatorsInv.addItem(item)
 
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
@@ -285,7 +300,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         active_subject = self.parent.experiment.active_subject
 
         try:
-            sol = str(self.ui.listWidgetForwardSolutions.currentItem().text())
+            sol = str(self.ui.listWidgetForwardSolutionsFwd.currentItem().text())
         except AttributeError:
             return
 
@@ -354,6 +369,31 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         logging.getLogger('ui_logger').info("Covariance plot clicked")
 
+    def on_pushButtonComputeInverse_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        if not self.parent.experiment.active_subject:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        fwd_name = str(self.ui.listWidgetForwardSolutionsInv.currentItem().text())
+
+        if not fwd_name:
+            return
+
+        self.inverseOperatorDialog = InverseOperatorDialog(self,
+            fwd_name, self.parent.experiment, on_close=self.initialize_ui)
+
+        self.inverseOperatorDialog.show()
+
+
     def on_pushButtonVisStc_clicked(self, checked=None):
         """Visualize source estimates."""
         if checked is None:
@@ -374,19 +414,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.stcFreqDialog = StcFreqDialog(self)
         self.stcFreqDialog.show()
 
-
-    def on_pushButtonComputeInverse_clicked(self, checked=None):
-        """Compute inverse operator clicked."""
-        if checked is None:
-            return
-        if self.parent.experiment.active_subject is None:
-            return
-
-        fwd_name = str(self.ui.listWidgetForwardSolution.currentItem().text())
-        inv = self.parent.compute_inverse(fwd_name)
-        _initializeInverseOperatorList(self.ui.listWidgetInverseOperator,
-                                       self.parent.experiment.active_subject)
-
     def on_pushButtonMakeSourceEstimate_clicked(self, checked=None):
         """Make source estimate clicked."""
         if checked is None:
@@ -401,95 +428,10 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         elif ui.radioButtonEpoch.isChecked():
             inst_name = str(self.epochList.currentItem().text())
             type = 'epochs'
-        # elif ui.radioButtonEvoked.isChecked():
-        #    inst_name = str(ui.listWidgetInverseEvoked.currentItem().text())
-        #    type = 'evoked'
         dir = self.parent.experiment.active_subject._source_analysis_directory
         self.sourceEstimateDialog = SourceEstimateDialog(self, inst_name, type)
         self.sourceEstimateDialog.stc_computed.connect(self.
             _update_source_estimates)
         self.sourceEstimateDialog.show()
 
-
-    def update_covariance_info_box(self):
-        """
-        Fills the info box in the covariance tab with info about the
-        current covariance matrix info for the active subject, if said info
-        exists.
-        """
-        path = self.parent.experiment.active_subject._source_analysis_directory
-        cvParamFilePath = os.path.join(path, 'covariance.param')
-
-        cvdict = None
-        if os.path.isfile(cvParamFilePath):
-            try:
-                cvdict = fileManager.unpickle(cvParamFilePath)
-            except Exception:
-                pass
-
-        if self.ui.frameCovarianceInfoWidget.layout() is not None:
-            sip.delete(self.ui.frameCovarianceInfoWidget.layout())
-
-        for child in self.ui.frameCovarianceInfoWidget.children():
-            child.setParent(None)
-
-        covLayout = QtGui.QGridLayout()
-        self.ui.frameCovarianceInfoWidget.setLayout(covLayout)
-
-        if cvdict is None:
-            covarianceWidgetNone = CovarianceWidgetNone()
-            covLayout.addWidget(covarianceWidgetNone)
-            return
-
-
-        if cvdict['covarianceSource'] == 'raw':
-            covarianceWidgetRaw = CovarianceWidgetRaw()
-            cvwui = covarianceWidgetRaw.ui
-            if cvdict['rawsubjectname'] is not None:
-                cvwui.textBrowserBasedOn.setText(cvdict['rawsubjectname'])
-            else:
-                cvwui.textBrowserBasedOn.setText(cvdict['rawfilepath'])
-            cvwui.textBrowserTmin.setText(str(cvdict['starttime']))
-            cvwui.textBrowserTmax.setText(str(cvdict['endtime']))
-            cvwui.textBrowserTstep.setText(str(cvdict['tstep']))
-            if cvdict['reject'] is not None:
-                txt = str(cvdict.get('reject').get('grad', ''))
-                cvwui.textBrowserGradPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('mag', ''))
-                cvwui.textBrowserMagPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('eeg', ''))
-                cvwui.textBrowserEEGPeakCovariance.setText(txt)
-                txt = str(cvdict.get('reject').get('eog', ''))
-                cvwui.textBrowserEOGPeakCovariance.setText(txt)
-            if cvdict['flat'] is not None:
-                txt = str(cvdict.get('flat').get('grad', ''))
-                cvwui.textBrowserFlatGrad.setText(txt)
-                txt = str(cvdict.get('flat').get('mag', ''))
-                cvwui.textBrowserFlatMag.setText(txt)
-                txt = str(cvdict.get('flat').get('eeg', ''))
-                cvwui.textBrowserFlatEEG.setText(txt)
-                txt = str(cvdict.get('flat').get('eog', ''))
-                cvwui.textBrowserFlatEOG.setText(txt)
-                txt = str(cvdict.get('flat').get('ecg', 'Not used'))
-                cvwui.textBrowserFlatECG.setText(txt)
-            covLayout.addWidget(covarianceWidgetRaw)
-
-
-        if cvdict['covarianceSource'] == 'epochs':
-            covarianceWidgetEpochs = CovarianceWidgetEpochs()
-            cvwui = covarianceWidgetEpochs.ui
-
-            for collection_name in cvdict['collection_names']:
-                cvwui.listWidgetEpochs.addItem(collection_name)
-
-            cvwui.textBrowserTmin.setText(str(cvdict['tmin']))
-            cvwui.textBrowserTmax.setText(str(cvdict['tmax']))
-
-            if cvdict['keep_sample_mean'] == True:
-                cvwui.labelKeepSampleValue.setText('True')
-            else:
-                cvwui.labelKeepSampleValue.setText('False')
-
-            cvwui.labelMethodValue.setText(cvdict['method'])
-            covLayout.addWidget(covarianceWidgetEpochs)
 

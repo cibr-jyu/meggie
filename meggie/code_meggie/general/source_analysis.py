@@ -3,7 +3,6 @@
 Created on Apr 11, 2013
 
 @author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Erkka Heinilä
-This module contains caller class that contains the main state of the software
 """
 
 import subprocess
@@ -17,6 +16,26 @@ import matplotlib.pyplot as plt
 import meggie.code_meggie.general.mne_wrapper as mne
 
 import meggie.code_meggie.general.fileManager as fileManager
+
+
+def create_inverse_operator(subject, operator_name, based_on, loose, depth):
+    """
+    """
+    fwd_path = os.path.join(subject.forward_solutions_directory, based_on)
+    fwd = mne.read_forward_solution(fwd_path)
+
+    cov_path = subject.covfile_path
+    cov = mne.read_cov(cov_path)
+
+    info = subject.get_working_file(preload=False).info
+
+    logging.getLogger('ui_logger').info('Creating inverse operator...')
+    inv = mne.make_inverse_operator(info, fwd, cov, loose=loose, depth=depth)
+    
+    # save the file
+    fname = operator_name + '-inv.fif'
+    path = os.path.join(subject.inverse_operators_directory, fname)
+    mne.write_inverse_operator(path, inv)
 
 
 def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
@@ -51,152 +70,6 @@ def create_forward_solution(subject, solution_name, decim, triang_ico, conductiv
     path = os.path.join(subject.forward_solutions_directory, fname)
     mne.write_forward_solution(path, fwd)
 
-
-def convert_mri_to_mne(active_subject):
-    """
-    Uses mne_setup_mri to active subject recon directory to create Neuromag
-    slices and sets (to be input later to do_forward_solution).
-    
-    Return True if creation successful, False if there was an error. 
-    """
-    sourceAnalDir = active_subject.source_analysis_directory
-    
-    # Hack the SUBJECT_DIR and SUBJECT variables to right location 
-    # (mne_setup_mri searches for reconstructed files from mri directory
-    # under the SUBJECT)
-    os.environ['SUBJECTS_DIR'] = sourceAnalDir
-    os.environ['SUBJECT'] = 'reconFiles'
-    
-    subprocess.check_output("$MNE_ROOT/bin/mne_setup_mri", shell=True)
-
-
-def compute_inverse(self, fwd_name):
-    """Computes an inverse operator for the forward solution and saves it
-    to the source_analysis directory.
-    Keyword arguments:
-        fwd: The forward operator name.
-
-    Returns:
-        The inverse operator
-    """
-    subject = self.experiment.active_subject
-    info = subject.get_working_file().info
-    sa_dir = subject._source_analysis_directory
-    fwd_file = os.path.join(subject._forwardSolutions_directory, fwd_name,
-                            'reconFiles', 'reconFiles-fwd.fif')
-    if os.path.isfile(fwd_file):
-        logging.getLogger('ui_logger').info('Reading forward solution...')
-    else:
-        raise IOError('Could not find forward solution with name %s.' %
-                      fwd_file)
-    fwd = mne.read_forward_solution(fwd_file)
-    cov = subject.get_cov()
-    inv = mne.minimum_norm.make_inverse_operator(info, fwd, cov)
-    inv_fname = os.path.join(sa_dir, subject.subject_name + '-inv.fif')
-    try:
-        mne.minimum_norm.write_inverse_operator(inv_fname, inv)
-    except Exception as e:
-        msg = ('Exception while computing inverse operator:\n\n' + str(e))
-        raise Exception(msg)
-    return inv
-
-def create_covariance_from_raw(self, cvdict):
-    """
-    Computes a covariance matrix based on raw file and saves it to the
-    approriate location under the subject.
-
-    Keyword arguments:
-
-    cvdict        -- dictionary containing parameters for covariance
-                     computation
-    """
-    subject_name = cvdict['rawsubjectname']
-    if subject_name is not None:
-        subject = self.experiment.subjects[subject_name]
-        raw = subject.get_working_file()
-        name = os.path.basename(subject.working_file_name)
-        filename_to_write = name[:-4] + '-cov.fif'
-    else:
-        raw = fileManager.open_raw(cvdict['rawfilepath'], True)
-        basename = os.path.basename(cvdict['rawfilepath'])[0]
-        filename_to_write = os.path.splitext(basename)[:-4] + '-cov.fif'
-
-    tmin = cvdict['starttime']
-    tmax = cvdict['endtime']
-    tstep = cvdict['tstep']
-
-    reject = cvdict['reject']
-    flat = cvdict['flat']
-    picks = cvdict['picks']
-
-    try:
-        cov = mne.cov.compute_raw_covariance(raw, tmin, tmax, tstep,
-                                             reject, flat, picks)
-    except ValueError as e:
-        raise ValueError('Error while computing covariance. ' + str(e))
-
-    self._save_covariance(cov, cvdict, filename_to_write)
-
-def create_covariance_from_epochs(self, params):
-    subject = self.experiment.active_subject
-    collection_names = params['collection_names']
-    epochs = []
-    filename_to_write = ''
-
-    for collection_name in collection_names:
-        epoch = subject.epochs.get(collection_name)
-        epochs.append(epoch.raw)
-        filename_to_write += os.path.splitext(collection_name)[0] + '-'
-    
-    filename_to_write = filename_to_write[:len(filename_to_write)-1] + '-cov.fif'
-    tmin = params['tmin']
-    tmax = params['tmax']
-    keep_sample_mean = params['keep_sample_mean']
-    method = params['method']
-    n_jobs = self.parent.preferencesHandler.n_jobs
-    
-    try:
-        cov = mne.compute_covariance(epochs,
-            keep_sample_mean=keep_sample_mean, tmin=tmin, tmax=tmax,
-            method=method, n_jobs=n_jobs)            
-    except ValueError as e:
-        raise ValueError('Error while computing covariance. ' + str(e))
-    
-    self._save_covariance(cov, params, filename_to_write)
-    
-def _save_covariance(self, cov, params, filename_to_write):
-    
-    path = self.experiment.active_subject._source_analysis_directory
-
-    # Remove previous covariance file before creating a new one.
-    fileManager.remove_files_with_regex(path, '.*-cov.fif')
-
-    filepath_to_write = os.path.join(path, filename_to_write)
-    try:
-        mne.write_cov(filepath_to_write, cov)
-    except IOError as err:
-        err.message = ('Could not write covariance file. The error '
-                       'message was: \n\n' + err.message)
-        raise
-
-    # Delete previous and write a new parameter file.
-    try:
-        fileManager.remove_files_with_regex(path, 'covariance.param')
-        cvparamFile = os.path.join(path, 'covariance.param')
-        fileManager.pickleObjectToFile(params, cvparamFile)
-
-    except Exception:
-        fileManager.remove_files_with_regex(path, '*-cov.fif')
-        raise
-
-    # Update ui.
-    self.parent.update_covariance_info_box()
-
-def plot_covariance(self):
-    """Plots the covariance matrix."""
-    subject = self.experiment.active_subject
-    cov = subject.get_cov()
-    cov.plot(subject._working_file.info)
 
 def make_source_estimate(self, inst_name, type, inv_name, method, lmbd):
     """

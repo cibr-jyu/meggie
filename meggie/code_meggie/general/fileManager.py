@@ -252,48 +252,6 @@ def save_tfr_topology(path, tfrs, times, freqs, labels):
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
-def pickleObjectToFile(picklable, fpath):
-    """pickle a picklable object to a file indicated by fpath
-
-    Keyword arguments:
-
-    picklable -- A picklable object.
-    fpath     -- Path to the pickled file
-    """
-    try:
-        pickleFile = open(fpath, 'wb')
-
-    except IOError as e:
-        return str(e)
-
-    # Protocol 2 used because of file object being pickled
-    pickle.dump(picklable, pickleFile, 2)
-
-    pickleFile.close()
-
-
-def unpickle(fpath):
-    """Unpickle an object from a file at fpath.
-
-    Keyword arguments:
-
-    fpath -- the path to the pickled file.
-
-    Return the unpickled object. If there is an exception, raise it to
-    allow the calling method to decide a what to do.
-    """
-    with open(fpath, 'rb') as f:
-        try:
-            unpickledObject = pickle.load(f)
-        except ImportError:
-            from pkg_resources import resource_filename
-            sys.path.insert(0, resource_filename('meggie', '/'))
-            unpickledObject = pickle.load(f)
-            sys.path.pop(0)
-
-    return unpickledObject
-
-
 def save_epoch(epoch, overwrite=False):
     """
     """
@@ -328,10 +286,13 @@ def get_layouts():
     
     return files
 
-
-def create_folders(paths):
-    for path in paths:
+def ensure_folder(path):
+    if not os.path.exists(path):
         os.makedirs(path)
+
+def ensure_folders(paths):
+    for path in paths:
+        ensure_folder(path)
         
 def create_timestamped_folder(experiment):
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -348,20 +309,7 @@ def create_timestamped_folder(experiment):
 
     return timestamped_folder
 
-def save_subject(subject, path):
-    try:
-        create_folders([
-            subject.subject_path,
-            subject.epochs_directory,
-            subject.evokeds_directory,
-            subject.source_analysis_directory,
-            subject.forward_solutions_directory,
-            subject.reconfiles_directory,
-            subject.stc_directory
-        ])
-    except OSError:
-        raise OSError("Couldn't create all the necessary folders. "
-                      "Do you have the necessary permissions?")
+def save_subject_raw(subject, path):
     
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
