@@ -606,6 +606,8 @@ class Ui_mainWindowTabSourceAnalysis(object):
         QtCore.QObject.connect(self.radioButtonStcEvoked, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.groupBoxStcEpochs.setDisabled)
         QtCore.QObject.connect(self.radioButtonStcRaw, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.groupBoxStcEvoked.setDisabled)
         QtCore.QObject.connect(self.radioButtonStcEpochs, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.groupBoxStcEvoked.setDisabled)
+        QtCore.QObject.connect(self.radioButtonStcEpochs, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.listWidgetStcEpochs.setEnabled)
+        QtCore.QObject.connect(self.radioButtonStcEvoked, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.listWidgetStcEvoked.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(mainWindowTabSourceAnalysis)
 
     def retranslateUi(self, mainWindowTabSourceAnalysis):

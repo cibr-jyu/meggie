@@ -42,7 +42,8 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(self.experiment, 
+            self, self.ui.scrollAreaWidgetContents)
 
     def on_pushButtonPlotEvents_clicked(self, checked=None):
         if checked is None:

@@ -11,6 +11,7 @@ from meggie.ui.source_analysis.covarianceRawDialogMain import CovarianceRawDialo
 from meggie.ui.source_analysis.covarianceEpochDialogMain import CovarianceEpochDialog  # noqa
 
 from meggie.ui.utils.messaging import messagebox
+from meggie.ui.utils.messaging import exc_messagebox
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
@@ -75,6 +76,18 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         for solution in solutions:
             item = QtGui.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsStc.addItem(item)
+
+        # populate epochs in source estimate tab
+        self.ui.listWidgetStcEpochs.clear()
+        for collection in active_subject.epochs:
+            item = QtGui.QListWidgetItem(collection)
+            self.ui.listWidgetStcEpochs.addItem(item)
+
+        # populate evoked in source estimate tab
+        self.ui.listWidgetStcEvoked.clear()
+        for evoked in active_subject.evokeds:
+            item = QtGui.QListWidgetItem(evoked)
+            self.ui.listWidgetStcEvoked.addItem(item)
 
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
@@ -375,13 +388,28 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
-        fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
+        try:
+            fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
+        except:
+            messagebox(self, "Have you selected the forward solution?")
 
-        if not fwd_name:
+        try:
+            if self.ui.radioButtonStcRaw.isChecked():
+                inst_type = 'raw'
+                inst_name = active_subject.working_file_name
+            elif self.ui.radioButtonStcEpochs.isChecked():
+                inst_type = 'epochs'
+                inst_name = str(self.ui.listWidgetStcEpochs.currentItem().text())
+            elif self.ui.radioButtonStcEvoked.isChecked():
+                inst_type = 'evoked'
+                inst_name = str(self.ui.listWidgetStcEvoked.currentItem().text())
+        except Exception as e:
+            messagebox(self, "Have you selected the dataset?")
             return
 
         self.linearSourceEstimateDialog = LinearSourceEstimateDialog(self,
-            fwd_name, self.parent.experiment, on_close=self.initialize_ui)
+            fwd_name, inst_type, inst_name, self.parent.experiment, 
+            on_close=self.initialize_ui)
 
         self.linearSourceEstimateDialog.show()
 
@@ -405,25 +433,5 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             return
         self.stcFreqDialog = StcFreqDialog(self)
         self.stcFreqDialog.show()
-
-    def on_pushButtonMakeSourceEstimate_clicked(self, checked=None):
-        """Make source estimate clicked."""
-        if checked is None:
-            return
-        if self.parent.experiment.active_subject is None:
-            return
-
-        ui = self.ui
-        if ui.radioButtonRaw.isChecked():
-            inst_name = self.parent.experiment.active_subject.subject_name
-            type = 'raw'
-        elif ui.radioButtonEpoch.isChecked():
-            inst_name = str(self.epochList.currentItem().text())
-            type = 'epochs'
-        dir = self.parent.experiment.active_subject._source_analysis_directory
-        self.sourceEstimateDialog = SourceEstimateDialog(self, inst_name, type)
-        self.sourceEstimateDialog.stc_computed.connect(self.
-            _update_source_estimates)
-        self.sourceEstimateDialog.show()
 
 

@@ -1225,5 +1225,37 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>radioButtonStcEpochs</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetStcEpochs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>201</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonStcEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>listWidgetStcEvoked</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>373</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

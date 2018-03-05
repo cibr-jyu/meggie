@@ -16,16 +16,18 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
     """
     """
 
-    def __init__(self, parent, based_on, experiment=None, on_close=None):
+    def __init__(self, parent, fwd_name, inst_type, inst_name, experiment=None, on_close=None):
         QtGui.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_linearSourceEstimateDialog()
         self.ui.setupUi(self)
         self.on_close = on_close
         self.experiment = experiment
-        self.based_on = based_on
+        self.fwd_name = fwd_name
+        self.inst_type = inst_type
+        self.inst_name = inst_name
 
-        self.ui.lineEditBasedOn.setText(based_on)
+        self.ui.lineEditBasedOn.setText(fwd_name)
 
     def accept(self):
         """

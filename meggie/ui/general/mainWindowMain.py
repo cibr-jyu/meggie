@@ -113,6 +113,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.listWidgetEvoked.setMaximumWidth(346)
         
         self.evokeds_batching_widget = BatchingWidget(
+            self.experiment,
             self, self.ui.widget,
             self.ui.pushButtonCreateEvoked,
             self.ui.pushButtonCreateEvokedBatch,

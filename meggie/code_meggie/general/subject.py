@@ -228,26 +228,10 @@ class Subject(object):
         return Events(self._experiment, self.get_working_file(),
                       stim_ch=stim_channel).events
         
-    def get_cov(self):
-        """Helper method for getting the current covariance matrix."""
-        sa_dir = self._source_analysis_directory
-        files = os.listdir(sa_dir)
-        cov_file = [f for f in files if f.endswith('-cov.fif')]
-        if len(cov_file) == 0:
-            raise ValueError('No covariance file found.')
-        elif len(cov_file) > 1:
-            raise ValueError('Multiple covariance files found. Remove the '
-                             'other one!')
-        else:
-            cov_file = cov_file[0]
-        return mne.read_cov(os.path.join(sa_dir, cov_file))
-
     def add_epochs(self, epochs):
         """
         Adds Epochs object to the epochs dictionary.
 
-        Keyword arguments:
-        epochs      -- Epochs object including param.fif and collection_name
         """
         self._epochs[epochs.collection_name] = epochs
 

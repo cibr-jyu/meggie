@@ -30,7 +30,8 @@ class FilterDialog(QtGui.QDialog):
         self.ui.setupUi(self)
 
         self.filterParameterDictionary = None
-        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(self.parent.experiment,
+            self, self.ui.scrollAreaWidgetContents)
 
     def on_pushButtonPreview_clicked(self, checked=None):
         """

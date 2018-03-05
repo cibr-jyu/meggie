@@ -18,7 +18,7 @@ import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
 
-def create_linear_source_estimate(subject, operator_name, based_on, loose, depth):
+def create_linear_source_estimate(subject, stc_name, based_on, loose, depth):
     """
     """
     fwd_path = os.path.join(subject.forward_solutions_directory, based_on)

@@ -57,7 +57,7 @@ class EventSelectionDialog(QtGui.QDialog):
             'fixed_length_events': []
         }
         
-        self.batching_widget = BatchingWidget(self, 
+        self.batching_widget = BatchingWidget(self.parent.experiment, self, 
             self.ui.scrollAreaWidgetContents)
 
     def update_events(self):

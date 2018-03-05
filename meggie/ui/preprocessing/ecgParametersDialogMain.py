@@ -36,7 +36,8 @@ class EcgParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self, self.ui.scrollAreaWidgetContents_2)
+        self.batching_widget = BatchingWidget(self.parent.experiment,
+            self, self.ui.scrollAreaWidgetContents_2)
 
         raw = self.parent.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names

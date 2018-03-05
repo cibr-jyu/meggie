@@ -24,13 +24,14 @@ class BatchingWidget(QtGui.QWidget):
         - widget                     (QWidget)
     """
     
-    def __init__(self, parent, container, pushButtonCompute=None,
+    def __init__(self, experiment, parent, container, pushButtonCompute=None,
                  pushButtonComputeBatch=None, selection_changed=None,
                  collect_parameter_values=None, hideHook=None):
         super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
+        self.experiment = experiment
 
         if not pushButtonCompute:
             pushButtonCompute = self.parent.ui.pushButtonCompute
@@ -58,7 +59,7 @@ class BatchingWidget(QtGui.QWidget):
         self.data = {}
         self.failed_subjects = []
         
-        if self.parent.experiment is None:
+        if self.experiment is None:
             return
 
     def on_listWidgetSubjects_currentItemChanged(self, item):
@@ -83,7 +84,7 @@ class BatchingWidget(QtGui.QWidget):
             self.pushButtonCompute.setEnabled(False)
             self.pushButtonComputeBatch.setEnabled(True)
 
-            subject_names = sorted(self.parent.experiment.subjects.keys())
+            subject_names = sorted(self.experiment.subjects.keys())
              
             for name in subject_names:
                 item = QtGui.QListWidgetItem(name)
@@ -111,7 +112,7 @@ class BatchingWidget(QtGui.QWidget):
             return
         item.setCheckState(QtCore.Qt.Checked)
         
-        subject = self.parent.experiment.subjects[str(item.text())]
+        subject = self.experiment.subjects[str(item.text())]
         params = self.collect_parameter_values()
         if params:
             self.data[subject.subject_name] = params
@@ -126,7 +127,7 @@ class BatchingWidget(QtGui.QWidget):
             item = self.ui.listWidgetSubjects.item(i)
             item.setCheckState(QtCore.Qt.Checked)
             name = str(item.text())
-            if name in self.parent.experiment.subjects:
+            if name in self.experiment.subjects:
                 params = self.collect_parameter_values()
                 if params:
                     self.data[name] = params 
