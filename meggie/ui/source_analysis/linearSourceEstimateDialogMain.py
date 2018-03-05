@@ -12,6 +12,8 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
 
+import meggie.code_meggie.general.mne_wrapper as mne
+
 class LinearSourceEstimateDialog(QtGui.QDialog):
     """
     """
@@ -28,6 +30,14 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         self.inst_name = inst_name
 
         self.ui.lineEditBasedOn.setText(fwd_name)
+        self.ui.lineEditData.setText(inst_name)
+
+
+    def populate_labels(self):
+        labels = mne.read_labels_from_annot(subject='reconFiles', parc='aparc')
+
+        # populate labels
+
 
     def accept(self):
         """

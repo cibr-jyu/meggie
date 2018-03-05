@@ -39,7 +39,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="labelIBasedOn">
+        <widget class="QLabel" name="labelBasedOn">
          <property name="text">
           <string>Based on forward solution:</string>
          </property>
@@ -47,6 +47,24 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEditBasedOn">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QLabel" name="labelData">
+         <property name="text">
+          <string>Based on dataset:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEditData">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -168,7 +186,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLambda"/>
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLambda">
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -182,7 +207,23 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBoxMethod"/>
+           <widget class="QComboBox" name="comboBoxMethod">
+            <item>
+             <property name="text">
+              <string>dSPM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>MNE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>sLORETA</string>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </item>
