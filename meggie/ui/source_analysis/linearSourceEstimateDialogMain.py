@@ -32,11 +32,21 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         self.ui.lineEditBasedOn.setText(fwd_name)
         self.ui.lineEditData.setText(inst_name)
 
+        self.populate_labels()
+
 
     def populate_labels(self):
-        labels = mne.read_labels_from_annot(subject='reconFiles', parc='aparc')
+        active_subject = self.experiment.active_subject
 
-        # populate labels
+        subject = 'reconFiles'
+        subjects_dir = active_subject.source_analysis_directory
+
+        labels = mne.read_labels_from_annot(subject='reconFiles', parc='aparc',
+            subjects_dir=subjects_dir)
+
+        self.ui.comboBoxLabel.clear()
+        for label in labels:
+            self.ui.comboBoxLabel.addItem(label.name)
 
 
     def accept(self):
@@ -49,19 +59,28 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
             messagebox(self, "Please give a name for the source estimate")
             return
 
-        based_on = self.based_on
+        fwd_name = self.fwd_name
+        inst_name = self.inst_name
+        inst_type = self.inst_type
 
         loose = float(self.ui.doubleSpinBoxLoose.value())
         depth = float(self.ui.doubleSpinBoxDepth.value())
+        lambda2 = float(self.ui.doubleSpinBoxLambda.value())
+        label = str(self.ui.comboBoxLabel.currentText())
+        method = str(self.ui.comboBoxMethod.currentText())
 
         subject = self.experiment.active_subject
+
+        from meggie.code_meggie.utils.debug import debug_trace;
+        debug_trace()
+
 
         @threaded
         def linear_stc(*args, **kwargs):
             create_linear_source_estimate(*args, **kwargs)
 
         try:
-            linear_stc(subject, name, based_on, loose, depth)
+            linear_stc(subject, name, fwd_name, loose, depth)
         except Exception as exc:
             exc_messagebox(self, exc)
 
