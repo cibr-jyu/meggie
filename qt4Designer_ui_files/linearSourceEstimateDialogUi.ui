@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>inverseOperatorDialog</class>
- <widget class="QDialog" name="inverseOperatorDialog">
+ <class>linearSourceEstimateDialog</class>
+ <widget class="QDialog" name="linearSourceEstimateDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>215</height>
+    <width>587</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create new inverse operator</string>
+   <string>Create new linear source estimate</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -25,14 +25,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="QLabel" name="labelInverseOperatorName">
+        <widget class="QLabel" name="labelSourceEstimateName">
          <property name="text">
-          <string>Inverse operator name:     </string>
+          <string>Source estimate name:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditInverseOperatorName"/>
+        <widget class="QLineEdit" name="lineEditSourceEstimateName"/>
        </item>
       </layout>
      </item>
@@ -56,8 +56,8 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBoxInverseOperatorParameters">
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="inverseOperatorParameters">
      <property name="title">
       <string>Inverse operator parameters:</string>
      </property>
@@ -120,7 +120,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="6" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -130,6 +130,67 @@
      </property>
     </widget>
    </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBoxStcParameters">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Source estimate parameters:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="labelLabel">
+            <property name="text">
+             <string>Label:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBoxLabel"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="labelLambda">
+            <property name="text">
+             <string>Regularization parameter:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLambda"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="labelMethod">
+            <property name="text">
+             <string>Method:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBoxMethod"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
@@ -137,7 +198,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>inverseOperatorDialog</receiver>
+   <receiver>linearSourceEstimateDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -153,7 +214,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>inverseOperatorDialog</receiver>
+   <receiver>linearSourceEstimateDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

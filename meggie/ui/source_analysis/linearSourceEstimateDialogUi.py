@@ -1,0 +1,145 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'linearSourceEstimateDialogUi.ui'
+#
+# Created by: PyQt4 UI code generator 4.11.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_linearSourceEstimateDialog(object):
+    def setupUi(self, linearSourceEstimateDialog):
+        linearSourceEstimateDialog.setObjectName(_fromUtf8("linearSourceEstimateDialog"))
+        linearSourceEstimateDialog.resize(587, 375)
+        linearSourceEstimateDialog.setModal(True)
+        self.formLayout_3 = QtGui.QFormLayout(linearSourceEstimateDialog)
+        self.formLayout_3.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout_3.setObjectName(_fromUtf8("formLayout_3"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.labelSourceEstimateName = QtGui.QLabel(linearSourceEstimateDialog)
+        self.labelSourceEstimateName.setObjectName(_fromUtf8("labelSourceEstimateName"))
+        self.horizontalLayout_6.addWidget(self.labelSourceEstimateName)
+        self.lineEditSourceEstimateName = QtGui.QLineEdit(linearSourceEstimateDialog)
+        self.lineEditSourceEstimateName.setObjectName(_fromUtf8("lineEditSourceEstimateName"))
+        self.horizontalLayout_6.addWidget(self.lineEditSourceEstimateName)
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.labelIBasedOn = QtGui.QLabel(linearSourceEstimateDialog)
+        self.labelIBasedOn.setObjectName(_fromUtf8("labelIBasedOn"))
+        self.horizontalLayout.addWidget(self.labelIBasedOn)
+        self.lineEditBasedOn = QtGui.QLineEdit(linearSourceEstimateDialog)
+        self.lineEditBasedOn.setEnabled(False)
+        self.lineEditBasedOn.setObjectName(_fromUtf8("lineEditBasedOn"))
+        self.horizontalLayout.addWidget(self.lineEditBasedOn)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.formLayout_3.setLayout(0, QtGui.QFormLayout.SpanningRole, self.verticalLayout)
+        self.inverseOperatorParameters = QtGui.QGroupBox(linearSourceEstimateDialog)
+        self.inverseOperatorParameters.setObjectName(_fromUtf8("inverseOperatorParameters"))
+        self.gridLayout_3 = QtGui.QGridLayout(self.inverseOperatorParameters)
+        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.labelLoose = QtGui.QLabel(self.inverseOperatorParameters)
+        self.labelLoose.setObjectName(_fromUtf8("labelLoose"))
+        self.horizontalLayout_2.addWidget(self.labelLoose)
+        self.doubleSpinBoxLoose = QtGui.QDoubleSpinBox(self.inverseOperatorParameters)
+        self.doubleSpinBoxLoose.setMaximum(1.0)
+        self.doubleSpinBoxLoose.setSingleStep(0.05)
+        self.doubleSpinBoxLoose.setProperty("value", 0.2)
+        self.doubleSpinBoxLoose.setObjectName(_fromUtf8("doubleSpinBoxLoose"))
+        self.horizontalLayout_2.addWidget(self.doubleSpinBoxLoose)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.labelDepth = QtGui.QLabel(self.inverseOperatorParameters)
+        self.labelDepth.setObjectName(_fromUtf8("labelDepth"))
+        self.horizontalLayout_3.addWidget(self.labelDepth)
+        self.doubleSpinBoxDepth = QtGui.QDoubleSpinBox(self.inverseOperatorParameters)
+        self.doubleSpinBoxDepth.setMaximum(1.0)
+        self.doubleSpinBoxDepth.setSingleStep(0.05)
+        self.doubleSpinBoxDepth.setProperty("value", 0.8)
+        self.doubleSpinBoxDepth.setObjectName(_fromUtf8("doubleSpinBoxDepth"))
+        self.horizontalLayout_3.addWidget(self.doubleSpinBoxDepth)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
+        self.formLayout_3.setWidget(3, QtGui.QFormLayout.SpanningRole, self.inverseOperatorParameters)
+        self.buttonBox = QtGui.QDialogButtonBox(linearSourceEstimateDialog)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.formLayout_3.setWidget(6, QtGui.QFormLayout.FieldRole, self.buttonBox)
+        self.groupBoxStcParameters = QtGui.QGroupBox(linearSourceEstimateDialog)
+        self.groupBoxStcParameters.setMinimumSize(QtCore.QSize(0, 0))
+        self.groupBoxStcParameters.setObjectName(_fromUtf8("groupBoxStcParameters"))
+        self.gridLayout = QtGui.QGridLayout(self.groupBoxStcParameters)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.horizontalLayout_7 = QtGui.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
+        self.labelLabel = QtGui.QLabel(self.groupBoxStcParameters)
+        self.labelLabel.setObjectName(_fromUtf8("labelLabel"))
+        self.horizontalLayout_7.addWidget(self.labelLabel)
+        self.comboBoxLabel = QtGui.QComboBox(self.groupBoxStcParameters)
+        self.comboBoxLabel.setObjectName(_fromUtf8("comboBoxLabel"))
+        self.horizontalLayout_7.addWidget(self.comboBoxLabel)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        self.labelLambda = QtGui.QLabel(self.groupBoxStcParameters)
+        self.labelLambda.setObjectName(_fromUtf8("labelLambda"))
+        self.horizontalLayout_4.addWidget(self.labelLambda)
+        self.doubleSpinBoxLambda = QtGui.QDoubleSpinBox(self.groupBoxStcParameters)
+        self.doubleSpinBoxLambda.setObjectName(_fromUtf8("doubleSpinBoxLambda"))
+        self.horizontalLayout_4.addWidget(self.doubleSpinBoxLambda)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.labelMethod = QtGui.QLabel(self.groupBoxStcParameters)
+        self.labelMethod.setObjectName(_fromUtf8("labelMethod"))
+        self.horizontalLayout_5.addWidget(self.labelMethod)
+        self.comboBoxMethod = QtGui.QComboBox(self.groupBoxStcParameters)
+        self.comboBoxMethod.setObjectName(_fromUtf8("comboBoxMethod"))
+        self.horizontalLayout_5.addWidget(self.comboBoxMethod)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_5)
+        self.gridLayout.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
+        self.formLayout_3.setWidget(5, QtGui.QFormLayout.SpanningRole, self.groupBoxStcParameters)
+
+        self.retranslateUi(linearSourceEstimateDialog)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), linearSourceEstimateDialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), linearSourceEstimateDialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(linearSourceEstimateDialog)
+
+    def retranslateUi(self, linearSourceEstimateDialog):
+        linearSourceEstimateDialog.setWindowTitle(_translate("linearSourceEstimateDialog", "Create new linear source estimate", None))
+        self.labelSourceEstimateName.setText(_translate("linearSourceEstimateDialog", "Source estimate name:", None))
+        self.labelIBasedOn.setText(_translate("linearSourceEstimateDialog", "Based on forward solution:", None))
+        self.inverseOperatorParameters.setTitle(_translate("linearSourceEstimateDialog", "Inverse operator parameters:", None))
+        self.labelLoose.setText(_translate("linearSourceEstimateDialog", "Loose:", None))
+        self.labelDepth.setText(_translate("linearSourceEstimateDialog", "Depth:", None))
+        self.groupBoxStcParameters.setTitle(_translate("linearSourceEstimateDialog", "Source estimate parameters:", None))
+        self.labelLabel.setText(_translate("linearSourceEstimateDialog", "Label:", None))
+        self.labelLambda.setText(_translate("linearSourceEstimateDialog", "Regularization parameter:", None))
+        self.labelMethod.setText(_translate("linearSourceEstimateDialog", "Method:", None))
+

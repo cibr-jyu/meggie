@@ -6,7 +6,7 @@ from PyQt4 import QtGui
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
-from meggie.ui.source_analysis.inverseOperatorDialogMain import InverseOperatorDialog  # noqa
+from meggie.ui.source_analysis.linearSourceEstimateDialogMain import LinearSourceEstimateDialog  # noqa
 from meggie.ui.source_analysis.covarianceRawDialogMain import CovarianceRawDialog  # noqa
 from meggie.ui.source_analysis.covarianceEpochDialogMain import CovarianceEpochDialog  # noqa
 
@@ -41,9 +41,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabCoregistration, "Coregistration")
         self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardSolution, "Forward solution creation")
         self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabNoiseCovariance, "Noise covariance")
-        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabInverseOperator, "Inverse operator")
-        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabSourceEstimate, "Source estimate")
-        self.ui.tabWidgetSourceAnalysis.insertTab(7, self.ui.tabAnalysis, "Analysis")
+        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabSourceEstimate, "Source estimate")
+        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabAnalysis, "Analysis")
 
 
     def initialize_ui(self):
@@ -70,19 +69,12 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             item = QtGui.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsFwd.addItem(item)
 
-        # populate forward solutions in inverse operator tab
+        # populate forward solutions in source estimate tab
         solutions = active_subject.get_forward_solution_names()
-        self.ui.listWidgetForwardSolutionsInv.clear()
+        self.ui.listWidgetForwardSolutionsStc.clear()
         for solution in solutions:
             item = QtGui.QListWidgetItem(solution)
-            self.ui.listWidgetForwardSolutionsInv.addItem(item)
-
-        # populate inverse operators in inverse operator tab
-        operators = active_subject.get_inverse_operator_names()
-        self.ui.listWidgetInverseOperatorsInv.clear()
-        for operator in operators:
-            item = QtGui.QListWidgetItem(operator)
-            self.ui.listWidgetInverseOperatorsInv.addItem(item)
+            self.ui.listWidgetForwardSolutionsStc.addItem(item)
 
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
@@ -369,7 +361,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         logging.getLogger('ui_logger').info("Covariance plot clicked")
 
-    def on_pushButtonComputeInverse_clicked(self, checked=None):
+    def on_pushButtonLinear_clicked(self, checked=None):
         """
         """
         if checked is None:
@@ -383,15 +375,15 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
-        fwd_name = str(self.ui.listWidgetForwardSolutionsInv.currentItem().text())
+        fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
 
         if not fwd_name:
             return
 
-        self.inverseOperatorDialog = InverseOperatorDialog(self,
+        self.linearSourceEstimateDialog = LinearSourceEstimateDialog(self,
             fwd_name, self.parent.experiment, on_close=self.initialize_ui)
 
-        self.inverseOperatorDialog.show()
+        self.linearSourceEstimateDialog.show()
 
 
     def on_pushButtonVisStc_clicked(self, checked=None):

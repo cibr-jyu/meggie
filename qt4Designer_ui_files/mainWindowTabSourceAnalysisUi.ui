@@ -75,9 +75,6 @@
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
              <widget class="QFrame" name="frameCopyRecon">
-              <property name="whatsThis">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
               </property>
@@ -98,9 +95,6 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="whatsThis">
                       <string/>
                      </property>
                      <property name="text">
@@ -130,16 +124,10 @@
                      <property name="enabled">
                       <bool>false</bool>
                      </property>
-                     <property name="whatsThis">
-                      <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButtonBrowseRecon">
-                     <property name="whatsThis">
-                      <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                     </property>
                      <property name="text">
                       <string>Browse...</string>
                      </property>
@@ -487,9 +475,6 @@
          <layout class="QVBoxLayout" name="verticalLayoutCoregistration">
           <item>
            <widget class="QFrame" name="frameCoregistrationGUI">
-            <property name="whatsThis">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -510,9 +495,6 @@
                     </font>
                    </property>
                    <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="whatsThis">
                     <string/>
                    </property>
                    <property name="text">
@@ -539,9 +521,6 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_9">
                  <item>
                   <widget class="QPushButton" name="pushButtonCoregistrationGUI">
-                   <property name="whatsThis">
-                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
-                   </property>
                    <property name="text">
                     <string>Open MNE-Python Coregistration...</string>
                    </property>
@@ -594,9 +573,6 @@
                   <widget class="QLineEdit" name="lineEditCoregistrationBrowse">
                    <property name="enabled">
                     <bool>false</bool>
-                   </property>
-                   <property name="whatsThis">
-                    <string>MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools.</string>
                    </property>
                   </widget>
                  </item>
@@ -765,9 +741,6 @@
          <layout class="QVBoxLayout" name="verticalLayoutCovariance">
           <item>
            <widget class="QFrame" name="frameCovarianceRaw">
-            <property name="whatsThis">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -788,9 +761,6 @@
                     </font>
                    </property>
                    <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="whatsThis">
                     <string/>
                    </property>
                    <property name="text">
@@ -881,9 +851,6 @@
           </item>
           <item>
            <widget class="QFrame" name="frameCovarianceCurrent">
-            <property name="whatsThis">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MRI-image reconstruction can take a day, therefore Meggie only allows importing the pre-reconstructed image. You can, however, examine the reconstructed image with provided tools - if you have PySurfer installed and its path set properly in Meggie preferences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -904,9 +871,6 @@
                     </font>
                    </property>
                    <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="whatsThis">
                     <string/>
                    </property>
                    <property name="text">
@@ -986,230 +950,176 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="tabInverseOperator">
-    <attribute name="title">
-     <string>Inverse operator</string>
-    </attribute>
-    <widget class="QWidget" name="layoutWidget_8">
-     <property name="geometry">
-      <rect>
-       <x>21</x>
-       <y>10</y>
-       <width>841</width>
-       <height>261</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayoutInverseOperator">
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayoutInverseOperator">
-        <item>
-         <widget class="QGroupBox" name="groupBoxInverseOperator">
-          <property name="title">
-           <string>Forward solutions to base inverse operator on:</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_36">
-           <item row="0" column="0">
-            <widget class="QListWidget" name="listWidgetForwardSolutionsInv"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonComputeInverse">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Compute 
- inverse operator...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayoutInverseOperator_2">
-        <item>
-         <widget class="QGroupBox" name="groupBoxInverseOperator_2">
-          <property name="title">
-           <string>Inverse operators:</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_37">
-           <item row="0" column="0">
-            <widget class="QListWidget" name="listWidgetInverseOperatorsInv"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </widget>
    <widget class="QWidget" name="tabSourceEstimate">
     <attribute name="title">
      <string>Source estimate</string>
     </attribute>
-    <widget class="QGroupBox" name="groupBox_11">
+    <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>20</y>
-       <width>430</width>
-       <height>511</height>
+       <x>10</x>
+       <y>10</y>
+       <width>745</width>
+       <height>408</height>
       </rect>
      </property>
-     <property name="title">
-      <string>Base source estimate on:</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout_17">
-      <item row="0" column="0" colspan="2">
-       <layout class="QVBoxLayout" name="verticalLayout_38">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
         <item>
-         <widget class="QRadioButton" name="radioButtonRaw">
-          <property name="text">
-           <string>Raw file</string>
+         <widget class="QGroupBox" name="groupBoxForwardSolutions">
+          <property name="title">
+           <string>Forward solutions:</string>
           </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
+          <layout class="QGridLayout" name="gridLayout_47">
+           <item row="0" column="1">
+            <widget class="QListWidget" name="listWidgetForwardSolutionsStc"/>
+           </item>
+          </layout>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_39">
-          <item>
-           <widget class="QRadioButton" name="radioButtonEpoch">
-            <property name="text">
-             <string>Epoch collection</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frameInverseEpochs">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>200</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QGroupBox" name="groupBox_11">
+          <property name="title">
+           <string>Base source estimate on:</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_17">
+           <item row="1" column="0" colspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_38">
+             <item>
+              <widget class="QRadioButton" name="radioButtonStcRaw">
+               <property name="text">
+                <string>Raw file</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_45">
+               <item row="1" column="0">
+                <widget class="QRadioButton" name="radioButtonStcEpochs">
+                 <property name="text">
+                  <string>Epochs data</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QGroupBox" name="groupBoxStcEpochs">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="title">
+                  <string>Evoked collections</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_46">
+                  <item row="0" column="0">
+                   <widget class="QListWidget" name="listWidgetStcEpochs">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_38">
+               <item row="0" column="0">
+                <widget class="QRadioButton" name="radioButtonStcEvoked">
+                 <property name="text">
+                  <string>Evoked data</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QGroupBox" name="groupBoxStcEvoked">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="title">
+                  <string>Evoked collections</string>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_39">
+                  <item row="0" column="0">
+                   <widget class="QListWidget" name="listWidgetStcEvoked">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_42">
         <item>
-         <layout class="QGridLayout" name="gridLayout_38">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButtonEvoked">
-            <property name="text">
-             <string>Evoked dataset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QGroupBox" name="groupBoxInverseEvoked">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="title">
-             <string>Evoked collections</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_39">
+         <widget class="QGroupBox" name="groupBoxActions">
+          <property name="title">
+           <string>Actions:</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_48">
+           <item row="0" column="1">
+            <layout class="QGridLayout" name="gridLayout">
              <item row="0" column="0">
-              <widget class="QListWidget" name="listWidgetInverseEvoked">
-               <property name="enabled">
-                <bool>false</bool>
+              <widget class="QPushButton" name="pushButtonLinear">
+               <property name="text">
+                <string>Create linear source estimate</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="pushButtonLCMV">
+               <property name="text">
+                <string>Create LCMV source estimate</string>
                </property>
               </widget>
              </item>
             </layout>
-           </widget>
-          </item>
-         </layout>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </item>
-     </layout>
-    </widget>
-    <widget class="QPushButton" name="pushButtonMakeSourceEstimate">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>40</y>
-       <width>121</width>
-       <height>491</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Make 
- source estimate</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_35">
-     <property name="geometry">
-      <rect>
-       <x>460</x>
-       <y>280</y>
-       <width>16</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>---</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_36">
-     <property name="geometry">
-      <rect>
-       <x>600</x>
-       <y>280</y>
-       <width>21</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>--&gt;</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="layoutWidget_9">
-     <property name="geometry">
-      <rect>
-       <x>640</x>
-       <y>40</y>
-       <width>284</width>
-       <height>263</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_40">
       <item>
-       <widget class="QGroupBox" name="groupBox_23">
-        <property name="title">
-         <string>Source estimates:</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_40">
-         <item row="0" column="0">
-          <widget class="QListWidget" name="listWidgetSourceEstimate"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonVisStc">
-        <property name="text">
-         <string>Visualize</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_40">
+        <item>
+         <widget class="QGroupBox" name="groupBox_23">
+          <property name="title">
+           <string>Source estimates:</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_40">
+           <item row="0" column="1">
+            <widget class="QListWidget" name="listWidgetSourceEstimatesStc"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="pushButtonStcRemove">
+             <property name="text">
+              <string>Remove source estimate</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -1218,56 +1128,102 @@
     <attribute name="title">
      <string>Analysis</string>
     </attribute>
-    <widget class="QGroupBox" name="groupBox_24">
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>221</width>
-       <height>91</height>
+       <x>10</x>
+       <y>20</y>
+       <width>181</width>
+       <height>119</height>
       </rect>
      </property>
-     <property name="title">
-      <string>Source estimates:</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_41">
-      <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_17">
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_41">
         <item>
-         <widget class="QPushButton" name="pushButtonStcFreq">
-          <property name="text">
-           <string>Frequency analysis</string>
+         <widget class="QGroupBox" name="groupBox_24">
+          <property name="title">
+           <string>Source estimates:</string>
           </property>
+          <layout class="QGridLayout" name="gridLayout_41">
+           <item row="0" column="1">
+            <widget class="QListWidget" name="listWidgetSourceEstimatesAna"/>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
       </item>
      </layout>
     </widget>
-    <widget class="QTextEdit" name="textEdit">
-     <property name="geometry">
-      <rect>
-       <x>460</x>
-       <y>60</y>
-       <width>211</width>
-       <height>171</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;Näille paikkeille sitten visualisointia, export-toimintoja yms.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
    </widget>
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>radioButtonStcRaw</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxStcEpochs</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonStcEvoked</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxStcEpochs</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonStcRaw</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxStcEvoked</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonStcEpochs</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBoxStcEvoked</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -18,7 +18,7 @@ import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
 
-def create_inverse_operator(subject, operator_name, based_on, loose, depth):
+def create_linear_source_estimate(subject, operator_name, based_on, loose, depth):
     """
     """
     fwd_path = os.path.join(subject.forward_solutions_directory, based_on)
@@ -33,9 +33,9 @@ def create_inverse_operator(subject, operator_name, based_on, loose, depth):
     inv = mne.make_inverse_operator(info, fwd, cov, loose=loose, depth=depth)
     
     # save the file
-    fname = operator_name + '-inv.fif'
-    path = os.path.join(subject.inverse_operators_directory, fname)
-    mne.write_inverse_operator(path, inv)
+    # fname = operator_name + '-inv.fif'
+    # path = os.path.join(subject.inverse_operators_directory, fname)
+    # mne.write_inverse_operator(path, inv)
 
 
 def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
