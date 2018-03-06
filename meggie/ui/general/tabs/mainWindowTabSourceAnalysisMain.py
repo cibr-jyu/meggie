@@ -393,6 +393,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
         except:
             messagebox(self, "Have you selected the forward solution?")
+            return
 
         try:
             if self.ui.radioButtonStcRaw.isChecked():

@@ -7,6 +7,7 @@ Created on Oct 22, 2013
 """
 
 import os
+import shutil
 import glob
 
 import numpy as np
@@ -38,6 +39,7 @@ class Subject(object):
         # forward model objects.
         self._epochs = dict()
         self._evokeds = dict()
+        self._stcs = dict()
         self._subject_path = os.path.join(experiment.workspace,
                                           experiment.experiment_name,
                                           subject_name)
@@ -167,6 +169,10 @@ class Subject(object):
     @property
     def evokeds(self):
         return self._evokeds
+
+    @property
+    def stcs(self):
+        return self._stcs
     
     def load_working_file(self, preload=True):
         """Loads raw file from subject folder and sets it on
@@ -245,7 +251,8 @@ class Subject(object):
         Adds Epochs object to the epochs dictionary.
 
         """
-        self._epochs[epochs.collection_name] = epochs
+        if not epochs.collection_name in self._epochs:
+            self._epochs[epochs.collection_name] = epochs
 
     def remove_epochs(self, collection_name):
         """
@@ -255,15 +262,18 @@ class Subject(object):
         Keyword arguments:
         collection_name    -- name of the epochs collection (QString)
         """
-        files_to_delete = filter(os.path.isfile, glob.\
-                                 glob(os.path.join(self._epochs_directory, \
-                                                   collection_name + '.fif')))
+        files_to_delete = filter(os.path.isfile, 
+            glob.glob(os.path.join(self._epochs_directory, 
+                                   collection_name + '.fif')))
+
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
+
         try:
             fileManager.delete_file_at(self._epochs_directory, files_to_delete)
         except OSError:
             raise IOError('Epochs could not be deleted from epochs folder.')
+
         self._epochs.pop(str(str(collection_name)), None)
 
     def add_evoked(self, evoked):
@@ -273,11 +283,12 @@ class Subject(object):
         Keyword arguments:
         evoked  -- Evoked object
         """
-        self._evokeds[evoked.name] = evoked
+        if not evoked.name in self._evokeds:
+            self._evokeds[evoked.name] = evoked
 
     def remove_evoked(self, name):
         """
-        Removes evoked object from the evoked dictionary.
+        Removes evoked object from the evoked dictionary and file system
 
         Keyword arguments:
         name    -- name of the evoked in QString
@@ -288,6 +299,23 @@ class Subject(object):
             raise IOError('Evoked could not be deleted from average folder.')
         self._evokeds.pop(str(name), None)
 
+    def add_stc(self, stc):
+        """
+        Adds SourceEstimate object to the stcs dictionary.
+
+        """
+        if not stc.name in self._stcs:
+            self._stcs[stc.name] = stc
+
+    def remove_stc(self, name):
+        """
+        """
+        path = os.path.join(self.stc_directory, name)
+        try:
+            shutil.rmtree(path)
+        except OSError:
+            raise IOError('Source estimate could not be removed from the file system')
+        self._stcs.pop(str(name), None)
 
     def check_ecg_projs(self):
         """

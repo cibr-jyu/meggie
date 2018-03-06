@@ -17,11 +17,20 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 import meggie.code_meggie.general.fileManager as fileManager
 
+from meggie.code_meggie.general.stc import SourceEstimateEvoked
+from meggie.code_meggie.general.stc import SourceEstimateEpochs
+from meggie.code_meggie.general.stc import SourceEstimateRaw
 
-def create_linear_source_estimate(subject, stc_name, based_on, loose, depth):
+
+def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type, 
+                                  fwd_name, loose, depth, label, lambda2, 
+                                  method, start, stop):
     """
     """
-    fwd_path = os.path.join(subject.forward_solutions_directory, based_on)
+
+    subject = experiment.active_subject
+
+    fwd_path = os.path.join(subject.forward_solutions_directory, fwd_name)
     fwd = mne.read_forward_solution(fwd_path)
 
     cov_path = subject.covfile_path
@@ -31,12 +40,31 @@ def create_linear_source_estimate(subject, stc_name, based_on, loose, depth):
 
     logging.getLogger('ui_logger').info('Creating inverse operator...')
     inv = mne.make_inverse_operator(info, fwd, cov, loose=loose, depth=depth)
-    
-    # save the file
-    # fname = operator_name + '-inv.fif'
-    # path = os.path.join(subject.inverse_operators_directory, fname)
-    # mne.write_inverse_operator(path, inv)
 
+    if inst_type == 'evoked':
+        evokeds = subject.evokeds[inst_name].mne_evokeds
+        stc_insts = {}
+        for key, inst in evokeds.items():
+            stc_insts[key] = mne.apply_inverse(inst, inv, lambda2, 
+                                                method, label)
+
+        stc = SourceEstimateEvoked(stc_name, stcs=stc_insts)
+            
+    elif inst_type == 'epochs':
+        inst = subject.epochs[inst_name].raw
+        stc_insts = mne.apply_inverse_epochs(inst, inv, lambda2, method, label)
+        stc = SourceEstimateEpochs(stc_name, stcs=stc_insts)
+
+    elif inst_type == 'raw':
+        inst = subject.get_working_file()
+        stc_inst = mne.apply_inverse_raw(inst, inv, lambda2, method, label, 
+                                    start, stop)
+        stc = SourceEstimateRaw(stc_name, stc=stc_inst)
+
+    subject.add_stc(stc)
+    stc.save()
+    experiment.save_experiment_settings()
+    
 
 def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
     """

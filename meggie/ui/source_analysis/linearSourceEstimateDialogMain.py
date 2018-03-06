@@ -29,6 +29,14 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         self.inst_type = inst_type
         self.inst_name = inst_name
 
+        if inst_type == 'raw':
+            self.ui.groupBoxTimeParameters.setEnabled(True)
+            self.ui.doubleSpinBoxStart.setEnabled(True)
+            self.ui.doubleSpinBoxEnd.setEnabled(True)
+            raw = self.experiment.active_subject.get_working_file(preload=False)
+            self.ui.doubleSpinBoxStart.setValue(raw.times[0])
+            self.ui.doubleSpinBoxEnd.setValue(raw.times[-1])
+
         self.ui.lineEditBasedOn.setText(fwd_name)
         self.ui.lineEditData.setText(inst_name)
 
@@ -57,9 +65,9 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         """
 
         # collect parameters
-        name = str(self.ui.lineEditSourceEstimateName.text())
-        if not name:
-            messagebox(self, "Please give a name for the source estimate")
+        stc_name = str(self.ui.lineEditSourceEstimateName.text())
+        if not stc_name:
+            messagebox(self, "Please give a name for the source estimate", exec_=True)
             return
 
         fwd_name = self.fwd_name
@@ -69,23 +77,30 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         loose = float(self.ui.doubleSpinBoxLoose.value())
         depth = float(self.ui.doubleSpinBoxDepth.value())
         lambda2 = float(self.ui.doubleSpinBoxLambda.value())
-        label = str(self.ui.comboBoxLabel.currentText())
         method = str(self.ui.comboBoxMethod.currentText())
 
+        start = float(self.ui.doubleSpinBoxStart.value())
+        end = float(self.ui.doubleSpinBoxEnd.value())
+
+        if inst_type == 'raw':
+            start, end = None, None
+
+        label = str(self.ui.comboBoxLabel.currentText())
+        if label == 'None':
+            label = None
+
         subject = self.experiment.active_subject
-
-        from meggie.code_meggie.utils.debug import debug_trace;
-        debug_trace()
-
 
         @threaded
         def linear_stc(*args, **kwargs):
             create_linear_source_estimate(*args, **kwargs)
 
         try:
-            linear_stc(subject, name, fwd_name, loose, depth)
+            linear_stc(self.experiment, stc_name, inst_name, inst_type, 
+                       fwd_name, loose, depth, label, lambda2, method, 
+                       start, end)
         except Exception as exc:
-            exc_messagebox(self, exc)
+            exc_messagebox(self.parent, exc, exec_=True)
 
         # call close handler
         if self.on_close:

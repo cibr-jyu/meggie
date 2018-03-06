@@ -4,7 +4,7 @@
 import logging
 from meggie.ui.general import messageBoxes
 
-def exc_messagebox(parent, exc):
+def exc_messagebox(parent, exc, exec_=False):
     """ Pops up a messagebox for exceptions
     """
     try:
@@ -25,10 +25,16 @@ def exc_messagebox(parent, exc):
     ])
 
     parent.messagebox = messageBoxes.shortMessageBox(message)
-    parent.messagebox.show()
+    if exec_:
+        parent.messagebox.exec_()
+    else:
+        parent.messagebox.show()
 
-def messagebox(parent, msg, title='Info'):
+def messagebox(parent, msg, title='Info', exec_=False):
     """ Pops up a messagebox
     """
     parent.messagebox = messageBoxes.shortMessageBox(msg, title=title)
-    parent.messagebox.show()
+    if exec_:
+        parent.messagebox.exec_()
+    else:
+        parent.messagebox.show()

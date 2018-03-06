@@ -20,6 +20,9 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.epoching.epochs import Epochs
 from meggie.code_meggie.epoching.evoked import Evoked
+from meggie.code_meggie.general.stc import SourceEstimateRaw
+from meggie.code_meggie.general.stc import SourceEstimateEvoked
+from meggie.code_meggie.general.stc import SourceEstimateEpochs
 
 from PyQt4.QtCore import QObject
 
@@ -247,13 +250,32 @@ class Experiment(QObject):
                 'working_file_name': subject.working_file_name,
                 'epochs': [], 
                 'evokeds': [],
+                'stcs': [],
             }
+            for stc in subject.stcs.values():
+                try:
+                    stc_dict = {
+                        'name': stc.name,
+                        'type': stc.type
+                    }
+                    subject_dict['stcs'].append(stc_dict)
+                except IOError:
+                    del subject.stcs[stc.name]
+                    message = 'Missing stc file. Experiment updated.'
+                    logging.getLogger('ui_logger').warning(message)
+
             for epoch in subject.epochs.values():
-                epoch_dict = {
-                    'collection_name': epoch.collection_name,
-                    'params': epoch.params
-                }
-                subject_dict['epochs'].append(epoch_dict)
+                try:
+                    epoch_dict = {
+                        'collection_name': epoch.collection_name,
+                        'params': epoch.params
+                    }
+                    subject_dict['epochs'].append(epoch_dict)
+                except IOError:
+                    del subject.epochs[epoch.collection_name]
+                    message = 'Missing epochs response file. Experiment updated.'
+                    logging.getLogger('ui_logger').warning(message)
+
             for evoked in subject.evokeds.values():
                 try:
                     evoked_dict = {
@@ -266,12 +288,12 @@ class Experiment(QObject):
                     del subject.evokeds[evoked.name]
                     message = 'Missing evoked response file. Experiment updated.'
                     logging.getLogger('ui_logger').warning(message)
+
             subjects.append(subject_dict)
         
         save_dict = {
             'subjects': subjects,
             'name': self.experiment_name,
-            #'workspace': self.workspace,
             'author': self.author,
             'description': self.description,
             'layout': self.layout,
@@ -406,6 +428,20 @@ class ExperimentHandler(QObject):
                     if 'info' in evoked_data:
                         evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
+
+                for stc_data in subject_data['stcs']:
+                    name = stc_data['name']
+                    type_ = stc_data['type']
+
+                    if type_ == 'raw':
+                        stc = SourceEstimateRaw(name)
+                    elif type_ == 'evoked':
+                        stc = SourceEstimateEvoked(name)
+                    elif type_ == 'epochs':
+                        stc = SourceEstimateEpochs(name)
+
+                    subject.add_stc(stc)
+
                 experiment.add_subject(subject)
 
                 # ensure that the folder structure exists 
