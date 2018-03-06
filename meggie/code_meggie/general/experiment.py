@@ -258,6 +258,9 @@ class Experiment(QObject):
                         'name': stc.name,
                         'type': stc.type
                     }
+                    if stc.type == 'evoked':
+                        stc_dict['keys'] = stc.keys()
+
                     subject_dict['stcs'].append(stc_dict)
                 except IOError:
                     del subject.stcs[stc.name]
@@ -385,11 +388,9 @@ class ExperimentHandler(QObject):
                 data = json.load(f)
         except ValueError:
             raise ValueError('Experiment from ' + exp_file + ' could not be ' + 
-                             'opened. If it is an old experiment, you might ' + 
-                             'want to create a new one as old-style ' + 
-                             '(pre 0.1.5) experiments are not supported ' + 
-                             'anymore.')
-            
+                             'opened. There might be a problem with ' +
+                             'coherence of the experiment file.')
+
         prefs = self.parent.preferencesHandler
         experiment = Experiment()
         experiment.author = data['author']
@@ -436,7 +437,8 @@ class ExperimentHandler(QObject):
                     if type_ == 'raw':
                         stc = SourceEstimateRaw(name)
                     elif type_ == 'evoked':
-                        stc = SourceEstimateEvoked(name)
+                        stc_dict = dict([(key, None) for key in stc_data['keys']])
+                        stc = SourceEstimateEvoked(name, stc_dict)
                     elif type_ == 'epochs':
                         stc = SourceEstimateEpochs(name)
 

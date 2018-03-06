@@ -67,7 +67,13 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         # collect parameters
         stc_name = str(self.ui.lineEditSourceEstimateName.text())
         if not stc_name:
-            messagebox(self, "Please give a name for the source estimate", exec_=True)
+            messagebox(self, "Please give a name for the source estimate", 
+                       exec_=True)
+            return
+
+        if stc_name in self.experiment.active_subject.stcs:
+            messagebox(self, "Source estimate with this name already exists", 
+                       exec_=True)
             return
 
         fwd_name = self.fwd_name

@@ -41,6 +41,8 @@ def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type,
     logging.getLogger('ui_logger').info('Creating inverse operator...')
     inv = mne.make_inverse_operator(info, fwd, cov, loose=loose, depth=depth)
 
+    logging.getLogger('ui_logger').info('Applying inverse operator...')
+
     if inst_type == 'evoked':
         evokeds = subject.evokeds[inst_name].mne_evokeds
         stc_insts = {}
@@ -61,8 +63,11 @@ def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type,
                                     start, stop)
         stc = SourceEstimateRaw(stc_name, stc=stc_inst)
 
+
+    logging.getLogger('ui_logger').info('Saving stc...')
     subject.add_stc(stc)
-    stc.save()
+    stc.save(experiment)
+
     experiment.save_experiment_settings()
     
 

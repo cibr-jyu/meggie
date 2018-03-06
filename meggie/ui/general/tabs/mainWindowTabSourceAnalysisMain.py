@@ -89,6 +89,12 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             item = QtGui.QListWidgetItem(evoked)
             self.ui.listWidgetStcEvoked.addItem(item)
 
+        # populate evoked in source estimate tab
+        self.ui.listWidgetSourceEstimatesStc.clear()
+        for stc in active_subject.stcs:
+            item = QtGui.QListWidgetItem(stc)
+            self.ui.listWidgetSourceEstimatesStc.addItem(item)
+
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
             self.ui.checkBoxCoregistrationSelected.setChecked(True)
@@ -415,6 +421,20 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.linearSourceEstimateDialog.show()
 
+    def on_pushButtonStcRemove_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        stc = str(self.ui.listWidgetSourceEstimatesStc.currentItem().text())
+        try:
+            self.parent.experiment.active_subject.remove_stc(stc)
+        except Exception as exc:
+            exc_messagebox(self, exc)
+
+        self.parent.experiment.save_experiment_settings()
+        self.initialize_ui()
 
     def on_pushButtonVisStc_clicked(self, checked=None):
         """Visualize source estimates."""
@@ -423,7 +443,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if self.parent.experiment.active_subject is None:
             return
 
-        stc = str(self.ui.listWidgetSourceEstimate.currentItem().text())
+        stc = str(self.ui.listWidgetSourceEstimatesAna.currentItem().text())
         self.plotStcDialog = PlotStcDialog(self, stc)
         self.plotStcDialog.show()
 
