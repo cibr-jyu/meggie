@@ -38,15 +38,18 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
     def populate_labels(self):
         active_subject = self.experiment.active_subject
 
-        subject = 'reconFiles'
+        subject = active_subject.mri_subject_name
         subjects_dir = active_subject.source_analysis_directory
 
-        labels = mne.read_labels_from_annot(subject='reconFiles', parc='aparc',
+        labels = mne.read_labels_from_annot(subject=subject, parc='aparc',
             subjects_dir=subjects_dir)
 
         self.ui.comboBoxLabel.clear()
+        self.ui.comboBoxLabel.addItem('None')
         for label in labels:
             self.ui.comboBoxLabel.addItem(label.name)
+
+        self.ui.comboBoxLabel.setCurrentIndex(0)
 
 
     def accept(self):

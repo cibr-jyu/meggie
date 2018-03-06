@@ -161,13 +161,13 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # set environment variables
         os.environ['SUBJECTS_DIR'] = active_subject.source_analysis_directory
-        os.environ['SUBJECT'] = 'reconFiles'
+        os.environ['SUBJECT'] = active_subject.mri_subject_name
 
         use_atlas = self.ui.checkBoxAtlas.isChecked()
 
         # create bem surfaces for later steps
         try:
-            mne.make_watershed_bem('reconFiles', atlas=use_atlas)
+            mne.make_watershed_bem(active_subject.mri_subject_name, atlas=use_atlas)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -211,10 +211,11 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # set environment variables for coregistration gui
         os.environ['SUBJECTS_DIR'] = subject.source_analysis_directory
-        os.environ['SUBJECT'] = 'reconFiles'
+        os.environ['SUBJECT'] = subject.mri_subject_name
 
         inst = subject.working_file_path
-        mne.coregistration(inst=inst, subject='reconFiles', head_high_res=False)
+        mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
+                           head_high_res=False)
 
     def on_pushButtonCoregistrationBrowse_clicked(self, checked=None):
         """

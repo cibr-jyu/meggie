@@ -42,7 +42,7 @@ def create_forward_solution(subject, solution_name, decim, triang_ico, conductiv
     """
     """
 
-    subject_name = 'reconFiles'
+    subject_name = subject.mri_subject_name
     subjects_dir = subject.source_analysis_directory
 
     # set up source space

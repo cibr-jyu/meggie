@@ -41,21 +41,29 @@ class Subject(object):
         self._subject_path = os.path.join(experiment.workspace,
                                           experiment.experiment_name,
                                           subject_name)
+
+        self._mri_subject_name = 'reconFiles'
         
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
-        self._evokeds_directory = os.path.join(self._epochs_directory, 'average')  # noqa
-        self._source_analysis_directory = os.path.join(self._subject_path, 'sourceAnalysis')  # noqa
-        self._reconfiles_directory = os.path.join(self._source_analysis_directory, 'reconFiles')  # noqa
-        self._forward_solutions_directory = os.path.join(self._source_analysis_directory, 'forwardSolutions')  # noqa
-        self._stc_directory = os.path.join(self._source_analysis_directory, 'stc')  # noqa
-        self._inverse_operators_directory = os.path.join(self._source_analysis_directory, 'inverseOperators')  # noqa
+
+        self._evokeds_directory = os.path.join(self._epochs_directory, 
+                                               'average')
+
+        self._source_analysis_directory = os.path.join(self._subject_path, 
+                                                       'sourceAnalysis')
+        self._reconfiles_directory = os.path.join(
+            self._source_analysis_directory, self._mri_subject_name)
+
+        self._forward_solutions_directory = os.path.join(
+            self._source_analysis_directory, 'forwardSolutions')
+
+        self._stc_directory = os.path.join(self._source_analysis_directory, 
+                                           'stc')
 
         self._transfile_path = os.path.join(self._source_analysis_directory, 
                                             'mri_meg-trans.fif')
         self._covfile_path = os.path.join(self._source_analysis_directory, 
                                             'noise-cov.fif')
-
-
 
         self._experiment = experiment
 
@@ -94,6 +102,10 @@ class Subject(object):
     @property
     def covfile_path(self):
         return self._covfile_path
+
+    @property
+    def mri_subject_name(self):
+        return self._mri_subject_name
 
     @property
     def subject_name(self):
@@ -423,7 +435,6 @@ class Subject(object):
                 self.evokeds_directory,
                 self.source_analysis_directory,
                 self.forward_solutions_directory,
-                self.inverse_operators_directory,
                 self.reconfiles_directory,
                 self.stc_directory
             ])
