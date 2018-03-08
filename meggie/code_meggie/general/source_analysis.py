@@ -22,6 +22,15 @@ from meggie.code_meggie.general.stc import SourceEstimateEpochs
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 
 
+def plot_source_estimate(experiment, stc):
+    """
+    """
+    subject = experiment.active_subject.mri_subject_name
+    subjects_dir = experiment.active_subject.source_analysis_directory
+
+    stc.plot(subjects_dir=subjects_dir, subject=subject, time_viewer=True)
+
+
 def create_lcmv_estimate(experiment, stc_name, inst_name, inst_type, 
                          data_covfile, noise_covfile, fwd_name, label,
                          reg, start, stop):

@@ -10,6 +10,7 @@ from meggie.ui.source_analysis.linearSourceEstimateDialogMain import LinearSourc
 from meggie.ui.source_analysis.lcmvDialogMain import LCMVDialog
 from meggie.ui.source_analysis.covarianceRawDialogMain import CovarianceRawDialog  # noqa
 from meggie.ui.source_analysis.covarianceEpochDialogMain import CovarianceEpochDialog  # noqa
+from meggie.ui.source_analysis.stcPlotDialogMain import stcPlotDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -90,11 +91,17 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             item = QtGui.QListWidgetItem(evoked)
             self.ui.listWidgetStcEvoked.addItem(item)
 
-        # populate evoked in source estimate tab
+        # populate stc in source estimate tab
         self.ui.listWidgetSourceEstimatesStc.clear()
         for stc in active_subject.stcs:
             item = QtGui.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesStc.addItem(item)
+
+        # populate stc in analysis tab
+        self.ui.listWidgetSourceEstimatesAna.clear()
+        for stc in active_subject.stcs:
+            item = QtGui.QListWidgetItem(stc)
+            self.ui.listWidgetSourceEstimatesAna.addItem(item)
 
         # populate covfiles in cov tab
         self.ui.listWidgetCovariances.clear()
@@ -532,24 +539,15 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         self.initialize_ui()
 
 
-    def on_pushButtonVisStc_clicked(self, checked=None):
-        """Visualize source estimates."""
+    def on_pushButtonPlotSourceEstimate_clicked(self, checked=None):
         if checked is None:
             return
-        if self.parent.experiment.active_subject is None:
-            return
 
-        stc = str(self.ui.listWidgetSourceEstimatesAna.currentItem().text())
-        self.plotStcDialog = PlotStcDialog(self, stc)
-        self.plotStcDialog.show()
+        logging.getLogger('ui_logger').info("Plotting source estimate..")
 
+        stc_item = self.ui.listWidgetSourceEstimatesAna.currentItem() 
+        stc_name = str(stc_item.text())
 
-    def on_pushButtonStcFreq_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-        self.stcFreqDialog = StcFreqDialog(self)
-        self.stcFreqDialog.show()
-
+        self.stcPlotDialog = stcPlotDialog(self.parent.experiment, stc_name)
+        self.stcPlotDialog.show()
 

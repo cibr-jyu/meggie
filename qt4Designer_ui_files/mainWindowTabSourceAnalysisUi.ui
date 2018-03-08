@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1060</width>
+    <width>918</width>
     <height>648</height>
    </rect>
   </property>
@@ -1073,21 +1073,41 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>181</width>
-       <height>119</height>
+       <width>385</width>
+       <height>230</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_17">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_41">
         <item>
-         <widget class="QGroupBox" name="groupBox_24">
+         <widget class="QGroupBox" name="groupBoxSourceEstimatesAna">
           <property name="title">
            <string>Source estimates:</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_41">
            <item row="0" column="1">
             <widget class="QListWidget" name="listWidgetSourceEstimatesAna"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QGroupBox" name="groupBoxActionsAna">
+          <property name="title">
+           <string>Actions:</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="1">
+            <widget class="QPushButton" name="pushButtonPlotSourceEstimate">
+             <property name="text">
+              <string>Plot source estimate</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>

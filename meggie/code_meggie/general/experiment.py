@@ -416,21 +416,21 @@ class ExperimentHandler(QObject):
                 subject = Subject(experiment, subject_data['subject_name'],
                                   subject_data['working_file_name'])
                 
-                for epoch_data in subject_data['epochs']:
+                for epoch_data in subject_data.get('epochs', []):
                     epochs = Epochs(epoch_data['collection_name'], subject,
                         epoch_data['params'])
                     epochs.collection_name = epoch_data['collection_name']
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
                 
-                for evoked_data in subject_data['evokeds']:
+                for evoked_data in subject_data.get('evokeds', []):
                     mne_evokeds = dict([(name, None) for name in evoked_data['event_names']])
                     evoked = Evoked(evoked_data['name'], subject, mne_evokeds)
                     if 'info' in evoked_data:
                         evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
 
-                for stc_data in subject_data['stcs']:
+                for stc_data in subject_data.get('stcs', []):
                     name = stc_data['name']
                     type_ = stc_data['type']
 
