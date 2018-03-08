@@ -1,7 +1,7 @@
 '''
 Created on 17.10.2016
 
-@author: jaolpeso, erpipehe
+@author: jaolpeso
 '''
 import logging
 

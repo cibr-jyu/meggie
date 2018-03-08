@@ -1,7 +1,7 @@
 '''
 Created on 3.5.2016
 
-@author: jaolpeso, erpipehe
+@author: jaolpeso
 '''
 import os
 

@@ -2,7 +2,7 @@
 """
 Created on Apr 11, 2013
 
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Erkka Heinilä
+@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
 """
 
 import itertools

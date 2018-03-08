@@ -1,7 +1,3 @@
-"""
-@author: Erkka Heinila
-"""
-
 from PyQt4 import QtGui
 
 from meggie.ui.source_analysis.lcmvDialogUi import Ui_lcmvDialog  # noqa

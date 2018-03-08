@@ -1,7 +1,7 @@
 '''
 Created on 7.1.2015
 
-@author: Kari Aliranta, Erkka Heinila
+@author: Kari Aliranta
 '''
 
 import logging

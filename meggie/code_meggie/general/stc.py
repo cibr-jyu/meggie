@@ -1,9 +1,3 @@
-'''
-Created on 6.3.2018
-
-@author: erpipehe
-'''
-
 import os
 
 import numpy as np

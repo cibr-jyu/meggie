@@ -1,9 +1,4 @@
 # coding: utf-8
-'''
-Created on Aug 02, 2017
-
-@author: erpipehe
-'''
 
 import logging
 
