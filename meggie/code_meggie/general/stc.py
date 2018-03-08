@@ -116,7 +116,11 @@ class SourceEstimateEpochs(SourceEstimate):
             # load from files
             return self.load(experiment)
 
-
+    def keys(self, experiment):
+        path = os.path.join(experiment.active_subject.stc_directory, self.name)
+        fnames = os.listdir(path)
+        keys = sorted(list(set([fname.split('-')[0] for fname in fnames])))
+        return keys
 
 class SourceEstimateEvoked(SourceEstimate):
     """
@@ -130,7 +134,7 @@ class SourceEstimateEvoked(SourceEstimate):
         self._stcs = stcs
         self._type = 'evoked'
 
-    def keys(self):
+    def keys(self, experiment):
         return self._stcs.keys()
 
     def save(self, experiment):

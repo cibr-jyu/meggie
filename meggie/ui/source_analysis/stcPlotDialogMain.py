@@ -30,6 +30,16 @@ class stcPlotDialog(QtGui.QDialog):
 
         self.experiment = experiment
         self.stc_name = stc_name
+
+        meggie_stc = experiment.active_subject.stcs[stc_name]
+
+        if meggie_stc.type == 'raw':
+            self.ui.comboBoxSource.setEnabled(False)
+            self.ui.labelSource.setEnabled(False)
+        else:
+            for key in meggie_stc.keys(experiment):
+                self.ui.comboBoxSource.addItem(key)
+
            
     def accept(self):
         """
