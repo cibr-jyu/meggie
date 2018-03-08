@@ -7,11 +7,13 @@ Created on 7.1.2015
 import logging
 import os
 
-import meggie.code_meggie.general.mne_wrapper as mne
-
 from PyQt4 import QtGui
 
+import meggie.code_meggie.general.mne_wrapper as mne
+import meggie.code_meggie.general.fileManager as fileManager
+
 from meggie.ui.source_analysis.covarianceRawDialogUi import Ui_covarianceRawDialog
+
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -39,9 +41,15 @@ class CovarianceRawDialog(QtGui.QDialog):
         tmin = self.ui.doubleSpinBoxStartTime.value()
         tmax = self.ui.doubleSpinBoxEndTime.value()
 
+        name = str(self.ui.lineEditName.text()) + '-cov.fif'
+        if name in self.experiment.active_subject.get_covfiles():
+            messagebox(self, "Covariance matrix of this name already exists",
+                       exec_=True)
+            return
+
         if self.ui.radioButtonElsewhere.isChecked():
             try:
-                path = lineEditRawFile.text()
+                path = self.ui.lineEditRawFile.text()
                 subject_raw = self.experiment.active_subject.get_working_file()
                 raw = fileManager.open_raw(path)
 
@@ -51,16 +59,20 @@ class CovarianceRawDialog(QtGui.QDialog):
                 raw.apply_proj()
 
             except Exception as exc:
-                exc_messagebox(self, exc)
+                exc_messagebox(self, exc, exec_=True)
+                return
         else:
             raw = self.experiment.active_subject.get_working_file().copy()
+            raw.apply_proj()
 
-        noise_cov = mne.compute_raw_covariance(
-                raw, tmin=tmin, tmax=tmax)
-
-        path = self.experiment.active_subject.covfile_path
-
-        mne.write_cov(path, noise_cov)
+        try:
+            cov = mne.compute_raw_covariance(raw, tmin=tmin, tmax=tmax)
+            path = os.path.join(self.experiment.active_subject.cov_directory, 
+                                name)
+            mne.write_cov(path, cov)
+        except Exception as exc:
+            exc_messagebox(self, exc, exec_=True)
+            return
 
         if self.on_close:
             self.on_close()

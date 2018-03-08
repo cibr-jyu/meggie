@@ -41,6 +41,7 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         self.ui.lineEditData.setText(inst_name)
 
         self.populate_labels()
+        self.populate_covariances()
 
 
     def populate_labels(self):
@@ -59,6 +60,14 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
 
         self.ui.comboBoxLabel.setCurrentIndex(0)
 
+    def populate_covariances(self):
+        active_subject = self.experiment.active_subject
+
+        covariances = active_subject.get_covfiles()
+        self.ui.comboBoxCovariance.clear()
+        for covariance in covariances:
+            self.ui.comboBoxCovariance.addItem(covariance)
+        self.ui.comboBoxCovariance.setCurrentIndex(0)
 
     def accept(self):
         """
@@ -84,6 +93,11 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         depth = float(self.ui.doubleSpinBoxDepth.value())
         lambda2 = float(self.ui.doubleSpinBoxLambda.value())
         method = str(self.ui.comboBoxMethod.currentText())
+        covfile = str(self.ui.comboBoxCovariance.currentText())
+
+        if not covfile:
+            messagebox(self, "No covariance matrix selected", exec_=True)
+            return
 
         start = float(self.ui.doubleSpinBoxStart.value())
         end = float(self.ui.doubleSpinBoxEnd.value())
@@ -103,8 +117,8 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
 
         try:
             linear_stc(self.experiment, stc_name, inst_name, inst_type, 
-                       fwd_name, loose, depth, label, lambda2, method, 
-                       start, end)
+                       covfile, fwd_name, loose, depth, label, lambda2, 
+                       method, start, end)
         except Exception as exc:
             exc_messagebox(self.parent, exc, exec_=True)
 

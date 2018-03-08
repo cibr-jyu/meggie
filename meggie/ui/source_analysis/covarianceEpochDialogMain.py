@@ -3,11 +3,13 @@ Created on 3.5.2016
 
 @author: jaolpeso, erpipehe
 '''
-import mne
+import os
 
 from PyQt4 import QtGui
 
 from meggie.ui.source_analysis.covarianceEpochDialogUi import Ui_covarianceEpochDialog
+
+import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -15,7 +17,7 @@ from meggie.ui.utils.messaging import messagebox
 class CovarianceEpochDialog(QtGui.QDialog):
     """
     The class containing the logic for the dialog for collecting the
-    parameters computing the noise covariance for epoch collection/s.
+    parameters computing the covariance for epoch collection/s.
     """
 
     def __init__(self, experiment, on_close=None):
@@ -38,17 +40,26 @@ class CovarianceEpochDialog(QtGui.QDialog):
             tmin = self.ui.doubleSpinBoxTmin.value()
             tmax = self.ui.doubleSpinBoxTmax.value()
         except Exception as exc:
-            messagebox(self, "No epoch collection selected")
+            messagebox(self, "No epoch collection selected", exec_=True)
             return
 
         epochs = self.experiment.active_subject.epochs[collection_name].raw
 
+        name = str(self.ui.lineEditName.text()) + '-cov.fif'
+        if name in self.experiment.active_subject.get_covfiles():
+            messagebox(self, "Covariance matrix of this name already exists", 
+                       exec_=True)
+            return
+
         try:
-            noise_cov = mne.compute_covariance(epochs, tmin=tmin, tmax=tmax)
-            path = self.experiment.active_subject.covfile_path
-            mne.write_cov(path, noise_cov)
+            cov = mne.compute_covariance(epochs, tmin=tmin, tmax=tmax)
+            path = os.path.join(self.experiment.active_subject.cov_directory,
+                                name)
+
+            mne.write_cov(path, cov)
         except Exception as exc:
-            exc_messagebox(self, exc) 
+            exc_messagebox(self, exc, exec_=True) 
+            return
 
         if self.on_close:
             self.on_close() 
@@ -65,5 +76,4 @@ class CovarianceEpochDialog(QtGui.QDialog):
 
         self.ui.doubleSpinBoxTmin.setValue(tmin)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
-
          

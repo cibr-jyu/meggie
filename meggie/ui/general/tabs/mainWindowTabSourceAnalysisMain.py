@@ -40,8 +40,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation, "Source modelling preparation")
         self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabCoregistration, "Coregistration")
-        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardSolution, "Forward solution creation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabNoiseCovariance, "Noise covariance")
+        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardSolution, "Forward solution")
+        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabNoiseCovariance, "Covariance matrix")
         self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabSourceEstimate, "Source estimate")
         self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabAnalysis, "Analysis")
 
@@ -95,13 +95,15 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             item = QtGui.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesStc.addItem(item)
 
+        # populate covfiles in cov tab
+        self.ui.listWidgetCovariances.clear()
+        for covfile in active_subject.get_covfiles():
+            item = QtGui.QListWidgetItem(covfile)
+            self.ui.listWidgetCovariances.addItem(item)
+
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
             self.ui.checkBoxCoregistrationSelected.setChecked(True)
-
-        # set covariance state to selected if covariance file exists
-        if active_subject.check_covfile_exists():
-            self.ui.checkBoxCovarianceComputed.setChecked(True)
 
         
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
@@ -373,14 +375,6 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.covarianceEpochDialog.show()
 
-    def on_pushButtonCovariancePlot_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-
-        logging.getLogger('ui_logger').info("Covariance plot clicked")
-
     def on_pushButtonLinear_clicked(self, checked=None):
         """
         """
@@ -435,6 +429,66 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         self.parent.experiment.save_experiment_settings()
         self.initialize_ui()
+
+    def on_pushButtonCovariancePlot_clicked(self, checked=None):
+        """ """
+        if checked is None:
+            return
+        
+        if not self.parent.experiment:
+            return
+
+        if not self.parent.experiment.active_subject:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        info = active_subject.get_working_file(preload=False).info
+
+        current_covfile = str(self.ui.listWidgetCovariances.currentItem().text())
+
+        path = os.path.join(active_subject.cov_directory,
+                            current_covfile)
+        cov = mne.read_cov(path)
+        cov.plot(info)
+
+
+    def on_pushButtonCovarianceRemove_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        if not self.parent.experiment.active_subject:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        try:
+
+            current_covfile = str(self.ui.listWidgetCovariances.currentItem().text())
+        except AttributeError:
+            return
+
+        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+            "Do you really want to remove the the selected covariance matrix?",
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.No:
+            return
+
+        path = os.path.join(active_subject.cov_directory,
+                            current_covfile)
+
+        logging.getLogger('ui_logger').info(
+            'Removing covariance matrix file from ' + path)
+
+        os.remove(path)
+
+        self.initialize_ui()
+
 
     def on_pushButtonVisStc_clicked(self, checked=None):
         """Visualize source estimates."""

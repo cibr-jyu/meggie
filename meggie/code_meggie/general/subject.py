@@ -34,9 +34,6 @@ class Subject(object):
         self._working_file = None
         self._working_file_name = working_file_name
 
-        # Dictionary for epochs where key is the name of the collection
-        # and value is the epochs object. Similar approach with evoked and
-        # forward model objects.
         self._epochs = dict()
         self._evokeds = dict()
         self._stcs = dict()
@@ -64,9 +61,9 @@ class Subject(object):
 
         self._transfile_path = os.path.join(self._source_analysis_directory, 
                                             'mri_meg-trans.fif')
-        self._covfile_path = os.path.join(self._source_analysis_directory, 
-                                            'noise-cov.fif')
 
+        self._cov_directory = os.path.join(self._source_analysis_directory, 
+                                           'cov')
         self._experiment = experiment
 
     @property
@@ -102,8 +99,8 @@ class Subject(object):
         return self._transfile_path
 
     @property
-    def covfile_path(self):
-        return self._covfile_path
+    def cov_directory(self):
+        return self._cov_directory
 
     @property
     def mri_subject_name(self):
@@ -409,14 +406,6 @@ class Subject(object):
 
         return False
 
-    def check_covfile_exists(self):
-        path = self.covfile_path
-
-        if os.path.isfile(path):
-            return True
-
-        return False
-
     def check_reconFiles_copied(self):
         reconDir = self.reconfiles_directory
         mriDir = os.path.join(reconDir, 'mri/') 
@@ -450,6 +439,11 @@ class Subject(object):
                        os.listdir(self.forward_solutions_directory))
         return names
 
+    def get_covfiles(self):
+        fnames = filter(lambda x: x.endswith('-cov.fif'),
+                        os.listdir(self.cov_directory))
+        return fnames
+
     def get_inverse_operator_names(self):
         names = filter(lambda x: x.endswith('inv.fif'), 
                        os.listdir(self.inverse_operators_directory))
@@ -464,6 +458,7 @@ class Subject(object):
                 self.source_analysis_directory,
                 self.forward_solutions_directory,
                 self.reconfiles_directory,
+                self.cov_directory,
                 self.stc_directory
             ])
         except OSError:
