@@ -7,6 +7,7 @@ from PyQt4 import QtGui
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
 from meggie.ui.source_analysis.linearSourceEstimateDialogMain import LinearSourceEstimateDialog  # noqa
+from meggie.ui.source_analysis.lcmvDialogMain import LCMVDialog
 from meggie.ui.source_analysis.covarianceRawDialogMain import CovarianceRawDialog  # noqa
 from meggie.ui.source_analysis.covarianceEpochDialogMain import CovarianceEpochDialog  # noqa
 
@@ -414,6 +415,47 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             on_close=self.initialize_ui)
 
         self.linearSourceEstimateDialog.show()
+
+    def on_pushButtonLCMV_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        if not self.parent.experiment:
+            return
+
+        if not self.parent.experiment.active_subject:
+            return
+
+        active_subject = self.parent.experiment.active_subject
+
+        try:
+            fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
+        except:
+            messagebox(self, "Have you selected the forward solution?")
+            return
+
+        try:
+            if self.ui.radioButtonStcRaw.isChecked():
+                inst_type = 'raw'
+                inst_name = active_subject.working_file_name
+            elif self.ui.radioButtonStcEpochs.isChecked():
+                inst_type = 'epochs'
+                inst_name = str(self.ui.listWidgetStcEpochs.currentItem().text())
+            elif self.ui.radioButtonStcEvoked.isChecked():
+                inst_type = 'evoked'
+                inst_name = str(self.ui.listWidgetStcEvoked.currentItem().text())
+        except Exception as e:
+            messagebox(self, "Have you selected the dataset?")
+            return
+
+        self.lcmvDialog = LCMVDialog(self,
+            fwd_name, inst_type, inst_name, self.parent.experiment, 
+            on_close=self.initialize_ui)
+
+        self.lcmvDialog.show()
+
 
     def on_pushButtonStcRemove_clicked(self, checked=None):
         """

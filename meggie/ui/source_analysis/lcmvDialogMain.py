@@ -4,9 +4,9 @@
 
 from PyQt4 import QtGui
 
-from meggie.ui.source_analysis.linearSourceEstimateDialogUi import Ui_linearSourceEstimateDialog  # noqa
+from meggie.ui.source_analysis.lcmvDialogUi import Ui_lcmvDialog  # noqa
 
-from meggie.code_meggie.general.source_analysis import create_linear_source_estimate  # noqa
+from meggie.code_meggie.general.source_analysis import create_lcmv_estimate
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -14,14 +14,14 @@ from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
-class LinearSourceEstimateDialog(QtGui.QDialog):
+class LCMVDialog(QtGui.QDialog):
     """
     """
 
     def __init__(self, parent, fwd_name, inst_type, inst_name, experiment=None, on_close=None):
         QtGui.QDialog.__init__(self)
         self.parent = parent
-        self.ui = Ui_linearSourceEstimateDialog()
+        self.ui = Ui_lcmvDialog()
         self.ui.setupUi(self)
         self.on_close = on_close
         self.experiment = experiment
@@ -46,12 +46,12 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
 
     def read_labels(self):
         active_subject = self.experiment.active_subject
+
         subject = active_subject.mri_subject_name
         subjects_dir = active_subject.source_analysis_directory
 
         labels = mne.read_labels_from_annot(subject=subject, parc='aparc',
             subjects_dir=subjects_dir)
-
         return labels
 
     def populate_labels(self):
@@ -68,10 +68,13 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         active_subject = self.experiment.active_subject
 
         covariances = active_subject.get_covfiles()
-        self.ui.comboBoxCovariance.clear()
+        self.ui.comboBoxNoiseCovariance.clear()
+        self.ui.comboBoxDataCovariance.clear()
         for covariance in covariances:
-            self.ui.comboBoxCovariance.addItem(covariance)
-        self.ui.comboBoxCovariance.setCurrentIndex(0)
+            self.ui.comboBoxNoiseCovariance.addItem(covariance)
+            self.ui.comboBoxDataCovariance.addItem(covariance)
+        self.ui.comboBoxNoiseCovariance.setCurrentIndex(0)
+        self.ui.comboBoxDataCovariance.setCurrentIndex(0)
 
     def accept(self):
         """
@@ -93,15 +96,9 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         inst_name = self.inst_name
         inst_type = self.inst_type
 
-        loose = float(self.ui.doubleSpinBoxLoose.value())
-        depth = float(self.ui.doubleSpinBoxDepth.value())
-        lambda2 = float(self.ui.doubleSpinBoxLambda.value())
-        method = str(self.ui.comboBoxMethod.currentText())
-        covfile = str(self.ui.comboBoxCovariance.currentText())
-
-        if not covfile:
-            messagebox(self, "No covariance matrix selected", exec_=True)
-            return
+        reg = float(self.ui.doubleSpinBoxReg.value())
+        data_covfile = str(self.ui.comboBoxDataCovariance.currentText())
+        noise_covfile = str(self.ui.comboBoxNoiseCovariance.currentText())
 
         start = float(self.ui.doubleSpinBoxStart.value())
         end = float(self.ui.doubleSpinBoxEnd.value())
@@ -119,13 +116,13 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
         subject = self.experiment.active_subject
 
         @threaded
-        def linear_stc(*args, **kwargs):
-            create_linear_source_estimate(*args, **kwargs)
+        def lcmv_stc(*args, **kwargs):
+            create_lcmv_estimate(*args, **kwargs)
 
         try:
-            linear_stc(self.experiment, stc_name, inst_name, inst_type, 
-                       covfile, fwd_name, loose, depth, label, lambda2, 
-                       method, start, end)
+            lcmv_stc(self.experiment, stc_name, inst_name, inst_type, 
+                     data_covfile, noise_covfile, fwd_name, label, 
+                     reg, start, end)
         except Exception as exc:
             exc_messagebox(self.parent, exc, exec_=True)
 

@@ -22,12 +22,65 @@ from meggie.code_meggie.general.stc import SourceEstimateEpochs
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 
 
+def create_lcmv_estimate(experiment, stc_name, inst_name, inst_type, 
+                         data_covfile, noise_covfile, fwd_name, label,
+                         reg, start, stop):
+    """
+    """
+
+    subject = experiment.active_subject
+
+    fwd_path = os.path.join(subject.forward_solutions_directory, fwd_name)
+    fwd = mne.read_forward_solution(fwd_path)
+
+    data_cov_path = os.path.join(subject.cov_directory, data_covfile)
+    data_cov = mne.read_cov(data_cov_path)
+
+    noise_cov_path = os.path.join(subject.cov_directory, noise_covfile)
+    noise_cov = mne.read_cov(noise_cov_path)
+
+    info = subject.get_working_file(preload=False).info
+
+    logging.getLogger('ui_logger').info('Beamforming...')
+
+    if inst_type == 'evoked':
+        evokeds = subject.evokeds[inst_name].mne_evokeds
+        stc_insts = {}
+        for key, inst in evokeds.items():
+            stc_insts[key] = mne.lcmv(inst, fwd, noise_cov=noise_cov, 
+                data_cov=data_cov, reg=reg, label=label)
+
+        stc = SourceEstimateEvoked(stc_name, stcs=stc_insts)
+            
+    elif inst_type == 'epochs':
+        inst = subject.epochs[inst_name].raw
+        stc_insts = mne.lcmv_epochs(inst, fwd, noise_cov=noise_cov, 
+            data_cov=data_cov, reg=reg, label=label)
+        
+        stc = SourceEstimateEpochs(stc_name, stcs=stc_insts)
+
+    elif inst_type == 'raw':
+        inst = subject.get_working_file().copy().copy()
+        inst.apply_proj()
+      
+        stc_inst = mne.lcmv_raw(inst, fwd, noise_cov=noise_cov, 
+            data_cov=data_cov, reg=reg, label=label)
+        
+        stc = SourceEstimateRaw(stc_name, stc=stc_inst)
+
+
+    logging.getLogger('ui_logger').info('Saving stc...')
+    subject.add_stc(stc)
+    stc.save(experiment)
+
+    experiment.save_experiment_settings()
+
+
 def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type, 
                                   covfile, fwd_name, loose, depth, label, 
                                   lambda2, method, start, stop):
     """
     """
-
     subject = experiment.active_subject
 
     fwd_path = os.path.join(subject.forward_solutions_directory, fwd_name)
