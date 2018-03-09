@@ -60,5 +60,11 @@ class stcPlotDialog(QtGui.QDialog):
         else:
             _, initial_time = stc.get_peak(hemi=None)
 
-        plot_source_estimate(self.experiment, stc, initial_time)
+        try:
+            plot_source_estimate(self.experiment, stc, initial_time)
+        except ImportError:
+            message = ("You need to install pysurfer for 3d visualization."
+                       "This can be done with e.g `pip install pysurfer`")
+            messagebox(self, message, exec_=True)
+
         
