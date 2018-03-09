@@ -26,7 +26,6 @@ class PreferencesHandler(object):
         '''Constructor'''
         self.working_directory = ''
         self.n_jobs = 3
-        self.MNERoot = ''
         self.FreeSurferHome = ''
         self.previous_experiment_name = ''
         self.auto_load_last_open_experiment = False
@@ -49,7 +48,6 @@ class PreferencesHandler(object):
                    self.previous_experiment_name)
         config.set('MiscOptions', 'n_jobs', self.n_jobs)       
         config.set('Workspace', 'workspaceDir', self.working_directory)
-        config.set('EnvVariables','MNERootDir', self.MNERoot)
         config.set('EnvVariables', 'FreeSurferHomeDir', self.FreeSurferHome)
 
         if self.auto_load_last_open_experiment == True:
@@ -86,24 +84,27 @@ class PreferencesHandler(object):
         # right next time). 
         try:
             self.working_directory = config.get('Workspace', 'workspaceDir') 
-            self.MNERoot = config.get('EnvVariables','MNERootDir')
             self.FreeSurferHome = config.get('EnvVariables', 'FreeSurferHomeDir')
             
             # No automatic typecasting to boolean here, so have to do this.
             if config.get('MiscOptions', 'autoreloadpreviousexperiment') == 'True':
                 self.auto_load_last_open_experiment = True
-            else: self.auto_load_last_open_experiment = False
+            else: 
+                self.auto_load_last_open_experiment = False
             
             if config.get('MiscOptions', 'confirmQuit') == 'True':
                 self.confirm_quit = True
-            else: self.confirm_quit = False
+            else: 
+                self.confirm_quit = False
             
             if config.get('MiscOptions', 'saveBads') == 'True':
                 self.save_bads = True
-            else: self.save_bads = False
+            else: 
+                self.save_bads = False
             
             self.previous_experiment_name = config.get(
                 'MiscOptions', 'previous_experiment_name')
+
             self.n_jobs = int(config.get('MiscOptions', 'n_jobs'))
         except NoOptionError:
             pass
@@ -111,34 +112,11 @@ class PreferencesHandler(object):
     
     def set_env_variables(self):
         """
-        Set various shell environment variables needed by MNE-C scripts and
-        FreeSurfer.
         """
-        message = ('Setting environment variables needed by MNE and '
-                   'Freesurfer ...')
+        message = ('Setting environment variables...')
         logging.getLogger('ui_logger').info(message)
 
-        if self.MNERoot:
-            os.environ['MNE_ROOT'] = self.MNERoot
-
-            mneBinPath = os.path.join(self.MNERoot, 'bin')
-            mneLibPath = os.path.join(self.MNERoot, 'lib')
-            mneUserFileSearchPath = os.path.join(self.MNERoot,
-                'share/app-defaults/%N')
-            os.environ['PATH'] += os.pathsep + mneBinPath
-
-            if os.environ.get('LD_LIBRARY_PATH') == None:
-                os.environ['LD_LIBRARY_PATH'] = mneLibPath
-            else:
-                os.environ['LD_LIBRARY_PATH'] += os.pathsep + mneLibPath
-
-            if os.environ.get('XUSERFILESEARCHPATH') == None:
-                os.environ['XUSERFILESEARCHPATH'] = mneUserFileSearchPath
-            else:
-                os.environ['XUSERFILESEARCHPATH'] += (os.pathsep +
-                    mneUserFileSearchPath)
-
-        # Also set environment directly for FreeSurfer.
+        # Set environment directly for FreeSurfer.
         if self.FreeSurferHome:
             freeSurferBinPath = os.path.join(self.FreeSurferHome, 'bin')
             freeSurferTktoolsPath = os.path.join(self.FreeSurferHome, 'tktools')

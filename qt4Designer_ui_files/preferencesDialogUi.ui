@@ -59,31 +59,6 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QLabel" name="labelMNERoot">
-          <property name="text">
-           <string>Select MNEROOT directory (needed for source analysis):</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QLineEdit" name="lineEditMNERoot"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonBrowseMNERoot">
-            <property name="text">
-             <string>Browse...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QLabel" name="labelFreeSurferHome">
@@ -162,7 +137,7 @@
            <number>1000000000</number>
           </property>
           <property name="value">
-           <number>10</number>
+           <number>3</number>
           </property>
          </widget>
         </item>
