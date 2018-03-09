@@ -360,4 +360,31 @@ def save_np_array(path, freqs, data, epochs_info):
     # save to file
     all_data = np.array(all_data)
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
+
+import os
+
+# see https://stackoverflow.com/a/13790289
+def tail(f, lines=1, _buffer=4098):
+    """Tail a file and get X lines from the end"""
+    # place holder for the lines found
+    lines_found = []
+
+    # block counter will be multiplied by buffer
+    # to get the block size from the end
+    block_counter = -1
+
+    # loop until we find X lines
+    while len(lines_found) < lines:
+        try:
+            f.seek(block_counter * _buffer, os.SEEK_END)
+        except IOError:  # either file is too small, or too many lines requested
+            f.seek(0)
+            lines_found = f.readlines()
+            break
+
+        lines_found = f.readlines()
+
+        block_counter -= 1
+
+    return lines_found[-lines:]
     

@@ -308,11 +308,12 @@ class Subject(object):
         """
         """
         path = os.path.join(self.stc_directory, name)
+        self._stcs.pop(str(name), None)
+
         try:
             shutil.rmtree(path)
         except OSError:
             raise IOError('Source estimate could not be removed from the file system')
-        self._stcs.pop(str(name), None)
 
     def check_ecg_projs(self):
         """

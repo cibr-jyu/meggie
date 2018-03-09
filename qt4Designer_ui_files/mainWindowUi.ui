@@ -21,7 +21,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
+    <width>700</width>
     <height>400</height>
    </size>
   </property>
@@ -77,7 +77,7 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>1100</width>
+          <width>1250</width>
           <height>750</height>
          </size>
         </property>
@@ -2666,13 +2666,6 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButtonMNE_Browse_Raw">
-            <property name="text">
-             <string>View raw file</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
            <widget class="QPushButton" name="pushButtonLayout">
             <property name="text">
              <string>Change layout...</string>
@@ -2799,7 +2792,6 @@
   <tabstop>pushButtonActivateSubject</tabstop>
   <tabstop>pushButtonAddSubjects</tabstop>
   <tabstop>pushButtonRemoveSubject</tabstop>
-  <tabstop>pushButtonMNE_Browse_Raw</tabstop>
   <tabstop>listWidgetSubjects</tabstop>
  </tabstops>
  <resources/>

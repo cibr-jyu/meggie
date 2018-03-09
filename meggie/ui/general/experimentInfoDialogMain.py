@@ -7,16 +7,15 @@ Created on 9.4.2014
 from PyQt4 import QtCore, QtGui
 from meggie.ui.general.experimentInfoDialogUi import Ui_experimentInfoDialog
 
-class experimentInfoDialog(QtGui.QDialog):
+class ExperimentInfoDialog(QtGui.QDialog):
     """
     Dialog for showing general info about the experiment.
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         """
-        Constructor
         """
-        QtGui.QDialog.__init__(self, parent)
+        QtGui.QDialog.__init__(self)
         self.ui = Ui_experimentInfoDialog() 
         self.ui.setupUi(self)        
         self.parent = parent
@@ -28,5 +27,7 @@ class experimentInfoDialog(QtGui.QDialog):
         
         
     def on_ButtonClose_clicked(self, checked=None):
-        if checked is None: return
+        if checked is None: 
+            return
+
         self.close()

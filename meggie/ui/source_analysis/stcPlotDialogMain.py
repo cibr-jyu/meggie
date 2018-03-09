@@ -14,6 +14,8 @@ import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.ui.source_analysis.stcPlotDialogUi import Ui_stcPlotDialog
 
+from meggie.code_meggie.general.source_analysis import plot_source_estimate
+
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -45,8 +47,18 @@ class stcPlotDialog(QtGui.QDialog):
         """
         """
 
-        if self.ui.radioButtonInitialTime.isChecked():
-            pass
+        meggie_stc = self.experiment.active_subject.stcs[self.stc_name]
+
+        if meggie_stc.type != 'raw':
+            source = str(self.ui.comboBoxSource.currentText())
+            stc = meggie_stc.get_data(self.experiment)[source]
         else:
-            pass
+            stc = meggie_stc.get_data(self.experiment)
+
+        if self.ui.radioButtonInitialTime.isChecked():
+            initial_time = self.ui.doubleSpinBoxInitialTime.value()
+        else:
+            _, initial_time = stc.get_peak(hemi=None)
+
+        plot_source_estimate(self.experiment, stc, initial_time)
         

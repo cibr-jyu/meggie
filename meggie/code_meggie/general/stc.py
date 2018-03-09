@@ -146,7 +146,7 @@ class SourceEstimateEvoked(SourceEstimate):
 
     def load(self, experiment):
         path = os.path.join(experiment.active_subject.stc_directory, self.name)
-        keys = self.keys()
+        keys = self.keys(experiment)
         for key in keys:
             self._stcs[key] = mne.read_source_estimate(os.path.join(path, key))
         return self._stcs

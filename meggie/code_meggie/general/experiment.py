@@ -259,7 +259,7 @@ class Experiment(QObject):
                         'type': stc.type
                     }
                     if stc.type == 'evoked':
-                        stc_dict['keys'] = stc.keys()
+                        stc_dict['keys'] = stc.keys(self)
 
                     subject_dict['stcs'].append(stc_dict)
                 except IOError:

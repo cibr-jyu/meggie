@@ -166,6 +166,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
 
+        self.initialize_ui()
+
     def on_pushButtonBem_clicked(self, checked=None):
         if checked is None:
             return
@@ -543,10 +545,18 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if checked is None:
             return
 
+        if not self.parent.experiment:
+            return
+
         logging.getLogger('ui_logger').info("Plotting source estimate..")
 
         stc_item = self.ui.listWidgetSourceEstimatesAna.currentItem() 
-        stc_name = str(stc_item.text())
+        try:
+            stc_name = str(stc_item.text())
+        except AttributeError as e:
+            messagebox(self, "You should select the source estimate first.")
+            return
+
 
         self.stcPlotDialog = stcPlotDialog(self.parent.experiment, stc_name)
         self.stcPlotDialog.show()

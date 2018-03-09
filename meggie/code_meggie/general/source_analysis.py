@@ -22,13 +22,13 @@ from meggie.code_meggie.general.stc import SourceEstimateEpochs
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 
 
-def plot_source_estimate(experiment, stc):
+def plot_source_estimate(experiment, stc, initial_time):
     """
     """
     subject = experiment.active_subject.mri_subject_name
     subjects_dir = experiment.active_subject.source_analysis_directory
 
-    stc.plot(subjects_dir=subjects_dir, subject=subject, time_viewer=True)
+    stc.plot(subjects_dir=subjects_dir, subject=subject, initial_time=initial_time, hemi='split', time_viewer=True, views=['lat', 'med'])
 
 
 def create_lcmv_estimate(experiment, stc_name, inst_name, inst_type, 
@@ -135,36 +135,41 @@ def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type,
     experiment.save_experiment_settings()
     
 
-def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
+def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity, include_eeg, include_meg):
     """
     """
 
     subject_name = subject.mri_subject_name
     subjects_dir = subject.source_analysis_directory
 
-    # set up source space
+    logging.getLogger('ui_logger').info('Setting up the source space...')
     src = mne.setup_source_space(subject=subject_name, spacing=decim,
         subjects_dir=subjects_dir)
 
-    # set up bem solution
+
+    logging.getLogger('ui_logger').info('Creating bem model...')
     model = mne.make_bem_model(subject=subject_name, ico=triang_ico,
 			       conductivity=conductivity,
 			       subjects_dir=subjects_dir)
+
+    logging.getLogger('ui_logger').info('Creating bem solution...')
     bem = mne.make_bem_solution(model)
 
     # gather parameters
     trans = subject.transfile_path
     info = subject.get_working_file().info
-    meg = True
-    eeg = True if len(conductivity) == 3 else False
+    meg = include_meg
+    eeg = include_eeg
     
-    # make forward solution
+    logging.getLogger('ui_logger').info('Creating forward solution...')
     fwd = mne.make_forward_solution(info, trans=trans, src=src, bem=bem,
         meg=meg, eeg=eeg, mindist=5.0)
 
     # save the file
     fname = solution_name + '-' + decim + '-src-fwd.fif'
     path = os.path.join(subject.forward_solutions_directory, fname)
+
     mne.write_forward_solution(path, fwd)
 
+    logging.getLogger('ui_logger').info('Forward solution creation done.')
 

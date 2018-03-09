@@ -9,6 +9,7 @@ from meggie.ui.source_analysis.forwardSolutionDialogUi import Ui_forwardSolution
 from meggie.code_meggie.general.source_analysis import create_forward_solution
 
 from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
 
 class ForwardSolutionDialog(QtGui.QDialog):
@@ -31,6 +32,13 @@ class ForwardSolutionDialog(QtGui.QDialog):
         name = str(self.ui.lineEditForwardSolutionName.text())
         decim = str(self.ui.comboBoxSurfaceDecimMethod.currentText())
         triang_ico = int(self.ui.spinBoxTriangFilesIco.value())
+
+        include_eeg = self.ui.checkBoxIncludeEEG.isChecked()
+        include_meg = self.ui.checkBoxIncludeMEG.isChecked()
+
+        if not include_eeg and not include_meg:
+            messagebox(self, "You must include either EEG or MEG channels.", exec_=True)
+            return
 
         inner_skull = float(self.ui.doubleSpinBoxBrainConductivity.value())
         outer_skull = float(self.ui.doubleSpinBoxSkullConductivity.value())
@@ -55,7 +63,7 @@ class ForwardSolutionDialog(QtGui.QDialog):
             create_forward_solution(*args, **kwargs)
 
         try:
-            fwd_solution(subject, name, decim, triang_ico, conductivity)
+            fwd_solution(subject, name, decim, triang_ico, conductivity, include_eeg, include_meg)
         except Exception as exc:
             exc_messagebox(self, exc)
 

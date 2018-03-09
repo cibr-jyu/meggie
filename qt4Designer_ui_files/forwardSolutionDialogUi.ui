@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>361</height>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@
       <string>BEM model setup parameters:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="labelHomog">
         <property name="text">
          <string>Compartment model (homog) :</string>
@@ -93,7 +93,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="3" column="1">
        <widget class="QComboBox" name="comboBoxCompartmentModel">
         <item>
          <property name="text">
@@ -107,7 +107,7 @@
         </item>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="4" column="1">
        <widget class="QFrame" name="frame_2">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -204,14 +204,14 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="labelTriangIco">
         <property name="text">
          <string>Triangulation files ico-number:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="2" column="1">
        <widget class="QSpinBox" name="spinBoxTriangFilesIco">
         <property name="enabled">
          <bool>true</bool>
@@ -221,6 +221,43 @@
         </property>
         <property name="value">
          <number>4</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelIncludeMEG">
+        <property name="text">
+         <string>Include MEG:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBoxIncludeMEG">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelIncludeEEG">
+        <property name="text">
+         <string>Include EEG:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBoxIncludeEEG">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>

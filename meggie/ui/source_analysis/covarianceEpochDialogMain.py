@@ -4,6 +4,7 @@ Created on 3.5.2016
 @author: jaolpeso
 '''
 import os
+import logging
 
 from PyQt4 import QtGui
 
@@ -60,6 +61,9 @@ class CovarianceEpochDialog(QtGui.QDialog):
         except Exception as exc:
             exc_messagebox(self, exc, exec_=True) 
             return
+
+     
+        logging.getLogger('ui_logger').info('Covariance matrix has been successfully computed.')
 
         if self.on_close:
             self.on_close() 

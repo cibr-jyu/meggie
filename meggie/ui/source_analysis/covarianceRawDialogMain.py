@@ -74,6 +74,8 @@ class CovarianceRawDialog(QtGui.QDialog):
             exc_messagebox(self, exc, exec_=True)
             return
 
+        logging.getLogger('ui_logger').info('Covariance matrix has been successfully computed.')
+
         if self.on_close:
             self.on_close()
 

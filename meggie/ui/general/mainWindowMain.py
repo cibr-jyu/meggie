@@ -23,6 +23,8 @@ from PyQt4.Qt import QApplication
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+from meggie.ui.icons import mainWindowIcons_rc
+
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
@@ -48,7 +50,7 @@ from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
-from meggie.ui.general.experimentInfoDialogMain import experimentInfoDialog
+from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
 from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -342,7 +344,8 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment is None:
             messagebox(self, 'You do not currently have an experiment activated.')  # noqa
             return
-        self.expInfoDialog = experimentInfoDialog(self)
+
+        self.expInfoDialog = ExperimentInfoDialog(self)
         self.expInfoDialog.show()
 
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
