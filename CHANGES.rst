@@ -1,10 +1,19 @@
 Changelog
 =========
 
-0.5.3 (unreleased)
+0.6.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.6.0 (2018-03-09)
+------------------
+
+- Pin MNE-python dependency to 0.15.2
+- Update logging mechanism
+- Refactor a lot of codebase
+- (Re)implement the source analysis pipeline
+- Fix ICA custom layout issue
 
 
 0.5.2 (2017-10-14)
