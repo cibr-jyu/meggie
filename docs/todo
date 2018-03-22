@@ -2,19 +2,12 @@ TODO:
 
 - should do manual for meggie
 - refactoring:
- * get rid of the caller by
-  - keeping the state inside Experiment-object that is intialized in MainWindow
-  - moving methods of caller to other python files as functions
-  - look into structure of mainWindowUi
-    * separate different tabs to different files?
-    * epochs batching widget code maybe should not lie there globally
+ * main window tabs to separate files
  * check proper style with pylint
 - we need tests
 
 bugs:
 - check also the spectral analysis things...
-- channel averages has something weird for magnetometers
-- there is a bug in epoch collection creation with batching widget that can hide collections from the main window
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - fix EEG projections / Ocular projections name mixup
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
@@ -34,6 +27,3 @@ features:
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
 - if possible, similar stats/seletion things as for epochs, for spectrums also
-- throbber to activate selected
-- throbber to batch widget
-- throbber to evokeds

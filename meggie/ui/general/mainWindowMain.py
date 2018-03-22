@@ -1195,7 +1195,7 @@ class MainWindow(QtGui.QMainWindow):
             def average():
                 return epoch.average()
 
-            evoked = average()
+            evoked = average(do_meanwhile=self.update_ui)
 
             evoked.comment = name
             evokeds[name] = evoked
