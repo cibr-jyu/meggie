@@ -1,10 +1,17 @@
 Changelog
 =========
 
-0.6.1 (unreleased)
+0.6.2 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.6.1 (2018-03-22)
+------------------
+
+- Refactor code
+- Update throbbers
+- Clean up messages
 
 0.6.0 (2018-03-09)
 ------------------
