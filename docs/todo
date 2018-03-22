@@ -10,7 +10,6 @@ TODO:
     * epochs batching widget code maybe should not lie there globally
  * check proper style with pylint
 - we need tests
-- have to check what happens if mne and freesurfer cant be found in the paths
 
 bugs:
 - check also the spectral analysis things...
@@ -19,6 +18,9 @@ bugs:
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - fix EEG projections / Ocular projections name mixup
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
+- if evoked created from different length epochs, plotting doesnt work
+- njobs-story
+- must fix the stft thingy
 
 features:
 - evoked topomaps
@@ -32,3 +34,6 @@ features:
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
 - if possible, similar stats/seletion things as for epochs, for spectrums also
+- throbber to activate selected
+- throbber to batch widget
+- throbber to evokeds

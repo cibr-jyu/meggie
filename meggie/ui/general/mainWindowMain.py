@@ -63,17 +63,18 @@ from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.evoked import Evoked
 from meggie.code_meggie.utils.units import get_unit
+from meggie.code_meggie.analysis.epoching import draw_evoked_potentials
+from meggie.code_meggie.analysis.epoching import group_average
+from meggie.code_meggie.analysis.epoching import average_channels
+from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
 
 
 class MainWindow(QtGui.QMainWindow):
     """
     Class containing the logic for the MainWindow
     """
-
-    caller = Caller.Instance()
 
     def __init__(self, application):
         QtGui.QMainWindow.__init__(self)
@@ -88,11 +89,6 @@ class MainWindow(QtGui.QMainWindow):
         if 'debug' not in sys.argv:
             self.directOutput()
             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
-
-        # One main window (and one _experiment) only needs one caller to do its
-        # bidding.
-        self.caller.setParent(self)
-
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
         self.preferencesHandler.set_env_variables()
@@ -113,7 +109,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.ui.listWidgetEvoked.setMinimumWidth(346)
         self.ui.listWidgetEvoked.setMaximumWidth(346)
-        
+
         self.evokeds_batching_widget = BatchingWidget(
             self.experiment,
             self, self.ui.widget,
@@ -121,9 +117,8 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.pushButtonCreateEvokedBatch,
             self.evoked_selection_changed,
             self.collect_evoked_parameter_values,
-            self.initialize_ui
         )
-        
+ 
         # Populate the combobox for selecting lobes for channel averages.
         self.populate_comboBoxLobes()
 
@@ -140,12 +135,12 @@ class MainWindow(QtGui.QMainWindow):
                 exc_messagebox(self, e)
             
             if exp:
-                self.caller.experiment = exp
                 self.experiment = exp
                 self.initialize_ui()
             else:
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
+
 
         # Select the first item on epoch list
         if self.epochList.ui.listWidgetEpochs.count() > 1:
@@ -210,7 +205,6 @@ class MainWindow(QtGui.QMainWindow):
             exp = self.experimentHandler.open_existing_experiment(
                 self.preferencesHandler, path=path)
             self.experiment = exp
-            self.caller.experiment = exp
             self.initialize_ui()
         except Exception as e:
             exc_messagebox(self, e)
@@ -505,6 +499,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def on_pushButtonEpochsPlot_clicked(self, checked=None):
         """Call ``epochs.plot``."""
+
         if checked is None:
             return
         if self.experiment.active_subject is None:
@@ -555,7 +550,8 @@ class MainWindow(QtGui.QMainWindow):
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
 
-            self.caller.draw_evoked_potentials(
+            draw_evoked_potentials(
+                self.experiment,
                 mne_evokeds.values(),
                 title=evoked_name)
 
@@ -586,7 +582,9 @@ class MainWindow(QtGui.QMainWindow):
         evoked_name = str(item.text())
 
         try:
-            evokeds, group_epoch_info = self.caller.group_average(evoked_name)
+            evokeds, group_epoch_info = group_average(
+                self.experiment, evoked_name, update_ui=self.update_ui)
+
         except Exception as e:
             exc_messagebox(self, e)
             return
@@ -791,7 +789,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         try:
-            self.caller.plot_projs_topomap(raw)
+            plot_projs_topomap(self.experiment, raw)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -835,7 +833,6 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         self.eogDialog = EogParametersDialog(self)
-        self.eogDialog.computed.connect(self.ui.checkBoxEOGComputed.setChecked)
         self.eogDialog.show()
 
     def on_pushButtonECG_clicked(self, checked=None):
@@ -994,11 +991,13 @@ class MainWindow(QtGui.QMainWindow):
             message = 'Please select an epoch collection to channel average.'
             messagebox(self, message)
             return
+
         name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
         
         try:
-            self.caller.average_channels(name,
-                                         self.ui.comboBoxLobes.currentText())
+            average_channels(self.experiment, name,
+                             self.ui.comboBoxLobes.currentText(),
+                             update_ui=self.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -1053,14 +1052,18 @@ class MainWindow(QtGui.QMainWindow):
         
         previous_subject = self.experiment.active_subject
         try:
-            self.caller.activate_subject(subject_name)
+            @threaded
+            def activate(subject_name):
+                self.experiment.activate_subject(subject_name)
+            activate(subject_name, do_meanwhile=self.update_ui)
+
         except Exception as e:
             self.experiment.active_subject = None
             exc_messagebox(self, "Couldn't activate the subject.")
             if previous_subject:
                 message = "Couldn't activate the subject, resuming to previous one."
                 logging.getLogger('ui_logger').info(message)
-                self.caller.activate_subject(previous_subject.subject_name)
+                self.experiment.activate_subject(previous_subject.subject_name)
 
         self.initialize_ui()
 
@@ -1076,7 +1079,6 @@ class MainWindow(QtGui.QMainWindow):
     @QtCore.pyqtSlot(Experiment)
     def setExperiment(self, newExperiment):
         """Temporary setter for experiment."""
-        self.caller.experiment = newExperiment
         self.experiment = newExperiment
         gc.collect()
         
@@ -1152,9 +1154,8 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.ui.textBrowserStim.setText('-1')
 
-
         self.ui.textBrowserWorkingFile.setText(
-            os.path.basename(epochs.raw.filename))
+            epochs.path)
 
     def clear_epoch_collection_parameters(self):
         """
@@ -1320,6 +1321,10 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
         self.populate_subject_list()
+
+        # Update the batching widget ui
+        if self.experiment:
+            self.evokeds_batching_widget.update(self.experiment, False)
 
         active_subject = self.experiment.active_subject
         

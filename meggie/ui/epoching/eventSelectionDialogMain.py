@@ -16,9 +16,10 @@ from PyQt4 import QtCore,QtGui
 from copy import deepcopy
 
 from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.epoching.events import Events
 from meggie.code_meggie.general import fileManager
+
+from meggie.code_meggie.analysis.epoching import create_epochs
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -34,7 +35,6 @@ class EventSelectionDialog(QtGui.QDialog):
     Class containing the logic for EventSelectionDialog. It is used for
     collecting desired events from continuous data.
     """
-    caller = Caller.Instance()
 
     def __init__(self, parent): #, params = None):
         """Initialize the event selection dialog.
@@ -341,7 +341,8 @@ class EventSelectionDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 try:
-                    self.caller.activate_subject(name)
+                    experiment = self.parent.experiment
+                    experiment.activate_subject(name)
                     events_str = self.calculate_epochs(subject)
                     epoch_info.append(events_str)
                 except Exception as e:
@@ -349,7 +350,9 @@ class EventSelectionDialog(QtGui.QDialog):
                                                                  str(e)))
 
                     logging.getLogger('ui_logger').exception(str(e))
-        self.caller.activate_subject(recently_active_subject)
+        experiment = self.parent.experiment
+        experiment.activate_subject(recently_active_subject)
+
         self.batching_widget.cleanup()
         self.parent.experiment.save_experiment_settings()
         self.parent.initialize_ui()
@@ -395,6 +398,7 @@ class EventSelectionDialog(QtGui.QDialog):
         messagebox(self.parent, help_message, 'Mask help')
 
     def calculate_epochs(self, subject):
-        events_str = self.caller.create_epochs(
+        experiment = self.parent.experiment
+        events_str = create_epochs(experiment,
             self.batching_widget.data[subject.subject_name], subject)
         return events_str

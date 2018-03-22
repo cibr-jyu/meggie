@@ -153,7 +153,7 @@ class MeasurementInfo(object):
         subj_info = self._info.get('subject_info')
 
         if not subj_info:
-            logging.getLogger('ui_logger').info("Personal info not found.")
+            logging.getLogger('ui_logger').debug("Personal info not found.")
             return ''
 
         last_name = subj_info.get('last_name', '')

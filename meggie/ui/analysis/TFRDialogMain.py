@@ -10,14 +10,13 @@ from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
+from meggie.code_meggie.analysis.spectral import TFR
+
 from meggie.ui.analysis.TFRfromEpochsUi import Ui_DialogEpochsTFR
-from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 
 class TFRDialog(QtGui.QDialog):
     """
-    Class containing the logic for TFRDialog. Collects the necessary parameter
-    values and passes them to the Caller-class.
     """
     
     def __init__(self, parent, epochs):
@@ -47,7 +46,6 @@ class TFRDialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Collects parameters and calls the caller class to create a TFR.
         """
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
@@ -73,12 +71,13 @@ class TFRDialog(QtGui.QDialog):
         
         save_data = self.ui.checkBoxSaveData.isChecked()
 
-        caller = Caller.Instance()
         try:
-            caller.TFR(epochs=self.epochs.raw,
+            experiment = self.parent.experiment
+            n_jobs = self.parent.preferencesHandler.n_jobs
+            TFR(experiment, epochs=self.epochs.raw,
                 collection_name=self.epochs.collection_name, ch_index=ch_index,
                 freqs=freqs, ncycles=ncycles, decim=decim, mode=mode,
                 blstart=blstart, blend=blend, save_data=save_data,
-                color_map=cmap)
+                color_map=cmap, n_jobs=n_jobs)
         except Exception as e:
             exc_messagebox(self, e)

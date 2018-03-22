@@ -3,18 +3,21 @@ Created on 6.10.2016
 
 @author: jaolpeso
 '''
+import logging
+
 from PyQt4 import QtCore,QtGui
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
 import numpy as np
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
+from meggie.code_meggie.preprocessing.projections import find_eog_events
+from meggie.code_meggie.preprocessing.projections import plot_average_epochs
+from meggie.code_meggie.preprocessing.projections import call_eeg_ssp
+
 class EegParametersDialog(QtGui.QDialog):
-    
-    caller = Caller.Instance()
     
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -66,7 +69,7 @@ class EegParametersDialog(QtGui.QDialog):
         mne.preprocessing.eog.peak_finder = new_peak_finder
 
         try:
-            eog_events = self.caller.find_eog_events(params)
+            eog_events = find_eog_events(self.parent.experiment, params)
             self.ui.tableWidgetEvents.clear()
             self.ui.tableWidgetEvents.setRowCount(0)
             for i in range(0, len(eog_events)):
@@ -128,7 +131,7 @@ class EegParametersDialog(QtGui.QDialog):
         events = self.get_events()
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
-        self.caller.plot_average_epochs(events, tmin, tmax)
+        plot_average_epochs(self.parent.experiment, events, tmin, tmax)
         
     def on_pushButtonShowEvents_clicked(self, checked=None):
         """
@@ -137,7 +140,11 @@ class EegParametersDialog(QtGui.QDialog):
         if checked is None: 
             return
         events = self.get_events()
-        self.caller.plot_events(events)
+
+        raw = self.parent.experiment.active_subject.get_working_file()
+        logging.getLogger('ui_logger').info('Plotting events..')
+
+        raw.plot(events=events, scalings=dict(eeg=40e-6))
 
     def set_event_table_headers(self):
         self.ui.tableWidgetEvents.setHorizontalHeaderLabels([
@@ -157,8 +164,6 @@ class EegParametersDialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Collects the parameters for calculating PCA projections and pass them
-        to the caller class.
         """
         parameter_values = self.collect_parameter_values()
         if len(parameter_values['events']) == 0:
@@ -172,4 +177,5 @@ class EegParametersDialog(QtGui.QDialog):
         self.close()
 
     def calculate_eeg(self, subject, params):
-        self.caller.call_eeg_ssp(params, subject)
+        update_ui = self.parent.update_ui
+        call_eeg_ssp(params, subject, update_ui=update_ui)

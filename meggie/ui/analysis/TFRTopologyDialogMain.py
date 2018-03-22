@@ -10,7 +10,8 @@ from PyQt4 import QtCore, QtGui
 import numpy as np
 
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.general.caller import Caller
+
+from meggie.code_meggie.analysis.spectral import TFR_topology
 
 from meggie.ui.analysis.TFRtopologyUi import Ui_DialogTFRTopology
 
@@ -19,10 +20,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 class TFRTopologyDialog(QtGui.QDialog):
     """
-    Class containing the logic for TFRTopologyDialog. Collects the necessary
-    parameter values and passes them to the Caller-class.
     """
-    caller = Caller.Instance()    
     
     def __init__(self, parent, epoch_name):
         """
@@ -56,9 +54,6 @@ class TFRTopologyDialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Collects the parameter values from the dialog window and passes them
-        to the caller. Also checks for erroneus parameter values and gives 
-        feedback to the user.
         """
         cmap = str(self.ui.comboBoxCmap.currentText())
         
@@ -101,11 +96,13 @@ class TFRTopologyDialog(QtGui.QDialog):
         else:
             scalp = None
         try:             
-            self.caller.TFR_topology(inst=epochs,
+            experiment = self.parent.experiment
+            n_jobs = self.parent.preferencesHandler.n_jobs
+            TFR_topology(experiment, inst=epochs,
                 collection_name=self.epoch_name, reptype=reptype, freqs=freqs, 
                 decim=decim, mode=mode, blstart=blstart, blend=blend, 
                 ncycles=ncycles, ch_type=ch_type, scalp=scalp, 
-                color_map=cmap, save_data=save_data)
+                color_map=cmap, save_data=save_data, n_jobs=n_jobs)
         except Exception as e:
             exc_messagebox(self.parent, e)
 

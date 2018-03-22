@@ -28,8 +28,10 @@ class FixedLengthEpochDialog(QtGui.QDialog):
         self.ui = Ui_FixedLengthEpochDialog()
         self.ui.setupUi(self)
         self.parent = parent
+        self.experiment = self.parent.parent.experiment
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')
-        self.raw = self.parent.experiment.active_subject.get_working_file(temporary=True)
+        self.raw = (self.experiment.active_subject
+                    .get_working_file(temporary=True))
         tmax = int(self.raw.times[-1])
         self.ui.spinBoxStart.setMaximum(tmax)
         self.ui.spinBoxEnd.setMaximum(tmax)

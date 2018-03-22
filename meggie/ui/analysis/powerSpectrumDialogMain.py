@@ -10,20 +10,19 @@ from PyQt4 import QtGui, QtCore
 
 import numpy as np
 
-from meggie.code_meggie.general.caller import Caller
-
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 
+from meggie.code_meggie.analysis.spectral import plot_power_spectrum
+
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 
 class PowerSpectrumDialog(QtGui.QDialog):
-    caller = Caller.Instance()
 
     def __init__(self, parent):
         """
@@ -137,7 +136,12 @@ class PowerSpectrumDialog(QtGui.QDialog):
         try:
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
-            self.caller.plot_power_spectrum(params, save_data, epochs)
+
+            experiment = self.parent.experiment
+            update_ui = self.parent.update_ui
+            plot_power_spectrum(experiment, params, save_data, epochs, 
+                                update_ui=update_ui)
         except Exception as e:
             exc_messagebox(self.parent, e)
+
         QtGui.QApplication.restoreOverrideCursor()

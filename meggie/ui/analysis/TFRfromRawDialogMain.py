@@ -8,17 +8,16 @@ Created on 24.5.2016
 from PyQt4 import QtGui
 
 from meggie.ui.analysis.TFRfromRawDialogUi import Ui_DialogRawTFR
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
+
+from meggie.code_meggie.analysis.spectral import TFR_raw
+
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 class TFRRawDialog(QtGui.QDialog):
     """
-    Class containing the logic for TFRDialog. Collects the necessary parameter
-    values and passes them to the Caller-class.
     """
-    caller = Caller.Instance()
     
     def __init__(self, parent):
         """
@@ -48,7 +47,6 @@ class TFRRawDialog(QtGui.QDialog):
         
     def accept(self):
         """
-        Collects parameters and calls the caller class to create a TFR.
         """
         wsize = self.ui.spinBoxWsize.value()
         if self.ui.checkBoxTstep.isChecked():
@@ -70,7 +68,8 @@ class TFRRawDialog(QtGui.QDialog):
 
         
         try:
-            self.caller.TFR_raw(wsize=wsize, tstep=tstep, channel=channel_idx,
+            experiment = self.parent.experiment
+            TFR_raw(experiment, wsize=wsize, tstep=tstep, channel=channel_idx,
                 fmin=fmin, fmax=fmax, blstart=blstart, blend=blend, mode=mode,
                 save_data=save_data)
         except Exception as e:
