@@ -85,7 +85,7 @@ def create_epochs(experiment, params, subject):
         raise ValueError('Could not create epochs for subject: No events found with given params.')
 
     if not isinstance(raw, mne.RAW_TYPE):
-        raise TypeError('Not a Raw object')
+        raise TypeError('Working file is of wrong type.')
 
     if params_copy['mag'] and params_copy['grad']:
         params_copy['meg'] = True
@@ -98,10 +98,10 @@ def create_epochs(experiment, params, subject):
     
     # find all proper picks
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-        eeg=params_copy['eeg'], eog=params_copy['eog'])
+                           eeg=params_copy['eeg'], eog=params_copy['eog'])
     
     if len(picks) == 0:
-        raise ValueError('Picks cannot be empty. Select picks by ' + 
+        raise ValueError('Picks cannot be empty. Select picks by ' +
                          'checking the checkboxes.')
 
     epochs = mne.Epochs(raw, np.array(events), 
@@ -254,6 +254,7 @@ def _average_channels(experiment, instance, channelsToAve):
 
         eegIdxs = mne.pick_types(evokedToAve.info, meg=False, eeg=True,
                                    ref_meg=False)
+
 
         # Merges the grad channel pairs in evokedToAve
         if len(gradsIdxs) > 0:
