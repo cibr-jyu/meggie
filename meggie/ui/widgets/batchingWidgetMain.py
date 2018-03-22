@@ -14,14 +14,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 from copy import deepcopy
 
 class BatchingWidget(QtGui.QWidget):
-    """Generic widget for handling batching in several dialogs.
-    The parent dialogs need to implement the following:
-        - selection_changed          (method)
-        - collect_parameter_values   (method)
-        - pushButtonCompute          (QPushButton, signal: clicked() -> accept())
-        - pushButtonComputeBatch     (QPushButton, signal: clicked() -> acceptBatch() <--create custom signal)
-        - pushButtonCancel           (QPushButton, signal: clicked() -> reject())
-        - widget                     (QWidget)
+    """
     """
     
     def __init__(self, experiment, parent, container, pushButtonCompute=None,
@@ -58,27 +51,11 @@ class BatchingWidget(QtGui.QWidget):
 
         self.data = {}
         self.failed_subjects = []
-        
-        if self.experiment is None:
-            return
 
-    def on_listWidgetSubjects_currentItemChanged(self, item):
-        if not item:
-            return
-        
-        if item.checkState() != QtCore.Qt.Checked:
-            return
-        
-        subject_name = str(item.text())
-        if subject_name in self.data.keys():
-            data_dict = self.data[subject_name]
-        else:
-            data_dict = {}
-        self.selection_changed(subject_name, data_dict)
-    
-    def showWidget(self, disabled):
-        
-        if disabled:
+    def update(self, experiment, enabled):
+        self.experiment = experiment
+
+        if enabled:
             self.ui.functionalityWidget.show()
             self.adjustSize()
             self.pushButtonCompute.setEnabled(False)
@@ -101,7 +78,24 @@ class BatchingWidget(QtGui.QWidget):
 
             if self.hideHook:
                 self.hideHook()
-
+        
+    def on_listWidgetSubjects_currentItemChanged(self, item):
+        if not item:
+            return
+        
+        if item.checkState() != QtCore.Qt.Checked:
+            return
+        
+        subject_name = str(item.text())
+        if subject_name in self.data.keys():
+            data_dict = self.data[subject_name]
+        else:
+            data_dict = {}
+        self.selection_changed(subject_name, data_dict)
+    
+    def showWidget(self, enabled):
+        self.update(self.experiment, enabled)
+        
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
         """

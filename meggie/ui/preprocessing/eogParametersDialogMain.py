@@ -22,8 +22,10 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
+
+from meggie.code_meggie.preprocessing.projections import call_eog_ssp
+from meggie.code_meggie.preprocessing.projections import plot_eog_events
 
 
 class EogParametersDialog(QtGui.QDialog):
@@ -31,8 +33,6 @@ class EogParametersDialog(QtGui.QDialog):
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
     """
-    computed = pyqtSignal(bool)
-    caller = Caller.Instance()
 
     def __init__(self, parent):
         """
@@ -42,7 +42,8 @@ class EogParametersDialog(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self.experiment, 
+        self.batching_widget = BatchingWidget(
+            self.parent.experiment, 
             self, self.ui.scrollAreaWidgetContents)
 
     def on_pushButtonPlotEvents_clicked(self, checked=None):
@@ -50,12 +51,10 @@ class EogParametersDialog(QtGui.QDialog):
             return
 
         parameter_values = self.collect_parameter_values()
-        self.caller.plot_eog_events(parameter_values)    
+        plot_eog_events(self.parent.experiment, parameter_values)    
 
     def accept(self):
         """
-        Collects the parameters for calculating PCA projections and passes 
-        them to the caller class.
         """
         parameter_values = self.collect_parameter_values()
         active_subject_name = self.parent.experiment.active_subject.subject_name
@@ -98,13 +97,13 @@ class EogParametersDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 try:
-                    self.caller.activate_subject(name)
+                    self.parent.experiment.activate_subject(name)
                     self.calculate_eog(subject)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((
                         subject, str(e)))
                 
-        self.caller.activate_subject(recently_active_subject)
+        self.parent.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.close()
@@ -191,12 +190,9 @@ class EogParametersDialog(QtGui.QDialog):
 
 
     def calculate_eog(self, subject):
-        """Calls caller class for calculating the projections for the given
-        subject and passes errors to accept method.
-
-        Keyword arguments:
-        subject               -- Subject object
         """
-        self.caller.call_eog_ssp(
-            self.batching_widget.data[subject.subject_name], subject)
+        """
+        update_ui = self.parent.update_ui
+        call_eog_ssp(self.batching_widget.data[subject.subject_name], 
+                     subject, update_ui)
         

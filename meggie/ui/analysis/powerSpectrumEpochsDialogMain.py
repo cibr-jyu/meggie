@@ -10,15 +10,15 @@ from collections import OrderedDict
 
 from PyQt4 import QtGui
 
+from meggie.code_meggie.analysis.spectral import plot_power_spectrum
+
 from meggie.ui.analysis.powerSpectrumEpochsDialogUi import Ui_Dialog
-from meggie.code_meggie.general.caller import Caller
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 class PowerSpectrumEpochsDialog(QtGui.QDialog):
     """
     """
-    caller = Caller.Instance()
     
     def __init__(self, parent, epochs):
         """
@@ -39,7 +39,6 @@ class PowerSpectrumEpochsDialog(QtGui.QDialog):
         
     def accept(self):
         """
-        Collects parameters and calls the caller class to create a TFR.
         """
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
@@ -80,6 +79,9 @@ class PowerSpectrumEpochsDialog(QtGui.QDialog):
                 mne_epochs[epoch.collection_name] = [mne_epoch]
             
         try:
-            self.caller.plot_power_spectrum(params, save_data, mne_epochs, basename='epochs')
+            experiment = self.parent.experiment
+            update_ui = self.parent.update_ui
+            n_jobs = self.parent.preferencesHandler.n_jobs
+            plot_power_spectrum(experiment, params, save_data, mne_epochs, basename='epochs', update_ui=update_ui, n_jobs=n_jobs)
         except Exception as e:
             exc_messagebox(self, e)

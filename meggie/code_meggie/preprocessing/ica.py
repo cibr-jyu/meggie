@@ -1,5 +1,7 @@
 """ Contains functions for analyzing and plotting ica components """
 
+import logging
+
 from copy import deepcopy
 
 import numpy as np
@@ -129,6 +131,7 @@ def _prepare_raw_for_changes(raw_new, raw_old):
 def apply_ica(raw, experiment, ica, indices):
     """
     """
+    logging.getLogger('ui_logger').info('Subtracting the components out of the data.')
     ica.apply(raw, exclude=indices)
 
     fileManager.save_raw(experiment, raw,

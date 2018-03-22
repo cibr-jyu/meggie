@@ -15,12 +15,14 @@ from PyQt4 import QtGui
 
 from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+
+from meggie.code_meggie.preprocessing.projections import plot_ecg_events
+from meggie.code_meggie.preprocessing.projections import call_ecg_ssp
 
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
@@ -29,7 +31,6 @@ class EcgParametersDialog(QtGui.QDialog):
     Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
     """
-    caller = Caller.Instance()
 
     def __init__(self, parent):
         QtGui.QDialog.__init__(self)
@@ -117,8 +118,6 @@ class EcgParametersDialog(QtGui.QDialog):
 
     def accept(self):
         """
-        Collects the parameters for calculating PCA projections and pass them
-        to the caller class.
         """
         parameter_values = self.collect_parameter_values()
         active_subject_name =  self.parent.experiment.active_subject.subject_name
@@ -138,7 +137,8 @@ class EcgParametersDialog(QtGui.QDialog):
             return
 
         parameter_values = self.collect_parameter_values()
-        self.caller.plot_ecg_events(parameter_values)    
+        experiment = self.parent.experiment
+        plot_ecg_events(experiment, parameter_values)    
         
     def acceptBatch(self):
         
@@ -164,12 +164,12 @@ class EcgParametersDialog(QtGui.QDialog):
                 if name == recently_active_subject:
                     continue
                 try:
-                    self.caller.activate_subject(name)
+                    self.parent.experiment.activate_subject(name)
                     self.calculate_ecg(subject)    
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, str(e)))              
 
-        self.caller.activate_subject(recently_active_subject)
+        self.parent.experimnt.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()        
         self.parent.initialize_ui()
         self.close()
@@ -203,11 +203,8 @@ class EcgParametersDialog(QtGui.QDialog):
         return dictionary
 
     def calculate_ecg(self, subject):
-        """Calls caller class for calculating the projections for the given
-        subject and passes errors to accept method.
-        
-        Keyword arguments:
-        subject               -- Subject object
         """
-        self.caller.call_ecg_ssp(
-            self.batching_widget.data[subject.subject_name], subject)
+        """
+        update_ui = self.parent.update_ui
+        call_ecg_ssp(self.batching_widget.data[subject.subject_name], 
+                     subject, update_ui=update_ui)

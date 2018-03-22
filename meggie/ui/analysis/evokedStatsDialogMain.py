@@ -15,9 +15,10 @@ import numpy as np
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.general.caller import Caller
 from meggie.code_meggie.general.statistic import Statistic
 from meggie.ui.analysis.evokedStatsDialogUi import Ui_EvokedStatsDialog
+
+from meggie.code_meggie.analysis.epoching import average_channels
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -197,7 +198,6 @@ class EvokedStatsDialog(QtGui.QDialog):
         """Visualize selected channel(s)."""
         if checked is None: 
             return
-        caller = Caller.Instance()
         
         subject = self.parent.experiment.active_subject
         evokeds = subject.evokeds[self.evoked_name].mne_evokeds
@@ -208,8 +208,11 @@ class EvokedStatsDialog(QtGui.QDialog):
                 event_name = evoked.comment
         
         try:
-            caller.average_channels(evoked_to_viz, None,
-                                    set(self.selected_channels[event_name]))
+            experiment = self.parent.experiment
+            update_ui = self.parent.update_ui
+            average_channels(experiment, evoked_to_viz, None,
+                             set(self.selected_channels[event_name]),
+                             update_ui=update_ui)
         except TypeError as e:
             exc_messagebox(self, "Please set selections")
         except Exception as e:
@@ -241,11 +244,15 @@ class EvokedStatsDialog(QtGui.QDialog):
             return
         
         logging.getLogger('ui_logger').info('Saving csv.')
+
         tmin = self.ui.doubleSpinBoxStart.value()
         tmax = self.ui.doubleSpinBoxStop.value()
+
         times = evoked.times
+
         min_idx = np.searchsorted(times, tmin)
         max_idx = np.searchsorted(times, tmax)
+
         # cropping the data:
         data = evoked.data[:, min_idx:max_idx]
         
@@ -257,6 +264,7 @@ class EvokedStatsDialog(QtGui.QDialog):
                              'Time of maximum', 'Half maximum',
                              'Time before max', 'Time after max', 'Duration',
                              'Integral'])
+
             for ch_name in self.selected_channels[collection_name]:
                 pick = evoked.ch_names.index(ch_name)
                 this_data = data[pick]
@@ -277,7 +285,9 @@ class EvokedStatsDialog(QtGui.QDialog):
 
                 if ch_name.startswith('MEG') and ch_name.endswith('3'):
                     if (ch_name[:-1] + '2') in self.selected_channels[collection_name]:
+
                         # Merge data from pair of grad channels
+
                         pick2 = evoked.ch_names.index(ch_name[:-1] + '2')
                         this_data = mne._merge_grad_data(np.array([this_data,
                                                                data[pick2]]))
