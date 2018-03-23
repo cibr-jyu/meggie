@@ -12,6 +12,7 @@ from meggie.ui.source_analysis.covarianceEpochDialogUi import Ui_covarianceEpoch
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
@@ -21,10 +22,11 @@ class CovarianceEpochDialog(QtGui.QDialog):
     parameters computing the covariance for epoch collection/s.
     """
 
-    def __init__(self, experiment, on_close=None):
+    def __init__(self, parent, experiment, on_close=None):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_covarianceEpochDialog()
         self.ui.setupUi(self)
+        self.parent = parent
         self.experiment = experiment
         self.on_close = on_close
 
@@ -53,11 +55,16 @@ class CovarianceEpochDialog(QtGui.QDialog):
             return
 
         try:
-            cov = mne.compute_covariance(epochs, tmin=tmin, tmax=tmax)
-            path = os.path.join(self.experiment.active_subject.cov_directory,
-                                name)
+            @threaded
+            def compute_cov():
+                cov = mne.compute_covariance(epochs, tmin=tmin, tmax=tmax)
+                path = os.path.join(self.experiment.active_subject.cov_directory,
+                                    name)
 
-            mne.write_cov(path, cov)
+                mne.write_cov(path, cov)
+
+            compute_cov(do_meanwhile=self.parent.parent.update_ui)
+
         except Exception as exc:
             exc_messagebox(self, exc, exec_=True) 
             return

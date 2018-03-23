@@ -116,9 +116,10 @@ class LCMVDialog(QtGui.QDialog):
             create_lcmv_estimate(*args, **kwargs)
 
         try:
+            update_ui = self.parent.parent.update_ui
             lcmv_stc(self.experiment, stc_name, inst_name, inst_type, 
                      data_covfile, noise_covfile, fwd_name, label, 
-                     reg, start, end)
+                     reg, start, end, do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self.parent, exc, exec_=True)
 

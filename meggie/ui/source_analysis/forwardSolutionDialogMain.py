@@ -63,7 +63,9 @@ class ForwardSolutionDialog(QtGui.QDialog):
             create_forward_solution(*args, **kwargs)
 
         try:
-            fwd_solution(subject, name, decim, triang_ico, conductivity, include_eeg, include_meg)
+            update_ui = self.parent.parent.update_ui
+            fwd_solution(subject, name, decim, triang_ico, conductivity, 
+                         include_eeg, include_meg, do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self, exc)
 

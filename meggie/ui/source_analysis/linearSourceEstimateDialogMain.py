@@ -119,9 +119,10 @@ class LinearSourceEstimateDialog(QtGui.QDialog):
             create_linear_source_estimate(*args, **kwargs)
 
         try:
+            update_ui = self.parent.parent.update_ui
             linear_stc(self.experiment, stc_name, inst_name, inst_type, 
                        covfile, fwd_name, loose, depth, label, lambda2, 
-                       method, start, end)
+                       method, start, end, do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self.parent, exc, exec_=True)
 

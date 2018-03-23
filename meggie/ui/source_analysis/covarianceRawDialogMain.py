@@ -14,7 +14,7 @@ import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.ui.source_analysis.covarianceRawDialogUi import Ui_covarianceRawDialog
 
-
+from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
@@ -25,12 +25,13 @@ class CovarianceRawDialog(QtGui.QDialog):
     parameters computing the noise covariance for a raw file.
     """
 
-    def __init__(self, experiment, on_close=None):
+    def __init__(self, parent, experiment, on_close=None):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_covarianceRawDialog()
         self.ui.setupUi(self)
 
         self.experiment = experiment
+        self.parent = parent
         self.on_close = on_close
            
            
@@ -66,10 +67,15 @@ class CovarianceRawDialog(QtGui.QDialog):
             raw.apply_proj()
 
         try:
-            cov = mne.compute_raw_covariance(raw, tmin=tmin, tmax=tmax)
-            path = os.path.join(self.experiment.active_subject.cov_directory, 
-                                name)
-            mne.write_cov(path, cov)
+            @threaded
+            def compute_covariance():
+
+                cov = mne.compute_raw_covariance(raw, tmin=tmin, tmax=tmax)
+                path = os.path.join(self.experiment.active_subject.cov_directory, 
+                                    name)
+                mne.write_cov(path, cov)
+            compute_covariance(do_meanwhile=self.parent.parent.update_ui)
+
         except Exception as exc:
             exc_messagebox(self, exc, exec_=True)
             return
