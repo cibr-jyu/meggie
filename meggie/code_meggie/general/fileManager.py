@@ -63,7 +63,7 @@ def copy_recon_files(activeSubject, sourceDirectory):
     # again.
     if os.path.isdir(reconDir):
         dir_util.remove_tree(reconDir)
-    
+
     logger = logging.getLogger('ui_logger')
     
     logger.info('Copying recon files...')

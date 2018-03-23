@@ -14,6 +14,7 @@ from meggie.ui.source_analysis.stcPlotDialogMain import stcPlotDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
@@ -162,7 +163,10 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # copy files
         try:
-            fileManager.copy_recon_files(active_subject, path)
+            @threaded
+            def copy_recon():
+                fileManager.copy_recon_files(active_subject, path)
+            copy_recon(do_meanwhile=self.parent.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -185,7 +189,10 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
 
         # create bem surfaces for later steps
         try:
-            mne.make_watershed_bem(active_subject.mri_subject_name, atlas=use_atlas)
+            @threaded
+            def watershed_bem():
+                mne.make_watershed_bem(active_subject.mri_subject_name, atlas=use_atlas, overwrite=True)
+            watershed_bem(do_meanwhile=self.parent.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
 
@@ -361,7 +368,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if not self.parent.experiment.active_subject:
             return
 
-        self.covarianceRawDialog = CovarianceRawDialog(self.parent.experiment, 
+        self.covarianceRawDialog = CovarianceRawDialog(self,
+            self.parent.experiment, 
             on_close=self.initialize_ui)
 
         self.covarianceRawDialog.show()
@@ -380,7 +388,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if not self.parent.experiment.active_subject:
             return
 
-        self.covarianceEpochDialog = CovarianceEpochDialog(
+        self.covarianceEpochDialog = CovarianceEpochDialog(self,
             self.parent.experiment, on_close=self.initialize_ui)
 
         self.covarianceEpochDialog.show()

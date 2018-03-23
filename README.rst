@@ -29,11 +29,15 @@ To develop:
 When installed with "develop", changes made to the code will be reflected when meggie is run
 
 To release conda-package (in root directory):
-
-1. Build by:
+1. Have following entry in .condarc:
+   channels:
+     - defaults
+     - https://conda.anaconda.org/conda-forge
+     - https://conda.anaconda.org/CIBR
+2. Build by:
    conda build .
-2. Copy created meggie package to for example anaconda.org cloud:
+3. Copy created meggie package to for example anaconda.org cloud:
    anaconda upload ...
-3. newest version of meggie should now be installable with just:
-   conda install -c cibr meggie
+4. newest version of meggie should now be installable with just:
+   conda install -c cibr -conda-forge meggie
    
