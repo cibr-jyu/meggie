@@ -21,7 +21,6 @@ def compute_ica(raw, n_components, method, max_iter):
     ica.fit(raw)
 
     # TODO: what if ica does not converge?
-    # TODO: what happens to different type of channels?
 
     return ica
 
@@ -35,7 +34,7 @@ def plot_topographies(ica, n_components, layout):
 
     def update_topography_texts():
         """ Change texts in the axes to match names in the dialog """
-        idx = 1
+        idx = 0
         for fig in figs:
             for ax in fig.get_axes():
                 if idx > n_components:
@@ -134,5 +133,7 @@ def apply_ica(raw, experiment, ica, indices):
     logging.getLogger('ui_logger').info('Subtracting the components out of the data.')
     ica.apply(raw, exclude=indices)
 
+    fname = experiment.active_subject.working_file_path
+
     fileManager.save_raw(experiment, raw,
-                         raw.info['filename'], overwrite=True)
+                         fname, overwrite=True)

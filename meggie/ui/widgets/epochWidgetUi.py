@@ -62,9 +62,5 @@ class Ui_Form(object):
         self.groupBoxEvents.setTitle(_translate("Form", "Events in currently selected epoch collection:", None))
         __sortingEnabled = self.listWidgetEvents.isSortingEnabled()
         self.listWidgetEvents.setSortingEnabled(False)
-        item = self.listWidgetEvents.item(0)
-        item.setText(_translate("Form", "gxxgxg", None))
-        item = self.listWidgetEvents.item(1)
-        item.setText(_translate("Form", "hghch", None))
         self.listWidgetEvents.setSortingEnabled(__sortingEnabled)
 

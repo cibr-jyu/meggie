@@ -27,3 +27,6 @@ features:
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
 - if possible, similar stats/seletion things as for epochs, for spectrums also
+
+ui changes:
+-

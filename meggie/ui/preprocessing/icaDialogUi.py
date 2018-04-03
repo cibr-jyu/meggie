@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(470, 647)
+        Dialog.resize(517, 647)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.bottomLayout = QtGui.QHBoxLayout()
@@ -49,7 +49,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 452, 587))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 499, 587))
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.gridLayout_5 = QtGui.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
@@ -149,6 +149,6 @@ class Ui_Dialog(object):
         self.pushButtonTransfer.setText(_translate("Dialog", "Transfer", None))
         self.pushButtonPlotProperties.setText(_translate("Dialog", "Plot properties", None))
         self.pushButtonPlotChanges.setText(_translate("Dialog", "Plot changes", None))
-        self.pushButtonPlotSources.setText(_translate("Dialog", "Plot sources", None))
+        self.pushButtonPlotSources.setText(_translate("Dialog", "Plot time courses", None))
         self.pushButtonPlotTopographies.setText(_translate("Dialog", "Plot topographies", None))
 

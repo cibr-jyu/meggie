@@ -71,7 +71,7 @@ class ICADialog(QtGui.QDialog):
             return
 
         for idx in range(self.ica.n_components_):
-            label = 'Component ' + str(idx+1)
+            label = 'Component ' + str(idx)
             self.ui.listWidgetNotRemoved.addItem(label)
             self.component_info[label] = idx
             self.not_removed.append(label)
@@ -200,7 +200,11 @@ class ICADialog(QtGui.QDialog):
 
         indices = [self.component_info[name] for name in self.removed]
 
-        apply_ica(raw, self.parent.experiment, self.ica, indices)
+        @threaded
+        def apply_ica_wrapper():
+            apply_ica(raw, self.parent.experiment, self.ica, indices)
+
+        apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
 
         self.initialize()
         self.close()
