@@ -38,7 +38,7 @@ class BadChannelsDialog(QtGui.QDialog):
         if checked is None:
             return
 
-        for idx in range(self.ui.listWidgetBard.count()):
+        for idx in range(self.ui.listWidgetBads.count()):
             self.ui.listWidgetBads.item(idx).setSelected(True)
 
     def on_pushButtonPlot_clicked(self, checked=None):
@@ -75,7 +75,7 @@ class BadChannelsDialog(QtGui.QDialog):
 
         raw.info['bads'] = [unicode(item.text()) for item in items]
         experiment = self.parent.experiment
-        fname = raw.info['filename']
+        fname = self.parent.experiment.active_subject.working_file_path
         fileManager.save_raw(experiment, raw, fname, overwrite=True)
         self.parent.initialize_ui()
         self.close()
