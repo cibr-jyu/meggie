@@ -16,6 +16,7 @@ bugs:
 - must fix the stft thingy
 
 features:
+- update meter and cancel button for batch
 - evoked topomaps
 - maybe a mock subject possibility combined with epoch or evoked import
 - open experiment also by specifying the exp file
@@ -27,6 +28,9 @@ features:
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
 - if possible, similar stats/seletion things as for epochs, for spectrums also
+- event import
 
 ui changes:
--
+- throbber till the end of ica-apply
+- alphabetical order to subjects
+- throbber to evoked batch (all batch?)

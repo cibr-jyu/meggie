@@ -1249,7 +1249,6 @@ class MainWindow(QtGui.QMainWindow):
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
         self.experiment.save_experiment_settings()
-        self.initialize_ui()
 
     def save_evoked_data(self, subjects):
         try:    
