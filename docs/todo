@@ -22,7 +22,7 @@ features:
 - ica done? doing ica transform in the source analysis part?
 - batch for saving spectrums ( there is a branch starting this )
 - average spectrums over subjects
-- maybe dont close dialogs with accept-button
+- maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
