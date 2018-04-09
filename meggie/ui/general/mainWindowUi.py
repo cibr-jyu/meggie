@@ -1234,7 +1234,7 @@ class Ui_MainWindow(object):
         self.labelECGComputed_2.setText(_translate("MainWindow", "ECG projections", None))
         self.labelMaxFilter_2.setText(_translate("MainWindow", "MaxFilter", None))
         self.labelEOGComputed_2.setText(_translate("MainWindow", "EOG projections", None))
-        self.labelEEGComputed.setText(_translate("MainWindow", "EEG projections", None))
+        self.labelEEGComputed.setText(_translate("MainWindow", "Ocular projections", None))
         self.labelEOGApplied_2.setText(_translate("MainWindow", "Applied", None))
         self.labelECGApplied_2.setText(_translate("MainWindow", "Computed", None))
         self.groupBoxVisualization_2.setTitle(_translate("MainWindow", "Visualization:", None))

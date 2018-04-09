@@ -535,7 +535,7 @@
                      <item row="4" column="0">
                       <widget class="QLabel" name="labelEEGComputed">
                        <property name="text">
-                        <string>EEG projections</string>
+                        <string>Ocular projections</string>
                        </property>
                       </widget>
                      </item>

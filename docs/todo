@@ -1,7 +1,5 @@
 TODO:
 
-- change the windows from samples to seconds, or defaults as something related to sampling rate.
-- fix EEG projections / Ocular projections name mixup
 - if evoked created from different length epochs, plotting doesnt work (Add better error message)
 - should do manual for meggie
 - throbber till the end of ica-apply
