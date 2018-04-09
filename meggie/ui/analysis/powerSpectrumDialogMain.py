@@ -15,6 +15,7 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
+from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
 from meggie.code_meggie.analysis.spectral import plot_power_spectrum
 
@@ -36,12 +37,18 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
         self.parent = parent
+
         raw = self.parent.experiment.active_subject.get_working_file()
+
         tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
+
+        # initialize output settings
+        self.output_rows = 'all_channels'
+        self.output_columns = 'all_data'
 
         # set nfft initially to ~2 seconds and overlap to ~1 seconds
         sfreq = raw.info['sfreq']
@@ -100,6 +107,18 @@ class PowerSpectrumDialog(QtGui.QDialog):
             return
         self.event_dialog = PowerSpectrumEvents(self)
         self.event_dialog.show()
+
+    def output_options_handler(self, row_setting, column_setting):
+        self.output_rows = row_setting
+        self.output_columns = column_setting
+
+    def on_pushButtonOutputOptions_clicked(self, checked=None):
+        if checked is None:
+            return
+        handler = self.output_options_handler
+        self.output_options_dialog = OutputOptions(self, handler=handler, 
+            row_setting=self.output_rows, column_setting=self.output_columns)
+        self.output_options_dialog.show()
 
     def accept(self, *args, **kwargs):
         """Starts the computation."""
