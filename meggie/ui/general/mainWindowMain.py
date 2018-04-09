@@ -1403,7 +1403,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment and self.experiment.active_subject:
             active_subject_name = self.experiment.active_subject.subject_name
 
-        for subject_name in self.experiment.subjects:
+        for subject_name in sorted(self.experiment.subjects.keys()):
             item = QtGui.QListWidgetItem()
             item.setText(subject_name)
             if subject_name == active_subject_name:
