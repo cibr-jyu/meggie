@@ -1,10 +1,7 @@
 TODO:
 
 - should do manual for meggie
-- throbber to evoked batch (all batch?) (read all the batch story)
-- output options (use parts of stats/selection here)
-- throbber till the end of ica-apply
-
+- should do output options
 
 - refactoring:
  * main window tabs to separate files
