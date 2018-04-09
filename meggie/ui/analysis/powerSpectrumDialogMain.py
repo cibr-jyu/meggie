@@ -43,6 +43,21 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
 
+        # set nfft initially to ~2 seconds and overlap to ~1 seconds
+        sfreq = raw.info['sfreq']
+        window_in_seconds = 2
+        nfft = int(np.power(2, np.ceil(np.log(sfreq * window_in_seconds)/np.log(2))))
+        overlap = nfft / 2
+
+        self.ui.spinBoxNfft.setValue(nfft)
+        self.ui.spinBoxOverlap.setValue(overlap)
+
+        if self.ui.spinBoxFmin.value() < raw.info['highpass']:
+            self.ui.spinBoxFmin.setValue(int(np.ceil(raw.info['highpass'])))
+
+        if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
+            self.ui.spinBoxFmax.setValue(int(raw.info['highpass']))
+
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
             return
@@ -98,7 +113,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
         if fmin >= fmax:
-            messagebox(self.parent, "End frequency must be higher than the starting frequency")
+            messagebox(self.parent, ("End frequency must be higher than the"
+                                     "starting frequency"))
             return
         
         subject = self.parent.experiment.active_subject
@@ -109,7 +125,8 @@ class PowerSpectrumDialog(QtGui.QDialog):
             if (interval[2] - interval[1]) * sfreq < float(self.ui.spinBoxNfft.value()):
                 valid = False
         if not valid:
-            messagebox(self.parent, "Sampling rate times shortest interval should be more than window size")
+            messagebox(self.parent, ("Sampling rate times shortest interval"
+                                     "should be more than window size"))
             return
         
         raw = self.parent.experiment.active_subject.get_working_file()
@@ -117,12 +134,13 @@ class PowerSpectrumDialog(QtGui.QDialog):
         epochs = OrderedDict()
         for interval in times:
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
-            tmin = 0
-            tmax = interval[2] - interval[1]
+            tmin, tmax = 0, interval[2] - interval[1]
             epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax)
             epoch.comment = str(interval)
+
             if interval[0] not in epochs:
                 epochs[interval[0]] = []
+
             epochs[interval[0]].append(epoch)
         
         params = dict()
@@ -131,6 +149,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
+
         save_data = self.ui.checkBoxSaveData.isChecked()
         
         try:
