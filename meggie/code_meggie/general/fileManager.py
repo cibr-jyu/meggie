@@ -310,6 +310,9 @@ def create_timestamped_folder(experiment):
     return timestamped_folder
 
 def save_subject_raw(subject, path):
+    """ when subject is created,
+    copy data from src destination to subject directory
+    """
     
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
@@ -322,46 +325,26 @@ def save_subject_raw(subject, path):
             shutil.copyfile(f, os.path.join(subject.subject_path, 
                                             os.path.basename(f)))
 
-def _read_epoch_stcs(subject):
-    """
-    Helper for getting stc epoch dirs for a subject.
-    Args:
-        subject: instance of Subject
-            Subject in use.
 
-    Returns: list
-        List of epoch dirs as str.
-    """
-    stc_dir = subject.stc_directory
-    stcs = list()
-    for epochs_dir in os.listdir(stc_dir):
-        if os.path.isdir(os.path.join(stc_dir, epochs_dir)):
-            stcs.append(epochs_dir)
-    return stcs
-
-def save_np_array(path, freqs, data, epochs_info):
+def save_csv(path, data, column_names, row_names):
     
     # gather all the data to list of rows
     all_data = []
 
-    # freqs data, assume same lengths for all evokeds
-    all_data.append(['freqs'] + freqs.tolist())
+    # freqs data, assume same lengths 
+    all_data.append([''] + column_names)
 
-    for idx in range(data.shape[0]):
-        row_name = epochs_info['ch_names'][idx]
-        
-        # mark bad channels
-        if epochs_info['ch_names'][idx] in epochs_info['bads']:
-            row_name += ' (bad)'        
-        
-        row = [row_name] + data[idx].tolist()
+    for idx in range(len(data)):
+        row_name = row_names[idx]
+        row = [row_name] + data[idx]
         all_data.append(row)
  
     # save to file
     all_data = np.array(all_data)
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
-import os
+
+
 
 # see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
@@ -388,3 +371,4 @@ def tail(f, lines=1, _buffer=4098):
 
     return lines_found[-lines:]
     
+

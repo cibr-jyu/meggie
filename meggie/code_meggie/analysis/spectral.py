@@ -249,7 +249,9 @@ def TFR_raw(experiment, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
             raw.ch_names[channel], '_TFR.csv']))
         fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
-def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='raw', update_ui=(lambda: None), n_jobs=1):
+def plot_power_spectrum(experiment, params, save_data, epoch_groups, 
+                        basename='raw', update_ui=(lambda: None), n_jobs=1,
+                        output_rows='all_channels', output_columns='all_data'):
     """
     Method for plotting power spectrum.
     Parameters:
@@ -284,14 +286,40 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
         
     colors = color_cycle(len(psds))
 
+    logging.getLogger('ui_logger').info("Saving data...")
     subject_name = experiment.active_subject.subject_name
     if save_data:
         path = fileManager.create_timestamped_folder(experiment)
+
+        raise Exception('FIX!')
+
         for idx, psd in enumerate(psds):
-            filename = ''.join([subject_name, '_', basename, '_',
-                'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
-            fileManager.save_np_array(os.path.join(path, filename), 
-                                      freqs, psd, info)
+            if output_rows == 'channel_averages':
+                # create new data array where channels dimension is reduced
+                # to number of averages
+                data = np.array()
+                row_names = []
+            else:
+                data = psd
+                row_names = info['ch_names']
+                for idx in range(len(row_names)):
+                    if info['ch_names'][idx] in info['bads']:
+                        row_names[idx] += ' (bad)'
+
+            if output_columns == 'statistics':
+                filename = ''.join([subject_name, '_', basename, '_',
+                                    'spectrum_statistics', '_', 
+                                    str(psd_groups.keys()[idx]), '.csv'])
+                # update data
+                data = data
+                column_names = []
+            else:
+                filename = ''.join([subject_name, '_', basename, '_',
+                    'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
+                column_names = freqs.tolist()
+
+            fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
+                                 column_names, row_names)
 
     logging.getLogger('ui_logger').info("Plotting power spectrum...")
 

@@ -178,7 +178,9 @@ class PowerSpectrumDialog(QtGui.QDialog):
             experiment = self.parent.experiment
             update_ui = self.parent.update_ui
             plot_power_spectrum(experiment, params, save_data, epochs, 
-                                update_ui=update_ui)
+                                update_ui=update_ui, 
+                                output_rows=self.output_rows,
+                                output_columns=self.output_columns)
         except Exception as e:
             exc_messagebox(self.parent, e)
 
