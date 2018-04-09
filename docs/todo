@@ -1,6 +1,5 @@
 TODO:
 
-- if evoked created from different length epochs, plotting doesnt work (Add better error message)
 - should do manual for meggie
 - throbber to evoked batch (all batch?) (read all the batch story)
 - output options (use parts of stats/selection here)

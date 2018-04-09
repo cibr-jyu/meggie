@@ -13,6 +13,8 @@ import warnings
 import gc
 import logging
 
+import numpy as np
+
 import matplotlib
 matplotlib.use('Qt4Agg')
 
@@ -1179,10 +1181,25 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def calculate_evokeds(self, subject, collection_names):
+
+        # check that lengths are same
+        time_arrays = []
+        for name in collection_names:
+            collection = subject.epochs.get(name)
+            if collection:
+                time_arrays.append(collection.raw.times)
+
+        for i, i_times in enumerate(time_arrays):
+            for j, j_times in enumerate(time_arrays):
+                if i != j:
+                    try:
+                        np.testing.assert_array_almost_equal(i_times, j_times)
+                    except AssertionError:
+                        raise Exception('Epochs collections of different time'
+                                        'scales are not allowed')
         
         evokeds = {}
         for name in collection_names:
-            collection = subject.epochs[name]
 
             try:
                 collection = subject.epochs[name]
