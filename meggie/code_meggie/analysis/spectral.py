@@ -291,10 +291,10 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
     if save_data:
         path = fileManager.create_timestamped_folder(experiment)
 
-        raise Exception('FIX!')
-
         for idx, psd in enumerate(psds):
             if output_rows == 'channel_averages':
+
+                raise Exception('FIX!')
                 # create new data array where channels dimension is reduced
                 # to number of averages
                 data = np.array()
@@ -302,11 +302,12 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
             else:
                 data = psd
                 row_names = info['ch_names']
-                for idx in range(len(row_names)):
-                    if info['ch_names'][idx] in info['bads']:
-                        row_names[idx] += ' (bad)'
+                for row_idx in range(len(row_names)):
+                    if info['ch_names'][row_idx] in info['bads']:
+                        row_names[row_idx] += ' (bad)'
 
             if output_columns == 'statistics':
+                raise Exception('FIX!')
                 filename = ''.join([subject_name, '_', basename, '_',
                                     'spectrum_statistics', '_', 
                                     str(psd_groups.keys()[idx]), '.csv'])

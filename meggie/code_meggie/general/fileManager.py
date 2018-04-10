@@ -344,8 +344,6 @@ def save_csv(path, data, column_names, row_names):
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
-
-
 # see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
     """Tail a file and get X lines from the end"""
