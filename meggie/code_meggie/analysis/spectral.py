@@ -293,12 +293,30 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
 
         for idx, psd in enumerate(psds):
             if output_rows == 'channel_averages':
+                data = []
+                selections = mne.SELECTIONS
+                for selection in selections:
+                    # find channels names for selection provided by mne
+                    selected_ch_names = mne._clean_names(
+                        mne.read_selection(selection),
+                        remove_whitespace=True)
 
-                raise Exception('FIX!')
-                # create new data array where channels dimension is reduced
-                # to number of averages
-                data = np.array()
-                row_names = []
+                    # find all channel names this way because earlier
+                    # the dimension of channels was reducted with picks
+                    all_ch_names = [ch_name for ch_idx, ch_name in 
+                                    enumerate(info['ch_names']) if 
+                                    ch_idx in picks]
+
+                    # calculate average
+                    ch_average = np.mean(
+                        [psd[ch_idx] for ch_idx, ch_name 
+                         in enumerate(all_ch_names)
+                         if ch_name in selected_ch_names], axis=0)
+
+                    data.append(ch_average)
+                data = np.array(data)
+                row_names = selections
+
             else:
                 data = psd
                 row_names = info['ch_names']
@@ -318,6 +336,9 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
                 filename = ''.join([subject_name, '_', basename, '_',
                     'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
                 column_names = freqs.tolist()
+
+            from meggie.code_meggie.utils.debug import debug_trace;
+            debug_trace()
 
             fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
                                  column_names, row_names)
