@@ -72,7 +72,7 @@
           <x>0</x>
           <y>0</y>
           <width>1327</width>
-          <height>849</height>
+          <height>847</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -1898,6 +1898,13 @@
                             </property>
                            </widget>
                           </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButtonEvokedTopomaps">
+                            <property name="text">
+                             <string>Plot evoked topomaps</string>
+                            </property>
+                           </widget>
+                          </item>
                          </layout>
                         </item>
                        </layout>
@@ -2093,7 +2100,7 @@
      <x>0</x>
      <y>0</y>
      <width>1683</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">

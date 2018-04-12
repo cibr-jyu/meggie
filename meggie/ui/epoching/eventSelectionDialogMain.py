@@ -405,7 +405,8 @@ class EventSelectionDialog(QtGui.QDialog):
         def create(*args, **kwargs):
             events_str = create_epochs(experiment,
                 self.batching_widget.data[subject.subject_name], subject)
+            return events_str
 
-        create(do_meanwhile=self.parent.update_ui)
+        events_str = create(do_meanwhile=self.parent.update_ui)
 
         return events_str
