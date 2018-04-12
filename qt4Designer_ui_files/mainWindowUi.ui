@@ -72,7 +72,7 @@
           <x>0</x>
           <y>0</y>
           <width>1327</width>
-          <height>847</height>
+          <height>849</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -108,7 +108,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="tabPreprocessing">
               <property name="minimumSize">
@@ -1898,13 +1898,6 @@
                             </property>
                            </widget>
                           </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButtonOpenEvokedStatsDialog">
-                            <property name="text">
-                             <string>Show evoked stats...</string>
-                            </property>
-                           </widget>
-                          </item>
                          </layout>
                         </item>
                        </layout>
@@ -2100,7 +2093,7 @@
      <x>0</x>
      <y>0</y>
      <width>1683</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="defaultUp">

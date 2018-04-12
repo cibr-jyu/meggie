@@ -39,7 +39,6 @@ from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
 from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.analysis.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
@@ -443,22 +442,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
-    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
-        """Open the evokedStatsDialog for viewing statistical data."""
-        if checked is None:
-            return
-
-        if self.experiment.active_subject is None:
-            return
-
-        item = self.ui.listWidgetEvoked.currentItem()
-        if item is None:
-            return
-
-        evoked_name = str(item.text())
-        self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
-        self.evokedStatsDialog.show()
-       
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
