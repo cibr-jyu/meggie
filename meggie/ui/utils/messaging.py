@@ -11,7 +11,7 @@ def exc_messagebox(parent, exc, exec_=False):
         error_message = str(exc.args[0])
         if not error_message:
             error_message = exc.__repr__()
-    except:
+    except IndexError:
         error_message = str(exc)
 
     # print traceback to console

@@ -1,32 +1,30 @@
 TODO:
 
 - should do manual for meggie
+
 - refactoring:
  * main window tabs to separate files
  * check proper style with pylint
 - we need tests
+- i totally need to check all the TFR code and spectrums in the spectral analysis tab
 
 bugs:
-- check also the spectral analysis things...
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
-- fix EEG projections / Ocular projections name mixup
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
-- if evoked created from different length epochs, plotting doesnt work
-- njobs-story
-- must fix the stft thingy
 
 features:
-- evoked topomaps
+- njobs-story
+- update meter and cancel button for batch
 - maybe a mock subject possibility combined with epoch or evoked import
 - open experiment also by specifying the exp file
 - ica done? doing ica transform in the source analysis part?
 - batch for saving spectrums ( there is a branch starting this )
 - average spectrums over subjects
-- maybe dont close dialogs with accept-button
+- average tfrs over subjects
+- maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums
 - average groups for epoch-based spetrums also
-- if possible, similar stats/seletion things as for epochs, for spectrums also
+- event import
 
-ui changes:
--
+

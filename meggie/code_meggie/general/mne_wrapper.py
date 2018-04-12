@@ -6,6 +6,7 @@ import inspect
 RAW_TYPE = mne.io.Raw
 EVOKED_TYPE = mne.Evoked
 EPOCHS_TYPE = mne.Epochs
+SELECTIONS = mne.selection._SELECTIONS
 
 
 def wrap(log_level, original_func):

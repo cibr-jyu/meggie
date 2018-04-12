@@ -16,6 +16,9 @@ import logging
 import matplotlib
 matplotlib.use('Qt4Agg')
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtGui import QAbstractItemView
@@ -37,7 +40,6 @@ from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
 from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.analysis.evokedStatsDialogMain import EvokedStatsDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
@@ -441,22 +443,6 @@ class MainWindow(QtGui.QMainWindow):
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
-    def on_pushButtonOpenEvokedStatsDialog_clicked(self, checked=None):
-        """Open the evokedStatsDialog for viewing statistical data."""
-        if checked is None:
-            return
-
-        if self.experiment.active_subject is None:
-            return
-
-        item = self.ui.listWidgetEvoked.currentItem()
-        if item is None:
-            return
-
-        evoked_name = str(item.text())
-        self.evokedStatsDialog = EvokedStatsDialog(self, evoked_name)
-        self.evokedStatsDialog.show()
-       
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
@@ -475,6 +461,44 @@ class MainWindow(QtGui.QMainWindow):
         
         self.save_evoked_data(subjects)
 
+
+    def on_pushButtonEvokedTopomaps_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        if not self.experiment:
+            return
+
+        if not self.experiment.active_subject:
+            return
+
+        item = self.ui.listWidgetEvoked.currentItem()
+        if item is None:
+            return
+
+        evoked_name = str(item.text())
+        evoked = self.experiment.active_subject.evokeds[evoked_name]
+        mne_evokeds = evoked.mne_evokeds
+
+        logging.getLogger('ui_logger').info("Plotting evoked topomaps.")
+
+        try:
+            times = np.arange(0.0, 0.3, 0.02)
+            for idx in range(len(mne_evokeds.keys())):
+                fig, axes = plt.subplots(2, len(times))
+                fig.suptitle(mne_evokeds.keys()[0]) 
+
+                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='mag',  # noqa
+                    average=0.05, axes=axes[0], show=False, colorbar=None)
+
+                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='grad',  # noqa
+                    average=0.05, axes=axes[1], show=False, colorbar=None)
+            plt.show()
+
+        except Exception as e:
+            exc_messagebox(self, e)
+
+
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel"""
         if checked is None:
@@ -487,7 +511,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'Please select an epoch collection on the list.'
+            message = 'Please select an epoch collection from the list.'
             messagebox(self, message)
             return
 
@@ -528,16 +552,13 @@ class MainWindow(QtGui.QMainWindow):
         """Plot the evoked data as a topology."""
         if checked is None:
             return
+
         if self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
         if item is None:
             return
-
-        self.ui.pushButtonVisualizeEvokedDataset.setText('      Visualizing...'
-                                                         '      ')
-        self.ui.pushButtonVisualizeEvokedDataset.setEnabled(False)
 
         evoked_name = str(item.text())
         evoked = self.experiment.active_subject.evokeds[evoked_name]
@@ -547,21 +568,13 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger('ui_logger').info(message)
 
         try:
-            QtGui.QApplication.setOverrideCursor(
-                QtGui.QCursor(QtCore.Qt.WaitCursor))
-
             draw_evoked_potentials(
                 self.experiment,
                 mne_evokeds.values(),
                 title=evoked_name)
-
         except Exception as e:
             exc_messagebox(self, e)
-        finally:
-            oldText = 'Visualize selected dataset'
-            self.ui.pushButtonVisualizeEvokedDataset.setText(oldText)
-            self.ui.pushButtonVisualizeEvokedDataset.setEnabled(True)
-            QtGui.QApplication.restoreOverrideCursor()
+
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
@@ -1179,10 +1192,25 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def calculate_evokeds(self, subject, collection_names):
+
+        # check that lengths are same
+        time_arrays = []
+        for name in collection_names:
+            collection = subject.epochs.get(name)
+            if collection:
+                time_arrays.append(collection.raw.times)
+
+        for i, i_times in enumerate(time_arrays):
+            for j, j_times in enumerate(time_arrays):
+                if i != j:
+                    try:
+                        np.testing.assert_array_almost_equal(i_times, j_times)
+                    except AssertionError:
+                        raise Exception('Epochs collections of different time'
+                                        'scales are not allowed')
         
         evokeds = {}
         for name in collection_names:
-            collection = subject.epochs[name]
 
             try:
                 collection = subject.epochs[name]
@@ -1249,7 +1277,6 @@ class MainWindow(QtGui.QMainWindow):
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)             
         self.experiment.save_experiment_settings()
-        self.initialize_ui()
 
     def save_evoked_data(self, subjects):
         try:    
@@ -1404,7 +1431,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment and self.experiment.active_subject:
             active_subject_name = self.experiment.active_subject.subject_name
 
-        for subject_name in self.experiment.subjects:
+        for subject_name in sorted(self.experiment.subjects.keys()):
             item = QtGui.QListWidgetItem()
             item.setText(subject_name)
             if subject_name == active_subject_name:

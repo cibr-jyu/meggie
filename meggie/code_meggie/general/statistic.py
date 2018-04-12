@@ -3,10 +3,11 @@
 """
 Created on Mar 14, 2013
 
-@author: Jaakko LeppÄkangas, Atte Rautio
+@author: Jaakko Leppäkangas, Atte Rautio
 Contains the Statistic-class used for statistical operations.
 """
 import numpy as np
+import scipy.stats as stats
 
 from PyQt4 import QtCore
 
@@ -196,3 +197,103 @@ class Statistic(QtCore.QObject):
                     ycoord = y
                     maximum = a
         return maximum, xcoord, ycoord
+
+
+class SpectrumStatistics(object):
+
+    def __init__(self, freqs, psds, log_transformed):
+        self.psds = psds
+        self.freqs = freqs
+
+        # ensure that we dont have log transformed data, so that
+        # integrals make sense
+        if log_transformed:
+            self.psds = 10**(psds.copy() / 10.0)
+
+        self._alpha_power = None
+        self._alpha_peak = None
+        self._alpha_frequency = None
+
+    def _get_power_law(self, x, y):
+        """ fits power law to given curve """
+
+        # interpolate zeros
+        mask = y == 0
+        y[mask] = np.interp(np.flatnonzero(mask), np.flatnonzero(~mask), y[~mask])
+
+        # then do log-log transform
+        x_log = np.log10(x)
+        y_log = np.log10(y)
+
+        # estimate slope and intercept with linear regression
+        slope, intercept, _, _, _ = stats.linregress(x_log, y_log)
+        y_log_fitted = intercept + slope*x_log
+
+        # transform the model back to original space
+        y_fitted = 10**y_log_fitted
+
+        return y_fitted
+
+    def _calculate_alpha_peak(self):
+        """ smart alpha peak finding.  """
+
+        freqs = self.freqs
+        psds = self.psds
+
+        peak_freqs = []
+        peak_ampls = []
+
+        # find argmax in area from 7 to 13
+        start = np.where(freqs >= 7)[0][0]
+        end = np.where(freqs <= 13)[0][-1]
+
+        # subtract power law out of psds to find argmax,
+        # but then find the extract the amplitude from original
+        for idx in range(len(psds)):
+            psd = psds[idx]
+
+            psd_powerlawless = psd - self._get_power_law(freqs, psd)
+
+            argmax_ = np.argmax(psd_powerlawless[start:end])
+
+            peak_freqs.append(freqs[start + argmax_])
+            peak_ampls.append(psd[start + argmax_])
+
+        self._alpha_peak = np.array(peak_ampls)
+        self._alpha_frequency = np.array(peak_freqs)
+        
+
+    def _calculate_alpha_power(self):
+        """ gets alpha power as integral over frequencies from 7.5 to 12.5 """
+        psds = self.psds
+        freqs = self.freqs
+
+        sel = np.where((freqs >= 7.5) & (freqs <= 12.5))[0]
+
+        power = []
+        for psd in psds:
+            power.append(np.trapz(psd[sel], freqs[sel]))
+
+        self._alpha_power = np.array(power)
+
+    @property
+    def alpha_peak(self):
+        if self._alpha_peak is None:
+            self._calculate_alpha_peak()
+
+        return self._alpha_peak
+
+    @property
+    def alpha_frequency(self):
+        if self._alpha_frequency is None:
+            self._calculate_alpha_peak()
+
+        return self._alpha_frequency
+
+    @property
+    def alpha_power(self):
+        if self._alpha_power is None:
+            self._calculate_alpha_power()
+
+        return self._alpha_power
+

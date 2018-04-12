@@ -21,6 +21,7 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
+from meggie.code_meggie.general.statistic import SpectrumStatistics
 
 
 def TFR(experiment, epochs, collection_name, ch_index, freqs, ncycles, decim,
@@ -249,7 +250,9 @@ def TFR_raw(experiment, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
             raw.ch_names[channel], '_TFR.csv']))
         fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
-def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='raw', update_ui=(lambda: None), n_jobs=1):
+def plot_power_spectrum(experiment, params, save_data, epoch_groups, 
+                        basename='raw', update_ui=(lambda: None), n_jobs=1,
+                        output_rows='all_channels', output_columns='all_data'):
     """
     Method for plotting power spectrum.
     Parameters:
@@ -265,6 +268,7 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
         
     picks = mne.pick_types(info, meg=True, eeg=True,
                            exclude=[])
+
     params['picks'] = picks
     psd_groups = _compute_spectrum(epoch_groups, params, n_jobs=n_jobs,
                                    do_meanwhile=update_ui)
@@ -276,6 +280,7 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
     psds = []
     for psd_list in psd_groups.values():
         # do a weighted (epoch lengths as weights) average of psds inside a group
+
         weights = np.array([length for psds_, freqs, length in psd_list])
         weights = weights.astype(float) / np.sum(weights)
         psd = np.average([psds_ for psds_, freqs, length in psd_list], 
@@ -285,24 +290,90 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
     colors = color_cycle(len(psds))
 
     subject_name = experiment.active_subject.subject_name
+
+    # find all channel names this way because earlier
+    # the dimension of channels was reduced with picks
+    all_ch_names = [ch_name for ch_idx, ch_name in 
+                    enumerate(info['ch_names']) if 
+                    ch_idx in picks]
+
     if save_data:
+        logging.getLogger('ui_logger').info("Saving data...")
         path = fileManager.create_timestamped_folder(experiment)
+
         for idx, psd in enumerate(psds):
-            filename = ''.join([subject_name, '_', basename, '_',
-                'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
-            fileManager.save_np_array(os.path.join(path, filename), 
-                                      freqs, psd, info)
+
+            if output_rows == 'channel_averages':
+
+                data = []
+
+                selections = mne.SELECTIONS
+                for selection in selections:
+                    # find channels names for selection provided by mne
+                    selected_ch_names = mne._clean_names(
+                        mne.read_selection(selection),
+                        remove_whitespace=True)
+
+                    cleaned_all_names = mne._clean_names(all_ch_names,
+                        remove_whitespace=True)
+
+                    # calculate average
+                    ch_average = np.mean(
+                        [psd[ch_idx] for ch_idx, ch_name 
+                         in enumerate(cleaned_all_names)
+                         if ch_name in selected_ch_names], axis=0)
+
+                    data.append(ch_average)
+
+                data = np.array(data)
+                row_names = selections
+
+            else:
+
+                data = psd
+                row_names = all_ch_names
+
+                for row_idx in range(len(row_names)):
+                    if all_ch_names[row_idx] in info['bads']:
+                        row_names[row_idx] += ' (bad)'
+
+            if output_columns == 'statistics':
+                statistics = SpectrumStatistics(freqs, data, params['log'])
+
+                alpha_peak = statistics.alpha_peak
+                alpha_frequency = statistics.alpha_frequency
+                alpha_power = statistics.alpha_power
+
+                filename = ''.join([subject_name, '_', basename, '_',
+                                    'spectrum_statistics', '_', 
+                                    str(psd_groups.keys()[idx]), '.csv'])
+
+                column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
+                data = np.array([alpha_peak, alpha_frequency, alpha_power])
+                data = np.transpose(data)
+
+            else:
+                filename = ''.join([subject_name, '_', basename, '_',
+                    'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
+                column_names = freqs.tolist()
+
+            fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
+                                 column_names, row_names)
 
     logging.getLogger('ui_logger').info("Plotting power spectrum...")
 
-    def my_callback(ax, ch_idx):
+    def individual_plot(ax, ch_idx):
         """
         Callback for the interactive plot.
         Opens a channel specific plot.
         """
+
+        ch_name = info['ch_names'][ch_idx]
+        psd_idx = all_ch_names.index(ch_name)
+        
         fig = plt.gcf()
         fig.canvas.set_window_title(''.join(['Spectrum_', subject_name,
-                                    '_', info['ch_names'][ch_idx]]))
+                                    '_', ch_name]))
         
         conditions = [str(key) for key in psd_groups]
         positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
@@ -312,7 +383,7 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
 
         color_idx = 0
         for psd in psds:
-            plt.plot(freqs, psd[ch_idx], color=colors[color_idx])
+            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
             color_idx += 1
         
         plt.xlabel('Frequency (Hz)')
@@ -324,19 +395,19 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups, basename='r
 
         plt.show()
 
-    info = deepcopy(info)
-    info['ch_names'] = [ch for idx, ch in enumerate(info['ch_names'])
-                        if idx in picks]
-
     for ax, idx in mne.iter_topography(info, fig_facecolor='white',
                                        axis_spinecolor='white',
                                        axis_facecolor='white', layout=lout,
-                                       on_pick=my_callback):
+                                       on_pick=individual_plot):
+
+        ch_name = info['ch_names'][idx]
+        psd_idx = all_ch_names.index(ch_name)
         
         color_idx = 0
         for psd in psds:
-            ax.plot(psd[idx], linewidth=0.2, color=colors[color_idx])
+            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
             color_idx += 1
+
     plt.gcf().canvas.set_window_title('Spectrum_' + subject_name)
     plt.show()
 

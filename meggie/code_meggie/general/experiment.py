@@ -40,7 +40,7 @@ class Experiment(QObject):
     workspace          -- The path to the experiment folder
     author             -- The name of the experiment's author
     description        -- A user defined description of the experiment
-    subjects           -- The list of the Subject objects in this experiment
+    subjects           -- The dict of Subject objects in this experiment
     active_subject     -- The subject that is currently processed
     """
 

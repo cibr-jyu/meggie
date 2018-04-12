@@ -21,6 +21,7 @@ from meggie.code_meggie.general import fileManager
 
 from meggie.code_meggie.analysis.epoching import create_epochs
 
+from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
@@ -399,6 +400,13 @@ class EventSelectionDialog(QtGui.QDialog):
 
     def calculate_epochs(self, subject):
         experiment = self.parent.experiment
-        events_str = create_epochs(experiment,
-            self.batching_widget.data[subject.subject_name], subject)
+
+        @threaded
+        def create(*args, **kwargs):
+            events_str = create_epochs(experiment,
+                self.batching_widget.data[subject.subject_name], subject)
+            return events_str
+
+        events_str = create(do_meanwhile=self.parent.update_ui)
+
         return events_str
