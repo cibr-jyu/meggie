@@ -59,11 +59,13 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.spinBoxNfft.setValue(nfft)
         self.ui.spinBoxOverlap.setValue(overlap)
 
-        if self.ui.spinBoxFmin.value() < raw.info['highpass']:
-            self.ui.spinBoxFmin.setValue(int(np.ceil(raw.info['highpass'])))
+        if raw.info.get('highpass'):
+            if self.ui.spinBoxFmin.value() < raw.info['highpass']:
+                self.ui.spinBoxFmin.setValue(int(np.ceil(raw.info['highpass'])))
 
-        if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
-            self.ui.spinBoxFmax.setValue(int(raw.info['highpass']))
+        if raw.info.get('lowpass'):
+            if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
+                self.ui.spinBoxFmax.setValue(int(raw.info['highpass']))
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
