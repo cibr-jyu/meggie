@@ -1,10 +1,21 @@
 Changelog
 =========
 
-0.6.4 (unreleased)
+0.7.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.7.0 (2018-04-12)
+------------------
+
+- Add plot evoked topomaps
+- Add output options for spectrums
+- Remove evoked stats dialog
+- Add throbbers
+- Add subject list sorting
+- Update power spectrum dialog default values
+- Fix evoked batch ui initialization bug
 
 0.6.3 (2018-04-03)
 ------------------
