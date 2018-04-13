@@ -679,20 +679,6 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="1">
-                        <widget class="QPushButton" name="pushButtonTFRraw">
-                         <property name="text">
-                          <string>TFR</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButtonSpectrum">
-                         <property name="text">
-                          <string>Power spectrum</string>
-                         </property>
-                        </widget>
-                       </item>
                        <item row="0" column="0">
                         <widget class="QPushButton" name="pushButtonRawPlot">
                          <property name="text">
@@ -700,7 +686,7 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="2">
+                       <item row="1" column="0">
                         <widget class="QPushButton" name="pushButtonPlotProjections">
                          <property name="text">
                           <string>Plot projections</string>
@@ -840,6 +826,18 @@
                 </item>
                </layout>
               </widget>
+             </widget>
+             <widget class="QWidget" name="tabSpectrums">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <attribute name="title">
+               <string>Spectrums</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_8"/>
              </widget>
              <widget class="QWidget" name="tabEpoching">
               <attribute name="title">
@@ -1729,9 +1727,9 @@
                </layout>
               </widget>
              </widget>
-             <widget class="QWidget" name="tabAveraging">
+             <widget class="QWidget" name="tabEvoked">
               <attribute name="title">
-               <string>Averaging</string>
+               <string>Evoked responses</string>
               </attribute>
               <widget class="QWidget" name="layoutWidget">
                <property name="geometry">
@@ -1970,101 +1968,10 @@
                </layout>
               </widget>
              </widget>
-             <widget class="QWidget" name="tabSpectralAnalysis">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+             <widget class="QWidget" name="tabInduced">
               <attribute name="title">
-               <string>Spectral analysis</string>
+               <string>Induced responses</string>
               </attribute>
-              <layout class="QGridLayout" name="gridLayout_8">
-               <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_33">
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout">
-                   <item>
-                    <widget class="QGroupBox" name="groupBoxEpochsTFR">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="title">
-                      <string/>
-                     </property>
-                     <widget class="QGroupBox" name="groupBoxAvailableTFR">
-                      <property name="geometry">
-                       <rect>
-                        <x>10</x>
-                        <y>310</y>
-                        <width>500</width>
-                        <height>180</height>
-                       </rect>
-                      </property>
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>1</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>500</width>
-                        <height>180</height>
-                       </size>
-                      </property>
-                      <property name="title">
-                       <string>Available actions:</string>
-                      </property>
-                      <layout class="QGridLayout" name="gridLayout_27">
-                       <item row="2" column="0">
-                        <widget class="QPushButton" name="pushButtonTFRTopology">
-                         <property name="text">
-                          <string>TFR topology</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButtonTFR">
-                         <property name="text">
-                          <string>One-channel TFR</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="0">
-                        <widget class="QPushButton" name="pushButtonSpectrumEpochs">
-                         <property name="text">
-                          <string>Power spectrum</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="Line" name="line">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBoxEpochParamsTFR">
-                   <property name="title">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
              </widget>
              <widget class="QWidget" name="tabSourceAnalysis">
               <attribute name="title">
@@ -2785,8 +2692,6 @@
   <tabstop>pushButtonChannelAverages</tabstop>
   <tabstop>pushButtonCreateEvoked</tabstop>
   <tabstop>pushButtonDeleteEvoked</tabstop>
-  <tabstop>pushButtonTFR</tabstop>
-  <tabstop>pushButtonTFRTopology</tabstop>
   <tabstop>textEditConsole</tabstop>
   <tabstop>textBrowserEvents</tabstop>
   <tabstop>pushButtonActivateSubject</tabstop>

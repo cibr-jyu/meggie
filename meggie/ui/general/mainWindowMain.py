@@ -60,6 +60,8 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.utils.decorators import threaded
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
+from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
+from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
@@ -99,7 +101,9 @@ class MainWindow(QtGui.QMainWindow):
         self.experimentHandler = experiment.ExperimentHandler(self)
 
         # Create the tab contents
+        self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
         self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
+        self.mainWindowTabInduced = MainWindowTabInduced(self)
 
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtGui.QLabel()
@@ -1481,15 +1485,19 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.tabWidget.removeTab(0)
 
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
-        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
-        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
-        self.ui.tabWidget.insertTab(5, self.mainWindowTabSourceAnalysis, "Source Analysis")
+        self.ui.tabWidget.insertTab(2, self.mainWindowTabSpectrums, "Spectrums")
+        self.ui.tabWidget.insertTab(3, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(4, self.ui.tabEvoked, "Evoked responses")
+        self.ui.tabWidget.insertTab(5, self.mainWindowTabInduced, "Induced responses")
+        self.ui.tabWidget.insertTab(6, self.mainWindowTabSourceAnalysis, "Source Analysis")
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
         self.mainWindowTabSourceAnalysis.update_tabs()
         self.mainWindowTabSourceAnalysis.initialize_ui()
+
+        self.mainWindowTabSpectrums.initialize_ui()
+        self.mainWindowTabInduced.initialize_ui()
         
     def on_currentChanged(self):
         """
@@ -1498,18 +1506,14 @@ class MainWindow(QtGui.QMainWindow):
         """
 
         index = self.ui.tabWidget.currentIndex()
-        if index == 1:
+        if index == 2:
             mode = QtGui.QAbstractItemView.SingleSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-        elif index == 2:
-            mode = QtGui.QAbstractItemView.MultiSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
-            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         elif index == 3:
             mode = QtGui.QAbstractItemView.MultiSelection
             self.epochList.ui.groupBoxEvents.setVisible(True)
-            self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         else:
             self.epochList.hide()
             return
