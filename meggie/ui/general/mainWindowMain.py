@@ -45,11 +45,6 @@ from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
-from meggie.ui.analysis.TFRDialogMain import TFRDialog
-from meggie.ui.analysis.TFRTopologyDialogMain import TFRTopologyDialog
-from meggie.ui.analysis.TFRfromRawDialogMain import TFRRawDialog
-from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
-from meggie.ui.analysis.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
@@ -809,39 +804,7 @@ class MainWindow(QtGui.QMainWindow):
             plot_projs_topomap(self.experiment, raw)
         except Exception as e:
             exc_messagebox(self, e)
-
-    def on_pushButtonSpectrum_clicked(self, checked=None):
-        """Open the power spectrum dialog."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        self.spectrumDialog = PowerSpectrumDialog(self)
-        self.spectrumDialog.show()
-        
-    def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
-        """Open the power spectrum dialog."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs for Power spectrum.'
-            messagebox(self, message)
-            return
-
-        collection_names = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-
-        epochs = []
-        for collection_name in collection_names:
-            epochs.append(self.experiment.active_subject.epochs.get(str(collection_name.text())))
-
-        self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
-        self.spectrumDialogEpochs.show()
-        
+       
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
@@ -938,64 +901,6 @@ class MainWindow(QtGui.QMainWindow):
         fileManager.save_raw(self.experiment, raw, fname)
         self.initialize_ui()
 
-    def on_pushButtonTFR_clicked(self, checked=None):
-        """Open the dialog for plotting TFR from a single channel."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs before TFR.'
-            messagebox(self, message)
-            return
-        
-        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        epochs = self.experiment.active_subject.epochs.get(collection_name)
-
-        self.tfr_dialog = TFRDialog(self, epochs)
-        self.tfr_dialog.show()
-        
-    def on_pushButtonTFRTopology_clicked(self, checked=None):
-        """Opens the dialog for plotting TFR topology."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs for TFR.'
-            messagebox(self, message)
-            return 
-        
-        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
-        self.tfrTop_dialog.show()
-
-        
-    def on_pushButtonTFRraw_clicked(self, checked=None):
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        self.tfr_raw_dialog = TFRRawDialog(self) 
-        self.tfr_raw_dialog.show()       
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""

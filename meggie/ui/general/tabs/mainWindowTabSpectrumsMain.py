@@ -36,3 +36,15 @@ class MainWindowTabSpectrums(QtGui.QDialog):
 
         # do something :)
 
+
+    def on_pushButtonSpectrum_clicked(self, checked=None):
+        """Open the power spectrum dialog."""
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+
+        self.spectrumDialog = PowerSpectrumDialog(self)
+        self.spectrumDialog.show()
+        
+
