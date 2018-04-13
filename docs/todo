@@ -1,6 +1,8 @@
 TODO:
 
 - should do manual for meggie
+- TFR objects and Spectrum objects that can be created and then saved or visualized separately.
+ * makes it easier to do batches.
 
 - refactoring:
  * main window tabs to separate files

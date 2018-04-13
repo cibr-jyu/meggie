@@ -293,9 +293,10 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
 
     # find all channel names this way because earlier
     # the dimension of channels was reduced with picks
-    all_ch_names = [ch_name for ch_idx, ch_name in 
+    picked_ch_names = [ch_name for ch_idx, ch_name in 
                     enumerate(info['ch_names']) if 
                     ch_idx in picks]
+    ch_names = info['ch_names']
 
     if save_data:
         logging.getLogger('ui_logger').info("Saving data...")
@@ -314,13 +315,13 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
                         mne.read_selection(selection),
                         remove_whitespace=True)
 
-                    cleaned_all_names = mne._clean_names(all_ch_names,
+                    cleaned_picked_ch_names = mne._clean_names(picked_ch_names,
                         remove_whitespace=True)
 
                     # calculate average
                     ch_average = np.mean(
                         [psd[ch_idx] for ch_idx, ch_name 
-                         in enumerate(cleaned_all_names)
+                         in enumerate(cleaned_picked_ch_names)
                          if ch_name in selected_ch_names], axis=0)
 
                     data.append(ch_average)
@@ -331,10 +332,10 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
             else:
 
                 data = psd
-                row_names = all_ch_names
+                row_names = picked_ch_names
 
                 for row_idx in range(len(row_names)):
-                    if all_ch_names[row_idx] in info['bads']:
+                    if picked_ch_names[row_idx] in info['bads']:
                         row_names[row_idx] += ' (bad)'
 
             if output_columns == 'statistics':
@@ -368,8 +369,8 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
         Opens a channel specific plot.
         """
 
-        ch_name = info['ch_names'][ch_idx]
-        psd_idx = all_ch_names.index(ch_name)
+        ch_name = ch_names[ch_idx]
+        psd_idx = picked_ch_names.index(ch_name)
         
         fig = plt.gcf()
         fig.canvas.set_window_title(''.join(['Spectrum_', subject_name,
@@ -400,8 +401,8 @@ def plot_power_spectrum(experiment, params, save_data, epoch_groups,
                                        axis_facecolor='white', layout=lout,
                                        on_pick=individual_plot):
 
-        ch_name = info['ch_names'][idx]
-        psd_idx = all_ch_names.index(ch_name)
+        ch_name = ch_names[idx]
+        psd_idx = picked_ch_names.index(ch_name)
         
         color_idx = 0
         for psd in psds:
