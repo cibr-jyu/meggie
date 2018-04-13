@@ -15,8 +15,7 @@ import traceback
 from PyQt4 import QtCore,QtGui
 from copy import deepcopy
 
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.events import Events
 from meggie.code_meggie.general import fileManager
 
 from meggie.code_meggie.analysis.epoching import create_epochs

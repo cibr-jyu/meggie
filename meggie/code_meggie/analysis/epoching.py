@@ -17,8 +17,8 @@ from meggie.code_meggie.analysis.utils import color_cycle
 
 from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.epochs import Epochs
+from meggie.code_meggie.structures.events import Events
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 

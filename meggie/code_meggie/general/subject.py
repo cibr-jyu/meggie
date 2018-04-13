@@ -15,7 +15,7 @@ import numpy as np
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.events import Events
 
 class Subject(object):
     

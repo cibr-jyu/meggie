@@ -1191,7 +1191,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionHide_Show_subject_list_and_info)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.scrollArea, self.tabWidget)
         MainWindow.setTabOrder(self.tabWidget, self.pushButtonCreateEpochs)

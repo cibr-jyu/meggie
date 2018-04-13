@@ -65,7 +65,7 @@ from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.evoked import Evoked
+from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.analysis.epoching import draw_evoked_potentials
 from meggie.code_meggie.analysis.epoching import group_average

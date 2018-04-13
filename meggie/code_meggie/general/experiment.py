@@ -18,8 +18,8 @@ from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.evoked import Evoked
+from meggie.code_meggie.structures.epochs import Epochs
+from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 from meggie.code_meggie.general.stc import SourceEstimateEvoked
 from meggie.code_meggie.general.stc import SourceEstimateEpochs
