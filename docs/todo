@@ -3,6 +3,8 @@ TODO:
 - should do manual for meggie
 - TFR objects and Spectrum objects that can be created and then saved or visualized separately.
  * makes it easier to do batches.
+- add throbber to bad channel dialog
+- sort epoch and eveoked and otehr list
 
 - refactoring:
  * main window tabs to separate files

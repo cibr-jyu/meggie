@@ -248,8 +248,7 @@ class Subject(object):
         Adds Epochs object to the epochs dictionary.
 
         """
-        if not epochs.collection_name in self._epochs:
-            self._epochs[epochs.collection_name] = epochs
+        self._epochs[epochs.collection_name] = epochs
 
     def remove_epochs(self, collection_name):
         """
@@ -280,8 +279,7 @@ class Subject(object):
         Keyword arguments:
         evoked  -- Evoked object
         """
-        if not evoked.name in self._evokeds:
-            self._evokeds[evoked.name] = evoked
+        self._evokeds[evoked.name] = evoked
 
     def remove_evoked(self, name):
         """
