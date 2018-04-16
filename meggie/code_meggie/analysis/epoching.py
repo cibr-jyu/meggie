@@ -96,9 +96,10 @@ def create_epochs(experiment, params, subject):
     else:
         params_copy['meg'] = False
     
-    # find all proper picks
+    # find all proper picks, dont include bads
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-                           eeg=params_copy['eeg'], eog=params_copy['eog'])
+                           eeg=params_copy['eeg'], eog=params_copy['eog'],
+                           exclude=[])
     
     if len(picks) == 0:
         raise ValueError('Picks cannot be empty. Select picks by ' +
@@ -111,7 +112,7 @@ def create_epochs(experiment, params, subject):
     if len(epochs.get_data()) == 0:
         raise ValueError('Could not find any data. Perhaps the ' + 
                          'rejection thresholds are too strict...')
-    
+
     epochs_object = Epochs(params['collection_name'], subject, params, epochs)
     fileManager.save_epoch(epochs_object, overwrite=True)
     subject.add_epochs(epochs_object)
