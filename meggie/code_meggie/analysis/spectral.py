@@ -445,3 +445,7 @@ def _compute_spectrum(epoch_groups, params, n_jobs):
 
     return psd_groups
 
+
+def create_power_spectrum():
+    pass
+

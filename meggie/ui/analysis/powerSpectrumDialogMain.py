@@ -25,7 +25,7 @@ from meggie.ui.utils.messaging import messagebox
 
 class PowerSpectrumDialog(QtGui.QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """
         Init method for the dialog.
         Constructs a set of time series from the given parameters.
@@ -37,8 +37,9 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
         self.parent = parent
+        self.experiment = experiment
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
@@ -138,7 +139,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                                      "starting frequency"))
             return
         
-        subject = self.parent.experiment.active_subject
+        subject = self.experiment.active_subject
         sfreq = subject.get_working_file().info['sfreq']
     
         valid = True
@@ -150,7 +151,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                                      "should be more than window size"))
             return
         
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         
         epochs = OrderedDict()
         for interval in times:
@@ -177,7 +178,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             QtGui.QApplication.setOverrideCursor(
                 QtGui.QCursor(QtCore.Qt.WaitCursor))
 
-            experiment = self.parent.experiment
+            experiment = self.experiment
             update_ui = self.parent.update_ui
             plot_power_spectrum(experiment, params, save_data, epochs, 
                                 update_ui=update_ui, 

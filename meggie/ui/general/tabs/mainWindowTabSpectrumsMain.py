@@ -6,6 +6,8 @@ from PyQt4 import QtGui
 
 from meggie.ui.general.tabs.mainWindowTabSpectrumsUi import Ui_mainWindowTabSpectrums  # noqa
 
+from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
+
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
@@ -36,15 +38,16 @@ class MainWindowTabSpectrums(QtGui.QDialog):
 
         # do something :)
 
-
-    def on_pushButtonSpectrum_clicked(self, checked=None):
+    def on_pushButtonComputeSpectrum_clicked(self, checked=None):
         """Open the power spectrum dialog."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if self.parent.experiment.active_subject is None:
             return
 
-        self.spectrumDialog = PowerSpectrumDialog(self)
+        self.spectrumDialog = PowerSpectrumDialog(self, 
+            self.parent.experiment)
         self.spectrumDialog.show()
         
 

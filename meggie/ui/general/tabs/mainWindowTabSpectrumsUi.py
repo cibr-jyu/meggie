@@ -33,9 +33,6 @@ class Ui_mainWindowTabSpectrums(object):
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
         self.verticalLayout_23 = QtGui.QVBoxLayout()
         self.verticalLayout_23.setObjectName(_fromUtf8("verticalLayout_23"))
-        self.groupBoxEpochs = QtGui.QGroupBox(self.layoutWidget)
-        self.groupBoxEpochs.setObjectName(_fromUtf8("groupBoxEpochs"))
-        self.verticalLayout_23.addWidget(self.groupBoxEpochs)
         self.groupBoxComputations = QtGui.QGroupBox(self.layoutWidget)
         self.groupBoxComputations.setMinimumSize(QtCore.QSize(400, 0))
         self.groupBoxComputations.setObjectName(_fromUtf8("groupBoxComputations"))
@@ -116,9 +113,8 @@ class Ui_mainWindowTabSpectrums(object):
 
     def retranslateUi(self, mainWindowTabSpectrums):
         mainWindowTabSpectrums.setWindowTitle(_translate("mainWindowTabSpectrums", "Form", None))
-        self.groupBoxEpochs.setTitle(_translate("mainWindowTabSpectrums", "Epochs", None))
         self.groupBoxComputations.setTitle(_translate("mainWindowTabSpectrums", "Computations", None))
-        self.pushButtonComputeSpectrum.setText(_translate("mainWindowTabSpectrums", "Compute spectrum", None))
+        self.pushButtonComputeSpectrum.setText(_translate("mainWindowTabSpectrums", "Compute spectrum...", None))
         self.groupBoxSpectrums.setTitle(_translate("mainWindowTabSpectrums", "Spectrums", None))
         self.labelSpectrumInfo.setText(_translate("mainWindowTabSpectrums", "Spectrum info", None))
         self.groupBoxSpectrumActions.setTitle(_translate("mainWindowTabSpectrums", "Available actions for spectrums", None))

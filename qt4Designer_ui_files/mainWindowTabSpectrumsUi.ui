@@ -26,13 +26,6 @@
     <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout_23">
       <item>
-       <widget class="QGroupBox" name="groupBoxEpochs">
-        <property name="title">
-         <string>Epochs</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QGroupBox" name="groupBoxComputations">
         <property name="minimumSize">
          <size>
@@ -47,7 +40,7 @@
          <item row="0" column="0">
           <widget class="QPushButton" name="pushButtonComputeSpectrum">
            <property name="text">
-            <string>Compute spectrum</string>
+            <string>Compute spectrum...</string>
            </property>
           </widget>
          </item>
