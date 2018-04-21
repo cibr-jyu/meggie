@@ -22,6 +22,7 @@ from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
 from meggie.code_meggie.general.statistic import SpectrumStatistics
+from meggie.code_meggie.structures.spectrum import Spectrum
 
 
 def TFR(experiment, epochs, collection_name, ch_index, freqs, ncycles, decim,
@@ -250,9 +251,9 @@ def TFR_raw(experiment, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
             raw.ch_names[channel], '_TFR.csv']))
         fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
-def plot_power_spectrum(experiment, params, save_data, epoch_groups, 
-                        basename='raw', update_ui=(lambda: None), n_jobs=1,
-                        output_rows='all_channels', output_columns='all_data'):
+def plot_power_spectrum_old(experiment, params, save_data, epoch_groups, 
+                            basename='raw', update_ui=(lambda: None), n_jobs=1,
+                            output_rows='all_channels', output_columns='all_data'):
     """
     Method for plotting power spectrum.
     Parameters:
@@ -446,6 +447,59 @@ def _compute_spectrum(epoch_groups, params, n_jobs):
     return psd_groups
 
 
-def create_power_spectrum():
+def create_power_spectrum(experiment, spectrum_name, params, epoch_groups, 
+                          update_ui=(lambda: None), n_jobs=1):
+    """
+    """
+    lout = fileManager.read_layout(experiment.layout)
+        
+    for epochs in epoch_groups.values():
+        info = epochs[0].info
+        break
+        
+    picks = mne.pick_types(info, meg=True, eeg=True,
+                           exclude=[])
+
+    params['picks'] = picks
+    psd_groups = _compute_spectrum(epoch_groups, params, n_jobs=n_jobs,
+                                   do_meanwhile=update_ui)
+
+    for psd_list in psd_groups.values():
+        freqs = psd_list[0][1]
+        break
+    
+    psds = []
+    for psd_list in psd_groups.values():
+        # do a weighted (epoch lengths as weights) average of psds inside a group
+
+        weights = np.array([length for psds_, freqs, length in psd_list])
+        weights = weights.astype(float) / np.sum(weights)
+        psd = np.average([psds_ for psds_, freqs, length in psd_list], 
+                         weights=weights, axis=0)
+        psds.append(psd)
+        
+    # find all channel names this way because earlier
+    # the dimension of channels was reduced with picks
+    picked_ch_names = [ch_name for ch_idx, ch_name in 
+                    enumerate(info['ch_names']) if 
+                    ch_idx in picks]
+
+    psd_data = dict(zip(psd_groups.keys(), psds))
+
+    spectrum = Spectrum(spectrum_name, experiment.active_subject,
+            psd_data, freqs, picked_ch_names)
+
+    experiment.active_subject.add_spectrum(spectrum) 
+
+    spectrum.save_data()
+
+
+def plot_power_spectrum():
+    pass
+
+def save_data_psd():
+    pass
+
+def group_average_psd():
     pass
 

@@ -344,6 +344,20 @@ def save_csv(path, data, column_names, row_names):
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
 
 
+def load_csv(path):
+
+    all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
+    data = []
+    column_names = []
+    row_names = []
+
+    column_names = all_data[0, 1:].tolist()
+    row_names = all_data[1:, 0].tolist()
+    data = all_data[1:, 1:].astype(np.float)
+
+    return column_names, row_names, data
+
+
 # see https://stackoverflow.com/a/13790289
 def tail(f, lines=1, _buffer=4098):
     """Tail a file and get X lines from the end"""

@@ -18,9 +18,7 @@ class Evoked(object):
         Constructor
         
         Keyword arguments:
-        raw    -- raw evoked file
         name   -- name of the raw evoked file
-        events -- list of events in raw file
         """
         self._name = name
         self._mne_evokeds = mne_evokeds

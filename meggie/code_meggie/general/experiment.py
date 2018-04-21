@@ -20,6 +20,7 @@ from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.structures.epochs import Epochs
 from meggie.code_meggie.structures.evoked import Evoked
+from meggie.code_meggie.structures.spectrum import Spectrum
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 from meggie.code_meggie.general.stc import SourceEstimateEvoked
 from meggie.code_meggie.general.stc import SourceEstimateEpochs
@@ -250,6 +251,7 @@ class Experiment(QObject):
                 'working_file_name': subject.working_file_name,
                 'epochs': [], 
                 'evokeds': [],
+                'spectrums': [],
                 'stcs': [],
             }
             for stc in subject.stcs.values():
@@ -291,6 +293,11 @@ class Experiment(QObject):
                     del subject.evokeds[evoked.name]
                     message = 'Missing evoked response file. Experiment updated.'
                     logging.getLogger('ui_logger').warning(message)
+            for spectrum in subject.spectrums.values():
+                spectrum_dict = {
+                    'name': spectrum.name,
+                }
+                subject_dict['spectrums'].append(spectrum_dict)
 
             subjects.append(subject_dict)
         
@@ -429,6 +436,10 @@ class ExperimentHandler(QObject):
                     if 'info' in evoked_data:
                         evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
+
+                for spectrum_data in subject_data.get('spectrums', []):
+                    spectrum = Spectrum(spectrum_data['name'], subject, None, None, None)
+                    subject.add_spectrum(spectrum)
 
                 for stc_data in subject_data.get('stcs', []):
                     name = stc_data['name']

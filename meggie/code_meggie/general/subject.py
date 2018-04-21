@@ -36,6 +36,7 @@ class Subject(object):
 
         self._epochs = dict()
         self._evokeds = dict()
+        self._spectrums = dict()
         self._stcs = dict()
         self._subject_path = os.path.join(experiment.workspace,
                                           experiment.experiment_name,
@@ -64,6 +65,10 @@ class Subject(object):
 
         self._cov_directory = os.path.join(self._source_analysis_directory, 
                                            'cov')
+
+        self._spectrums_directory = os.path.join(self._subject_path, 
+                                                 'spectrums')
+
         self._experiment = experiment
 
     @property
@@ -101,6 +106,10 @@ class Subject(object):
     @property
     def cov_directory(self):
         return self._cov_directory
+
+    @property
+    def spectrums_directory(self):
+        return self._spectrums_directory
 
     @property
     def mri_subject_name(self):
@@ -166,6 +175,10 @@ class Subject(object):
     @property
     def evokeds(self):
         return self._evokeds
+
+    @property
+    def spectrums(self):
+        return self._spectrums
 
     @property
     def stcs(self):
@@ -271,6 +284,18 @@ class Subject(object):
             raise IOError('Epochs could not be deleted from epochs folder.')
 
         self._epochs.pop(str(str(collection_name)), None)
+
+    def add_spectrum(self, spectrum):
+        self._spectrums[spectrum.name] = spectrum
+
+    def remove_spectrum(self, spectrum):
+
+        try:
+            spectrum.delete_data()
+        except OSError:
+            raise IOError('Spectrum could not be deleted from folders.')
+        self._spectrums.pop(str(name), None)
+
 
     def add_evoked(self, evoked):
         """
@@ -457,6 +482,7 @@ class Subject(object):
                 self.source_analysis_directory,
                 self.forward_solutions_directory,
                 self.reconfiles_directory,
+                self.spectrums_directory,
                 self.cov_directory,
                 self.stc_directory
             ])

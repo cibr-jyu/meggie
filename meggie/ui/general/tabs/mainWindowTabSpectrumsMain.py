@@ -36,7 +36,33 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         if active_subject is None:
             return
 
-        # do something :)
+        # update subjects list
+        self.ui.listWidgetSpectrums.clear()
+        for name in active_subject.spectrums:
+            item = QtGui.QListWidgetItem(name)
+            self.ui.listWidgetSpectrums.addItem(item)
+
+
+    def on_listWidgetSpectrums_currentItemChanged(self, item):
+        if not item:
+            self.ui.textBrowserSpectrumInfo.clear()
+            return
+
+        experiment = self.parent.experiment
+
+        spectrum_name = str(item.text())
+        spectrum = experiment.active_subject.spectrums.get(spectrum_name)
+        info = 'Name: ' + str(spectrum_name) + '\n'
+
+        freqs = spectrum.freqs
+        fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
+        info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+
+        keys = spectrum.data.keys()
+        if keys:
+            info += 'Condition labels: ' + ', '.join([str(key) for key in keys])
+        self.ui.textBrowserSpectrumInfo.setText(info) 
+
 
     def on_pushButtonComputeSpectrum_clicked(self, checked=None):
         """Open the power spectrum dialog."""
@@ -51,3 +77,5 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         self.spectrumDialog.show()
         
 
+    def update_ui(self):
+        self.parent.update_ui()

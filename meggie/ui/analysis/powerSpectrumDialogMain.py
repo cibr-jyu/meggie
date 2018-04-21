@@ -17,7 +17,7 @@ from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
-from meggie.code_meggie.analysis.spectral import plot_power_spectrum
+from meggie.code_meggie.analysis.spectral import create_power_spectrum
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -126,6 +126,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
     def accept(self, *args, **kwargs):
         """Starts the computation."""
 
+        name = self.ui.lineEditName.text()
+        if not name:
+            messagebox(self.parent, "Must have a name")
+            return
+
         times = self.intervals
         
         if not times:
@@ -172,19 +177,12 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
-        save_data = self.ui.checkBoxSaveData.isChecked()
-        
         try:
-            QtGui.QApplication.setOverrideCursor(
-                QtGui.QCursor(QtCore.Qt.WaitCursor))
-
             experiment = self.experiment
             update_ui = self.parent.update_ui
-            plot_power_spectrum(experiment, params, save_data, epochs, 
-                                update_ui=update_ui, 
-                                output_rows=self.output_rows,
-                                output_columns=self.output_columns)
+            create_power_spectrum(experiment, name, params, epochs, 
+                                  update_ui=update_ui)
+            experiment.save_experiment_settings()
+            self.parent.initialize_ui()
         except Exception as e:
             exc_messagebox(self.parent, e)
-
-        QtGui.QApplication.restoreOverrideCursor()
