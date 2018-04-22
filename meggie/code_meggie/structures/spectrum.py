@@ -18,7 +18,7 @@ class Spectrum(object):
     
     """
 
-    def __init__(self, name, subject, data, freqs, ch_names):
+    def __init__(self, name, subject, log_transformed, data, freqs, ch_names):
         """
         """
         # name has no group number and no '.fif'
@@ -32,6 +32,7 @@ class Spectrum(object):
         self._freqs = freqs
         self._spectrums_directory = subject.spectrums_directory
         self._ch_names = ch_names
+        self._log_transformed = log_transformed
    
     def _load_data(self):
         template = self.name + '_' + '([0-9]*)\.csv'
@@ -102,5 +103,9 @@ class Spectrum(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def log_transformed(self):
+        return self._log_transformed
 
 

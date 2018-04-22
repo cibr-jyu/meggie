@@ -296,6 +296,7 @@ class Experiment(QObject):
             for spectrum in subject.spectrums.values():
                 spectrum_dict = {
                     'name': spectrum.name,
+                    'log_transformed': spectrum.log_transformed,
                 }
                 subject_dict['spectrums'].append(spectrum_dict)
 
@@ -438,7 +439,8 @@ class ExperimentHandler(QObject):
                     subject.add_evoked(evoked)
 
                 for spectrum_data in subject_data.get('spectrums', []):
-                    spectrum = Spectrum(spectrum_data['name'], subject, None, None, None)
+                    spectrum = Spectrum(spectrum_data['name'], subject, 
+                        spectrum_data['log_transformed'], None, None, None)
                     subject.add_spectrum(spectrum)
 
                 for stc_data in subject_data.get('stcs', []):

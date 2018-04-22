@@ -12,6 +12,8 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
+from meggie.code_meggie.analysis.spectral import plot_power_spectrum
+
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
@@ -61,6 +63,11 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         keys = spectrum.data.keys()
         if keys:
             info += 'Condition labels: ' + ', '.join([str(key) for key in keys])
+            info += '\n'
+
+        log_transformed = spectrum.log_transformed 
+        info += 'Log transformed: ' + str(log_transformed) + '\n'
+
         self.ui.textBrowserSpectrumInfo.setText(info) 
 
 
@@ -75,6 +82,47 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         self.spectrumDialog = PowerSpectrumDialog(self, 
             self.parent.experiment)
         self.spectrumDialog.show()
+
+    def on_pushButtonVisualizeSpectrum_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+
+        if not active_subject:
+            return
+
+        spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
+        if not spectrum_name:
+            return
+
+        plot_power_spectrum(self.parent.experiment, spectrum_name)
+
+
+    def on_pushButtonDeleteSpectrum_clicked(self, checked=None):
+        if checked is None:
+            return
+
+    def on_pushButtonGroupAverage_clicked(self, checked=None):
+        if checked is None:
+            return
+
+    def on_pushButtonGroupDeleteSpectrum_clicked(self, checked=None):
+        if checked is None:
+            return
+
+    def on_pushButtonGroupSaveSpectrum_clicked(self, checked=None):
+        if checked is None:
+            return
+
+    def on_pushButtonSaveSpectrum_clicked(self, checked=None):
+        if checked is None:
+            return
         
 
     def update_ui(self):

@@ -451,7 +451,6 @@ def create_power_spectrum(experiment, spectrum_name, params, epoch_groups,
                           update_ui=(lambda: None), n_jobs=1):
     """
     """
-    lout = fileManager.read_layout(experiment.layout)
         
     for epochs in epoch_groups.values():
         info = epochs[0].info
@@ -487,15 +486,81 @@ def create_power_spectrum(experiment, spectrum_name, params, epoch_groups,
     psd_data = dict(zip(psd_groups.keys(), psds))
 
     spectrum = Spectrum(spectrum_name, experiment.active_subject,
-            psd_data, freqs, picked_ch_names)
+            params['log'], psd_data, freqs, picked_ch_names)
 
     experiment.active_subject.add_spectrum(spectrum) 
 
     spectrum.save_data()
 
 
-def plot_power_spectrum():
-    pass
+def plot_power_spectrum(experiment, name):
+    """
+    """
+
+    lout = fileManager.read_layout(experiment.layout)
+
+    subject = experiment.active_subject
+    subject_name = subject.subject_name
+
+    spectrum = subject.spectrums.get(name)
+
+    data = spectrum.data
+    freqs = spectrum.freqs
+    ch_names = spectrum.ch_names
+    log_transformed = spectrum.log_transformed
+
+    raw_info = subject.get_working_file().info
+
+    colors = color_cycle(len(data))
+
+    def individual_plot(ax, ch_idx):
+        """
+        Callback for the interactive plot.
+        Opens a channel specific plot.
+        """
+
+        # notice that ch_idx is index in the original ch_names,
+        # and ch_names from spectrum object are only the data channels
+        ch_name = raw_info['ch_names'][ch_idx]
+        psd_idx = ch_names.index(ch_name)
+        
+        fig = plt.gcf()
+        fig.canvas.set_window_title(''.join(['spectrum_', subject_name,
+                                    '_', ch_name]))
+        
+        conditions = [str(key) for key in data]
+        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+        
+        for cond, col, pos in zip(conditions, colors, positions):
+            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+
+        color_idx = 0
+        for psd in data.values():
+            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
+            color_idx += 1
+        
+        plt.xlabel('Frequency (Hz)')
+
+        plt.ylabel('Power ({})'.format(get_power_unit(
+            mne.channel_type(raw_info, ch_idx),
+            log_transformed
+        )))
+
+        plt.show()
+
+    for ax, idx in mne.iter_topography(raw_info, fig_facecolor='white',
+                                       axis_spinecolor='white',
+                                       axis_facecolor='white', layout=lout,
+                                       on_pick=individual_plot):
+
+        psd_idx = ch_names.index(raw_info['ch_names'][idx])
+        
+        for color_idx, psd in enumerate(data.values()):
+            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
+
+    plt.gcf().canvas.set_window_title('spectrum_' + subject_name)
+    plt.show()
+
 
 def save_data_psd():
     pass
