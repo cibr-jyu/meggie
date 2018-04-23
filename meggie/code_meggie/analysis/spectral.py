@@ -562,8 +562,71 @@ def plot_power_spectrum(experiment, name):
     plt.show()
 
 
-def save_data_psd():
-    pass
+def save_data_psd(subject, output_rows, output_columns, spectrum_name):
+    raise Exception('Saving not implemented')
+
+    spectrum = subject.spectrums.get(spectrum_name)
+    path = fileManager.create_timestamped_folder(experiment)
+
+    for idx, psd in enumerate(psds):
+
+        if output_rows == 'channel_averages':
+
+            data = []
+
+            selections = mne.SELECTIONS
+            for selection in selections:
+                # find channels names for selection provided by mne
+                selected_ch_names = mne._clean_names(
+                    mne.read_selection(selection),
+                    remove_whitespace=True)
+
+                cleaned_picked_ch_names = mne._clean_names(picked_ch_names,
+                    remove_whitespace=True)
+
+                # calculate average
+                ch_average = np.mean(
+                    [psd[ch_idx] for ch_idx, ch_name 
+                     in enumerate(cleaned_picked_ch_names)
+                     if ch_name in selected_ch_names], axis=0)
+
+                data.append(ch_average)
+
+            data = np.array(data)
+            row_names = selections
+
+        else:
+
+            data = psd
+            row_names = picked_ch_names
+
+            for row_idx in range(len(row_names)):
+                if picked_ch_names[row_idx] in info['bads']:
+                    row_names[row_idx] += ' (bad)'
+
+        if output_columns == 'statistics':
+            statistics = SpectrumStatistics(freqs, data, params['log'])
+
+            alpha_peak = statistics.alpha_peak
+            alpha_frequency = statistics.alpha_frequency
+            alpha_power = statistics.alpha_power
+
+            filename = ''.join([subject_name, '_', basename, '_',
+                                'spectrum_statistics', '_', 
+                                str(psd_groups.keys()[idx]), '.csv'])
+
+            column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
+            data = np.array([alpha_peak, alpha_frequency, alpha_power])
+            data = np.transpose(data)
+
+        else:
+            filename = ''.join([subject_name, '_', basename, '_',
+                'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
+            column_names = freqs.tolist()
+
+        fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
+                             column_names, row_names)
+
 
 def group_average_psd():
     pass

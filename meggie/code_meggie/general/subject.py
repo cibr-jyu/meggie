@@ -268,6 +268,9 @@ class Subject(object):
         Keyword arguments:
         collection_name    -- name of the epochs collection (QString)
         """
+
+        self._epochs.pop(str(str(collection_name)), None)
+
         files_to_delete = filter(os.path.isfile, 
             glob.glob(os.path.join(self._epochs_directory, 
                                    collection_name + '.fif')))
@@ -280,19 +283,16 @@ class Subject(object):
         except OSError:
             raise IOError('Epochs could not be deleted from epochs folder.')
 
-        self._epochs.pop(str(str(collection_name)), None)
-
     def add_spectrum(self, spectrum):
         self._spectrums[spectrum.name] = spectrum
 
-    def remove_spectrum(self, spectrum):
+    def remove_spectrum(self, name):
 
+        spectrum = self._spectrums.pop(str(name), None)
         try:
             spectrum.delete_data()
         except OSError:
             raise IOError('Spectrum could not be deleted from folders.')
-        self._spectrums.pop(str(name), None)
-
 
     def add_evoked(self, evoked):
         """
@@ -310,11 +310,12 @@ class Subject(object):
         Keyword arguments:
         name    -- name of the evoked in QString
         """
+        self._evokeds.pop(str(name), None)
+
         try:
             fileManager.delete_file_at(self._evokeds_directory, name)
         except OSError:
             raise IOError('Evoked could not be deleted from average folder.')
-        self._evokeds.pop(str(name), None)
 
     def add_stc(self, stc):
         """
@@ -327,9 +328,9 @@ class Subject(object):
     def remove_stc(self, name):
         """
         """
-        path = os.path.join(self.stc_directory, name)
         self._stcs.pop(str(name), None)
 
+        path = os.path.join(self.stc_directory, name)
         try:
             shutil.rmtree(path)
         except OSError:

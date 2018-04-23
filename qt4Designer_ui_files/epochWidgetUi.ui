@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>334</height>
+    <width>402</width>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
           <x>10</x>
           <y>30</y>
           <width>361</width>
-          <height>121</height>
+          <height>111</height>
          </rect>
         </property>
         <property name="selectionMode">
@@ -40,7 +40,7 @@
           <x>0</x>
           <y>150</y>
           <width>391</width>
-          <height>151</height>
+          <height>101</height>
          </rect>
         </property>
         <property name="title">
@@ -55,7 +55,7 @@
            <x>10</x>
            <y>30</y>
            <width>361</width>
-           <height>111</height>
+           <height>61</height>
           </rect>
          </property>
          <property name="editTriggers">

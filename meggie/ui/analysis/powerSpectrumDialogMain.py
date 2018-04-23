@@ -12,7 +12,6 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
-from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
 from meggie.code_meggie.analysis.spectral import create_power_spectrum
 

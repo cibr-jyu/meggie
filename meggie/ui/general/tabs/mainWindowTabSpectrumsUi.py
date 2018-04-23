@@ -25,9 +25,9 @@ except AttributeError:
 class Ui_mainWindowTabSpectrums(object):
     def setupUi(self, mainWindowTabSpectrums):
         mainWindowTabSpectrums.setObjectName(_fromUtf8("mainWindowTabSpectrums"))
-        mainWindowTabSpectrums.resize(1112, 732)
+        mainWindowTabSpectrums.resize(1112, 726)
         self.layoutWidget = QtGui.QWidget(mainWindowTabSpectrums)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 981, 711))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 941, 591))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.gridLayout_15 = QtGui.QGridLayout(self.layoutWidget)
         self.gridLayout_15.setObjectName(_fromUtf8("gridLayout_15"))
