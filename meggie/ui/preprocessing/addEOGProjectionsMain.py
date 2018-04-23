@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 25, 2013
-
-@author: Jaakko Leppakangas
-Contains the AddEOGProjections-class used for adding EOG projections.
 """
 
 import glob

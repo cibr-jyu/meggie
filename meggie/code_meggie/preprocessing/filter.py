@@ -1,4 +1,4 @@
-""" This module provides functions for filtering
+"""
 """
 
 import logging

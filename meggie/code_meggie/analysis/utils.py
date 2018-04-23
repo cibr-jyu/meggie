@@ -1,3 +1,6 @@
+"""
+"""
+
 import itertools
 
 def color_cycle(n):

@@ -1,11 +1,8 @@
 # coding: utf-8
 
 """
-Created on Mar 14, 2013
-
-@author: Jaakko Leppakangas, Atte Rautio
-Contains unit tests for the Statistic class.
 """
+
 import unittest
 
 from meggie.code_meggie.general.statistic import Statistic

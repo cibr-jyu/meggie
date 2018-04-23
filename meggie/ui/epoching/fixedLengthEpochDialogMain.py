@@ -1,8 +1,5 @@
-'''
-Created on 10.9.2015
-
-@author: Jaakko Leppakangas
-'''
+"""
+"""
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialogButtonBox
 

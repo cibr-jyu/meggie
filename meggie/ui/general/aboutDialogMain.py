@@ -1,11 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 29, 2013
-
-@author: Janne Pesonen
-Contains the PreferencesDialog-class used in setting the preferences for
-the application.
 """
 
 from PyQt4 import QtCore, QtGui

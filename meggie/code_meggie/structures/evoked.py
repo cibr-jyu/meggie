@@ -1,8 +1,5 @@
-'''
-Created on 20.2.2014
-
-@author: jaolpeso
-'''
+"""
+"""
 
 import os
 

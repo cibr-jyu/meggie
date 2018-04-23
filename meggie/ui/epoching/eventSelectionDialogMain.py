@@ -1,11 +1,6 @@
 # coding: utf-8
 
 """
-Created on Mar 19, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas, Atte Rautio
-Contains the EventSelectionDialog-class that holds the logic for
-EventSelectionDialog-window.
 """
 
 import numpy as np

@@ -1,8 +1,6 @@
-'''
-Created on 22.1.2016
+"""
+"""
 
-@author: jaolpeso
-'''
 import sys
 from PyQt4 import QtGui, QtCore
 

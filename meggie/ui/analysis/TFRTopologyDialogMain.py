@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 26, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas
-Contains the TFRTopologyDialog-class used for creating TFR-topologies.
 """
 from PyQt4 import QtCore, QtGui
 import numpy as np

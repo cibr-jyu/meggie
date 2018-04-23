@@ -1,8 +1,5 @@
-'''
-Created on 9.4.2014
-
-@author: Kari Aliranta
-'''
+"""
+"""
 
 from PyQt4 import QtCore, QtGui
 from meggie.ui.general.experimentInfoDialogUi import Ui_experimentInfoDialog

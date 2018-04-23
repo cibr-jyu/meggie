@@ -8,17 +8,20 @@ TODO:
 - log parsing, subject specific.
 - undo button to batch
 - evoked topo plots all with same names, fix that
+- unify EEG and EOG projections (EEG is EOG with channel selection)
 
 - refactoring:
  * main window tabs to separate files
  * check proper style with pylint
 - we need tests
+- combine general/fileManager.py and utils/files.py
 
 bugs:
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- more automated ICA
 - njobs-story
 - update meter and cancel button for batch
 - maybe a mock subject possibility combined with epoch or evoked import

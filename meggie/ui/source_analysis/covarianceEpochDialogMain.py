@@ -1,8 +1,5 @@
-'''
-Created on 3.5.2016
-
-@author: jaolpeso
-'''
+"""
+"""
 import os
 import logging
 

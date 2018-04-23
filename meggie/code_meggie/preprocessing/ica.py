@@ -1,4 +1,5 @@
-""" Contains functions for analyzing and plotting ica components """
+"""
+"""
 
 import logging
 

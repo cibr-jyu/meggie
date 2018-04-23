@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Mar 14, 2013
-
-@author: Jaakko Leppäkangas, Atte Rautio
-Contains the Statistic-class used for statistical operations.
 """
 import numpy as np
 import scipy.stats as stats

@@ -97,11 +97,12 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         if not active_subject:
             return
 
-        spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
-        if not spectrum_name:
+        spectrum_item = self.ui.listWidgetSpectrums.currentItem()
+
+        if not spectrum_item:
             return
 
-        plot_power_spectrum(self.parent.experiment, spectrum_name)
+        plot_power_spectrum(self.parent.experiment, spectrum_item.text())
 
 
     def on_pushButtonDeleteSpectrum_clicked(self, checked=None):

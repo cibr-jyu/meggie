@@ -1,12 +1,6 @@
 # coding: utf-8
 
-
 """
-Created on Mar 6, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas
-Contains the MeasurementInfo-class used for collecting information from
-MEG-measurement raw files.
 """
 
 import datetime

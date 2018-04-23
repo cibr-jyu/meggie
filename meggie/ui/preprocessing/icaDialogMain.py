@@ -1,5 +1,8 @@
 # coding: utf-8
 
+"""
+"""
+
 import logging
 
 from PyQt4 import QtGui

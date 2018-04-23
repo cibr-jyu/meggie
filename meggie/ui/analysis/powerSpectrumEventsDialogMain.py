@@ -1,8 +1,5 @@
-'''
-Created on 17.10.2016
-
-@author: jaolpeso
-'''
+"""
+"""
 import logging
 
 from PyQt4 import QtGui

@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Mar 16, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Atte Rautio
-Contains the MainWindow-class that holds the main window of the application.
 """
 
 import os

@@ -1,13 +1,8 @@
 # coding: utf-8
 
-
 """
-Created on Oct 22, 2013
-@author: Janne Pesonen, Kari Aliranta
-
-Classes needed for controlling Meggie experiments.
-
 """
+
 import os
 import re
 import json

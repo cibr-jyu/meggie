@@ -1,8 +1,5 @@
-'''
-Created on 26.2.2015
-
-@author: Jaakko Leppakangas
-'''
+"""
+"""
 
 from collections import OrderedDict
 

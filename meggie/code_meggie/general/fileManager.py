@@ -1,10 +1,6 @@
 # coding: utf-8
+
 """
-Created on Mar 13, 2013
-
-@author: Jaakko Leppakangas, Atte Rautio, Kari Aliranta
-
-A module for various file operations needed by Meggie.
 """
  
 import os

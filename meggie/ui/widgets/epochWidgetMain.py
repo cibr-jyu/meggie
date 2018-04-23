@@ -1,11 +1,8 @@
 # coding: utf-8
 
 """
-Created on May 2, 2013
-
-@author: Jaakko Leppakangas, Atte Rautio
-Contains the EpochWidget-class used for listing epoch collections.
 """
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 

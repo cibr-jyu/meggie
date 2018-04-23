@@ -1,11 +1,8 @@
 # coding: utf-8
 
 """
-Created on Apr 26, 2013
-
-@author: Jaakko Leppakangas
-Contains the TFRDialog-class used for creating TFRs.
 """
+
 from PyQt4 import QtCore, QtGui
 
 import numpy as np

@@ -1,9 +1,6 @@
 # coding: utf-8
 
 """
-Created on Oct 22, 2013
-
-@author: jaolpeso
 """
 
 import os

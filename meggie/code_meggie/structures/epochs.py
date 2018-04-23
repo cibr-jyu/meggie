@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Mar 12, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
-Contains the Epochs-class for handling epochs created from the MEG data.
 """
 import os
 

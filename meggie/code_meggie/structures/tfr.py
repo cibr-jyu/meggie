@@ -10,7 +10,7 @@ import meggie.code_meggie.general.mne_wrapper as mne
 class TFR(object):
     
     """
-    A class for creating and handling spectrums
+    A class for creating and handling TFR's
     
     """
 

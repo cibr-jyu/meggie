@@ -1,11 +1,8 @@
 # coding: utf-8
 
 """
-Created on Mar 12, 2013
-
-@author: Jaakko Leppakangas
-Contains the Events-class that gets events from a raw file.
 """
+
 import logging
 
 import numpy as np

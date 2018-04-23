@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 25, 2013
-
-@author: Jaakko Leppakangas
-Contains the AddECGProjections-class used for adding ECG projections.
 """
 
 import glob
