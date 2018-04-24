@@ -107,17 +107,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.event_dialog = PowerSpectrumEvents(self)
         self.event_dialog.show()
 
-    def output_options_handler(self, row_setting, column_setting):
-        self.output_rows = row_setting
-        self.output_columns = column_setting
-
-    def on_pushButtonOutputOptions_clicked(self, checked=None):
-        if checked is None:
-            return
-        handler = self.output_options_handler
-        self.output_options_dialog = OutputOptions(self, handler=handler, 
-            row_setting=self.output_rows, column_setting=self.output_columns)
-        self.output_options_dialog.show()
 
     def accept(self, *args, **kwargs):
         """Starts the computation."""
@@ -159,6 +148,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin, tmax = 0, interval[2] - interval[1]
             epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax)
+            epoch.baseline = None
             epoch.comment = str(interval)
 
             if interval[0] not in epochs:
@@ -182,3 +172,5 @@ class PowerSpectrumDialog(QtGui.QDialog):
             self.parent.initialize_ui()
         except Exception as e:
             exc_messagebox(self.parent, e)
+
+        self.close()

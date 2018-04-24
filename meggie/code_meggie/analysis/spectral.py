@@ -251,167 +251,6 @@ def TFR_raw(experiment, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
             raw.ch_names[channel], '_TFR.csv']))
         fileManager.save_tfr(filename, tfr[channel], times, freqs)
 
-def plot_power_spectrum_old(experiment, params, save_data, epoch_groups, 
-                            basename='raw', update_ui=(lambda: None), n_jobs=1,
-                            output_rows='all_channels', output_columns='all_data'):
-    """
-    Method for plotting power spectrum.
-    Parameters:
-    params         - Dictionary containing the parameters.
-    save_data      - Boolean indicating whether to save psd data to files.
-                     Only data from channels of interest is saved.
-    """
-    lout = fileManager.read_layout(experiment.layout)
-        
-    for epochs in epoch_groups.values():
-        info = epochs[0].info
-        break
-        
-    picks = mne.pick_types(info, meg=True, eeg=True,
-                           exclude=[])
-
-    params['picks'] = picks
-    psd_groups = _compute_spectrum(epoch_groups, params, n_jobs=n_jobs,
-                                   do_meanwhile=update_ui)
-
-    for psd_list in psd_groups.values():
-        freqs = psd_list[0][1]
-        break
-    
-    psds = []
-    for psd_list in psd_groups.values():
-        # do a weighted (epoch lengths as weights) average of psds inside a group
-
-        weights = np.array([length for psds_, freqs, length in psd_list])
-        weights = weights.astype(float) / np.sum(weights)
-        psd = np.average([psds_ for psds_, freqs, length in psd_list], 
-                         weights=weights, axis=0)
-        psds.append(psd)
-        
-    colors = color_cycle(len(psds))
-
-    subject_name = experiment.active_subject.subject_name
-
-    # find all channel names this way because earlier
-    # the dimension of channels was reduced with picks
-    picked_ch_names = [ch_name for ch_idx, ch_name in 
-                    enumerate(info['ch_names']) if 
-                    ch_idx in picks]
-    ch_names = info['ch_names']
-
-    if save_data:
-        logging.getLogger('ui_logger').info("Saving data...")
-        path = fileManager.create_timestamped_folder(experiment)
-
-        for idx, psd in enumerate(psds):
-
-            if output_rows == 'channel_averages':
-
-                data = []
-
-                selections = mne.SELECTIONS
-                for selection in selections:
-                    # find channels names for selection provided by mne
-                    selected_ch_names = mne._clean_names(
-                        mne.read_selection(selection),
-                        remove_whitespace=True)
-
-                    cleaned_picked_ch_names = mne._clean_names(picked_ch_names,
-                        remove_whitespace=True)
-
-                    # calculate average
-                    ch_average = np.mean(
-                        [psd[ch_idx] for ch_idx, ch_name 
-                         in enumerate(cleaned_picked_ch_names)
-                         if ch_name in selected_ch_names], axis=0)
-
-                    data.append(ch_average)
-
-                data = np.array(data)
-                row_names = selections
-
-            else:
-
-                data = psd
-                row_names = picked_ch_names
-
-                for row_idx in range(len(row_names)):
-                    if picked_ch_names[row_idx] in info['bads']:
-                        row_names[row_idx] += ' (bad)'
-
-            if output_columns == 'statistics':
-                statistics = SpectrumStatistics(freqs, data, params['log'])
-
-                alpha_peak = statistics.alpha_peak
-                alpha_frequency = statistics.alpha_frequency
-                alpha_power = statistics.alpha_power
-
-                filename = ''.join([subject_name, '_', basename, '_',
-                                    'spectrum_statistics', '_', 
-                                    str(psd_groups.keys()[idx]), '.csv'])
-
-                column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
-                data = np.array([alpha_peak, alpha_frequency, alpha_power])
-                data = np.transpose(data)
-
-            else:
-                filename = ''.join([subject_name, '_', basename, '_',
-                    'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
-                column_names = freqs.tolist()
-
-            fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
-                                 column_names, row_names)
-
-    logging.getLogger('ui_logger').info("Plotting power spectrum...")
-
-    def individual_plot(ax, ch_idx):
-        """
-        Callback for the interactive plot.
-        Opens a channel specific plot.
-        """
-
-        ch_name = ch_names[ch_idx]
-        psd_idx = picked_ch_names.index(ch_name)
-        
-        fig = plt.gcf()
-        fig.canvas.set_window_title(''.join(['Spectrum_', subject_name,
-                                    '_', ch_name]))
-        
-        conditions = [str(key) for key in psd_groups]
-        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
-        
-        for cond, col, pos in zip(conditions, colors, positions):
-            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
-        color_idx = 0
-        for psd in psds:
-            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
-            color_idx += 1
-        
-        plt.xlabel('Frequency (Hz)')
-
-        plt.ylabel('Power ({})'.format(get_power_unit(
-            mne.channel_type(info, ch_idx),
-            params['log'] 
-        )))
-
-        plt.show()
-
-    for ax, idx in mne.iter_topography(info, fig_facecolor='white',
-                                       axis_spinecolor='white',
-                                       axis_facecolor='white', layout=lout,
-                                       on_pick=individual_plot):
-
-        ch_name = ch_names[idx]
-        psd_idx = picked_ch_names.index(ch_name)
-        
-        color_idx = 0
-        for psd in psds:
-            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
-            color_idx += 1
-
-    plt.gcf().canvas.set_window_title('Spectrum_' + subject_name)
-    plt.show()
 
 @threaded
 def _compute_spectrum(epoch_groups, params, n_jobs):
@@ -562,72 +401,110 @@ def plot_power_spectrum(experiment, name):
     plt.show()
 
 
-def save_data_psd(subject, output_rows, output_columns, spectrum_name):
-    raise Exception('Saving not implemented')
+def save_data_psd(experiment, subjects, output_rows, 
+                  output_columns, spectrum_name):
 
-    spectrum = subject.spectrums.get(spectrum_name)
+    logging.getLogger('ui_logger').info('Checking compatibility..')
+    freq_lengths = []
+    ch_name_lengths = []
+    for subject in subjects:
+        spectrum = subject.spectrums.get(spectrum_name, None)
+        if spectrum is None:
+            continue
+        freq_lengths.append(len(spectrum.freqs))
+        ch_name_lengths.append(len(spectrum.ch_names))
+
+    if len(set(freq_lengths)) > 1:
+        raise Exception("Frequencies are not all equal")
+
+    if len(set(ch_name_lengths)) > 1:
+        raise Exception("Channels are not all equal")
+
+    logging.getLogger('ui_logger').info('Saving..')
+
     path = fileManager.create_timestamped_folder(experiment)
+    data = []
+    row_names = []
 
-    for idx, psd in enumerate(psds):
+    for subject in subjects:
+        spectrum = subject.spectrums.get(spectrum_name, None)
+        if spectrum is None:
+            continue
 
-        if output_rows == 'channel_averages':
+        freqs = spectrum.freqs
+        ch_names = spectrum.ch_names
+        info = subject.get_working_file(preload=False).info
+        subject_name = subject.subject_name
+        log_transformed = spectrum.log_transformed
 
-            data = []
+        for idx, (key, psd) in enumerate(spectrum.data.items()):
 
-            selections = mne.SELECTIONS
-            for selection in selections:
-                # find channels names for selection provided by mne
-                selected_ch_names = mne._clean_names(
-                    mne.read_selection(selection),
-                    remove_whitespace=True)
+            if output_rows == 'channel_averages':
 
-                cleaned_picked_ch_names = mne._clean_names(picked_ch_names,
-                    remove_whitespace=True)
+                subject_data = []
 
-                # calculate average
-                ch_average = np.mean(
-                    [psd[ch_idx] for ch_idx, ch_name 
-                     in enumerate(cleaned_picked_ch_names)
-                     if ch_name in selected_ch_names], axis=0)
+                selections = mne.SELECTIONS
+                for selection in selections:
+                    # find channels names for selection provided by mne
+                    selected_ch_names = mne._clean_names(
+                        mne.read_selection(selection),
+                        remove_whitespace=True)
 
-                data.append(ch_average)
+                    cleaned_ch_names = mne._clean_names(ch_names,
+                        remove_whitespace=True)
 
-            data = np.array(data)
-            row_names = selections
+                    # calculate average
+                    ch_average = np.mean(
+                        [psd[ch_idx] for ch_idx, ch_name 
+                         in enumerate(cleaned_ch_names)
+                         if ch_name in selected_ch_names
+                         and ch_name not in info['bads']], axis=0)
 
-        else:
+                    subject_data.append(ch_average)
 
-            data = psd
-            row_names = picked_ch_names
+                subject_data = np.array(subject_data)
 
-            for row_idx in range(len(row_names)):
-                if picked_ch_names[row_idx] in info['bads']:
-                    row_names[row_idx] += ' (bad)'
+                subject_row_names = []
+                for sel in selections:
+                    row_name = ('[' + subject_name + '] ' + 
+                                '{' + str(key) + '} ' + sel)
+                    subject_row_names.append(row_name)
 
-        if output_columns == 'statistics':
-            statistics = SpectrumStatistics(freqs, data, params['log'])
+            else:
+                subject_data = psd
 
-            alpha_peak = statistics.alpha_peak
-            alpha_frequency = statistics.alpha_frequency
-            alpha_power = statistics.alpha_power
+                subject_row_names = []
+                for ch_name in ch_names:
+                    row_name = ('[' + subject_name + '] ' + 
+                                '{' + str(key) + '} ' + ch_name)
+                    subject_row_names.append(row_name)
 
-            filename = ''.join([subject_name, '_', basename, '_',
-                                'spectrum_statistics', '_', 
-                                str(psd_groups.keys()[idx]), '.csv'])
+            if output_columns == 'statistics':
+                statistics = SpectrumStatistics(
+                    freqs, subject_data, log_transformed)
 
-            column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
-            data = np.array([alpha_peak, alpha_frequency, alpha_power])
-            data = np.transpose(data)
+                alpha_peak = statistics.alpha_peak
+                alpha_frequency = statistics.alpha_frequency
+                alpha_power = statistics.alpha_power
 
-        else:
-            filename = ''.join([subject_name, '_', basename, '_',
-                'spectrum', '_', str(psd_groups.keys()[idx]), '.csv'])
-            column_names = freqs.tolist()
+                filename = ''.join([subject_name, '_', 
+                                    'spectrum_statistics.csv'])
 
-        fileManager.save_csv(os.path.join(path, filename), data.tolist(), 
-                             column_names, row_names)
+                column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
+                subject_data = np.transpose(
+                    np.array([alpha_peak, alpha_frequency, alpha_power]))
+
+            else:
+                filename = ''.join([subject_name, '_', 'spectrum.csv'])
+                column_names = freqs.tolist()
+
+            row_names.extend(subject_row_names)
+            data.extend(subject_data.tolist())
+
+    fileManager.save_csv(os.path.join(path, filename), data, 
+                         column_names, row_names)
 
 
-def group_average_psd():
-    pass
+def group_average_psd(experiment, spectrum_name):
+    logging.getLogger('ui_logger').info('Calculating group average for psds') 
 

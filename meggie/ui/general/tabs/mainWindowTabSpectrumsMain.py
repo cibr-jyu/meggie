@@ -14,6 +14,7 @@ from meggie.ui.utils.decorators import threaded
 
 from meggie.code_meggie.analysis.spectral import plot_power_spectrum
 from meggie.code_meggie.analysis.spectral import save_data_psd
+from meggie.code_meggie.analysis.spectral import group_average_psd
 
 from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
@@ -143,13 +144,90 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         if checked is None:
             return
 
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        if experiment.active_subject is None:
+            return
+        
+        if self.ui.listWidgetSpectrums.currentItem() is None:
+            messagebox(self, 'No spectrum selected')
+
+        spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
+
+        @threaded
+        def group_average(*args, **kwargs):
+            group_average_psd(experiment, spectrum_name)
+
+        group_average(do_meanwhile=self.update_ui)
+
+        experiment.save_experiment_settings()
+        self.initialize_ui()
+
     def on_pushButtonGroupDeleteSpectrum_clicked(self, checked=None):
         if checked is None:
             return
 
+        experiment = self.parent.experiment
+        if not experiment:
+            return 
+
+        if experiment.active_subject is None:
+            return
+
+        if self.ui.listWidgetSpectrums.currentItem() is None:
+            messagebox(self, 'No spectrum selected')
+
+        spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
+
+        message = 'Permanently remove spectrum from all subjects?'
+        reply = QtGui.QMessageBox.question(self, 'Delete spectrums',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            for subject in experiment.subjects.values():
+                if spectrum_name in subject.spectrums:
+                    subject.remove_spectrum(
+                        spectrum_name,
+                    )
+
+        logging.getLogger('ui_logger').info('Removed spectrums.')
+        experiment.save_experiment_settings()
+        self.initialize_ui()
+
+
     def on_pushButtonGroupSaveSpectrum_clicked(self, checked=None):
         if checked is None:
             return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        spectrum_item = self.ui.listWidgetSpectrums.currentItem()
+        if not spectrum_item:
+            return
+
+        subjects = experiment.subjects.values()
+        logging.getLogger('ui_logger').info('Saving spectrum for all subjects')
+
+        def output_options_handler(row_setting, column_setting):
+            logging.getLogger('ui_logger').info('Saving spectrum')
+            save_data_psd(experiment, subjects, row_setting, 
+                          column_setting, spectrum_item.text())
+
+        handler = output_options_handler
+        self.output_options_dialog = OutputOptions(self, handler=handler)
+        self.output_options_dialog.show()
+
+
 
     def on_pushButtonSaveSpectrum_clicked(self, checked=None):
         if checked is None:
@@ -169,8 +247,8 @@ class MainWindowTabSpectrums(QtGui.QDialog):
 
         def output_options_handler(row_setting, column_setting):
             logging.getLogger('ui_logger').info('Saving spectrum')
-            save_data_psd(active_subject, row_setting, column_setting, 
-                          spectrum_item.text())
+            save_data_psd(experiment, [active_subject], row_setting, 
+                          column_setting, spectrum_item.text())
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)

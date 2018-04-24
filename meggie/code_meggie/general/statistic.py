@@ -198,13 +198,16 @@ class Statistic(QtCore.QObject):
 class SpectrumStatistics(object):
 
     def __init__(self, freqs, psds, log_transformed):
-        self.psds = psds
+
         self.freqs = freqs
 
         # ensure that we dont have log transformed data, so that
-        # integrals make sense
+        # things make sense
+        self.log_transformed = log_transformed
         if log_transformed:
             self.psds = 10**(psds.copy() / 10.0)
+        else:
+            self.psds = psds
 
         self._alpha_power = None
         self._alpha_peak = None
@@ -276,6 +279,10 @@ class SpectrumStatistics(object):
     def alpha_peak(self):
         if self._alpha_peak is None:
             self._calculate_alpha_peak()
+
+        # return peak as original log transformed version
+        if self.log_transformed:
+            return 10 * np.log10(self._alpha_peak)
 
         return self._alpha_peak
 
