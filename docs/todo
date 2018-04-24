@@ -1,12 +1,11 @@
 TODO:
 
-- should do manual for meggie
 - TFR objects and Spectrum objects that can be created and then saved or visualized separately.
  * makes it easier to do batches.
 - add throbber to bad channel dialog
 - sort epoch and eveoked and otehr list
-- evoked topo plots all with same names, fix that
-- unify EEG and EOG projections (EEG is EOG with channel selection)
+- evoked topo plots all with same names, fix that, and longer sequence
+- plot accuracy as preference
 
 - refactoring:
  * main window tabs to separate files
@@ -20,11 +19,13 @@ bugs:
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- unify EEG and EOG projections (EEG is EOG with channel selection)
+- should do manual for meggie
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
 - plots with more accuracy?
 - log parsing, subject specific.
-- undo button to batch
+- stop button to batch
 - more automated ICA
 - njobs-story
 - update meter and cancel button for batch
