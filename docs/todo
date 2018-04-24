@@ -20,6 +20,9 @@ bugs:
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- add delay to triggers
+- add simple trigger filtering (only triggers followed by something)
+- plots with more accuracy?
 - log parsing, subject specific.
 - undo button to batch
 - more automated ICA

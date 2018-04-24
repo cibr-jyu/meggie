@@ -62,7 +62,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
         if raw.info.get('lowpass'):
             if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
-                self.ui.spinBoxFmax.setValue(int(raw.info['highpass']))
+                self.ui.spinBoxFmax.setValue(int(raw.info['lowpass']))
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
