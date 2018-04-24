@@ -319,8 +319,8 @@ def create_power_spectrum(experiment, spectrum_name, params, epoch_groups,
     # find all channel names this way because earlier
     # the dimension of channels was reduced with picks
     picked_ch_names = [ch_name for ch_idx, ch_name in 
-                    enumerate(info['ch_names']) if 
-                    ch_idx in picks]
+                       enumerate(info['ch_names']) if 
+                       ch_idx in picks]
 
     psd_data = dict(zip(psd_groups.keys(), psds))
 

@@ -43,10 +43,6 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
 
-        # initialize output settings
-        self.output_rows = 'all_channels'
-        self.output_columns = 'all_data'
-
         # set nfft initially to ~2 seconds and overlap to ~1 seconds
         sfreq = raw.info['sfreq']
         window_in_seconds = 2
@@ -147,8 +143,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         for interval in times:
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin, tmax = 0, interval[2] - interval[1]
-            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax)
-            epoch.baseline = None
+            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax, baseline=None)
             epoch.comment = str(interval)
 
             if interval[0] not in epochs:
