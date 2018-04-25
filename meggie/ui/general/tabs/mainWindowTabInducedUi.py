@@ -35,6 +35,7 @@ class Ui_mainWindowTabInduced(object):
         self.verticalLayout_23.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.verticalLayout_23.setObjectName(_fromUtf8("verticalLayout_23"))
         self.groupBoxEpochs = QtGui.QGroupBox(self.layoutWidget)
+        self.groupBoxEpochs.setTitle(_fromUtf8(""))
         self.groupBoxEpochs.setObjectName(_fromUtf8("groupBoxEpochs"))
         self.verticalLayout_23.addWidget(self.groupBoxEpochs)
         self.groupBoxComputations = QtGui.QGroupBox(self.layoutWidget)
@@ -117,7 +118,6 @@ class Ui_mainWindowTabInduced(object):
 
     def retranslateUi(self, mainWindowTabInduced):
         mainWindowTabInduced.setWindowTitle(_translate("mainWindowTabInduced", "Form", None))
-        self.groupBoxEpochs.setTitle(_translate("mainWindowTabInduced", "Epochs", None))
         self.groupBoxComputations.setTitle(_translate("mainWindowTabInduced", "Computations", None))
         self.pushButtonComputeTFR.setText(_translate("mainWindowTabInduced", "Compute TFR...", None))
         self.groupBoxTFR.setTitle(_translate("mainWindowTabInduced", "TFR\'s", None))

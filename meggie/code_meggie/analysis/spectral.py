@@ -219,37 +219,11 @@ def TFR_topology(experiment, inst, collection_name, reptype, freqs, decim, mode,
     fig.canvas.mpl_connect('button_press_event', onclick)
 
 
-def TFR_raw(experiment, wsize, tstep, channel, fmin, fmax, blstart, blend, mode,
-            save_data):
-    lout = fileManager.read_layout(experiment.layout)
-    
-    raw = experiment.active_subject.get_working_file()
-    
-    raw = raw.copy()
-    raw.apply_proj()
-    
-    tfr = np.abs(mne.stft(raw._data, wsize, tstep=tstep))
-    freqs = mne.stftfreq(wsize, sfreq=raw.info['sfreq'])
-    times = np.arange(tfr.shape[2]) * tstep / raw.info['sfreq']
-    baseline = (blstart, blend)
-    
-    tfr_ = mne.AverageTFR(raw.info, tfr, times, freqs, 1)
-    
-    if mode:
-        tfr_.data = mne.rescale(tfr_.data, times, baseline=baseline, 
-                                         mode=mode)
-    
-    fig = tfr_.plot(picks=[channel], fmin=fmin, fmax=fmax, layout=lout)
-    subject_name = experiment.active_subject.subject_name
-    fig.canvas.set_window_title(''.join(['TFR_raw_', subject_name, '_',
-                                raw.ch_names[channel]]))
-    
-    if save_data:
-        path = fileManager.create_timestamped_folder(experiment)
-        filename = os.path.join(path, ''.join([
-            experiment.active_subject.subject_name, '_',
-            raw.ch_names[channel], '_TFR.csv']))
-        fileManager.save_tfr(filename, tfr[channel], times, freqs)
+def create_tfr(experiment, subject, collection_name, freqs, decim, mode, 
+                 blstart, blend, ncycles, ch_type,
+                 n_jobs=1):
+    """
+    """
 
 
 @threaded

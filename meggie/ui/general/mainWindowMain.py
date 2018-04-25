@@ -101,7 +101,8 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.statusbar.addWidget(self.statusLabel)
 
         # Creates a listwidget for epoch analysis.
-        self.epochList = EpochWidget(self)
+        self.epochList = EpochWidget(self, epoch_getter=self.get_epochs,
+            parameter_setter=self.show_epoch_collection_parameters)
         self.epochList.hide()
 
         self.ui.listWidgetEvoked.setMinimumWidth(346)
@@ -145,6 +146,18 @@ class MainWindow(QtGui.QMainWindow):
 
         # Set bads not selectable
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
+
+
+    def get_epochs(self, epoch_name):
+        experiment = self.experiment
+        if not experiment:
+            return
+        
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        return active_subject.epochs.get(epoch_name)
 
 
     def on_actionQuit_triggered(self, checked=None):
@@ -501,16 +514,16 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
 
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
+        if self.epochList.isEmpty():
             messagebox(self, 'Create epochs before visualizing.')
             return
 
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.currentItem() is None:
             message = 'Please select an epoch collection from the list.'
             messagebox(self, message)
             return
 
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        name = str(self.epochList.currentItem().text())
         epochs = self.experiment.active_subject.epochs.get(name)
         self.visualizeEpochs = (visualizeEpochChannelDialogMain.
                                 VisualizeEpochChannelDialog(epochs))
@@ -524,7 +537,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
 
-        item = self.epochList.ui.listWidgetEpochs.currentItem()
+        item = self.epochList.currentItem()
         if item is None:
             message = 'No epochs collection selected.'
             messagebox(self, message)
@@ -669,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
                         collection_name,
                     )
             
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
+        if self.epochList.isEmpty():
             self.clear_epoch_collection_parameters()
         
         if collection_name not in self.experiment.active_subject.epochs:
@@ -905,12 +918,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
         
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.currentItem() is None:
             message = 'Please select an epoch collection to channel average.'
             messagebox(self, message)
             return
 
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        name = str(self.epochList.currentItem().text())
         
         try:
             average_channels(self.experiment, name,
@@ -1017,20 +1030,7 @@ class MainWindow(QtGui.QMainWindow):
             
             logging.getLogger('ui_logger').warning(
                 'Epochs parameters not found!')
-
             return
-        
-        events = epochs.raw.event_id
-        
-        for event_name, event_id in events.items():
-            events_str = ''.join([
-                event_name,
-                ' [' + str(len(epochs.raw[event_name])) + ' events found]'
-            ])
-
-            item = QtGui.QListWidgetItem()
-            item.setText(events_str)
-            self.epochList.ui.listWidgetEvents.addItem(item)
         
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
@@ -1079,8 +1079,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Clears epoch collection parameters on mainWindow Epoching tab.
         """
-        while self.epochList.ui.listWidgetEvents.count() > 0:
-            self.epochList.ui.listWidgetEvents.takeItem(0)
         self.ui.textBrowserTmin.clear()
         self.ui.textBrowserTmax.clear()
         self.ui.textBrowserGrad.clear()
@@ -1308,7 +1306,7 @@ class MainWindow(QtGui.QMainWindow):
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
             for epoch in epochs_items.values():
-                self.epochList.ui.listWidgetEpochs.addItem(epoch.collection_name)
+                self.epochList.add_item(epoch.collection_name)
 
         if evokeds_items is not None:
             for evoked in evokeds_items.values():
@@ -1409,17 +1407,15 @@ class MainWindow(QtGui.QMainWindow):
         index = self.ui.tabWidget.currentIndex()
         if index == 2:
             mode = QtGui.QAbstractItemView.SingleSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
         elif index == 3:
             mode = QtGui.QAbstractItemView.MultiSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         else:
             self.epochList.hide()
             return
 
-        self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
+        self.epochList.setSelectionMode(mode)
         self.epochList.show()
 
     def collect_parameter_values(self):

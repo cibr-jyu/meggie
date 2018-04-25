@@ -10,6 +10,8 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
+from meggie.ui.widgets.epochWidgetMain import EpochWidget
+
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
@@ -20,6 +22,12 @@ class MainWindowTabInduced(QtGui.QDialog):
         self.parent = parent
         self.ui = Ui_mainWindowTabInduced()
         self.ui.setupUi(self)
+
+        self.epochList = EpochWidget(self, 
+            epoch_getter=self.parent.get_epochs)
+        self.epochList.setParent(self.ui.groupBoxEpochs)
+        self.epochList.setSelectionMode(
+            QtGui.QAbstractItemView.MultiSelection)
 
         self.initialize_ui()
 
@@ -34,7 +42,11 @@ class MainWindowTabInduced(QtGui.QDialog):
         if active_subject is None:
             return
 
-        # do something :)
+        # populate epoch widget
+        self.epochList.clearItems()
+        for epoch_name in active_subject.epochs:
+            item = QtGui.QListWidgetItem(epoch_name)
+            self.epochList.add_item(item)
 
  
     def on_pushButtonTFR_clicked(self, checked=None):
