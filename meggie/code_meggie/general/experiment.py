@@ -16,6 +16,7 @@ from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.structures.epochs import Epochs
 from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.structures.spectrum import Spectrum
+from meggie.code_meggie.structures.tfr import TFR
 from meggie.code_meggie.general.stc import SourceEstimateRaw
 from meggie.code_meggie.general.stc import SourceEstimateEvoked
 from meggie.code_meggie.general.stc import SourceEstimateEpochs
@@ -247,6 +248,7 @@ class Experiment(QObject):
                 'epochs': [], 
                 'evokeds': [],
                 'spectrums': [],
+                'tfrs': [],
                 'stcs': [],
             }
             for stc in subject.stcs.values():
@@ -288,12 +290,22 @@ class Experiment(QObject):
                     del subject.evokeds[evoked.name]
                     message = 'Missing evoked response file. Experiment updated.'
                     logging.getLogger('ui_logger').warning(message)
+
             for spectrum in subject.spectrums.values():
                 spectrum_dict = {
                     'name': spectrum.name,
                     'log_transformed': spectrum.log_transformed,
                 }
                 subject_dict['spectrums'].append(spectrum_dict)
+
+            for tfr in subject.tfrs.values():
+                tfr_dict = {
+                    'name': tfr.name,
+                    'decim': tfr.decim,
+                    'n_cycles': tfr.n_cycles,
+                    'evoked_subtracted': tfr.evoked_subtracted,
+                }
+                subject_dict['tfrs'].append(tfr_dict)
 
             subjects.append(subject_dict)
         
@@ -389,7 +401,9 @@ class ExperimentHandler(QObject):
         try:
             with open(exp_file, 'r') as f:
                 data = json.load(f)
-        except ValueError:
+        except ValueError as exc:
+            import traceback; traceback.print_exc()
+
             raise ValueError('Experiment from ' + exp_file + ' could not be ' + 
                              'opened. There might be a problem with ' +
                              'coherence of the experiment file.')
@@ -437,6 +451,12 @@ class ExperimentHandler(QObject):
                     spectrum = Spectrum(spectrum_data['name'], subject, 
                         spectrum_data['log_transformed'], None, None, None)
                     subject.add_spectrum(spectrum)
+
+                for tfr_data in subject_data.get('tfrs', []):
+                    tfr = TFR(None, tfr_data['name'], subject, 
+                        tfr_data['decim'], tfr_data['n_cycles'], 
+                        tfr_data['evoked_subtracted'])
+                    subject.add_tfr(tfr)
 
                 for stc_data in subject_data.get('stcs', []):
                     name = stc_data['name']

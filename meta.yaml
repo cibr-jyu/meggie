@@ -21,6 +21,7 @@ requirements:
     - joblib
     - scikit-learn
     - pysurfer
+    - h5py
     - mne ==0.15.2
 
 about:

@@ -36,12 +36,6 @@ class TFRDialog(QtGui.QDialog):
         epochs = subject.epochs[epoch_name].raw
 
         self.ui.lineEditEpochName.setText(epoch_name)
-        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.tmax)
-        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.tmax)
-        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
 
         if epochs.info.get('highpass'):
             if self.ui.doubleSpinBoxMinFreq.value() < epochs.info['highpass']:
@@ -71,6 +65,8 @@ class TFRDialog(QtGui.QDialog):
         decim = self.ui.spinBoxDecim.value()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
         freqs = np.arange(minfreq, maxfreq, interval)
+
+        subtract_evoked = self.ui.checkBoxSubtractEvoked.isChecked()
         
         if self.ui.radioButtonFixed.isChecked():
             ncycles = self.ui.doubleSpinBoxNcycles.value()
@@ -84,7 +80,8 @@ class TFRDialog(QtGui.QDialog):
         @threaded
         def do_tfr(*args, **kwargs):
             create_tfr(experiment, subject, tfr_name, self.epoch_name, 
-                       freqs=freqs, decim=decim, ncycles=ncycles, n_jobs=n_jobs)
+                       freqs=freqs, decim=decim, ncycles=ncycles, 
+                       subtract_evoked=subtract_evoked, n_jobs=n_jobs)
                 
         try:             
             do_tfr(do_meanwhile=self.parent.update_ui)

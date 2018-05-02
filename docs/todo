@@ -19,6 +19,7 @@ bugs:
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
 - unify EEG and EOG projections (EEG is EOG with channel selection)
 - should do manual for meggie
 - add delay to triggers

@@ -18,10 +18,12 @@ from meggie.code_meggie.analysis.epoching import create_epochs
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+from meggie.ui.utils.validators import validate_name
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
+
 
 from meggie.code_meggie.utils.units import get_scaling
 
@@ -256,6 +258,12 @@ class EventSelectionDialog(QtGui.QDialog):
             return
 
         param_dict = self.collect_parameter_values()
+
+        try:
+            validate_name(param_dict.get('collection_name', ''))
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
         
         epochs = self.parent.experiment.active_subject.epochs
         if param_dict['collection_name'] in epochs:

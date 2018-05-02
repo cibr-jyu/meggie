@@ -186,6 +186,10 @@ class Subject(object):
         return self._spectrums
 
     @property
+    def tfrs(self):
+        return self._tfrs
+
+    @property
     def stcs(self):
         return self._stcs
     

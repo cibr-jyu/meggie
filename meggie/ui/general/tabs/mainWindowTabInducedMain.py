@@ -50,6 +50,41 @@ class MainWindowTabInduced(QtGui.QDialog):
             item = QtGui.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
 
+        self.ui.listWidgetTFR.clear()
+        for name in active_subject.tfrs:
+            item = QtGui.QListWidgetItem(name)
+            self.ui.listWidgetTFR.addItem(item)
+
+    def on_listWidgetTFR_currentItemChanged(self, item):
+        if not item:
+            self.ui.textBrowserTFRInfo.clear()
+            return
+
+        experiment = self.parent.experiment
+
+        tfr_name = str(item.text())
+        tfr = experiment.active_subject.tfrs.get(tfr_name)
+        info = 'Name: ' + str(tfr_name) + '\n'
+
+        freqs = tfr.tfr.freqs
+        fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
+        info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+
+        decim = tfr.decim
+        info += 'Decim: ' + str(decim) + '\n'
+
+        evoked_subtracted = tfr.evoked_subtracted
+        info += 'Evoked subtracted: ' + str(evoked_subtracted) + '\n'
+
+        n_cycles = tfr.n_cycles
+        if type(n_cycles) is list:
+            cmin, cmax = "%.1f" % n_cycles[0], "%.1f" % n_cycles[-1]
+            info += 'Cycles: ' + cmin + ' - ' + cmax + '\n'
+        else:
+	    info += 'Cycles: ' + str(n_cycles) + '\n'
+
+        self.ui.textBrowserTFRInfo.setText(info)
+
     @property
     def preferencesHandler(self):
         return self.parent.preferencesHandler

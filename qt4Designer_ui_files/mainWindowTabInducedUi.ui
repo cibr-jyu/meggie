@@ -156,6 +156,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
                <widget class="QPushButton" name="pushButtonSaveTFR">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Save TFR data</string>
                 </property>
@@ -163,6 +166,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="pushButtonGroupSaveTFR">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Group save TFR data</string>
                 </property>

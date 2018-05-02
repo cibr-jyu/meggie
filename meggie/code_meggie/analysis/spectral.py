@@ -23,9 +23,10 @@ from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
 from meggie.code_meggie.general.statistic import SpectrumStatistics
 from meggie.code_meggie.structures.spectrum import Spectrum
+from meggie.code_meggie.structures.tfr import TFR
 
 
-def TFR(experiment, epochs, collection_name, ch_index, freqs, ncycles, decim,
+def TFR_old(experiment, epochs, collection_name, ch_index, freqs, ncycles, decim,
         mode, blstart, blend, save_data, color_map='auto', n_jobs=1):
     """
     Plots a time-frequency representation of the data for a selected
@@ -478,16 +479,28 @@ def group_average_psd(experiment, spectrum_name):
 
 
 def create_tfr(experiment, subject, tfr_name, epochs_name, 
-               freqs, decim, ncycles, n_jobs):
+               freqs, decim, ncycles, subtract_evoked, n_jobs):
 
     epochs = subject.epochs[epochs_name].raw
 
-    tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
-                         average=False, return_itc=False, n_jobs=n_jobs)
+    if subtract_evoked:
+        logging.getLogger('ui_logger').info('Subtracting evoked...')
+        epochs = epochs.copy().subtract_evoked()
 
-    meggie_tfr = TFR(tfr, tfr_name, subject, decim=decim, n_cycles)
+    logging.getLogger('ui_logger').info('Computing TFR...')
+
+    tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
+                         average=True, return_itc=False, n_jobs=n_jobs)
+
+    logging.getLogger('ui_logger').info('Saving TFR...')
+
+    # convert list-like to list
+    if hasattr(ncycles, '__len__'):
+        ncycles = list(ncycles)
+
+    meggie_tfr = TFR(tfr, tfr_name, subject, decim, ncycles, subtract_evoked)
 
     experiment.active_subject.add_tfr(meggie_tfr) 
 
-    meggie_tfr.save_data()
+    meggie_tfr.save_tfr()
 
