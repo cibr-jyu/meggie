@@ -482,3 +482,13 @@ def save_data_psd(experiment, subjects, output_rows,
 def group_average_psd(experiment, spectrum_name):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
 
+
+def create_tfr(experiment, subject, epochs_name, reptype, 
+               freqs, decim, mode, blstart, blend,
+               ncycles, color_map, n_jobs):
+
+    from meggie.code_meggie.utils.debug import debug_trace;
+    debug_trace()
+
+    print "miau"
+

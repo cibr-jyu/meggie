@@ -6,6 +6,8 @@ from PyQt4 import QtGui
 
 from meggie.ui.general.tabs.mainWindowTabInducedUi import Ui_mainWindowTabInduced  # noqa
 
+from meggie.ui.analysis.TFRDialogMain import TFRDialog
+
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
@@ -48,15 +50,24 @@ class MainWindowTabInduced(QtGui.QDialog):
             item = QtGui.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
 
- 
-    def on_pushButtonTFR_clicked(self, checked=None):
+    @property
+    def preferencesHandler(self):
+        return self.parent.preferencesHandler
+
+    def on_pushButtonComputeTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not experiment.active_subject:
             return
         
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.currentItem() is None:
             message = 'You must select epochs before TFR.'
             messagebox(self, message)
             return
@@ -70,34 +81,7 @@ class MainWindowTabInduced(QtGui.QDialog):
             messagebox(self, message)
             return
         
-        epochs = self.experiment.active_subject.epochs.get(collection_name)
-
-        self.tfr_dialog = TFRDialog(self, epochs)
+        self.tfr_dialog = TFRDialog(self, experiment, collection_name)
         self.tfr_dialog.show()
         
-    def on_pushButtonTFRTopology_clicked(self, checked=None):
-        """Opens the dialog for plotting TFR topology."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs for TFR.'
-            messagebox(self, message)
-            return 
-        
-        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
-        self.tfrTop_dialog.show()
-
-
 
