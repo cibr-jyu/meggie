@@ -14,16 +14,6 @@
    <string>Power spectrum</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::NoButton</set>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -35,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>704</width>
-        <height>597</height>
+        <height>598</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -48,7 +38,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
+         <y>70</y>
          <width>681</width>
          <height>191</height>
         </rect>
@@ -201,7 +191,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>200</y>
+         <y>270</y>
          <width>671</width>
          <height>321</height>
         </rect>
@@ -389,37 +379,30 @@
         </item>
        </layout>
       </widget>
-      <widget class="Line" name="line">
+      <widget class="QGroupBox" name="groupBoxGeneral">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>530</y>
+         <y>0</y>
          <width>681</width>
-         <height>16</height>
+         <height>52</height>
         </rect>
        </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="title">
+        <string>General</string>
        </property>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>549</y>
-         <width>671</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QCheckBox" name="checkBoxSaveData">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelName">
           <property name="text">
-           <string>Save data to file</string>
+           <string>Spectrum name:</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="2">
+         <widget class="QLineEdit" name="lineEditName"/>
+        </item>
+        <item row="0" column="1">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -432,16 +415,19 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonOutputOptions">
-          <property name="text">
-           <string>Output options...</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::NoButton</set>
+     </property>
     </widget>
    </item>
    <item row="2" column="0">

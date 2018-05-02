@@ -1,4 +1,5 @@
 # coding: utf-8
+
 """
 """
 
@@ -17,8 +18,8 @@ from meggie.code_meggie.analysis.utils import color_cycle
 
 from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.epochs import Epochs
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.epochs import Epochs
+from meggie.code_meggie.structures.events import Events
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 
@@ -96,9 +97,10 @@ def create_epochs(experiment, params, subject):
     else:
         params_copy['meg'] = False
     
-    # find all proper picks
+    # find all proper picks, dont include bads
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
-                           eeg=params_copy['eeg'], eog=params_copy['eog'])
+                           eeg=params_copy['eeg'], eog=params_copy['eog'],
+                           exclude=[])
     
     if len(picks) == 0:
         raise ValueError('Picks cannot be empty. Select picks by ' +
@@ -111,7 +113,7 @@ def create_epochs(experiment, params, subject):
     if len(epochs.get_data()) == 0:
         raise ValueError('Could not find any data. Perhaps the ' + 
                          'rejection thresholds are too strict...')
-    
+
     epochs_object = Epochs(params['collection_name'], subject, params, epochs)
     fileManager.save_epoch(epochs_object, overwrite=True)
     subject.add_epochs(epochs_object)

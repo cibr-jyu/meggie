@@ -1,8 +1,5 @@
-'''
-Created on Sep 12, 2013
-
-@author: jaolpeso
-'''
+"""
+"""
 
 from PyQt4 import QtCore, QtGui
 

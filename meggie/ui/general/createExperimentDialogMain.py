@@ -1,11 +1,6 @@
 # coding: utf-8
 
-
 """
-@author: Kari Aliranta, Jaakko Leppakangas
-
-Contains the CreateExperimentDialog-class that holds the logic for
-CreateExperimentDialog-window.
 """
 
 import os

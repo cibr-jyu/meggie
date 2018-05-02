@@ -1,10 +1,6 @@
 # coding: utf-8
+
 """
-Created on Mar 13, 2013
-
-@author: Jaakko Leppakangas, Atte Rautio, Kari Aliranta
-
-A module for various file operations needed by Meggie.
 """
  
 import os
@@ -342,6 +338,20 @@ def save_csv(path, data, column_names, row_names):
     # save to file
     all_data = np.array(all_data)
     np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
+
+
+def load_csv(path):
+
+    all_data = np.loadtxt(path, dtype=np.str, delimiter=', ')
+    data = []
+    column_names = []
+    row_names = []
+
+    column_names = all_data[0, 1:].tolist()
+    row_names = all_data[1:, 0].tolist()
+    data = all_data[1:, 1:].astype(np.float)
+
+    return column_names, row_names, data
 
 
 # see https://stackoverflow.com/a/13790289

@@ -1,7 +1,4 @@
 """
-Created on 11.10.2016
-
-@author: jaolpeso
 """
 
 import glob

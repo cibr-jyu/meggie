@@ -1,17 +1,14 @@
-'''
-Created on 17.10.2016
-
-@author: jaolpeso
-'''
+"""
+"""
 import logging
 
 from PyQt4 import QtGui
 
-from meggie.ui.analysis.powerSpectrumEventsUi import Ui_Advanced 
+from meggie.ui.analysis.powerSpectrumEventsDialogUi import Ui_Advanced 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.events import Events
 
 class PowerSpectrumEvents(QtGui.QDialog):
     

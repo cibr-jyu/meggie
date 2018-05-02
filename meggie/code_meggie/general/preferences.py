@@ -1,12 +1,7 @@
 # coding: utf-8
 
-'''
-Created on 19.9.2014
-
-@author: Kari Aliranta
-
-Module for code related to handling program wide preferences.
-'''
+"""
+"""
 
 import os
 import logging

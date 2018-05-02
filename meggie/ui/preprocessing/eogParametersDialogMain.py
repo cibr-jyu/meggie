@@ -1,11 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 12, 2013
-
-@author: Jaakko Leppakangas
-Contains the EogParametersDialog used for collecting parameter values for
-calculating EOG projections.
 """
 
 import os

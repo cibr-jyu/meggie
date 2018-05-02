@@ -1,11 +1,6 @@
 # coding: utf-8
 
 """
-Created on Apr 16, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen
-Contains the EcgParametersDialog-class used for collecting parameter values
-for calculating ECG projections.
 """
 
 import logging

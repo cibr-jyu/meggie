@@ -1,9 +1,6 @@
 # coding: utf-8
 
 """
-@author: Jaakko Leppakangas
-Contains the InfoDialog-class used for viewing background info from
-a raw data file.
 """
 
 import sys

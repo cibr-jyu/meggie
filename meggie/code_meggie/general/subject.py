@@ -1,9 +1,6 @@
 # coding: utf-8
 
 """
-Created on Oct 22, 2013
-
-@author: jaolpeso
 """
 
 import os
@@ -15,7 +12,7 @@ import numpy as np
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.epoching.events import Events
+from meggie.code_meggie.structures.events import Events
 
 class Subject(object):
     
@@ -36,6 +33,8 @@ class Subject(object):
 
         self._epochs = dict()
         self._evokeds = dict()
+        self._spectrums = dict()
+        self._tfrs = dict()
         self._stcs = dict()
         self._subject_path = os.path.join(experiment.workspace,
                                           experiment.experiment_name,
@@ -64,6 +63,13 @@ class Subject(object):
 
         self._cov_directory = os.path.join(self._source_analysis_directory, 
                                            'cov')
+
+        self._spectrums_directory = os.path.join(self._subject_path, 
+                                                 'spectrums')
+
+        self._tfr_directory = os.path.join(self._subject_path, 
+                                           'tfrs')
+
         self._experiment = experiment
 
     @property
@@ -101,6 +107,14 @@ class Subject(object):
     @property
     def cov_directory(self):
         return self._cov_directory
+
+    @property
+    def spectrums_directory(self):
+        return self._spectrums_directory
+
+    @property
+    def tfr_directory(self):
+        return self._tfr_directory
 
     @property
     def mri_subject_name(self):
@@ -166,6 +180,14 @@ class Subject(object):
     @property
     def evokeds(self):
         return self._evokeds
+
+    @property
+    def spectrums(self):
+        return self._spectrums
+
+    @property
+    def tfrs(self):
+        return self._tfrs
 
     @property
     def stcs(self):
@@ -248,8 +270,7 @@ class Subject(object):
         Adds Epochs object to the epochs dictionary.
 
         """
-        if not epochs.collection_name in self._epochs:
-            self._epochs[epochs.collection_name] = epochs
+        self._epochs[epochs.collection_name] = epochs
 
     def remove_epochs(self, collection_name):
         """
@@ -259,6 +280,9 @@ class Subject(object):
         Keyword arguments:
         collection_name    -- name of the epochs collection (QString)
         """
+
+        self._epochs.pop(str(str(collection_name)), None)
+
         files_to_delete = filter(os.path.isfile, 
             glob.glob(os.path.join(self._epochs_directory, 
                                    collection_name + '.fif')))
@@ -271,7 +295,27 @@ class Subject(object):
         except OSError:
             raise IOError('Epochs could not be deleted from epochs folder.')
 
-        self._epochs.pop(str(str(collection_name)), None)
+    def add_spectrum(self, spectrum):
+        self._spectrums[spectrum.name] = spectrum
+
+    def remove_spectrum(self, name):
+
+        spectrum = self._spectrums.pop(str(name), None)
+        try:
+            spectrum.delete_data()
+        except OSError:
+            raise IOError('Spectrum could not be deleted from folders.')
+
+    def add_tfr(self, tfr):
+        self._tfrs[tfr.name] = tfr
+
+    def remove_tfr(self, name):
+
+        tfr = self._tfrs.pop(str(name), None)
+        try:
+            tfr.delete_tfr()
+        except OSError:
+            raise IOError('TFR could not be deleted from folders.')
 
     def add_evoked(self, evoked):
         """
@@ -280,8 +324,7 @@ class Subject(object):
         Keyword arguments:
         evoked  -- Evoked object
         """
-        if not evoked.name in self._evokeds:
-            self._evokeds[evoked.name] = evoked
+        self._evokeds[evoked.name] = evoked
 
     def remove_evoked(self, name):
         """
@@ -290,11 +333,12 @@ class Subject(object):
         Keyword arguments:
         name    -- name of the evoked in QString
         """
+        self._evokeds.pop(str(name), None)
+
         try:
             fileManager.delete_file_at(self._evokeds_directory, name)
         except OSError:
             raise IOError('Evoked could not be deleted from average folder.')
-        self._evokeds.pop(str(name), None)
 
     def add_stc(self, stc):
         """
@@ -307,9 +351,9 @@ class Subject(object):
     def remove_stc(self, name):
         """
         """
-        path = os.path.join(self.stc_directory, name)
         self._stcs.pop(str(name), None)
 
+        path = os.path.join(self.stc_directory, name)
         try:
             shutil.rmtree(path)
         except OSError:
@@ -459,6 +503,8 @@ class Subject(object):
                 self.source_analysis_directory,
                 self.forward_solutions_directory,
                 self.reconfiles_directory,
+                self.spectrums_directory,
+                self.tfr_directory,
                 self.cov_directory,
                 self.stc_directory
             ])

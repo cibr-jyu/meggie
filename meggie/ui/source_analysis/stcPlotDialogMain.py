@@ -1,8 +1,5 @@
-'''
-Created on 7.1.2015
-
-@author: Kari Aliranta
-'''
+"""
+"""
 
 import logging
 import os

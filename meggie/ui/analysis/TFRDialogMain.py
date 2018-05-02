@@ -1,83 +1,96 @@
 # coding: utf-8
 
 """
-Created on Apr 26, 2013
-
-@author: Jaakko Leppakangas
-Contains the TFRDialog-class used for creating TFRs.
 """
 from PyQt4 import QtCore, QtGui
-
 import numpy as np
 
-from meggie.code_meggie.analysis.spectral import TFR
+from meggie.code_meggie.general import fileManager
 
-from meggie.ui.analysis.TFRfromEpochsUi import Ui_DialogEpochsTFR
+from meggie.code_meggie.analysis.spectral import create_tfr
+
+from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog
+
+from meggie.ui.utils.validators import validate_name
+
+from meggie.ui.utils.decorators import threaded
+from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 
 class TFRDialog(QtGui.QDialog):
     """
     """
     
-    def __init__(self, parent, epochs):
+    def __init__(self, parent, experiment, epoch_name):
         """
-        Constructor. Sets up the dialog
-        
-        Keyword arguments:
-        
-        parent    --    Parent of the dialog
-        epochs    --    a collection of epochs
         """
-        QtGui.QDialog.__init__(self)
-        self.parent = parent
-        self.epochs = epochs
-        ch_names = self.epochs.raw.ch_names
-        self.ui = Ui_DialogEpochsTFR()
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_TFRDialog()
         self.ui.setupUi(self)
-        self.ui.comboBoxChannels.addItems(ch_names)
-        
-        self.ui.doubleSpinBoxBaselineStart.setMinimum(epochs.raw.tmin)
-        self.ui.doubleSpinBoxBaselineStart.setMaximum(epochs.raw.tmax)
-        self.ui.doubleSpinBoxBaselineStart.setValue(epochs.raw.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMinimum(epochs.raw.tmin)
-        self.ui.doubleSpinBoxBaselineEnd.setMaximum(epochs.raw.tmax)
-        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
-        
+
+        self.parent = parent
+        self.epoch_name = epoch_name
+        self.experiment = experiment
+
+        subject = experiment.active_subject
+        epochs = subject.epochs[epoch_name].raw
+
+        self.ui.lineEditEpochName.setText(epoch_name)
+
+        if epochs.info.get('highpass'):
+            if self.ui.doubleSpinBoxMinFreq.value() < epochs.info['highpass']:
+                self.ui.doubleSpinBoxMinFreq.setValue(
+                    int(np.ceil(epochs.info['highpass'])))
+
+        if epochs.info.get('lowpass'):
+            if self.ui.doubleSpinBoxMaxFreq.value() > epochs.info['lowpass']:
+                self.ui.doubleSpinBoxMaxFreq.setValue(
+                    int(np.ceil(epochs.info['lowpass'])))
+
 
     def accept(self):
         """
         """
+
+        tfr_name = self.ui.lineEditTFRName.text()
+
+        try:
+            validate_name(tfr_name)
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+        
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
-        ch_index = self.ui.comboBoxChannels.currentIndex()
+        decim = self.ui.spinBoxDecim.value()
         interval = self.ui.doubleSpinBoxFreqInterval.value()
-        ncycles =  self.ui.doubleSpinBoxNcycles.value()
-        freqs = np.arange(minfreq, maxfreq, interval)        
+        freqs = np.arange(minfreq, maxfreq, interval)
+
+        subtract_evoked = self.ui.checkBoxSubtractEvoked.isChecked()
         
         if self.ui.radioButtonFixed.isChecked():
             ncycles = self.ui.doubleSpinBoxNcycles.value()
         elif self.ui.radioButtonAdapted.isChecked():
-            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()        
-        
-        if self.ui.groupBoxBaseline.isChecked():
-            mode = str(self.ui.comboBoxMode.currentText())
-            blstart = self.ui.doubleSpinBoxBaselineStart.value()
-            blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        else:
-            blstart, blend, mode = None, None, None
-        
-        decim = self.ui.spinBoxDecim.value()
-        cmap = str(self.ui.comboBoxCmap.currentText())
-        
-        save_data = self.ui.checkBoxSaveData.isChecked()
+            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
-        try:
-            experiment = self.parent.experiment
-            n_jobs = self.parent.preferencesHandler.n_jobs
-            TFR(experiment, epochs=self.epochs.raw,
-                collection_name=self.epochs.collection_name, ch_index=ch_index,
-                freqs=freqs, ncycles=ncycles, decim=decim, mode=mode,
-                blstart=blstart, blend=blend, save_data=save_data,
-                color_map=cmap, n_jobs=n_jobs)
+        experiment = self.experiment
+        subject = experiment.active_subject
+        n_jobs = self.parent.preferencesHandler.n_jobs
+
+        @threaded
+        def do_tfr(*args, **kwargs):
+            create_tfr(experiment, subject, tfr_name, self.epoch_name, 
+                       freqs=freqs, decim=decim, ncycles=ncycles, 
+                       subtract_evoked=subtract_evoked, n_jobs=n_jobs)
+                
+        try:             
+            do_tfr(do_meanwhile=self.parent.update_ui)
+            experiment.save_experiment_settings()
+            self.parent.initialize_ui()
         except Exception as e:
-            exc_messagebox(self, e)
+            exc_messagebox(self.parent, e)
+            return
+
+        self.close()
+
+

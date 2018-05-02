@@ -1,11 +1,8 @@
 # coding: utf-8
 
 """
-Created on May 2, 2013
-
-@author: Jaakko Leppakangas, Atte Rautio
-Contains the EpochWidget-class used for listing epoch collections.
 """
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import pyqtSignal
 
@@ -19,7 +16,7 @@ class EpochWidget(QtGui.QWidget):
     #Custom signals:
     on_selection_changed = pyqtSignal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, epoch_getter=None, parameter_setter=None):
         """
         Constructor 
         """
@@ -27,19 +24,17 @@ class EpochWidget(QtGui.QWidget):
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
-        self.parent = parent
+        self.epoch_getter = epoch_getter
+        self.parameter_setter = parameter_setter
         
-        # Connect listWidgetEpochs.currentItemChanged method to change
-        # parameters on epochParamsWidget
-        self.ui.listWidgetEpochs.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
-        
 
-#    def addItem(self, collection_name):
-#        """
-#        Add an item or items to the widget's list
-#        """
-#        self.ui.listWidgetEpochs.addItem(collection_name)
+
+    def setSelectionMode(self, mode):
+        """
+        """
+        self.ui.listWidgetEpochs.setSelectionMode(mode)
+        
         
     def clearItems(self):
         """Remove all the items from the widget's list.
@@ -49,8 +44,7 @@ class EpochWidget(QtGui.QWidget):
 
     def currentItem(self):
         """return The currently selected item from the widget's list."""
-        if self.ui.listWidgetEpochs.count() == 0: return None
-        else:
+        if self.ui.listWidgetEpochs.count() != 0: 
             return self.ui.listWidgetEpochs.currentItem() 
 
     def isEmpty(self):
@@ -70,23 +64,29 @@ class EpochWidget(QtGui.QWidget):
         row = self.ui.listWidgetEpochs.row(item)
         self.ui.listWidgetEpochs.takeItem(row)
 
-    def setCurrentItem(self, item):
+    def add_item(self, item):
         """
-        sets the current item of the widget's list.
-
-        Keyword arguments:
-        item = item to be set as the current item.
         """
-        self.ui.listWidgetEpochs.setCurrentItem(item)
+        self.ui.listWidgetEpochs.addItem(item)
+        
 
     def selection_changed(self):
-        item = self.ui.listWidgetEpochs.currentItem()
-        if item is None: 
+        item = self.currentItem()
+        if item is None:
             return
-        epochs = self.parent.experiment.active_subject.epochs
-        key = str(item.text())
-        if epochs.has_key(key):
-            epoch = self.parent.experiment.active_subject.epochs[key]
-            if epoch.params is not None:
-                self.parent.show_epoch_collection_parameters(epoch)
+
+        epochs = self.epoch_getter(item.text())
+        # update info box
+        events = epochs.raw.event_id
+        self.ui.listWidgetEvents.clear()
+        for event_name, event_id in events.items():
+            events_str = (event_name + ' [' + str(len(epochs.raw[event_name])) + 
+                          ' events found]')
+
+            item = QtGui.QListWidgetItem(events_str)
+            self.ui.listWidgetEvents.addItem(item)
+
+        # call show parameter handler
+        if self.parameter_setter and epochs.params is not None:
+            self.parameter_setter(epochs)
 

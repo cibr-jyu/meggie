@@ -1,10 +1,6 @@
 # coding: utf-8
 
 """
-Created on Mar 16, 2013
-
-@author: Kari Aliranta, Jaakko Leppakangas, Janne Pesonen, Atte Rautio
-Contains the MainWindow-class that holds the main window of the application.
 """
 
 import os
@@ -45,11 +41,6 @@ from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
-from meggie.ui.analysis.TFRDialogMain import TFRDialog
-from meggie.ui.analysis.TFRTopologyDialogMain import TFRTopologyDialog
-from meggie.ui.analysis.TFRfromRawDialogMain import TFRRawDialog
-from meggie.ui.analysis.powerSpectrumDialogMain import PowerSpectrumDialog
-from meggie.ui.analysis.powerSpectrumEpochsDialogMain import PowerSpectrumEpochsDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
@@ -60,12 +51,14 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.ui.utils.decorators import threaded
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
+from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
+from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
 
 from meggie.code_meggie.general import experiment
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.epoching.evoked import Evoked
+from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.analysis.epoching import draw_evoked_potentials
 from meggie.code_meggie.analysis.epoching import group_average
@@ -99,14 +92,17 @@ class MainWindow(QtGui.QMainWindow):
         self.experimentHandler = experiment.ExperimentHandler(self)
 
         # Create the tab contents
+        self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
         self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
+        self.mainWindowTabInduced = MainWindowTabInduced(self)
 
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtGui.QLabel()
         self.ui.statusbar.addWidget(self.statusLabel)
 
         # Creates a listwidget for epoch analysis.
-        self.epochList = EpochWidget(self)
+        self.epochList = EpochWidget(self, epoch_getter=self.get_epochs,
+            parameter_setter=self.show_epoch_collection_parameters)
         self.epochList.hide()
 
         self.ui.listWidgetEvoked.setMinimumWidth(346)
@@ -150,6 +146,18 @@ class MainWindow(QtGui.QMainWindow):
 
         # Set bads not selectable
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
+
+
+    def get_epochs(self, epoch_name):
+        experiment = self.experiment
+        if not experiment:
+            return
+        
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        return active_subject.epochs.get(epoch_name)
 
 
     def on_actionQuit_triggered(self, checked=None):
@@ -356,7 +364,7 @@ class MainWindow(QtGui.QMainWindow):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
         epoch_widget.clear()
-        for name in self.experiment.subjects[subject_name].epochs:
+        for name in sorted(self.experiment.subjects[subject_name].epochs):
             item = QtGui.QListWidgetItem()
             item.setText(name)
             epoch_widget.addItem(item)
@@ -483,10 +491,10 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger('ui_logger').info("Plotting evoked topomaps.")
 
         try:
-            times = np.arange(0.0, 0.3, 0.02)
+            times = np.arange(0.0, 0.4, 0.02)
             for idx in range(len(mne_evokeds.keys())):
                 fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(mne_evokeds.keys()[0]) 
+                fig.suptitle(mne_evokeds.keys()[idx]) 
 
                 mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='mag',  # noqa
                     average=0.05, axes=axes[0], show=False, colorbar=None)
@@ -506,16 +514,16 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
 
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
+        if self.epochList.isEmpty():
             messagebox(self, 'Create epochs before visualizing.')
             return
 
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.currentItem() is None:
             message = 'Please select an epoch collection from the list.'
             messagebox(self, message)
             return
 
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        name = str(self.epochList.currentItem().text())
         epochs = self.experiment.active_subject.epochs.get(name)
         self.visualizeEpochs = (visualizeEpochChannelDialogMain.
                                 VisualizeEpochChannelDialog(epochs))
@@ -529,7 +537,7 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
 
-        item = self.epochList.ui.listWidgetEpochs.currentItem()
+        item = self.epochList.currentItem()
         if item is None:
             message = 'No epochs collection selected.'
             messagebox(self, message)
@@ -674,7 +682,7 @@ class MainWindow(QtGui.QMainWindow):
                         collection_name,
                     )
             
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
+        if self.epochList.isEmpty():
             self.clear_epoch_collection_parameters()
         
         if collection_name not in self.experiment.active_subject.epochs:
@@ -805,39 +813,7 @@ class MainWindow(QtGui.QMainWindow):
             plot_projs_topomap(self.experiment, raw)
         except Exception as e:
             exc_messagebox(self, e)
-
-    def on_pushButtonSpectrum_clicked(self, checked=None):
-        """Open the power spectrum dialog."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        self.spectrumDialog = PowerSpectrumDialog(self)
-        self.spectrumDialog.show()
-        
-    def on_pushButtonSpectrumEpochs_clicked(self, checked=None):
-        """Open the power spectrum dialog."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs for Power spectrum.'
-            messagebox(self, message)
-            return
-
-        collection_names = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-
-        epochs = []
-        for collection_name in collection_names:
-            epochs.append(self.experiment.active_subject.epochs.get(str(collection_name.text())))
-
-        self.spectrumDialogEpochs = PowerSpectrumEpochsDialog(self, epochs)
-        self.spectrumDialogEpochs.show()
-        
+       
     def on_pushButtonEOG_clicked(self, checked=None):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
@@ -934,64 +910,6 @@ class MainWindow(QtGui.QMainWindow):
         fileManager.save_raw(self.experiment, raw, fname)
         self.initialize_ui()
 
-    def on_pushButtonTFR_clicked(self, checked=None):
-        """Open the dialog for plotting TFR from a single channel."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs before TFR.'
-            messagebox(self, message)
-            return
-        
-        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        epochs = self.experiment.active_subject.epochs.get(collection_name)
-
-        self.tfr_dialog = TFRDialog(self, epochs)
-        self.tfr_dialog.show()
-        
-    def on_pushButtonTFRTopology_clicked(self, checked=None):
-        """Opens the dialog for plotting TFR topology."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
-            message = 'You must select epochs for TFR.'
-            messagebox(self, message)
-            return 
-        
-        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
-        
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        self.tfrTop_dialog = TFRTopologyDialog(self, collection_name)
-        self.tfrTop_dialog.show()
-
-        
-    def on_pushButtonTFRraw_clicked(self, checked=None):
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        self.tfr_raw_dialog = TFRRawDialog(self) 
-        self.tfr_raw_dialog.show()       
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""
@@ -1000,12 +918,12 @@ class MainWindow(QtGui.QMainWindow):
         if self.experiment.active_subject is None:
             return
         
-        if self.epochList.ui.listWidgetEpochs.currentItem() is None:
+        if self.epochList.currentItem() is None:
             message = 'Please select an epoch collection to channel average.'
             messagebox(self, message)
             return
 
-        name = str(self.epochList.ui.listWidgetEpochs.currentItem().text())
+        name = str(self.epochList.currentItem().text())
         
         try:
             average_channels(self.experiment, name,
@@ -1112,20 +1030,7 @@ class MainWindow(QtGui.QMainWindow):
             
             logging.getLogger('ui_logger').warning(
                 'Epochs parameters not found!')
-
             return
-        
-        events = epochs.raw.event_id
-        
-        for event_name, event_id in events.items():
-            events_str = ''.join([
-                event_name,
-                ' [' + str(len(epochs.raw[event_name])) + ' events found]'
-            ])
-
-            item = QtGui.QListWidgetItem()
-            item.setText(events_str)
-            self.epochList.ui.listWidgetEvents.addItem(item)
         
         self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
         self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
@@ -1174,8 +1079,6 @@ class MainWindow(QtGui.QMainWindow):
         """
         Clears epoch collection parameters on mainWindow Epoching tab.
         """
-        while self.epochList.ui.listWidgetEvents.count() > 0:
-            self.epochList.ui.listWidgetEvents.takeItem(0)
         self.ui.textBrowserTmin.clear()
         self.ui.textBrowserTmax.clear()
         self.ui.textBrowserGrad.clear()
@@ -1402,11 +1305,11 @@ class MainWindow(QtGui.QMainWindow):
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
-            for epoch in epochs_items.values():
-                self.epochList.ui.listWidgetEpochs.addItem(epoch.collection_name)
+            for epoch in sorted(epochs_items.values()):
+                self.epochList.add_item(epoch.collection_name)
 
         if evokeds_items is not None:
-            for evoked in evokeds_items.values():
+            for evoked in sorted(evokeds_items.values()):
                 self.ui.listWidgetEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
@@ -1481,15 +1384,19 @@ class MainWindow(QtGui.QMainWindow):
             self.ui.tabWidget.removeTab(0)
 
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
-        self.ui.tabWidget.insertTab(2, self.ui.tabEpoching, "Epoching")
-        self.ui.tabWidget.insertTab(3, self.ui.tabAveraging, "Averaging")
-        self.ui.tabWidget.insertTab(4, self.ui.tabSpectralAnalysis, "Spectral Analysis")
-        self.ui.tabWidget.insertTab(5, self.mainWindowTabSourceAnalysis, "Source Analysis")
+        self.ui.tabWidget.insertTab(2, self.mainWindowTabSpectrums, "Spectrums")
+        self.ui.tabWidget.insertTab(3, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(4, self.ui.tabEvoked, "Evoked responses")
+        self.ui.tabWidget.insertTab(5, self.mainWindowTabInduced, "Induced responses")
+        self.ui.tabWidget.insertTab(6, self.mainWindowTabSourceAnalysis, "Source Analysis")
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
         self.mainWindowTabSourceAnalysis.update_tabs()
         self.mainWindowTabSourceAnalysis.initialize_ui()
+
+        self.mainWindowTabSpectrums.initialize_ui()
+        self.mainWindowTabInduced.initialize_ui()
         
     def on_currentChanged(self):
         """
@@ -1498,23 +1405,17 @@ class MainWindow(QtGui.QMainWindow):
         """
 
         index = self.ui.tabWidget.currentIndex()
-        if index == 1:
+        if index == 2:
             mode = QtGui.QAbstractItemView.SingleSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-        elif index == 2:
-            mode = QtGui.QAbstractItemView.MultiSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
-            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         elif index == 3:
             mode = QtGui.QAbstractItemView.MultiSelection
-            self.epochList.ui.groupBoxEvents.setVisible(True)
-            self.epochList.setParent(self.ui.groupBoxEpochsTFR)
+            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         else:
             self.epochList.hide()
             return
 
-        self.epochList.ui.listWidgetEpochs.setSelectionMode(mode)
+        self.epochList.setSelectionMode(mode)
         self.epochList.show()
 
     def collect_parameter_values(self):

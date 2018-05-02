@@ -1,7 +1,4 @@
 """
-Created on 19.12.2015
-
-@author: talli
 """
 import os
 import logging

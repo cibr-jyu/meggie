@@ -31,7 +31,7 @@ def wrap(log_level, original_func):
     return wrapped
 
 
-read_raw_fif = wrap('info', mne.io.read_raw_fif)
+read_raw_fif = wrap('debug', mne.io.read_raw_fif)
 _has_eeg_average_ref_proj = wrap('debug', mne.io.proj._has_eeg_average_ref_proj)
 make_fixed_length_events = wrap('debug', mne.make_fixed_length_events)
 read_layout = wrap('debug', mne.channels.layout.read_layout) 
@@ -88,6 +88,7 @@ plot_epochs_image = wrap('debug', mne.viz.plot_epochs_image)
 lcmv_raw = wrap('debug', mne.beamformer.lcmv_raw)
 lcmv_epochs = wrap('debug', mne.beamformer.lcmv_epochs)
 lcmv = wrap('debug', mne.beamformer.lcmv)
+read_tfrs = wrap('debug', mne.time_frequency.read_tfrs)
 ICA = wrap('debug', mne.preprocessing.ICA)
 AverageTFR = wrap('debug', mne.time_frequency.AverageTFR)
 Epochs = wrap('debug', mne.Epochs)

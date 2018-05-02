@@ -1,3 +1,6 @@
+"""
+"""
+
 from PyQt4 import QtGui
 
 from meggie.ui.source_analysis.linearSourceEstimateDialogUi import Ui_linearSourceEstimateDialog  # noqa

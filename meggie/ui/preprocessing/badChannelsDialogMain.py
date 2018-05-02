@@ -1,7 +1,4 @@
 """
-Created on 16.11.2016
-
-@author: jaolpeso
 """
 
 from PyQt4 import QtGui

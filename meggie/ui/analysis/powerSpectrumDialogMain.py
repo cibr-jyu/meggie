@@ -1,8 +1,5 @@
-'''
-Created on 26.2.2015
-
-@author: Jaakko Leppakangas
-'''
+"""
+"""
 
 from collections import OrderedDict
 
@@ -15,9 +12,8 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
-from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
-from meggie.code_meggie.analysis.spectral import plot_power_spectrum
+from meggie.code_meggie.analysis.spectral import create_power_spectrum
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -25,7 +21,7 @@ from meggie.ui.utils.messaging import messagebox
 
 class PowerSpectrumDialog(QtGui.QDialog):
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """
         Init method for the dialog.
         Constructs a set of time series from the given parameters.
@@ -37,18 +33,15 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
         self.parent = parent
+        self.experiment = experiment
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
         self.ui.doubleSpinBoxTmin.setMaximum(tmax)
         self.ui.doubleSpinBoxTmax.setMaximum(tmax)
-
-        # initialize output settings
-        self.output_rows = 'all_channels'
-        self.output_columns = 'all_data'
 
         # set nfft initially to ~2 seconds and overlap to ~1 seconds
         sfreq = raw.info['sfreq']
@@ -65,7 +58,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
         if raw.info.get('lowpass'):
             if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
-                self.ui.spinBoxFmax.setValue(int(raw.info['highpass']))
+                self.ui.spinBoxFmax.setValue(int(raw.info['lowpass']))
 
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
@@ -110,20 +103,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         self.event_dialog = PowerSpectrumEvents(self)
         self.event_dialog.show()
 
-    def output_options_handler(self, row_setting, column_setting):
-        self.output_rows = row_setting
-        self.output_columns = column_setting
-
-    def on_pushButtonOutputOptions_clicked(self, checked=None):
-        if checked is None:
-            return
-        handler = self.output_options_handler
-        self.output_options_dialog = OutputOptions(self, handler=handler, 
-            row_setting=self.output_rows, column_setting=self.output_columns)
-        self.output_options_dialog.show()
 
     def accept(self, *args, **kwargs):
         """Starts the computation."""
+
+        name = self.ui.lineEditName.text()
+        if not name:
+            messagebox(self.parent, "Must have a name")
+            return
 
         times = self.intervals
         
@@ -138,7 +125,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
                                      "starting frequency"))
             return
         
-        subject = self.parent.experiment.active_subject
+        subject = self.experiment.active_subject
         sfreq = subject.get_working_file().info['sfreq']
     
         valid = True
@@ -150,13 +137,13 @@ class PowerSpectrumDialog(QtGui.QDialog):
                                      "should be more than window size"))
             return
         
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         
         epochs = OrderedDict()
         for interval in times:
             events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
             tmin, tmax = 0, interval[2] - interval[1]
-            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax)
+            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax, baseline=None)
             epoch.comment = str(interval)
 
             if interval[0] not in epochs:
@@ -171,19 +158,14 @@ class PowerSpectrumDialog(QtGui.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
-        save_data = self.ui.checkBoxSaveData.isChecked()
-        
         try:
-            QtGui.QApplication.setOverrideCursor(
-                QtGui.QCursor(QtCore.Qt.WaitCursor))
-
-            experiment = self.parent.experiment
+            experiment = self.experiment
             update_ui = self.parent.update_ui
-            plot_power_spectrum(experiment, params, save_data, epochs, 
-                                update_ui=update_ui, 
-                                output_rows=self.output_rows,
-                                output_columns=self.output_columns)
+            create_power_spectrum(experiment, name, params, epochs, 
+                                  update_ui=update_ui)
+            experiment.save_experiment_settings()
+            self.parent.initialize_ui()
         except Exception as e:
             exc_messagebox(self.parent, e)
 
-        QtGui.QApplication.restoreOverrideCursor()
+        self.close()

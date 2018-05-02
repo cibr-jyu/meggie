@@ -1,8 +1,5 @@
-'''
-Created on 20.10.2016
-
-@author: jaolpeso
-'''
+"""
+"""
 from PyQt4 import QtGui
 
 from meggie.ui.epoching.bitSelectionDialogUi import Ui_Dialog

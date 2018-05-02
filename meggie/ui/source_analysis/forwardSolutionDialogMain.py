@@ -1,5 +1,4 @@
 """
-Author: Jaakko Leppakangas
 """
 
 from PyQt4 import QtGui

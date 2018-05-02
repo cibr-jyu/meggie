@@ -1,10 +1,7 @@
 # coding: utf-8
 
-'''
-Created on Oct 31, 2013
-
-@author: jaolpeso
-'''
+"""
+"""
 from PyQt4 import QtCore, QtGui
 
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
