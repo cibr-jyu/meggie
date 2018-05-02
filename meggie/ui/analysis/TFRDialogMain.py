@@ -13,6 +13,7 @@ from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog
 
 from meggie.ui.utils.validators import validate_name
 
+from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 
@@ -65,20 +66,6 @@ class TFRDialog(QtGui.QDialog):
             exc_messagebox(self, exc)
             return
         
-        cmap = str(self.ui.comboBoxCmap.currentText())
-        
-        if self.ui.groupBoxBaseline.isChecked():
-            mode = str(self.ui.comboBoxMode.currentText())
-            blstart = self.ui.doubleSpinBoxBaselineStart.value()
-            blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        else:
-            blstart, blend, mode = None, None, None
-            
-        if self.ui.radioButtonInduced.isChecked():
-            reptype = 'average'
-        elif self.ui.radioButtonPhase.isChecked():
-            reptype = 'itc'
-
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
         decim = self.ui.spinBoxDecim.value()
@@ -92,13 +79,17 @@ class TFRDialog(QtGui.QDialog):
 
         experiment = self.experiment
         subject = experiment.active_subject
+        n_jobs = self.parent.preferencesHandler.n_jobs
+
+        @threaded
+        def do_tfr(*args, **kwargs):
+            create_tfr(experiment, subject, tfr_name, self.epoch_name, 
+                       freqs=freqs, decim=decim, ncycles=ncycles, n_jobs=n_jobs)
                 
         try:             
-            n_jobs = self.parent.preferencesHandler.n_jobs
-            create_tfr(experiment, subject, self.epoch_name, reptype=reptype, 
-                       freqs=freqs, decim=decim, mode=mode, blstart=blstart, 
-                       blend=blend, ncycles=ncycles, color_map=cmap, 
-                       n_jobs=n_jobs)
+            do_tfr(do_meanwhile=self.parent.update_ui)
+            experiment.save_experiment_settings()
+            self.parent.initialize_ui()
         except Exception as e:
             exc_messagebox(self.parent, e)
             return

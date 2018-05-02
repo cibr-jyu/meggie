@@ -54,6 +54,10 @@ class MainWindowTabInduced(QtGui.QDialog):
     def preferencesHandler(self):
         return self.parent.preferencesHandler
 
+    @property
+    def update_ui(self):
+        return self.parent.update_ui
+
     def on_pushButtonComputeTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
         if checked is None:

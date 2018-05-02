@@ -219,12 +219,6 @@ def TFR_topology(experiment, inst, collection_name, reptype, freqs, decim, mode,
     fig.canvas.mpl_connect('button_press_event', onclick)
 
 
-def create_tfr(experiment, subject, collection_name, freqs, decim, mode, 
-                 blstart, blend, ncycles, ch_type,
-                 n_jobs=1):
-    """
-    """
-
 
 @threaded
 def _compute_spectrum(epoch_groups, params, n_jobs):
@@ -483,12 +477,17 @@ def group_average_psd(experiment, spectrum_name):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
 
 
-def create_tfr(experiment, subject, epochs_name, reptype, 
-               freqs, decim, mode, blstart, blend,
-               ncycles, color_map, n_jobs):
+def create_tfr(experiment, subject, tfr_name, epochs_name, 
+               freqs, decim, ncycles, n_jobs):
 
-    from meggie.code_meggie.utils.debug import debug_trace;
-    debug_trace()
+    epochs = subject.epochs[epochs_name].raw
 
-    print "miau"
+    tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
+                         average=False, return_itc=False, n_jobs=n_jobs)
+
+    meggie_tfr = TFR(tfr, tfr_name, subject, decim=decim, n_cycles)
+
+    experiment.active_subject.add_tfr(meggie_tfr) 
+
+    meggie_tfr.save_data()
 

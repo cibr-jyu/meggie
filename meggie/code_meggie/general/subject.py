@@ -34,6 +34,7 @@ class Subject(object):
         self._epochs = dict()
         self._evokeds = dict()
         self._spectrums = dict()
+        self._tfrs = dict()
         self._stcs = dict()
         self._subject_path = os.path.join(experiment.workspace,
                                           experiment.experiment_name,
@@ -65,6 +66,9 @@ class Subject(object):
 
         self._spectrums_directory = os.path.join(self._subject_path, 
                                                  'spectrums')
+
+        self._tfr_directory = os.path.join(self._subject_path, 
+                                           'tfrs')
 
         self._experiment = experiment
 
@@ -107,6 +111,10 @@ class Subject(object):
     @property
     def spectrums_directory(self):
         return self._spectrums_directory
+
+    @property
+    def tfr_directory(self):
+        return self._tfr_directory
 
     @property
     def mri_subject_name(self):
@@ -293,6 +301,17 @@ class Subject(object):
             spectrum.delete_data()
         except OSError:
             raise IOError('Spectrum could not be deleted from folders.')
+
+    def add_tfr(self, tfr):
+        self._tfrs[tfr.name] = tfr
+
+    def remove_tfr(self, name):
+
+        tfr = self._tfrs.pop(str(name), None)
+        try:
+            tfr.delete_data()
+        except OSError:
+            raise IOError('TFR could not be deleted from folders.')
 
     def add_evoked(self, evoked):
         """
@@ -481,6 +500,7 @@ class Subject(object):
                 self.forward_solutions_directory,
                 self.reconfiles_directory,
                 self.spectrums_directory,
+                self.tfr_directory,
                 self.cov_directory,
                 self.stc_directory
             ])
