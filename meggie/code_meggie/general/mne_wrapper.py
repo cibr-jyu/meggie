@@ -31,7 +31,7 @@ def wrap(log_level, original_func):
     return wrapped
 
 
-read_raw_fif = wrap('info', mne.io.read_raw_fif)
+read_raw_fif = wrap('debug', mne.io.read_raw_fif)
 _has_eeg_average_ref_proj = wrap('debug', mne.io.proj._has_eeg_average_ref_proj)
 make_fixed_length_events = wrap('debug', mne.make_fixed_length_events)
 read_layout = wrap('debug', mne.channels.layout.read_layout) 
