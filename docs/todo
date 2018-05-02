@@ -1,27 +1,22 @@
 TODO:
 
-- TFR objects and Spectrum objects that can be created and then saved or visualized separately.
- * makes it easier to do batches.
-- add throbber to bad channel dialog
-- sort epoch and eveoked and otehr list
-- evoked topo plots all with same names, fix that, and longer sequence
-- plot accuracy as preference
-
 - refactoring:
- * main window tabs to separate files
+ * all main window tabs to separate files
  * check proper style with pylint
+ * combine general/fileManager.py and utils/files.py
+ * remove active_subject-references from code_meggie analysis-sections (pass by parameter)
 - we need tests
-- combine general/fileManager.py and utils/files.py
-- remove active_subject-references from code_meggie analysis-sections (pass by parameter)
+- should do manual for meggie
 
 bugs:
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 
 features:
+- add throbber to bad channel dialog
+- plot accuracy as preference
 - tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
 - unify EEG and EOG projections (EEG is EOG with channel selection)
-- should do manual for meggie
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
 - plots with more accuracy?
@@ -36,7 +31,5 @@ features:
 - maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums
-- average groups for epoch-based spetrums also
 - event import
-
 

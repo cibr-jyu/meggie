@@ -364,7 +364,7 @@ class MainWindow(QtGui.QMainWindow):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
         epoch_widget.clear()
-        for name in self.experiment.subjects[subject_name].epochs:
+        for name in sorted(self.experiment.subjects[subject_name].epochs):
             item = QtGui.QListWidgetItem()
             item.setText(name)
             epoch_widget.addItem(item)
@@ -491,10 +491,10 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger('ui_logger').info("Plotting evoked topomaps.")
 
         try:
-            times = np.arange(0.0, 0.3, 0.02)
+            times = np.arange(0.0, 0.4, 0.02)
             for idx in range(len(mne_evokeds.keys())):
                 fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(mne_evokeds.keys()[0]) 
+                fig.suptitle(mne_evokeds.keys()[idx]) 
 
                 mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='mag',  # noqa
                     average=0.05, axes=axes[0], show=False, colorbar=None)
@@ -1305,11 +1305,11 @@ class MainWindow(QtGui.QMainWindow):
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
-            for epoch in epochs_items.values():
+            for epoch in sorted(epochs_items.values()):
                 self.epochList.add_item(epoch.collection_name)
 
         if evokeds_items is not None:
-            for evoked in evokeds_items.values():
+            for evoked in sorted(evokeds_items.values()):
                 self.ui.listWidgetEvoked.addItem(evoked.name)
 
         # This updates the 'Subject info' section below the subject list.
