@@ -7,12 +7,15 @@ from PyQt4 import QtGui
 from meggie.ui.general.tabs.mainWindowTabInducedUi import Ui_mainWindowTabInduced  # noqa
 
 from meggie.ui.analysis.TFRDialogMain import TFRDialog
+from meggie.ui.analysis.TFRPlotTopologyDialogMain import TFRPlotTopologyDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
+
+from meggie.code_meggie.analysis.spectral import group_average_tfr
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
@@ -92,6 +95,126 @@ class MainWindowTabInduced(QtGui.QDialog):
     @property
     def update_ui(self):
         return self.parent.update_ui
+
+
+    def on_pushButtonPlotTFRTopology_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        self.tfr_plot_dialog = TFRPlotTopologyDialog(
+            self, experiment, tfr_item.text())
+        self.tfr_plot_dialog.show()
+
+    def on_pushButtonGroupAverage_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        if experiment.active_subject is None:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        tfr_name = tfr_item.text()
+
+        @threaded
+        def group_average(*args, **kwargs):
+            group_average_tfr(experiment, tfr_name)
+
+        group_average(do_meanwhile=self.update_ui)
+
+        experiment.save_experiment_settings()
+        self.initialize_ui()
+
+
+    def on_pushButtonDeleteTFR_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        message = 'Permanently remove a TFR?'
+        reply = QtGui.QMessageBox.question(self, 'Delete TFR',
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            try:
+                self.parent.experiment.active_subject.remove_tfr(
+                    tfr_item.text()
+                )
+            except Exception as e:
+                exc_messagebox(self, e)
+
+            self.parent.experiment.save_experiment_settings()
+            self.initialize_ui()
+
+
+    def on_pushButtonGroupDeleteTFR_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        tfr_name = tfr_item.text()
+
+        message = 'Permanently remove TFR from all subjects?'
+        reply = QtGui.QMessageBox.question(self, "Delete TFR's",
+                                           message, QtGui.QMessageBox.Yes |
+                                           QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            for subject in experiment.subjects.values():
+                if tfr_name in subject.tfrs:
+                    subject.remove_tfr(
+                        tfr_name,
+                    )
+
+        logging.getLogger('ui_logger').info("Removed TFR's.")
+        experiment.save_experiment_settings()
+        self.initialize_ui()
+
 
     def on_pushButtonComputeTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""

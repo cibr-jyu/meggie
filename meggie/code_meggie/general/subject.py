@@ -313,7 +313,7 @@ class Subject(object):
 
         tfr = self._tfrs.pop(str(name), None)
         try:
-            tfr.delete_data()
+            tfr.delete_tfr()
         except OSError:
             raise IOError('TFR could not be deleted from folders.')
 

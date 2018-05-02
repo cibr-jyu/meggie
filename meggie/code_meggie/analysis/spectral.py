@@ -26,201 +26,6 @@ from meggie.code_meggie.structures.spectrum import Spectrum
 from meggie.code_meggie.structures.tfr import TFR
 
 
-def TFR_old(experiment, epochs, collection_name, ch_index, freqs, ncycles, decim,
-        mode, blstart, blend, save_data, color_map='auto', n_jobs=1):
-    """
-    Plots a time-frequency representation of the data for a selected
-    channel. Modified from example by Alexandre Gramfort.
-    """
-
-    baseline = (blstart, blend)
-    
-    @threaded
-    def calculate_tfrs():
-        power, itc = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, 
-                                    decim=decim, n_jobs=n_jobs)
-        evoked = epochs.average()
-        return power, itc, evoked
-        
-    power, itc, evoked = calculate_tfrs()
-    
-    if mode:
-        power.data = mne.rescale(power.data, power.times, 
-            baseline=baseline, mode=mode)
-        itc.data = mne.rescale(itc.data, itc.times, 
-            baseline=baseline, mode=mode)          
-    
-    ch_name = power.ch_names[ch_index]
-    
-    if save_data:
-
-        subject = experiment.active_subject.subject_name
-        path = fileManager.create_timestamped_folder(experiment)
-        ch_name = power.ch_names[ch_index]
-
-        power_fname = os.path.join(
-            path,
-            subject + '_' + ch_name + '_TFR_epochs_induced.csv'
-        )
-
-        fileManager.save_tfr(power_fname, power.data[ch_index], power.times, freqs)
-
-        itc_fname = os.path.join(
-            path,
-            subject + '_' + ch_name + '_TFR_epochs_itc.csv'
-        )
-
-        fileManager.save_tfr(itc_fname, itc.data[ch_index], itc.times, freqs)
-
-    evoked_data = evoked.data[ch_index]
-    evoked_times = 1e3 * evoked.times
-
-    logging.getLogger('ui_logger').info('Plotting TFR.')
-    fig = plt.figure()
-
-    plt.subplot2grid((3, 15), (0, 0), colspan=14)
-
-    ch_type = mne.channel_type(evoked.info, ch_index)
-
-    try:
-        plt.ylabel(get_unit(ch_type))
-        evoked_data *= get_scaling(ch_type)
-    except:
-        raise TypeError('TFR plotting for %s channels not supported.' % 
-                        ch_type)
-
-    plt.plot(evoked_times, evoked_data)
-    plt.title('Evoked response (%s)' % evoked.ch_names[ch_index])
-    plt.xlabel('Time (ms)')
-    plt.xlim(evoked_times[0], evoked_times[-1])
-
-    if color_map == 'auto':
-        cmap = 'RdBu_r'
-    else:
-        cmap = color_map    
-
-    data = power.data[ch_index]
-
-    plt.subplot2grid((3, 15), (1, 0), colspan=14)
-    img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
-        freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
-    plt.xlabel('Time (ms)')
-    plt.ylabel('Frequency (Hz)')
-    plt.title('Induced power (%s)' % evoked.ch_names[ch_index])
-    plt.colorbar(cax=plt.subplot2grid((3, 15), (1, 14)), mappable=img)
-
-    data = itc.data[ch_index]
-        
-    plt.subplot2grid((3, 15), (2, 0), colspan=14)
-    img = plt.imshow(data, extent=[evoked_times[0], evoked_times[-1],
-        freqs[0], freqs[-1]], aspect='auto', origin='lower', cmap=cmap)
-    plt.xlabel('Time (ms)')
-    plt.ylabel('Frequency (Hz)')
-    plt.title('Phase-lock (%s)' % evoked.ch_names[ch_index])
-    plt.colorbar(cax=plt.subplot2grid((3, 15), (2, 14)), mappable=img)
-
-    plt.tight_layout()
-    fig.canvas.set_window_title('_'.join(['TFR', collection_name,
-                                          ch_name]))
-    fig.show()
-
-
-def TFR_topology(experiment, inst, collection_name, reptype, freqs, decim, mode, 
-                 blstart, blend, ncycles, ch_type, scalp, color_map='auto',
-                 save_data=False, n_jobs=1):
-    """
-    Plots time-frequency representations on topographies for MEG sensors.
-    Modified from example by Alexandre Gramfort and Denis Engemann.
-    Keyword arguments:
-    inst            -- Epochs extracted from the data or previously computed
-                       AverageTFR object to plot.
-    collection_name -- Name of the epoch collection.
-    reptype         -- Type of representation (average or itc).
-    freqs           -- Frequencies for the representation as a numpy array.
-    decim           -- Temporal decimation factor.
-    mode            -- Rescaling mode (logratio | ratio | zscore |
-                       mean | percent).
-    blstart         -- Starting point for baseline correction.
-    blend           -- Ending point for baseline correction.
-    ncycles         -- Value used to count the number of cycles.
-    ch_type         -- Channel type (mag | grad | eeg).
-    scalp           -- Parameter dictionary for scalp plot. If None, no scalp
-                       plot is drawn.
-    color_map       -- Matplotlib color map to use. Defaults to ``auto``, in
-                       which case ``RdBu_r`` is used or ``Reds`` if only
-                       positive values exist in the data.
-    save_data       -- save data to file or not
-    """
-
-    @threaded
-    def calculate_tfrs():
-        power, itc = mne.tfr_morlet(inst, freqs=freqs, n_cycles=ncycles, 
-                                    decim=decim, n_jobs=n_jobs)
-        return power, itc
-    
-    power, itc = calculate_tfrs()
-    baseline = (blstart, blend)
-    layout = fileManager.read_layout(experiment.layout)
-            
-    if reptype == 'average':
-        inst = power
-        title = 'Average power'
-    elif reptype == 'itc':
-        inst = itc
-        title = 'Inter-trial coherence'
-        
-    if color_map == 'auto':
-        cmap = 'RdBu_r'
-    else:
-        cmap = color_map
-
-    if mode:
-        inst.data = mne.rescale(inst.data, inst.times, 
-            baseline=baseline, mode=mode)    
-
-    if save_data:
-        subject = experiment.active_subject.subject_name
-        path = fileManager.create_timestamped_folder(experiment)
-
-        fname = os.path.join(
-            path,
-            subject + '_TFR_epochs_allchannels.csv'
-        )
-
-        labels = []
-        for ch_name in inst.info['ch_names']:
-            if ch_name in inst.info['bads']:
-                ch_name += ' (bad)'
-            labels.append(ch_name)
-
-        logging.getLogger('ui_logger').info("Saving data..")
-        fileManager.save_tfr_topology(fname, inst.data, 
-                            inst.times, freqs, labels)
-        
-
-    if scalp is not None:
-        inst.plot_topomap(tmin=scalp['tmin'], tmax=scalp['tmax'],
-                          fmin=scalp['fmin'], fmax=scalp['fmax'],
-                          ch_type=ch_type, layout=layout,
-                          show=False, cmap=cmap)
-
-    logging.getLogger('ui_logger').info("Plotting.")
-    fig = inst.plot_topo(fmin=freqs[0], fmax=freqs[-1], layout=layout, 
-        cmap=cmap, title=title)
-
-    fig.canvas.set_window_title('TFR' + '_' + collection_name)
-    fig.show()
-
-    def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gcf().canvas.set_window_title('_'.join(['TFR', collection_name,
-                                                    channel]))
-        plt.show(block=False)
-
-    fig.canvas.mpl_connect('button_press_event', onclick)
-
-
-
 @threaded
 def _compute_spectrum(epoch_groups, params, n_jobs):
     """Performed in a worker thread."""
@@ -477,6 +282,52 @@ def save_data_psd(experiment, subjects, output_rows,
 def group_average_psd(experiment, spectrum_name):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
 
+    # check data coherence
+    keys = []
+    ch_names = []
+    freqs = []
+    logs = []
+    for subject in experiment.subjects.values():
+        spectrum = subject.spectrums.get(spectrum_name)
+        if not spectrum:
+            continue
+        keys.append(tuple(spectrum.data.keys()))
+        ch_names.append(tuple(spectrum.ch_names))
+        freqs.append(tuple(spectrum.freqs))
+        logs.append(spectrum.log_transformed)
+
+    if len(set(keys)) != 1:
+        raise Exception("PSD's contain different conditions")
+    if len(set(ch_names)) != 1:
+        raise Exception("PSD's contain different sets of channels")
+    if len(set(freqs)) != 1:
+        raise Exception("PSD's contain different sets of freqs")
+    if len(set(logs)) != 1:
+        raise Exception("Some of the PSD's are log transformed and some are not")
+
+    data = dict([(key, []) for key in keys[0]])
+    for subject in experiment.subjects.values():
+        spectrum = subject.spectrums.get(spectrum_name)
+        if not spectrum:
+            continue
+
+        for key, cond_data in spectrum.data.items():
+            data[key].append(cond_data)
+
+    for key in data:
+        data[key] = np.mean(data[key], axis=0)
+
+    freqs = spectrum.freqs
+    ch_names = spectrum.ch_names
+    name = 'group_' + spectrum_name
+
+    spectrum = Spectrum(name, experiment.active_subject,
+            logs[0], data, freqs, ch_names)
+
+    experiment.active_subject.add_spectrum(spectrum) 
+
+    spectrum.save_data()
+
 
 def create_tfr(experiment, subject, tfr_name, epochs_name, 
                freqs, decim, ncycles, subtract_evoked, n_jobs):
@@ -501,6 +352,112 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     meggie_tfr = TFR(tfr, tfr_name, subject, decim, ncycles, subtract_evoked)
 
     experiment.active_subject.add_tfr(meggie_tfr) 
+
+    meggie_tfr.save_tfr()
+
+
+def save_data_tfr():
+    pass
+
+    # if save_data:
+    #     subject = experiment.active_subject.subject_name
+    #     path = fileManager.create_timestamped_folder(experiment)
+    #     fname = os.path.join(
+    #         path,
+    #         subject + '_TFR_epochs_allchannels.csv'
+    #     )
+    #     labels = []
+    #     for ch_name in inst.info['ch_names']:
+    #         if ch_name in inst.info['bads']:
+    #             ch_name += ' (bad)'
+    #         labels.append(ch_name)
+    #     logging.getLogger('ui_logger').info("Saving data..")
+    #     fileManager.save_tfr_topology(fname, inst.data, 
+    #                         inst.times, freqs, labels)
+    # if save_data:
+    #     subject = experiment.active_subject.subject_name
+    #     path = fileManager.create_timestamped_folder(experiment)
+    #     ch_name = power.ch_names[ch_index]
+    #     power_fname = os.path.join(
+    #         path,
+    #         subject + '_' + ch_name + '_TFR_epochs_induced.csv'
+    #     )
+    #     fileManager.save_tfr(power_fname, power.data[ch_index], power.times, freqs)
+    #     itc_fname = os.path.join(
+    #         path,
+    #         subject + '_' + ch_name + '_TFR_epochs_itc.csv'
+    #     )
+    #     fileManager.save_tfr(itc_fname, itc.data[ch_index], itc.times, freqs)
+
+def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
+
+    layout = fileManager.read_layout(experiment.layout)
+
+    logging.getLogger('ui_logger').info("Plotting TFR topology...")
+    fig = tfr.plot_topo(layout=layout, show=False, baseline=(blstart, blend), mode=blmode)
+
+    fig.canvas.set_window_title('TFR' + '_' + name)
+
+    def onclick(event):
+        channel = plt.getp(plt.gca(), 'title')
+        plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
+                                                    channel]))
+        plt.show(block=False)
+
+    fig.canvas.mpl_connect('button_press_event', onclick)
+    fig.show()
+
+
+def group_average_tfr(experiment, tfr_name):
+    logging.getLogger('ui_logger').info('Calculating group average for tfrs') 
+
+    # check data coherence
+    freqs = []
+    times = []
+    ch_names = []
+    decims = []
+    subtracts = []
+
+    for subject in experiment.subjects.values():
+        tfr = subject.tfrs.get(tfr_name)
+        if not tfr:
+            continue
+        freqs.append(tuple(tfr.tfr.freqs))
+        times.append(tuple(tfr.tfr.times))
+        ch_names.append(tuple(tfr.tfr.info['ch_names']))
+        decims.append(tfr.decim)
+        subtracts.append(tfr.evoked_subtracted)
+
+    if len(set(freqs)) != 1:
+        raise Exception("TFR's contain different sets of freqs")
+    if len(set(ch_names)) != 1:
+        raise Exception("TFR's contain different sets of channels")
+    if len(set(times)) != 1:
+        raise Exception("TFR's contain different sets of times")
+    if len(set(decims)) != 1:
+        raise Exception("TFR's contain different sets of decims")
+    if len(set(subtracts)) != 1:
+        raise Exception("TFR's contain different evoked subtraction settings")
+
+
+
+    tfrs = []
+    for subject in experiment.subjects.values():
+        tfr = subject.tfrs.get(tfr_name)
+        if not tfr:
+            continue
+        tfrs.append(tfr.tfr)
+
+    average_tfr = mne.grand_average(tfrs, drop_bads=False)
+    decim = tfr.decim
+    n_cycles = tfr.n_cycles
+    evoked_subtracted = tfr.evoked_subtracted
+
+    meggie_tfr = TFR(average_tfr, 'group_' + tfr_name, 
+                     experiment.active_subject, 
+                     decim, n_cycles, evoked_subtracted)
+
+    experiment.active_subject.add_tfr(meggie_tfr)
 
     meggie_tfr.save_tfr()
 
