@@ -200,6 +200,11 @@ def save_data_psd(experiment, subjects, output_rows,
     data = []
     row_names = []
 
+    if len(subjects) == 1: 
+        fname_stem = subjects[0].subject_name
+    else:
+        fname_stem = 'subjects'
+
     for subject in subjects:
         spectrum = subject.spectrums.get(spectrum_name, None)
         if spectrum is None:
@@ -261,7 +266,7 @@ def save_data_psd(experiment, subjects, output_rows,
                 alpha_frequency = statistics.alpha_frequency
                 alpha_power = statistics.alpha_power
 
-                filename = ''.join([subject_name, '_', 
+                filename = ''.join([fname_stem, '_', 
                                     'spectrum_statistics.csv'])
 
                 column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
@@ -269,7 +274,7 @@ def save_data_psd(experiment, subjects, output_rows,
                     np.array([alpha_peak, alpha_frequency, alpha_power]))
 
             else:
-                filename = ''.join([subject_name, '_', 'spectrum.csv'])
+                filename = ''.join([fname_stem, '_', 'spectrum.csv'])
                 column_names = freqs.tolist()
 
             row_names.extend(subject_row_names)
@@ -314,11 +319,12 @@ def group_average_psd(experiment, spectrum_name):
         for key, cond_data in spectrum.data.items():
             data[key].append(cond_data)
 
+        freqs = spectrum.freqs
+        ch_names = spectrum.ch_names
+
     for key in data:
         data[key] = np.mean(data[key], axis=0)
 
-    freqs = spectrum.freqs
-    ch_names = spectrum.ch_names
     name = 'group_' + spectrum_name
 
     spectrum = Spectrum(name, experiment.active_subject,
@@ -439,19 +445,19 @@ def group_average_tfr(experiment, tfr_name):
     if len(set(subtracts)) != 1:
         raise Exception("TFR's contain different evoked subtraction settings")
 
-
-
     tfrs = []
     for subject in experiment.subjects.values():
         tfr = subject.tfrs.get(tfr_name)
         if not tfr:
             continue
+
+        decim = tfr.decim
+        n_cycles = tfr.n_cycles
+        evoked_subtracted = tfr.evoked_subtracted
+
         tfrs.append(tfr.tfr)
 
     average_tfr = mne.grand_average(tfrs, drop_bads=False)
-    decim = tfr.decim
-    n_cycles = tfr.n_cycles
-    evoked_subtracted = tfr.evoked_subtracted
 
     meggie_tfr = TFR(average_tfr, 'group_' + tfr_name, 
                      experiment.active_subject, 
