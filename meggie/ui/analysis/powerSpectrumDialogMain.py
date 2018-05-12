@@ -1,6 +1,8 @@
 """
 """
 
+import logging
+
 from collections import OrderedDict
 
 from PyQt4 import QtGui, QtCore
@@ -51,6 +53,11 @@ class PowerSpectrumDialog(QtGui.QDialog):
 
         self.ui.spinBoxNfft.setValue(nfft)
         self.ui.spinBoxOverlap.setValue(overlap)
+
+        logging.getLogger('ui_logger').info('Miau')
+
+        from meggie.code_meggie.utils.debug import debug_trace;
+        debug_trace()
 
         if raw.info.get('highpass'):
             if self.ui.spinBoxFmin.value() < raw.info['highpass']:

@@ -11,6 +11,7 @@ TODO:
 bugs:
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
+- meggie allows to create a new experiment over existing experiment,
 
 features:
 - add throbber to bad channel dialog
