@@ -9,9 +9,12 @@ TODO:
 - should do manual for meggie
 
 bugs:
+- Channel averages for spectrums should have channel type separately. Also grad mean should be mean of grad pairs
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 - meggie allows to create a new experiment over existing experiment,
+- fix the spectrum problem with concatenated raw files.
+- powerspectrum dialog name field size
 
 features:
 - add throbber to bad channel dialog
