@@ -49,12 +49,12 @@ class MainWindowTabInduced(QtGui.QDialog):
 
         # populate epoch widget
         self.epochList.clearItems()
-        for epoch_name in active_subject.epochs:
+        for epoch_name in sorted(active_subject.epochs.keys()):
             item = QtGui.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
 
         self.ui.listWidgetTFR.clear()
-        for name in active_subject.tfrs:
+        for name in sorted(active_subject.tfrs.keys()):
             item = QtGui.QListWidgetItem(name)
             self.ui.listWidgetTFR.addItem(item)
 

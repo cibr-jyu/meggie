@@ -364,7 +364,8 @@ class MainWindow(QtGui.QMainWindow):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
         epoch_widget.clear()
-        for name in sorted(self.experiment.subjects[subject_name].epochs):
+        epochs = self.experiment.subjects[subject_name].epochs
+        for name in sorted(epochs.keys()):
             item = QtGui.QListWidgetItem()
             item.setText(name)
             epoch_widget.addItem(item)
@@ -1305,12 +1306,12 @@ class MainWindow(QtGui.QMainWindow):
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
-            for epoch in sorted(epochs_items.values()):
-                self.epochList.add_item(epoch.collection_name)
+            for name in sorted(epochs_items.keys()):
+                self.epochList.add_item(name)
 
         if evokeds_items is not None:
-            for evoked in sorted(evokeds_items.values()):
-                self.ui.listWidgetEvoked.addItem(evoked.name)
+            for name in sorted(evokeds_items.keys()):
+                self.ui.listWidgetEvoked.addItem(name)
 
         # This updates the 'Subject info' section below the subject list.
         try:
