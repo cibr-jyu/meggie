@@ -17,6 +17,7 @@ bugs:
 - powerspectrum dialog name field size
 
 features:
+- add way to get the list of channels and a picture of channel averages, maybe some interactive thingy
 - add throbber to bad channel dialog
 - plot accuracy as preference
 - tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
