@@ -1,17 +1,17 @@
 """
 """
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.code_meggie.general import fileManager
 
 from meggie.ui.general.layoutDialogUi import Ui_Layout
 
-class LayoutDialog(QtGui.QDialog):
+class LayoutDialog(QtWidgets.QDialog):
     
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Layout()
         self.ui.setupUi(self)
@@ -26,7 +26,7 @@ class LayoutDialog(QtGui.QDialog):
         """
         if checked is None:
             return
-        fname = str(QtGui.QFileDialog.getOpenFileName(self, 'Open file',
+        fname = str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file',
                                                       '/home/', "Layout-files "
                                                       "(*.lout *.lay);;All "
                                                       "files (*.*)"))

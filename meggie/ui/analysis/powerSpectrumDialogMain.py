@@ -5,7 +5,7 @@ import logging
 
 from collections import OrderedDict
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtWidgets
 
 import numpy as np
 
@@ -21,7 +21,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 
-class PowerSpectrumDialog(QtGui.QDialog):
+class PowerSpectrumDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, experiment):
         """
@@ -30,7 +30,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
         Parameters:
         parent     - The parent window for this dialog.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.intervals = []
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
@@ -78,7 +78,7 @@ class PowerSpectrumDialog(QtGui.QDialog):
     def add_intervals(self, intervals):
         for interval in intervals:
             self.intervals.append(interval)
-            item = QtGui.QListWidgetItem(
+            item = QtWidgets.QListWidgetItem(
                 '%s: %s - %s s' % (
                 interval[0],
                 round(interval[1], 4),

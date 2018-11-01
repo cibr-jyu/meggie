@@ -5,8 +5,9 @@
 
 import os
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
@@ -15,7 +16,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
  
-class CreateExperimentDialog(QtGui.QDialog):
+class CreateExperimentDialog(QtWidgets.QDialog):
     """
     Class containing the logic for CreateExperimentDialog. It is used for 
     setting up a new experiment for analyzing MEG data.
@@ -24,7 +25,7 @@ class CreateExperimentDialog(QtGui.QDialog):
     experimentCreated = pyqtSignal(Experiment)
     
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.fname = ''
         
         # Reference to main dialog window

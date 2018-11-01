@@ -2,7 +2,7 @@ import os
 import logging
 import shutil
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.general.tabs.mainWindowTabInducedUi import Ui_mainWindowTabInduced  # noqa
 
@@ -21,9 +21,9 @@ import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
 
-class MainWindowTabInduced(QtGui.QDialog):
+class MainWindowTabInduced(QtWidgets.QDialog):
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_mainWindowTabInduced()
         self.ui.setupUi(self)
@@ -32,7 +32,7 @@ class MainWindowTabInduced(QtGui.QDialog):
             epoch_getter=self.parent.get_epochs)
         self.epochList.setParent(self.ui.groupBoxEpochs)
         self.epochList.setSelectionMode(
-            QtGui.QAbstractItemView.MultiSelection)
+            QtWidgets.QAbstractItemView.MultiSelection)
 
         self.initialize_ui()
 
@@ -50,12 +50,12 @@ class MainWindowTabInduced(QtGui.QDialog):
         # populate epoch widget
         self.epochList.clearItems()
         for epoch_name in sorted(active_subject.epochs.keys()):
-            item = QtGui.QListWidgetItem(epoch_name)
+            item = QtWidgets.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
 
         self.ui.listWidgetTFR.clear()
         for name in sorted(active_subject.tfrs.keys()):
-            item = QtGui.QListWidgetItem(name)
+            item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetTFR.addItem(item)
 
     def on_listWidgetTFR_currentItemChanged(self, item):
@@ -84,7 +84,7 @@ class MainWindowTabInduced(QtGui.QDialog):
             cmin, cmax = "%.1f" % n_cycles[0], "%.1f" % n_cycles[-1]
             info += 'Cycles: ' + cmin + ' - ' + cmax + '\n'
         else:
-	    info += 'Cycles: ' + str(n_cycles) + '\n'
+            info += 'Cycles: ' + str(n_cycles) + '\n'
 
         self.ui.textBrowserTFRInfo.setText(info)
 
@@ -163,12 +163,12 @@ class MainWindowTabInduced(QtGui.QDialog):
             return
 
         message = 'Permanently remove a TFR?'
-        reply = QtGui.QMessageBox.question(self, 'Delete TFR',
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'Delete TFR',
+                                           message, QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             try:
                 self.parent.experiment.active_subject.remove_tfr(
                     tfr_item.text()
@@ -199,12 +199,12 @@ class MainWindowTabInduced(QtGui.QDialog):
         tfr_name = tfr_item.text()
 
         message = 'Permanently remove TFR from all subjects?'
-        reply = QtGui.QMessageBox.question(self, "Delete TFR's",
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, "Delete TFR's",
+                                           message, QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
                 if tfr_name in subject.tfrs:
                     subject.remove_tfr(

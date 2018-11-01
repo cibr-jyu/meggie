@@ -2,7 +2,7 @@ import os
 import logging
 import shutil
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.general.tabs.mainWindowTabSpectrumsUi import Ui_mainWindowTabSpectrums  # noqa
 
@@ -22,9 +22,9 @@ import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
 
-class MainWindowTabSpectrums(QtGui.QDialog):
+class MainWindowTabSpectrums(QtWidgets.QDialog):
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_mainWindowTabSpectrums()
         self.ui.setupUi(self)
@@ -45,7 +45,7 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         # update subjects list
         self.ui.listWidgetSpectrums.clear()
         for name in active_subject.spectrums:
-            item = QtGui.QListWidgetItem(name)
+            item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetSpectrums.addItem(item)
 
 
@@ -123,12 +123,12 @@ class MainWindowTabSpectrums(QtGui.QDialog):
             return
 
         message = 'Permanently remove a spectrum?'
-        reply = QtGui.QMessageBox.question(self, 'Delete spectrum',
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'Delete spectrum',
+                                           message, QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             try:
                 self.parent.experiment.active_subject.remove_spectrum(
                     spectrum_item.text()
@@ -182,12 +182,12 @@ class MainWindowTabSpectrums(QtGui.QDialog):
         spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
 
         message = 'Permanently remove spectrum from all subjects?'
-        reply = QtGui.QMessageBox.question(self, 'Delete spectrums',
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'Delete spectrums',
+                                           message, QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
                 if spectrum_name in subject.spectrums:
                     subject.remove_spectrum(

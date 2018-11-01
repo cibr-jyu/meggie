@@ -5,13 +5,13 @@
 
 import sys
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
 from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 
 
-class InfoDialog(QtGui.QDialog):
+class InfoDialog(QtWidgets.QDialog):
     """
     Dialog to get and show the info from the raw file. Can be used to direct
     the extracted information from the file to the dialog itself or some
@@ -27,7 +27,7 @@ class InfoDialog(QtGui.QDialog):
         create_window -- Boolean to determine if a new dialog window 
                          is created.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.raw = raw
         self.ui = targetUi
         if create_window:

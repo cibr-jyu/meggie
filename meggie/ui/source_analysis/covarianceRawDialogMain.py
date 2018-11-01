@@ -4,7 +4,7 @@
 import logging
 import os
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
@@ -16,14 +16,14 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 
-class CovarianceRawDialog(QtGui.QDialog):
+class CovarianceRawDialog(QtWidgets.QDialog):
     """
     The class containing the logic for the dialog for collecting the
     parameters computing the noise covariance for a raw file.
     """
 
     def __init__(self, parent, experiment, on_close=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_covarianceRawDialog()
         self.ui.setupUi(self)
 
@@ -92,7 +92,7 @@ class CovarianceRawDialog(QtGui.QDialog):
         if checked is None: 
             return
 
-        fname = QtGui.QFileDialog.getOpenFileName(self, 
+        fname = QtWidgets.QFileDialog.getOpenFileName(self, 
             'Select raw ' + 'to use')
         self.ui.lineEditRawFile.setText(fname)
 

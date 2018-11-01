@@ -2,7 +2,7 @@
 
 """
 """
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
@@ -17,7 +17,7 @@ import traceback
 import os
 
 
-class AddSubjectDialog(QtGui.QDialog):
+class AddSubjectDialog(QtWidgets.QDialog):
     """
     Class for creating subjects from raw measurement data files.
 
@@ -26,7 +26,7 @@ class AddSubjectDialog(QtGui.QDialog):
     """
 
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_AddSubject()
         self.ui.setupUi(self)
 

@@ -6,7 +6,7 @@
 import glob
 import numpy as np
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.code_meggie.preprocessing.projections import read_projections
 from meggie.code_meggie.preprocessing.projections import preview_projections
@@ -15,7 +15,7 @@ from meggie.code_meggie.preprocessing.projections import apply_exg
 from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
 from meggie.ui.utils.messaging import exc_messagebox
 
-class AddECGProjections(QtGui.QDialog):
+class AddECGProjections(QtWidgets.QDialog):
     """
     Class containing the logic for adding ECG projections.
     Projections should be created and saved in a file before adding them.
@@ -27,7 +27,7 @@ class AddECGProjections(QtGui.QDialog):
         parent        -- The parent of this object.
         added_projs   -- Projectors already added to the raw object.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -37,13 +37,13 @@ class AddECGProjections(QtGui.QDialog):
         self.projs = read_projections(
             glob.glob(directory + '/*_ecg_*proj*')[0])
 
-        self.listWidget = QtGui.QListWidget()
+        self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
 
         # Add checkboxes
         for proj in self.projs:
-            item = QtGui.QListWidgetItem(self.listWidget)
-            checkBox = QtGui.QCheckBox()
+            item = QtWidgets.QListWidgetItem(self.listWidget)
+            checkBox = QtWidgets.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
             if str(proj) in [str(x) for x in added_projs]:

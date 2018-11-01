@@ -16,7 +16,7 @@ sip.setapi('QVariant', 2)
 os.environ['ETS_TOOLKIT'] = 'qt4'
 os.environ['QT_API'] = 'pyqt'
 
-from pyface.qt import QtGui, QtCore  # Mayavi needs these from pyface
+# from pyface.qt import QtGui, QtCore  # Mayavi needs these from pyface
 
 from meggie.ui.general import mainWindowMain
 

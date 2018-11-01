@@ -4,7 +4,7 @@
 import logging
 import os
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
@@ -18,12 +18,12 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
 
-class stcPlotDialog(QtGui.QDialog):
+class stcPlotDialog(QtWidgets.QDialog):
     """
     """
 
     def __init__(self, experiment, stc_name):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_stcPlotDialog()
         self.ui.setupUi(self)
 

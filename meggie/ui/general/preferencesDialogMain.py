@@ -5,14 +5,15 @@
 
 import os
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 from meggie.ui.general.preferencesDialogUi import Ui_DialogPreferences
 
 from meggie.ui.utils.messaging import messagebox
 
-class PreferencesDialog(QtGui.QDialog):
+class PreferencesDialog(QtWidgets.QDialog):
     """
     Dialog to set the preferences for the application (workspace directory
     and Freesurfer directory etc.
@@ -22,7 +23,7 @@ class PreferencesDialog(QtGui.QDialog):
         """
         Constructor
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_DialogPreferences() 
         self.ui.setupUi(self)
         
@@ -51,14 +52,14 @@ class PreferencesDialog(QtGui.QDialog):
         if checked is None: 
             return 
         
-        workFilepath = str(QtGui.QFileDialog.getExistingDirectory(
+        workFilepath = str(QtWidgets.QFileDialog.getExistingDirectory(
             self, "Select a workspace directory"))
         self.ui.LineEditFilePath.setText(workFilepath)
     
     def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
         if checked is None: return
         
-        FreeSurferHome = str(QtGui.QFileDialog.getExistingDirectory(
+        FreeSurferHome = str(QtWidgets.QFileDialog.getExistingDirectory(
             self, "Point Meggie to your FreeSurfer home directory"))
         self.ui.lineEditFreeSurferHome.setText(FreeSurferHome)
     

@@ -8,8 +8,9 @@ import ast
 import gc
 import traceback
 
-from PyQt4 import QtCore,QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 from meggie.ui.preprocessing.eogParametersDialogUi import Ui_Dialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -23,7 +24,7 @@ from meggie.code_meggie.preprocessing.projections import call_eog_ssp
 from meggie.code_meggie.preprocessing.projections import plot_eog_events
 
 
-class EogParametersDialog(QtGui.QDialog):
+class EogParametersDialog(QtWidgets.QDialog):
     """
     Class containing the logic for eogParametersDialog. Used for collecting
     parameter values for calculating EOG projections.
@@ -33,7 +34,7 @@ class EogParametersDialog(QtGui.QDialog):
         """
         Constructor. Initializes the dialog.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)

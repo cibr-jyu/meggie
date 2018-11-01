@@ -2,7 +2,8 @@
 """
 
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.ui.widgets.batchingWidgetUi import Ui_BatchingWidget
 
@@ -11,7 +12,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 from copy import deepcopy
 
-class BatchingWidget(QtGui.QWidget):
+class BatchingWidget(QtWidgets.QWidget):
     """
     """
     
@@ -62,7 +63,7 @@ class BatchingWidget(QtGui.QWidget):
             subject_names = sorted(self.experiment.subjects.keys())
              
             for name in subject_names:
-                item = QtGui.QListWidgetItem(name)
+                item = QtWidgets.QListWidgetItem(name)
                 item.setCheckState(QtCore.Qt.Unchecked)
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 self.ui.listWidgetSubjects.addItem(item)

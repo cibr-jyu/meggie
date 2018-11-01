@@ -1,7 +1,7 @@
 """
 """
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.source_analysis.forwardSolutionDialogUi import Ui_forwardSolutionDialog  # noqa
 
@@ -11,12 +11,12 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
 
-class ForwardSolutionDialog(QtGui.QDialog):
+class ForwardSolutionDialog(QtWidgets.QDialog):
     """
     """
 
     def __init__(self, parent, experiment=None, on_close=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_forwardSolutionDialog()
         self.ui.setupUi(self)

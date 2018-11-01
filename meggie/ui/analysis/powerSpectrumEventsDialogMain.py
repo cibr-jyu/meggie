@@ -2,15 +2,15 @@
 """
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.analysis.powerSpectrumEventsDialogUi import Ui_Advanced 
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.utils.messaging import messagebox
 from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
 from meggie.code_meggie.structures.events import Events
 
-class PowerSpectrumEvents(QtGui.QDialog):
+class PowerSpectrumEvents(QtWidgets.QDialog):
     
     def __init__(self, parent):
         """
@@ -18,7 +18,7 @@ class PowerSpectrumEvents(QtGui.QDialog):
         Parameters:
         parent     - The parent window for this dialog.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.intervals = []
         self.ui = Ui_Advanced()
         self.ui.setupUi(self)
@@ -45,7 +45,7 @@ class PowerSpectrumEvents(QtGui.QDialog):
             if not event_min or not event_end:
                 raise Exception("No min and end events set")
         except:
-            exc_messagebox(self, "Please check your inputs")
+            messagebox(self, "Please check your inputs")
             return
 
         raw = self.parent.experiment.active_subject.get_working_file()
@@ -69,11 +69,11 @@ class PowerSpectrumEvents(QtGui.QDialog):
         end_triggers = find_triggers(event_end)
         
         if len(min_triggers) == 0:
-            exc_messagebox(self, 'No start events found')
+            messagebox(self, 'No start events found')
             return
             
         if len(end_triggers) == 0:
-            exc_messagebox(self, 'No end events found')
+            messagebox(self, 'No end events found')
             return
 
         intervals = []
@@ -86,14 +86,14 @@ class PowerSpectrumEvents(QtGui.QDialog):
                 next_end_trigger = [trigger for trigger in end_triggers 
                                     if trigger[0] > min_triggers[idx][0]][0][0]
             except IndexError:
-                exc_messagebox(self, "One of the found start triggers" 
+                messagebox(self, "One of the found start triggers" 
                                      "didn't have corresponding end trigger")
                 return
             
             end_trigger_seconds = (next_end_trigger - raw.first_samp) / raw.info['sfreq']
             
             if end_trigger_seconds < min_trigger_seconds:
-                exc_messagebox(self, "Selected events seem not be valid. Start and end events need to alternate.")
+                messagebox(self, "Selected events seem not be valid. Start and end events need to alternate.")
                 return
             
             intervals.append((group, min_trigger_seconds, end_trigger_seconds))

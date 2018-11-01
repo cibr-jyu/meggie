@@ -1,19 +1,19 @@
 """
 """
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.preprocessing.badChannelsDialogUi import Ui_Dialog
 from meggie.code_meggie.general import fileManager
 
 
-class BadChannelsDialog(QtGui.QDialog):
+class BadChannelsDialog(QtWidgets.QDialog):
     """ Handles bad channel selection by allowing bad channels to be selected
     either on a list widget or the raw plot
     """
 
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -24,7 +24,7 @@ class BadChannelsDialog(QtGui.QDialog):
         channels = raw.ch_names
 
         for channel in channels:
-            item = QtGui.QListWidgetItem(channel)
+            item = QtWidgets.QListWidgetItem(channel)
             self.ui.listWidgetBads.addItem(item)
             if channel in raw.info['bads']:
                 item.setSelected(True)

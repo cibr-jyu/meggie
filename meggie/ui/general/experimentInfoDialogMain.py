@@ -1,10 +1,11 @@
 """
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from meggie.ui.general.experimentInfoDialogUi import Ui_experimentInfoDialog
 
-class ExperimentInfoDialog(QtGui.QDialog):
+class ExperimentInfoDialog(QtWidgets.QDialog):
     """
     Dialog for showing general info about the experiment.
     """
@@ -12,7 +13,7 @@ class ExperimentInfoDialog(QtGui.QDialog):
     def __init__(self, parent):
         """
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_experimentInfoDialog() 
         self.ui.setupUi(self)        
         self.parent = parent

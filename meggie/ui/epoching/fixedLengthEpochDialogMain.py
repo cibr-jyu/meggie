@@ -1,14 +1,13 @@
 """
 """
-from PyQt4 import QtGui
-from PyQt4.QtGui import QDialogButtonBox
+from PyQt5 import QtWidgets
 
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.ui.epoching.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
 
-class FixedLengthEpochDialog(QtGui.QDialog):
+class FixedLengthEpochDialog(QtWidgets.QDialog):
     """
     Class containing the logic for FixedLengthEpochDialog. It is used for
     creating fixed length events.
@@ -21,12 +20,12 @@ class FixedLengthEpochDialog(QtGui.QDialog):
 
         parent -- Set the parent of this dialog
         """
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_FixedLengthEpochDialog()
         self.ui.setupUi(self)
         self.parent = parent
         self.experiment = self.parent.parent.experiment
-        self.ui.buttonBox.button(QDialogButtonBox.Ok).setText('Add events')
+        self.ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText('Add events')
         self.raw = (self.experiment.active_subject
                     .get_working_file(temporary=True))
         tmax = int(self.raw.times[-1])
@@ -51,4 +50,4 @@ class FixedLengthEpochDialog(QtGui.QDialog):
             if event_params not in self.parent.event_data['fixed_length_events']:
                 self.parent.event_data['fixed_length_events'].append(event_params)
                 self.parent.update_events()
-        return QtGui.QDialog.accept(self, *args, **kwargs)
+        return QtWidgets.QDialog.accept(self, *args, **kwargs)

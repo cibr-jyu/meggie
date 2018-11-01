@@ -7,7 +7,6 @@ import re
 import copy
 import logging
 
-from PyQt4 import QtGui
 
 import numpy as np
 import matplotlib.pyplot as plt

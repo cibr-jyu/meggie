@@ -1,13 +1,14 @@
 """ This module provides tools for doing tasks in worker threads """
 
-from Queue import Queue
-from Queue import Empty
+from queue import Queue
+from queue import Empty
 from time import sleep
 from sys import exc_info
 from multiprocessing.pool import ThreadPool
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 def threaded(func):
@@ -16,7 +17,7 @@ def threaded(func):
         """ Inner function for threaded-decoration """
         # worker threads should be used on time consuming
         # tasks so add a indicator for user
-        QtGui.QApplication.setOverrideCursor(
+        QtWidgets.QApplication.setOverrideCursor(
             QtGui.QCursor(QtCore.Qt.WaitCursor))
 
         pool = ThreadPool(processes=1)
@@ -38,12 +39,16 @@ def threaded(func):
             try:
                 exc = bucket.get(block=False)
                 pool.terminate()
-                QtGui.QApplication.restoreOverrideCursor()
-                try:
-                    msg = exc[1].args[0]
-                except:
-                    msg = str(exc[1])
-                raise exc[0], msg, exc[2]
+                QtWidgets.QApplication.restoreOverrideCursor()
+
+                # try:
+                #     msg = exc[1].args[0]
+                # except:
+                #     msg = str(exc[1])
+                # raise BaseException(exc[0], msg, exc[2])
+
+                raise exc[1].with_traceback(exc[2])
+
             except Empty:
                 pass
             if async_result.ready():
@@ -55,7 +60,7 @@ def threaded(func):
         pool.terminate()
 
         # everything went fine and control should return to user
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
 
         return result
     return decorated

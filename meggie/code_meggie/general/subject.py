@@ -283,9 +283,9 @@ class Subject(object):
 
         self._epochs.pop(str(str(collection_name)), None)
 
-        files_to_delete = filter(os.path.isfile, 
+        files_to_delete = list(filter(os.path.isfile, 
             glob.glob(os.path.join(self._epochs_directory, 
-                                   collection_name + '.fif')))
+                                   collection_name + '.fif'))))
 
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
@@ -365,10 +365,10 @@ class Subject(object):
         Returns True if projections found.
         """
         path = self.subject_path
-        #Check whether ECG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path + '/*_ecg_avg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path + '/*_ecg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path + '/*_ecg-eve*'))
+        # check whether ECG projections are calculated
+        files = list(filter(os.path.isfile, glob.glob(path + '/*_ecg_avg_proj*')))
+        files += list(filter(os.path.isfile, glob.glob(path + '/*_ecg_proj*')))
+        files += list(filter(os.path.isfile, glob.glob(path + '/*_ecg-eve*')))
         if len(files) > 1:
             return True
         return False           
@@ -380,9 +380,9 @@ class Subject(object):
         """
         path = self.subject_path
         #Check whether EOG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path + '/*_eog_avg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path + '/*_eog_proj*'))
-        files += filter(os.path.isfile, glob.glob(path + '/*_eog-eve*'))
+        files = list(filter(os.path.isfile, glob.glob(path + '/*_eog_avg_proj*')))
+        files += list(filter(os.path.isfile, glob.glob(path + '/*_eog_proj*')))
+        files += list(filter(os.path.isfile, glob.glob(path + '/*_eog-eve*')))
         if len(files) > 1:
             return True
         return False
@@ -394,8 +394,8 @@ class Subject(object):
         """
         path = self.subject_path
         #Check whether EEG projections are calculated
-        files =  filter(os.path.isfile, glob.glob(path + '/*_eeg_proj*'))
-        files += filter(os.path.isfile, glob.glob(path + '/*_eeg-eve*'))
+        files = list(filter(os.path.isfile, glob.glob(path + '/*_eeg_proj*')))
+        files += list(filter(os.path.isfile, glob.glob(path + '/*_eeg-eve*')))
         if len(files) > 1:
             return True
         return False
@@ -435,8 +435,8 @@ class Subject(object):
         path = self.subject_path
 
         # Check whether sss/tsss method is applied.
-        files = filter(os.path.isfile, glob.glob(path + '/*sss*'))
-        files.extend(filter(os.path.isfile, glob.glob(path + '/*_mc*')))
+        files = list(filter(os.path.isfile, glob.glob(path + '/*sss*')))
+        files.extend(list(filter(os.path.isfile, glob.glob(path + '/*_mc*'))))
 
         if len(files) > 0:
             return True
@@ -480,18 +480,18 @@ class Subject(object):
             return False
 
     def get_forward_solution_names(self):
-        names = filter(lambda x: x.endswith('fwd.fif'), 
-                       os.listdir(self.forward_solutions_directory))
+        names = list(filter(lambda x: x.endswith('fwd.fif'), 
+                            os.listdir(self.forward_solutions_directory)))
         return names
 
     def get_covfiles(self):
-        fnames = filter(lambda x: x.endswith('-cov.fif'),
-                        os.listdir(self.cov_directory))
+        fnames = list(filter(lambda x: x.endswith('-cov.fif'),
+                             os.listdir(self.cov_directory)))
         return fnames
 
     def get_inverse_operator_names(self):
-        names = filter(lambda x: x.endswith('inv.fif'), 
-                       os.listdir(self.inverse_operators_directory))
+        names = list(filter(lambda x: x.endswith('inv.fif'), 
+                            os.listdir(self.inverse_operators_directory)))
         return names
 
     def ensure_folders(self):

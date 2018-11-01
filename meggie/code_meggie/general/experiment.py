@@ -21,7 +21,7 @@ from meggie.code_meggie.general.stc import SourceEstimateRaw
 from meggie.code_meggie.general.stc import SourceEstimateEvoked
 from meggie.code_meggie.general.stc import SourceEstimateEpochs
 
-from PyQt4.QtCore import QObject
+from PyQt5.QtCore import QObject
 
 
 class Experiment(QObject):

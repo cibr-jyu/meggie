@@ -3,11 +3,12 @@
 """
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from meggie.ui.general.aboutDialogUi import Ui_Dialog
 
 
-class AboutDialog(QtGui.QDialog):
+class AboutDialog(QtWidgets.QDialog):
     """
     Dialog to set the preferences for the application. Only allows choosing the
     calibration file for the experiment.
@@ -17,7 +18,7 @@ class AboutDialog(QtGui.QDialog):
         """
         Constructor
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_Dialog() 
         self.ui.setupUi(self)
         

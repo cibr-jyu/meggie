@@ -20,23 +20,22 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 def read_layout(layout):
     if not layout or layout == "Infer from data":
-	return None
+        return
 
     if os.path.isabs(layout):
         fname = os.path.basename(layout)
         folder = os.path.dirname(layout)
-	return mne.read_layout(fname, folder)
+        return mne.read_layout(fname, folder)
 
     import pkg_resources
     path_mne = pkg_resources.resource_filename('mne', 'channels/data/layouts')
     path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
 
     if os.path.exists(os.path.join(path_mne, layout)):
-	return mne.read_layout(layout, path_mne)
+        return mne.read_layout(layout, path_mne)
 
     if os.path.exists(os.path.join(path_meggie, layout)):
-	return mne.read_layout(layout, path_meggie)
-
+        return mne.read_layout(layout, path_meggie)
 
 
 def copy_recon_files(activeSubject, sourceDirectory):

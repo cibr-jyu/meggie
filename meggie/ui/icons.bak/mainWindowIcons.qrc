@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="toolBarIcons">
+    <file>images/whatsThisMode.png</file>
+    <file>images/openExperiment.png</file>
+    <file>images/showExperimentInfo.png</file>
+    <file>images/subjectList.png</file>
+    <file>images/createExperiment.png</file>
+  </qresource>
+</RCC>

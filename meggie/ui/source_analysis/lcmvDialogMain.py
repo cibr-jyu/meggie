@@ -1,7 +1,7 @@
 """
 """
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.source_analysis.lcmvDialogUi import Ui_lcmvDialog  # noqa
 
@@ -13,12 +13,12 @@ from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
-class LCMVDialog(QtGui.QDialog):
+class LCMVDialog(QtWidgets.QDialog):
     """
     """
 
     def __init__(self, parent, fwd_name, inst_type, inst_name, experiment=None, on_close=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_lcmvDialog()
         self.ui.setupUi(self)

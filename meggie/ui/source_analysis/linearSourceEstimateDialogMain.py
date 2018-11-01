@@ -1,7 +1,7 @@
 """
 """
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.source_analysis.linearSourceEstimateDialogUi import Ui_linearSourceEstimateDialog  # noqa
 
@@ -13,12 +13,12 @@ from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
-class LinearSourceEstimateDialog(QtGui.QDialog):
+class LinearSourceEstimateDialog(QtWidgets.QDialog):
     """
     """
 
     def __init__(self, parent, fwd_name, inst_type, inst_name, experiment=None, on_close=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_linearSourceEstimateDialog()
         self.ui.setupUi(self)

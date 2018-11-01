@@ -4,7 +4,7 @@
 import glob
 import numpy as np
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.code_meggie.preprocessing.projections import read_projections
 from meggie.code_meggie.preprocessing.projections import preview_projections
@@ -14,14 +14,14 @@ from meggie.ui.preprocessing.addProjectionsUi import Ui_Dialog
 from meggie.ui.utils.messaging import exc_messagebox
 
 
-class AddEEGProjections(QtGui.QDialog):
+class AddEEGProjections(QtWidgets.QDialog):
     """
     """
 
     def __init__(self, parent, added_projs):
         """
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -30,13 +30,13 @@ class AddEEGProjections(QtGui.QDialog):
         self.projs = read_projections(
             glob.glob(directory + '/*_eeg_*proj*')[0])
 
-        self.listWidget = QtGui.QListWidget()
+        self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
 
         # Add checkboxes
         for proj in self.projs:
-            item = QtGui.QListWidgetItem(self.listWidget)
-            checkBox = QtGui.QCheckBox()
+            item = QtWidgets.QListWidgetItem(self.listWidget)
+            checkBox = QtWidgets.QCheckBox()
             self.listWidget.setItemWidget(item, checkBox)
             checkBox.setText(str(proj))
             if str(proj) in [str(x) for x in added_projs]:
