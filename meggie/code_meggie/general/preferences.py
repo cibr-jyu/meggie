@@ -59,8 +59,7 @@ class PreferencesHandler(object):
         else:
             config.set('MiscOptions', 'saveBads', 'False')
 
-
-        with open(home_filepath('.meggieprefs'), 'wb') as configfile:
+        with open(home_filepath('.meggieprefs'), 'w') as configfile:
             config.write(configfile)
         
         

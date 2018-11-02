@@ -282,7 +282,7 @@ class Experiment(QObject):
                 try:
                     evoked_dict = {
                         'name': evoked.name,
-                        'event_names': evoked.mne_evokeds.keys(),
+                        'event_names': list(evoked.mne_evokeds.keys()),
                         'info': evoked.info,
                     }
                     subject_dict['evokeds'].append(evoked_dict)
@@ -330,7 +330,7 @@ class Experiment(QObject):
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
             pass
-        
+
         # save to file
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f, sort_keys=True, indent=4)

@@ -26,8 +26,8 @@ class Events(object):
                                  uint_cast=True)
         
         if mask or id_:
-            events = filter(
-                lambda event: self._should_take(id_, mask, event), events)
+            events = list(filter(
+                lambda event: self._should_take(id_, mask, event), events))
             events = np.array(events)
 
         # remove spurious events

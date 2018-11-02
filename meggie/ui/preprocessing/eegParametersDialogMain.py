@@ -97,7 +97,7 @@ class EegParametersDialog(QtWidgets.QDialog):
         events = list()
         rowCount = self.ui.tableWidgetEvents.rowCount()
         
-        for i in xrange(0, rowCount):
+        for i in range(0, rowCount):
             time = int(self.ui.tableWidgetEvents.item(i, 1).text())
             events.append([time, 0, 1])
 

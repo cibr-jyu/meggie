@@ -493,14 +493,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             times = np.arange(0.0, 0.4, 0.02)
-            for idx in range(len(mne_evokeds.keys())):
+            for idx in range(len(list(mne_evokeds.keys()))):
                 fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(mne_evokeds.keys()[idx]) 
+                fig.suptitle(list(mne_evokeds.keys())[idx]) 
 
-                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='mag',  # noqa
+                list(mne_evokeds.values())[idx].plot_topomap(
+                    times=times, ch_type='mag',  # noqa
                     average=0.05, axes=axes[0], show=False, colorbar=None)
 
-                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='grad',  # noqa
+                list(mne_evokeds.values())[idx].plot_topomap(
+                    times=times, ch_type='grad',  # noqa
                     average=0.05, axes=axes[1], show=False, colorbar=None)
             plt.show()
 
@@ -579,11 +581,10 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             draw_evoked_potentials(
                 self.experiment,
-                mne_evokeds.values(),
+                list(mne_evokeds.values()),
                 title=evoked_name)
         except Exception as e:
             exc_messagebox(self, e)
-
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
@@ -1153,8 +1154,8 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             message = 'Writing evoked data as ' + evoked_name + ' ...'
             logging.getLogger('ui_logger').info(message)
-            
-            mne.write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+
+            mne.write_evokeds(os.path.join(saveFolder, evoked_name), list(evokeds.values()))
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')

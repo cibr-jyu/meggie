@@ -2,7 +2,8 @@
 
 """
 """
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
 from meggie.ui.general.infoDialogUi import Ui_infoDialog
@@ -74,19 +75,15 @@ class AddSubjectDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        self.fnames = QtGui.QFileDialog.getOpenFileNames(self,
-                                                         'Select one or more '
-                                                         'files to open.',
-                                                         '/home/')
+        self.fnames = QtWidgets.QFileDialog.getOpenFileNames(self,
+            'Select one or more files to open.', os.path.expanduser("~"))[0]
 
         if len(self.fnames) > 0:
             for name in self.fnames:
-                item = QtGui.QListWidgetItem()
+                item = QtWidgets.QListWidgetItem()
                 item.setText(name)
-                # TODO add name into the list of filenames
-                if len(self.ui.listWidgetFileNames.findItems(name, QtCore.Qt.
-                                                             MatchExactly)
-                       ) > 0:
+                if len(self.ui.listWidgetFileNames.findItems(
+                       name, QtCore.Qt.MatchExactly)) > 0:
                     continue
                 self.ui.listWidgetFileNames.addItem(item)
 
@@ -109,7 +106,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
         self.infoDialog = InfoDialog(self.raw, info, True)
         self.infoDialog.show()
 
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes selected filenames on the listWidgetFileNames."""

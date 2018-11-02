@@ -321,7 +321,7 @@ def _group_average(experiment, evoked_name):
 
     subjects = experiment.subjects.values()
     responses = [subject.evokeds.get(evoked_name) for subject in subjects]
-    responses = filter(bool, responses)
+    responses = list(filter(bool, responses))
 
     # assumme all have same same amount of evokeds
     evoked_groups = {}

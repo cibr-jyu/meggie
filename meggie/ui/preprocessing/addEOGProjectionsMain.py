@@ -67,7 +67,7 @@ class AddEOGProjections(QtWidgets.QDialog):
         """
         applied = list()
 
-        for index in xrange(self.listWidget.count()):
+        for index in range(self.listWidget.count()):
             checkbox = self.listWidget.itemWidget(self.listWidget.item(index))
             applied.append(checkbox.isChecked())
 

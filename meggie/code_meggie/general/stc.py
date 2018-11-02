@@ -155,7 +155,7 @@ class SourceEstimateEvoked(SourceEstimate):
         return self._stcs
 
     def get_data(self, experiment):
-        if len(filter(bool, self._stcs.values())) == len(self._stcs):
+        if len(list(filter(bool, self._stcs.values()))) == len(self._stcs):
             return self._stcs
         else:
             # load from files

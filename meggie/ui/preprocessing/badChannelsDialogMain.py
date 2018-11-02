@@ -46,7 +46,7 @@ class BadChannelsDialog(QtWidgets.QDialog):
 
         self.raw = self.parent.experiment.active_subject.get_working_file().copy()
         items = self.ui.listWidgetBads.selectedItems()
-        self.raw.info['bads'] = [unicode(item.text()) for item in items]
+        self.raw.info['bads'] = [item.text() for item in items]
         fig = self.raw.plot()
         fig.canvas.mpl_connect('close_event', self.handle_close)
 
@@ -70,7 +70,7 @@ class BadChannelsDialog(QtWidgets.QDialog):
 
         raw = self.parent.experiment.active_subject.get_working_file()
 
-        raw.info['bads'] = [unicode(item.text()) for item in items]
+        raw.info['bads'] = [item.text() for item in items]
         experiment = self.parent.experiment
         fname = self.parent.experiment.active_subject.working_file_path
         fileManager.save_raw(experiment, raw, fname, overwrite=True)
