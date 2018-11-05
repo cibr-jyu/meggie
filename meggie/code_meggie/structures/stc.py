@@ -138,7 +138,7 @@ class SourceEstimateEvoked(SourceEstimate):
         self._type = 'evoked'
 
     def keys(self, experiment):
-        return self._stcs.keys()
+        return list(self._stcs.keys())
 
     def save(self, experiment):
         path = os.path.join(experiment.active_subject.stc_directory, self.name)

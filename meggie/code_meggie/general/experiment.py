@@ -17,9 +17,9 @@ from meggie.code_meggie.structures.epochs import Epochs
 from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.structures.spectrum import Spectrum
 from meggie.code_meggie.structures.tfr import TFR
-from meggie.code_meggie.general.stc import SourceEstimateRaw
-from meggie.code_meggie.general.stc import SourceEstimateEvoked
-from meggie.code_meggie.general.stc import SourceEstimateEpochs
+from meggie.code_meggie.structures.stc import SourceEstimateRaw
+from meggie.code_meggie.structures.stc import SourceEstimateEvoked
+from meggie.code_meggie.structures.stc import SourceEstimateEpochs
 
 from PyQt5.QtCore import QObject
 
@@ -258,7 +258,7 @@ class Experiment(QObject):
                         'type': stc.type
                     }
                     if stc.type == 'evoked':
-                        stc_dict['keys'] = stc.keys(self)
+                        stc_dict['keys'] = list(stc.keys(self))
 
                     subject_dict['stcs'].append(stc_dict)
                 except IOError:

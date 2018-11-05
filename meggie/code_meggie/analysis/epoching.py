@@ -144,8 +144,7 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
     colors = color_cycle(len(evokeds))
 
     fig = mne.plot_evoked_topo(evokeds, layout,
-        color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
-        font_color='k')
+        color=colors, title=title)
 
     conditions = [e.comment for e in evokeds]
     positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)

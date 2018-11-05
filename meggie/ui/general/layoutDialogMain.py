@@ -29,7 +29,7 @@ class LayoutDialog(QtWidgets.QDialog):
         fname = str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file',
                                                       '/home/', "Layout-files "
                                                       "(*.lout *.lay);;All "
-                                                      "files (*.*)"))
+                                                      "files (*.*)")[0])
         self.ui.labelLayout.setText(fname)
 
     @QtCore.pyqtSlot(int)

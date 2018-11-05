@@ -92,8 +92,8 @@ class CovarianceRawDialog(QtWidgets.QDialog):
         if checked is None: 
             return
 
-        fname = QtWidgets.QFileDialog.getOpenFileName(self, 
-            'Select raw ' + 'to use')
+        fname = str(QtWidgets.QFileDialog.getOpenFileName(self, 
+            'Select raw ' + 'to use')[0])
         self.ui.lineEditRawFile.setText(fname)
 
         

@@ -256,7 +256,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             return
 
         path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select the coordinate MEG-MRI coordinate transformation file"))
+            "Select the coordinate MEG-MRI coordinate transformation file")[0])
 
         if path == '':
             return
@@ -268,7 +268,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         try:
             shutil.copyfile(src, dst)
         except Exception as exc:
-            exc_messagebox(exc)
+            exc_messagebox(self, exc)
 
         self.ui.lineEditCoregistrationBrowse.setText(path)
 
@@ -299,7 +299,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             return
 
         path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select a forward solution file"))
+            "Select a forward solution file")[0])
 
         if not path.endswith('fwd.fif'):
             messagebox(self, "Forward solution file should end with -fwd.fif")
@@ -313,7 +313,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         try:
             shutil.copyfile(src, dst)
         except Exception as exc:
-            exc_messagebox(exc)
+            exc_messagebox(self, exc)
 
         self.initialize_ui()
 
