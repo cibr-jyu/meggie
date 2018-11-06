@@ -141,17 +141,15 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         
         raw = self.experiment.active_subject.get_working_file()
         
-        epochs = OrderedDict()
+        raw_blocks = OrderedDict()
         for interval in times:
-            events = np.array([[raw.first_samp + interval[1]*sfreq, 0, 1]], dtype=np.int)
-            tmin, tmax = 0, interval[2] - interval[1]
-            epoch = mne.Epochs(raw, events=events, tmin=tmin, tmax=tmax, baseline=None)
-            epoch.comment = str(interval)
 
-            if interval[0] not in epochs:
-                epochs[interval[0]] = []
+            block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
 
-            epochs[interval[0]].append(epoch)
+            if interval[0] not in raw_blocks:
+                raw_blocks[interval[0]] = []
+
+            raw_blocks[interval[0]].append(block)
         
         params = dict()
         params['fmin'] = fmin
@@ -163,7 +161,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         try:
             experiment = self.experiment
             update_ui = self.parent.update_ui
-            create_power_spectrum(experiment, name, params, epochs, 
+            create_power_spectrum(experiment, name, params, raw_blocks, 
                                   update_ui=update_ui)
             experiment.save_experiment_settings()
             self.parent.initialize_ui()
