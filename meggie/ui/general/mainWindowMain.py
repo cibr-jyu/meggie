@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.Qt import QApplication
 
@@ -1458,7 +1459,7 @@ class MainWindow(QtWidgets.QMainWindow):
         text - Text to write to the console.
         """
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtWidgets.QTextCursor.End)
+        cursor.movePosition(QtGui.QTextCursor.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
@@ -1471,11 +1472,10 @@ class MainWindow(QtWidgets.QMainWindow):
         text - Text to write to the console.
         """
         cursor = self.ui.textEditConsole.textCursor()
-        cursor.movePosition(QtWidgets.QTextCursor.End)
+        cursor.movePosition(QtGui.QTextCursor.End)
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
-
 
     def setup_loggers(self):
 
