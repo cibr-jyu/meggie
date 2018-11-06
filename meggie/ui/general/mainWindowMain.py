@@ -1431,8 +1431,13 @@ class MainWindow(QtWidgets.QMainWindow):
         Method for directing stdout to the console and back.
         """
         if self.ui.actionDirectToConsole.isChecked():
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+            stdout_stream = EmittingStream(textWritten=self.normalOutputWritten)
+            stdout_stream.orig_stream = sys.__stdout__
+            stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
+            stderr_stream.orig_stream = sys.__stderr__
+
+            sys.stdout = stdout_stream
+            sys.stderr = stderr_stream
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -1566,6 +1571,10 @@ class EmittingStream(QtCore.QObject):
 
     def flush(self):
         pass
+
+    def fileno(self):
+        return self.orig_stream.fileno()
+
 
 
 def main():

@@ -212,6 +212,8 @@ def save_data_psd(experiment, subjects, output_rows,
 
             if output_rows == 'channel_averages':
 
+                ch_types = ['grad', 'mag']
+
                 subject_data = []
 
                 selections = mne.SELECTIONS
@@ -224,22 +226,33 @@ def save_data_psd(experiment, subjects, output_rows,
                     cleaned_ch_names = mne._clean_names(ch_names,
                         remove_whitespace=True)
 
-                    # calculate average
-                    ch_average = np.mean(
-                        [psd[ch_idx] for ch_idx, ch_name 
-                         in enumerate(cleaned_ch_names)
-                         if ch_name in selected_ch_names
-                         and ch_name not in info['bads']], axis=0)
+                    for ch_type in ch_types:
 
-                    subject_data.append(ch_average)
+                        if ch_type == 'grad':
+                            ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                             if not ch_name.endswith('1')]
+                        elif ch_type == 'mag':
+                            ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                             if ch_name.endswith('1')]
+
+                        # calculate average
+                        ch_average = np.mean(
+                            [psd[ch_idx] for ch_idx, ch_name 
+                             in enumerate(cleaned_ch_names)
+                             if ch_name in ch_names_filt
+                             and ch_name not in info['bads']], axis=0)
+
+                        subject_data.append(ch_average)
 
                 subject_data = np.array(subject_data)
 
                 subject_row_names = []
                 for sel in selections:
-                    row_name = ('[' + subject_name + '] ' + 
-                                '{' + str(key) + '} ' + sel)
-                    subject_row_names.append(row_name)
+                    for ch_type in ch_types:
+                        row_name = ('[' + subject_name + '] ' + 
+                                    '{' + str(key) + '} ' +
+                                    '(' + ch_type + ') ' + sel)
+                        subject_row_names.append(row_name)
 
             else:
                 subject_data = psd

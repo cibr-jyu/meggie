@@ -38,8 +38,11 @@ class OutputOptions(QtWidgets.QDialog):
             row_setting = 'all_channels'
 
         if self.handler:
-            self.handler(row_setting=row_setting, 
-                         column_setting=column_setting)
+            try:
+                self.handler(row_setting=row_setting, 
+                             column_setting=column_setting)
+            except Exception as exc:
+                exc_messagebox(self.parent, exc)
 
         self.close()
 

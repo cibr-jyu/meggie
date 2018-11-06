@@ -7,15 +7,11 @@ TODO:
  * remove active_subject-references from code_meggie analysis-sections (pass by parameter)
 - we need tests
 - should do manual for meggie
-- go python3-compatible
 
 bugs:
 - ssp default amount of vectors
-- Channel averages for spectrums should have channel type separately. Also grad mean should be mean of grad pairs
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
-- when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
 - meggie allows to create a new experiment over existing experiment,
-- fix the spectrum problem with concatenated raw files.
 - powerspectrum dialog name field size
 
 features:
@@ -27,13 +23,12 @@ features:
 - unify EEG and EOG projections (EEG is EOG with channel selection)
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
-- log parsing, subject specific.
+- log parsing, subject specific
 - more automated ICA
 - njobs-story
 - update meter and cancel button for batch
 - maybe a mock subject possibility combined with epoch or evoked import
 - open experiment also by specifying the exp file
-- ica done? doing ica transform in the source analysis part?
 - maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums

@@ -196,6 +196,8 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
 
+        self.initialize_ui()
+
     def on_pushButtonCheckTalairach_clicked(self, checked=None):
         if checked is None:
             return
