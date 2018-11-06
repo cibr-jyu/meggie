@@ -2,19 +2,19 @@
 """
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.analysis.outputOptionsUi import Ui_outputOptions
 from meggie.ui.utils.messaging import exc_messagebox
 
 
-class OutputOptions(QtGui.QDialog):
+class OutputOptions(QtWidgets.QDialog):
     
     def __init__(self, parent, handler=None, 
                  row_setting=None, column_setting=None):
         """
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_outputOptions()
         self.ui.setupUi(self)
         self.parent = parent
@@ -38,8 +38,11 @@ class OutputOptions(QtGui.QDialog):
             row_setting = 'all_channels'
 
         if self.handler:
-            self.handler(row_setting=row_setting, 
-                         column_setting=column_setting)
+            try:
+                self.handler(row_setting=row_setting, 
+                             column_setting=column_setting)
+            except Exception as exc:
+                exc_messagebox(self.parent, exc)
 
         self.close()
 

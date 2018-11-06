@@ -14,9 +14,9 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 import meggie.code_meggie.general.fileManager as fileManager
 
-from meggie.code_meggie.general.stc import SourceEstimateEvoked
-from meggie.code_meggie.general.stc import SourceEstimateEpochs
-from meggie.code_meggie.general.stc import SourceEstimateRaw
+from meggie.code_meggie.structures.stc import SourceEstimateEvoked
+from meggie.code_meggie.structures.stc import SourceEstimateEpochs
+from meggie.code_meggie.structures.stc import SourceEstimateRaw
 
 
 def plot_source_estimate(experiment, stc, initial_time):

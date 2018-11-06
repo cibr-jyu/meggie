@@ -138,7 +138,7 @@ class SourceEstimateEvoked(SourceEstimate):
         self._type = 'evoked'
 
     def keys(self, experiment):
-        return self._stcs.keys()
+        return list(self._stcs.keys())
 
     def save(self, experiment):
         path = os.path.join(experiment.active_subject.stc_directory, self.name)
@@ -155,7 +155,7 @@ class SourceEstimateEvoked(SourceEstimate):
         return self._stcs
 
     def get_data(self, experiment):
-        if len(filter(bool, self._stcs.values())) == len(self._stcs):
+        if len(list(filter(bool, self._stcs.values()))) == len(self._stcs):
             return self._stcs
         else:
             # load from files

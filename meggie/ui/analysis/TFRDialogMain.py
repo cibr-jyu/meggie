@@ -2,7 +2,8 @@
 
 """
 """
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtWidgets
+
 import numpy as np
 
 from meggie.code_meggie.general import fileManager
@@ -17,14 +18,14 @@ from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 
-class TFRDialog(QtGui.QDialog):
+class TFRDialog(QtWidgets.QDialog):
     """
     """
     
     def __init__(self, parent, experiment, epoch_name):
         """
         """
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_TFRDialog()
         self.ui.setupUi(self)
 

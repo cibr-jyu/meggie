@@ -27,7 +27,7 @@ from meggie.code_meggie.structures.tfr import TFR
 
 
 @threaded
-def _compute_spectrum(epoch_groups, params, n_jobs):
+def _compute_spectrum(raw_block_groups, params, n_jobs):
     """Performed in a worker thread."""
     fmin = params['fmin']
     fmax = params['fmax']
@@ -37,17 +37,14 @@ def _compute_spectrum(epoch_groups, params, n_jobs):
 
     psd_groups = OrderedDict()
     
-    for key, epochs in epoch_groups.items():
-        for epoch in epochs:
+    for key, raw_blocks in raw_block_groups.items():
+        for raw_block in raw_blocks:
 
-            epoch.load_data()
-            length = epoch._data.shape[-1]
-            
-            psds, freqs = mne.psd_welch(epoch, fmin=fmin, fmax=fmax, 
+            length = len(raw_block.times)
+
+            psds, freqs = mne.psd_welch(raw_block, fmin=fmin, fmax=fmax, 
                 n_fft=nfft, n_overlap=overlap, picks=picks, 
                 proj=True, n_jobs=n_jobs)
-
-            psds = np.average(psds, axis=0)
 
             if params['log']:
                 psds = 10 * np.log10(psds)
@@ -60,20 +57,20 @@ def _compute_spectrum(epoch_groups, params, n_jobs):
     return psd_groups
 
 
-def create_power_spectrum(experiment, spectrum_name, params, epoch_groups, 
+def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups, 
                           update_ui=(lambda: None), n_jobs=1):
     """
     """
         
-    for epochs in epoch_groups.values():
-        info = epochs[0].info
+    for raw_blocks in raw_block_groups.values():
+        info = raw_blocks[0].info
         break
-        
+
     picks = mne.pick_types(info, meg=True, eeg=True,
                            exclude=[])
 
     params['picks'] = picks
-    psd_groups = _compute_spectrum(epoch_groups, params, n_jobs=n_jobs,
+    psd_groups = _compute_spectrum(raw_block_groups, params, n_jobs=n_jobs,
                                    do_meanwhile=update_ui)
 
     for psd_list in psd_groups.values():
@@ -82,7 +79,7 @@ def create_power_spectrum(experiment, spectrum_name, params, epoch_groups,
     
     psds = []
     for psd_list in psd_groups.values():
-        # do a weighted (epoch lengths as weights) average of psds inside a group
+        # do a weighted (raw block lengths as weights) average of psds inside a group
 
         weights = np.array([length for psds_, freqs, length in psd_list])
         weights = weights.astype(float) / np.sum(weights)
@@ -220,6 +217,8 @@ def save_data_psd(experiment, subjects, output_rows,
 
             if output_rows == 'channel_averages':
 
+                ch_types = ['grad', 'mag']
+
                 subject_data = []
 
                 selections = mne.SELECTIONS
@@ -232,22 +231,33 @@ def save_data_psd(experiment, subjects, output_rows,
                     cleaned_ch_names = mne._clean_names(ch_names,
                         remove_whitespace=True)
 
-                    # calculate average
-                    ch_average = np.mean(
-                        [psd[ch_idx] for ch_idx, ch_name 
-                         in enumerate(cleaned_ch_names)
-                         if ch_name in selected_ch_names
-                         and ch_name not in info['bads']], axis=0)
+                    for ch_type in ch_types:
 
-                    subject_data.append(ch_average)
+                        if ch_type == 'grad':
+                            ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                             if not ch_name.endswith('1')]
+                        elif ch_type == 'mag':
+                            ch_names_filt = [ch_name for ch_name in selected_ch_names
+                                             if ch_name.endswith('1')]
+
+                        # calculate average
+                        ch_average = np.mean(
+                            [psd[ch_idx] for ch_idx, ch_name 
+                             in enumerate(cleaned_ch_names)
+                             if ch_name in ch_names_filt
+                             and ch_name not in info['bads']], axis=0)
+
+                        subject_data.append(ch_average)
 
                 subject_data = np.array(subject_data)
 
                 subject_row_names = []
                 for sel in selections:
-                    row_name = ('[' + subject_name + '] ' + 
-                                '{' + str(key) + '} ' + sel)
-                    subject_row_names.append(row_name)
+                    for ch_type in ch_types:
+                        row_name = ('[' + subject_name + '] ' + 
+                                    '{' + str(key) + '} ' +
+                                    '(' + ch_type + ') ' + sel)
+                        subject_row_names.append(row_name)
 
             else:
                 subject_data = psd

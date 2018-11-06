@@ -17,11 +17,11 @@ from meggie.code_meggie.structures.epochs import Epochs
 from meggie.code_meggie.structures.evoked import Evoked
 from meggie.code_meggie.structures.spectrum import Spectrum
 from meggie.code_meggie.structures.tfr import TFR
-from meggie.code_meggie.general.stc import SourceEstimateRaw
-from meggie.code_meggie.general.stc import SourceEstimateEvoked
-from meggie.code_meggie.general.stc import SourceEstimateEpochs
+from meggie.code_meggie.structures.stc import SourceEstimateRaw
+from meggie.code_meggie.structures.stc import SourceEstimateEvoked
+from meggie.code_meggie.structures.stc import SourceEstimateEpochs
 
-from PyQt4.QtCore import QObject
+from PyQt5.QtCore import QObject
 
 
 class Experiment(QObject):
@@ -258,7 +258,7 @@ class Experiment(QObject):
                         'type': stc.type
                     }
                     if stc.type == 'evoked':
-                        stc_dict['keys'] = stc.keys(self)
+                        stc_dict['keys'] = list(stc.keys(self))
 
                     subject_dict['stcs'].append(stc_dict)
                 except IOError:
@@ -282,7 +282,7 @@ class Experiment(QObject):
                 try:
                     evoked_dict = {
                         'name': evoked.name,
-                        'event_names': evoked.mne_evokeds.keys(),
+                        'event_names': list(evoked.mne_evokeds.keys()),
                         'info': evoked.info,
                     }
                     subject_dict['evokeds'].append(evoked_dict)
@@ -330,7 +330,7 @@ class Experiment(QObject):
             os.makedirs(os.path.join(self.workspace, self.experiment_name))
         except OSError:
             pass
-        
+
         # save to file
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f, sort_keys=True, indent=4)

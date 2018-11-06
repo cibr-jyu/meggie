@@ -5,8 +5,8 @@
 
 import logging
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.ui.preprocessing.ecgParametersDialogUi import Ui_Dialog
 
@@ -21,14 +21,14 @@ from meggie.code_meggie.preprocessing.projections import call_ecg_ssp
 
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
-class EcgParametersDialog(QtGui.QDialog):
+class EcgParametersDialog(QtWidgets.QDialog):
     """
     Class containing the logic for ecgParametersDialog. it collects parameter
     values for calculating ECG projections.
     """
 
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)

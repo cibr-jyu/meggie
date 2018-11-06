@@ -7,7 +7,9 @@ import numpy as np
 import logging
 import traceback
 
-from PyQt4 import QtCore,QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+
 from copy import deepcopy
 
 from meggie.code_meggie.structures.events import Events
@@ -27,7 +29,7 @@ from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
 from meggie.code_meggie.utils.units import get_scaling
 
-class EventSelectionDialog(QtGui.QDialog):
+class EventSelectionDialog(QtWidgets.QDialog):
     """
     Class containing the logic for EventSelectionDialog. It is used for
     collecting desired events from continuous data.
@@ -42,7 +44,7 @@ class EventSelectionDialog(QtGui.QDialog):
         params -- A dictionary containing parameter values to fill the
                   the different fields in the dialog with.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
@@ -67,7 +69,7 @@ class EventSelectionDialog(QtGui.QDialog):
         if 'events' in event_data:
             events = event_data['events']
             for event in events:
-                item = QtGui.QListWidgetItem(
+                item = QtWidgets.QListWidgetItem(
                     '%s, %s' % (
                     'ID ' + str(event['event_id']),
                     'mask=' + str(event['mask'])
@@ -77,7 +79,7 @@ class EventSelectionDialog(QtGui.QDialog):
         if 'fixed_length_events' in event_data:
             fixed_length_events = event_data['fixed_length_events']
             for idx, event in enumerate(fixed_length_events):
-                item = QtGui.QListWidgetItem(
+                item = QtWidgets.QListWidgetItem(
                     '%s, %s, %s, %s' % (
                     'Fixed ' + str(idx + 1),
                     'start=' + str(event['tmin']), 
@@ -272,9 +274,9 @@ class EventSelectionDialog(QtGui.QDialog):
                 'Are you sure you want to overwrite the ',
                 'collection?'
             ])
-            reply = QtGui.QMessageBox.question(self.parent, header, message,                
-                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.No:
+            reply = QtWidgets.QMessageBox.question(self.parent, header, message,                
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
                 return
 
         subject_name = self.parent.experiment.active_subject.subject_name
@@ -311,9 +313,9 @@ class EventSelectionDialog(QtGui.QDialog):
                 'Are you sure you want to overwrite the ',
                 'collection?'
             ])
-            reply = QtGui.QMessageBox.question(self.parent, header, message,                
-                QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.No:
+            reply = QtWidgets.QMessageBox.question(self.parent, header, message,                
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
                 return 
             
         recently_active_subject = self.parent.experiment.active_subject.subject_name

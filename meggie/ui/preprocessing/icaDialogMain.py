@@ -5,7 +5,7 @@
 
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.preprocessing.icaDialogUi import Ui_Dialog
 from meggie.ui.utils.decorators import threaded
@@ -20,21 +20,21 @@ from meggie.code_meggie.preprocessing.ica import apply_ica
 from meggie.ui.utils.messaging import exc_messagebox
 
 
-class ICADialog(QtGui.QDialog):
+class ICADialog(QtWidgets.QDialog):
     """ Functionality for ICA dialog UI
     """
 
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
-            QtGui.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection)
         self.ui.listWidgetRemoved.setSelectionMode(
-            QtGui.QAbstractItemView.ExtendedSelection)
+            QtWidgets.QAbstractItemView.ExtendedSelection)
 
         self.initialize()
 

@@ -4,8 +4,8 @@
 
 import logging
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -14,14 +14,14 @@ from meggie.code_meggie.preprocessing.filter import filter_data
 
 from meggie.ui.utils.messaging import messagebox
 
-class FilterDialog(QtGui.QDialog):
+class FilterDialog(QtWidgets.QDialog):
     """
     Class containing the logic for filterDialog. It collects the parameters
     needed for filtering and shows the preview for the filter if required.
     """
 
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)

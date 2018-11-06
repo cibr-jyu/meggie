@@ -3,13 +3,13 @@
 import os
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.ui.general.logDialogUi import Ui_LogDialog
 
-class LogDialog(QtGui.QDialog):
+class LogDialog(QtWidgets.QDialog):
     """
     Class containing the logic for logDialogUi. It is used for displaying the
     MNE calls and params of the current experiment.
@@ -17,7 +17,7 @@ class LogDialog(QtGui.QDialog):
     def __init__(self, parent):
         """
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_LogDialog()
         self.ui.setupUi(self)

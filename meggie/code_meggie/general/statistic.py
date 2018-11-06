@@ -5,7 +5,7 @@
 import numpy as np
 import scipy.stats as stats
 
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 
 class Statistic(QtCore.QObject):
     """

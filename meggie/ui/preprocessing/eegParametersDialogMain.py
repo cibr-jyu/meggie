@@ -2,7 +2,8 @@
 """
 import logging
 
-from PyQt4 import QtCore,QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 from meggie.ui.preprocessing.eegParametersDialogUi import Ui_Dialog
 
 import numpy as np
@@ -14,10 +15,10 @@ from meggie.code_meggie.preprocessing.projections import find_eog_events
 from meggie.code_meggie.preprocessing.projections import plot_average_epochs
 from meggie.code_meggie.preprocessing.projections import call_eeg_ssp
 
-class EegParametersDialog(QtGui.QDialog):
+class EegParametersDialog(QtWidgets.QDialog):
     
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
@@ -72,11 +73,11 @@ class EegParametersDialog(QtGui.QDialog):
             for i in range(0, len(eog_events)):
                 self.ui.tableWidgetEvents.insertRow(i)
                 self.ui.tableWidgetEvents.setItem(
-                    i,0,QtGui.QTableWidgetItem(
+                    i,0,QtWidgets.QTableWidgetItem(
                         str(raw.times[eog_events[i][0] - raw.first_samp])
                     )
                 )
-                self.ui.tableWidgetEvents.setItem(i,1,QtGui.
+                self.ui.tableWidgetEvents.setItem(i,1,QtWidgets.
                     QTableWidgetItem(str(int(eog_events[i][0])))
                 )
         except Exception as e:
@@ -96,7 +97,7 @@ class EegParametersDialog(QtGui.QDialog):
         events = list()
         rowCount = self.ui.tableWidgetEvents.rowCount()
         
-        for i in xrange(0, rowCount):
+        for i in range(0, rowCount):
             time = int(self.ui.tableWidgetEvents.item(i, 1).text())
             events.append([time, 0, 1])
 

@@ -61,9 +61,9 @@ class Spectrum(object):
 
         for key, psd in self.data.items():
 
-	    row_names = self._ch_names
-	    column_names = self._freqs.tolist()
-	    data = psd.tolist()
+            row_names = self._ch_names
+            column_names = self._freqs.tolist()
+            data = psd.tolist()
 
             path = os.path.join(self._spectrums_directory, 
                                 self.name + '_' + str(key) + '.csv')

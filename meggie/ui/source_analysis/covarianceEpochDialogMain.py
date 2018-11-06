@@ -3,7 +3,7 @@
 import os
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.source_analysis.covarianceEpochDialogUi import Ui_covarianceEpochDialog
 
@@ -13,14 +13,14 @@ from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
-class CovarianceEpochDialog(QtGui.QDialog):
+class CovarianceEpochDialog(QtWidgets.QDialog):
     """
     The class containing the logic for the dialog for collecting the
     parameters computing the covariance for epoch collection/s.
     """
 
     def __init__(self, parent, experiment, on_close=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_covarianceEpochDialog()
         self.ui.setupUi(self)
         self.parent = parent
@@ -29,7 +29,7 @@ class CovarianceEpochDialog(QtGui.QDialog):
 
         epochs = experiment.active_subject.epochs
         for collection_name in epochs.keys():
-            item = QtGui.QListWidgetItem(collection_name)
+            item = QtWidgets.QListWidgetItem(collection_name)
             self.ui.listWidgetEpochs.addItem(item)
             
     def accept(self):

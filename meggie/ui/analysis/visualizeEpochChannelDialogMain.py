@@ -1,7 +1,8 @@
 """
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 import numpy as np
 
@@ -10,13 +11,13 @@ import meggie.code_meggie.general.mne_wrapper as mne
 from meggie.ui.analysis.visualizeEpochChannelDialogUi import Ui_VisualizeEpochChannelDialog
 
 
-class VisualizeEpochChannelDialog(QtGui.QDialog):
+class VisualizeEpochChannelDialog(QtWidgets.QDialog):
     
     """A dialog for visualizing epoch channels with custom parameters
     """
     
     def __init__(self, epochs=None):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_VisualizeEpochChannelDialog()
         self.ui.setupUi(self)
         self.epochs = epochs
@@ -26,7 +27,7 @@ class VisualizeEpochChannelDialog(QtGui.QDialog):
 
         # fills channels list with epoch collection channel names.
         for channel in epochs.raw.ch_names:
-            item = QtGui.QListWidgetItem()
+            item = QtWidgets.QListWidgetItem()
             item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
         

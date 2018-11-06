@@ -7,7 +7,6 @@ import re
 import copy
 import logging
 
-from PyQt4 import QtGui
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -145,8 +144,7 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
     colors = color_cycle(len(evokeds))
 
     fig = mne.plot_evoked_topo(evokeds, layout,
-        color=colors, title=title, fig_facecolor='w', axis_facecolor='w',
-        font_color='k')
+        color=colors, title=title)
 
     conditions = [e.comment for e in evokeds]
     positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
@@ -322,7 +320,7 @@ def _group_average(experiment, evoked_name):
 
     subjects = experiment.subjects.values()
     responses = [subject.evokeds.get(evoked_name) for subject in subjects]
-    responses = filter(bool, responses)
+    responses = list(filter(bool, responses))
 
     # assumme all have same same amount of evokeds
     evoked_groups = {}

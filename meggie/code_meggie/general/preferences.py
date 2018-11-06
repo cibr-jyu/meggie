@@ -5,9 +5,8 @@
 
 import os
 import logging
-import ConfigParser
+import configparser
 
-from ConfigParser import NoOptionError
 from meggie.code_meggie.utils.files import home_filepath
 
 
@@ -32,7 +31,7 @@ class PreferencesHandler(object):
         """
         Writes the preferences to disk, in an easily readable form.
         """
-        config = ConfigParser.RawConfigParser()
+        config = configparser.RawConfigParser()
         config.add_section('MiscOptions')
         config.add_section('Workspace')
         config.add_section('EnvVariables')
@@ -60,8 +59,7 @@ class PreferencesHandler(object):
         else:
             config.set('MiscOptions', 'saveBads', 'False')
 
-
-        with open(home_filepath('.meggieprefs'), 'wb') as configfile:
+        with open(home_filepath('.meggieprefs'), 'w') as configfile:
             config.write(configfile)
         
         
@@ -71,7 +69,7 @@ class PreferencesHandler(object):
         """
         filename = home_filepath('.meggieprefs')
         if os.path.isfile(filename):
-            config = ConfigParser.RawConfigParser()
+            config = configparser.RawConfigParser()
             config.read(filename)
         else: return
         
@@ -101,7 +99,7 @@ class PreferencesHandler(object):
                 'MiscOptions', 'previous_experiment_name')
 
             self.n_jobs = int(config.get('MiscOptions', 'n_jobs'))
-        except NoOptionError:
+        except configparser.NoOptionError:
             pass
             
     

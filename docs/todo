@@ -9,25 +9,26 @@ TODO:
 - should do manual for meggie
 
 bugs:
+- ssp default amount of vectors
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
-- when creating the projection vectors from EOG, some of the data might unnecessarily be rejected
+- meggie allows to create a new experiment over existing experiment,
+- powerspectrum dialog name field size
 
 features:
+- ica applied checkbox
+- add way to get the list of channels and a picture of channel averages, maybe some interactive thingy
 - add throbber to bad channel dialog
 - plot accuracy as preference
 - tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
 - unify EEG and EOG projections (EEG is EOG with channel selection)
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
-- plots with more accuracy?
-- log parsing, subject specific.
-- stop button to batch
+- log parsing, subject specific
 - more automated ICA
 - njobs-story
 - update meter and cancel button for batch
 - maybe a mock subject possibility combined with epoch or evoked import
 - open experiment also by specifying the exp file
-- ica done? doing ica transform in the source analysis part?
 - maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums

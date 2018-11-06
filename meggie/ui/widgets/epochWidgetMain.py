@@ -3,12 +3,13 @@
 """
 """
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 from meggie.ui.widgets.epochWidgetUi import Ui_Form
 
-class EpochWidget(QtGui.QWidget):
+class EpochWidget(QtWidgets.QWidget):
     """
     Creates a widget that shows a list of epoch collections.
     """
@@ -20,7 +21,7 @@ class EpochWidget(QtGui.QWidget):
         """
         Constructor 
         """
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         
         self.ui = Ui_Form()
         self.ui.setupUi(self)
@@ -83,7 +84,7 @@ class EpochWidget(QtGui.QWidget):
             events_str = (event_name + ' [' + str(len(epochs.raw[event_name])) + 
                           ' events found]')
 
-            item = QtGui.QListWidgetItem(events_str)
+            item = QtWidgets.QListWidgetItem(events_str)
             self.ui.listWidgetEvents.addItem(item)
 
         # call show parameter handler

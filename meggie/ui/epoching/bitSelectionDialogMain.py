@@ -1,11 +1,11 @@
 """
 """
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5.Qt import QPushButton, pyqtSlot
 
 from meggie.ui.epoching.bitSelectionDialogUi import Ui_Dialog
-from PyQt4.Qt import QPushButton, pyqtSlot
 
-class BitSelectionDialog(QtGui.QDialog):
+class BitSelectionDialog(QtWidgets.QDialog):
     
     
     def __init__(self, parent, target, target_spinbox=None):
@@ -14,7 +14,7 @@ class BitSelectionDialog(QtGui.QDialog):
         Parameters:
         parent     - The parent window for this dialog.
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.intervals = []
         self.button_count = 16
         self.ui = Ui_Dialog()

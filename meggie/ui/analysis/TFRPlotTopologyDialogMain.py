@@ -2,7 +2,7 @@
 """
 import logging
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.analysis.TFRPlotTopologyDialogUi import Ui_TFRPlotTopologyDialog
 
@@ -11,12 +11,12 @@ from meggie.code_meggie.analysis.spectral import plot_tfr_topology
 from meggie.ui.utils.messaging import exc_messagebox
 
 
-class TFRPlotTopologyDialog(QtGui.QDialog):
+class TFRPlotTopologyDialog(QtWidgets.QDialog):
     
     def __init__(self, parent, experiment, tfr_name):
         """
         """
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.ui = Ui_TFRPlotTopologyDialog()
         self.ui.setupUi(self)
         self.parent = parent

@@ -10,15 +10,16 @@ import gc
 import logging
 
 import matplotlib
-matplotlib.use('Qt4Agg')
+matplotlib.use('Qt5Agg')
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from PyQt4 import QtCore
-from PyQt4 import QtGui
-from PyQt4.QtGui import QAbstractItemView
-from PyQt4.Qt import QApplication
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.Qt import QApplication
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
@@ -66,13 +67,13 @@ from meggie.code_meggie.analysis.epoching import average_channels
 from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
 
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     """
     Class containing the logic for the MainWindow
     """
 
     def __init__(self, application):
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -97,7 +98,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mainWindowTabInduced = MainWindowTabInduced(self)
 
         # Creates a label on status bar to show current working file message.
-        self.statusLabel = QtGui.QLabel()
+        self.statusLabel = QtWidgets.QLabel()
         self.ui.statusbar.addWidget(self.statusLabel)
 
         # Creates a listwidget for epoch analysis.
@@ -166,12 +167,12 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         if self.preferencesHandler.confirm_quit:
-            reply = QtGui.QMessageBox.question(self, 'Close Meggie',
+            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                 'Are you sure you want to quit Meggie?', 
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-                QtGui.QMessageBox.No)
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                QtWidgets.QMessageBox.No)
 
-            if reply == QtGui.QMessageBox.Yes:
+            if reply == QtWidgets.QMessageBox.Yes:
                 self.close()
         else:
             self.close()
@@ -203,7 +204,7 @@ class MainWindow(QtGui.QMainWindow):
         else:
             directory = ''
 
-        path = str(QtGui.QFileDialog.getExistingDirectory
+        path = str(QtWidgets.QFileDialog.getExistingDirectory
                    (self, "Select _experiment directory", directory))
 
         if path == '':
@@ -251,13 +252,13 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         message = 'Permanently remove the selected subjects and the related files?'
-        reply = QtGui.QMessageBox.question(self, 'Delete selected subjects',
-                                           message, QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'Delete selected subjects',
+                                           message, QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
         failures = []
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             for index in selIndexes:
                 subject_name = index.data()
         
@@ -279,13 +280,13 @@ class MainWindow(QtGui.QMainWindow):
         """Redefine window close event to allow confirming on quit."""
 
         if self.preferencesHandler.confirm_quit:
-            reply = QtGui.QMessageBox.question(self, 'Close Meggie',
+            reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
                                                'Are you sure you want to '
-                                               'quit?', QtGui.QMessageBox.Yes | 
-                                               QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
+                                               'quit?', QtWidgets.QMessageBox.Yes | 
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
-            if reply == QtGui.QMessageBox.Yes:
+            if reply == QtWidgets.QMessageBox.Yes:
                 event.accept()
             else:
                 event.ignore()
@@ -364,8 +365,9 @@ class MainWindow(QtGui.QMainWindow):
         epoch_widget = self.epochList.ui.listWidgetEpochs
         
         epoch_widget.clear()
-        for name in sorted(self.experiment.subjects[subject_name].epochs):
-            item = QtGui.QListWidgetItem()
+        epochs = self.experiment.subjects[subject_name].epochs
+        for name in sorted(epochs.keys()):
+            item = QtWidgets.QListWidgetItem()
             item.setText(name)
             epoch_widget.addItem(item)
             if name in data_dict:
@@ -492,14 +494,16 @@ class MainWindow(QtGui.QMainWindow):
 
         try:
             times = np.arange(0.0, 0.4, 0.02)
-            for idx in range(len(mne_evokeds.keys())):
+            for idx in range(len(list(mne_evokeds.keys()))):
                 fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(mne_evokeds.keys()[idx]) 
+                fig.suptitle(list(mne_evokeds.keys())[idx]) 
 
-                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='mag',  # noqa
+                list(mne_evokeds.values())[idx].plot_topomap(
+                    times=times, ch_type='mag',  # noqa
                     average=0.05, axes=axes[0], show=False, colorbar=None)
 
-                mne_evokeds.values()[idx].plot_topomap(times=times, ch_type='grad',  # noqa
+                list(mne_evokeds.values())[idx].plot_topomap(
+                    times=times, ch_type='grad',  # noqa
                     average=0.05, axes=axes[1], show=False, colorbar=None)
             plt.show()
 
@@ -578,11 +582,10 @@ class MainWindow(QtGui.QMainWindow):
         try:
             draw_evoked_potentials(
                 self.experiment,
-                mne_evokeds.values(),
+                list(mne_evokeds.values()),
                 title=evoked_name)
         except Exception as e:
             exc_messagebox(self, e)
-
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         """
@@ -637,12 +640,12 @@ class MainWindow(QtGui.QMainWindow):
         item_str = self.epochList.currentItem().text()
 
         message = 'Permanently remove epochs?'
-        reply = QtGui.QMessageBox.question(self, 'delete epochs',
-                                           message, QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
+                                           message, QtWidgets.QMessageBox.Yes | 
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             try:
                 self.experiment.active_subject.remove_epochs(
                     item_str,
@@ -670,12 +673,12 @@ class MainWindow(QtGui.QMainWindow):
         collection_name = self.epochList.currentItem().text()
         
         message = 'Permanently remove epoch collection from all subjects?'
-        reply = QtGui.QMessageBox.question(self, 'delete epochs',
-                                           message, QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
+                                           message, QtWidgets.QMessageBox.Yes | 
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             for subject in self.experiment.subjects.values():
                 if collection_name in subject.epochs:
                     subject.remove_epochs(
@@ -709,12 +712,12 @@ class MainWindow(QtGui.QMainWindow):
         item_str = self.ui.listWidgetEvoked.currentItem().text()
 
         message = 'Permanently remove evokeds?'
-        reply = QtGui.QMessageBox.question(self, 'delete evokeds',
-                                           message, QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'delete evokeds',
+                                           message, QtWidgets.QMessageBox.Yes | 
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             try:
                 self.experiment.active_subject.remove_evoked(
                     item_str,
@@ -740,12 +743,12 @@ class MainWindow(QtGui.QMainWindow):
         collection_name = self.ui.listWidgetEvoked.currentItem().text()
         
         message = 'Permanently remove evokeds from all subjects?'
-        reply = QtGui.QMessageBox.question(self, 'delete evokeds',
-                                           message, QtGui.QMessageBox.Yes | 
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+        reply = QtWidgets.QMessageBox.question(self, 'delete evokeds',
+                                           message, QtWidgets.QMessageBox.Yes | 
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             for subject in self.experiment.subjects.values():
                 if collection_name in subject.evokeds:
                     subject.remove_evoked(collection_name)
@@ -771,7 +774,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.raw = raw.copy()
                 fig = self.raw.plot(events=events)
                 fig.canvas.mpl_connect('close_event', self.handle_close)
-            except Exception, err:
+            except Exception as err:
                 exc_messagebox(parent, err)
                 return
         
@@ -806,7 +809,7 @@ class MainWindow(QtGui.QMainWindow):
 
         raw = self.experiment.active_subject.get_working_file()
         if not raw.info['projs']:
-            exc_messagebox(self, "No added projections.")
+            messagebox(self, "No added projections.")
             return
         
         try:
@@ -1037,7 +1040,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Creates dictionary of strings instead of qstrings for rejections.
         params_rejections_str = dict((str(key), value) for key, value in
-                                     params['reject'].iteritems())
+                                     params['reject'].items())
 
         if 'mag' in params_rejections_str:
             factor = params_rejections_str['mag']
@@ -1152,8 +1155,8 @@ class MainWindow(QtGui.QMainWindow):
         try:
             message = 'Writing evoked data as ' + evoked_name + ' ...'
             logging.getLogger('ui_logger').info(message)
-            
-            mne.write_evokeds(os.path.join(saveFolder, evoked_name), evokeds.values())
+
+            mne.write_evokeds(os.path.join(saveFolder, evoked_name), list(evokeds.values()))
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
@@ -1185,7 +1188,7 @@ class MainWindow(QtGui.QMainWindow):
         try:    
             evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
         except AttributeError:
-            exc_messagebox(self, "Please select evoked data from the list")
+            messagebox(self, "Please select evoked data from the list")
             return
 
         path = fileManager.create_timestamped_folder(
@@ -1305,12 +1308,12 @@ class MainWindow(QtGui.QMainWindow):
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
         if epochs_items is not None:
-            for epoch in sorted(epochs_items.values()):
-                self.epochList.add_item(epoch.collection_name)
+            for name in sorted(epochs_items.keys()):
+                self.epochList.add_item(name)
 
         if evokeds_items is not None:
-            for evoked in sorted(evokeds_items.values()):
-                self.ui.listWidgetEvoked.addItem(evoked.name)
+            for name in sorted(evokeds_items.keys()):
+                self.ui.listWidgetEvoked.addItem(name)
 
         # This updates the 'Subject info' section below the subject list.
         try:
@@ -1335,7 +1338,7 @@ class MainWindow(QtGui.QMainWindow):
             active_subject_name = self.experiment.active_subject.subject_name
 
         for subject_name in sorted(self.experiment.subjects.keys()):
-            item = QtGui.QListWidgetItem()
+            item = QtWidgets.QListWidgetItem()
             item.setText(subject_name)
             if subject_name == active_subject_name:
                 font = item.font()
@@ -1355,7 +1358,7 @@ class MainWindow(QtGui.QMainWindow):
             return
 
         events_string = ''
-        for key, value in events.iteritems():
+        for key, value in events.items():
             events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
 
         self.ui.textBrowserEvents.setText(events_string)
@@ -1406,10 +1409,10 @@ class MainWindow(QtGui.QMainWindow):
 
         index = self.ui.tabWidget.currentIndex()
         if index == 2:
-            mode = QtGui.QAbstractItemView.SingleSelection
+            mode = QtWidgets.QAbstractItemView.SingleSelection
             self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
         elif index == 3:
-            mode = QtGui.QAbstractItemView.MultiSelection
+            mode = QtWidgets.QAbstractItemView.MultiSelection
             self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
         else:
             self.epochList.hide()
@@ -1428,8 +1431,13 @@ class MainWindow(QtGui.QMainWindow):
         Method for directing stdout to the console and back.
         """
         if self.ui.actionDirectToConsole.isChecked():
-            sys.stdout = EmittingStream(textWritten=self.normalOutputWritten)
-            sys.stderr = EmittingStream(textWritten=self.errorOutputWritten)
+            stdout_stream = EmittingStream(textWritten=self.normalOutputWritten)
+            stdout_stream.orig_stream = sys.__stdout__
+            stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
+            stderr_stream.orig_stream = sys.__stderr__
+
+            sys.stdout = stdout_stream
+            sys.stderr = stderr_stream
         else:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -1473,7 +1481,6 @@ class MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
-
 
     def setup_loggers(self):
 
@@ -1565,10 +1572,14 @@ class EmittingStream(QtCore.QObject):
     def flush(self):
         pass
 
+    def fileno(self):
+        return self.orig_stream.fileno()
+
+
 
 def main():
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app)
 
     window.showMaximized()

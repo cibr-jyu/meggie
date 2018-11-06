@@ -2,7 +2,7 @@ import os
 import logging
 import shutil
 
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
@@ -20,9 +20,9 @@ import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
 
 
-class MainWindowTabSourceAnalysis(QtGui.QDialog):
+class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_mainWindowTabSourceAnalysis()
         self.ui.setupUi(self)
@@ -70,44 +70,44 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         solutions = active_subject.get_forward_solution_names()
         self.ui.listWidgetForwardSolutionsFwd.clear()
         for solution in solutions:
-            item = QtGui.QListWidgetItem(solution)
+            item = QtWidgets.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsFwd.addItem(item)
 
         # populate forward solutions in source estimate tab
         solutions = active_subject.get_forward_solution_names()
         self.ui.listWidgetForwardSolutionsStc.clear()
         for solution in solutions:
-            item = QtGui.QListWidgetItem(solution)
+            item = QtWidgets.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsStc.addItem(item)
 
         # populate epochs in source estimate tab
         self.ui.listWidgetStcEpochs.clear()
         for collection in active_subject.epochs:
-            item = QtGui.QListWidgetItem(collection)
+            item = QtWidgets.QListWidgetItem(collection)
             self.ui.listWidgetStcEpochs.addItem(item)
 
         # populate evoked in source estimate tab
         self.ui.listWidgetStcEvoked.clear()
         for evoked in active_subject.evokeds:
-            item = QtGui.QListWidgetItem(evoked)
+            item = QtWidgets.QListWidgetItem(evoked)
             self.ui.listWidgetStcEvoked.addItem(item)
 
         # populate stc in source estimate tab
         self.ui.listWidgetSourceEstimatesStc.clear()
         for stc in active_subject.stcs:
-            item = QtGui.QListWidgetItem(stc)
+            item = QtWidgets.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesStc.addItem(item)
 
         # populate stc in analysis tab
         self.ui.listWidgetSourceEstimatesAna.clear()
         for stc in active_subject.stcs:
-            item = QtGui.QListWidgetItem(stc)
+            item = QtWidgets.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesAna.addItem(item)
 
         # populate covfiles in cov tab
         self.ui.listWidgetCovariances.clear()
         for covfile in active_subject.get_covfiles():
-            item = QtGui.QListWidgetItem(covfile)
+            item = QtWidgets.QListWidgetItem(covfile)
             self.ui.listWidgetCovariances.addItem(item)
 
         # set transfile state to selected if transfile exists
@@ -123,7 +123,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         if checked is None:
             return
 
-        path = str(QtGui.QFileDialog.getExistingDirectory(self,
+        path = str(QtWidgets.QFileDialog.getExistingDirectory(self,
             "Select directory of the reconstructed MRI image"))
 
         if path == '':
@@ -141,14 +141,14 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         active_subject = self.parent.experiment.active_subject
 
         if active_subject.check_reconFiles_copied():
-            reply = QtGui.QMessageBox.question(self, 'Please confirm',
+            reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
                                                "Do you really want to change "
                                                "the reconstructed files?",
-                                               QtGui.QMessageBox.Yes |
-                                               QtGui.QMessageBox.No,
-                                               QtGui.QMessageBox.No)
+                                               QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
-            if reply == QtGui.QMessageBox.No:
+            if reply == QtWidgets.QMessageBox.No:
                 return
 
         path = self.ui.lineEditRecon.text()
@@ -195,6 +195,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
             watershed_bem(do_meanwhile=self.parent.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
+
+        self.initialize_ui()
 
     def on_pushButtonCheckTalairach_clicked(self, checked=None):
         if checked is None:
@@ -255,8 +257,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         else:
             return
 
-        path = str(QtGui.QFileDialog.getOpenFileName(self,
-            "Select the coordinate MEG-MRI coordinate transformation file"))
+        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select the coordinate MEG-MRI coordinate transformation file")[0])
 
         if path == '':
             return
@@ -268,7 +270,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         try:
             shutil.copyfile(src, dst)
         except Exception as exc:
-            exc_messagebox(exc)
+            exc_messagebox(self, exc)
 
         self.ui.lineEditCoregistrationBrowse.setText(path)
 
@@ -298,8 +300,8 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         else:
             return
 
-        path = str(QtGui.QFileDialog.getOpenFileName(self,
-            "Select a forward solution file"))
+        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select a forward solution file")[0])
 
         if not path.endswith('fwd.fif'):
             messagebox(self, "Forward solution file should end with -fwd.fif")
@@ -313,7 +315,7 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         try:
             shutil.copyfile(src, dst)
         except Exception as exc:
-            exc_messagebox(exc)
+            exc_messagebox(self, exc)
 
         self.initialize_ui()
 
@@ -335,14 +337,14 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         except AttributeError:
             return
 
-        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+        reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
                                            "Do you really want to remove "
                                            "the the selected solution?",
-                                           QtGui.QMessageBox.Yes |
-                                           QtGui.QMessageBox.No,
-                                           QtGui.QMessageBox.No)
+                                           QtWidgets.QMessageBox.Yes |
+                                           QtWidgets.QMessageBox.No,
+                                           QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.No:
             return
 
 
@@ -530,12 +532,12 @@ class MainWindowTabSourceAnalysis(QtGui.QDialog):
         except AttributeError:
             return
 
-        reply = QtGui.QMessageBox.question(self, 'Please confirm',
+        reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
             "Do you really want to remove the the selected covariance matrix?",
-            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-            QtGui.QMessageBox.No)
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.No:
+        if reply == QtWidgets.QMessageBox.No:
             return
 
         path = os.path.join(active_subject.cov_directory,

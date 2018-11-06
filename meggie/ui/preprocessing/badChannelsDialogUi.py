@@ -1,69 +1,56 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'badChannelsDialogUi.ui'
+# Form implementation generated from reading ui file '../badChannelsDialogUi.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.setObjectName("Dialog")
         Dialog.resize(368, 706)
-        self.gridLayout = QtGui.QGridLayout(Dialog)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.listWidgetBads = QtGui.QListWidget(Dialog)
-        self.listWidgetBads.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        self.listWidgetBads.setObjectName(_fromUtf8("listWidgetBads"))
+        self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setObjectName("gridLayout")
+        self.listWidgetBads = QtWidgets.QListWidget(Dialog)
+        self.listWidgetBads.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.listWidgetBads.setObjectName("listWidgetBads")
         self.gridLayout.addWidget(self.listWidgetBads, 0, 0, 1, 1)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.pushButtonReject = QtGui.QPushButton(Dialog)
-        self.pushButtonReject.setObjectName(_fromUtf8("pushButtonReject"))
+        self.pushButtonReject = QtWidgets.QPushButton(Dialog)
+        self.pushButtonReject.setObjectName("pushButtonReject")
         self.horizontalLayout.addWidget(self.pushButtonReject)
-        self.pushButtonAccept = QtGui.QPushButton(Dialog)
-        self.pushButtonAccept.setObjectName(_fromUtf8("pushButtonAccept"))
+        self.pushButtonAccept = QtWidgets.QPushButton(Dialog)
+        self.pushButtonAccept.setObjectName("pushButtonAccept")
         self.horizontalLayout.addWidget(self.pushButtonAccept)
         self.gridLayout.addLayout(self.horizontalLayout, 3, 0, 1, 1)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.pushButtonSelectAll = QtGui.QPushButton(Dialog)
-        self.pushButtonSelectAll.setObjectName(_fromUtf8("pushButtonSelectAll"))
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.pushButtonSelectAll = QtWidgets.QPushButton(Dialog)
+        self.pushButtonSelectAll.setObjectName("pushButtonSelectAll")
         self.horizontalLayout_2.addWidget(self.pushButtonSelectAll)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.pushButtonPlot = QtGui.QPushButton(Dialog)
-        self.pushButtonPlot.setObjectName(_fromUtf8("pushButtonPlot"))
+        self.pushButtonPlot = QtWidgets.QPushButton(Dialog)
+        self.pushButtonPlot.setObjectName("pushButtonPlot")
         self.horizontalLayout_2.addWidget(self.pushButtonPlot)
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.pushButtonReject, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.reject)
-        QtCore.QObject.connect(self.pushButtonAccept, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.accept)
+        self.pushButtonReject.clicked.connect(Dialog.reject)
+        self.pushButtonAccept.clicked.connect(Dialog.accept)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Customize channels", None))
-        self.pushButtonReject.setText(_translate("Dialog", "Cancel", None))
-        self.pushButtonAccept.setText(_translate("Dialog", "Ok", None))
-        self.pushButtonSelectAll.setText(_translate("Dialog", "Select all", None))
-        self.pushButtonPlot.setText(_translate("Dialog", "Select from plot...", None))
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Customize channels"))
+        self.pushButtonReject.setText(_translate("Dialog", "Cancel"))
+        self.pushButtonAccept.setText(_translate("Dialog", "Ok"))
+        self.pushButtonSelectAll.setText(_translate("Dialog", "Select all"))
+        self.pushButtonPlot.setText(_translate("Dialog", "Select from plot..."))
 
