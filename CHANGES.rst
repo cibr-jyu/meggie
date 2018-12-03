@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.8.2 (unreleased)
+0.9.1 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+0.9.0 (2018-11-06)
+------------------
+
+- Update code to be python3 and pyqt5 compatible
+- Fix splitted raw file problem with spectrum computation
+- Separate grad and mag ch types properly in spectrum computation
+- Add small beauty enhancements
 
 0.8.1 (2018-05-03)
 ------------------

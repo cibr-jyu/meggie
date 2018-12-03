@@ -1,19 +1,19 @@
 package:
   name: meggie
-  version: "0.8.1"
+  version: "0.9.0"
 
 source:
   path: .
 
 requirements:
   build:
-    - python
+    - python >=3.0.0
     - setuptools
-    - mne ==0.15.2
+    - mne ==0.16.2
 
   run:
-    - python
-    - pyqt ==4.11.4
+    - python >=3.0.0
+    - pyqt >=5.0.0
     - xlwt
     - xlrd
     - mayavi
@@ -22,7 +22,7 @@ requirements:
     - scikit-learn
     - pysurfer
     - h5py
-    - mne ==0.15.2
+    - mne ==0.16.2
 
 about:
   license: BSD (3-clause)
