@@ -9,12 +9,16 @@ TODO:
 - should do manual for meggie
 
 bugs:
+- fix topomap for eeg
+- eeg-data eeg reference (not added as projection in 0.17.0)
 - ssp default amount of vectors
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - meggie allows to create a new experiment over existing experiment,
 - powerspectrum dialog name field size
 
 features:
+- eeg referencing gui, combining etc fun stuff. to import! special options?
+- add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"
 - ica applied checkbox
 - add way to get the list of channels and a picture of channel averages, maybe some interactive thingy
 - add throbber to bad channel dialog
