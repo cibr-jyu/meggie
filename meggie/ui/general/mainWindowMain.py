@@ -493,18 +493,42 @@ class MainWindow(QtWidgets.QMainWindow):
         logging.getLogger('ui_logger').info("Plotting evoked topomaps.")
 
         try:
-            times = np.arange(0.0, 0.4, 0.02)
+            number_of_timepoints = 20
             for idx in range(len(list(mne_evokeds.keys()))):
-                fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(list(mne_evokeds.keys())[idx]) 
+                evoked = list(mne_evokeds.values())[idx]
+                evoked_name = list(mne_evokeds.keys())[idx]
+                for ch_type in ['mag', 'grad', 'eeg']:
+                    n_eeg_channels = len(list(mne.pick_types(evoked.info, eeg=True)))
+                    n_mag_channels = len(list(mne.pick_types(evoked.info, meg='mag')))
+                    n_grad_channels = len(list(mne.pick_types(evoked.info, meg='grad')))
 
-                list(mne_evokeds.values())[idx].plot_topomap(
-                    times=times, ch_type='mag',  # noqa
-                    average=0.05, axes=axes[0], show=False, colorbar=None)
+                    # if mixed data, plot only mag and grad
+                    if ch_type == 'eeg' and (n_eeg_channels == 0 or
+                                             n_mag_channels > 0 or 
+                                             n_grad_channels > 0):
+                        continue
+                    if ch_type == 'grad' and n_grad_channels == 0:
+                        continue
+                    if ch_type == 'mag' and n_mag_channels == 0:
+                        continue
 
-                list(mne_evokeds.values())[idx].plot_topomap(
-                    times=times, ch_type='grad',  # noqa
-                    average=0.05, axes=axes[1], show=False, colorbar=None)
+                    times = np.linspace(0, 
+                                        evoked.times[-1], 
+                                        number_of_timepoints+1)[:-1]
+
+                    fig, axes = plt.subplots(2, int(number_of_timepoints/2))
+                    axes = axes.reshape(-1)
+
+                    title = evoked_name + ' (' + ch_type + ')'
+                    fig.suptitle(title) 
+
+                    layout = self.experiment.layout
+                    layout = fileManager.read_layout(layout)
+
+                    evoked.plot_topomap(
+                        times=times, ch_type=ch_type,
+                        axes=axes, show=False, colorbar=False,
+                        layout=layout)
             plt.show()
 
         except Exception as e:

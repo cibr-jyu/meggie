@@ -9,14 +9,15 @@ TODO:
 - should do manual for meggie
 
 bugs:
-- fix topomap for eeg
 - eeg-data eeg reference (not added as projection in 0.17.0)
 - ssp default amount of vectors
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - meggie allows to create a new experiment over existing experiment,
 - powerspectrum dialog name field size
+- mixed data poorly supported (eeg isnt plotted when possible). should make it so that layout is only used for eeg and always when possible eeg uses that separately from meg.
 
 features:
+- update to mne=0.17.0
 - eeg referencing gui, combining etc fun stuff. to import! special options?
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"
 - ica applied checkbox
