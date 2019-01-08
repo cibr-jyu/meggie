@@ -15,8 +15,14 @@ bugs:
 - meggie allows to create a new experiment over existing experiment,
 - powerspectrum dialog name field size
 - mixed data poorly supported (eeg isnt plotted when possible). should make it so that layout is only used for eeg and always when possible eeg uses that separately from meg.
+- try except over ica plot topographies
+- fix ica plot topographies for eeg data
 
 features:
+- in plot changes ica dont show bad channels
+- color visualize evoked so that bad channels are in different color and dont affect scale
+- color visualize spectrum so that bad channels are in different color and dont affect scale
+- set own baselines for epochs
 - update to mne=0.17.0
 - eeg referencing gui, combining etc fun stuff. to import! special options?
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"

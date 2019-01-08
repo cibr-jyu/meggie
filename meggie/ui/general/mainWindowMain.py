@@ -39,7 +39,6 @@ from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
-from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
@@ -861,16 +860,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
 
-    def on_pushButtonEEG_clicked(self, checked=None):
-        """Open the dialog for calculating the EEG PCA."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        self.eegDialog = EegParametersDialog(self)
-        self.eegDialog.show()
-
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
@@ -895,18 +884,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEcgProjs.show()
         
-    def on_pushButtonApplyEEG_clicked(self, checked=None):
-        """Open the dialog for applying the ECG-projections to the data."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        
-        info = self.experiment.active_subject.get_working_file().info
-        self.addEegProjs = AddEEGProjections(self, info['projs'])
-        self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEegProjs.show()
-
     def on_pushButtonRemoveProj_clicked(self, checked=None):
         if checked is None:
             return
@@ -953,8 +930,12 @@ class MainWindow(QtWidgets.QMainWindow):
         name = str(self.epochList.currentItem().text())
         
         try:
+            lobe_name = self.ui.comboBoxLobes.currentText()
+            channels = mne.read_selection(
+                lobe_name)
             average_channels(self.experiment, name,
-                             self.ui.comboBoxLobes.currentText(),
+                             channels,
+                             lobe_name, 
                              update_ui=self.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
@@ -1269,11 +1250,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.checkBoxECGApplied.setChecked(False)
         self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
-        self.ui.checkBoxEEGComputed.setChecked(False)
-        self.ui.checkBoxEEGApplied.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
-        self.ui.pushButtonApplyEEG.setEnabled(False)
 
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
@@ -1307,11 +1285,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.checkBoxEOGComputed.setChecked(True)
         
-        # Check whether EEG projections are calculated
-        if active_subject.check_eeg_projs():
-            self.ui.pushButtonApplyEEG.setEnabled(True)
-            self.ui.checkBoxEEGComputed.setChecked(True)        
-        
         # Check whether ECG projections are applied
         if active_subject.check_ecg_applied():
             self.ui.checkBoxECGApplied.setChecked(True)
@@ -1320,10 +1293,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if active_subject.check_eog_applied():
             self.ui.checkBoxEOGApplied.setChecked(True)
 
-        # Check whether EEG projections are applied
-        if active_subject.check_eeg_applied():
-            self.ui.checkBoxEEGApplied.setChecked(True)
-        
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():
             self.ui.checkBoxMaxFilterComputed.setChecked(True)

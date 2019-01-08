@@ -53,27 +53,30 @@ def create_lcmv_estimate(experiment, stc_name, inst_name, inst_type,
         evokeds = subject.evokeds[inst_name].mne_evokeds
         stc_insts = {}
         for key, inst in evokeds.items():
-            stc_insts[key] = mne.lcmv(inst, fwd, noise_cov=noise_cov, 
-                data_cov=data_cov, reg=reg, label=label)
+            lcmv_filter = mne.make_lcmv(inst.info, fwd, data_cov, reg=reg, 
+                                        noise_cov=noise_cov, label=label)
+            stc_insts[key] = mne.apply_lcmv(inst, lcmv_filter)
 
         stc = SourceEstimateEvoked(stc_name, stcs=stc_insts)
             
     elif inst_type == 'epochs':
         inst = subject.epochs[inst_name].raw
-        stc_insts = mne.lcmv_epochs(inst, fwd, noise_cov=noise_cov, 
-            data_cov=data_cov, reg=reg, label=label)
-        
+        lcmv_filter = mne.make_lcmv(inst.info, fwd, data_cov, 
+                                    noise_cov=noise_cov, reg=reg, 
+                                    label=label)
+        stc_insts = mne.apply_lcmv_epochs(inst, lcmv_filter)
         stc = SourceEstimateEpochs(stc_name, stcs=stc_insts)
 
     elif inst_type == 'raw':
-        inst = subject.get_working_file().copy().copy()
+        inst = subject.get_working_file().copy()
         inst.apply_proj()
       
-        stc_inst = mne.lcmv_raw(inst, fwd, noise_cov=noise_cov, 
-            data_cov=data_cov, reg=reg, label=label)
+        lcmv_filter = mne.make_lcmv(inst.info, fwd, data_cov, 
+                                    noise_cov=noise_cov, reg=reg, 
+                                    label=label)
+        stc_inst = mne.apply_lcmv_raw(inst, lcmv_filter) 
         
         stc = SourceEstimateRaw(stc_name, stc=stc_inst)
-
 
     logging.getLogger('ui_logger').info('Saving stc...')
     subject.add_stc(stc)

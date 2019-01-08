@@ -72,7 +72,7 @@
           <x>0</x>
           <y>0</y>
           <width>1331</width>
-          <height>847</height>
+          <height>839</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -152,7 +152,7 @@
                     <layout class="QHBoxLayout" name="horizontalLayout_18">
                      <item>
                       <layout class="QGridLayout" name="gridLayout_14">
-                       <item row="2" column="0">
+                       <item row="3" column="0">
                         <widget class="QPushButton" name="pushButtonEOG">
                          <property name="text">
                           <string>Calculate EOG projections...</string>
@@ -160,16 +160,6 @@
                         </widget>
                        </item>
                        <item row="3" column="1">
-                        <widget class="QPushButton" name="pushButtonApplyEEG">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="text">
-                          <string>Apply ocular projections...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="2" column="1">
                         <widget class="QPushButton" name="pushButtonApplyEOG">
                          <property name="enabled">
                           <bool>false</bool>
@@ -179,7 +169,7 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="1" column="1">
+                       <item row="2" column="1">
                         <widget class="QPushButton" name="pushButtonApplyECG">
                          <property name="enabled">
                           <bool>false</bool>
@@ -189,14 +179,7 @@
                          </property>
                         </widget>
                        </item>
-                       <item row="3" column="0">
-                        <widget class="QPushButton" name="pushButtonEEG">
-                         <property name="text">
-                          <string>Calculate ocular projections...</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
+                       <item row="2" column="0">
                         <widget class="QPushButton" name="pushButtonECG">
                          <property name="text">
                           <string>Calculate ECG projections...</string>
@@ -214,6 +197,20 @@
                         <widget class="QPushButton" name="pushButtonICA">
                          <property name="text">
                           <string>ICA...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="1">
+                        <widget class="QPushButton" name="pushButtonResample">
+                         <property name="text">
+                          <string>Resample...</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButtonRereference">
+                         <property name="text">
+                          <string>Rereference...</string>
                          </property>
                         </widget>
                        </item>
@@ -519,99 +516,6 @@
                        </item>
                        <item>
                         <spacer name="horizontalSpacer_16">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="4" column="0">
-                      <widget class="QLabel" name="labelEEGComputed">
-                       <property name="text">
-                        <string>Ocular projections</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="4" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_22">
-                       <item>
-                        <spacer name="horizontalSpacer_18">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                       <item>
-                        <widget class="QCheckBox" name="checkBoxEEGComputed">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::NoFocus</enum>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_19">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="4" column="2">
-                      <layout class="QHBoxLayout" name="horizontalLayout_34">
-                       <item>
-                        <spacer name="horizontalSpacer_20">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                       <item>
-                        <widget class="QCheckBox" name="checkBoxEEGApplied">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::NoFocus</enum>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_21">
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -1988,7 +1892,7 @@
      <x>0</x>
      <y>0</y>
      <width>1687</width>
-     <height>24</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -2524,7 +2428,16 @@
         <string>Subjects (active in bold):</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_12">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
          <number>9</number>
         </property>
         <item row="1" column="0">
