@@ -72,10 +72,9 @@ def plot_properties(raw, ica, picks, layout):
     for fig in figs:
         for ax_idx, ax in enumerate(fig.get_axes()):
             if ax_idx == 0:
-                ax.set_title("Component " + str(picks[idx] + 1))
+                ax.set_title("Component " + str(picks[idx]))
                 idx += 1
             break
-
 
 def plot_changes(raw, ica, indices):
     """
