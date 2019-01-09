@@ -143,11 +143,16 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
     layout = fileManager.read_layout(experiment.layout)
     colors = color_cycle(len(evokeds))
 
-    fig = mne.plot_evoked_topo(evokeds, layout,
+    new_evokeds = []
+    for evoked_idx, evoked in enumerate(evokeds):
+        
+        new_evokeds.append(evoked.copy().drop_channels(evoked.info['bads']))
+
+    fig = mne.plot_evoked_topo(new_evokeds, layout,
         color=colors, title=title)
 
-    conditions = [e.comment for e in evokeds]
-    positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
+    conditions = [e.comment for e in new_evokeds]
+    positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
             
     for cond, col, pos in zip(conditions, colors, positions):
         plt.figtext(0.775, pos, cond, color=col, fontsize=12)
