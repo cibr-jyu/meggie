@@ -138,7 +138,12 @@ class ICADialog(QtWidgets.QDialog):
 
         layout = self.parent.experiment.layout
 
-        plot_topographies(self.ica, len(self.component_info), layout)
+        try:
+            plot_topographies(self.ica, len(self.component_info), layout)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
+
 
     def on_pushButtonPlotSources_clicked(self, checked=None):
         """
@@ -148,7 +153,12 @@ class ICADialog(QtWidgets.QDialog):
 
         raw = self.parent.experiment.active_subject.get_working_file()
 
-        plot_sources(raw, self.ica)
+        try:
+            plot_sources(raw, self.ica)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
+
 
 
     def on_pushButtonPlotProperties_clicked(self, checked=None):
@@ -159,9 +169,18 @@ class ICADialog(QtWidgets.QDialog):
 
         picks = self.get_picks()
 
+        if not picks:
+            return
+
         raw = self.parent.experiment.active_subject.get_working_file()
 
-        plot_properties(raw, self.ica, picks)
+        layout = self.parent.experiment.layout
+
+        try:
+            plot_properties(raw, self.ica, picks, layout)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
     def on_pushButtonPlotChanges_clicked(self, checked=None):
         """
@@ -173,7 +192,11 @@ class ICADialog(QtWidgets.QDialog):
 
         indices = [self.component_info[name] for name in self.removed]
 
-        plot_changes(raw, self.ica, indices)
+        try:
+            plot_changes(raw, self.ica, indices)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
     def get_picks(self):
         """ Finds out the indices off all the selected components
