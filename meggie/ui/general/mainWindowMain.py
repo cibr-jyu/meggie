@@ -1280,8 +1280,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.pushButtonApplyECG.setEnabled(True)
             self.ui.checkBoxECGComputed.setChecked(True)
         
-        # Check whether EOG projections are calculated
-        if active_subject.check_eog_projs():
+        # Check whether EOG (and old EEG) projections are calculated
+        if active_subject.check_eog_projs() or active_subject.check_eeg_projs():
             self.ui.pushButtonApplyEOG.setEnabled(True)
             self.ui.checkBoxEOGComputed.setChecked(True)
         
@@ -1289,8 +1289,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if active_subject.check_ecg_applied():
             self.ui.checkBoxECGApplied.setChecked(True)
         
-        # Check whether EOG projections are applied
-        if active_subject.check_eog_applied():
+        # Check whether EOG (and old EEG) projections are applied
+        if active_subject.check_eog_applied() or active_subject.check_eeg_applied():
             self.ui.checkBoxEOGApplied.setChecked(True)
 
         # Check whether sss/tsss method is applied.
