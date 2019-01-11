@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../eventSelectionDialogUi.ui'
+# Form implementation generated from reading ui file 'eventSelectionDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -40,7 +40,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 745, 920))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 745, 928))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(700, 850))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.pushButtonFixedLength = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
@@ -201,6 +201,30 @@ class Ui_EventSelectionDialog(object):
         self.doubleSpinBoxTmax.setObjectName("doubleSpinBoxTmax")
         self.horizontalLayout_3.addWidget(self.doubleSpinBoxTmax)
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.labelBaselineStart = QtWidgets.QLabel(self.groupBoxEpoch)
+        self.labelBaselineStart.setObjectName("labelBaselineStart")
+        self.horizontalLayout_5.addWidget(self.labelBaselineStart)
+        self.doubleSpinBoxBaselineStart = QtWidgets.QDoubleSpinBox(self.groupBoxEpoch)
+        self.doubleSpinBoxBaselineStart.setDecimals(3)
+        self.doubleSpinBoxBaselineStart.setMinimum(-10.0)
+        self.doubleSpinBoxBaselineStart.setProperty("value", -0.2)
+        self.doubleSpinBoxBaselineStart.setObjectName("doubleSpinBoxBaselineStart")
+        self.horizontalLayout_5.addWidget(self.doubleSpinBoxBaselineStart)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.labelBaselineEnd = QtWidgets.QLabel(self.groupBoxEpoch)
+        self.labelBaselineEnd.setObjectName("labelBaselineEnd")
+        self.horizontalLayout_6.addWidget(self.labelBaselineEnd)
+        self.doubleSpinBoxBaselineEnd = QtWidgets.QDoubleSpinBox(self.groupBoxEpoch)
+        self.doubleSpinBoxBaselineEnd.setDecimals(3)
+        self.doubleSpinBoxBaselineEnd.setMinimum(-10.0)
+        self.doubleSpinBoxBaselineEnd.setProperty("value", 0.0)
+        self.doubleSpinBoxBaselineEnd.setObjectName("doubleSpinBoxBaselineEnd")
+        self.horizontalLayout_6.addWidget(self.doubleSpinBoxBaselineEnd)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.gridLayout_6.addLayout(self.verticalLayout_6, 0, 0, 1, 1)
         self.groupBox.raise_()
         self.widget.raise_()
@@ -270,4 +294,8 @@ class Ui_EventSelectionDialog(object):
         self.doubleSpinBoxTmin.setSuffix(_translate("EventSelectionDialog", " s"))
         self.labelTmax.setText(_translate("EventSelectionDialog", "End time:"))
         self.doubleSpinBoxTmax.setSuffix(_translate("EventSelectionDialog", " s"))
+        self.labelBaselineStart.setText(_translate("EventSelectionDialog", "Baseline start:"))
+        self.doubleSpinBoxBaselineStart.setSuffix(_translate("EventSelectionDialog", "s"))
+        self.labelBaselineEnd.setText(_translate("EventSelectionDialog", "Baseline end:"))
+        self.doubleSpinBoxBaselineEnd.setSuffix(_translate("EventSelectionDialog", "s"))
 

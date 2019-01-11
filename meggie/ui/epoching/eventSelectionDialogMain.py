@@ -133,6 +133,8 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.ui.lineEditCollectionName.setText(dic['collection_name'])
         self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
         self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
+        self.ui.doubleSpinBoxBaselineStart.setValue(dic['bstart'])
+        self.ui.doubleSpinBoxBaselineEnd.setValue(dic['bend'])
         
         events = deepcopy(params_dict['events'])
         fle = deepcopy(params_dict['fixed_length_events'])
@@ -164,6 +166,8 @@ class EventSelectionDialog(QtWidgets.QDialog):
             'collection_name': 'Epochs',
             'tmin': -0.200,
             'tmax': 0.500,
+            'bstart': -0.200,
+            'bend': 0.000,
             'event_id': 1,
             'mask': 0,
             'reject': rejections
@@ -177,6 +181,8 @@ class EventSelectionDialog(QtWidgets.QDialog):
         """
         tmin = float(self.ui.doubleSpinBoxTmin.value())
         tmax = float(self.ui.doubleSpinBoxTmax.value())
+        bstart = float(self.ui.doubleSpinBoxBaselineStart.value())
+        bend = float(self.ui.doubleSpinBoxBaselineEnd.value())
 
         mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
         grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
@@ -221,8 +227,9 @@ class EventSelectionDialog(QtWidgets.QDialog):
         
         param_dict = {'mag' : mag, 'grad' : grad,
                       'eeg' : eeg, 'eog' : eog,
-                      'reject' : reject, 'tmin' : float(tmin),
-                      'tmax' : float(tmax), 
+                      'reject' : reject, 
+                      'tmin' : float(tmin), 'tmax' : float(tmax), 
+                      'bstart' : float(bstart), 'bend' : float(bend), 
                       'collection_name' : collection_name,
                       'events' : events, 'fixed_length_events' : fle}
         return param_dict

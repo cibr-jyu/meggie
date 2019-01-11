@@ -95,8 +95,8 @@ def create_epochs(experiment, params, subject):
         params_copy['meg'] = 'grad'
     else:
         params_copy['meg'] = False
-    
-    # find all proper picks, dont include bads
+   
+    # find all proper picks, dont exclude bads
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
                            eeg=params_copy['eeg'], eog=params_copy['eog'],
                            exclude=[])
@@ -106,7 +106,8 @@ def create_epochs(experiment, params, subject):
                          'checking the checkboxes.')
 
     epochs = mne.Epochs(raw, np.array(events), 
-        category, params_copy['tmin'], params_copy['tmax'], 
+        category, params_copy['tmin'], params_copy['tmax'],
+        baseline=(params_copy['bstart'], params_copy['bend']),
         picks=picks, reject=params_copy['reject'])
         
     if len(epochs.get_data()) == 0:

@@ -17,8 +17,7 @@ bugs:
 - mixed data poorly supported (eeg isnt plotted when possible). should make it so that layout is only used for eeg and always when possible eeg uses that separately from meg.
 
 features:
-- color visualize evoked so that bad channels are in different color and dont affect scale
-- color visualize spectrum so that bad channels are in different color and dont affect scale
+- bad channels in spectrums should be saved to the spectrum object, not taken from the raw
 - set own baselines for epochs
 - eeg referencing gui, combining etc fun stuff. to import! special options?
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"

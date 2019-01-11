@@ -136,11 +136,6 @@ def open_raw(fname, preload=True):
         logging.getLogger('ui_logger').info('Reading ' + fname)
         raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True)
 
-        # this was default till mne-python 0.13, so have it for consistency
-        if not mne._has_eeg_average_ref_proj(raw.info['projs']):
-            if mne.pick_types(raw.info, meg=False, eeg=True).size > 0:
-                raw.set_eeg_reference()
-
         return raw
     except IOError as e:
         raise IOError(str(e))
