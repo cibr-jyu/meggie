@@ -208,7 +208,7 @@
                         </widget>
                        </item>
                        <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButtonRereference">
+                        <widget class="QPushButton" name="pushButtonRereferencing">
                          <property name="text">
                           <string>Rereference...</string>
                          </property>

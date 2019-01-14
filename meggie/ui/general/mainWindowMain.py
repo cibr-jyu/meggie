@@ -42,6 +42,7 @@ from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
+from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
@@ -974,6 +975,26 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.resamplingDialog = ResamplingDialog(self)
         self.resamplingDialog.show()
+
+    def on_pushButtonResampling_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+        self.resamplingDialog = ResamplingDialog(self)
+        self.resamplingDialog.show()
+
+    def on_pushButtonRereferencing_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+        self.rereferencingDialog = RereferencingDialog(self)
+        self.rereferencingDialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """

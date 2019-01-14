@@ -13,7 +13,7 @@ requirements:
 
   run:
     - python
-    - pyqt ==4.11.4
+    - pyqt >=5.0.0
     - xlwt
     - xlrd
     - mayavi
@@ -22,7 +22,7 @@ requirements:
     - scikit-learn
     - pysurfer
     - h5py
-    - mne ==0.15.2
+    - mne ==0.17.0
 
 about:
   license: BSD (3-clause)
