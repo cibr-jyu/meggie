@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1687</width>
+    <width>1521</width>
     <height>1014</height>
    </rect>
   </property>
@@ -71,8 +71,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1331</width>
-          <height>839</height>
+          <width>1250</width>
+          <height>825</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -236,7 +236,7 @@
                    </size>
                   </property>
                   <property name="title">
-                   <string>Preprocessing steps completed:</string>
+                   <string>Preprocessing information:</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_18">
                    <item row="0" column="0">
@@ -244,7 +244,21 @@
                      <property name="sizeConstraint">
                       <enum>QLayout::SetDefaultConstraint</enum>
                      </property>
-                     <item row="1" column="2">
+                     <item row="4" column="0">
+                      <widget class="QLabel" name="labelRereferenced">
+                       <property name="text">
+                        <string>Rereferenced:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="labelMaxFilter_2">
+                       <property name="text">
+                        <string>MaxFilter applied:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
                       <layout class="QHBoxLayout" name="horizontalLayout_21">
                        <item>
                         <spacer name="horizontalSpacer_7">
@@ -287,120 +301,21 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="2" column="0">
+                     <item row="1" column="0">
                       <widget class="QLabel" name="labelECGComputed_2">
                        <property name="text">
-                        <string>ECG projections</string>
+                        <string>ECG projections added:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_13">
-                       <property name="spacing">
-                        <number>6</number>
-                       </property>
-                       <item>
-                        <spacer name="horizontalSpacer_5">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                       <item>
-                        <widget class="QCheckBox" name="checkBoxMaxFilterComputed">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::NoFocus</enum>
-                         </property>
-                         <property name="inputMethodHints">
-                          <set>Qt::ImhDigitsOnly</set>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_8">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QLabel" name="labelMaxFilter_2">
+                     <item row="2" column="0">
+                      <widget class="QLabel" name="labelEOGComputed_2">
                        <property name="text">
-                        <string>MaxFilter</string>
+                        <string>EOG projections added:</string>
                        </property>
                       </widget>
                      </item>
                      <item row="2" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_17">
-                       <item>
-                        <spacer name="horizontalSpacer_11">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                       <item>
-                        <widget class="QCheckBox" name="checkBoxECGComputed">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::NoFocus</enum>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_12">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QLabel" name="labelEOGComputed_2">
-                       <property name="text">
-                        <string>EOG projections</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="2">
                       <layout class="QHBoxLayout" name="horizontalLayout_20">
                        <item>
                         <spacer name="horizontalSpacer_13">
@@ -443,7 +358,7 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="2" column="2">
+                     <item row="1" column="1">
                       <layout class="QHBoxLayout" name="horizontalLayout_16">
                        <item>
                         <spacer name="horizontalSpacer_9">
@@ -486,10 +401,17 @@
                        </item>
                       </layout>
                      </item>
+                     <item row="3" column="0">
+                      <widget class="QLabel" name="labelICAApplied">
+                       <property name="text">
+                        <string>ICA applied:</string>
+                       </property>
+                      </widget>
+                     </item>
                      <item row="3" column="1">
-                      <layout class="QHBoxLayout" name="horizontalLayout_19">
+                      <layout class="QHBoxLayout" name="horizontalLayout_5">
                        <item>
-                        <spacer name="horizontalSpacer_15">
+                        <spacer name="horizontalSpacer">
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -502,12 +424,9 @@
                         </spacer>
                        </item>
                        <item>
-                        <widget class="QCheckBox" name="checkBoxEOGComputed">
+                        <widget class="QCheckBox" name="checkBoxICAApplied">
                          <property name="enabled">
                           <bool>false</bool>
-                         </property>
-                         <property name="focusPolicy">
-                          <enum>Qt::NoFocus</enum>
                          </property>
                          <property name="text">
                           <string/>
@@ -515,7 +434,7 @@
                         </widget>
                        </item>
                        <item>
-                        <spacer name="horizontalSpacer_16">
+                        <spacer name="horizontalSpacer_5">
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -529,37 +448,45 @@
                        </item>
                       </layout>
                      </item>
-                     <item row="0" column="2">
-                      <widget class="QLabel" name="labelEOGApplied_2">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Applied</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QLabel" name="labelECGApplied_2">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Computed</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                      </widget>
+                     <item row="4" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_6">
+                       <item>
+                        <spacer name="horizontalSpacer_4">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkBoxRereferenced">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_6">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
                      </item>
                     </layout>
                    </item>
@@ -1891,7 +1818,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1687</width>
+     <width>1521</width>
      <height>20</height>
     </rect>
    </property>

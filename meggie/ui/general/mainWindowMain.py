@@ -1276,12 +1276,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.labelSubjectValue.clear()
         self.ui.listWidgetProjs.clear()
         self.ui.listWidgetBads.clear()
-        self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
-        self.ui.checkBoxECGComputed.setChecked(False)
         self.ui.checkBoxECGApplied.setChecked(False)
-        self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
+        self.ui.checkBoxICAApplied.setChecked(False)
+        self.ui.checkBoxRereferenced.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
 
@@ -1310,12 +1309,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
             self.ui.pushButtonApplyECG.setEnabled(True)
-            self.ui.checkBoxECGComputed.setChecked(True)
         
         # Check whether EOG (and old EEG) projections are calculated
         if active_subject.check_eog_projs() or active_subject.check_eeg_projs():
             self.ui.pushButtonApplyEOG.setEnabled(True)
-            self.ui.checkBoxEOGComputed.setChecked(True)
         
         # Check whether ECG projections are applied
         if active_subject.check_ecg_applied():
@@ -1327,8 +1324,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():
-            self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
+             
+        if active_subject.ica_applied:
+            self.ui.checkBoxICAApplied.setChecked(True)
+        if active_subject.rereferenced:
+            self.ui.checkBoxRereferenced.setChecked(True)
 
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds

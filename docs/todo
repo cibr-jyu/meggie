@@ -9,7 +9,7 @@ TODO:
 - should do manual for meggie
 
 bugs:
-- eeg-data eeg reference (not added as projection in 0.17.0)
+- if doing source analysis for eeg, must ensure that average reference is used
 - ssp default amount of vectors
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
 - meggie allows to create a new experiment over existing experiment,
@@ -18,12 +18,8 @@ bugs:
 
 features:
 - bad channels in spectrums should be saved to the spectrum object, not taken from the raw
-- set own baselines for epochs
-- eeg referencing gui, combining etc fun stuff. to import! special options?
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"
-- ica applied checkbox
 - add way to get the list of channels and a picture of channel averages, maybe some interactive thingy
-- add throbber to bad channel dialog
 - plot accuracy as preference
 - tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
 - unify EEG and EOG projections (EEG is EOG with channel selection)

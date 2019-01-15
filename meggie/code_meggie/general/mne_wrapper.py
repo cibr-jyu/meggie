@@ -6,6 +6,7 @@ import inspect
 RAW_TYPE = mne.io.Raw
 EVOKED_TYPE = mne.Evoked
 EPOCHS_TYPE = mne.Epochs
+PROJECTION_TYPE = mne.io.Projection
 SELECTIONS = mne.selection._SELECTIONS
 
 

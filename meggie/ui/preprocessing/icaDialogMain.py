@@ -232,5 +232,9 @@ class ICADialog(QtWidgets.QDialog):
 
         apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
 
+        self.parent.experiment.active_subject.ica_applied = True
+        self.parent.experiment.save_experiment_settings()
+
         self.initialize()
+        self.parent.initialize_ui()
         self.close()

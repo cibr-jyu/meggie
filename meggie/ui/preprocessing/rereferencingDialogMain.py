@@ -2,6 +2,8 @@
 """
 import logging
 
+import numpy as np
+
 from PyQt5 import QtWidgets
 
 from meggie.ui.preprocessing.rereferencingDialogUi import Ui_rereferencingDialog
@@ -44,20 +46,24 @@ class RereferencingDialog(QtWidgets.QDialog):
 
         @threaded
         def rereference_fun():
-
             if selection == 'Use average':
-                raw.set_eeg_reference(ref_channels='average')
+                raw.set_eeg_reference(ref_channels='average', projection=False)
             elif selection == '':
                 raise Exception('Empty selection')
             else:
                 raw.set_eeg_reference(ref_channels=[selection])
-                
+
         try:
             rereference_fun()
         except Exception as exc:
             exc_messagebox(self.parent, exc)
+            self.close()
+            return
 
         fileManager.save_raw(experiment, raw, path)
+
+        experiment.active_subject.rereferenced = True
+        experiment.save_experiment_settings()
 
         logging.getLogger('ui_logger').info('Data was successfully rereferenced using setting: ' + selection)
 
