@@ -1,10 +1,20 @@
 Changelog
 =========
 
-0.9.1 (unreleased)
+0.9.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- nothing changed yet.
+
+0.9.1 (2019-01-15)
+------------------
+
+- Implement resampling and rereferencing
+- Add baseline adjusting to epochs
+- Add bad channel dropping to evoked topo
+- Fix ICA for EEG
+- Fix EEG topomaps
+- Update to mne==0.1.7.0
 
 0.9.0 (2018-11-06)
 ------------------
