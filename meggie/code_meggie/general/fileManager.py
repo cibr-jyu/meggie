@@ -136,11 +136,6 @@ def open_raw(fname, preload=True):
         logging.getLogger('ui_logger').info('Reading ' + fname)
         raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True)
 
-        # this was default till mne-python 0.13, so have it for consistency
-        if not mne._has_eeg_average_ref_proj(raw.info['projs']):
-            if mne.pick_types(raw.info, meg=False, eeg=True).size > 0:
-                raw.set_eeg_reference()
-
         return raw
     except IOError as e:
         raise IOError(str(e))
@@ -166,7 +161,6 @@ def save_raw(experiment, raw, fname, overwrite=True):
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
     new_files = [fname_ for fname_ in contents if pat_new.match(fname_)]
-
     
     if len(old_files) != len(new_files):
         logger = logging.getLogger('ui_logger')
@@ -178,9 +172,19 @@ def save_raw(experiment, raw, fname, overwrite=True):
         for part in new_files:
             logger.debug(part)
         
+    moved_paths = []
     for file_ in new_files:
-        shutil.move(os.path.join(folder, os.path.basename(file_)), 
-                    os.path.join(folder, os.path.basename(file_)[1:]))
+        tmp_path = os.path.join(folder, os.path.basename(file_))
+        new_path = os.path.join(folder, os.path.basename(file_)[1:])
+        shutil.move(tmp_path, new_path)
+        moved_paths.append(new_path)
+
+    for file_ in old_files:
+        old_file_path = os.path.join(folder, os.path.basename(file_))
+        if old_file_path not in moved_paths:
+            logger.warning('Removing unused part: ' + str(old_file_path))
+            os.remove(old_file_path)
+
     experiment.active_subject.working_file_name = os.path.basename(fname)
     raw._filenames[0] = fname
     

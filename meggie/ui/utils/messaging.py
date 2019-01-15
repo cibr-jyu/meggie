@@ -7,15 +7,17 @@ from meggie.ui.general import messageBoxes
 def exc_messagebox(parent, exc, exec_=False):
     """ Pops up a messagebox for exceptions
     """
-    if isinstance(exc, str):
-        error_message = exc
-    else:
-        try:
-            error_message = str(exc.args[0])
-            if not error_message:
-                error_message = exc.__repr__()
-        except IndexError:
+
+    try:
+        if isinstance(exc, str):
+            error_message = exc
+        else:
             error_message = str(exc)
+            if not error_message:
+                error_message = ('(empty message of type ' + 
+                                 str(exc.__repr__()) + ')')
+    except Exception as e:
+        error_message = ''
 
     # print traceback to console
     logging.getLogger('ui_logger').exception(error_message)

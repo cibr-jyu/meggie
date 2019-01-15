@@ -16,7 +16,8 @@ from meggie.code_meggie.structures.events import Events
 
 class Subject(object):
     
-    def __init__(self, experiment, subject_name, working_file_name):
+    def __init__(self, experiment, subject_name, working_file_name,
+                  ica_applied=False, rereferenced=False):
         """
         Constructor for the subject class.
         
@@ -30,6 +31,9 @@ class Subject(object):
         self._subject_name = subject_name
         self._working_file = None
         self._working_file_name = working_file_name
+
+        self._ica_applied = ica_applied
+        self._rereferenced = rereferenced
 
         self._epochs = dict()
         self._evokeds = dict()
@@ -119,6 +123,30 @@ class Subject(object):
     @property
     def mri_subject_name(self):
         return self._mri_subject_name
+
+    @property
+    def ica_applied(self):
+        """
+        """
+        return self._ica_applied
+
+    @ica_applied.setter
+    def ica_applied(self, value):
+        """
+        """
+        self._ica_applied = value
+
+    @property
+    def rereferenced(self):
+        """
+        """
+        return self._rereferenced
+
+    @rereferenced.setter
+    def rereferenced(self, value):
+        """
+        """
+        self._rereferenced = value
 
     @property
     def subject_name(self):
@@ -432,14 +460,18 @@ class Subject(object):
         Checks the subject folder for sss/tsss applied file.
         Returns True if sss/tsss found.
         """
-        path = self.subject_path
 
         # Check whether sss/tsss method is applied.
-        files = list(filter(os.path.isfile, glob.glob(path + '/*sss*')))
-        files.extend(list(filter(os.path.isfile, glob.glob(path + '/*_mc*'))))
+        # path = self.subject_path
+        # files = list(filter(os.path.isfile, glob.glob(path + '/*sss*')))
+        # files.extend(list(filter(os.path.isfile, glob.glob(path + '/*_mc*'))))
+        # if len(files) > 0:
+        #     return True
 
-        if len(files) > 0:
-            return True
+        raw = self.get_working_file()
+        for item in raw.info['proc_history']:
+            if 'maxfilter' in item['creator']:
+                return True
 
         return False
 

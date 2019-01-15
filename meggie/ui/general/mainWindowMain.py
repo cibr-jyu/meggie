@@ -39,9 +39,10 @@ from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
 from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
 from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
-from meggie.ui.preprocessing.addEEGProjectionsMain import AddEEGProjections
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
+from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
+from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
@@ -493,18 +494,42 @@ class MainWindow(QtWidgets.QMainWindow):
         logging.getLogger('ui_logger').info("Plotting evoked topomaps.")
 
         try:
-            times = np.arange(0.0, 0.4, 0.02)
+            number_of_timepoints = 20
             for idx in range(len(list(mne_evokeds.keys()))):
-                fig, axes = plt.subplots(2, len(times))
-                fig.suptitle(list(mne_evokeds.keys())[idx]) 
+                evoked = list(mne_evokeds.values())[idx]
+                evoked_name = list(mne_evokeds.keys())[idx]
+                for ch_type in ['mag', 'grad', 'eeg']:
+                    n_eeg_channels = len(list(mne.pick_types(evoked.info, eeg=True)))
+                    n_mag_channels = len(list(mne.pick_types(evoked.info, meg='mag')))
+                    n_grad_channels = len(list(mne.pick_types(evoked.info, meg='grad')))
 
-                list(mne_evokeds.values())[idx].plot_topomap(
-                    times=times, ch_type='mag',  # noqa
-                    average=0.05, axes=axes[0], show=False, colorbar=None)
+                    # if mixed data, plot only mag and grad
+                    if ch_type == 'eeg' and (n_eeg_channels == 0 or
+                                             n_mag_channels > 0 or 
+                                             n_grad_channels > 0):
+                        continue
+                    if ch_type == 'grad' and n_grad_channels == 0:
+                        continue
+                    if ch_type == 'mag' and n_mag_channels == 0:
+                        continue
 
-                list(mne_evokeds.values())[idx].plot_topomap(
-                    times=times, ch_type='grad',  # noqa
-                    average=0.05, axes=axes[1], show=False, colorbar=None)
+                    times = np.linspace(0, 
+                                        evoked.times[-1], 
+                                        number_of_timepoints+1)[:-1]
+
+                    fig, axes = plt.subplots(2, int(number_of_timepoints/2))
+                    axes = axes.reshape(-1)
+
+                    title = evoked_name + ' (' + ch_type + ')'
+                    fig.suptitle(title) 
+
+                    layout = self.experiment.layout
+                    layout = fileManager.read_layout(layout)
+
+                    evoked.plot_topomap(
+                        times=times, ch_type=ch_type,
+                        axes=axes, show=False, colorbar=False,
+                        layout=layout)
             plt.show()
 
         except Exception as e:
@@ -837,16 +862,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ecgDialog = EcgParametersDialog(self)
         self.ecgDialog.show()
 
-    def on_pushButtonEEG_clicked(self, checked=None):
-        """Open the dialog for calculating the EEG PCA."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-
-        self.eegDialog = EegParametersDialog(self)
-        self.eegDialog.show()
-
     def on_pushButtonApplyEOG_clicked(self, checked=None):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
@@ -871,18 +886,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.addEcgProjs.show()
         
-    def on_pushButtonApplyEEG_clicked(self, checked=None):
-        """Open the dialog for applying the ECG-projections to the data."""
-        if checked is None:
-            return
-        if self.experiment.active_subject is None:
-            return
-        
-        info = self.experiment.active_subject.get_working_file().info
-        self.addEegProjs = AddEEGProjections(self, info['projs'])
-        self.addEegProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEegProjs.show()
-
     def on_pushButtonRemoveProj_clicked(self, checked=None):
         if checked is None:
             return
@@ -929,8 +932,12 @@ class MainWindow(QtWidgets.QMainWindow):
         name = str(self.epochList.currentItem().text())
         
         try:
+            lobe_name = self.ui.comboBoxLobes.currentText()
+            channels = mne.read_selection(
+                lobe_name)
             average_channels(self.experiment, name,
-                             self.ui.comboBoxLobes.currentText(),
+                             channels,
+                             lobe_name, 
                              update_ui=self.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
@@ -958,6 +965,36 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.filterDialog = FilterDialog(self)
         self.filterDialog.show()
+
+    def on_pushButtonResampling_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+        self.resamplingDialog = ResamplingDialog(self)
+        self.resamplingDialog.show()
+
+    def on_pushButtonResampling_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+        self.resamplingDialog = ResamplingDialog(self)
+        self.resamplingDialog.show()
+
+    def on_pushButtonRereferencing_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+        if self.experiment.active_subject is None:
+            return
+        self.rereferencingDialog = RereferencingDialog(self)
+        self.rereferencingDialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """
@@ -1239,17 +1276,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.labelSubjectValue.clear()
         self.ui.listWidgetProjs.clear()
         self.ui.listWidgetBads.clear()
-        self.ui.checkBoxMaxFilterComputed.setChecked(False)
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
-        self.ui.checkBoxECGComputed.setChecked(False)
         self.ui.checkBoxECGApplied.setChecked(False)
-        self.ui.checkBoxEOGComputed.setChecked(False)
         self.ui.checkBoxEOGApplied.setChecked(False)
-        self.ui.checkBoxEEGComputed.setChecked(False)
-        self.ui.checkBoxEEGApplied.setChecked(False)
+        self.ui.checkBoxICAApplied.setChecked(False)
+        self.ui.checkBoxRereferenced.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
-        self.ui.pushButtonApplyEEG.setEnabled(False)
 
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
@@ -1276,34 +1309,27 @@ class MainWindow(QtWidgets.QMainWindow):
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
             self.ui.pushButtonApplyECG.setEnabled(True)
-            self.ui.checkBoxECGComputed.setChecked(True)
         
-        # Check whether EOG projections are calculated
-        if active_subject.check_eog_projs():
+        # Check whether EOG (and old EEG) projections are calculated
+        if active_subject.check_eog_projs() or active_subject.check_eeg_projs():
             self.ui.pushButtonApplyEOG.setEnabled(True)
-            self.ui.checkBoxEOGComputed.setChecked(True)
-        
-        # Check whether EEG projections are calculated
-        if active_subject.check_eeg_projs():
-            self.ui.pushButtonApplyEEG.setEnabled(True)
-            self.ui.checkBoxEEGComputed.setChecked(True)        
         
         # Check whether ECG projections are applied
         if active_subject.check_ecg_applied():
             self.ui.checkBoxECGApplied.setChecked(True)
         
-        # Check whether EOG projections are applied
-        if active_subject.check_eog_applied():
+        # Check whether EOG (and old EEG) projections are applied
+        if active_subject.check_eog_applied() or active_subject.check_eeg_applied():
             self.ui.checkBoxEOGApplied.setChecked(True)
 
-        # Check whether EEG projections are applied
-        if active_subject.check_eeg_applied():
-            self.ui.checkBoxEEGApplied.setChecked(True)
-        
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():
-            self.ui.checkBoxMaxFilterComputed.setChecked(True)
             self.ui.checkBoxMaxFilterApplied.setChecked(True)
+             
+        if active_subject.ica_applied:
+            self.ui.checkBoxICAApplied.setChecked(True)
+        if active_subject.rereferenced:
+            self.ui.checkBoxRereferenced.setChecked(True)
 
         epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds

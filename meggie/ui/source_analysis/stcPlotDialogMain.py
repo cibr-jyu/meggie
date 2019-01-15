@@ -46,9 +46,12 @@ class stcPlotDialog(QtWidgets.QDialog):
 
         meggie_stc = self.experiment.active_subject.stcs[self.stc_name]
 
-        if meggie_stc.type != 'raw':
+        if meggie_stc.type == 'evoked':
             source = str(self.ui.comboBoxSource.currentText())
             stc = meggie_stc.get_data(self.experiment)[source]
+        elif meggie_stc.type == 'epochs':
+            source = str(self.ui.comboBoxSource.currentText())
+            stc = meggie_stc.get_data(self.experiment)[int(source)]
         else:
             stc = meggie_stc.get_data(self.experiment)
 

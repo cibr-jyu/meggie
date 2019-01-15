@@ -29,14 +29,14 @@ class FixedLengthEpochDialog(QtWidgets.QDialog):
         self.raw = (self.experiment.active_subject
                     .get_working_file(temporary=True))
         tmax = int(self.raw.times[-1])
-        self.ui.spinBoxStart.setMaximum(tmax)
-        self.ui.spinBoxEnd.setMaximum(tmax)
-        self.ui.spinBoxEnd.setValue(tmax)
+        self.ui.doubleSpinBoxStart.setMaximum(tmax)
+        self.ui.doubleSpinBoxEnd.setMaximum(tmax)
+        self.ui.doubleSpinBoxEnd.setValue(tmax)
 
     def accept(self, *args, **kwargs):
         event_params = {
-            'tmin': self.ui.spinBoxStart.value(),
-            'tmax': self.ui.spinBoxEnd.value(),
+            'tmin': self.ui.doubleSpinBoxStart.value(),
+            'tmax': self.ui.doubleSpinBoxEnd.value(),
             'interval': self.ui.doubleSpinBoxInterval.value(),
         }
         subject = self.parent.get_selected_subject()

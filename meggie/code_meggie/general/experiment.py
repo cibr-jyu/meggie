@@ -245,6 +245,8 @@ class Experiment(QObject):
             subject_dict = {
                 'subject_name': subject.subject_name,
                 'working_file_name': subject.working_file_name,
+                'ica_applied': subject.ica_applied,
+                'rereferenced': subject.rereferenced,
                 'epochs': [], 
                 'evokeds': [],
                 'spectrums': [],
@@ -430,8 +432,12 @@ class ExperimentHandler(QObject):
             for subject_data in data['subjects']:
 
                 
-                subject = Subject(experiment, subject_data['subject_name'],
-                                  subject_data['working_file_name'])
+                subject = Subject(experiment, 
+                                  subject_data['subject_name'],
+                                  subject_data['working_file_name'],
+                                  subject_data.get('ica_applied', False),
+                                  subject_data.get('rereferenced', False)
+                )
                 
                 for epoch_data in subject_data.get('epochs', []):
                     epochs = Epochs(epoch_data['collection_name'], subject,

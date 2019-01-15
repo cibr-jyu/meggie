@@ -95,8 +95,8 @@ def create_epochs(experiment, params, subject):
         params_copy['meg'] = 'grad'
     else:
         params_copy['meg'] = False
-    
-    # find all proper picks, dont include bads
+   
+    # find all proper picks, dont exclude bads
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
                            eeg=params_copy['eeg'], eog=params_copy['eog'],
                            exclude=[])
@@ -106,7 +106,8 @@ def create_epochs(experiment, params, subject):
                          'checking the checkboxes.')
 
     epochs = mne.Epochs(raw, np.array(events), 
-        category, params_copy['tmin'], params_copy['tmax'], 
+        category, params_copy['tmin'], params_copy['tmax'],
+        baseline=(params_copy['bstart'], params_copy['bend']),
         picks=picks, reject=params_copy['reject'])
         
     if len(epochs.get_data()) == 0:
@@ -143,11 +144,16 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
     layout = fileManager.read_layout(experiment.layout)
     colors = color_cycle(len(evokeds))
 
-    fig = mne.plot_evoked_topo(evokeds, layout,
+    new_evokeds = []
+    for evoked_idx, evoked in enumerate(evokeds):
+        
+        new_evokeds.append(evoked.copy().drop_channels(evoked.info['bads']))
+
+    fig = mne.plot_evoked_topo(new_evokeds, layout,
         color=colors, title=title)
 
-    conditions = [e.comment for e in evokeds]
-    positions = np.arange(0.025, 0.025 + 0.04 * len(evokeds), 0.04)
+    conditions = [e.comment for e in new_evokeds]
+    positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
             
     for cond, col, pos in zip(conditions, colors, positions):
         plt.figtext(0.775, pos, cond, color=col, fontsize=12)
@@ -163,43 +169,35 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
 
     fig.canvas.mpl_connect('button_press_event', onclick)
 
-def average_channels(experiment, instance, lobeName, channelSet=[], 
+def average_channels(experiment, instance, channels, title, 
                      update_ui=(lambda: None)):
     """
     """
     
-    if channelSet:
-        channels = channelSet
-        title = 'selected set of channels'
-    else:
-        channels = mne.read_selection(lobeName)
-        title = lobeName
-        
     message = "Calculating channel averages for " + title
     logging.getLogger('ui_logger').info(message)
 
-    dataList, epochs_name = _average_channels(experiment,
+    datalist, epochs_name = _average_channels(experiment,
         instance, channels, do_meanwhile=update_ui)
 
-    # Plotting:
-    plt.clf()
     fig = plt.figure()
     subject_name = experiment.active_subject.subject_name
-    fig.canvas.set_window_title('_'.join([epochs_name, 
-        'channel_avg', title]))
+    fig.canvas.set_window_title('_'.join([
+        epochs_name, 
+        'channel_avg', 
+        title]))
+
     fig.suptitle('Channel average for ' + title, y=1.0025)
 
     # Draw a separate plot for each event type
-    for index, (times, eventName, data) in enumerate(dataList):
-        ca = fig.add_subplot(len(dataList), 1, index + 1) 
-        ca.set_title(eventName)
+    for index, (times, event_name, ch_type, data) in enumerate(datalist):
+        ca = fig.add_subplot(len(datalist), 1, index + 1) 
+        ca.set_title(event_name)
 
-        if eventName.endswith('grad'):
+        if event_name.endswith('grad'):
             ch_type = 'grad'
-        elif eventName.endswith('mag'):
+        elif event_name.endswith('mag'):
             ch_type = 'mag'
-        elif eventName.endswith('eeg'):
-            ch_type = 'eeg'
 
         label = get_unit(ch_type)
         data *= get_scaling(ch_type)
@@ -213,80 +211,72 @@ def average_channels(experiment, instance, lobeName, channelSet=[],
     fig.show()
 
 @threaded
-def _average_channels(experiment, instance, channelsToAve):
+def _average_channels(experiment, instance, channels):
     """Performed in a worker thread."""
 
-    if isinstance(instance, str):
-        _epochs = experiment.active_subject.epochs.get(instance)
-        epochs = _epochs.raw
-        epochs_name = _epochs.collection_name
-        if epochs is None:
-            raise Exception('No epochs found.')
-        category = epochs.event_id
+    meggie_epochs = experiment.active_subject.epochs.get(instance)
+    epochs = meggie_epochs.raw
+    epochs_name = meggie_epochs.collection_name
 
-        # Creates evoked potentials from the given events (variable 'name' 
-        # refers to different categories).
-        evokeds = [epochs[name].average() for name in category.keys()]
-    elif isinstance(instance, mne.EVOKED_TYPE):
-        evokeds = [instance]
-        epochs_name = evokeds[0].comment
-    elif isinstance(instance, list) or isinstance(instance, np.ndarray):
-        evokeds = instance
-        epochs_name = 'List_of_epochs'
+    if epochs is None:
+        raise Exception('No epochs found.')
 
-    # Channel names in Evoked objects may or may not have whitespaces
-    # depending on the measurements settings,
-    # need to check and adjust channelsToAve accordingly.
-    
-    channelNameString = evokeds[0].info['ch_names'][0]
-    if re.match("^MEG[0-9]+", channelNameString):
-        channelsToAve = mne._clean_names(channelsToAve, remove_whitespace=True)
+    category = epochs.event_id
 
-    dataList = []
+    evokeds = [epochs[name].average() for name in category.keys()]
+
+    if not list(mne.pick_types(evokeds[0].info, meg=True)):
+        raise Exception('Supported only for MEG data')
+
+
+    datalist = []
 
     for evoked in evokeds:
-        evokedToAve = mne.pick_channels_evoked(evoked, list(channelsToAve))
 
-        ch_names = evokedToAve.ch_names
-        gradsIdxs = mne._pair_grad_sensors_from_ch_names(ch_names)
+        evoked = evoked.copy()
 
-        magsIdxs = mne.pick_channels_regexp(ch_names, regexp='MEG.{3,4}1$')
+        # remove bad channels, and their pairs
+        removed = []
+        for ch_idx, ch_name in enumerate(evoked.info['ch_names']):
+            if ch_name in evoked.info['bads']:
+                if ch_name.endswith('1'):
+                    removed.append(ch_name)
+                else:
+                    ch_group = ch_name[-4:-1]
+                    for ch_idx_2, ch_name_2 in enumerate(evoked.info['ch_names']):
+                        if ch_name_2[-4:-1] == ch_group and not ch_name_2.endswith('1'):  # noqa
+                            if ch_name_2 not in removed:
+                                removed.append(ch_name_2)
 
-        eegIdxs = mne.pick_types(evokedToAve.info, meg=False, eeg=True,
-                                   ref_meg=False)
+        grad_idxs = mne.pick_types(evoked.info, meg='grad', 
+                                   selection=channels,
+                                   exclude=removed)
+        mag_idxs = mne.pick_types(evoked.info, meg='mag',
+                                  selection=channels,
+                                  exclude=removed)
 
-
-        # Merges the grad channel pairs in evokedToAve
-        if len(gradsIdxs) > 0:
-            gradData = mne._merge_grad_data(evokedToAve.data[gradsIdxs])
-
-            # Averages the gradData
-            averagedGradData = np.mean(gradData, axis=0)
+        if len(grad_idxs) > 0:
+            grad_data = mne._merge_grad_data(evoked.data[grad_idxs])
+            grad_data = np.mean(grad_data, axis=0)
 
             # Links the event name and the corresponding data
-            dataList.append((
-                evokedToAve.times, 
-                evokedToAve.comment + '_grad',
-                averagedGradData
+            datalist.append((
+                evoked.times, 
+                evoked.comment + ' (grad)',
+                'grad',
+                grad_data
             ))
-        if len(magsIdxs) > 0:
-            mag_data = evokedToAve.data[magsIdxs]
-            averagedMagData = np.mean(mag_data, axis=0)
-            dataList.append((
-                evokedToAve.times,
-                evokedToAve.comment + '_mag', 
-                averagedMagData
-            ))
-        if len(eegIdxs) > 0:
-            eeg_data = evokedToAve.data[eegIdxs]
-            averagedEegData = np.mean(eeg_data, axis=0)
-            dataList.append((
-                evokedToAve.times,
-                evokedToAve.comment + '_eeg', 
-                averagedEegData
+        if len(mag_idxs) > 0:
+            mag_data = evoked.data[mag_idxs]
+            mag_data = np.mean(mag_data, axis=0)
+            datalist.append((
+                evoked.times,
+                evoked.comment + ' (mag)', 
+                'mag',
+                mag_data
             ))
 
-    return dataList, epochs_name
+    return datalist, epochs_name
 
 def group_average(experiment, evoked_name, update_ui=(lambda: None)):
     """

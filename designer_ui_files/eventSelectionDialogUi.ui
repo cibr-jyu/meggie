@@ -93,7 +93,7 @@
         <x>0</x>
         <y>0</y>
         <width>745</width>
-        <height>920</height>
+        <height>928</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -479,6 +479,60 @@
               </property>
               <property name="value">
                <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="labelBaselineStart">
+              <property name="text">
+               <string>Baseline start:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="minimum">
+               <double>-10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>-0.200000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="labelBaselineEnd">
+              <property name="text">
+               <string>Baseline end:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+              <property name="suffix">
+               <string>s</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="minimum">
+               <double>-10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.000000000000000</double>
               </property>
              </widget>
             </item>

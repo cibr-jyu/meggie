@@ -409,8 +409,15 @@ def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
 
     layout = fileManager.read_layout(experiment.layout)
 
+    if blmode:
+        bline = (blstart, blend)
+        mode = blmode
+    else:
+        bline = None
+        mode = None
+
     logging.getLogger('ui_logger').info("Plotting TFR topology...")
-    fig = tfr.plot_topo(layout=layout, show=False, baseline=(blstart, blend), mode=blmode)
+    fig = tfr.plot_topo(layout=layout, show=False, baseline=bline, mode=mode)
 
     fig.canvas.set_window_title('TFR' + '_' + name)
 

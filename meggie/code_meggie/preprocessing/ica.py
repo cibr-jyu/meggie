@@ -60,29 +60,36 @@ def plot_sources(raw, ica):
     sources.plot()
 
 
-def plot_properties(raw, ica, picks):
+def plot_properties(raw, ica, picks, layout):
     """
     """
-    figs = ica.plot_properties(raw, picks)
+    layout = fileManager.read_layout(layout)
+    figs = ica.plot_properties(
+            raw, picks, topomap_args={'layout': layout})
 
     # fix the names
     idx = 0
     for fig in figs:
         for ax_idx, ax in enumerate(fig.get_axes()):
             if ax_idx == 0:
-                ax.set_title("Component " + str(picks[idx] + 1))
+                ax.set_title("Component " + str(picks[idx]))
                 idx += 1
             break
-
 
 def plot_changes(raw, ica, indices):
     """
     """
 
     raw_removed = raw.copy()
+    raw_old = raw.copy()
     ica.apply(raw_removed, exclude=indices)
 
-    changes_raw = _prepare_raw_for_changes(raw_removed, raw)
+    # remove bads
+    bads = raw.info['bads']
+    raw_removed.drop_channels(bads)
+    raw_old.drop_channels(bads)
+
+    changes_raw = _prepare_raw_for_changes(raw_removed, raw_old)
     changes_raw.plot(color='red', bad_color='blue')
 
 
