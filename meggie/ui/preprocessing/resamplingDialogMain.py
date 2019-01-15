@@ -39,5 +39,7 @@ class ResamplingDialog(QtWidgets.QDialog):
             resample(experiment, raw, fname, rate)
         resample_fun()
 
+        logging.getLogger('ui_logger').info('Resampling done successfully.')
+
         self.close()
         self.parent.initialize_ui()

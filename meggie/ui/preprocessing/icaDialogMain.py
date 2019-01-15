@@ -235,6 +235,8 @@ class ICADialog(QtWidgets.QDialog):
         self.parent.experiment.active_subject.ica_applied = True
         self.parent.experiment.save_experiment_settings()
 
+        logging.getLogger('ui_logger').info('ICA applied successfully.')
+
         self.initialize()
         self.parent.initialize_ui()
         self.close()

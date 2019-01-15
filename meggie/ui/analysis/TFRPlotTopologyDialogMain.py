@@ -41,7 +41,10 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
 
         tfr = active_subject.tfrs[self.tfr_name].tfr
 
-        blmode = self.ui.comboBoxBaselineMode.currentText()
+        if self.ui.checkBoxBaselineCorrection.isChecked():
+            blmode = self.ui.comboBoxBaselineMode.currentText()
+        else:
+            blmode = None
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
    
