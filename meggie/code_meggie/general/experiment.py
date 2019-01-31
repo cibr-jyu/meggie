@@ -88,7 +88,7 @@ class Experiment(QObject):
     def author(self, author):
         """
         """
-        self._author = validate_name(author, fieldname='author')
+        self._author = validate_name(author, minlength=0, fieldname='author')
 
     @property
     def description(self):

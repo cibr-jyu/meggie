@@ -56,6 +56,7 @@ class CreateExperimentDialog(QtWidgets.QDialog):
             )
         except Exception as e:
             exc_messagebox(self, e)
+            return
         
         self.experimentCreated.emit(experiment)
         self.close()
