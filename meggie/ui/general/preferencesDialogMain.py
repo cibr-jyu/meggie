@@ -48,12 +48,12 @@ class PreferencesDialog(QtWidgets.QDialog):
         """
         Opens a filebrowser to select the workspace.
         """
-        # Standard workaround for file dialog opening twice
         if checked is None: 
             return 
         
-        workFilepath = str(QtWidgets.QFileDialog.getExistingDirectory(
-            self, "Select a workspace directory"))
+        workFilepath = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(
+                self, "Select a workspace directory")))
         self.ui.LineEditFilePath.setText(workFilepath)
     
     def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):

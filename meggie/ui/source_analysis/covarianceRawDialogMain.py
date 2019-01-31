@@ -5,6 +5,7 @@ import logging
 import os
 
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 import meggie.code_meggie.general.mne_wrapper as mne
 import meggie.code_meggie.general.fileManager as fileManager
@@ -92,8 +93,11 @@ class CovarianceRawDialog(QtWidgets.QDialog):
         if checked is None: 
             return
 
-        fname = str(QtWidgets.QFileDialog.getOpenFileName(self, 
-            'Select raw ' + 'to use')[0])
+        fname = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self, 
+                'Select raw ' + 'to use')[0])
+        )
+
         self.ui.lineEditRawFile.setText(fname)
 
         
