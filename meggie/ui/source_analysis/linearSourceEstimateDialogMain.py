@@ -119,7 +119,7 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
             start, end = None, None
 
         label = str(self.ui.comboBoxLabel.currentText())
-        if label == 'None':
+        if label == 'None' or label == '':
             label = None
         else:
             labels = self.read_labels()
