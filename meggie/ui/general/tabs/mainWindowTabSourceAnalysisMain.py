@@ -243,8 +243,11 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         os.environ['SUBJECT'] = subject.mri_subject_name
 
         inst = subject.working_file_path
-        mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
-                           head_high_res=False)
+        try:
+            mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
+                               head_high_res=False)
+        except Exception as exc:
+            exc_messagebox(self, exc)
 
     def on_pushButtonCoregistrationBrowse_clicked(self, checked=None):
         """
