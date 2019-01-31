@@ -140,7 +140,11 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         def group_average(*args, **kwargs):
             group_average_tfr(experiment, tfr_name)
 
-        group_average(do_meanwhile=self.update_ui)
+        try:
+            group_average(do_meanwhile=self.update_ui)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         experiment.save_experiment_settings()
         self.initialize_ui()

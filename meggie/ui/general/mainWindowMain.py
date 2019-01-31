@@ -602,7 +602,7 @@ class MainWindow(QtWidgets.QMainWindow):
         evoked = self.experiment.active_subject.evokeds[evoked_name]
         mne_evokeds = evoked.mne_evokeds
 
-        message = 'Meggie: Visualizing evoked collection %s...\n' % evoked_name
+        message = 'Visualizing evoked collection %s...\n' % evoked_name
         logging.getLogger('ui_logger').info(message)
 
         try:

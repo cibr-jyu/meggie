@@ -456,14 +456,15 @@ def group_average_tfr(experiment, tfr_name):
     if len(set(subtracts)) != 1:
         raise Exception("TFR's contain different evoked subtraction settings")
 
-
-
     tfrs = []
     for subject in experiment.subjects.values():
         tfr = subject.tfrs.get(tfr_name)
         if not tfr:
             continue
         tfrs.append(tfr.tfr)
+
+    if len(tfrs) < 2:
+        raise Exception('No other subject with a corresponding TFR found')
 
     average_tfr = mne.grand_average(tfrs, drop_bads=False)
     decim = tfr.decim

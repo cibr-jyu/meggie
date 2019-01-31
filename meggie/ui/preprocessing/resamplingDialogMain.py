@@ -32,6 +32,7 @@ class ResamplingDialog(QtWidgets.QDialog):
         raw = experiment.active_subject.get_working_file()
         fname = experiment.active_subject.working_file_path
 
+        old_rate = raw.info['sfreq']
         rate = self.ui.doubleSpinBoxNewRate.value()
 
         @threaded
@@ -39,7 +40,8 @@ class ResamplingDialog(QtWidgets.QDialog):
             resample(experiment, raw, fname, rate)
         resample_fun()
 
-        logging.getLogger('ui_logger').info('Resampling done successfully.')
+        logging.getLogger('ui_logger').info('Resampling done successfully from ' +
+                                            str(old_rate) + ' to ' + str(rate))
 
         self.close()
         self.parent.initialize_ui()

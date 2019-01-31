@@ -17,6 +17,7 @@ from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 
 from meggie.code_meggie.analysis.spectral import create_power_spectrum
 
+from meggie.code_meggie.utils.validators import validate_name
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
@@ -110,9 +111,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         """Starts the computation."""
 
         name = self.ui.lineEditName.text()
-        if not name:
-            messagebox(self.parent, "Must have a name")
-            return
+
+        name = validate_name(name)
 
         times = self.intervals
         

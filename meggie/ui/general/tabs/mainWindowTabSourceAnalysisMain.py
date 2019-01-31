@@ -3,6 +3,7 @@ import logging
 import shutil
 
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
