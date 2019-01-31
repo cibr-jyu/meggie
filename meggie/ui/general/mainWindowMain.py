@@ -249,8 +249,6 @@ class MainWindow(QtWidgets.QMainWindow):
         selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
 
         if selIndexes == []:
-            message = 'No subject selected for removal.'
-            messagebox(self, message)
             return
 
         message = 'Permanently remove the selected subjects and the related files?'
@@ -330,7 +328,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         self.epochParameterDialog = EventSelectionDialog(self)
@@ -409,7 +407,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
@@ -433,7 +431,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         subject_names = self.evokeds_batching_widget.selected_subjects
@@ -458,12 +457,18 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
+
+        if not self.experiment:
+            return
         
         subjects = self.experiment.subjects
         self.save_evoked_data(subjects)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         if checked is None:
+            return
+
+        if not self.experiment:
             return
         
         subjects = dict([
@@ -478,10 +483,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if not self.experiment:
-            return
-
-        if not self.experiment.active_subject:
+        if not self.experiment or  self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -541,7 +543,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Plot image over epochs channel"""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         if self.epochList.isEmpty():
@@ -564,7 +567,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         item = self.epochList.currentItem()
@@ -591,7 +595,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -622,7 +626,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         item = self.ui.listWidgetEvoked.currentItem()
@@ -646,6 +650,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
             return
+
+        if not self.experiment:
+            return
         
         self.layoutDialog = LayoutDialog(self)
         self.layoutDialog.show()
@@ -654,7 +661,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Delete the selected epoch collection."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         if self.epochList.isEmpty():
@@ -690,7 +697,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
         
         if self.epochList.currentItem() is None:
@@ -725,7 +733,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         if self.ui.listWidgetEvoked.count() == 0:
@@ -760,6 +768,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def on_pushButtonGroupDeleteEvoked_clicked(self, checked=None):
         if checked is None:
+            return
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         if self.ui.listWidgetEvoked.currentItem() is None:
@@ -811,7 +822,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Call ``raw.plot``."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         # Create a plot where bad channels are not set by clicking them
@@ -820,7 +832,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonCustomChannels_clicked(self, checked=None):
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
         
         self.badChannelsDialog = BadChannelsDialog(self)
@@ -830,7 +843,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Plots added projections as topomaps."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         raw = self.experiment.active_subject.get_working_file()
@@ -847,7 +861,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Open the dialog for calculating the EOG PCA."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         self.eogDialog = EogParametersDialog(self)
@@ -857,7 +872,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Open the dialog for calculating the ECG PCA."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         self.ecgDialog = EcgParametersDialog(self)
@@ -867,7 +883,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Open the dialog for applying the EOG-projections to the data."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         info = self.experiment.active_subject.get_working_file().info
@@ -879,7 +896,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Open the dialog for applying the ECG-projections to the data."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
         
         info = self.experiment.active_subject.get_working_file().info
@@ -890,7 +908,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def on_pushButtonRemoveProj_clicked(self, checked=None):
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
         
         if self.ui.listWidgetProjs.currentItem() is None:
@@ -922,7 +941,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """Shows the channels average graph."""
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
         
         if self.epochList.currentItem() is None:
@@ -949,7 +969,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         self.icaDialog = ICADialog(self)
@@ -961,7 +982,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+
+        if not self.experiment or self.experiment.active_subject is None:
             return
 
         self.filterDialog = FilterDialog(self)
@@ -972,18 +994,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if checked is None:
             return
-        if self.experiment.active_subject is None:
-            return
-        self.resamplingDialog = ResamplingDialog(self)
-        self.resamplingDialog.show()
 
-    def on_pushButtonResampling_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
-        if self.experiment.active_subject is None:
-            return
+
         self.resamplingDialog = ResamplingDialog(self)
         self.resamplingDialog.show()
 
@@ -992,7 +1006,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if checked is None:
             return
-        if self.experiment.active_subject is None:
+        if not self.experiment or self.experiment.active_subject is None:
             return
         self.rereferencingDialog = RereferencingDialog(self)
         self.rereferencingDialog.show()
