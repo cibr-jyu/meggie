@@ -9,6 +9,7 @@ from meggie.ui.source_analysis.covarianceEpochDialogUi import Ui_covarianceEpoch
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+from meggie.code_meggie.utils.validators import validate_name
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -45,7 +46,13 @@ class CovarianceEpochDialog(QtWidgets.QDialog):
 
         epochs = self.experiment.active_subject.epochs[collection_name].raw
 
-        name = str(self.ui.lineEditName.text()) + '-cov.fif'
+        try:
+            name = validate_name(str(self.ui.lineEditName.text()))
+        except Exception as exc:
+            exc_messagebox(self, exc, exec_=True) 
+            return
+
+        name = name + '-cov.fif'
         if name in self.experiment.active_subject.get_covfiles():
             messagebox(self, "Covariance matrix of this name already exists", 
                        exec_=True)

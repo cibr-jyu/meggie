@@ -1,6 +1,8 @@
 """
 """
 
+import numpy as np
+
 from PyQt5 import QtWidgets
 
 from meggie.ui.source_analysis.linearSourceEstimateDialogUi import Ui_linearSourceEstimateDialog  # noqa
@@ -39,7 +41,13 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
         self.ui.lineEditBasedOn.setText(fwd_name)
         self.ui.lineEditData.setText(inst_name)
 
-        self.populate_labels()
+        try:
+            self.populate_labels()
+        except Exception as exc:
+            messagebox(self, "Could not populate labels.", 
+                       exec_=True)
+            return
+
         self.populate_covariances()
 
 
@@ -97,6 +105,9 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
         lambda2 = float(self.ui.doubleSpinBoxLambda.value())
         method = str(self.ui.comboBoxMethod.currentText())
         covfile = str(self.ui.comboBoxCovariance.currentText())
+
+        if np.isclose(depth, 0):
+            depth = None
 
         if not covfile:
             messagebox(self, "No covariance matrix selected", exec_=True)

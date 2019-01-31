@@ -15,6 +15,7 @@ from meggie.ui.source_analysis.covarianceRawDialogUi import Ui_covarianceRawDial
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
+from meggie.code_meggie.utils.validators import validate_name
 
 
 class CovarianceRawDialog(QtWidgets.QDialog):
@@ -40,7 +41,13 @@ class CovarianceRawDialog(QtWidgets.QDialog):
         tmin = self.ui.doubleSpinBoxStartTime.value()
         tmax = self.ui.doubleSpinBoxEndTime.value()
 
-        name = str(self.ui.lineEditName.text()) + '-cov.fif'
+        try:
+            name = validate_name(str(self.ui.lineEditName.text()))
+        except Exception as exc:
+            exc_messagebox(self, exc, exec_=True)
+            return
+
+        name = name + '-cov.fif'
         if name in self.experiment.active_subject.get_covfiles():
             messagebox(self, "Covariance matrix of this name already exists",
                        exec_=True)

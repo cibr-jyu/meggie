@@ -12,7 +12,7 @@ class Ui_EventSelectionDialog(object):
     def setupUi(self, EventSelectionDialog):
         EventSelectionDialog.setObjectName("EventSelectionDialog")
         EventSelectionDialog.setWindowModality(QtCore.Qt.WindowModal)
-        EventSelectionDialog.resize(763, 977)
+        EventSelectionDialog.resize(763, 821)
         self.gridLayout = QtWidgets.QGridLayout(EventSelectionDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
@@ -40,7 +40,7 @@ class Ui_EventSelectionDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 745, 928))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 731, 850))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(700, 850))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.pushButtonFixedLength = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
