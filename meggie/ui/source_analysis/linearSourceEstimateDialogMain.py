@@ -46,7 +46,6 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
         except Exception as exc:
             messagebox(self, "Could not populate labels.", 
                        exec_=True)
-            return
 
         self.populate_covariances()
 
