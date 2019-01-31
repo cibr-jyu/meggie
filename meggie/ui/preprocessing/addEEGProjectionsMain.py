@@ -1,6 +1,7 @@
 """
 """
 
+import os
 import glob
 import numpy as np
 
@@ -28,7 +29,7 @@ class AddEEGProjections(QtWidgets.QDialog):
         directory = self.parent.experiment.active_subject.subject_path
 
         self.projs = read_projections(
-            glob.glob(directory + '/*_eeg_*proj*')[0])
+            glob.glob(os.path.join(directory, '*_eeg_*proj*'))[0])
 
         self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)

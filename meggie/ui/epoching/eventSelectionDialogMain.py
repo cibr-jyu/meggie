@@ -20,7 +20,6 @@ from meggie.code_meggie.analysis.epoching import create_epochs
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.validators import validate_name
 from meggie.ui.epoching.eventSelectionDialogUi import Ui_EventSelectionDialog
 from meggie.ui.epoching.fixedLengthEpochDialogMain import FixedLengthEpochDialog
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
@@ -28,6 +27,7 @@ from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
 
 
 from meggie.code_meggie.utils.units import get_scaling
+from meggie.code_meggie.utils.validators import validate_name
 
 class EventSelectionDialog(QtWidgets.QDialog):
     """

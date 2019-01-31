@@ -394,9 +394,9 @@ class Subject(object):
         """
         path = self.subject_path
         # check whether ECG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(path + '/*_ecg_avg_proj*')))
-        files += list(filter(os.path.isfile, glob.glob(path + '/*_ecg_proj*')))
-        files += list(filter(os.path.isfile, glob.glob(path + '/*_ecg-eve*')))
+        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg_avg_proj*'))))
+        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg_proj*'))))
+        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg-eve*'))))
         if len(files) > 1:
             return True
         return False           
@@ -408,9 +408,9 @@ class Subject(object):
         """
         path = self.subject_path
         #Check whether EOG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(path + '/*_eog_avg_proj*')))
-        files += list(filter(os.path.isfile, glob.glob(path + '/*_eog_proj*')))
-        files += list(filter(os.path.isfile, glob.glob(path + '/*_eog-eve*')))
+        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog_avg_proj*'))))
+        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog_proj*'))))
+        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog-eve*'))))
         if len(files) > 1:
             return True
         return False
@@ -422,8 +422,8 @@ class Subject(object):
         """
         path = self.subject_path
         #Check whether EEG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(path + '/*_eeg_proj*')))
-        files += list(filter(os.path.isfile, glob.glob(path + '/*_eeg-eve*')))
+        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eeg_proj*'))))
+        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eeg-eve*'))))
         if len(files) > 1:
             return True
         return False
@@ -461,13 +461,6 @@ class Subject(object):
         Returns True if sss/tsss found.
         """
 
-        # Check whether sss/tsss method is applied.
-        # path = self.subject_path
-        # files = list(filter(os.path.isfile, glob.glob(path + '/*sss*')))
-        # files.extend(list(filter(os.path.isfile, glob.glob(path + '/*_mc*'))))
-        # if len(files) > 0:
-        #     return True
-
         raw = self.get_working_file()
         for item in raw.info['proc_history']:
             if 'maxfilter' in item['creator']:
@@ -485,7 +478,7 @@ class Subject(object):
 
     def check_reconFiles_copied(self):
         reconDir = self.reconfiles_directory
-        mriDir = os.path.join(reconDir, 'mri/') 
+        mriDir = os.path.join(reconDir, 'mri') 
         if os.path.isdir(mriDir):
             return True
         else: 
@@ -503,9 +496,9 @@ class Subject(object):
 
     def check_mne_setup_mri_run(self):
         reconDir = self.reconfiles_directory
-        mriDir = os.path.join(reconDir, 'mri/') 
-        T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag/')
-        brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag/')
+        mriDir = os.path.join(reconDir, 'mri') 
+        T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag')
+        brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag')
         if os.path.isdir(T1NeuroMagDir) and os.path.isdir(brainNeuroMagDir):
             return True
         else:

@@ -7,7 +7,7 @@ import os
 import logging
 import configparser
 
-from meggie.code_meggie.utils.files import home_filepath
+from meggie.code_meggie.utils.files import homepath
 
 
 class PreferencesHandler(object):
@@ -59,7 +59,7 @@ class PreferencesHandler(object):
         else:
             config.set('MiscOptions', 'saveBads', 'False')
 
-        with open(home_filepath('.meggieprefs'), 'w') as configfile:
+        with open(os.path.join(homepath(), '.meggieprefs'), 'w') as configfile:
             config.write(configfile)
         
         
@@ -67,7 +67,7 @@ class PreferencesHandler(object):
         """
         Reads the preferences from disk into class attributes.
         """
-        filename = home_filepath('.meggieprefs')
+        filename = os.path.join(homepath(), '.meggieprefs')
         if os.path.isfile(filename):
             config = configparser.RawConfigParser()
             config.read(filename)

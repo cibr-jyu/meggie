@@ -11,6 +11,8 @@ import logging
 
 from meggie.ui.utils.decorators import threaded
 
+from meggie.code_meggie.utils.validators import validate_name
+
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.general.subject import Subject
 from meggie.code_meggie.structures.epochs import Epochs
@@ -67,52 +69,26 @@ class Experiment(QObject):
     @property
     def experiment_name(self):
         """
-        Returns the name of the experiment.
         """
         return self._experiment_name
 
     @experiment_name.setter
     def experiment_name(self, experiment_name):
         """
-        Sets the name for the experiment. 
-        Keyword arguments:
-        experiment_name    -- the name of the experiment
         """
-        name = os.path.basename(experiment_name)
-        
-        if (len(name) <= 30):
-            if re.match("^[A-Za-z0-9_ ]*$", name):
-                self._experiment_name = str(experiment_name)
-            else:
-                raise ValueError('Use only letters and numbers in experiment' +
-                                 'name')
-        else:
-            raise ValueError('Too long experiment name')
+        self._experiment_name = validate_name(experiment_name, fieldname='name')
 
     @property
     def author(self):
         """
-        Returns the author of the experiment
         """
         return self._author
 
     @author.setter
     def author(self, author):
         """
-        Sets the author of the experiment.
-        Raises exception if the author name is too long.
-        Raises exception if the author name includes other characters
-        than letters and numbers.
-        Keyword arguments:
-        author          - - the author of the experiment
         """
-        if (len(author) <= 30):
-            if re.match("^[A-Za-zäÄöÖåÅ0-9 ]*$", author):
-                self._author = author
-            else:
-                raise ValueError("Use only letters and numbers in _author name")
-        else:
-            raise ValueError('Too long _author name')
+        self._author = validate_name(author, fieldname='author')
 
     @property
     def description(self):
@@ -124,24 +100,19 @@ class Experiment(QObject):
     @description.setter
     def description(self, description):
         """
-        Sets the _description of the experiment written by the _author.
-        Raises exception if the _description is too long.
-        Raises exception if the _description includes other characters
-        than letters and numbers.        
-        Keyword arguments:
-        description     -- the description of the experiment written by the
-                           author
         """
-        if (len(description) <= 1000):
+
+        if len(description) <= 1000:
+
             if (re.match(
                 "^[A-Za-zäÄöÖåÅ0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
                  description) or len(description) == 0):
                 self._description = description
             else:
                 raise ValueError("Use only letters and " + 
-                                 "numbers in your _description")
+                                 "numbers in your description")
         else:
-            raise ValueError("Too long _description")
+            raise ValueError("Too long description")
 
     @property
     def layout(self):

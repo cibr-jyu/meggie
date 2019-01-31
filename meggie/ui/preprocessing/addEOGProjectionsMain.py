@@ -3,6 +3,7 @@
 """
 """
 
+import os
 import glob
 import numpy as np
 
@@ -36,7 +37,7 @@ class AddEOGProjections(QtWidgets.QDialog):
         directory = self.parent.experiment._active_subject._subject_path
 
         self.projs = read_projections(
-            glob.glob(directory + '/*_eog_*proj*')[0])
+            glob.glob(os.path.join(directory, '*_eog_*proj*'))[0])
 
         self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
