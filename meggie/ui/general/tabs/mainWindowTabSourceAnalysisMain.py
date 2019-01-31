@@ -123,8 +123,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         if checked is None:
             return
 
-        path = str(QtWidgets.QFileDialog.getExistingDirectory(self,
-            "Select directory of the reconstructed MRI image"))
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(self,
+                "Select directory of the reconstructed MRI image")))
 
         if path == '':
             return
@@ -257,8 +258,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         else:
             return
 
-        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select the coordinate MEG-MRI coordinate transformation file")[0])
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select the coordinate MEG-MRI coordinate transformation file")[0]))
 
         if path == '':
             return
@@ -300,8 +302,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         else:
             return
 
-        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select a forward solution file")[0])
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select a forward solution file")[0]))
 
         if not path.endswith('fwd.fif'):
             messagebox(self, "Forward solution file should end with -fwd.fif")

@@ -30,10 +30,11 @@ class LayoutDialog(QtWidgets.QDialog):
 
         home = homepath()
 
-        fname = str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file',
-                                                          home, "Layout-files "
-                                                          "(*.lout *.lay);;All "
-                                                          "files (*.*)")[0])
+        fname = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file',
+                                                      home, "Layout-files "
+                                                      "(*.lout *.lay);;All "
+                                                      "files (*.*)")[0]))
         self.ui.labelLayout.setText(fname)
 
     @QtCore.pyqtSlot(int)

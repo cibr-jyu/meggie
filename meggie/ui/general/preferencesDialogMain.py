@@ -57,10 +57,12 @@ class PreferencesDialog(QtWidgets.QDialog):
         self.ui.LineEditFilePath.setText(workFilepath)
     
     def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
-        if checked is None: return
+        if checked is None: 
+            return
         
-        FreeSurferHome = str(QtWidgets.QFileDialog.getExistingDirectory(
-            self, "Point Meggie to your FreeSurfer home directory"))
+        FreeSurferHome = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(
+                self, "Point Meggie to your FreeSurfer home directory")))
         self.ui.lineEditFreeSurferHome.setText(FreeSurferHome)
     
         

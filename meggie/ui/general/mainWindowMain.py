@@ -205,8 +205,9 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             directory = ''
 
-        path = str(QtWidgets.QFileDialog.getExistingDirectory
-                   (self, "Select _experiment directory", directory))
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(self, 
+                "Select experiment directory", directory)))
 
         if path == '':
             return
