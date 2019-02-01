@@ -14,7 +14,6 @@ class EpochWidget(QtWidgets.QWidget):
     Creates a widget that shows a list of epoch collections.
     """
     
-    #Custom signals:
     on_selection_changed = pyqtSignal()
 
     def __init__(self, parent, epoch_getter=None, parameter_setter=None):
@@ -28,7 +27,8 @@ class EpochWidget(QtWidgets.QWidget):
         self.epoch_getter = epoch_getter
         self.parameter_setter = parameter_setter
         
-        self.ui.listWidgetEpochs.currentItemChanged.connect(self.selection_changed)
+        self.ui.listWidgetEpochs.currentItemChanged.connect(
+            self.selection_changed)
 
 
     def setSelectionMode(self, mode):
@@ -77,7 +77,6 @@ class EpochWidget(QtWidgets.QWidget):
             return
 
         epochs = self.epoch_getter(item.text())
-        # update info box
         events = epochs.raw.event_id
         self.ui.listWidgetEvents.clear()
         for event_name, event_id in events.items():

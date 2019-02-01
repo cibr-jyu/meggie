@@ -21,6 +21,7 @@ from meggie.code_meggie.structures.epochs import Epochs
 from meggie.code_meggie.structures.events import Events
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
+from meggie.code_meggie.utils.validators import validate_name
 
 
 def create_epochs(experiment, params, subject):
@@ -113,6 +114,12 @@ def create_epochs(experiment, params, subject):
     if len(epochs.get_data()) == 0:
         raise ValueError('Could not find any data. Perhaps the ' + 
                          'rejection thresholds are too strict...')
+
+    try:
+        validate_name(params.get('collection_name', ''))
+    except Exception as exc:
+        exc_messagebox(self, exc)
+        return
 
     epochs_object = Epochs(params['collection_name'], subject, params, epochs)
     fileManager.save_epoch(epochs_object, overwrite=True)

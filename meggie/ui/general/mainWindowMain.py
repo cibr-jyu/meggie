@@ -30,8 +30,6 @@ from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
 from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.epoching.eventSelectionDialogMain import EventSelectionDialog
-from meggie.ui.analysis import visualizeEpochChannelDialogMain
 from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
 from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
 from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
@@ -55,8 +53,9 @@ from meggie.ui.utils.decorators import threaded
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
 from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
 from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
+from meggie.ui.general.tabs.mainWindowTabEpochsMain import MainWindowTabEpochs
 
-from meggie.code_meggie.general import experiment
+from meggie.code_meggie.general.experiment import ExperimentHandler
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
@@ -91,21 +90,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.preferencesHandler.set_env_variables()
 
         # For handling initialization and switching of experiments.
-        self.experimentHandler = experiment.ExperimentHandler(self)
+        self.experimentHandler = ExperimentHandler(self)
 
         # Create the tab contents
         self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
+        self.mainWindowTabEpochs = MainWindowTabEpochs(self)
         self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
         self.mainWindowTabInduced = MainWindowTabInduced(self)
 
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtWidgets.QLabel()
         self.ui.statusbar.addWidget(self.statusLabel)
-
-        # Creates a listwidget for epoch analysis.
-        self.epochList = EpochWidget(self, epoch_getter=self.get_epochs,
-            parameter_setter=self.show_epoch_collection_parameters)
-        self.epochList.hide()
 
         self.ui.listWidgetEvoked.setMinimumWidth(346)
         self.ui.listWidgetEvoked.setMaximumWidth(346)
@@ -119,9 +114,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.collect_evoked_parameter_values,
         )
  
-        # Populate the combobox for selecting lobes for channel averages.
-        self.populate_comboBoxLobes()
-
         self.ui.tabWidget.currentChanged.connect(self.on_currentChanged)
 
         # If the user has chosen to open the previous experiment automatically.
@@ -141,10 +133,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
 
-
-        # Select the first item on epoch list
-        if self.epochList.ui.listWidgetEpochs.count() > 1:
-            self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
 
         # Set bads not selectable
         self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
@@ -322,17 +310,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.dialogPreferences = PreferencesDialog(self)
         self.dialogPreferences.show()
-
-    def on_pushButtonCreateEpochs_clicked(self, checked=None):
-        """Open the epoch dialog."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.epochParameterDialog = EventSelectionDialog(self)
-        self.epochParameterDialog.show()
 
     def on_actionAbout_triggered(self, checked=None):
         """Open the About-dialog."""
@@ -539,57 +516,6 @@ class MainWindow(QtWidgets.QMainWindow):
             exc_messagebox(self, e)
 
 
-    def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
-        """Plot image over epochs channel"""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        if self.epochList.isEmpty():
-            messagebox(self, 'Create epochs before visualizing.')
-            return
-
-        if self.epochList.currentItem() is None:
-            message = 'Please select an epoch collection from the list.'
-            messagebox(self, message)
-            return
-
-        name = str(self.epochList.currentItem().text())
-        epochs = self.experiment.active_subject.epochs.get(name)
-        self.visualizeEpochs = (visualizeEpochChannelDialogMain.
-                                VisualizeEpochChannelDialog(epochs))
-        self.visualizeEpochs.show()
-
-    def on_pushButtonEpochsPlot_clicked(self, checked=None):
-        """Call ``epochs.plot``."""
-
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        item = self.epochList.currentItem()
-        if item is None:
-            message = 'No epochs collection selected.'
-            messagebox(self, message)
-            return
-
-        epochs_name = str(item.text())
-        epochs = self.experiment.active_subject.epochs.get(epochs_name)
-        bads = epochs.raw.info['bads']
-        
-        def handle_close(event):
-            epochs.raw.info['bads'] = bads
-            fileManager.save_epoch(epochs, overwrite=True)
-            self.epochList.selection_changed()
-       
-        fig = epochs.raw.plot(block=True, show=True)
-        
-        fig.canvas.mpl_connect('close_event', handle_close)
-
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """Plot the evoked data as a topology."""
         if checked is None:
@@ -657,76 +583,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layoutDialog = LayoutDialog(self)
         self.layoutDialog.show()
 
-    def on_pushButtonDeleteEpochs_clicked(self, checked=None):
-        """Delete the selected epoch collection."""
-        if checked is None:
-            return
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        if self.epochList.isEmpty():
-            return
-
-        elif self.epochList.currentItem() is None:
-            messagebox(self, 'No epochs selected')
-
-        item_str = self.epochList.currentItem().text()
-
-        message = 'Permanently remove epochs?'
-        reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
-                                           message, QtWidgets.QMessageBox.Yes | 
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
-
-        if reply == QtWidgets.QMessageBox.Yes:
-            try:
-                self.experiment.active_subject.remove_epochs(
-                    item_str,
-                )
-            except Exception as e:
-                exc_messagebox(self, e)
-
-            self.epochList.remove_item(self.epochList.currentItem())
-
-        if self.epochList.ui.listWidgetEpochs.count() == 0:
-            self.clear_epoch_collection_parameters()
-
-        self.experiment.save_experiment_settings()
-        self.initialize_ui()
-
-    def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        
-        if self.epochList.currentItem() is None:
-            messagebox(self, 'No epochs selected')
-
-        collection_name = self.epochList.currentItem().text()
-        
-        message = 'Permanently remove epoch collection from all subjects?'
-        reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
-                                           message, QtWidgets.QMessageBox.Yes | 
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
-
-        if reply == QtWidgets.QMessageBox.Yes:
-            for subject in self.experiment.subjects.values():
-                if collection_name in subject.epochs:
-                    subject.remove_epochs(
-                        collection_name,
-                    )
-            
-        if self.epochList.isEmpty():
-            self.clear_epoch_collection_parameters()
-        
-        if collection_name not in self.experiment.active_subject.epochs:
-            self.epochList.remove_item(self.epochList.currentItem())
-        
-        self.experiment.save_experiment_settings()
-        self.initialize_ui()
 
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked."""
@@ -937,32 +793,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
 
-    def on_pushButtonChannelAverages_clicked(self, checked=None):
-        """Shows the channels average graph."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        
-        if self.epochList.currentItem() is None:
-            message = 'Please select an epoch collection to channel average.'
-            messagebox(self, message)
-            return
-
-        name = str(self.epochList.currentItem().text())
-        
-        try:
-            lobe_name = self.ui.comboBoxLobes.currentText()
-            channels = mne.read_selection(
-                lobe_name)
-            average_channels(self.experiment, name,
-                             channels,
-                             lobe_name, 
-                             update_ui=self.update_ui)
-        except Exception as e:
-            exc_messagebox(self, e)
-
     def on_pushButtonICA_clicked(self, checked=None):
         """
         Show the dialog for ICA preprocessing.
@@ -1032,10 +862,6 @@ class MainWindow(QtWidgets.QMainWindow):
             if subject_name == self.experiment.active_subject.subject_name:
                 return
 
-        # This prevents taking the epoch list currentItem from the previously
-        # open subject when activating another subject.
-        self.clear_epoch_collection_parameters()
-        
         previous_subject = self.experiment.active_subject
         try:
             @threaded
@@ -1070,78 +896,6 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.initialize_ui()
 
-    def show_epoch_collection_parameters(self, epochs):
-        """
-        Shows parameters from the currently chosen epochs.
-
-        Keyword arguments:
-        epochs -- Epochs object
-        """
-        # Set default/empty values for epoch parameters.
-        self.clear_epoch_collection_parameters()
-        params = epochs.params
-
-        if params is None:
-            
-            logging.getLogger('ui_logger').warning(
-                'Epochs parameters not found!')
-            return
-        
-        self.ui.textBrowserTmin.setText(str(params['tmin']) + ' s')
-        self.ui.textBrowserTmax.setText(str(params['tmax']) + ' s')
-
-        # Creates dictionary of strings instead of qstrings for rejections.
-        params_rejections_str = dict((str(key), value) for key, value in
-                                     params['reject'].items())
-
-        if 'mag' in params_rejections_str:
-            factor = params_rejections_str['mag']
-            self.ui.textBrowserMag.setText(
-                str(factor) + ' ' + get_unit('mag'))
-        else:
-            self.ui.textBrowserMag.setText('-1')
-
-        if 'grad' in params_rejections_str:
-            factor = params_rejections_str['grad']
-            self.ui.textBrowserGrad.setText(
-                str(factor) + ' ' + get_unit('grad'))
-        else:
-            self.ui.textBrowserGrad.setText('-1')
-
-        if 'eeg' in params_rejections_str:
-            factor = params_rejections_str['eeg']
-            self.ui.textBrowserEEG.setText(
-                str(factor) + ' ' + get_unit('eeg'))
-        else:
-            self.ui.textBrowserEEG.setText('-1')
-
-        if 'eog' in params_rejections_str:
-            factor = params_rejections_str['eog']
-            self.ui.textBrowserEOG.setText(
-                str(factor) + ' ' + get_unit('eog'))
-        else:
-            self.ui.textBrowserEOG.setText('-1')
-
-        if 'stim' in params_rejections_str:
-            self.ui.textBrowserStim.setText('Yes')
-        else:
-            self.ui.textBrowserStim.setText('-1')
-
-        self.ui.textBrowserWorkingFile.setText(
-            epochs.path)
-
-    def clear_epoch_collection_parameters(self):
-        """
-        Clears epoch collection parameters on mainWindow Epoching tab.
-        """
-        self.ui.textBrowserTmin.clear()
-        self.ui.textBrowserTmax.clear()
-        self.ui.textBrowserGrad.clear()
-        self.ui.textBrowserMag.clear()
-        self.ui.textBrowserEEG.clear()
-        self.ui.textBrowserStim.clear()
-        self.ui.textBrowserEOG.clear()
-        self.ui.textBrowserWorkingFile.clear()
 
     def collect_evoked_parameter_values(self):
         collection_names = [str(item.text()) for item 
@@ -1275,8 +1029,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setup_loggers()
 
-        self.clear_epoch_collection_parameters()
-        self.epochList.clearItems()
         self.ui.listWidgetSubjects.clear()
         self.ui.listWidgetEvoked.clear()
         self.ui.textBrowserEvents.clear()
@@ -1346,12 +1098,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if active_subject.rereferenced:
             self.ui.checkBoxRereferenced.setChecked(True)
 
-        epochs_items = active_subject.epochs
         evokeds_items = active_subject.evokeds
-        if epochs_items is not None:
-            for name in sorted(epochs_items.keys()):
-                self.epochList.add_item(name)
-
         if evokeds_items is not None:
             for name in sorted(evokeds_items.keys()):
                 self.ui.listWidgetEvoked.addItem(name)
@@ -1404,22 +1151,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.textBrowserEvents.setText(events_string)
 
-    def populate_comboBoxLobes(self):
-        """
-        Populate the combo box listing available lobes for to use for
-        channel averaging.
-        """
-        self.ui.comboBoxLobes.clear()
-        self.ui.comboBoxLobes.addItem('Vertex')
-        self.ui.comboBoxLobes.addItem('Left-temporal')
-        self.ui.comboBoxLobes.addItem('Right-temporal')
-        self.ui.comboBoxLobes.addItem('Left-parietal')
-        self.ui.comboBoxLobes.addItem('Right-parietal')
-        self.ui.comboBoxLobes.addItem('Left-occipital')
-        self.ui.comboBoxLobes.addItem('Right-occipital')
-        self.ui.comboBoxLobes.addItem('Left-frontal')
-        self.ui.comboBoxLobes.addItem('Right-frontal')
-
     def update_tabs(self):
         """Method for initializing the tabs."""
 
@@ -1429,7 +1160,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.mainWindowTabSpectrums, "Spectrums")
-        self.ui.tabWidget.insertTab(3, self.ui.tabEpoching, "Epoching")
+        self.ui.tabWidget.insertTab(3, self.mainWindowTabEpochs, "Epoching")
         self.ui.tabWidget.insertTab(4, self.ui.tabEvoked, "Evoked responses")
         self.ui.tabWidget.insertTab(5, self.mainWindowTabInduced, "Induced responses")
         self.ui.tabWidget.insertTab(6, self.mainWindowTabSourceAnalysis, "Source Analysis")
@@ -1440,6 +1171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWindowTabSourceAnalysis.initialize_ui()
 
         self.mainWindowTabSpectrums.initialize_ui()
+        self.mainWindowTabEpochs.initialize_ui()
         self.mainWindowTabInduced.initialize_ui()
         
     def on_currentChanged(self):
@@ -1448,19 +1180,18 @@ class MainWindow(QtWidgets.QMainWindow):
         Show the epoch collection list epochList when in appropriate tabs.
         """
 
-        index = self.ui.tabWidget.currentIndex()
-        if index == 2:
-            mode = QtWidgets.QAbstractItemView.SingleSelection
-            self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
-        elif index == 3:
-            mode = QtWidgets.QAbstractItemView.MultiSelection
-            self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
-        else:
-            self.epochList.hide()
-            return
-
-        self.epochList.setSelectionMode(mode)
-        self.epochList.show()
+        # index = self.ui.tabWidget.currentIndex()
+        # if index == 2:
+        #     mode = QtWidgets.QAbstractItemView.SingleSelection
+        #     self.epochList.setParent(self.ui.groupBoxEpochsEpoching)
+        # elif index == 3:
+        #     mode = QtWidgets.QAbstractItemView.MultiSelection
+        #     self.epochList.setParent(self.ui.groupBoxEpochsAveraging)
+        # else:
+        #     self.epochList.hide()
+        #     return
+        # self.epochList.setSelectionMode(mode)
+        # self.epochList.show()
 
     def collect_parameter_values(self):
         collection_names = [str(item.text()) for item 
