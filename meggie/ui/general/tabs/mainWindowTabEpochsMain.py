@@ -53,7 +53,7 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
         self.populate_lobes()
         self.clear_epoch_collection_parameters()
-        self.epochList.clearItems()
+        self.epochList.clear_items()
 
         epochs_items = active_subject.epochs
         if epochs_items is not None:

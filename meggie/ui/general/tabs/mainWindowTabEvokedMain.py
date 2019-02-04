@@ -44,19 +44,22 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         mode = QtWidgets.QAbstractItemView.MultiSelection
         self.epochList.setSelectionMode(mode)
 
-        # self.ui.listWidgetEvoked.setMinimumWidth(346)
-        # self.ui.listWidgetEvoked.setMaximumWidth(346)
-
         self.evokeds_batching_widget = BatchingWidget(
-            self.parent.experiment,
-            self, self.ui.widgetBatchContainer,
-            self.ui.pushButtonCreateEvoked,
-            self.ui.pushButtonCreateEvokedBatch,
-            self.evoked_selection_changed,
-            self.collect_evoked_parameter_values,
+            experiment_getter=self.experiment_getter,
+            parent=self, 
+            geometry=self.ui.widgetBatchContainer.geometry(),
+            container=self.ui.widgetBatchContainer,
+            pushButtonCompute=self.ui.pushButtonCreateEvoked,
+            pushButtonComputeBatch=self.ui.pushButtonCreateEvokedBatch,
+            selection_changed=self.evoked_selection_changed,
+            collect_parameter_values=self.collect_evoked_parameter_values,
+            hideHook=self.hideHook
         )
 
         self.initialize_ui()
+
+    def experiment_getter(self):
+        return self.parent.experiment
 
     def initialize_ui(self):
 
@@ -68,7 +71,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         if active_subject is None:
             return
 
-        self.epochList.clearItems()
+        self.epochList.clear_items()
         epochs_items = active_subject.epochs
         if epochs_items is not None:
             for name in sorted(epochs_items.keys()):
@@ -85,8 +88,8 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
 
         # Update the batching widget ui
-        if self.parent.experiment:
-            self.evokeds_batching_widget.update(self.parent.experiment, False)
+        # if self.parent.experiment:
+        #     self.evokeds_batching_widget.update(self.parent.experiment, False)
 
     def update_ui(self):
         self.parent.update_ui()
@@ -380,16 +383,19 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         self.initialize_ui()
 
     def evoked_selection_changed(self, subject_name, data_dict):
-        epoch_widget = self.epochList.ui.listWidgetEpochs
-
-        epoch_widget.clear()
+        """
+        """
+        self.epochList.clear_items()
         epochs = self.parent.experiment.subjects[subject_name].epochs
         for name in sorted(epochs.keys()):
             item = QtWidgets.QListWidgetItem()
             item.setText(name)
-            epoch_widget.addItem(item)
+            self.epochList.add_item(item)
             if name in data_dict:
                 item.setSelected(True)
+
+    def hideHook(self):
+        self.initialize_ui()
 
 
     def on_listWidgetEvoked_currentItemChanged(self, item):

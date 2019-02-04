@@ -133,11 +133,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QWidget" name="widgetBatchContainer" native="true">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>460</y>
+         <x>20</x>
+         <y>390</y>
          <width>311</width>
          <height>441</height>
         </rect>
@@ -543,7 +543,7 @@
        </layout>
       </widget>
       <zorder>groupBox</zorder>
-      <zorder>widget</zorder>
+      <zorder>widgetBatchContainer</zorder>
       <zorder>groupBoxEvent</zorder>
       <zorder>groupBoxRejection</zorder>
       <zorder>groupBoxEpoch</zorder>

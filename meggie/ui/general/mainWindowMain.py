@@ -24,7 +24,6 @@ from PyQt5.Qt import QApplication
 import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.ui.icons import mainWindowIcons_rc
-
 from meggie.ui.general.mainWindowUi import Ui_MainWindow
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog

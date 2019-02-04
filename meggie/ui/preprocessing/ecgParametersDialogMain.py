@@ -32,13 +32,18 @@ class EcgParametersDialog(QtWidgets.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.batching_widget = BatchingWidget(self.parent.experiment,
-            self, self.ui.scrollAreaWidgetContents_2)
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter,
+            parent=self, 
+            container=self.ui.scrollAreaWidgetContents_2,
+            geometry=self.ui.widget.geometry())
 
         raw = self.parent.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
+    def experiment_getter(self):
+        return self.parent.experiment
 
     def selection_changed(self, subject_name, params_dict):
         """

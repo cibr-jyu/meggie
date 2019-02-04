@@ -317,7 +317,6 @@ def plot_average_epochs(experiment, events, tmin, tmax):
     subject_name = experiment.active_subject.subject_name
     fig.canvas.set_window_title('avg_epochs_' + subject_name)
 
-@threaded
 def find_eog_events(experiment, params):
     raw = experiment.active_subject.get_working_file()
     eog_events = mne.find_eog_events(raw, l_freq=params['l_freq'], 

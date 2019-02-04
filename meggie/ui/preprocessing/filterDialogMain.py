@@ -27,8 +27,14 @@ class FilterDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.filterParameterDictionary = None
-        self.batching_widget = BatchingWidget(self.parent.experiment,
-            self, self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter,
+            parent=self,
+            container=self.ui.scrollAreaWidgetContents,
+            geometry=self.ui.widget.geometry())
+
+    def experiment_getter(self):
+        return self.parent.experiment
 
     def on_pushButtonPreview_clicked(self, checked=None):
         """
@@ -96,12 +102,13 @@ class FilterDialog(QtWidgets.QDialog):
         """
         """
         recently_active_subject = self.parent.experiment.active_subject.subject_name
-        subject_names = []
+        # subject_names = []
+        # for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
+        #     item = self.batching_widget.ui.listWidgetSubjects.item(i)
+        #     if item.checkState() == QtCore.Qt.Checked:
+        #         subject_names.append(item.text())
 
-        for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
-            item = self.batching_widget.ui.listWidgetSubjects.item(i)
-            if item.checkState() == QtCore.Qt.Checked:
-                subject_names.append(item.text())
+        subject_names = self.batching_widget.selected_subjects
 
         # In case of batch process:
         # 1. Calculation is first done for the active subject to prevent an

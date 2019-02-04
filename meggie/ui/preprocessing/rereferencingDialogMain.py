@@ -54,7 +54,7 @@ class RereferencingDialog(QtWidgets.QDialog):
                 raw.set_eeg_reference(ref_channels=[selection])
 
         try:
-            rereference_fun()
+            rereference_fun(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
             self.close()

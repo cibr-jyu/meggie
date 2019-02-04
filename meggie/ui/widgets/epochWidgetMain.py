@@ -37,11 +37,13 @@ class EpochWidget(QtWidgets.QWidget):
         self.ui.listWidgetEpochs.setSelectionMode(mode)
         
         
-    def clearItems(self):
+    def clear_items(self):
         """Remove all the items from the widget's list.
         """
         while self.ui.listWidgetEpochs.count() > 0:
             self.ui.listWidgetEpochs.takeItem(0)
+
+        self.ui.listWidgetEvents.clear()
 
     def currentItem(self):
         """return The currently selected item from the widget's list."""

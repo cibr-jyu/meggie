@@ -68,7 +68,7 @@ class ICADialog(QtWidgets.QDialog):
             return compute_ica(raw, n_components, method, max_iter)
 
         try:
-            self.ica = _compute_ica()
+            self.ica = _compute_ica(do_meanwhile=self.parent.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
             return

@@ -56,8 +56,16 @@ class EventSelectionDialog(QtWidgets.QDialog):
             'fixed_length_events': []
         }
         
-        self.batching_widget = BatchingWidget(self.experiment, self, 
-            self.ui.scrollAreaWidgetContents)
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter, 
+            parent=self, 
+            container=self.ui.scrollAreaWidgetContents,
+            geometry=self.ui.widgetBatchContainer.geometry())
+            # container=self.ui.scrollAreaWidgetContents)
+
+
+    def experiment_getter(self):
+        return self.experiment
 
     def update_events(self):
         """Add a list of events or a single event to the ui's eventlist.
@@ -145,11 +153,7 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.update_events()
 
     def get_selected_subject(self):
-        item = None
-
-        if self.batching_widget.ui.checkBoxBatch.checkState():
-            item = self.batching_widget.ui.listWidgetSubjects.currentItem()
-
+        item = Non
         if item is None:
             subject_name = self.experiment.active_subject.subject_name
         else:
@@ -323,11 +327,13 @@ class EventSelectionDialog(QtWidgets.QDialog):
                 return 
             
         recently_active_subject = self.experiment.active_subject.subject_name
-        subject_names = []
-        for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
-            item = self.batching_widget.ui.listWidgetSubjects.item(i)
-            if item.checkState() == QtCore.Qt.Checked:
-                subject_names.append(item.text())
+
+        # subject_names = []
+        # for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
+        #     item = self.batching_widget.ui.listWidgetSubjects.item(i)
+        #     if item.checkState() == QtCore.Qt.Checked:
+        #         subject_names.append(item.text())
+        subject_names = self.batching_widget.selected_subjects
 
         epoch_info = []
 

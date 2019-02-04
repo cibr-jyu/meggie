@@ -190,7 +190,6 @@ class Experiment(QObject):
         self.active_subject = self.subjects[subject_name]
         return self.active_subject
  
-    @threaded
     def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
         
