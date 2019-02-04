@@ -45,7 +45,7 @@ class BatchingWidget(QtWidgets.QWidget):
         self.pushButtonComputeBatch.setEnabled(False)
 
         self.ui.functionalityWidget.hide()
-        self.setGeometry(self.parent.ui.widget.geometry())
+        self.setGeometry(container.geometry())
         self.adjustSize()
 
         self.data = {}
@@ -93,7 +93,8 @@ class BatchingWidget(QtWidgets.QWidget):
         self.selection_changed(subject_name, data_dict)
     
     def showWidget(self, enabled):
-        self.update(self.experiment, enabled)
+        if self.experiment:
+            self.update(self.experiment, enabled)
         
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.

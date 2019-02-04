@@ -155,7 +155,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
             epochs.path)
 
 
-
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch collection."""
         if checked is None:
@@ -188,7 +187,8 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
                 exc_messagebox(self, e)
 	    
             experiment.save_experiment_settings()
-            self.initialize_ui()
+            # update mainwindow ui, as epochs are shown in multiple tabs
+            self.parent.initialize_ui()
 
 
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
@@ -224,7 +224,7 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
                             subject.subject_name)
 
             experiment.save_experiment_settings()
-            self.initialize_ui()
+            self.parent.initialize_ui()
 
     def on_pushButtonChannelAverages_clicked(self, checked=None):
         """Shows the channels average graph."""

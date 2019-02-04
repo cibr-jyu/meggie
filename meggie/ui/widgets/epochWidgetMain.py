@@ -77,6 +77,10 @@ class EpochWidget(QtWidgets.QWidget):
             return
 
         epochs = self.epoch_getter(item.text())
+
+        if not epochs:
+            return
+
         events = epochs.raw.event_id
         self.ui.listWidgetEvents.clear()
         for event_name, event_id in events.items():

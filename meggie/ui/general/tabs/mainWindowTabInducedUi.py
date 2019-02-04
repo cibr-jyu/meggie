@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../mainWindowTabInducedUi.ui'
+# Form implementation generated from reading ui file 'mainWindowTabInducedUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,9 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_mainWindowTabInduced(object):
     def setupUi(self, mainWindowTabInduced):
         mainWindowTabInduced.setObjectName("mainWindowTabInduced")
-        mainWindowTabInduced.resize(1112, 732)
+        mainWindowTabInduced.resize(997, 601)
         self.layoutWidget = QtWidgets.QWidget(mainWindowTabInduced)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 981, 711))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 981, 581))
         self.layoutWidget.setObjectName("layoutWidget")
         self.gridLayout_15 = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout_15.setContentsMargins(0, 0, 0, 0)
@@ -108,7 +108,7 @@ class Ui_mainWindowTabInduced(object):
     def retranslateUi(self, mainWindowTabInduced):
         _translate = QtCore.QCoreApplication.translate
         mainWindowTabInduced.setWindowTitle(_translate("mainWindowTabInduced", "Form"))
-        self.groupBoxComputations.setTitle(_translate("mainWindowTabInduced", "Computations"))
+        self.groupBoxComputations.setTitle(_translate("mainWindowTabInduced", "Computations:"))
         self.pushButtonComputeTFR.setText(_translate("mainWindowTabInduced", "Compute TFR..."))
         self.groupBoxTFR.setTitle(_translate("mainWindowTabInduced", "TFR\'s"))
         self.labelTFRInfo.setText(_translate("mainWindowTabInduced", "TFR info"))
