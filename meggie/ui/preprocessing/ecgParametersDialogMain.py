@@ -27,23 +27,26 @@ class EcgParametersDialog(QtWidgets.QDialog):
     values for calculating ECG projections.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.experiment = experiment
+
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
             parent=self, 
             container=self.ui.scrollAreaWidgetContents_2,
             geometry=self.ui.widget.geometry())
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         MEG_channels = MeasurementInfo(raw).MEG_channel_names
         self.ui.comboBoxECGChannel.addItems(MEG_channels)
 
     def experiment_getter(self):
-        return self.parent.experiment
+        return self.experiment
 
     def selection_changed(self, subject_name, params_dict):
         """
@@ -59,7 +62,7 @@ class EcgParametersDialog(QtWidgets.QDialog):
             dic = self.get_default_values()
         
         #channel_list = self.batching_widget.data[subject_name + ' channels']
-        subject = self.parent.experiment.subjects.get(subject_name)
+        subject = self.experiment.subjects.get(subject_name)
         raw = subject.get_working_file(preload=False, temporary=True)
         channel_list = raw.ch_names
         self.ui.comboBoxECGChannel.addItems(channel_list)
@@ -120,13 +123,13 @@ class EcgParametersDialog(QtWidgets.QDialog):
         """
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name =  self.parent.experiment.active_subject.subject_name
+        active_subject_name =  self.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
         try:
-            self.calculate_ecg(self.parent.experiment.active_subject)    
+            self.calculate_ecg(self.experiment.active_subject)    
         except Exception as e:
             self.batching_widget.failed_subjects.append((
-                self.parent.experiment.active_subject, str(e)))
+                self.experiment.active_subject, str(e)))
             
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -137,12 +140,12 @@ class EcgParametersDialog(QtWidgets.QDialog):
             return
 
         parameter_values = self.collect_parameter_values()
-        experiment = self.parent.experiment
+        experiment = self.experiment
         plot_ecg_events(experiment, parameter_values)    
         
     def acceptBatch(self):
         
-        recently_active_subject = self.parent.experiment.active_subject.subject_name
+        recently_active_subject = self.experiment.active_subject.subject_name
         subject_names = []
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
             item = self.batching_widget.ui.listWidgetSubjects.item(i)
@@ -153,23 +156,23 @@ class EcgParametersDialog(QtWidgets.QDialog):
         #    excessive reading of a raw file.
         if recently_active_subject in subject_names:
             try:
-                self.calculate_ecg(self.parent.experiment.active_subject)    
+                self.calculate_ecg(self.experiment.active_subject)    
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.parent.experiment.active_subject, str(e)))
+                    self.experiment.active_subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects
-        for name, subject in self.parent.experiment.subjects.items():
+        for name, subject in self.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
                 try:
-                    self.parent.experiment.activate_subject(name)
+                    self.experiment.activate_subject(name)
                     self.calculate_ecg(subject)    
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, str(e)))              
 
-        self.parent.experimnt.activate_subject(recently_active_subject)
+        self.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()        
         self.parent.initialize_ui()
         self.close()

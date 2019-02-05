@@ -17,13 +17,15 @@ from meggie.code_meggie.preprocessing.projections import call_eeg_ssp
 
 class EegParametersDialog(QtWidgets.QDialog):
     
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.experiment = experiment
         
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         self.ui.comboBoxChannelSelect.addItems(raw.ch_names)
         
         self.ui.tableWidgetEvents.currentItemChanged.connect(
@@ -40,7 +42,7 @@ class EegParametersDialog(QtWidgets.QDialog):
         Finds EOG-events from the raw data.
         Called when find eog events -button is clicked.
         """
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         if checked is None or not raw: return
         
         params = dict()
@@ -67,7 +69,7 @@ class EegParametersDialog(QtWidgets.QDialog):
         mne.preprocessing.eog.peak_finder = new_peak_finder
 
         try:
-            eog_events = find_eog_events(self.parent.experiment, params)
+            eog_events = find_eog_events(self.experiment, params)
             self.ui.tableWidgetEvents.clear()
             self.ui.tableWidgetEvents.setRowCount(0)
             for i in range(0, len(eog_events)):
@@ -129,7 +131,7 @@ class EegParametersDialog(QtWidgets.QDialog):
         events = self.get_events()
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
-        plot_average_epochs(self.parent.experiment, events, tmin, tmax)
+        plot_average_epochs(self.experiment, events, tmin, tmax)
         
     def on_pushButtonShowEvents_clicked(self, checked=None):
         """
@@ -139,7 +141,7 @@ class EegParametersDialog(QtWidgets.QDialog):
             return
         events = self.get_events()
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         logging.getLogger('ui_logger').info('Plotting events..')
 
         raw.plot(events=events, scalings=dict(eeg=40e-6))
@@ -168,7 +170,7 @@ class EegParametersDialog(QtWidgets.QDialog):
             messagebox(self.parent, 'Add events before computing projects.')
             return
         try:
-            self.calculate_eeg(self.parent.experiment.active_subject, parameter_values)    
+            self.calculate_eeg(self.experiment.active_subject, parameter_values)    
         except Exception as e:
             pass
         self.parent.initialize_ui()

@@ -61,7 +61,6 @@ class EventSelectionDialog(QtWidgets.QDialog):
             parent=self, 
             container=self.ui.scrollAreaWidgetContents,
             geometry=self.ui.widgetBatchContainer.geometry())
-            # container=self.ui.scrollAreaWidgetContents)
 
 
     def experiment_getter(self):

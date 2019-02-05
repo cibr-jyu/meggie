@@ -24,11 +24,13 @@ class ICADialog(QtWidgets.QDialog):
     """ Functionality for ICA dialog UI
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.experiment = experiment
 
         # change normal list widgets to multiselect widgets
         self.ui.listWidgetNotRemoved.setSelectionMode(
@@ -61,7 +63,7 @@ class ICADialog(QtWidgets.QDialog):
         method = 'fastica'
         max_iter = self.ui.spinBoxMaxIter.value()
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         @threaded
         def _compute_ica():
@@ -136,7 +138,7 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        layout = self.parent.experiment.layout
+        layout = self.experiment.layout
 
         try:
             plot_topographies(self.ica, len(self.component_info), layout)
@@ -151,7 +153,7 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         try:
             plot_sources(raw, self.ica)
@@ -172,9 +174,9 @@ class ICADialog(QtWidgets.QDialog):
         if not picks:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
-        layout = self.parent.experiment.layout
+        layout = self.experiment.layout
 
         try:
             plot_properties(raw, self.ica, picks, layout)
@@ -188,7 +190,7 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         indices = [self.component_info[name] for name in self.removed]
 
@@ -222,18 +224,18 @@ class ICADialog(QtWidgets.QDialog):
         if not self.ica:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         indices = [self.component_info[name] for name in self.removed]
 
         @threaded
         def apply_ica_wrapper():
-            apply_ica(raw, self.parent.experiment, self.ica, indices)
+            apply_ica(raw, self.experiment, self.ica, indices)
 
         apply_ica_wrapper(do_meanwhile=self.parent.update_ui)
 
-        self.parent.experiment.active_subject.ica_applied = True
-        self.parent.experiment.save_experiment_settings()
+        self.experiment.active_subject.ica_applied = True
+        self.experiment.save_experiment_settings()
 
         logging.getLogger('ui_logger').info('ICA applied successfully.')
 

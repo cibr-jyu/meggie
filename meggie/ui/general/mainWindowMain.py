@@ -12,9 +12,6 @@ import logging
 import matplotlib
 matplotlib.use('Qt5Agg')
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
@@ -29,17 +26,7 @@ from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
 from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
-from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
-from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
-from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
-from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
-from meggie.ui.preprocessing.filterDialogMain import FilterDialog
-from meggie.ui.preprocessing.icaDialogMain import ICADialog
-from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
-from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
 from meggie.ui.general.logDialogMain import LogDialog
@@ -47,18 +34,18 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
 
-from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
+from meggie.ui.general.tabs.mainWindowTabPreprocessingMain import MainWindowTabPreprocessing
 from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
-from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
 from meggie.ui.general.tabs.mainWindowTabEpochsMain import MainWindowTabEpochs
 from meggie.ui.general.tabs.mainWindowTabEvokedMain import MainWindowTabEvoked
+from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
+from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
 
 from meggie.code_meggie.general.experiment import ExperimentHandler
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.utils.units import get_unit
-from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -79,6 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if 'debug' not in sys.argv:
             self.directOutput()
             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()
         self.preferencesHandler.set_env_variables()
@@ -87,6 +75,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.experimentHandler = ExperimentHandler(self)
 
         # Create the tab contents
+        self.mainWindowTabPreprocessing = MainWindowTabPreprocessing(self)
         self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
         self.mainWindowTabEpochs = MainWindowTabEpochs(self)
         self.mainWindowTabEvoked = MainWindowTabEvoked(self)
@@ -113,22 +102,6 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
-
-
-        # Set bads not selectable
-        self.ui.listWidgetBads.setSelectionMode(QAbstractItemView.NoSelection)
-
-
-    def get_epochs(self, epoch_name):
-        experiment = self.experiment
-        if not experiment:
-            return
-        
-        active_subject = experiment.active_subject
-        if not active_subject:
-            return
-
-        return active_subject.epochs.get(epoch_name)
 
 
     def on_actionQuit_triggered(self, checked=None):
@@ -329,194 +302,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layoutDialog = LayoutDialog(self)
         self.layoutDialog.show()
 
-
-    class RawBadsPlot(object):
-        def __init__(self, parent):
-            self.parent = parent
-            
-            if parent.ui.checkBoxShowEvents.isChecked():
-                events = parent.experiment.active_subject.get_events()
-            else:
-                events = None
-            try:
-                raw = parent.experiment.active_subject.get_working_file()  # noqa
-                self.raw = raw.copy()
-                fig = self.raw.plot(events=events)
-                fig.canvas.mpl_connect('close_event', self.handle_close)
-            except Exception as err:
-                exc_messagebox(parent, err)
-                return
-        
-        def handle_close(self, event):
-            self.raw = None
-
-    def on_pushButtonRawPlot_clicked(self, checked=None):
-        """Call ``raw.plot``."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        # Create a plot where bad channels are not set by clicking them
-        self.plot = MainWindow.RawBadsPlot(self)
-        
-    def on_pushButtonCustomChannels_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        
-        self.badChannelsDialog = BadChannelsDialog(self)
-        self.badChannelsDialog.show()
-        
-    def on_pushButtonPlotProjections_clicked(self, checked=None):
-        """Plots added projections as topomaps."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        raw = self.experiment.active_subject.get_working_file()
-        if not raw.info['projs']:
-            messagebox(self, "No added projections.")
-            return
-        
-        try:
-            plot_projs_topomap(self.experiment, raw)
-        except Exception as e:
-            exc_messagebox(self, e)
-       
-    def on_pushButtonEOG_clicked(self, checked=None):
-        """Open the dialog for calculating the EOG PCA."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.eogDialog = EogParametersDialog(self)
-        self.eogDialog.show()
-
-    def on_pushButtonECG_clicked(self, checked=None):
-        """Open the dialog for calculating the ECG PCA."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.ecgDialog = EcgParametersDialog(self)
-        self.ecgDialog.show()
-
-    def on_pushButtonApplyEOG_clicked(self, checked=None):
-        """Open the dialog for applying the EOG-projections to the data."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        info = self.experiment.active_subject.get_working_file().info
-        self.addEogProjs = AddEOGProjections(self, info['projs'])
-        self.addEogProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEogProjs.show()
-        
-    def on_pushButtonApplyECG_clicked(self, checked=None):
-        """Open the dialog for applying the ECG-projections to the data."""
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        
-        info = self.experiment.active_subject.get_working_file().info
-        self.addEcgProjs = AddECGProjections(self, info['projs'])
-        self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEcgProjs.show()
-        
-    def on_pushButtonRemoveProj_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        
-        if self.ui.listWidgetProjs.currentItem() is None:
-            message = 'Select projection to remove.'
-            messagebox(self, message)
-            return
-        
-        selected_items = self.ui.listWidgetProjs.selectedItems()
-        raw = self.experiment.active_subject.get_working_file()
-        str_projs = [str(proj) for proj in raw.info['projs']]
-        
-        for item in selected_items:
-            proj_name = item.text()
-            if proj_name in str_projs:
-                index = str_projs.index(proj_name)
-                str_projs.pop(index)
-                raw.info['projs'].pop(index)
-                row = self.ui.listWidgetProjs.row(item)
-                self.ui.listWidgetProjs.takeItem(row)
-
-        directory = self.experiment.active_subject.subject_path
-        subject_name = self.experiment.active_subject.working_file_name
-        fname = os.path.join(directory, subject_name)        
-        fileManager.save_raw(self.experiment, raw, fname)
-        self.initialize_ui()
-
-
-    def on_pushButtonICA_clicked(self, checked=None):
-        """
-        Show the dialog for ICA preprocessing.
-        """
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.icaDialog = ICADialog(self)
-        self.icaDialog.show()
-
-    def on_pushButtonFilter_clicked(self, checked=None):
-        """
-        Show the dialog for filtering.
-        """
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.filterDialog = FilterDialog(self)
-        self.filterDialog.show()
-
-    def on_pushButtonResampling_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-
-        self.resamplingDialog = ResamplingDialog(self)
-        self.resamplingDialog.show()
-
-    def on_pushButtonRereferencing_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-        if not self.experiment or self.experiment.active_subject is None:
-            return
-        self.rereferencingDialog = RereferencingDialog(self)
-        self.rereferencingDialog.show()
-
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """
         Activates a subject.
@@ -555,7 +340,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.initialize_ui()
 
-    #####################
+    def get_epochs(self, epoch_name):
+        experiment = self.experiment
+        if not experiment:
+            return
+        
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        return active_subject.epochs.get(epoch_name)
+
 
     def update_ui(self):
         """
@@ -572,14 +367,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.initialize_ui()
 
-
     def initialize_ui(self):
         """
-        Method for setting up the GUI. Called whenever a subject is activated,
-        either via creation of a new subject or change of an active subject.
-        Also called when anything that can affect UI state has been run.
-        Checks the existence of a ton of files and sets the GUI fields to
-        reflect the state of the experiment and subject according to them.
         """
 
         self.update_tabs()
@@ -597,15 +386,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.labelMagMEGValue.clear()
         self.ui.labelSamplesValue.clear()
         self.ui.labelSubjectValue.clear()
-        self.ui.listWidgetProjs.clear()
-        self.ui.listWidgetBads.clear()
-        self.ui.checkBoxMaxFilterApplied.setChecked(False)
-        self.ui.checkBoxECGApplied.setChecked(False)
-        self.ui.checkBoxEOGApplied.setChecked(False)
-        self.ui.checkBoxICAApplied.setChecked(False)
-        self.ui.checkBoxRereferenced.setChecked(False)
-        self.ui.pushButtonApplyECG.setEnabled(False)
-        self.ui.pushButtonApplyEOG.setEnabled(False)
 
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
@@ -625,31 +405,6 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.statusLabel.setText(status)
 
-        # Check whether ECG projections are calculated
-        if active_subject.check_ecg_projs():
-            self.ui.pushButtonApplyECG.setEnabled(True)
-        
-        # Check whether EOG (and old EEG) projections are calculated
-        if active_subject.check_eog_projs() or active_subject.check_eeg_projs():
-            self.ui.pushButtonApplyEOG.setEnabled(True)
-        
-        # Check whether ECG projections are applied
-        if active_subject.check_ecg_applied():
-            self.ui.checkBoxECGApplied.setChecked(True)
-        
-        # Check whether EOG (and old EEG) projections are applied
-        if active_subject.check_eog_applied() or active_subject.check_eeg_applied():
-            self.ui.checkBoxEOGApplied.setChecked(True)
-
-        # Check whether sss/tsss method is applied.
-        if active_subject.check_sss_applied():
-            self.ui.checkBoxMaxFilterApplied.setChecked(True)
-             
-        if active_subject.ica_applied:
-            self.ui.checkBoxICAApplied.setChecked(True)
-        if active_subject.rereferenced:
-            self.ui.checkBoxRereferenced.setChecked(True)
-
         # This updates the 'Subject info' section below the subject list.
         try:
             InfoDialog(raw, self.ui, False)
@@ -657,14 +412,6 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             exc_messagebox(self, err)
             return
-
-        projs = raw.info['projs']
-        for proj in projs:
-            self.ui.listWidgetProjs.addItem(str(proj))
-
-        bads = raw.info['bads']
-        for bad in bads:
-            self.ui.listWidgetBads.addItem(bad)
 
     def populate_subject_list(self):
         """ """
@@ -705,7 +452,7 @@ class MainWindow(QtWidgets.QMainWindow):
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
 
-        self.ui.tabWidget.insertTab(1, self.ui.tabPreprocessing, "Preprocessing")
+        self.ui.tabWidget.insertTab(1, self.mainWindowTabPreprocessing, "Preprocessing")
         self.ui.tabWidget.insertTab(2, self.mainWindowTabSpectrums, "Spectrums")
         self.ui.tabWidget.insertTab(3, self.mainWindowTabEpochs, "Epoching")
         self.ui.tabWidget.insertTab(4, self.mainWindowTabEvoked, "Evoked responses")
@@ -717,6 +464,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWindowTabSourceAnalysis.update_tabs()
         self.mainWindowTabSourceAnalysis.initialize_ui()
 
+        self.mainWindowTabPreprocessing.initialize_ui()
         self.mainWindowTabSpectrums.initialize_ui()
         self.mainWindowTabEpochs.initialize_ui()
         self.mainWindowTabEvoked.initialize_ui()
@@ -870,7 +618,6 @@ class EmittingStream(QtCore.QObject):
 
     def fileno(self):
         return self.orig_stream.fileno()
-
 
 
 def main():

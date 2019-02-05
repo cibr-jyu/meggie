@@ -30,7 +30,7 @@ class EogParametersDialog(QtWidgets.QDialog):
     parameter values for calculating EOG projections.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """
         Constructor. Initializes the dialog.
         """
@@ -38,6 +38,9 @@ class EogParametersDialog(QtWidgets.QDialog):
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.experiment = experiment
+
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter, 
             parent=self, 
@@ -45,27 +48,27 @@ class EogParametersDialog(QtWidgets.QDialog):
             geometry=self.ui.widget.geometry())
 
     def experiment_getter(self):
-        return self.parent.experiment
+        return self.experiment
 
     def on_pushButtonPlotEvents_clicked(self, checked=None):
         if checked is None:
             return
 
         parameter_values = self.collect_parameter_values()
-        plot_eog_events(self.parent.experiment, parameter_values)    
+        plot_eog_events(self.experiment, parameter_values)    
 
     def accept(self):
         """
         """
         parameter_values = self.collect_parameter_values()
-        active_subject_name = self.parent.experiment.active_subject.subject_name
+        active_subject_name = self.experiment.active_subject.subject_name
         self.batching_widget.data[active_subject_name] = parameter_values
 
         try:
-            self.calculate_eog(self.parent.experiment.active_subject)
+            self.calculate_eog(self.experiment.active_subject)
         except Exception as e:
             self.batching_widget.failed_subjects.append((
-                self.parent.experiment.active_subject, str(e)))        
+                self.experiment.active_subject, str(e)))        
         
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
@@ -73,7 +76,7 @@ class EogParametersDialog(QtWidgets.QDialog):
     
     def acceptBatch(self):
         
-        recently_active_subject = self.parent.experiment.active_subject.subject_name
+        recently_active_subject = self.experiment.active_subject.subject_name
         subject_names = []
 
         for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
@@ -87,24 +90,24 @@ class EogParametersDialog(QtWidgets.QDialog):
         if recently_active_subject in subject_names:
 
             try:
-                self.calculate_eog(self.parent.experiment.active_subject)
+                self.calculate_eog(self.experiment.active_subject)
             except Exception as e:
                 self.batching_widget.failed_subjects.append((
-                    self.parent.experiment.active_subject, str(e)))
+                    self.experiment.active_subject, str(e)))
         
         # 2. Calculation is done for the rest of the subjects.
-        for name, subject in self.parent.experiment.subjects.items():
+        for name, subject in self.experiment.subjects.items():
             if name in subject_names:
                 if name == recently_active_subject:
                     continue
                 try:
-                    self.parent.experiment.activate_subject(name)
+                    self.experiment.activate_subject(name)
                     self.calculate_eog(subject)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((
                         subject, str(e)))
                 
-        self.parent.experiment.activate_subject(recently_active_subject)
+        self.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
         self.parent.initialize_ui()
         self.close()
@@ -144,7 +147,7 @@ class EogParametersDialog(QtWidgets.QDialog):
         on dialog.
         """
 
-        subject = self.parent.experiment.subjects[subject_name]
+        subject = self.experiment.subjects[subject_name]
         if len(params_dict) > 0:
             dic = params_dict  
         else:

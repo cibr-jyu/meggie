@@ -21,7 +21,7 @@ class AddECGProjections(QtWidgets.QDialog):
     Class containing the logic for adding ECG projections.
     Projections should be created and saved in a file before adding them.
     """
-    def __init__(self, parent, added_projs):
+    def __init__(self, parent, added_projs, experiment):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
@@ -33,7 +33,9 @@ class AddECGProjections(QtWidgets.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        directory = self.parent.experiment.active_subject.subject_path
+        self.experiment = experiment
+
+        directory = self.experiment.active_subject.subject_path
 
         self.projs = read_projections(
             glob.glob(os.path.join(directory, '*_ecg_*proj*'))[0])
@@ -56,7 +58,7 @@ class AddECGProjections(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         applied = self.create_applied_list()
         projs = np.array(self.projs)[np.array(applied)]
 
@@ -78,7 +80,7 @@ class AddECGProjections(QtWidgets.QDialog):
         add the selected projections to the working file.
         """
 
-        experiment = self.parent.experiment
+        experiment = self.experiment
         raw = experiment.active_subject.get_working_file()
         directory = experiment.active_subject.subject_path
         applied = self.create_applied_list()

@@ -13,7 +13,7 @@ from meggie.code_meggie.preprocessing.resampling import resample
 
 class ResamplingDialog(QtWidgets.QDialog):
     
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """
         """
         QtWidgets.QDialog.__init__(self)
@@ -21,14 +21,16 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
 
-        subject = self.parent.experiment.active_subject
+        self.experiment = experiment
+
+        subject = self.experiment.active_subject
         raw = subject.get_working_file()
         sfreq = raw.info['sfreq']
 
         self.ui.labelCurrentRateValue.setText(str(sfreq))
         
     def accept(self):
-        experiment = self.parent.experiment
+        experiment = self.experiment
         raw = experiment.active_subject.get_working_file()
         fname = experiment.active_subject.working_file_path
 
@@ -44,4 +46,4 @@ class ResamplingDialog(QtWidgets.QDialog):
                                             str(old_rate) + ' to ' + str(rate))
 
         self.close()
-        self.parent.initialize_ui()
+        self.parent.parent.initialize_ui()
