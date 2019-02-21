@@ -80,6 +80,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
         if len(self.fnames) > 0:
             for name in self.fnames:
+                name = QtCore.QDir.toNativeSeparators(name)
                 item = QtWidgets.QListWidgetItem()
                 item.setText(name)
                 if len(self.ui.listWidgetFileNames.findItems(

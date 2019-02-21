@@ -1,6 +1,7 @@
 """
 """
 
+import os
 import glob
 import numpy as np
 
@@ -18,17 +19,19 @@ class AddEEGProjections(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, parent, added_projs):
+    def __init__(self, parent, added_projs, experiment):
         """
         """
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        directory = self.parent.experiment.active_subject.subject_path
+        directory = self.experiment.active_subject.subject_path
+
+        self.experiment = experiment
 
         self.projs = read_projections(
-            glob.glob(directory + '/*_eeg_*proj*')[0])
+            glob.glob(os.path.join(directory, '*_eeg_*proj*'))[0])
 
         self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
@@ -48,7 +51,7 @@ class AddEEGProjections(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         applied = self.create_applied_list()
         projs = np.array(self.projs)[np.array(applied)]
 
@@ -70,7 +73,7 @@ class AddEEGProjections(QtWidgets.QDialog):
         add the selected projections to the working file.
         """
 
-        experiment = self.parent.experiment
+        experiment = self.experiment
         raw = experiment.active_subject.get_working_file()
         directory = experiment.active_subject.subject_path
         applied = self.create_applied_list()

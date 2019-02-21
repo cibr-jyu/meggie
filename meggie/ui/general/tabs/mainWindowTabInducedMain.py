@@ -48,7 +48,7 @@ class MainWindowTabInduced(QtWidgets.QDialog):
             return
 
         # populate epoch widget
-        self.epochList.clearItems()
+        self.epochList.clear_items()
         for epoch_name in sorted(active_subject.epochs.keys()):
             item = QtWidgets.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
@@ -140,7 +140,11 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         def group_average(*args, **kwargs):
             group_average_tfr(experiment, tfr_name)
 
-        group_average(do_meanwhile=self.update_ui)
+        try:
+            group_average(do_meanwhile=self.update_ui)
+        except Exception as e:
+            exc_messagebox(self, e)
+            return
 
         experiment.save_experiment_settings()
         self.initialize_ui()

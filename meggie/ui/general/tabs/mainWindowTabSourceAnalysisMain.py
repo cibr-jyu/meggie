@@ -3,6 +3,7 @@ import logging
 import shutil
 
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 from meggie.ui.general.tabs.mainWindowTabSourceAnalysisUi import Ui_mainWindowTabSourceAnalysis  # noqa
 from meggie.ui.source_analysis.forwardSolutionDialogMain import ForwardSolutionDialog  # noqa
@@ -123,8 +124,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         if checked is None:
             return
 
-        path = str(QtWidgets.QFileDialog.getExistingDirectory(self,
-            "Select directory of the reconstructed MRI image"))
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getExistingDirectory(self,
+                "Select directory of the reconstructed MRI image")))
 
         if path == '':
             return
@@ -241,8 +243,11 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         os.environ['SUBJECT'] = subject.mri_subject_name
 
         inst = subject.working_file_path
-        mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
-                           head_high_res=False)
+        try:
+            mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
+                               head_high_res=False)
+        except Exception as exc:
+            exc_messagebox(self, exc)
 
     def on_pushButtonCoregistrationBrowse_clicked(self, checked=None):
         """
@@ -257,8 +262,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         else:
             return
 
-        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select the coordinate MEG-MRI coordinate transformation file")[0])
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select the coordinate MEG-MRI coordinate transformation file")[0]))
 
         if path == '':
             return
@@ -300,8 +306,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         else:
             return
 
-        path = str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select a forward solution file")[0])
+        path = QtCore.QDir.toNativeSeparators(
+            str(QtWidgets.QFileDialog.getOpenFileName(self,
+            "Select a forward solution file")[0]))
 
         if not path.endswith('fwd.fif'):
             messagebox(self, "Forward solution file should end with -fwd.fif")

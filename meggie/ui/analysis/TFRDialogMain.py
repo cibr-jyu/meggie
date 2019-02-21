@@ -12,7 +12,7 @@ from meggie.code_meggie.analysis.spectral import create_tfr
 
 from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog
 
-from meggie.ui.utils.validators import validate_name
+from meggie.code_meggie.utils.validators import validate_name
 
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import messagebox

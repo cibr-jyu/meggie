@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../aboutDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/aboutDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,9 +14,6 @@ class Ui_Dialog(object):
         Dialog.resize(921, 591)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.textBrowser = QtWidgets.QTextBrowser(Dialog)
-        self.textBrowser.setObjectName("textBrowser")
-        self.gridLayout.addWidget(self.textBrowser, 1, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -25,6 +22,25 @@ class Ui_Dialog(object):
         self.pushButtonClose.setObjectName("pushButtonClose")
         self.horizontalLayout_2.addWidget(self.pushButtonClose)
         self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.labelVersion = QtWidgets.QLabel(Dialog)
+        self.labelVersion.setObjectName("labelVersion")
+        self.horizontalLayout.addWidget(self.labelVersion)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.lineEditVersion = QtWidgets.QLineEdit(Dialog)
+        self.lineEditVersion.setMaxLength(100)
+        self.lineEditVersion.setReadOnly(True)
+        self.lineEditVersion.setObjectName("lineEditVersion")
+        self.horizontalLayout.addWidget(self.lineEditVersion)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.textBrowser = QtWidgets.QTextBrowser(Dialog)
+        self.textBrowser.setObjectName("textBrowser")
+        self.verticalLayout.addWidget(self.textBrowser)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -32,15 +48,15 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Meggie - About"))
+        self.pushButtonClose.setText(_translate("Dialog", "Close"))
+        self.labelVersion.setText(_translate("Dialog", "Current version:"))
         self.textBrowser.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt;\">This is a prototype version of Meggie,  a graphical user interface for preprocessing and analyzing MEG-measurement data. Meggie utilizes external modules such as the MNE and Freesurfer software packages.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:11pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:11pt;\">Meggie is realeased under the Simplified BSD lisence:</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">Copyright (c) &lt;2018&gt;, &lt;Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen, Atte Rautio and Erkka Heinila&gt;</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">Copyright (c) &lt;2018&gt;, &lt;Kari Aliranta, Jaakko Leppäkangas, Janne Pesonen, Atte Rautio and CIBR&gt;</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">All rights reserved.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">Redistribution and use in source and binary forms, with or without</span></p>\n"
@@ -66,5 +82,4 @@ class Ui_Dialog(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">The views and conclusions contained in the software and documentation are those</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">of the authors and should not be interpreted as representing official policies, </span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#f9f9f9;\"><span style=\" font-family:\'monospace,Courier\'; font-size:11pt; color:#000000; background-color:#f9f9f9;\">either expressed or implied, of the FreeBSD Project.</span></p></body></html>"))
-        self.pushButtonClose.setText(_translate("Dialog", "Close"))
 

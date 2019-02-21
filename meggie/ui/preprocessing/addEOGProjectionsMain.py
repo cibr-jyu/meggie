@@ -3,6 +3,7 @@
 """
 """
 
+import os
 import glob
 import numpy as np
 
@@ -21,7 +22,7 @@ class AddEOGProjections(QtWidgets.QDialog):
     Projections should be created and saved in a file before adding them.
     """
 
-    def __init__(self, parent, added_projs):
+    def __init__(self, parent, added_projs, experiment):
         """
         Constructor. Initializes the dialog.
         Keyword arguments:
@@ -33,10 +34,12 @@ class AddEOGProjections(QtWidgets.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        directory = self.parent.experiment._active_subject._subject_path
+        self.experiment = experiment
+
+        directory = self.experiment._active_subject._subject_path
 
         self.projs = read_projections(
-            glob.glob(directory + '/*_eog_*proj*')[0])
+            glob.glob(os.path.join(directory, '*_eog_*proj*'))[0])
 
         self.listWidget = QtWidgets.QListWidget()
         self.ui.verticalLayout_2.addWidget(self.listWidget)
@@ -56,7 +59,7 @@ class AddEOGProjections(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         applied = self.create_applied_list()
         projs = np.array(self.projs)[np.array(applied)]
 
@@ -78,7 +81,7 @@ class AddEOGProjections(QtWidgets.QDialog):
         Adds the projections.
         """
 
-        experiment = self.parent.experiment
+        experiment = self.experiment
         raw = experiment.active_subject.get_working_file()
         directory = experiment.active_subject.subject_path
         applied = self.create_applied_list()

@@ -16,14 +16,17 @@ class BatchingWidget(QtWidgets.QWidget):
     """
     """
     
-    def __init__(self, experiment, parent, container, pushButtonCompute=None,
-                 pushButtonComputeBatch=None, selection_changed=None,
-                 collect_parameter_values=None, hideHook=None):
+    def __init__(self, experiment_getter, parent, geometry, 
+                 container=None, 
+                 pushButtonCompute=None,
+                 pushButtonComputeBatch=None, 
+                 selection_changed=None,
+                 collect_parameter_values=None, 
+                 hideHook=None):
         super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
-        self.experiment = experiment
 
         if not pushButtonCompute:
             pushButtonCompute = self.parent.ui.pushButtonCompute
@@ -34,6 +37,8 @@ class BatchingWidget(QtWidgets.QWidget):
         if not collect_parameter_values:
             collect_parameter_values = self.parent.collect_parameter_values
             
+        self.experiment_getter = experiment_getter
+        self.experiment = None
         self.hideHook = hideHook
         
         self.pushButtonComputeBatch = pushButtonComputeBatch
@@ -45,14 +50,16 @@ class BatchingWidget(QtWidgets.QWidget):
         self.pushButtonComputeBatch.setEnabled(False)
 
         self.ui.functionalityWidget.hide()
-        self.setGeometry(self.parent.ui.widget.geometry())
+        self.setGeometry(geometry)
         self.adjustSize()
 
         self.data = {}
         self.failed_subjects = []
 
-    def update(self, experiment, enabled):
-        self.experiment = experiment
+    def update(self, enabled):
+
+        if not self.experiment:
+            return
 
         if enabled:
             self.ui.functionalityWidget.show()
@@ -82,8 +89,8 @@ class BatchingWidget(QtWidgets.QWidget):
         if not item:
             return
         
-        if item.checkState() != QtCore.Qt.Checked:
-            return
+        # if item.checkState() != QtCore.Qt.Checked:
+        #     return
         
         subject_name = str(item.text())
         if subject_name in self.data.keys():
@@ -93,7 +100,10 @@ class BatchingWidget(QtWidgets.QWidget):
         self.selection_changed(subject_name, data_dict)
     
     def showWidget(self, enabled):
-        self.update(self.experiment, enabled)
+        self.experiment = self.experiment_getter()
+
+        if self.experiment:
+            self.update(enabled)
         
     def on_pushButtonApply_clicked(self, checked=None):
         """Saves parameters to selected subject's eog parameters dictionary.
@@ -111,7 +121,7 @@ class BatchingWidget(QtWidgets.QWidget):
             self.data[subject.subject_name] = params
 
     def on_pushButtonApplyAll_clicked(self, checked=None):
-        """Saves parameters to selected subjects' eog parameters dictionaries.
+        """
         """
         if checked is None: 
             return

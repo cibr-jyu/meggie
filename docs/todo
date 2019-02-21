@@ -1,36 +1,41 @@
 TODO:
 
 - refactoring:
- * all main window tabs to separate files
  * check proper style with pylint
  * combine general/fileManager.py and utils/files.py
  * remove active_subject-references from code_meggie analysis-sections (pass by parameter)
 - we need tests
 - should do manual for meggie
+- check that "all" functionalities are wrapped in try except
 
 bugs:
 - if doing source analysis for eeg, must ensure that average reference is used
 - ssp default amount of vectors
 - experiment-saving will not scale well, as saving is loading every evoked object from every subject temporarily
-- meggie allows to create a new experiment over existing experiment,
+- meggie allows to create a new experiment over existing experiment
 - powerspectrum dialog name field size
 - mixed data poorly supported (eeg isnt plotted when possible). should make it so that layout is only used for eeg and always when possible eeg uses that separately from meg.
+- maybe remove then columns option (statistics) from save data
 
 features:
+- remove bad channels from spectrum plot
+- set channel groups for experiment; channel groups can then be used in many places with eeg also. (for eeg default is all channels)
+- channel groups for visualization and saving in spectrums, evokeds and tfrs. 
+- open experiment also by specifying the exp file
+- when adding subject with the same name, add it but change the name with suffix -i or something.
+- bad channel interpolation
 - bad channels in spectrums should be saved to the spectrum object, not taken from the raw
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"
+- in logging window, checkboxes for debug and info
 - add way to get the list of channels and a picture of channel averages, maybe some interactive thingy
 - plot accuracy as preference
-- tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots)
+- tfr save data and tfr multiple conditions (plotting is done by plotting multiple plots), and tfr plot for channel averages
 - unify EEG and EOG projections (EEG is EOG with channel selection)
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
-- log parsing, subject specific
-- more automated ICA
 - njobs-story
 - update meter and cancel button for batch
 - maybe a mock subject possibility combined with epoch or evoked import
-- open experiment also by specifying the exp file
 - maybe dont close dialogs with accept-button, and change cancel-button name to close, and always print a text when job is finished, or maybe a popup
 - unify names of accept-buttons
 - allow defining of colors for spectrums

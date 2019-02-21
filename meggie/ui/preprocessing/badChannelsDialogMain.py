@@ -12,15 +12,16 @@ class BadChannelsDialog(QtWidgets.QDialog):
     either on a list widget or the raw plot
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
         self.raw = None
+        self.experiment = experiment
 
-        raw = parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
         channels = raw.ch_names
 
         for channel in channels:
@@ -44,7 +45,7 @@ class BadChannelsDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        self.raw = self.parent.experiment.active_subject.get_working_file().copy()
+        self.raw = self.experiment.active_subject.get_working_file().copy()
         items = self.ui.listWidgetBads.selectedItems()
         self.raw.info['bads'] = [item.text() for item in items]
         fig = self.raw.plot()
@@ -68,11 +69,11 @@ class BadChannelsDialog(QtWidgets.QDialog):
         """
         items = self.ui.listWidgetBads.selectedItems()
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_working_file()
 
         raw.info['bads'] = [item.text() for item in items]
-        experiment = self.parent.experiment
-        fname = self.parent.experiment.active_subject.working_file_path
+        experiment = self.experiment
+        fname = self.experiment.active_subject.working_file_path
         fileManager.save_raw(experiment, raw, fname, overwrite=True)
         self.parent.initialize_ui()
         self.close()

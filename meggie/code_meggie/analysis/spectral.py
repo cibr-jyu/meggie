@@ -474,6 +474,9 @@ def group_average_tfr(experiment, tfr_name):
 
         tfrs.append(tfr.tfr)
 
+    if len(tfrs) < 2:
+        raise Exception('No other subject with a corresponding TFR found')
+
     average_tfr = mne.grand_average(tfrs, drop_bads=False)
 
     meggie_tfr = TFR(average_tfr, 'group_' + tfr_name, 

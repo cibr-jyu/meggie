@@ -16,7 +16,7 @@ import meggie.code_meggie.general.fileManager as fileManager
 
 class RereferencingDialog(QtWidgets.QDialog):
     
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """
         """
         QtWidgets.QDialog.__init__(self)
@@ -24,7 +24,9 @@ class RereferencingDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
 
-        subject = self.parent.experiment.active_subject
+        self.experiment = experiment
+
+        subject = self.experiment.active_subject
         raw = subject.get_working_file()
         sfreq = raw.info['sfreq']
 
@@ -37,7 +39,7 @@ class RereferencingDialog(QtWidgets.QDialog):
             self.ui.comboBoxChannel.addItem(ch_name)
 
     def accept(self):
-        experiment = self.parent.experiment
+        experiment = self.experiment
         
         raw = experiment.active_subject.get_working_file()
         path = experiment.active_subject.working_file_path
@@ -54,7 +56,7 @@ class RereferencingDialog(QtWidgets.QDialog):
                 raw.set_eeg_reference(ref_channels=[selection])
 
         try:
-            rereference_fun()
+            rereference_fun(do_meanwhile=self.parent.update_ui)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
             self.close()

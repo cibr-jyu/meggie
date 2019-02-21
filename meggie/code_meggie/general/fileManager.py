@@ -28,8 +28,8 @@ def read_layout(layout):
         return mne.read_layout(fname, folder)
 
     import pkg_resources
-    path_mne = pkg_resources.resource_filename('mne', 'channels/data/layouts')
-    path_meggie = pkg_resources.resource_filename('meggie', 'data/layouts')
+    path_mne = pkg_resources.resource_filename('mne', os.path.join('channels', 'data', 'layouts'))
+    path_meggie = pkg_resources.resource_filename('meggie', os.path.join('data', 'layouts'))
 
     if os.path.exists(os.path.join(path_mne, layout)):
         return mne.read_layout(layout, path_mne)
@@ -268,14 +268,14 @@ def get_layouts():
     files = []
     
     try:
-        path_meggie = resource_filename('meggie', 'data/layouts')
+        path_meggie = resource_filename('meggie', os.path.join('data', 'layouts'))
 
         files.extend([f for f in os.listdir(path_meggie)])
     except:
         pass        
     
     try:    
-        path = resource_filename('mne', 'channels/data/layouts')
+        path = resource_filename('mne', os.path.join('channels', 'data', 'layouts'))
         
         files.extend([f for f in os.listdir(path) 
                       if os.path.isfile(os.path.join(path,f)) 
