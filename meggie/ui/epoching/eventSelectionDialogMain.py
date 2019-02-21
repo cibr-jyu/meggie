@@ -152,7 +152,7 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.update_events()
 
     def get_selected_subject(self):
-        item = Non
+        item = None
         if item is None:
             subject_name = self.experiment.active_subject.subject_name
         else:
