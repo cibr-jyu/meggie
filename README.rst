@@ -3,41 +3,34 @@ Meggie
 
 User-friendly graphical interface to do analysis on EEG and MEG data.
 
-To develop:
+To develop in linux:
 
 1. install anaconda
 2. create a new isolated environment:
-   conda create -n meggie-env python==2.7.14
+   conda create -n meggie-env-develop python==3.6.6
 3. activate the environment:
-   conda activate meggie-env
+   conda activate meggie-env-develop
 4. install dependencies:
-   pip install mne==0.15.2
-   pip install pysurfer
-   conda install pyqt==4.11.4
-   conda install pyface
-   conda install xlrd
-   conda install scikit-learn
-   conda install matplotlib
-   conda install mayavi
+   conda install -c conda-forge mne
+   pip install nose
 5. "install" meggie as symlinks:
-   for example: python /path/to/setup.py develop
+   python setup.py develop
 6. run meggie in debug mode (error messages in console):
-   for example: meggie debug
+   meggie debug
 7. run tests:
-   for example: python setup.py nosetests
+   for example: python -m "nose"
 
 When installed with "develop", changes made to the code will be reflected when meggie is run
 
 To release conda-package (in root directory):
 1. Have following entry in .condarc:
    channels:
-     - defaults
      - https://conda.anaconda.org/conda-forge
+     - defaults
      - https://conda.anaconda.org/CIBR
 2. Build by:
    conda build .
 3. Copy created meggie package to for example anaconda.org cloud:
    anaconda upload ...
 4. newest version of meggie should now be installable with just:
-   conda install -c cibr -conda-forge meggie
-   
+   conda install -n meggie-env -c CIBR -c conda-forge meggie
