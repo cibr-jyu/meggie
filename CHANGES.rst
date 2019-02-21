@@ -1,10 +1,15 @@
 Changelog
 =========
 
-0.10.1 (unreleased)
+0.10.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.10.1 (2019-02-21)
+------------------
+
+- Fix typo that made epoch creation crash
 
 0.10.0 (2019-02-21)
 ------------------
@@ -22,7 +27,7 @@ Changelog
 - Add bad channel dropping to evoked topo
 - Fix ICA for EEG
 - Fix EEG topomaps
-- Update to mne==0.1.7.0
+- Update to mne==0.17.0
 
 0.9.0 (2018-11-06)
 ------------------
