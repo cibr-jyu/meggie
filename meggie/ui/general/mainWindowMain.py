@@ -64,8 +64,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Direct output to console
         if 'debug' not in sys.argv:
-            self.directOutput()
             self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
+            self.directOutput()
 
         # For storing and handling program wide prefences.
         self.preferencesHandler = PreferencesHandler()

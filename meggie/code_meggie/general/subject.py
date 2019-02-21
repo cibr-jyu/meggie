@@ -428,33 +428,6 @@ class Subject(object):
             return True
         return False
         
-    def check_ecg_applied(self):
-        """
-        Checks the subject folder for ECG applied file.
-        Returns True if ecg_applied found.
-        """
-        raw = self.get_working_file()
-        projs = raw.info['projs']
-        return any('ECG' in str(proj) for proj in projs)
-        
-    def check_eog_applied(self):
-        """
-        Checks the subject folder for EOG applied file.
-        Returns True if eog_applied found.
-        """
-        raw = self.get_working_file()
-        projs = raw.info['projs']
-        return any('EOG' in str(proj) for proj in projs)
-
-    def check_eeg_applied(self):
-        """
-        Checks the subject folder for EEG applied file.
-        Returns True if eeg_applied found.
-        """
-        raw = self.get_working_file()
-        projs = raw.info['projs']
-        return any('Ocular' in str(proj) for proj in projs)
-
     def check_sss_applied(self):
         """
         Checks the subject folder for sss/tsss applied file.

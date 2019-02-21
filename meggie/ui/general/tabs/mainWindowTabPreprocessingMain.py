@@ -57,8 +57,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         self.ui.listWidgetProjs.clear()
         self.ui.listWidgetBads.clear()
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
-        self.ui.checkBoxECGApplied.setChecked(False)
-        self.ui.checkBoxEOGApplied.setChecked(False)
         self.ui.checkBoxICAApplied.setChecked(False)
         self.ui.checkBoxRereferenced.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
@@ -69,16 +67,8 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
             self.ui.pushButtonApplyECG.setEnabled(True)
 
         # Check whether EOG (and old EEG) projections are calculated
-        if active_subject.check_eog_projs() or active_subject.check_eeg_projs():
+        if active_subject.check_eog_projs():
             self.ui.pushButtonApplyEOG.setEnabled(True)
-
-        # Check whether ECG projections are applied
-        if active_subject.check_ecg_applied():
-            self.ui.checkBoxECGApplied.setChecked(True)
-
-        # Check whether EOG (and old EEG) projections are applied
-        if active_subject.check_eog_applied() or active_subject.check_eeg_applied():
-            self.ui.checkBoxEOGApplied.setChecked(True)
 
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():
