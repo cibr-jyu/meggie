@@ -9,12 +9,14 @@
 [//]: # (Hello)
 
 Installation with this method would be possible for other operating systems too, but conda packages are yet to be built.
+
 ### Install from source
 My suggestion is to first install MNE-python with all its dependencies to your python environment, and then install meggie to that same environment. One way to do this would be:
-1. *conda create -c conda-forge -n meggie-env mne==0.17.0*
+1. Create new python environment: *conda create -n meggie-env python=3*
 1. Activate the environment using: *source activate meggie-env*
-1. *python setup.py install*
-1. Run with command: *meggie* 
+1. Install mne to environment: *conda install -c conda-forge mne==0.17.0*
+1. Install meggie to environment using: *python setup.py install*
+1. Run Meggie with command: *meggie* 
 
 [//]: # (Hello)
 
