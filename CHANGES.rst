@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.9.2 (unreleased)
+0.10.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.10.0 (2019-02-21)
+------------------
+
+- Refactor code
+- Make meggie windows compatible
+- Fix bugs
+- Clean up UI
 
 0.9.1 (2019-01-15)
 ------------------
