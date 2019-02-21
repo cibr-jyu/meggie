@@ -4,7 +4,8 @@
 ### Install from anaconda cloud (works in 64bit linux environments)
 1. Install meggie from anaconda cloud in an isolated conda environment using command: *conda create -c conda-forge -c CIBR -n meggie-env meggie*
 1. Activate the environment using: *source activate meggie-env*
-1. Run with command: *meggie*
+1. Run with command: *meggie* 
+
 [//]: # (Hello)
 
 Installation with this method would be possible for other operating systems too, but conda packages are yet to be built.
@@ -13,7 +14,8 @@ My suggestion is to first install MNE-python with all its dependencies to your p
 1. *conda create -c conda-forge -n meggie-env mne==0.17.0*
 1. Activate the environment using: *source activate meggie-env*
 1. *python setup.py install*
-1. Run with command: *meggie*
+1. Run with command: *meggie* 
+
 [//]: # (Hello)
 
 The idea of installing meggie over mne with dependencies should work on any major platform (Windows, Linux, Mac).
