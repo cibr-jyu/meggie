@@ -22,6 +22,12 @@ My suggestion is to first install MNE-python with all its dependencies to your p
 
 The idea of installing meggie over mne with dependencies should work on any major platform (Windows, Linux, Mac).
 
+### Debugging
+
+* If command *meggie* is not found, you should ensure that you are in the correct python environment.
+* If the command is found, but the software crashes during startup to an *ImportError*, you should ensure that you are using *Python 3* and that the dependencies are installed. Individual missing dependencies can often be installed with either *conda install* or *pip install*.
+* If the software crashes during analysis, and the terminal window does not show you the stack trace, you may start meggie using command *meggie debug* and reproduce the crash.
+
 ## Set up meggie experiment and add first dataset
 
 1. Let's ensure first that preferences are set up correctly, so go and select **Tools** from the menu, and then **Preferences**. Most important setting for now is the working directory. It is the place where all things created by meggie will go. It could be for example *your\_home\_directory/meggie-experiments*. After setting that, click **ok**.
