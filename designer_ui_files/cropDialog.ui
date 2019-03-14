@@ -1,47 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>outputOptions</class>
- <widget class="QDialog" name="outputOptions">
+ <class>cropDialog</class>
+ <widget class="QDialog" name="cropDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>255</width>
-    <height>149</height>
+    <width>286</width>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Output options</string>
+   <string>Crop</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBoxType">
-         <property name="title">
-          <string>Type</string>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButtonAddToList">
+         <property name="text">
+          <string>Add to list</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButtonAllChannels">
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBoxCrop">
+         <property name="title">
+          <string>Crop settings:</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelFrom">
             <property name="text">
-             <string>All channels</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>From:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButtonChannelAverages">
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelTo">
             <property name="text">
-             <string>Channel averages</string>
+             <string>To:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxFrom">
+            <property name="suffix">
+             <string>s</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>1000000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxTo">
+            <property name="suffix">
+             <string>s</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="maximum">
+             <double>1000000.000000000000000</double>
             </property>
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QListWidget" name="listWidgetKeep"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelKeep">
+         <property name="text">
+          <string>Keep following intervals:</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -86,7 +126,7 @@
   <connection>
    <sender>pushButtonCancel</sender>
    <signal>clicked()</signal>
-   <receiver>outputOptions</receiver>
+   <receiver>cropDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -102,7 +142,7 @@
   <connection>
    <sender>pushButtonAccept</sender>
    <signal>clicked()</signal>
-   <receiver>outputOptions</receiver>
+   <receiver>cropDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">

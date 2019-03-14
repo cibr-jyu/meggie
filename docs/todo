@@ -18,6 +18,7 @@ bugs:
 - maybe remove then columns option (statistics) from save data
 
 features:
+- multigroupaverage (maybe some dialog from group average)
 - remove bad channels from spectrum plot
 - set channel groups for experiment; channel groups can then be used in many places with eeg also. (for eeg default is all channels)
 - channel groups for visualization and saving in spectrums, evokeds and tfrs. 

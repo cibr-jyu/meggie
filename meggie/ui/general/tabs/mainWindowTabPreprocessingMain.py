@@ -23,6 +23,7 @@ from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
+from meggie.ui.preprocessing.cropDialogMain import CropDialog
 from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 
 from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
@@ -292,6 +293,19 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.resamplingDialog = ResamplingDialog(self, experiment)
         self.resamplingDialog.show()
+
+    def on_pushButtonCrop_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment or experiment.active_subject is None:
+            return
+
+        self.cropDialog = CropDialog(self, experiment)
+        self.cropDialog.show()
 
     def on_pushButtonRereferencing_clicked(self, checked=None):
         """

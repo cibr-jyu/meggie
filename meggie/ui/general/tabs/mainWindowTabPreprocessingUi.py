@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'designer_ui_files/mainWindowTabPreprocessingUi.ui'
+# Form implementation generated from reading ui file 'mainWindowTabPreprocessingUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -53,6 +53,9 @@ class Ui_mainWindowTabPreprocessing(object):
         self.pushButtonRereferencing = QtWidgets.QPushButton(self.groupBoxAvailablePreprocessing)
         self.pushButtonRereferencing.setObjectName("pushButtonRereferencing")
         self.gridLayout_14.addWidget(self.pushButtonRereferencing, 1, 0, 1, 1)
+        self.pushButtonCrop = QtWidgets.QPushButton(self.groupBoxAvailablePreprocessing)
+        self.pushButtonCrop.setObjectName("pushButtonCrop")
+        self.gridLayout_14.addWidget(self.pushButtonCrop, 4, 0, 1, 1)
         self.horizontalLayout_18.addLayout(self.gridLayout_14)
         self.gridLayout_13.addLayout(self.horizontalLayout_18, 0, 0, 1, 1)
         self.gridLayout_19.addWidget(self.groupBoxAvailablePreprocessing, 1, 0, 1, 1)
@@ -200,6 +203,7 @@ class Ui_mainWindowTabPreprocessing(object):
         self.pushButtonICA.setText(_translate("mainWindowTabPreprocessing", "ICA..."))
         self.pushButtonResampling.setText(_translate("mainWindowTabPreprocessing", "Resample..."))
         self.pushButtonRereferencing.setText(_translate("mainWindowTabPreprocessing", "Rereference..."))
+        self.pushButtonCrop.setText(_translate("mainWindowTabPreprocessing", "Crop..."))
         self.groupBoxPreprocessingCheckBoxes.setTitle(_translate("mainWindowTabPreprocessing", "Preprocessing information:"))
         self.labelRereferenced.setText(_translate("mainWindowTabPreprocessing", "Rereferenced:"))
         self.labelMaxFilter.setText(_translate("mainWindowTabPreprocessing", "MaxFilter applied:"))

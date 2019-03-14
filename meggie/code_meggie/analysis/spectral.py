@@ -15,13 +15,13 @@ import matplotlib.pyplot as plt
 import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.code_meggie.analysis.utils import color_cycle
+from meggie.code_meggie.analysis.utils import average_data_to_channel_groups
 
 from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
-from meggie.code_meggie.general.statistic import SpectrumStatistics
 from meggie.code_meggie.structures.spectrum import Spectrum
 from meggie.code_meggie.structures.tfr import TFR
 
@@ -67,7 +67,7 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
         break
 
     picks = mne.pick_types(info, meg=True, eeg=True,
-                           exclude=[])
+                           exclude='bads')
 
     params['picks'] = picks
     psd_groups = _compute_spectrum(raw_block_groups, params, n_jobs=n_jobs,
@@ -103,77 +103,111 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
     spectrum.save_data()
 
 
-def plot_power_spectrum(experiment, name):
+def plot_power_spectrum(experiment, name, output):
     """
     """
-
-    lout = fileManager.read_layout(experiment.layout)
 
     subject = experiment.active_subject
     subject_name = subject.subject_name
 
     spectrum = subject.spectrums.get(name)
 
+    lout = fileManager.read_layout(experiment.layout)
+
     data = spectrum.data
     freqs = spectrum.freqs
     ch_names = spectrum.ch_names
     log_transformed = spectrum.log_transformed
 
+    channel_groups = experiment.channel_groups
+
     raw_info = subject.get_working_file().info
 
     colors = color_cycle(len(data))
 
-    def individual_plot(ax, ch_idx):
-        """
-        Callback for the interactive plot.
-        Opens a channel specific plot.
-        """
+    if output == 'all_channels':
+        logging.getLogger('ui_logger').info('Plotting spectrum from all channels..')
 
-        # notice that ch_idx is index in the original ch_names,
-        # and ch_names from spectrum object are only the data channels
-        ch_name = raw_info['ch_names'][ch_idx]
-        psd_idx = ch_names.index(ch_name)
-        
-        fig = plt.gcf()
-        fig.canvas.set_window_title(''.join(['spectrum_', subject_name,
-                                    '_', ch_name]))
-        
-        conditions = [str(key) for key in data]
-        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
-        
-        for cond, col, pos in zip(conditions, colors, positions):
-            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+        def individual_plot(ax, ch_idx):
+            """
+            Callback for the interactive plot.
+            Opens a channel specific plot.
+            """
 
-        color_idx = 0
-        for psd in data.values():
-            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
-            color_idx += 1
-        
-        plt.xlabel('Frequency (Hz)')
+            # notice that ch_idx is index in the original ch_names,
+            # and ch_names from spectrum object are only the data channels
+            ch_name = raw_info['ch_names'][ch_idx]
+            psd_idx = ch_names.index(ch_name)
+            
+            fig = plt.gcf()
+            fig.canvas.set_window_title(''.join(['spectrum_', subject_name,
+                                        '_', ch_name]))
+            
+            conditions = [str(key) for key in data]
+            positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+            
+            for cond, col, pos in zip(conditions, colors, positions):
+                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
-        plt.ylabel('Power ({})'.format(get_power_unit(
-            mne.channel_type(raw_info, ch_idx),
-            log_transformed
-        )))
+            color_idx = 0
+            for psd in data.values():
+                plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
+                color_idx += 1
+            
+            plt.xlabel('Frequency (Hz)')
+
+            plt.ylabel('Power ({})'.format(get_power_unit(
+                mne.channel_type(raw_info, ch_idx),
+                log_transformed
+            )))
+
+            plt.show()
+
+        for ax, idx in mne.iter_topography(raw_info, fig_facecolor='white',
+                                           axis_spinecolor='white',
+                                           axis_facecolor='white', layout=lout,
+                                           on_pick=individual_plot):
+
+            if raw_info['ch_names'][idx] not in ch_names:
+                continue
+
+            psd_idx = ch_names.index(raw_info['ch_names'][idx])
+            
+            for color_idx, psd in enumerate(data.values()):
+                ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
+
+        plt.gcf().canvas.set_window_title('spectrum_' + subject_name)
+        plt.show()
+
+    elif output == 'channel_averages':
+        logging.getLogger('ui_logger').info('Plotting spectrum channel averages..')
+
+
+        averages = {}
+        for idx, (key, psd) in enumerate(spectrum.data.items()):
+
+            data_labels, averaged_data = average_data_to_channel_groups(
+                psd, ch_names, channel_groups, type_='mean')
+            averages[key] = data_labels, averaged_data
+            shape = averaged_data.shape
+
+        for ii in range(shape[0]):
+            fig, ax = plt.subplots()
+            for color_idx, key in enumerate(spectrum.data.keys()):
+                ax.set_xlabel('Frequency (Hz)')
+                ax.set_ylabel('Power ({})'.format(get_power_unit(
+                    averages[key][0][ii][0],
+                    log_transformed
+                )))
+                ax.plot(freqs, averages[key][1][ii], color=colors[color_idx])
+            ch_type, ch_group = averages[key][0][ii]
+            title = 'Spectrum ({0}, {1})'.format(ch_type, ch_group)
+            fig.canvas.set_window_title(title)
+            fig.suptitle(title)
 
         plt.show()
 
-    for ax, idx in mne.iter_topography(raw_info, fig_facecolor='white',
-                                       axis_spinecolor='white',
-                                       axis_facecolor='white', layout=lout,
-                                       on_pick=individual_plot):
-
-        psd_idx = ch_names.index(raw_info['ch_names'][idx])
-        
-        for color_idx, psd in enumerate(data.values()):
-            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
-
-    plt.gcf().canvas.set_window_title('spectrum_' + subject_name)
-    plt.show()
-
-
-def save_data_psd(experiment, subjects, output_rows, 
-                  output_columns, spectrum_name):
+def save_data_psd(experiment, subjects, output_rows, spectrum_name):
 
     logging.getLogger('ui_logger').info('Checking compatibility..')
     freq_lengths = []
@@ -191,11 +225,14 @@ def save_data_psd(experiment, subjects, output_rows,
     if len(set(ch_name_lengths)) > 1:
         raise Exception("Channels are not all equal")
 
-    logging.getLogger('ui_logger').info('Saving..')
 
+    channel_groups = experiment.channel_groups
+
+    logging.getLogger('ui_logger').info('Saving..')
     path = fileManager.create_timestamped_folder(experiment)
     data = []
     row_names = []
+
 
     for subject in subjects:
         spectrum = subject.spectrums.get(spectrum_name, None)
@@ -212,48 +249,19 @@ def save_data_psd(experiment, subjects, output_rows,
 
             if output_rows == 'channel_averages':
 
-                ch_types = ['grad', 'mag']
-
                 subject_data = []
 
-                selections = mne.SELECTIONS
-                for selection in selections:
-                    # find channels names for selection provided by mne
-                    selected_ch_names = mne._clean_names(
-                        mne.read_selection(selection),
-                        remove_whitespace=True)
+                data_labels, averaged_data = average_data_to_channel_groups(
+                    psd, ch_names, channel_groups, type_='mean')
 
-                    cleaned_ch_names = mne._clean_names(ch_names,
-                        remove_whitespace=True)
-
-                    for ch_type in ch_types:
-
-                        if ch_type == 'grad':
-                            ch_names_filt = [ch_name for ch_name in selected_ch_names
-                                             if not ch_name.endswith('1')]
-                        elif ch_type == 'mag':
-                            ch_names_filt = [ch_name for ch_name in selected_ch_names
-                                             if ch_name.endswith('1')]
-
-                        # calculate average
-                        ch_average = np.mean(
-                            [psd[ch_idx] for ch_idx, ch_name 
-                             in enumerate(cleaned_ch_names)
-                             if ch_name in ch_names_filt
-                             and ch_name not in info['bads']], axis=0)
-
-                        subject_data.append(ch_average)
-
-                subject_data = np.array(subject_data)
+                subject_data = np.array(averaged_data)
 
                 subject_row_names = []
-                for sel in selections:
-                    for ch_type in ch_types:
-                        row_name = ('[' + subject_name + '] ' + 
-                                    '{' + str(key) + '} ' +
-                                    '(' + ch_type + ') ' + sel)
-                        subject_row_names.append(row_name)
-
+                for ch_type, sel in data_labels:
+                    row_name = ('[' + subject_name + '] ' + 
+                                '{' + str(key) + '} ' +
+                                '(' + ch_type + ') ' + sel)
+                    subject_row_names.append(row_name)
             else:
                 subject_data = psd
 
@@ -262,32 +270,15 @@ def save_data_psd(experiment, subjects, output_rows,
                     row_name = ('[' + subject_name + '] ' + 
                                 '{' + str(key) + '} ' + ch_name)
                     subject_row_names.append(row_name)
-
-            if output_columns == 'statistics':
-                statistics = SpectrumStatistics(
-                    freqs, subject_data, log_transformed)
-
-                alpha_peak = statistics.alpha_peak
-                alpha_frequency = statistics.alpha_frequency
-                alpha_power = statistics.alpha_power
-
-                filename = ''.join([subject_name, '_', 
-                                    'spectrum_statistics.csv'])
-
-                column_names = ['Alpha amplitude', 'Alpha frequency', 'Alpha power']
-                subject_data = np.transpose(
-                    np.array([alpha_peak, alpha_frequency, alpha_power]))
-
-            else:
-                filename = ''.join([subject_name, '_', 'spectrum.csv'])
-                column_names = freqs.tolist()
+            
+            filename = ''.join([subject_name, '_', 'spectrum.csv'])
+            column_names = freqs.tolist()
 
             row_names.extend(subject_row_names)
             data.extend(subject_data.tolist())
 
     fileManager.save_csv(os.path.join(path, filename), data, 
                          column_names, row_names)
-
 
 def group_average_psd(experiment, spectrum_name):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
@@ -365,39 +356,6 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
 
     meggie_tfr.save_tfr()
 
-
-def save_data_tfr():
-    pass
-
-    # if save_data:
-    #     subject = experiment.active_subject.subject_name
-    #     path = fileManager.create_timestamped_folder(experiment)
-    #     fname = os.path.join(
-    #         path,
-    #         subject + '_TFR_epochs_allchannels.csv'
-    #     )
-    #     labels = []
-    #     for ch_name in inst.info['ch_names']:
-    #         if ch_name in inst.info['bads']:
-    #             ch_name += ' (bad)'
-    #         labels.append(ch_name)
-    #     logging.getLogger('ui_logger').info("Saving data..")
-    #     fileManager.save_tfr_topology(fname, inst.data, 
-    #                         inst.times, freqs, labels)
-    # if save_data:
-    #     subject = experiment.active_subject.subject_name
-    #     path = fileManager.create_timestamped_folder(experiment)
-    #     ch_name = power.ch_names[ch_index]
-    #     power_fname = os.path.join(
-    #         path,
-    #         subject + '_' + ch_name + '_TFR_epochs_induced.csv'
-    #     )
-    #     fileManager.save_tfr(power_fname, power.data[ch_index], power.times, freqs)
-    #     itc_fname = os.path.join(
-    #         path,
-    #         subject + '_' + ch_name + '_TFR_epochs_itc.csv'
-    #     )
-    #     fileManager.save_tfr(itc_fname, itc.data[ch_index], itc.times, freqs)
 
 def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
 
