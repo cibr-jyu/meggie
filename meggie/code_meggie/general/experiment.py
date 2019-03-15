@@ -346,8 +346,11 @@ class ExperimentHandler(QObject):
             experiment.description = expDict['description']
         except AttributeError:
             raise Exception('Cannot assign attribute to experiment.')
-        
+      
         experiment.workspace = prefs.working_directory
+
+        if os.path.exists(os.path.join(experiment.workspace, experiment.experiment_name)):
+            raise Exception('Experiment with same name already exists.')
         
         experiment.save_experiment_settings()
         
@@ -367,13 +370,17 @@ class ExperimentHandler(QObject):
         """
         
         if path:
-            exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
+            if path.endswith('.exp'):
+                exp_file = path
+            else:
+                exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
         else:
             if prefs.previous_experiment_name == '':
                 return
+
             exp_file = os.path.join(
-            prefs.previous_experiment_name,
-            os.path.basename(prefs.previous_experiment_name) + '.exp'
+                prefs.previous_experiment_name,
+                os.path.basename(prefs.previous_experiment_name) + '.exp'
             )
         
         if not os.path.isfile(exp_file):
