@@ -18,7 +18,6 @@ from meggie.ui.widgets.epochWidgetMain import EpochWidget
 
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_scaling
-from meggie.code_meggie.analysis.epoching import average_channels
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
@@ -51,7 +50,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         if active_subject is None:
             return
 
-        self.populate_lobes()
         self.clear_epoch_collection_parameters()
         self.epochList.clear_items()
 
@@ -68,19 +66,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
     def update_ui(self):
         self.parent.update_ui()
-
-    def populate_lobes(self):
-        self.ui.comboBoxLobes.clear()
-        self.ui.comboBoxLobes.addItem('Vertex')
-        self.ui.comboBoxLobes.addItem('Left-temporal')
-        self.ui.comboBoxLobes.addItem('Right-temporal')
-        self.ui.comboBoxLobes.addItem('Left-parietal')
-        self.ui.comboBoxLobes.addItem('Right-parietal')
-        self.ui.comboBoxLobes.addItem('Left-occipital')
-        self.ui.comboBoxLobes.addItem('Right-occipital')
-        self.ui.comboBoxLobes.addItem('Left-frontal')
-        self.ui.comboBoxLobes.addItem('Right-frontal')
-
 
     def clear_epoch_collection_parameters(self):
         """
@@ -212,7 +197,7 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
                                            QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
-            for subject in self.experiment.subjects.values():
+            for subject in experiment.subjects.values():
                 if collection_name in subject.epochs:
                     try:
                         subject.remove_epochs(
@@ -226,33 +211,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
             experiment.save_experiment_settings()
             self.parent.initialize_ui()
 
-    def on_pushButtonChannelAverages_clicked(self, checked=None):
-        """Shows the channels average graph."""
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        if self.epochList.currentItem() is None:
-            message = 'Please select an epoch collection first.'
-            messagebox(self, message)
-            return
-
-        name = str(self.epochList.currentItem().text())
-
-        try:
-            lobe_name = self.ui.comboBoxLobes.currentText()
-            channels = mne.read_selection(
-                lobe_name)
-            average_channels(experiment, name,
-                             channels,
-                             lobe_name,
-                             update_ui=self.update_ui)
-        except Exception as e:
-            exc_messagebox(self, e)
-
     def on_pushButtonCreateEpochs_clicked(self, checked=None):
         """Open the epoch dialog."""
         if checked is None:
@@ -264,7 +222,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
         self.epochParameterDialog = EventSelectionDialog(self, experiment)
         self.epochParameterDialog.show()
-
 
     def on_pushButtonVisualizeEpochChannels_clicked(self, checked=None):
         """Plot image over epochs channel"""

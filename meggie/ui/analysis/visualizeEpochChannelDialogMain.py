@@ -44,6 +44,6 @@ class VisualizeEpochChannelDialog(QtWidgets.QDialog):
                                         colorbar=True,
                                         order=None, show=True)
 
-        fig[0].canvas.set_window_title('_'.join(['Viz_channel',
-                                       self.epochs.collection_name,
-                                       self.epochs.raw.ch_names[pick]]))
+        fig[0].canvas.set_window_title(
+            self.epochs.collection_name + ' on channel ' +
+            self.epochs.raw.ch_names[pick])

@@ -274,7 +274,7 @@ class Ui_EventSelectionDialog(object):
         self.pushButtonEdit.setText(_translate("EventSelectionDialog", "Edit..."))
         self.pushButtonHelp.setText(_translate("EventSelectionDialog", "Help..."))
         self.pushButtonClear.setText(_translate("EventSelectionDialog", "Clear list <<"))
-        self.groupBoxRejection.setTitle(_translate("EventSelectionDialog", "Rejection parameters"))
+        self.groupBoxRejection.setTitle(_translate("EventSelectionDialog", "Picks and rejection paremeters"))
         self.checkBoxGrad.setToolTip(_translate("EventSelectionDialog", "Include or exclude grad channels"))
         self.checkBoxGrad.setText(_translate("EventSelectionDialog", "Grad"))
         self.doubleSpinBoxGradReject_3.setSuffix(_translate("EventSelectionDialog", " fT/cm"))

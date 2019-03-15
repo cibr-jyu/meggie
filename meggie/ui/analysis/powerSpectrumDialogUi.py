@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../powerSpectrumDialogUi.ui'
+# Form implementation generated from reading ui file 'powerSpectrumDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -18,7 +18,7 @@ class Ui_PowerSpectrumDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 702, 603))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 704, 608))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(700, 540))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.groupBoxConditions = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
@@ -167,7 +167,7 @@ class Ui_PowerSpectrumDialog(object):
         self.listWidgetIntervals.setObjectName("listWidgetIntervals")
         self.horizontalLayout_3.addWidget(self.listWidgetIntervals)
         self.groupBoxGeneral = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupBoxGeneral.setGeometry(QtCore.QRect(10, 0, 681, 52))
+        self.groupBoxGeneral.setGeometry(QtCore.QRect(10, 0, 681, 71))
         self.groupBoxGeneral.setObjectName("groupBoxGeneral")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.groupBoxGeneral)
         self.gridLayout_3.setObjectName("gridLayout_3")

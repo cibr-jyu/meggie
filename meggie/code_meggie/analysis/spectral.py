@@ -182,12 +182,18 @@ def plot_power_spectrum(experiment, name, output):
     elif output == 'channel_averages':
         logging.getLogger('ui_logger').info('Plotting spectrum channel averages..')
 
-
         averages = {}
         for idx, (key, psd) in enumerate(spectrum.data.items()):
 
+            if log_transformed:
+                psd = 10 ** (psd / 10.0)
+
             data_labels, averaged_data = average_data_to_channel_groups(
-                psd, ch_names, channel_groups, type_='mean')
+                psd, ch_names, channel_groups)
+
+            if log_transformed:
+                averaged_data = 10 * np.log10(averaged_data)
+
             averages[key] = data_labels, averaged_data
             shape = averaged_data.shape
 
@@ -225,6 +231,11 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     if len(set(ch_name_lengths)) > 1:
         raise Exception("Channels are not all equal")
 
+    if len(subjects) > 1:
+        filename = 'group_spectrum_' + spectrum_name + '.csv'
+    else:
+        filename = (subjects[0].subject_name + '_spectrum_' + 
+                    spectrum_name + '.csv')
 
     channel_groups = experiment.channel_groups
 
@@ -232,7 +243,6 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     path = fileManager.create_timestamped_folder(experiment)
     data = []
     row_names = []
-
 
     for subject in subjects:
         spectrum = subject.spectrums.get(spectrum_name, None)
@@ -251,8 +261,14 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
 
                 subject_data = []
 
+                if log_transformed:
+                    psd = 10 ** (psd / 10.0)
+
                 data_labels, averaged_data = average_data_to_channel_groups(
-                    psd, ch_names, channel_groups, type_='mean')
+                    psd, ch_names, channel_groups)
+
+                if log_transformed:
+                    averaged_data = 10 * np.log10(averaged_data)
 
                 subject_data = np.array(averaged_data)
 
@@ -271,7 +287,6 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
                                 '{' + str(key) + '} ' + ch_name)
                     subject_row_names.append(row_name)
             
-            filename = ''.join([subject_name, '_', 'spectrum.csv'])
             column_names = freqs.tolist()
 
             row_names.extend(subject_row_names)

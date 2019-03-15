@@ -6,7 +6,7 @@
 import re
 import copy
 import logging
-
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.code_meggie.analysis.utils import color_cycle
+from meggie.code_meggie.analysis.utils import average_data_to_channel_groups
 
 from meggie.ui.utils.decorators import threaded
 from meggie.code_meggie.general import fileManager
@@ -143,7 +144,7 @@ def create_eventlist(experiment, params, subject):
     return e.events
 
 
-def draw_evoked_potentials(experiment, evokeds, title=None):
+def draw_evoked_potentials(experiment, evokeds, output, title=None):
     """
     Draws a topography representation of the evoked potentials.
 
@@ -151,139 +152,136 @@ def draw_evoked_potentials(experiment, evokeds, title=None):
     layout = fileManager.read_layout(experiment.layout)
     colors = color_cycle(len(evokeds))
 
+    channel_groups = experiment.channel_groups
+
     new_evokeds = []
     for evoked_idx, evoked in enumerate(evokeds):
-        
         new_evokeds.append(evoked.copy().drop_channels(evoked.info['bads']))
 
-    fig = mne.plot_evoked_topo(new_evokeds, layout,
-        color=colors, title=title)
+    if output == 'all_channels':
 
-    conditions = [e.comment for e in new_evokeds]
-    positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
+        fig = mne.plot_evoked_topo(new_evokeds, layout,
+            color=colors, title=title)
+
+        conditions = [e.comment for e in new_evokeds]
+        positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
+                
+        for cond, col, pos in zip(conditions, colors, positions):
+            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
             
-    for cond, col, pos in zip(conditions, colors, positions):
-        plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+        window_title = '_'.join(conditions)
+        fig.canvas.set_window_title(window_title)
+        fig.show()
         
-    window_title = '_'.join(conditions)
-    fig.canvas.set_window_title(window_title)
-    fig.show()
-    
-    def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gcf().canvas.set_window_title('_'.join([window_title, channel]))
-        plt.show(block=False)
+        def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join([window_title, channel]))
+            plt.show(block=False)
 
-    fig.canvas.mpl_connect('button_press_event', onclick)
+        fig.canvas.mpl_connect('button_press_event', onclick)
 
-def average_channels(experiment, instance, channels, title, 
-                     update_ui=(lambda: None)):
-    """
-    """
-    
-    message = "Calculating channel averages for " + title
-    logging.getLogger('ui_logger').info(message)
+    elif output == 'channel_averages':
 
-    datalist, epochs_name = _average_channels(experiment,
-        instance, channels, do_meanwhile=update_ui)
+        averages = []
+        for evoked_idx, evoked in enumerate(new_evokeds):
+            data_labels, averaged_data = average_data_to_channel_groups(
+                evoked.data, evoked.info['ch_names'], channel_groups)
+            averages.append((data_labels, averaged_data))
+            shape = averaged_data.shape
 
-    fig = plt.figure()
-    subject_name = experiment.active_subject.subject_name
-    fig.canvas.set_window_title('_'.join([
-        epochs_name, 
-        'channel_avg', 
-        title]))
+        for ii in range(shape[0]):
+            fig, ax = plt.subplots()
+            for evoked_idx in range(len(new_evokeds)):
+                evoked_name = new_evokeds[evoked_idx].comment
+                times = new_evokeds[evoked_idx].times
+                ax.set_xlabel('Time (s)')
+                ax.set_ylabel('{}'.format(get_unit(
+                    averages[evoked_idx][0][ii][0]
+                )))
+                ax.plot(times, averages[evoked_idx][1][ii], 
+                        color=colors[evoked_idx])
+            ch_type, ch_group = averages[evoked_idx][0][ii]
+            title = 'Evoked ({0}, {1})'.format(ch_type, ch_group)
+            fig.canvas.set_window_title(title)
+            fig.suptitle(title)
 
-    fig.suptitle('Channel average for ' + title, y=1.0025)
-
-    # Draw a separate plot for each event type
-    for index, (times, event_name, ch_type, data) in enumerate(datalist):
-        ca = fig.add_subplot(len(datalist), 1, index + 1) 
-        ca.set_title(event_name)
-
-        if event_name.endswith('grad'):
-            ch_type = 'grad'
-        elif event_name.endswith('mag'):
-            ch_type = 'mag'
-
-        label = get_unit(ch_type)
-        data *= get_scaling(ch_type)
-
-        ca.plot(times, data)
-
-        ca.set_xlabel('Time (s)')
-        ca.set_ylabel(label)
-
-    plt.tight_layout()
-    fig.show()
-
-@threaded
-def _average_channels(experiment, instance, channels):
-    """Performed in a worker thread."""
-
-    meggie_epochs = experiment.active_subject.epochs.get(instance)
-    epochs = meggie_epochs.raw
-    epochs_name = meggie_epochs.collection_name
-
-    if epochs is None:
-        raise Exception('No epochs found.')
-
-    category = epochs.event_id
-
-    evokeds = [epochs[name].average() for name in category.keys()]
-
-    if not list(mne.pick_types(evokeds[0].info, meg=True)):
-        raise Exception('Supported only for MEG data')
+        plt.show()
 
 
-    datalist = []
+def save_data_evoked(experiment, subjects, output_rows, evoked_name):
 
-    for evoked in evokeds:
+    path = fileManager.create_timestamped_folder(experiment)
 
-        evoked = evoked.copy()
+    channel_groups = experiment.channel_groups
 
-        # remove bad channels, and their pairs
-        removed = []
-        for ch_idx, ch_name in enumerate(evoked.info['ch_names']):
-            if ch_name in evoked.info['bads']:
-                if ch_name.endswith('1'):
-                    removed.append(ch_name)
+    time_lengths = []
+    tmins = []
+    tmaxs = []
+    for subject in subjects.values():
+        meggie_evoked = subject.evokeds.get(evoked_name, None)
+        if meggie_evoked is None:
+            continue
+        for evoked in meggie_evoked.mne_evokeds.values():
+            if not evoked:
+                continue
+            time_lengths.append(len(evoked.times))
+            tmins.append(evoked.times[0])
+            tmaxs.append(evoked.times[-1])
+
+    if len(set(time_lengths)) > 1 or len(set(tmins)) > 1 or len(set(tmaxs)) > 1:
+        raise Exception("Time settings are not all equal")
+
+    cleaned_evoked_name = evoked_name.split('.')[0]
+
+    if len(subjects) > 1:
+        filename = 'group_spectrum_' + cleaned_evoked_name + '.csv'
+    else:
+        filename = (list(subjects.values())[0].subject_name + 
+                    '_spectrum_' + cleaned_evoked_name + '.csv')
+
+    logging.getLogger('ui_logger').info('Saving evokeds..')
+
+    data = []
+    row_names = []
+
+    for sub_name, subject in subjects.items():
+        names = []
+        evokeds = []
+        meggie_evoked = subject.evokeds.get(evoked_name)
+        if meggie_evoked:
+            for name, evoked in meggie_evoked.mne_evokeds.items():
+                if not evoked:
+                    continue
+
+                column_names = evoked.times.tolist()
+
+                if output_rows == 'channel_averages':
+                    evoked = evoked.copy().drop_channels(evoked.info['bads'])
+
+                    data_labels, averaged_data = average_data_to_channel_groups(
+                        evoked.data, evoked.info['ch_names'], channel_groups)
+
+                    data.extend(averaged_data.tolist())
+
+                    for ch_type, sel in data_labels:
+                        row_name = ('[' + sub_name + '] ' +
+                                    '{' + name + '} ' + 
+                                    '(' + ch_type + ') ' + sel)
+                        row_names.append(row_name)
+                    
                 else:
-                    ch_group = ch_name[-4:-1]
-                    for ch_idx_2, ch_name_2 in enumerate(evoked.info['ch_names']):
-                        if ch_name_2[-4:-1] == ch_group and not ch_name_2.endswith('1'):  # noqa
-                            if ch_name_2 not in removed:
-                                removed.append(ch_name_2)
+                    data.extend(evoked.data.tolist())
+                    for ch_name in evoked.info['ch_names']:
+                        if ch_name in evoked.info['bads']:
+                            ch_name = ch_name + ' (bad)'
+                        row_name = ('[' + sub_name + '] ' +
+                                    '{' + name + '] ' + 
+                                    ch_name)
+                        row_names.append(row_name)
 
-        grad_idxs = mne.pick_types(evoked.info, meg='grad', 
-                                   selection=channels,
-                                   exclude=removed)
-        mag_idxs = mne.pick_types(evoked.info, meg='mag',
-                                  selection=channels,
-                                  exclude=removed)
+    fileManager.save_csv(os.path.join(path, filename), data, column_names,
+                         row_names)
 
-        if len(grad_idxs) > 0:
-            grad_data = mne._merge_grad_data(evoked.data[grad_idxs])
-            grad_data = np.mean(grad_data, axis=0)
-
-            # Links the event name and the corresponding data
-            datalist.append((
-                evoked.times, 
-                evoked.comment + ' (grad)',
-                'grad',
-                grad_data
-            ))
-        if len(mag_idxs) > 0:
-            mag_data = evoked.data[mag_idxs]
-            mag_data = np.mean(mag_data, axis=0)
-            datalist.append((
-                evoked.times,
-                evoked.comment + ' (mag)', 
-                'mag',
-                mag_data
-            ))
-
-    return datalist, epochs_name
 
 def group_average(experiment, evoked_name, update_ui=(lambda: None)):
     """
