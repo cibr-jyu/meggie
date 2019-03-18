@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.utils.files import homepath
+from meggie.code_meggie.general.fileManager import homepath
 
 from meggie.ui.general.layoutDialogUi import Ui_Layout
 

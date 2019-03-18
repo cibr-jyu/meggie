@@ -7,7 +7,7 @@ import os
 import logging
 import configparser
 
-from meggie.code_meggie.utils.files import homepath
+from meggie.code_meggie.general.fileManager import homepath
 
 
 class PreferencesHandler(object):

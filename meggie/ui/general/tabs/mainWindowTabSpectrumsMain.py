@@ -37,13 +37,14 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.ui.listWidgetSpectrums.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
 
         # update subjects list
-        self.ui.listWidgetSpectrums.clear()
         for name in active_subject.spectrums:
             item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetSpectrums.addItem(item)
@@ -103,7 +104,14 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not spectrum_item:
             return
 
-        plot_power_spectrum(self.parent.experiment, spectrum_item.text())
+        def output_options_handler(row_setting):
+            logging.getLogger('ui_logger').info('Plotting spectrum..')
+            plot_power_spectrum(self.parent.experiment, spectrum_item.text(), 
+                                output=row_setting)
+
+        handler = output_options_handler
+        self.output_options_dialog = OutputOptions(self, handler=handler)
+        self.output_options_dialog.show()
 
 
     def on_pushButtonDeleteSpectrum_clicked(self, checked=None):
@@ -216,19 +224,16 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not spectrum_item:
             return
 
-        subjects = experiment.subjects.values()
+        subjects = list(experiment.subjects.values())
         logging.getLogger('ui_logger').info('Saving spectrum for all subjects')
 
-        def output_options_handler(row_setting, column_setting):
+        def output_options_handler(row_setting):
             logging.getLogger('ui_logger').info('Saving spectrum')
-            save_data_psd(experiment, subjects, row_setting, 
-                          column_setting, spectrum_item.text())
+            save_data_psd(experiment, subjects, row_setting, spectrum_item.text())
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)
         self.output_options_dialog.show()
-
-
 
     def on_pushButtonSaveSpectrum_clicked(self, checked=None):
         if checked is None:
@@ -246,10 +251,9 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not spectrum_item:
             return
 
-        def output_options_handler(row_setting, column_setting):
+        def output_options_handler(row_setting):
             logging.getLogger('ui_logger').info('Saving spectrum')
-            save_data_psd(experiment, [active_subject], row_setting, 
-                          column_setting, spectrum_item.text())
+            save_data_psd(experiment, [active_subject], row_setting, spectrum_item.text())
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)

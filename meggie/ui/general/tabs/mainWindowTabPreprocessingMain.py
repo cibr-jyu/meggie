@@ -23,6 +23,7 @@ from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
+from meggie.ui.preprocessing.cropDialogMain import CropDialog
 from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 
 from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
@@ -49,11 +50,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
-        active_subject = self.parent.experiment.active_subject
-
-        if active_subject is None:
-            return
-
         self.ui.listWidgetProjs.clear()
         self.ui.listWidgetBads.clear()
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
@@ -61,6 +57,11 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         self.ui.checkBoxRereferenced.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
+
+        active_subject = self.parent.experiment.active_subject
+
+        if active_subject is None:
+            return
 
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():
@@ -292,6 +293,19 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.resamplingDialog = ResamplingDialog(self, experiment)
         self.resamplingDialog.show()
+
+    def on_pushButtonCrop_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment or experiment.active_subject is None:
+            return
+
+        self.cropDialog = CropDialog(self, experiment)
+        self.cropDialog.show()
 
     def on_pushButtonRereferencing_clicked(self, checked=None):
         """

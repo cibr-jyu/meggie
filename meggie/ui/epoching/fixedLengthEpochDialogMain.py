@@ -13,7 +13,7 @@ class FixedLengthEpochDialog(QtWidgets.QDialog):
     creating fixed length events.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, experiment):
         """Initialize the event selection dialog.
 
         Keyword arguments:
@@ -24,7 +24,7 @@ class FixedLengthEpochDialog(QtWidgets.QDialog):
         self.ui = Ui_FixedLengthEpochDialog()
         self.ui.setupUi(self)
         self.parent = parent
-        self.experiment = self.parent.parent.experiment
+        self.experiment = experiment
         self.ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText('Add events')
         self.raw = (self.experiment.active_subject
                     .get_working_file(temporary=True))

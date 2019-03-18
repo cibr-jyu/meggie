@@ -55,6 +55,14 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.ui.listWidgetForwardSolutionsFwd.clear()
+        self.ui.listWidgetForwardSolutionsStc.clear()
+        self.ui.listWidgetStcEpochs.clear()
+        self.ui.listWidgetStcEvoked.clear()
+        self.ui.listWidgetSourceEstimatesStc.clear()
+        self.ui.listWidgetSourceEstimatesAna.clear()
+        self.ui.listWidgetCovariances.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
@@ -69,44 +77,37 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         # populate forward solutions in forward solutions tab
         solutions = active_subject.get_forward_solution_names()
-        self.ui.listWidgetForwardSolutionsFwd.clear()
         for solution in solutions:
             item = QtWidgets.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsFwd.addItem(item)
 
         # populate forward solutions in source estimate tab
         solutions = active_subject.get_forward_solution_names()
-        self.ui.listWidgetForwardSolutionsStc.clear()
         for solution in solutions:
             item = QtWidgets.QListWidgetItem(solution)
             self.ui.listWidgetForwardSolutionsStc.addItem(item)
 
         # populate epochs in source estimate tab
-        self.ui.listWidgetStcEpochs.clear()
         for collection in active_subject.epochs:
             item = QtWidgets.QListWidgetItem(collection)
             self.ui.listWidgetStcEpochs.addItem(item)
 
         # populate evoked in source estimate tab
-        self.ui.listWidgetStcEvoked.clear()
         for evoked in active_subject.evokeds:
             item = QtWidgets.QListWidgetItem(evoked)
             self.ui.listWidgetStcEvoked.addItem(item)
 
         # populate stc in source estimate tab
-        self.ui.listWidgetSourceEstimatesStc.clear()
         for stc in active_subject.stcs:
             item = QtWidgets.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesStc.addItem(item)
 
         # populate stc in analysis tab
-        self.ui.listWidgetSourceEstimatesAna.clear()
         for stc in active_subject.stcs:
             item = QtWidgets.QListWidgetItem(stc)
             self.ui.listWidgetSourceEstimatesAna.addItem(item)
 
         # populate covfiles in cov tab
-        self.ui.listWidgetCovariances.clear()
         for covfile in active_subject.get_covfiles():
             item = QtWidgets.QListWidgetItem(covfile)
             self.ui.listWidgetCovariances.addItem(item)
@@ -114,7 +115,6 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
             self.ui.checkBoxCoregistrationSelected.setChecked(True)
-
         
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """

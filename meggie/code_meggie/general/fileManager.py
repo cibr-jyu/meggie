@@ -187,70 +187,8 @@ def save_raw(experiment, raw, fname, overwrite=True):
 
     experiment.active_subject.working_file_name = os.path.basename(fname)
     raw._filenames[0] = fname
+
     
-def group_save_evokeds(path, evokeds, names):
-    """ Combine data from multiple evokeds to one big csv """
-
-    if len(evokeds) == 0:
-        raise ValueError("At least one evoked object is needed.")
-
-    message = "Writing " + str(len(evokeds)) + " evokeds to " + path
-    logging.getLogger('ui_logger').info(message)
-
-    # gather all the data to list of rows
-    all_data = []
-
-    # time point data, assume same lengths for all evokeds
-    all_data.append(['times'] + evokeds[0].times.tolist())
-
-    # time series data
-    for idx, evoked in enumerate(evokeds):
-        for ch_idx in range(len(evoked.data)):
-            ch_name = evoked.info['ch_names'][ch_idx].replace(' ', '')
-            row_name = names[idx] + ' ' + ch_name
-
-            # mark bad channels
-            if evoked.info['ch_names'][ch_idx] in evoked.info['bads']:
-                row_name += ' (bad)'
-
-            row = [row_name] + evoked.data[ch_idx, :].tolist()
-            all_data.append(row)
-
-    all_data = np.array(all_data)
-    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
-
-
-def save_tfr(path, tfr, times, freqs):
-
-    all_data = []
-    all_data.append([''] + times.tolist())
-    
-    for i in range(tfr.shape[0]):
-        row = []
-        row.append(freqs[i])
-        for value in tfr[i]:
-            row.append(value)
-        all_data.append(row) 
-
-    all_data = np.array(all_data)
-    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
-
-
-def save_tfr_topology(path, tfrs, times, freqs, labels):
-    all_data = []
-    all_data.append([''] + times.tolist())
-    for idx, tfr in enumerate(tfrs):
-        for i in range(tfr.shape[0]):
-            row = []
-            row.append('[' + labels[idx] + '] ' +  str(freqs[i]))
-            for value in tfr[i]:
-                row.append(value)
-            all_data.append(row)
-
-    all_data = np.array(all_data)
-    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
-
-
 def save_epoch(epoch, overwrite=False):
     """
     """
@@ -383,3 +321,12 @@ def tail(f, lines=1, _buffer=4098):
     return lines_found[-lines:]
     
 
+def homepath():
+    """ Tries to find correct path for file from user's home folder """
+    from os.path import expanduser
+    home = expanduser("~")
+
+    if not home:
+        return '.'
+
+    return home

@@ -385,7 +385,7 @@ class EventSelectionDialog(QtWidgets.QDialog):
         if checked is None:
             return
         if self.fixedLengthDialog is None:
-            self.fixedLengthDialog = FixedLengthEpochDialog(self)
+            self.fixedLengthDialog = FixedLengthEpochDialog(self, self.experiment)
         self.fixedLengthDialog.show()
 
     def on_pushButtonEdit_clicked(self, checked=None):

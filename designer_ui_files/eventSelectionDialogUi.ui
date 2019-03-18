@@ -235,7 +235,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Rejection parameters</string>
+        <string>Picks and rejection paremeters</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">

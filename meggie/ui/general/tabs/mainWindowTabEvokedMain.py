@@ -19,8 +19,13 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.code_meggie.structures.evoked import Evoked
 
+from meggie.ui.analysis.outputOptionsMain import OutputOptions
+
 from meggie.code_meggie.analysis.epoching import draw_evoked_potentials
+from meggie.code_meggie.analysis.epoching import save_data_evoked
 from meggie.code_meggie.analysis.epoching import group_average
+
+from meggie.ui.analysis.outputOptionsMain import OutputOptions
 
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_scaling
@@ -66,19 +71,20 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.epochList.clear_items()
+        self.ui.listWidgetEvoked.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
 
-        self.epochList.clear_items()
         epochs_items = active_subject.epochs
         if epochs_items is not None:
             for name in sorted(epochs_items.keys()):
                 self.epochList.add_item(name)
 
         evokeds_items = active_subject.evokeds
-        self.ui.listWidgetEvoked.clear()
         if evokeds_items is not None:
             for name in sorted(evokeds_items.keys()):
                 self.ui.listWidgetEvoked.addItem(name)
@@ -87,13 +93,8 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         if self.epochList.ui.listWidgetEpochs.count() > 1:
             self.epochList.ui.listWidgetEpochs.setCurrentRow(0)
 
-        # Update the batching widget ui
-        # if self.parent.experiment:
-        #     self.evokeds_batching_widget.update(self.parent.experiment, False)
-
     def update_ui(self):
         self.parent.update_ui()
-
 
     def on_pushButtonCreateEvoked_clicked(self, checked=None):
         """
@@ -166,7 +167,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             return
 
         subjects = self.parent.experiment.subjects
-        self.save_evoked_data(subjects)
+        self.save_data(subjects)
 
     def on_pushButtonSaveEvoked_clicked(self, checked=None):
         if checked is None:
@@ -184,7 +185,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
              experiment.active_subject),
         ])
 
-        self.save_evoked_data(subjects)
+        self.save_data(subjects)
 
 
     def on_pushButtonEvokedTopomaps_clicked(self, checked=None):
@@ -269,13 +270,19 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         message = 'Visualizing evoked collection %s...\n' % evoked_name
         logging.getLogger('ui_logger').info(message)
 
-        try:
-            draw_evoked_potentials(
-                experiment,
-                list(mne_evokeds.values()),
-                title=evoked_name)
-        except Exception as e:
-            exc_messagebox(self, e)
+        def output_options_handler(row_setting):
+            try:
+                draw_evoked_potentials(
+                    experiment,
+                    list(mne_evokeds.values()),
+                    row_setting,
+                    title=evoked_name)
+            except Exception as e:
+                exc_messagebox(self, e)
+
+        handler = output_options_handler
+        self.output_options_dialog = OutputOptions(self, handler=handler)
+        self.output_options_dialog.show()
 
     def on_pushButtonGroupAverageEvoked_clicked(self, checked=None):
         """
@@ -524,28 +531,22 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         subject.add_evoked(new_evoked)
         self.parent.experiment.save_experiment_settings()
 
-    def save_evoked_data(self, subjects):
+    def save_data(self, subjects):
         try:
             evoked_name = str(self.ui.listWidgetEvoked.currentItem().text())
         except AttributeError:
             messagebox(self, "Please select evoked data from the list")
             return
 
-        path = fileManager.create_timestamped_folder(
-            self.parent.experiment)
+        def output_options_handler(row_setting):
+            try:
+                save_data_evoked(self.parent.experiment, subjects, 
+                                 row_setting, evoked_name)
+            except Exception as exc:
+                exc_messagebox(self, exc)
+                return
 
-        for sub_name, subject in subjects.items():
-            names = []
-            evokeds = []
-            meggie_evoked = subject.evokeds.get(evoked_name)
-            if meggie_evoked:
-                for name, evoked in meggie_evoked.mne_evokeds.items():
-                    if evoked:
-                        evokeds.append(evoked)
-                        names.append(name)
-            if evokeds:
-                cleaned_evoked_name = evoked_name.split('.')[0]
-                filename = cleaned_evoked_name + '_' + sub_name + '.csv'  # noqa
-                fileManager.group_save_evokeds(os.path.join(path, filename),
-                                               evokeds, names)
+        handler = output_options_handler
+        self.output_options_dialog = OutputOptions(self, handler=handler)
+        self.output_options_dialog.show()
 

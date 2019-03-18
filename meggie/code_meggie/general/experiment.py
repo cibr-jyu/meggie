@@ -55,7 +55,7 @@ class Experiment(QObject):
         self._active_subject = None
         self._workspace = None
         self._layout = 'Infer from data'
-
+        self._channel_groups = 'MNE'
         
 
     @property
@@ -121,6 +121,14 @@ class Experiment(QObject):
     @layout.setter
     def layout(self, layout):
         self._layout = layout
+
+    @property
+    def channel_groups(self):
+        return self._channel_groups
+    
+    @channel_groups.setter
+    def channel_groups(self, channel_groups):
+        self._channel_groups = channel_groups
 
     @property
     def active_subject(self):
@@ -287,6 +295,7 @@ class Experiment(QObject):
             'author': self.author,
             'description': self.description,
             'layout': self.layout,
+            'channel_groups': self.channel_groups
         }
 
         version = ''
@@ -337,8 +346,11 @@ class ExperimentHandler(QObject):
             experiment.description = expDict['description']
         except AttributeError:
             raise Exception('Cannot assign attribute to experiment.')
-        
+      
         experiment.workspace = prefs.working_directory
+
+        if os.path.exists(os.path.join(experiment.workspace, experiment.experiment_name)):
+            raise Exception('Experiment with same name already exists.')
         
         experiment.save_experiment_settings()
         
@@ -358,13 +370,17 @@ class ExperimentHandler(QObject):
         """
         
         if path:
-            exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
+            if path.endswith('.exp'):
+                exp_file = path
+            else:
+                exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
         else:
             if prefs.previous_experiment_name == '':
                 return
+
             exp_file = os.path.join(
-            prefs.previous_experiment_name,
-            os.path.basename(prefs.previous_experiment_name) + '.exp'
+                prefs.previous_experiment_name,
+                os.path.basename(prefs.previous_experiment_name) + '.exp'
             )
         
         if not os.path.isfile(exp_file):
@@ -390,6 +406,11 @@ class ExperimentHandler(QObject):
             experiment.layout = data['layout']
         else:
             experiment.layout = 'Infer from data'
+
+        if 'channel_groups' in data.keys():
+            experiment.channel_groups = data['channel_groups']
+        else:
+            experiment.channel_groups = 'MNE'
         
         if path:
             experiment.workspace = os.path.dirname(path)

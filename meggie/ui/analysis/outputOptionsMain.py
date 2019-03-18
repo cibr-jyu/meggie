@@ -11,7 +11,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 class OutputOptions(QtWidgets.QDialog):
     
     def __init__(self, parent, handler=None, 
-                 row_setting=None, column_setting=None):
+                 row_setting=None):
         """
         """
         QtWidgets.QDialog.__init__(self)
@@ -22,15 +22,8 @@ class OutputOptions(QtWidgets.QDialog):
 
         if row_setting == 'channel_averages':
             self.ui.radioButtonChannelAverages.setChecked(True)
-        if column_setting == 'statistics':
-            self.ui.radioButtonStatistics.setChecked(True)
         
     def accept(self):
-
-        if self.ui.radioButtonStatistics.isChecked():
-            column_setting = 'statistics'
-        else:
-            column_setting = 'all_data'
 
         if self.ui.radioButtonChannelAverages.isChecked():
             row_setting = 'channel_averages'
@@ -39,8 +32,7 @@ class OutputOptions(QtWidgets.QDialog):
 
         if self.handler:
             try:
-                self.handler(row_setting=row_setting, 
-                             column_setting=column_setting)
+                self.handler(row_setting=row_setting)
             except Exception as exc:
                 exc_messagebox(self.parent, exc)
 
