@@ -45,13 +45,13 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.clear_epoch_collection_parameters()
+        self.epochList.clear_items()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
-
-        self.clear_epoch_collection_parameters()
-        self.epochList.clear_items()
 
         epochs_items = active_subject.epochs
         if epochs_items is not None:

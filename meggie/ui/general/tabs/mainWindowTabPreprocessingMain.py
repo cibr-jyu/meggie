@@ -50,11 +50,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
-        active_subject = self.parent.experiment.active_subject
-
-        if active_subject is None:
-            return
-
         self.ui.listWidgetProjs.clear()
         self.ui.listWidgetBads.clear()
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
@@ -62,6 +57,11 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         self.ui.checkBoxRereferenced.setChecked(False)
         self.ui.pushButtonApplyECG.setEnabled(False)
         self.ui.pushButtonApplyEOG.setEnabled(False)
+
+        active_subject = self.parent.experiment.active_subject
+
+        if active_subject is None:
+            return
 
         # Check whether ECG projections are calculated
         if active_subject.check_ecg_projs():

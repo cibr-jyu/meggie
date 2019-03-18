@@ -42,18 +42,19 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.epochList.clear_items()
+        self.ui.listWidgetTFR.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
 
         # populate epoch widget
-        self.epochList.clear_items()
         for epoch_name in sorted(active_subject.epochs.keys()):
             item = QtWidgets.QListWidgetItem(epoch_name)
             self.epochList.add_item(item)
 
-        self.ui.listWidgetTFR.clear()
         for name in sorted(active_subject.tfrs.keys()):
             item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetTFR.addItem(item)

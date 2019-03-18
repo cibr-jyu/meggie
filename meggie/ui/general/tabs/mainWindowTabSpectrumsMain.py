@@ -37,13 +37,14 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.ui.listWidgetSpectrums.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
 
         # update subjects list
-        self.ui.listWidgetSpectrums.clear()
         for name in active_subject.spectrums:
             item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetSpectrums.addItem(item)
@@ -222,7 +223,7 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if not spectrum_item:
             return
 
-        subjects = experiment.subjects.values()
+        subjects = list(experiment.subjects.values())
         logging.getLogger('ui_logger').info('Saving spectrum for all subjects')
 
         def output_options_handler(row_setting):
@@ -232,8 +233,6 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)
         self.output_options_dialog.show()
-
-
 
     def on_pushButtonSaveSpectrum_clicked(self, checked=None):
         if checked is None:

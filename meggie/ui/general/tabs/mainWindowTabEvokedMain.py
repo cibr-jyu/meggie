@@ -71,19 +71,20 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         if not self.parent.experiment:
             return
 
+        self.epochList.clear_items()
+        self.ui.listWidgetEvoked.clear()
+
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
 
-        self.epochList.clear_items()
         epochs_items = active_subject.epochs
         if epochs_items is not None:
             for name in sorted(epochs_items.keys()):
                 self.epochList.add_item(name)
 
         evokeds_items = active_subject.evokeds
-        self.ui.listWidgetEvoked.clear()
         if evokeds_items is not None:
             for name in sorted(evokeds_items.keys()):
                 self.ui.listWidgetEvoked.addItem(name)
