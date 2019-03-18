@@ -1,10 +1,20 @@
 Changelog
 =========
 
-0.10.2 (unreleased)
+0.11.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.11.0 (2019-03-18)
+------------------
+
+- Update MNE dependency to 0.17.1
+- Add and unify channel averaging in spectrums and evokeds
+- Open experiment also by specifying exp file
+- Disallow creating new experiment over existing experiment
+- Fix power spectrum dialog name field size
+- Improve EEG support
 
 0.10.1 (2019-02-21)
 ------------------
