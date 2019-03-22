@@ -298,7 +298,6 @@ def group_average(experiment, evoked_name, update_ui=(lambda: None)):
         raise ValueError('No evoked responses found from any subject.')
     
     if count > 0 and count < len(experiment.subjects):
-        
         message = ("Evoked responses not found from every subject. " + 
                    "(" + str(count) + " responses found.)")
         logging.getLogger('ui_logger').warning(message)
@@ -330,7 +329,10 @@ def _group_average(experiment, evoked_name):
     grand_averages = {}
 
     for key, evokeds in evoked_groups.items():
-        grand_averaged = mne.grand_average(evokeds)
+        if len(evokeds) == 1:
+            grand_averaged = evokeds[0].copy()
+        else:
+            grand_averaged = mne.grand_average(evokeds)
         grand_averaged.comment = key
         grand_averages[key] = grand_averaged
 
