@@ -2,6 +2,10 @@
 
 """
 """
+import traceback
+import os
+import logging
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
@@ -13,9 +17,6 @@ from meggie.code_meggie.general import fileManager
 
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
-
-import traceback
-import os
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
@@ -34,6 +35,20 @@ class AddSubjectDialog(QtWidgets.QDialog):
         self.parent = parent
         self.ui.pushButtonShowFileInfo.setEnabled(False)
 
+    def find_next_available_name(self, name):
+        # Check if the subject is already added to the experiment.
+        counter = 0
+        while counter < 1000:
+            if counter != 0:
+                name = name + '_' + str(counter)
+                
+            if name not in self.parent.experiment.subjects:
+                return name
+
+            counter += 1
+
+        raise Exception('Could not find available name')
+
     def accept(self):
         """ Add the new subject. """
         failed_subjects = []
@@ -43,24 +58,14 @@ class AddSubjectDialog(QtWidgets.QDialog):
             basename = os.path.basename(raw_path)
             subject_name = basename.split('.')[0]
 
-            # Check if the subject is already added to the experiment.
-            if subject_name in self.parent.experiment.subjects:
-                failed_subjects.append(subject_name)
-                continue
-
             try:
+                subject_name = self.find_next_available_name(subject_name)
                 self.parent.experiment.create_subject(subject_name,
                                                       self.parent.experiment,
                                                       basename,
                                                       raw_path=raw_path)
             except Exception as e:
                 exc_messagebox(self.parent, e)
-
-        if len(failed_subjects) > 0:
-            msg = 'The following subjects were already added to the experiment: \n'
-            for subject_name in failed_subjects:
-                msg += subject_name + '\n'
-                messagebox(self.parent, msg)
 
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.

@@ -341,10 +341,17 @@ def group_average_psd(experiment, spectrum_name):
     for key in data:
         data[key] = np.mean(data[key], axis=0)
 
+    active_subject = experiment.active_subject
+    spectrum = active_subject.spectrums.get(spectrum_name)
+
+    freqs = spectrum.freqs
+    ch_names = spectrum.ch_names
+    log_transformed = spectrum.log_transformed
+
     name = 'group_' + spectrum_name
 
-    spectrum = Spectrum(name, experiment.active_subject,
-            logs[0], data, freqs, ch_names)
+    spectrum = Spectrum(name, active_subject,
+            log_transformed, data, freqs, ch_names)
 
     experiment.active_subject.add_spectrum(spectrum) 
 
@@ -450,10 +457,13 @@ def group_average_tfr(experiment, tfr_name):
     if len(tfrs) < 2:
         raise Exception('No other subject with a corresponding TFR found')
 
+    active_subject = experiment.active_subject
+    tfr = active_subject.tfrs.get(tfr_name)
+
     average_tfr = mne.grand_average(tfrs, drop_bads=False)
 
     meggie_tfr = TFR(average_tfr, 'group_' + tfr_name, 
-                     experiment.active_subject, 
+                     active_subject, 
                      decim, n_cycles, evoked_subtracted)
 
     experiment.active_subject.add_tfr(meggie_tfr)

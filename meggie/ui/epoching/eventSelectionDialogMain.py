@@ -99,9 +99,8 @@ class EventSelectionDialog(QtWidgets.QDialog):
         """
         """
         subject = self.experiment.subjects.get(subject_name)
-        
-        # Empty params_dict includes 'events' and 'fixed_length_events' keys.
-        if len(params_dict) > 2:
+
+        if len(params_dict) > 0:
             dic = params_dict
         else:
             dic = self.get_default_values(subject)
@@ -143,12 +142,14 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxBaselineStart.setValue(dic['bstart'])
         self.ui.doubleSpinBoxBaselineEnd.setValue(dic['bend'])
         
-        events = deepcopy(params_dict['events'])
-        fle = deepcopy(params_dict['fixed_length_events'])
-        
-        self.event_data['events'] = events
-        self.event_data['fixed_length_events'] = fle
-        
+        if 'events' in params_dict.keys():
+            events = deepcopy(params_dict['events'])
+            self.event_data['events'] = events
+
+        if 'fixed_length_events' in params_dict.keys():
+            fle = deepcopy(params_dict['fixed_length_events'])
+            self.event_data['fixed_length_events'] = fle
+            
         self.update_events()
 
     def get_selected_subject(self):
