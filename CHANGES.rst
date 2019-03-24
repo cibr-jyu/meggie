@@ -1,10 +1,18 @@
 Changelog
 =========
 
-0.11.1 (unreleased)
+0.11.2 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.11.1 (2019-03-24)
+------------------
+
+- Allow adding same dataset again, add number suffix
+- Fix batch widget in event selection dialog
+- Fix group averages if only active subject contains the data
+
 
 0.11.0 (2019-03-18)
 ------------------
