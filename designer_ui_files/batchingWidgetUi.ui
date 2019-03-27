@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>392</height>
+    <height>293</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Batch processing</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -57,7 +57,7 @@
      <x>0</x>
      <y>48</y>
      <width>289</width>
-     <height>341</height>
+     <height>241</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -65,71 +65,6 @@
      <layout class="QGridLayout" name="functionalityLayout">
       <item row="1" column="0">
        <layout class="QVBoxLayout" name="applyButtonsLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Apply parameters:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_30">
-          <item>
-           <widget class="QPushButton" name="pushButtonApply">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>90</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Apply</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>to selected subject</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_31">
           <item>
@@ -156,7 +91,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Apply to all</string>
+             <string>Select all</string>
             </property>
            </widget>
           </item>
@@ -201,7 +136,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Select subject to modify its parameters</string>
+           <string>Select subjects to include in batch</string>
           </property>
          </widget>
         </item>
@@ -220,22 +155,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_17"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonRemove">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Remove subject from this process</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>

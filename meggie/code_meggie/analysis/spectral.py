@@ -27,7 +27,7 @@ from meggie.code_meggie.structures.tfr import TFR
 
 
 @threaded
-def _compute_spectrum(raw_block_groups, params, n_jobs):
+def _compute_spectrum(raw_block_groups, params):
     """Performed in a worker thread."""
     fmin = params['fmin']
     fmax = params['fmax']
@@ -44,7 +44,7 @@ def _compute_spectrum(raw_block_groups, params, n_jobs):
 
             psds, freqs = mne.psd_welch(raw_block, fmin=fmin, fmax=fmax, 
                 n_fft=nfft, n_overlap=overlap, picks=picks, 
-                proj=True, n_jobs=n_jobs)
+                proj=True)
 
             if params['log']:
                 psds = 10 * np.log10(psds)
@@ -58,7 +58,7 @@ def _compute_spectrum(raw_block_groups, params, n_jobs):
 
 
 def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups, 
-                          update_ui=(lambda: None), n_jobs=1):
+                          update_ui=(lambda: None)):
     """
     """
         
@@ -70,7 +70,7 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
                            exclude='bads')
 
     params['picks'] = picks
-    psd_groups = _compute_spectrum(raw_block_groups, params, n_jobs=n_jobs,
+    psd_groups = _compute_spectrum(raw_block_groups, params,
                                    do_meanwhile=update_ui)
 
     for psd_list in psd_groups.values():
@@ -350,7 +350,7 @@ def group_average_psd(experiment, spectrum_name):
 
 
 def create_tfr(experiment, subject, tfr_name, epochs_name, 
-               freqs, decim, ncycles, subtract_evoked, n_jobs):
+               freqs, decim, ncycles, subtract_evoked):
 
     epochs = subject.epochs[epochs_name].raw
 
@@ -361,7 +361,7 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     logging.getLogger('ui_logger').info('Computing TFR...')
 
     tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
-                         average=True, return_itc=False, n_jobs=n_jobs)
+                         average=True, return_itc=False)
 
     logging.getLogger('ui_logger').info('Saving TFR...')
 

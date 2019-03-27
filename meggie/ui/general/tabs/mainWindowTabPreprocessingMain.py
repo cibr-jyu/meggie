@@ -14,16 +14,10 @@ from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
-from meggie.ui.preprocessing.eogParametersDialogMain import EogParametersDialog
-from meggie.ui.preprocessing.ecgParametersDialogMain import EcgParametersDialog
-from meggie.ui.preprocessing.eegParametersDialogMain import EegParametersDialog
-from meggie.ui.preprocessing.addECGProjectionsMain import AddECGProjections
-from meggie.ui.preprocessing.addEOGProjectionsMain import AddEOGProjections
 from meggie.ui.preprocessing.badChannelsDialogMain import BadChannelsDialog
 from meggie.ui.preprocessing.filterDialogMain import FilterDialog
 from meggie.ui.preprocessing.icaDialogMain import ICADialog
 from meggie.ui.preprocessing.resamplingDialogMain import ResamplingDialog
-from meggie.ui.preprocessing.cropDialogMain import CropDialog
 from meggie.ui.preprocessing.rereferencingDialogMain import RereferencingDialog
 
 from meggie.code_meggie.preprocessing.projections import plot_projs_topomap
@@ -55,21 +49,11 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         self.ui.checkBoxMaxFilterApplied.setChecked(False)
         self.ui.checkBoxICAApplied.setChecked(False)
         self.ui.checkBoxRereferenced.setChecked(False)
-        self.ui.pushButtonApplyECG.setEnabled(False)
-        self.ui.pushButtonApplyEOG.setEnabled(False)
 
         active_subject = self.parent.experiment.active_subject
 
         if active_subject is None:
             return
-
-        # Check whether ECG projections are calculated
-        if active_subject.check_ecg_projs():
-            self.ui.pushButtonApplyECG.setEnabled(True)
-
-        # Check whether EOG (and old EEG) projections are calculated
-        if active_subject.check_eog_projs():
-            self.ui.pushButtonApplyEOG.setEnabled(True)
 
         # Check whether sss/tsss method is applied.
         if active_subject.check_sss_applied():
@@ -161,63 +145,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
 
-    def on_pushButtonEOG_clicked(self, checked=None):
-        """Open the dialog for calculating the EOG PCA."""
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        self.eogDialog = EogParametersDialog(self, experiment)
-        self.eogDialog.show()
-
-
-    def on_pushButtonECG_clicked(self, checked=None):
-        """Open the dialog for calculating the ECG PCA."""
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        self.ecgDialog = EcgParametersDialog(self, experiment)
-        self.ecgDialog.show()
-
-    def on_pushButtonApplyEOG_clicked(self, checked=None):
-        """Open the dialog for applying the EOG-projections to the data."""
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        info = experiment.active_subject.get_working_file().info
-        self.addEogProjs = AddEOGProjections(self, info['projs'],
-                                             experiment)
-        self.addEogProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEogProjs.show()
-
-
-    def on_pushButtonApplyECG_clicked(self, checked=None):
-        """Open the dialog for applying the ECG-projections to the data."""
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        info = experiment.active_subject.get_working_file().info
-        self.addEcgProjs = AddECGProjections(self, info['projs'],
-                                             experiment)
-        self.addEcgProjs.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.addEcgProjs.show()
-
-
     def on_pushButtonRemoveProj_clicked(self, checked=None):
         if checked is None:
             return
@@ -276,10 +203,8 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         if not experiment or experiment.active_subject is None:
             return
 
-        self.filterDialog = FilterDialog(self, experiment,
-                                         self.parent.preferencesHandler)
+        self.filterDialog = FilterDialog(self, experiment)
         self.filterDialog.show()
-
 
     def on_pushButtonResampling_clicked(self, checked=None):
         """
@@ -293,19 +218,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.resamplingDialog = ResamplingDialog(self, experiment)
         self.resamplingDialog.show()
-
-    def on_pushButtonCrop_clicked(self, checked=None):
-        """
-        """
-        if checked is None:
-            return
-
-        experiment = self.parent.experiment
-        if not experiment or experiment.active_subject is None:
-            return
-
-        self.cropDialog = CropDialog(self, experiment)
-        self.cropDialog.show()
 
     def on_pushButtonRereferencing_clicked(self, checked=None):
         """

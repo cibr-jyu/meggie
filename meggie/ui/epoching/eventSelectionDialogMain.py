@@ -48,7 +48,6 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.experiment = experiment
         self.ui = Ui_EventSelectionDialog()
         self.ui.setupUi(self)
-        self.fixedLengthDialog = None
         self.used_names = []
         
         self.event_data = {
@@ -95,88 +94,6 @@ class EventSelectionDialog(QtWidgets.QDialog):
                 ))
                 self.ui.listWidgetEvents.addItem(item)
 
-    def selection_changed(self, subject_name, params_dict):
-        """
-        """
-        subject = self.experiment.subjects.get(subject_name)
-
-        if len(params_dict) > 0:
-            dic = params_dict
-        else:
-            dic = self.get_default_values(subject)
-            
-        rejection = dic['reject']
-        
-        if 'grad' in rejection.keys():
-            self.ui.checkBoxGrad.setChecked(True)
-            self.ui.doubleSpinBoxGradReject_3.setValue(rejection['grad'])
-        else:
-            self.ui.checkBoxGrad.setChecked(False)
-        
-        if 'mag' in rejection.keys():
-            self.ui.checkBoxMag.setChecked(True)
-            self.ui.doubleSpinBoxMagReject_3.setValue(rejection['mag'])
-        else:
-            self.ui.checkBoxMag.setChecked(False)
-        
-        if 'eeg' in rejection.keys():
-            self.ui.checkBoxEeg.setChecked(True)
-            self.ui.doubleSpinBoxEEGReject_3.setValue(rejection['eeg'])
-        else:
-            self.ui.checkBoxEeg.setChecked(False)
-        
-        if 'eog' in rejection.keys():
-            self.ui.checkBoxEog.setChecked(True)
-            self.ui.doubleSpinBoxEOGReject_3.setValue(rejection['eog'])
-        else:
-            self.ui.checkBoxEog.setChecked(False)
-        
-        if 'event_id' in dic.keys():
-            self.ui.spinBoxEventID.setValue(dic['event_id'])
-        else:
-            self.ui.spinBoxEventID.setValue(1)
-        
-        self.ui.lineEditCollectionName.setText(dic['collection_name'])
-        self.ui.doubleSpinBoxTmin.setValue(dic['tmin'])
-        self.ui.doubleSpinBoxTmax.setValue(dic['tmax'])
-        self.ui.doubleSpinBoxBaselineStart.setValue(dic['bstart'])
-        self.ui.doubleSpinBoxBaselineEnd.setValue(dic['bend'])
-        
-        if 'events' in params_dict.keys():
-            events = deepcopy(params_dict['events'])
-            self.event_data['events'] = events
-
-        if 'fixed_length_events' in params_dict.keys():
-            fle = deepcopy(params_dict['fixed_length_events'])
-            self.event_data['fixed_length_events'] = fle
-            
-        self.update_events()
-
-    def get_selected_subject(self):
-        item = None
-        if item is None:
-            subject_name = self.experiment.active_subject.subject_name
-        else:
-            subject_name = str(item.text())
-
-        return self.experiment.subjects[subject_name]
-    
-    def get_default_values(self, subject):
-        rejections = {
-            'grad': 3000.00,
-            'mag': 4000.00
-        }
-        return {
-            'collection_name': 'Epochs',
-            'tmin': -0.200,
-            'tmax': 0.500,
-            'bstart': -0.200,
-            'bend': 0.000,
-            'event_id': 1,
-            'mask': 0,
-            'reject': rejections
-        }
-
     def collect_parameter_values(self):
         """Collect the parameter values for epoch creation from the ui.
 
@@ -222,7 +139,7 @@ class EventSelectionDialog(QtWidgets.QDialog):
         else: 
             meg = False
 
-        subject = self.get_selected_subject()
+        subject = self.experiment.active_subject
 
         info = subject.get_working_file(preload=False).info
 
@@ -279,24 +196,21 @@ class EventSelectionDialog(QtWidgets.QDialog):
                 'Are you sure you want to overwrite the ',
                 'collection?'
             ])
-            reply = QtWidgets.QMessageBox.question(self.parent, header, message,                
-                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.question(self.parent, header, message,                      QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+
             if reply == QtWidgets.QMessageBox.No:
                 return
 
         subject_name = self.experiment.active_subject.subject_name
         
-        self.batching_widget.data[subject_name] = param_dict
         try:
-            self.calculate_epochs(self.experiment.active_subject)
+            self.calculate_epochs(self.experiment.active_subject, param_dict)
         except Exception as e:
-            self.batching_widget.failed_subjects.append((
-                self.experiment.active_subject,
-                str(e)
-            ))
+            messagebox(self.parent, 'Calculation failed: ' + str(e))
+            logging.getLogger('ui_logger').error('Params: ' + str(param_dict))
             logging.getLogger('ui_logger').exception(str(e))
+            return
         
-        self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
 
         # reinitialize main window as epochs are shown in many tabs
@@ -306,67 +220,48 @@ class EventSelectionDialog(QtWidgets.QDialog):
 
     def acceptBatch(self):
 
+        if self.ui.listWidgetEvents.count() == 0:
+            message = 'Cannot create epochs from empty list.'
+            messagebox(self.parent, message)
+            return
+
+        param_dict = self.collect_parameter_values()
+
+        selected_subject_names = self.batching_widget.selected_subjects
+
         found = False
-        for name, subject_data in self.batching_widget.data.items():
-            for epoch_name in self.experiment.subjects[name].epochs:
-                if 'collection_name' not in subject_data:
-                    continue
-                if epoch_name == subject_data['collection_name']:
+        for subject_name in selected_subject_names:
+            subject = self.experiment.subjects[subject_name]
+            for epoch_name in subject.epochs:
+                if epoch_name == param_dict['collection_name']:
                     found = True
                     break
 
         if found:
             header = 'Collection name exists in experiment within one or more subjects. '
-            message = ''.join([
-                'Are you sure you want to overwrite the ',
-                'collection?'
-            ])
+            message = 'Do you want to continue?'
             reply = QtWidgets.QMessageBox.question(self.parent, header, message,                
                 QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.No:
                 return 
-            
-        recently_active_subject = self.experiment.active_subject.subject_name
-
-        # subject_names = []
-        # for i in range(self.batching_widget.ui.listWidgetSubjects.count()):
-        #     item = self.batching_widget.ui.listWidgetSubjects.item(i)
-        #     if item.checkState() == QtCore.Qt.Checked:
-        #         subject_names.append(item.text())
-        subject_names = self.batching_widget.selected_subjects
 
         epoch_info = []
 
-        # In case of batch process:
-        # 1. Calculation is first done for the active subject to prevent an
-        #    excessive reading of a raw file.
-        if recently_active_subject in subject_names:
-            try:
-                events_str = self.calculate_epochs(self.experiment.active_subject)
-                epoch_info.append(events_str) 
-            except Exception as e:
-                self.batching_widget.failed_subjects.append((
-                    self.experiment.active_subject, str(e)))     
+        experiment = self.experiment
+        recently_active_subject = experiment.active_subject.subject_name
 
-                logging.getLogger('ui_logger').exception(str(e))
-        
-        # 2. Calculation is done for the rest of the subjects.
         for name, subject in self.experiment.subjects.items():
-            if name in subject_names:
-                if name == recently_active_subject:
-                    continue
+            if name in selected_subject_names:
                 try:
-                    experiment = self.experiment
                     experiment.activate_subject(name)
-                    events_str = self.calculate_epochs(subject)
+                    events_str = self.calculate_epochs(subject, param_dict)
                     epoch_info.append(events_str)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject, 
                                                                  str(e)))
-
+                    logging.getLogger('ui_logger').error('Params: ' + str(param_dict))
                     logging.getLogger('ui_logger').exception(str(e))
 
-        experiment = self.experiment
         experiment.activate_subject(recently_active_subject)
 
         self.batching_widget.cleanup()
@@ -378,7 +273,6 @@ class EventSelectionDialog(QtWidgets.QDialog):
         if len(epoch_info) > 0:
             for info in epoch_info:
                 logging.getLogger('ui_logger').info(info)
-            
         self.close()
 
     def on_pushButtonFixedLength_clicked(self, checked=None):
@@ -415,13 +309,13 @@ class EventSelectionDialog(QtWidgets.QDialog):
         
         messagebox(self.parent, help_message, 'Mask help')
 
-    def calculate_epochs(self, subject):
+    def calculate_epochs(self, subject, param_dict):
         experiment = self.experiment
 
         @threaded
         def create(*args, **kwargs):
             events_str = create_epochs(experiment,
-                self.batching_widget.data[subject.subject_name], subject)
+                param_dict, subject)
             return events_str
 
         events_str = create(do_meanwhile=self.parent.update_ui)

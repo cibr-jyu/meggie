@@ -17,6 +17,8 @@ from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 
 from meggie.code_meggie.analysis.spectral import create_power_spectrum
 
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+
 from meggie.code_meggie.utils.validators import validate_name
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
@@ -63,6 +65,15 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
                 self.ui.spinBoxFmax.setValue(int(raw.info['lowpass']))
 
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter,
+            parent=self,
+            container=self.ui.scrollAreaWidgetContents,
+            geometry=self.ui.widgetBatchContainer.geometry())
+
+    def experiment_getter(self):
+        return self.experiment
+
     def on_pushButtonAdd_clicked(self, checked=None):
         if checked is None:
             return
@@ -106,51 +117,90 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.event_dialog = PowerSpectrumEvents(self)
         self.event_dialog.show()
 
-
-    def accept(self, *args, **kwargs):
-        """Starts the computation."""
-
-        name = self.ui.lineEditName.text()
-
-        name = validate_name(name)
-
-        times = self.intervals
-        
+    def validate_settings(self, name, times, fmin, fmax, sfreq):
         if not times:
-            messagebox(self.parent, "Must have at least one interval")
-            return
+            raise Exception("Must have at least one interval")
 
-        fmin = self.ui.spinBoxFmin.value()
-        fmax = self.ui.spinBoxFmax.value()
         if fmin >= fmax:
-            messagebox(self.parent, ("End frequency must be higher than the"
-                                     "starting frequency"))
-            return
-        
-        subject = self.experiment.active_subject
-        sfreq = subject.get_working_file().info['sfreq']
-    
+            raise Exception("End frequency must be higher than the starting frequency")
+   
         valid = True
         for interval in times:
             if (interval[2] - interval[1]) * sfreq < float(self.ui.spinBoxNfft.value()):
                 valid = False
+
         if not valid:
-            messagebox(self.parent, ("Sampling rate times shortest interval"
-                                     "should be more than window size"))
+            raise Exception("Sampling rate times shortest interval "
+                            "should be more than window size")
+
+    def accept(self, *args, **kwargs):
+        """Starts the computation."""
+
+        name = validate_name(self.ui.lineEditName.text())
+        times = self.intervals
+        fmin = self.ui.spinBoxFmin.value()
+        fmax = self.ui.spinBoxFmax.value()
+
+        experiment = self.experiment
+
+        subject = experiment.active_subject
+        sfreq = subject.get_working_file().info['sfreq']
+        
+        try:
+            self.validate_settings(name, times, fmin, fmax, sfreq)
+        except Exception as exc:
+            messagebox(self.parent, str(exc))
             return
-        
-        raw = self.experiment.active_subject.get_working_file()
-        
-        raw_blocks = OrderedDict()
-        for interval in times:
 
-            block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
-
-            if interval[0] not in raw_blocks:
-                raw_blocks[interval[0]] = []
-
-            raw_blocks[interval[0]].append(block)
+        params = dict()
+        params['fmin'] = fmin
+        params['fmax'] = fmax
+        params['nfft'] = self.ui.spinBoxNfft.value()
+        params['log'] = self.ui.checkBoxLogarithm.isChecked()
+        params['overlap'] = self.ui.spinBoxOverlap.value()
+       
+        raw = subject.get_working_file()
         
+        try:
+            raw_blocks = OrderedDict()
+            for interval in times:
+
+                block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
+
+                if interval[0] not in raw_blocks:
+                    raw_blocks[interval[0]] = []
+
+                raw_blocks[interval[0]].append(block)
+            
+            update_ui = self.parent.update_ui
+            create_power_spectrum(experiment, name, params, raw_blocks, 
+                                  update_ui=update_ui)
+        except Exception as e:
+            exc_messagebox(self.parent, e)
+            return
+
+        experiment.save_experiment_settings()
+        self.parent.initialize_ui()
+
+        self.close()
+
+    def acceptBatch(self, *args):
+        name = validate_name(self.ui.lineEditName.text())
+        times = self.intervals
+        fmin = self.ui.spinBoxFmin.value()
+        fmax = self.ui.spinBoxFmax.value()
+
+        experiment = self.experiment
+
+        subject = experiment.active_subject
+        sfreq = subject.get_working_file().info['sfreq']
+        
+        try:
+            self.validate_settings(name, times, fmin, fmax, sfreq)
+        except Exception as exc:
+            messagebox(self.parent, str(exc))
+            return
+
         params = dict()
         params['fmin'] = fmin
         params['fmax'] = fmax
@@ -158,14 +208,37 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
-        try:
-            experiment = self.experiment
-            update_ui = self.parent.update_ui
-            create_power_spectrum(experiment, name, params, raw_blocks, 
-                                  update_ui=update_ui)
-            experiment.save_experiment_settings()
-            self.parent.initialize_ui()
-        except Exception as e:
-            exc_messagebox(self.parent, e)
+        selected_subject_names = self.batching_widget.selected_subjects
+        recently_active_subject = experiment.active_subject.subject_name
 
+        for subject_name, subject in self.experiment.subjects.items():
+            if subject_name in selected_subject_names:
+                try:
+                    experiment.activate_subject(subject_name)
+                    raw = subject.get_working_file()
+
+                    raw_blocks = OrderedDict()
+                    for interval in times:
+
+                        block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
+
+                        if interval[0] not in raw_blocks:
+                            raw_blocks[interval[0]] = []
+
+                        raw_blocks[interval[0]].append(block)
+                    
+                    update_ui = self.parent.update_ui
+                    create_power_spectrum(experiment, name, params, raw_blocks, 
+                                          update_ui=update_ui)
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject,
+                                                                 str(e)))
+                    logging.getLogger('ui_logger').exception(str(e))
+
+        experiment.activate_subject(recently_active_subject)
+
+        self.batching_widget.cleanup()
+        experiment.save_experiment_settings()
+
+        self.parent.initialize_ui()
         self.close()

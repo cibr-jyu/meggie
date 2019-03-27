@@ -56,8 +56,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             container=self.ui.widgetBatchContainer,
             pushButtonCompute=self.ui.pushButtonCreateEvoked,
             pushButtonComputeBatch=self.ui.pushButtonCreateEvokedBatch,
-            selection_changed=self.evoked_selection_changed,
-            collect_parameter_values=self.collect_evoked_parameter_values,
             hideHook=self.hideHook
         )
 
@@ -111,7 +109,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
         collection_names = [str(item.text()) for item in selected_items]
 
-        # If no collections are selected, show a message to to the user and return.
         if len(collection_names) == 0:
             messagebox(self, 'Please select an epoch collection to average.')
             return
@@ -123,12 +120,12 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
 
-        self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
 
-
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
+        """
+        """
         if checked is None:
             return
 
@@ -140,7 +137,10 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         recently_active_subject_name = experiment.active_subject.subject_name
 
-        for subject_name, collection_names in self.evokeds_batching_widget.data.items():
+        selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+        collection_names = [str(item.text()) for item in selected_items]
+
+        for subject_name, subject in experiment.subjects.items():
             if subject_name in subject_names:
                 try:
                     subject = experiment.activate_subject(subject_name)
@@ -151,6 +151,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
                     logging.getLogger('ui_logger').exception(str(e))
 
         experiment.activate_subject(recently_active_subject_name)
+
         experiment.save_experiment_settings()
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
@@ -317,7 +318,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked."""
         if checked is None:
@@ -365,6 +365,9 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         if not experiment or experiment.active_subject is None:
             return
 
+        if self.ui.listWidgetEvoked.count() == 0:
+            return
+
         if self.ui.listWidgetEvoked.currentItem() is None:
             messagebox(self, 'No evokeds selected')
             return
@@ -388,18 +391,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         experiment.save_experiment_settings()
         self.initialize_ui()
-
-    def evoked_selection_changed(self, subject_name, data_dict):
-        """
-        """
-        self.epochList.clear_items()
-        epochs = self.parent.experiment.subjects[subject_name].epochs
-        for name in sorted(epochs.keys()):
-            item = QtWidgets.QListWidgetItem()
-            item.setText(name)
-            self.epochList.add_item(item)
-            if name in data_dict:
-                item.setSelected(True)
 
     def hideHook(self):
         self.initialize_ui()

@@ -76,13 +76,12 @@ class TFRDialog(QtWidgets.QDialog):
 
         experiment = self.experiment
         subject = experiment.active_subject
-        n_jobs = self.parent.preferencesHandler.n_jobs
 
         @threaded
         def do_tfr(*args, **kwargs):
             create_tfr(experiment, subject, tfr_name, self.epoch_name, 
                        freqs=freqs, decim=decim, ncycles=ncycles, 
-                       subtract_evoked=subtract_evoked, n_jobs=n_jobs)
+                       subtract_evoked=subtract_evoked)
                 
         try:             
             do_tfr(do_meanwhile=self.parent.update_ui)

@@ -161,6 +161,7 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         
         if self.ui.listWidgetSpectrums.currentItem() is None:
             messagebox(self, 'No spectrum selected')
+            return
 
         spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
 
@@ -185,7 +186,7 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
             return
 
         if self.ui.listWidgetSpectrums.currentItem() is None:
-            messagebox(self, 'No spectrum selected')
+            return
 
         spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
 
