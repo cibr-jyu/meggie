@@ -116,7 +116,7 @@ def plot_power_spectrum(experiment, name, output):
 
     data = spectrum.data
     freqs = spectrum.freqs
-    ch_names = spectrum.ch_names
+    ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
     log_transformed = spectrum.log_transformed
 
     channel_groups = experiment.channel_groups
@@ -136,7 +136,7 @@ def plot_power_spectrum(experiment, name, output):
 
             # notice that ch_idx is index in the original ch_names,
             # and ch_names from spectrum object are only the data channels
-            ch_name = raw_info['ch_names'][ch_idx]
+            ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
             psd_idx = ch_names.index(ch_name)
             
             fig = plt.gcf()
@@ -168,10 +168,11 @@ def plot_power_spectrum(experiment, name, output):
                                            axis_facecolor='white', layout=lout,
                                            on_pick=individual_plot):
 
-            if raw_info['ch_names'][idx] not in ch_names:
+            ch_name = raw_info['ch_names'][idx].replace(' ', '')
+            if ch_name not in ch_names:
                 continue
 
-            psd_idx = ch_names.index(raw_info['ch_names'][idx])
+            psd_idx = ch_names.index(ch_name)
             
             for color_idx, psd in enumerate(data.values()):
                 ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
@@ -303,14 +304,18 @@ def group_average_psd(experiment, spectrum_name, groups):
     ch_names = []
     freqs = []
     logs = []
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrums.get(spectrum_name)
-        if not spectrum:
-            continue
-        keys.append(tuple(spectrum.data.keys()))
-        ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in spectrum.ch_names]))
-        freqs.append(tuple(spectrum.freqs))
-        logs.append(spectrum.log_transformed)
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            subject = experiment.subjects.get(subject_name)
+            if not subject:
+                continue
+            spectrum = subject.spectrums.get(spectrum_name)
+            if not spectrum:
+                continue
+            keys.append(tuple(spectrum.data.keys()))
+            ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in spectrum.ch_names]))
+            freqs.append(tuple(spectrum.freqs))
+            logs.append(spectrum.log_transformed)
 
     if len(set(keys)) != 1:
         raise Exception("PSD's contain different conditions")
@@ -327,31 +332,52 @@ def group_average_psd(experiment, spectrum_name, groups):
     else:
         common_ch_names = ch_names[0]
 
-    from meggie.code_meggie.utils.debug import debug_trace;
-    debug_trace()
+    grand_psds = {}
+    for group_key, group_subjects in groups.items():
+        for subject in experiment.subjects.values():
+            if subject.subject_name not in group_subjects:
+                continue
+            spectrums = subject.spectrums.get(spectrum_name)
+            for spectrum_item_key, spectrum_item in spectrums.data.items():
+                grand_key = (group_key, spectrum_item_key)
 
-    data = dict([(key, []) for key in keys[0]])
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrums.get(spectrum_name)
-        if not spectrum:
-            continue
+                idxs = []
+                # get common channels in "subject specific space"
+                for ch_idx, ch_name in enumerate(
+                    [ch.replace(' ', '') for ch in spectrums.ch_names]
+                ):
+                    if ch_name in common_ch_names:
+                        idxs.append(ch_idx)
 
-        for key, cond_data in spectrum.data.items():
-            data[key].append(cond_data)
+                spectrum_item = spectrum_item[idxs]
 
-    for key in data:
-        data[key] = np.mean(data[key], axis=0)
+                # sanity check
+                if spectrum_item.shape[0] != len(common_ch_names):
+                    raise Exception('Something wrong with the channels')
+
+                if grand_key in grand_psds:
+                    grand_psds[grand_key].append(spectrum_item)
+                else:
+                    grand_psds[grand_key] = [spectrum_item]
+
+    grand_averages = {}
+    for key, grand_psd in grand_psds.items():
+        new_key = str(key[1]) + '_group_' + str(key[0])
+        if len(grand_psd) == 1:
+            grand_averages[new_key] = grand_psd[0].copy()
+        else:
+            grand_averages[new_key] = np.mean(grand_psd, axis=0)
 
     active_subject = experiment.active_subject
     spectrum = active_subject.spectrums.get(spectrum_name)
 
     freqs = spectrum.freqs
-    ch_names = spectrum.ch_names
+    ch_names = common_ch_names
     log_transformed = spectrum.log_transformed
     name = 'group_' + spectrum_name
 
     spectrum = Spectrum(name, active_subject,
-            log_transformed, data, freqs, ch_names)
+            log_transformed, grand_averages, freqs, ch_names)
 
     experiment.active_subject.add_spectrum(spectrum) 
 
