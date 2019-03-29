@@ -295,7 +295,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     fileManager.save_csv(os.path.join(path, filename), data, 
                          column_names, row_names)
 
-def group_average_psd(experiment, spectrum_name):
+def group_average_psd(experiment, spectrum_name, groups):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
 
     # check data coherence
@@ -308,18 +308,27 @@ def group_average_psd(experiment, spectrum_name):
         if not spectrum:
             continue
         keys.append(tuple(spectrum.data.keys()))
-        ch_names.append(tuple(spectrum.ch_names))
+        ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in spectrum.ch_names]))
         freqs.append(tuple(spectrum.freqs))
         logs.append(spectrum.log_transformed)
 
     if len(set(keys)) != 1:
         raise Exception("PSD's contain different conditions")
-    if len(set(ch_names)) != 1:
-        raise Exception("PSD's contain different sets of channels")
     if len(set(freqs)) != 1:
         raise Exception("PSD's contain different sets of freqs")
     if len(set(logs)) != 1:
         raise Exception("Some of the PSD's are log transformed and some are not")
+
+    if len(set(ch_names)) != 1:
+        logging.getLogger('ui_logger').info("PSD's contain different sets of channels. Identifying common ones..")
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
+        logging.getLogger('ui_logger').info(str(len(common_ch_names)) + ' common channels found.')
+        logging.getLogger('ui_logger').debug('Common channels are ' + str(ch_names))
+    else:
+        common_ch_names = ch_names[0]
+
+    from meggie.code_meggie.utils.debug import debug_trace;
+    debug_trace()
 
     data = dict([(key, []) for key in keys[0]])
     for subject in experiment.subjects.values():

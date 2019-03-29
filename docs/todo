@@ -16,6 +16,7 @@ features:
 - multi-groupaverage (maybe some dialog from group average, where can set number for each subject)
 - add batch for tfrs
 - channel groups for visualization and saving in tfrs. 
+- set tabstops properly
 - set channel groups for experiment; channel groups can then be used in many places with eeg also. (for eeg default is all channels)
 - bad channel interpolation
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"

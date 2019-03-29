@@ -17,6 +17,7 @@ from meggie.code_meggie.analysis.spectral import save_data_psd
 from meggie.code_meggie.analysis.spectral import group_average_psd
 
 from meggie.ui.analysis.outputOptionsMain import OutputOptions
+from meggie.ui.general.groupAverageDialogMain import GroupAverageDialog
 
 import meggie.code_meggie.general.fileManager as fileManager
 import meggie.code_meggie.general.mne_wrapper as mne
@@ -164,15 +165,23 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
             return
 
         spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
+        
+        def average_groups_handler(groups):
+            try:
+                @threaded
+                def group_average(*args, **kwargs):
+                    group_average_psd(experiment, spectrum_name, groups)
 
-        @threaded
-        def group_average(*args, **kwargs):
-            group_average_psd(experiment, spectrum_name)
+                group_average(do_meanwhile=self.update_ui)
+                self.initialize_ui()
+                experiment.save_experiment_settings()
+            except Exception as exc:
+                exc_messagebox(self, exc)
+                return
 
-        group_average(do_meanwhile=self.update_ui)
-
-        experiment.save_experiment_settings()
-        self.initialize_ui()
+        handler = average_groups_handler
+        self.group_average_dialog = GroupAverageDialog(experiment, handler)
+        self.group_average_dialog.show()
 
     def on_pushButtonGroupDeleteSpectrum_clicked(self, checked=None):
         if checked is None:

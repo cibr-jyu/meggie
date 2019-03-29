@@ -20,6 +20,7 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 from meggie.code_meggie.structures.evoked import Evoked
 
 from meggie.ui.analysis.outputOptionsMain import OutputOptions
+from meggie.ui.general.groupAverageDialogMain import GroupAverageDialog
 
 from meggie.code_meggie.analysis.epoching import draw_evoked_potentials
 from meggie.code_meggie.analysis.epoching import save_data_evoked
@@ -304,19 +305,26 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         evoked_name = str(item.text())
 
-        try:
-            evokeds, group_epoch_info = group_average(
-                experiment, evoked_name, update_ui=self.update_ui)
+        def average_groups_handler(groups):
+            try:
+                evokeds, subjects_info = group_average(
+                    experiment, evoked_name, groups,
+                    do_meanwhile=self.update_ui)
 
-        except Exception as e:
-            exc_messagebox(self, e)
-            return
+                self.save_evoked(experiment.active_subject, evokeds, 
+                                 'group_' + evoked_name, 
+                                 subjects_info=subjects_info)
 
-        self.save_evoked(experiment.active_subject, evokeds, 
-                         'group_' + evoked_name, 
-                         group_epoch_info=group_epoch_info)
+                self.initialize_ui()
+                experiment.save_experiment_settings()
 
-        self.initialize_ui()
+            except Exception as e:
+                exc_messagebox(self, e)
+                return
+
+        handler = average_groups_handler
+        self.group_average_dialog = GroupAverageDialog(experiment, handler)
+        self.group_average_dialog.show()
 
     def on_pushButtonDeleteEvoked_clicked(self, checked=None):
         """Delete the selected evoked."""
@@ -405,22 +413,14 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         evoked_name = str(item.text())
         evoked = experiment.active_subject.evokeds.get(evoked_name)
-        info = 'Subjects:\n'
 
-        if 'subjects' not in evoked.info:
-            self.ui.textBrowserEvokedInfo.clear()
-            return
+        info = 'Epoch collection info:\n'
 
-        for subject_name in evoked.info['subjects']:
-            info += subject_name + '\n'
-
-        info += '\nEpoch collection info:\n'
-
-        for collection_name, events in evoked.info['epoch_collections'].items():
-            info += collection_name
+        for subject_name, events in evoked.info['epoch_collections'].items():
+            info += subject_name
             for key, value in events.items():
                 info += ' [' + key + ', ' + str(value) + '] '
-            info += '\n\n'
+            info += '\n'
 
         self.ui.textBrowserEvokedInfo.setText(info)
 
@@ -451,9 +451,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         evokeds = {}
         for name in collection_names:
-
-
-
             try:
                 collection = subject.epochs[name]
             except KeyError:
@@ -475,10 +472,26 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             '_evoked.fif'
         )
 
-        self.save_evoked(subject, evokeds, evoked_name)
+        epoch_info = {} 
+        for key in evokeds:
+            epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
+            events = epoch.event_id
+            epoch_info[key] = dict([(name, str(len(epoch[name])) + ' events')
+                                    for name in events])
 
+        epoch_info = {
+            'epoch_collections': epoch_info
+        }
 
-    def save_evoked(self, subject, evokeds, evoked_name, group_epoch_info={}):
+        subjects_info = {}
+        subjects_info[subject.subject_name] = epoch_info
+ 
+        self.save_evoked(subject, evokeds, evoked_name,
+                         subjects_info)
+
+    def save_evoked(self, subject, evokeds, evoked_name, 
+                    subjects_info):
+
         # Save evoked into evoked (average) directory with name evoked_name
         saveFolder = subject.evokeds_directory
         if not os.path.exists(saveFolder):
@@ -493,7 +506,8 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             message = 'Writing evoked data as ' + evoked_name + ' ...'
             logging.getLogger('ui_logger').info(message)
 
-            mne.write_evokeds(os.path.join(saveFolder, evoked_name), list(evokeds.values()))
+            mne.write_evokeds(os.path.join(saveFolder, evoked_name), 
+                              list(evokeds.values()))
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
                        'still process the evoked file (visualize etc.).')
@@ -501,23 +515,10 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         new_evoked = Evoked(evoked_name, subject, evokeds)
 
-
         epoch_info = {}
-        subject_names = []
+        for subject_name, info in subjects_info.items():
+            epoch_info[subject_name] = info['epoch_collections']
 
-        if not group_epoch_info:
-            for key in evokeds:
-                epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
-                events = epoch.event_id
-                epoch_info[key] = dict([(name, str(len(epoch[name])) + ' events')
-                                        for name in events])
-            subject_names = [subject.subject_name]
-        else:
-            for subject_name, info in group_epoch_info.items():
-                epoch_info[subject_name] = info['epoch_collections']
-                subject_names = ['group evoked']
-
-        new_evoked.info['subjects'] = subject_names
         new_evoked.info['epoch_collections'] = epoch_info
         subject.add_evoked(new_evoked)
         self.parent.experiment.save_experiment_settings()
