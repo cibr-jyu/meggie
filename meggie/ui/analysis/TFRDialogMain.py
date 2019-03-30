@@ -14,6 +14,8 @@ from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog
 
 from meggie.code_meggie.utils.validators import validate_name
 
+from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+
 from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -58,9 +60,19 @@ class TFRDialog(QtWidgets.QDialog):
 
         self.ui.doubleSpinBoxNcycles.setValue(n_cycles)
 
-        # select factor such that minfreq / factor = n_cycles, and then ceil
+        # select factor such that minfreq / factor = n_cycles, 
+        # and then ceil
         factor = np.ceil(minfreq/float(n_cycles))
         self.ui.doubleSpinBoxCycleFactor.setValue(factor)
+
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter,
+            parent=self,
+            container=self.ui.groupBoxBatching,
+            geometry=self.ui.widgetBatchContainer.geometry())
+
+    def experiment_getter(self):
+        return self.experiment
 
     def accept(self):
         """
@@ -105,5 +117,8 @@ class TFRDialog(QtWidgets.QDialog):
             return
 
         self.close()
+
+    def acceptBatch(self):
+        pass
 
 
