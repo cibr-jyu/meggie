@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../TFRDialogUi.ui'
+# Form implementation generated from reading ui file 'TFRDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,11 +27,10 @@ class Ui_TFRDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 558, 423))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 558, 432))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
-        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.groupBoxMisc = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.groupBoxMisc.setObjectName("groupBoxMisc")
@@ -40,7 +39,9 @@ class Ui_TFRDialog(object):
         self.gridLayout_10 = QtWidgets.QGridLayout()
         self.gridLayout_10.setObjectName("gridLayout_10")
         self.spinBoxDecim = QtWidgets.QSpinBox(self.groupBoxMisc)
-        self.spinBoxDecim.setProperty("value", 2)
+        self.spinBoxDecim.setMinimum(1)
+        self.spinBoxDecim.setMaximum(1000)
+        self.spinBoxDecim.setProperty("value", 1)
         self.spinBoxDecim.setObjectName("spinBoxDecim")
         self.gridLayout_10.addWidget(self.spinBoxDecim, 0, 1, 1, 1)
         self.labelDecim = QtWidgets.QLabel(self.groupBoxMisc)
@@ -78,7 +79,7 @@ class Ui_TFRDialog(object):
         self.doubleSpinBoxMinFreq = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
         self.doubleSpinBoxMinFreq.setMinimum(0.0)
         self.doubleSpinBoxMinFreq.setMaximum(1000.0)
-        self.doubleSpinBoxMinFreq.setProperty("value", 4.0)
+        self.doubleSpinBoxMinFreq.setProperty("value", 5.0)
         self.doubleSpinBoxMinFreq.setObjectName("doubleSpinBoxMinFreq")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMinFreq)
         self.labelMaxFreq = QtWidgets.QLabel(self.groupBoxFrequencies)
@@ -87,7 +88,7 @@ class Ui_TFRDialog(object):
         self.doubleSpinBoxMaxFreq = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
         self.doubleSpinBoxMaxFreq.setMinimum(0.0)
         self.doubleSpinBoxMaxFreq.setMaximum(1000.0)
-        self.doubleSpinBoxMaxFreq.setProperty("value", 40.0)
+        self.doubleSpinBoxMaxFreq.setProperty("value", 30.0)
         self.doubleSpinBoxMaxFreq.setObjectName("doubleSpinBoxMaxFreq")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxMaxFreq)
         self.labelFrequencyInterval = QtWidgets.QLabel(self.groupBoxFrequencies)
@@ -96,7 +97,7 @@ class Ui_TFRDialog(object):
         self.doubleSpinBoxFreqInterval = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
         self.doubleSpinBoxFreqInterval.setMinimum(0.1)
         self.doubleSpinBoxFreqInterval.setMaximum(99.99)
-        self.doubleSpinBoxFreqInterval.setProperty("value", 2.0)
+        self.doubleSpinBoxFreqInterval.setProperty("value", 0.5)
         self.doubleSpinBoxFreqInterval.setObjectName("doubleSpinBoxFreqInterval")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.doubleSpinBoxFreqInterval)
         self.label_7 = QtWidgets.QLabel(self.groupBoxFrequencies)
@@ -113,12 +114,12 @@ class Ui_TFRDialog(object):
         self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
         self.radioButtonFixed = QtWidgets.QRadioButton(self.groupBoxFrequencies)
-        self.radioButtonFixed.setChecked(True)
+        self.radioButtonFixed.setChecked(False)
         self.radioButtonFixed.setObjectName("radioButtonFixed")
         self.horizontalLayout_18.addWidget(self.radioButtonFixed)
         self.formLayout.setLayout(4, QtWidgets.QFormLayout.LabelRole, self.horizontalLayout_18)
         self.doubleSpinBoxNcycles = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
-        self.doubleSpinBoxNcycles.setEnabled(True)
+        self.doubleSpinBoxNcycles.setEnabled(False)
         self.doubleSpinBoxNcycles.setMinimum(1.0)
         self.doubleSpinBoxNcycles.setMaximum(100.0)
         self.doubleSpinBoxNcycles.setProperty("value", 5.0)
@@ -128,12 +129,13 @@ class Ui_TFRDialog(object):
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
         self.radioButtonAdapted = QtWidgets.QRadioButton(self.groupBoxFrequencies)
         self.radioButtonAdapted.setToolTip("")
-        self.radioButtonAdapted.setChecked(False)
+        self.radioButtonAdapted.setCheckable(True)
+        self.radioButtonAdapted.setChecked(True)
         self.radioButtonAdapted.setObjectName("radioButtonAdapted")
         self.horizontalLayout_19.addWidget(self.radioButtonAdapted)
         self.formLayout.setLayout(5, QtWidgets.QFormLayout.LabelRole, self.horizontalLayout_19)
         self.doubleSpinBoxCycleFactor = QtWidgets.QDoubleSpinBox(self.groupBoxFrequencies)
-        self.doubleSpinBoxCycleFactor.setEnabled(False)
+        self.doubleSpinBoxCycleFactor.setEnabled(True)
         self.doubleSpinBoxCycleFactor.setToolTip("")
         self.doubleSpinBoxCycleFactor.setMinimum(1.0)
         self.doubleSpinBoxCycleFactor.setMaximum(10.0)

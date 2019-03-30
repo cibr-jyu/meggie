@@ -39,15 +39,28 @@ class TFRDialog(QtWidgets.QDialog):
         self.ui.lineEditEpochName.setText(epoch_name)
 
         if epochs.info.get('highpass'):
-            if self.ui.doubleSpinBoxMinFreq.value() < epochs.info['highpass']:
-                self.ui.doubleSpinBoxMinFreq.setValue(
-                    int(np.ceil(epochs.info['highpass'])))
+            self.ui.doubleSpinBoxMinFreq.setValue(
+                max(int(np.ceil(epochs.info['highpass'])), 
+                    self.ui.doubleSpinBoxMinFreq.value()))
 
         if epochs.info.get('lowpass'):
-            if self.ui.doubleSpinBoxMaxFreq.value() > epochs.info['lowpass']:
-                self.ui.doubleSpinBoxMaxFreq.setValue(
-                    int(np.ceil(epochs.info['lowpass'])))
+            self.ui.doubleSpinBoxMaxFreq.setValue(
+                min(int(np.floor(epochs.info['lowpass'])), 
+                    self.ui.doubleSpinBoxMaxFreq.value()))
 
+        epoch_length = epochs.times[-1] - epochs.times[0]
+
+        # try to use as many cycles as possible
+        # (window ~= 10 * (n_cycles / (2.0 * np.pi * freq))
+        minfreq = self.ui.doubleSpinBoxMinFreq.value()
+        n_cycles = epoch_length * 2.0 * np.pi * minfreq / 10.0
+        n_cycles = max(np.floor(n_cycles), 1)
+
+        self.ui.doubleSpinBoxNcycles.setValue(n_cycles)
+
+        # select factor such that minfreq / factor = n_cycles, and then ceil
+        factor = np.ceil(minfreq/float(n_cycles))
+        self.ui.doubleSpinBoxCycleFactor.setValue(factor)
 
     def accept(self):
         """

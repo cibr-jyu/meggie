@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>558</width>
-        <height>423</height>
+        <height>432</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -62,8 +62,14 @@
            <layout class="QGridLayout" name="gridLayout_10">
             <item row="0" column="1">
              <widget class="QSpinBox" name="spinBoxDecim">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
               <property name="value">
-               <number>2</number>
+               <number>1</number>
               </property>
              </widget>
             </item>
@@ -146,7 +152,7 @@
                <double>1000.000000000000000</double>
               </property>
               <property name="value">
-               <double>4.000000000000000</double>
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -169,7 +175,7 @@
                <double>1000.000000000000000</double>
               </property>
               <property name="value">
-               <double>40.000000000000000</double>
+               <double>30.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -192,7 +198,7 @@
                <double>99.989999999999995</double>
               </property>
               <property name="value">
-               <double>2.000000000000000</double>
+               <double>0.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -223,7 +229,7 @@
                  <string>Fixed</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -232,7 +238,7 @@
             <item row="4" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
               <property name="enabled">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="minimum">
                <double>1.000000000000000</double>
@@ -255,8 +261,11 @@
                 <property name="text">
                  <string>Freqs divided by</string>
                 </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
                 <property name="checked">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -265,7 +274,7 @@
             <item row="5" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxCycleFactor">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="toolTip">
                <string/>
