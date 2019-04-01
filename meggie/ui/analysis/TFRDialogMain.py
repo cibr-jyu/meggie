@@ -2,8 +2,8 @@
 
 """
 """
+import logging
 from PyQt5 import QtWidgets
-
 import numpy as np
 
 from meggie.code_meggie.general import fileManager
@@ -119,6 +119,55 @@ class TFRDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self):
-        pass
+
+        tfr_name = self.ui.lineEditTFRName.text()
+
+        try:
+            validate_name(tfr_name)
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+        
+        minfreq = self.ui.doubleSpinBoxMinFreq.value()
+        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+        decim = self.ui.spinBoxDecim.value()
+        interval = self.ui.doubleSpinBoxFreqInterval.value()
+        freqs = np.arange(minfreq, maxfreq, interval)
+
+        subtract_evoked = self.ui.checkBoxSubtractEvoked.isChecked()
+        
+        if self.ui.radioButtonFixed.isChecked():
+            ncycles = self.ui.doubleSpinBoxNcycles.value()
+        elif self.ui.radioButtonAdapted.isChecked():
+            ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
+
+        experiment = self.experiment
+
+        recently_active_subject = experiment.active_subject.subject_name
+        selected_subject_names = self.batching_widget.selected_subjects
+
+        for subject_name, subject in self.experiment.subjects.items():
+            if subject_name in selected_subject_names:
+                try:             
+                    experiment.activate_subject(subject_name)
+
+                    @threaded
+                    def do_tfr(*args, **kwargs):
+                        create_tfr(experiment, subject, tfr_name, self.epoch_name, 
+                                   freqs=freqs, decim=decim, ncycles=ncycles, 
+                                   subtract_evoked=subtract_evoked)
+                            
+                    do_tfr(do_meanwhile=self.parent.update_ui)
+                except Exception as e:
+                    self.batching_widget.failed_subjects.append((subject, str(e)))
+                    logging.getLogger('ui_logger').exception(str(e))
+
+        experiment.activate_subject(recently_active_subject)
+
+        self.batching_widget.cleanup()
+        experiment.save_experiment_settings()
+
+        self.parent.initialize_ui()
+        self.close()
 
 

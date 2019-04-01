@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'TFRDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/TFRDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -33,7 +33,7 @@ class Ui_TFRDialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -314, 480, 800))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 480, 800))
         self.scrollAreaWidgetContents.setMinimumSize(QtCore.QSize(0, 800))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
@@ -185,8 +185,8 @@ class Ui_TFRDialog(object):
         self.radioButtonAdapted.toggled['bool'].connect(self.doubleSpinBoxCycleFactor.setEnabled)
         self.radioButtonFixed.toggled['bool'].connect(self.doubleSpinBoxNcycles.setEnabled)
         self.pushButtonCancel.clicked.connect(TFRDialog.reject)
-        self.pushButtonComputeBatch.clicked.connect(TFRDialog.accept)
-        self.pushButtonCompute.clicked.connect(TFRDialog.acceptBatch)
+        self.pushButtonComputeBatch.clicked.connect(TFRDialog.acceptBatch)
+        self.pushButtonCompute.clicked.connect(TFRDialog.accept)
         QtCore.QMetaObject.connectSlotsByName(TFRDialog)
         TFRDialog.setTabOrder(self.scrollArea, self.radioButtonFixed)
         TFRDialog.setTabOrder(self.radioButtonFixed, self.radioButtonAdapted)

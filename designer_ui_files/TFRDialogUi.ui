@@ -64,7 +64,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-314</y>
+        <y>0</y>
         <width>480</width>
         <height>800</height>
        </rect>
@@ -439,7 +439,7 @@
    <sender>pushButtonComputeBatch</sender>
    <signal>clicked()</signal>
    <receiver>TFRDialog</receiver>
-   <slot>accept()</slot>
+   <slot>acceptBatch()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>387</x>
@@ -455,7 +455,7 @@
    <sender>pushButtonCompute</sender>
    <signal>clicked()</signal>
    <receiver>TFRDialog</receiver>
-   <slot>acceptBatch()</slot>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>472</x>
