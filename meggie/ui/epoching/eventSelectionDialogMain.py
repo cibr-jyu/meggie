@@ -110,7 +110,8 @@ class EventSelectionDialog(QtWidgets.QDialog):
         eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
         eog = self.ui.checkBoxEog.checkState() == QtCore.Qt.Checked
 
-        collection_name = str(self.ui.lineEditCollectionName.text())
+        collection_name = validate_name(
+            str(self.ui.lineEditCollectionName.text()))
 
         reject = dict()
         if mag:
@@ -187,7 +188,11 @@ class EventSelectionDialog(QtWidgets.QDialog):
             messagebox(self.parent, message)
             return
 
-        param_dict = self.collect_parameter_values()
+        try:
+            param_dict = self.collect_parameter_values()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
         epochs = self.experiment.active_subject.epochs
         if param_dict['collection_name'] in epochs:
@@ -225,7 +230,11 @@ class EventSelectionDialog(QtWidgets.QDialog):
             messagebox(self.parent, message)
             return
 
-        param_dict = self.collect_parameter_values()
+        try:
+            param_dict = self.collect_parameter_values()
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
         selected_subject_names = self.batching_widget.selected_subjects
 

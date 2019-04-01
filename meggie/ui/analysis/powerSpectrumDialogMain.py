@@ -136,7 +136,12 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
     def accept(self, *args, **kwargs):
         """Starts the computation."""
 
-        name = validate_name(self.ui.lineEditName.text())
+        try:
+            name = validate_name(self.ui.lineEditName.text())
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+
         times = self.intervals
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
@@ -185,7 +190,13 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.close()
 
     def acceptBatch(self, *args):
-        name = validate_name(self.ui.lineEditName.text())
+
+        try:
+            name = validate_name(self.ui.lineEditName.text())
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
+
         times = self.intervals
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
