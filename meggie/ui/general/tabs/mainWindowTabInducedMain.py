@@ -98,7 +98,7 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         return self.parent.update_ui
 
 
-    def on_pushButtonPlotTFRTopology_clicked(self, checked=None):
+    def on_pushButtonPlotTFR_clicked(self, checked=None):
         """
         """
         if checked is None:

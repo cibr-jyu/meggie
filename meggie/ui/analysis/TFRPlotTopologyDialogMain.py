@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets
 
 from meggie.ui.analysis.TFRPlotTopologyDialogUi import Ui_TFRPlotTopologyDialog
 
-from meggie.code_meggie.analysis.spectral import plot_tfr_topology
+from meggie.code_meggie.analysis.spectral import plot_tfr
 
 from meggie.ui.utils.messaging import exc_messagebox
 
@@ -45,11 +45,17 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
             blmode = self.ui.comboBoxBaselineMode.currentText()
         else:
             blmode = None
+
+        if self.ui.radioButtonAllChannels.isChecked():
+            output = 'all_channels'
+        else:
+            output = 'channel_averages'
+
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
    
-        plot_tfr_topology(self.experiment, tfr, self.tfr_name, 
-                          blmode, blstart, blend)
+        plot_tfr(self.experiment, tfr, self.tfr_name, 
+                 blmode, blstart, blend, output)
 
         self.close()
 

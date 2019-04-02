@@ -411,7 +411,8 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     meggie_tfr.save_tfr()
 
 
-def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
+def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
+             output):
 
     layout = fileManager.read_layout(experiment.layout)
 
@@ -422,19 +423,57 @@ def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
         bline = None
         mode = None
 
-    logging.getLogger('ui_logger').info("Plotting TFR topology...")
-    fig = tfr.plot_topo(layout=layout, show=False, baseline=bline, mode=mode)
+    logging.getLogger('ui_logger').info("Plotting TFR...")
 
-    fig.canvas.set_window_title('TFR' + '_' + name)
+    if output == 'all_channels':
+        fig = tfr.plot_topo(layout=layout, show=False, baseline=bline, mode=mode)
 
-    def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
-                                                    channel]))
-        plt.show(block=False)
+        fig.canvas.set_window_title('TFR' + '_' + name)
 
-    fig.canvas.mpl_connect('button_press_event', onclick)
-    fig.show()
+        def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
+                                                        channel]))
+            plt.show(block=False)
+
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        fig.show()
+    else:
+
+        data = tfr.data
+        ch_names = tfr.info['ch_names']
+        channel_groups = experiment.channel_groups
+
+        data_labels, averaged_data = average_data_to_channel_groups(
+            data, ch_names, channel_groups)
+
+        sfreq = tfr.info['sfreq']
+        times = tfr.times
+        freqs = tfr.freqs
+
+        for idx in range(len(data_labels)):
+            data = averaged_data[idx]
+            labels = data_labels[idx]
+            info = mne.create_info(ch_names=['grandaverage'], 
+                                   sfreq=sfreq, 
+                                   ch_types='mag')
+            tfr = mne.AverageTFR(
+                info, 
+                data[np.newaxis, :], 
+                times, 
+                freqs, 
+                1)
+
+            title = labels[1] + ' (' + labels[0] + ')'
+
+            # prevent interaction as no topology is involved now
+            def onselect(*args, **kwargs):
+                pass
+
+            tfr._onselect = onselect
+
+            tfr.plot(baseline=bline, mode=mode,
+                     title=title)
 
 
 def group_average_tfr(experiment, tfr_name):
