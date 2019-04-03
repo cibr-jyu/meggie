@@ -1,10 +1,22 @@
 Changelog
 =========
 
-0.11.2 (unreleased)
+0.12.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.12.0 (2019-04-03)
+------------------
+
+- Add filter options to log window
+- Remove SSP for now
+- Implement multi-group-average for evokeds and spectrums
+- Make batching widget more sensible
+- Add batch for resampling, spectrums and TFR's
+- Implement channel averages for TFR's
+- Improve TFR dialogs
+- Catch name validation failures
 
 0.11.1 (2019-03-24)
 ------------------
