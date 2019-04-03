@@ -338,6 +338,8 @@ def group_average_psd(experiment, spectrum_name, groups):
             if subject.subject_name not in group_subjects:
                 continue
             spectrums = subject.spectrums.get(spectrum_name)
+            if not spectrums:
+                continue
             for spectrum_item_key, spectrum_item in spectrums.data.items():
                 grand_key = (group_key, spectrum_item_key)
 
