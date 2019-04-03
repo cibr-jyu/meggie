@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../batchingWidgetUi.ui'
+# Form implementation generated from reading ui file 'batchingWidgetUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,14 +11,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BatchingWidget(object):
     def setupUi(self, BatchingWidget):
         BatchingWidget.setObjectName("BatchingWidget")
-        BatchingWidget.resize(291, 392)
-        self.widget = QtWidgets.QWidget(BatchingWidget)
-        self.widget.setGeometry(QtCore.QRect(0, 10, 289, 41))
-        self.widget.setObjectName("widget")
-        self.headingLayout = QtWidgets.QHBoxLayout(self.widget)
+        BatchingWidget.resize(291, 293)
+        self.layoutWidget = QtWidgets.QWidget(BatchingWidget)
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 10, 289, 41))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.headingLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
         self.headingLayout.setContentsMargins(0, 0, 0, 0)
         self.headingLayout.setObjectName("headingLayout")
-        self.checkBoxBatch = QtWidgets.QCheckBox(self.widget)
+        self.checkBoxBatch = QtWidgets.QCheckBox(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -29,7 +29,7 @@ class Ui_BatchingWidget(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.headingLayout.addItem(spacerItem)
         self.functionalityWidget = QtWidgets.QWidget(BatchingWidget)
-        self.functionalityWidget.setGeometry(QtCore.QRect(0, 48, 289, 341))
+        self.functionalityWidget.setGeometry(QtCore.QRect(0, 48, 289, 241))
         self.functionalityWidget.setObjectName("functionalityWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.functionalityWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -38,30 +38,6 @@ class Ui_BatchingWidget(object):
         self.functionalityLayout.setObjectName("functionalityLayout")
         self.applyButtonsLayout = QtWidgets.QVBoxLayout()
         self.applyButtonsLayout.setObjectName("applyButtonsLayout")
-        self.label = QtWidgets.QLabel(self.functionalityWidget)
-        self.label.setEnabled(True)
-        self.label.setObjectName("label")
-        self.applyButtonsLayout.addWidget(self.label)
-        self.horizontalLayout_30 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_30.setObjectName("horizontalLayout_30")
-        self.pushButtonApply = QtWidgets.QPushButton(self.functionalityWidget)
-        self.pushButtonApply.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonApply.sizePolicy().hasHeightForWidth())
-        self.pushButtonApply.setSizePolicy(sizePolicy)
-        self.pushButtonApply.setMinimumSize(QtCore.QSize(90, 0))
-        self.pushButtonApply.setMaximumSize(QtCore.QSize(90, 16777215))
-        self.pushButtonApply.setObjectName("pushButtonApply")
-        self.horizontalLayout_30.addWidget(self.pushButtonApply)
-        self.label_6 = QtWidgets.QLabel(self.functionalityWidget)
-        self.label_6.setEnabled(True)
-        self.label_6.setObjectName("label_6")
-        self.horizontalLayout_30.addWidget(self.label_6)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_30.addItem(spacerItem1)
-        self.applyButtonsLayout.addLayout(self.horizontalLayout_30)
         self.horizontalLayout_31 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_31.setObjectName("horizontalLayout_31")
         self.pushButtonApplyAll = QtWidgets.QPushButton(self.functionalityWidget)
@@ -79,8 +55,8 @@ class Ui_BatchingWidget(object):
         self.label_7.setEnabled(True)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_31.addWidget(self.label_7)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_31.addItem(spacerItem2)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_31.addItem(spacerItem1)
         self.applyButtonsLayout.addLayout(self.horizontalLayout_31)
         self.functionalityLayout.addLayout(self.applyButtonsLayout, 1, 0, 1, 1)
         self.subjectListLayout = QtWidgets.QVBoxLayout()
@@ -106,15 +82,6 @@ class Ui_BatchingWidget(object):
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
         self.subjectListLayout.addLayout(self.horizontalLayout_17)
-        self.pushButtonRemove = QtWidgets.QPushButton(self.functionalityWidget)
-        self.pushButtonRemove.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonRemove.sizePolicy().hasHeightForWidth())
-        self.pushButtonRemove.setSizePolicy(sizePolicy)
-        self.pushButtonRemove.setObjectName("pushButtonRemove")
-        self.subjectListLayout.addWidget(self.pushButtonRemove)
         self.functionalityLayout.addLayout(self.subjectListLayout, 0, 0, 1, 1)
         self.verticalLayout.addLayout(self.functionalityLayout)
 
@@ -126,11 +93,7 @@ class Ui_BatchingWidget(object):
         _translate = QtCore.QCoreApplication.translate
         BatchingWidget.setWindowTitle(_translate("BatchingWidget", "Batch processing"))
         self.checkBoxBatch.setText(_translate("BatchingWidget", "Batch processing"))
-        self.label.setText(_translate("BatchingWidget", "Apply parameters:"))
-        self.pushButtonApply.setText(_translate("BatchingWidget", "Apply"))
-        self.label_6.setText(_translate("BatchingWidget", "to selected subject"))
-        self.pushButtonApplyAll.setText(_translate("BatchingWidget", "Apply to all"))
+        self.pushButtonApplyAll.setText(_translate("BatchingWidget", "Select all"))
         self.label_7.setText(_translate("BatchingWidget", "subjects on the list"))
-        self.labelSubjects.setText(_translate("BatchingWidget", "Select subject to modify its parameters"))
-        self.pushButtonRemove.setText(_translate("BatchingWidget", "Remove subject from this process"))
+        self.labelSubjects.setText(_translate("BatchingWidget", "Select subjects to include in batch"))
 

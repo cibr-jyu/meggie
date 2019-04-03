@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>494</width>
-    <height>532</height>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -92,7 +92,7 @@
       <string>Miscellaneous preferences:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="6" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
          <string/>
@@ -105,43 +105,6 @@
          <string>Show confirmation dialog on Meggie quit</string>
         </property>
        </widget>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="labelNJobs">
-          <property name="text">
-           <string>Number of jobs to run in parallel:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBoxNJobs">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>1000000000</number>
-          </property>
-          <property name="value">
-           <number>3</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkBoxAutomaticOpenPreviousExperiment">

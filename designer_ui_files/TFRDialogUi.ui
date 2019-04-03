@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>482</height>
+    <width>512</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,38 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonComputeBatch">
+       <property name="text">
+        <string>Batch</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCompute">
+       <property name="text">
+        <string>Compute</string>
        </property>
       </widget>
      </item>
@@ -41,14 +65,14 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>558</width>
-        <height>423</height>
+        <width>480</width>
+        <height>800</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>0</height>
+        <height>800</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -62,8 +86,14 @@
            <layout class="QGridLayout" name="gridLayout_10">
             <item row="0" column="1">
              <widget class="QSpinBox" name="spinBoxDecim">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>1000</number>
+              </property>
               <property name="value">
-               <number>2</number>
+               <number>1</number>
               </property>
              </widget>
             </item>
@@ -146,7 +176,7 @@
                <double>1000.000000000000000</double>
               </property>
               <property name="value">
-               <double>4.000000000000000</double>
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -169,7 +199,7 @@
                <double>1000.000000000000000</double>
               </property>
               <property name="value">
-               <double>40.000000000000000</double>
+               <double>30.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -192,7 +222,7 @@
                <double>99.989999999999995</double>
               </property>
               <property name="value">
-               <double>2.000000000000000</double>
+               <double>0.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -223,7 +253,7 @@
                  <string>Fixed</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -232,7 +262,7 @@
             <item row="4" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxNcycles">
               <property name="enabled">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="minimum">
                <double>1.000000000000000</double>
@@ -255,8 +285,11 @@
                 <property name="text">
                  <string>Freqs divided by</string>
                 </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
                 <property name="checked">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -265,7 +298,7 @@
             <item row="5" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxCycleFactor">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="toolTip">
                <string/>
@@ -322,6 +355,25 @@
          </layout>
         </widget>
        </item>
+       <item row="5" column="0">
+        <widget class="QGroupBox" name="groupBoxBatching">
+         <property name="title">
+          <string>Batching</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QWidget" name="widgetBatchContainer" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -332,42 +384,9 @@
   <tabstop>scrollArea</tabstop>
   <tabstop>radioButtonFixed</tabstop>
   <tabstop>radioButtonAdapted</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TFRDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>288</x>
-     <y>647</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TFRDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>312</x>
-     <y>647</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>radioButtonAdapted</sender>
    <signal>toggled(bool)</signal>
@@ -375,12 +394,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>126</x>
-     <y>454</y>
+     <x>148</x>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>448</y>
+     <x>384</x>
+     <y>313</y>
     </hint>
    </hints>
   </connection>
@@ -391,14 +410,65 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>414</y>
+     <x>89</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>213</x>
-     <y>414</y>
+     <x>367</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>TFRDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>521</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonComputeBatch</sender>
+   <signal>clicked()</signal>
+   <receiver>TFRDialog</receiver>
+   <slot>acceptBatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>73</x>
+     <y>523</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonCompute</sender>
+   <signal>clicked()</signal>
+   <receiver>TFRDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>472</x>
+     <y>509</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>511</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>acceptBatch()</slot>
+ </slots>
 </ui>

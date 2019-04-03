@@ -39,40 +39,6 @@
         <layout class="QHBoxLayout" name="horizontalLayout_18">
          <item>
           <layout class="QGridLayout" name="gridLayout_14">
-           <item row="3" column="0">
-            <widget class="QPushButton" name="pushButtonEOG">
-             <property name="text">
-              <string>Calculate EOG projections...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QPushButton" name="pushButtonApplyEOG">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Apply EOG projections...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="pushButtonApplyECG">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Apply ECG projections...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="pushButtonECG">
-             <property name="text">
-              <string>Calculate ECG projections...</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QPushButton" name="pushButtonFilter">
              <property name="text">
@@ -378,7 +344,7 @@
       <item>
        <widget class="QLabel" name="labelBads">
         <property name="text">
-         <string>Bad channels</string>
+         <string>Bad channels:</string>
         </property>
        </widget>
       </item>
@@ -432,7 +398,7 @@
       <item>
        <widget class="QLabel" name="labelProjs">
         <property name="text">
-         <string>Added projection items</string>
+         <string>Found projection items:</string>
         </property>
        </widget>
       </item>

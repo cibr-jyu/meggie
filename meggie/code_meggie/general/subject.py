@@ -387,47 +387,7 @@ class Subject(object):
         except OSError:
             raise IOError('Source estimate could not be removed from the file system')
 
-    def check_ecg_projs(self):
-        """
-        Checks the subject folder for ECG projection files.
-        Returns True if projections found.
-        """
-        path = self.subject_path
-        # check whether ECG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg_avg_proj*'))))
-        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg_proj*'))))
-        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_ecg-eve*'))))
-        if len(files) > 1:
-            return True
-        return False           
-        
-    def check_eog_projs(self):
-        """
-        Checks the subject folder for EOG projection files.
-        Returns True if projections found.
-        """
-        path = self.subject_path
-        #Check whether EOG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog_avg_proj*'))))
-        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog_proj*'))))
-        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eog-eve*'))))
-        if len(files) > 1:
-            return True
-        return False
-    
-    def check_eeg_projs(self):
-        """
-        Checks the subject folder for EEG projection files.
-        Returns True if projections found.
-        """
-        path = self.subject_path
-        #Check whether EEG projections are calculated
-        files = list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eeg_proj*'))))
-        files += list(filter(os.path.isfile, glob.glob(os.path.join(path, '*_eeg-eve*'))))
-        if len(files) > 1:
-            return True
-        return False
-        
+
     def check_sss_applied(self):
         """
         Checks the subject folder for sss/tsss applied file.

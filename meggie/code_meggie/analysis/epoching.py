@@ -282,58 +282,78 @@ def save_data_evoked(experiment, subjects, output_rows, evoked_name):
     fileManager.save_csv(os.path.join(path, filename), data, column_names,
                          row_names)
 
+@threaded
+def group_average(experiment, evoked_name, groups):
+    """
+    """
 
-def group_average(experiment, evoked_name, update_ui=(lambda: None)):
-    """
-    """
+    # sanity checks
+    sfreqs = []
+    tmins = []
+    tmaxs = []
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            subject = experiment.subjects.get(subject_name)
+            if not subject:
+                continue
+            evoked = subject.evokeds.get(evoked_name)
+            if not evoked:
+                continue
+
+            mne_evokeds = evoked.mne_evokeds
+            for mne_evoked in mne_evokeds.values():
+                sfreqs.append(mne_evoked.info['sfreq'])
+                tmins.append(mne_evoked.times[0])
+                tmaxs.append(mne_evoked.times[-1])
+
+    if len(set(sfreqs)) > 1:
+        raise Exception('Sampling rates do not match')
+    if len(set(tmins)) > 1 or len(set(tmaxs)) > 1:
+        raise Exception('Times do not match')
+
     count = 0
+    found_subjects = []
     group_info = {}
     for subject in experiment.subjects.values():
+        subject_in_groups = False
+        for group_key, group_subjects in groups.items():
+            if subject.subject_name in group_subjects:
+                subject_in_groups = True
+        if not subject_in_groups:
+            continue
+
         if subject.evokeds.get(evoked_name):
             count += 1
             evoked = subject.evokeds.get(evoked_name)
-            group_info[subject.subject_name] = evoked.info
+            info = evoked.info['epoch_collections'][subject.subject_name]
+            group_info[subject.subject_name] = {'epoch_collections': info}
+            found_subjects.append(subject)
 
     if count == 0:
         raise ValueError('No evoked responses found from any subject.')
-    
-    if count > 0 and count < len(experiment.subjects):
-        message = ("Evoked responses not found from every subject. " + 
-                   "(" + str(count) + " responses found.)")
-        logging.getLogger('ui_logger').warning(message)
-    
-    evokeds = _group_average(experiment,
-       evoked_name, do_meanwhile=update_ui
-    )
 
-    return evokeds, group_info
-
-@threaded
-def _group_average(experiment, evoked_name):
-    """Performed in a worker thread."""
-
-    subjects = experiment.subjects.values()
-    responses = [subject.evokeds.get(evoked_name) for subject in subjects]
-    responses = list(filter(bool, responses))
-
-    # assumme all have same same amount of evokeds
-    evoked_groups = {}
-    
-    for response in responses:
-        for key, value in response.mne_evokeds.items():
-            if evoked_groups.get(key):
-                evoked_groups[key].append(value)
-            else:
-                evoked_groups[key] = [value]
+    grand_evokeds = {}
+    for group_key, group_subjects in groups.items():
+        for subject in found_subjects:
+            if subject.subject_name not in group_subjects:
+                continue
+            evoked = subject.evokeds.get(evoked_name)
+            for evoked_item_key, evoked_item in evoked.mne_evokeds.items():
+                grand_key = (group_key, evoked_item_key)
+                if grand_key in grand_evokeds:
+                    grand_evokeds[grand_key].append(evoked_item)
+                else:
+                    grand_evokeds[grand_key] = [evoked_item]
 
     grand_averages = {}
+    for key, grand_evoked in grand_evokeds.items():
+        new_key = str(key[1]) + '_' + str(key[0])
+        if len(grand_evoked) == 1:
+            grand_averages[new_key] = grand_evoked[0].copy()
 
-    for key, evokeds in evoked_groups.items():
-        if len(evokeds) == 1:
-            grand_averaged = evokeds[0].copy()
         else:
-            grand_averaged = mne.grand_average(evokeds)
-        grand_averaged.comment = key
-        grand_averages[key] = grand_averaged
+            grand_averages[new_key] = mne.grand_average(grand_evoked)
 
-    return grand_averages
+        grand_averages[new_key].comment = new_key
+
+    return grand_averages, group_info

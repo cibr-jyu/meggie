@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>724</width>
-    <height>665</height>
+    <width>741</width>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,14 +24,14 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>704</width>
-        <height>608</height>
+        <width>707</width>
+        <height>1050</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
         <width>700</width>
-        <height>540</height>
+        <height>1050</height>
        </size>
       </property>
       <widget class="QGroupBox" name="groupBoxConditions">
@@ -423,6 +423,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="widgetBatchContainer" native="true">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>610</y>
+         <width>120</width>
+         <height>80</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -459,9 +469,16 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonAccept">
+      <widget class="QPushButton" name="pushButtonComputeBatch">
        <property name="text">
-        <string>Start</string>
+        <string>Batch</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCompute">
+       <property name="text">
+        <string>Compute</string>
        </property>
       </widget>
      </item>
@@ -475,14 +492,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButtonAccept</sender>
+   <sender>pushButtonCompute</sender>
    <signal>clicked()</signal>
    <receiver>PowerSpectrumDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>713</x>
-     <y>610</y>
+     <x>683</x>
+     <y>841</y>
     </hint>
     <hint type="destinationlabel">
      <x>723</x>
@@ -497,8 +514,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>622</x>
-     <y>610</y>
+     <x>511</x>
+     <y>841</y>
     </hint>
     <hint type="destinationlabel">
      <x>723</x>
@@ -506,5 +523,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButtonComputeBatch</sender>
+   <signal>clicked()</signal>
+   <receiver>PowerSpectrumDialog</receiver>
+   <slot>acceptBatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>567</x>
+     <y>831</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>847</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>acceptBatch()</slot>
+ </slots>
 </ui>

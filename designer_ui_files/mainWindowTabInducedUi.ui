@@ -110,9 +110,9 @@
             <item row="0" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <widget class="QPushButton" name="pushButtonPlotTFRTopology">
+               <widget class="QPushButton" name="pushButtonPlotTFR">
                 <property name="text">
-                 <string>Plot TFR topology</string>
+                 <string>Plot TFR...</string>
                 </property>
                </widget>
               </item>

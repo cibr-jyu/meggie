@@ -35,16 +35,17 @@ class Spectrum(object):
         self._log_transformed = log_transformed
    
     def _load_data(self):
-        template = self.name + '_' + '([0-9]*)\.csv'
+        template = self.name + '_' + '([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrums_directory):
             match = re.match(template, fname)
             if match:
                 logging.getLogger('ui_logger').debug(
                     'Reading spectrum file: ' + str(fname))
                 try:
-                    key = int(match.group(1))
+                    key = str(match.group(1))
                 except Exception as exc:
                     raise Exception("Unknown file name format.")
+
                 freqs, ch_names, psd = fileManager.load_csv(
                     os.path.join(self._spectrums_directory, fname))
 

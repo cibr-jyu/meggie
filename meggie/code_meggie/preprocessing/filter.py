@@ -3,13 +3,13 @@
 
 import logging
 
-from meggie.ui.utils.decorators import threaded
-
 import meggie.code_meggie.general.fileManager as fileManager
+
+from meggie.ui.utils.decorators import threaded
 
 
 @threaded
-def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
+def filter_data(experiment, dic, subject, preview=False, **kwargs):
     """
     Filters the data array in place according to parameters in paramDict.
     Depending on the parameters, the filter is one or more of
@@ -28,7 +28,7 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
 
     logging.getLogger('ui_logger').info("Filtering.")
     dataToFilter.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
-        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw, n_jobs=n_jobs,
+        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
         method='fft', fir_design='firwin')
 
     freqs = list()
@@ -42,8 +42,7 @@ def filter_data(experiment, dic, subject, n_jobs, preview=False, **kwargs):
 
         logging.getLogger('ui_logger').info("Band-stop filtering.")
         dataToFilter.notch_filter(freqs, picks=None, filter_length=length,
-            notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw, 
-            n_jobs=n_jobs)
+            notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
 
     if not preview:
         fname = dataToFilter.filenames[0]

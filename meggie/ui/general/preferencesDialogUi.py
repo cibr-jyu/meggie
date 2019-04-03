@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../preferencesDialogUi.ui'
+# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogPreferences(object):
     def setupUi(self, DialogPreferences):
         DialogPreferences.setObjectName("DialogPreferences")
-        DialogPreferences.resize(494, 532)
+        DialogPreferences.resize(494, 482)
         self.gridLayout_3 = QtWidgets.QGridLayout(DialogPreferences)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.groupBoxWorkingDirectory = QtWidgets.QGroupBox(DialogPreferences)
@@ -64,24 +64,10 @@ class Ui_DialogPreferences(object):
         self.label_2 = QtWidgets.QLabel(self.groupBox)
         self.label_2.setText("")
         self.label_2.setObjectName("label_2")
-        self.gridLayout_4.addWidget(self.label_2, 6, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_2, 5, 0, 1, 1)
         self.checkBoxConfirmQuit = QtWidgets.QCheckBox(self.groupBox)
         self.checkBoxConfirmQuit.setObjectName("checkBoxConfirmQuit")
         self.gridLayout_4.addWidget(self.checkBoxConfirmQuit, 1, 0, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.labelNJobs = QtWidgets.QLabel(self.groupBox)
-        self.labelNJobs.setObjectName("labelNJobs")
-        self.horizontalLayout_3.addWidget(self.labelNJobs)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
-        self.spinBoxNJobs = QtWidgets.QSpinBox(self.groupBox)
-        self.spinBoxNJobs.setMinimum(1)
-        self.spinBoxNJobs.setMaximum(1000000000)
-        self.spinBoxNJobs.setProperty("value", 3)
-        self.spinBoxNJobs.setObjectName("spinBoxNJobs")
-        self.horizontalLayout_3.addWidget(self.spinBoxNJobs)
-        self.gridLayout_4.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
         self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBox)
         self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
         self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
@@ -109,6 +95,5 @@ class Ui_DialogPreferences(object):
         self.pushButtonBrowseFreeSurferHome.setText(_translate("DialogPreferences", "Browse..."))
         self.groupBox.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:"))
         self.checkBoxConfirmQuit.setText(_translate("DialogPreferences", "Show confirmation dialog on Meggie quit"))
-        self.labelNJobs.setText(_translate("DialogPreferences", "Number of jobs to run in parallel:"))
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
 

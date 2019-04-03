@@ -152,7 +152,7 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         if self.epochList.isEmpty():
             return
 
-        elif self.epochList.currentItem() is None:
+        if self.epochList.currentItem() is None:
             messagebox(self, 'No epochs selected')
 
         item_str = self.epochList.currentItem().text()
@@ -183,6 +183,9 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
         experiment = self.parent.experiment
         if not experiment or experiment.active_subject is None:
+            return
+
+        if self.epochList.isEmpty():
             return
 
         if self.epochList.currentItem() is None:

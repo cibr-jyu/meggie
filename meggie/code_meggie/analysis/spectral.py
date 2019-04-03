@@ -27,7 +27,7 @@ from meggie.code_meggie.structures.tfr import TFR
 
 
 @threaded
-def _compute_spectrum(raw_block_groups, params, n_jobs):
+def _compute_spectrum(raw_block_groups, params):
     """Performed in a worker thread."""
     fmin = params['fmin']
     fmax = params['fmax']
@@ -44,7 +44,7 @@ def _compute_spectrum(raw_block_groups, params, n_jobs):
 
             psds, freqs = mne.psd_welch(raw_block, fmin=fmin, fmax=fmax, 
                 n_fft=nfft, n_overlap=overlap, picks=picks, 
-                proj=True, n_jobs=n_jobs)
+                proj=True)
 
             if params['log']:
                 psds = 10 * np.log10(psds)
@@ -58,7 +58,7 @@ def _compute_spectrum(raw_block_groups, params, n_jobs):
 
 
 def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups, 
-                          update_ui=(lambda: None), n_jobs=1):
+                          update_ui=(lambda: None)):
     """
     """
         
@@ -70,7 +70,7 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
                            exclude='bads')
 
     params['picks'] = picks
-    psd_groups = _compute_spectrum(raw_block_groups, params, n_jobs=n_jobs,
+    psd_groups = _compute_spectrum(raw_block_groups, params,
                                    do_meanwhile=update_ui)
 
     for psd_list in psd_groups.values():
@@ -116,7 +116,7 @@ def plot_power_spectrum(experiment, name, output):
 
     data = spectrum.data
     freqs = spectrum.freqs
-    ch_names = spectrum.ch_names
+    ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
     log_transformed = spectrum.log_transformed
 
     channel_groups = experiment.channel_groups
@@ -136,7 +136,7 @@ def plot_power_spectrum(experiment, name, output):
 
             # notice that ch_idx is index in the original ch_names,
             # and ch_names from spectrum object are only the data channels
-            ch_name = raw_info['ch_names'][ch_idx]
+            ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
             psd_idx = ch_names.index(ch_name)
             
             fig = plt.gcf()
@@ -168,10 +168,11 @@ def plot_power_spectrum(experiment, name, output):
                                            axis_facecolor='white', layout=lout,
                                            on_pick=individual_plot):
 
-            if raw_info['ch_names'][idx] not in ch_names:
+            ch_name = raw_info['ch_names'][idx].replace(' ', '')
+            if ch_name not in ch_names:
                 continue
 
-            psd_idx = ch_names.index(raw_info['ch_names'][idx])
+            psd_idx = ch_names.index(ch_name)
             
             for color_idx, psd in enumerate(data.values()):
                 ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
@@ -300,7 +301,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     fileManager.save_csv(os.path.join(path, filename), data, 
                          column_names, row_names)
 
-def group_average_psd(experiment, spectrum_name):
+def group_average_psd(experiment, spectrum_name, groups):
     logging.getLogger('ui_logger').info('Calculating group average for psds') 
 
     # check data coherence
@@ -308,50 +309,81 @@ def group_average_psd(experiment, spectrum_name):
     ch_names = []
     freqs = []
     logs = []
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrums.get(spectrum_name)
-        if not spectrum:
-            continue
-        keys.append(tuple(spectrum.data.keys()))
-        ch_names.append(tuple(spectrum.ch_names))
-        freqs.append(tuple(spectrum.freqs))
-        logs.append(spectrum.log_transformed)
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            subject = experiment.subjects.get(subject_name)
+            if not subject:
+                continue
+            spectrum = subject.spectrums.get(spectrum_name)
+            if not spectrum:
+                continue
+            keys.append(tuple(spectrum.data.keys()))
+            ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in spectrum.ch_names]))
+            freqs.append(tuple(spectrum.freqs))
+            logs.append(spectrum.log_transformed)
 
     if len(set(keys)) != 1:
         raise Exception("PSD's contain different conditions")
-    if len(set(ch_names)) != 1:
-        raise Exception("PSD's contain different sets of channels")
     if len(set(freqs)) != 1:
         raise Exception("PSD's contain different sets of freqs")
     if len(set(logs)) != 1:
         raise Exception("Some of the PSD's are log transformed and some are not")
 
-    data = dict([(key, []) for key in keys[0]])
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrums.get(spectrum_name)
-        if not spectrum:
-            continue
+    if len(set(ch_names)) != 1:
+        logging.getLogger('ui_logger').info("PSD's contain different sets of channels. Identifying common ones..")
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
+        logging.getLogger('ui_logger').info(str(len(common_ch_names)) + ' common channels found.')
+        logging.getLogger('ui_logger').debug('Common channels are ' + str(ch_names))
+    else:
+        common_ch_names = ch_names[0]
 
-        for key, cond_data in spectrum.data.items():
-            data[key].append(cond_data)
+    grand_psds = {}
+    for group_key, group_subjects in groups.items():
+        for subject in experiment.subjects.values():
+            if subject.subject_name not in group_subjects:
+                continue
+            spectrums = subject.spectrums.get(spectrum_name)
+            for spectrum_item_key, spectrum_item in spectrums.data.items():
+                grand_key = (group_key, spectrum_item_key)
 
-        freqs = spectrum.freqs
-        ch_names = spectrum.ch_names
+                idxs = []
+                # get common channels in "subject specific space"
+                for ch_idx, ch_name in enumerate(
+                    [ch.replace(' ', '') for ch in spectrums.ch_names]
+                ):
+                    if ch_name in common_ch_names:
+                        idxs.append(ch_idx)
 
-    for key in data:
-        data[key] = np.mean(data[key], axis=0)
+                spectrum_item = spectrum_item[idxs]
+
+                # sanity check
+                if spectrum_item.shape[0] != len(common_ch_names):
+                    raise Exception('Something wrong with the channels')
+
+                if grand_key in grand_psds:
+                    grand_psds[grand_key].append(spectrum_item)
+                else:
+                    grand_psds[grand_key] = [spectrum_item]
+
+    grand_averages = {}
+    for key, grand_psd in grand_psds.items():
+        new_key = str(key[1]) + '_group_' + str(key[0])
+        if len(grand_psd) == 1:
+            grand_averages[new_key] = grand_psd[0].copy()
+        else:
+            grand_averages[new_key] = np.mean(grand_psd, axis=0)
 
     active_subject = experiment.active_subject
     spectrum = active_subject.spectrums.get(spectrum_name)
 
     freqs = spectrum.freqs
-    ch_names = spectrum.ch_names
+    ch_names = common_ch_names
     log_transformed = spectrum.log_transformed
 
     name = 'group_' + spectrum_name
 
     spectrum = Spectrum(name, active_subject,
-            log_transformed, data, freqs, ch_names)
+            log_transformed, grand_averages, freqs, ch_names)
 
     experiment.active_subject.add_spectrum(spectrum) 
 
@@ -359,7 +391,7 @@ def group_average_psd(experiment, spectrum_name):
 
 
 def create_tfr(experiment, subject, tfr_name, epochs_name, 
-               freqs, decim, ncycles, subtract_evoked, n_jobs):
+               freqs, decim, ncycles, subtract_evoked):
 
     epochs = subject.epochs[epochs_name].raw
 
@@ -370,7 +402,7 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     logging.getLogger('ui_logger').info('Computing TFR...')
 
     tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
-                         average=True, return_itc=False, n_jobs=n_jobs)
+                         average=True, return_itc=False)
 
     logging.getLogger('ui_logger').info('Saving TFR...')
 
@@ -385,7 +417,8 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     meggie_tfr.save_tfr()
 
 
-def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
+def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
+             output):
 
     layout = fileManager.read_layout(experiment.layout)
 
@@ -396,19 +429,57 @@ def plot_tfr_topology(experiment, tfr, name, blmode, blstart, blend):
         bline = None
         mode = None
 
-    logging.getLogger('ui_logger').info("Plotting TFR topology...")
-    fig = tfr.plot_topo(layout=layout, show=False, baseline=bline, mode=mode)
+    logging.getLogger('ui_logger').info("Plotting TFR...")
 
-    fig.canvas.set_window_title('TFR' + '_' + name)
+    if output == 'all_channels':
+        fig = tfr.plot_topo(layout=layout, show=False, baseline=bline, mode=mode)
 
-    def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
-                                                    channel]))
-        plt.show(block=False)
+        fig.canvas.set_window_title('TFR' + '_' + name)
 
-    fig.canvas.mpl_connect('button_press_event', onclick)
-    fig.show()
+        def onclick(event):
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
+                                                        channel]))
+            plt.show(block=False)
+
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        fig.show()
+    else:
+
+        data = tfr.data
+        ch_names = tfr.info['ch_names']
+        channel_groups = experiment.channel_groups
+
+        data_labels, averaged_data = average_data_to_channel_groups(
+            data, ch_names, channel_groups)
+
+        sfreq = tfr.info['sfreq']
+        times = tfr.times
+        freqs = tfr.freqs
+
+        for idx in range(len(data_labels)):
+            data = averaged_data[idx]
+            labels = data_labels[idx]
+            info = mne.create_info(ch_names=['grandaverage'], 
+                                   sfreq=sfreq, 
+                                   ch_types='mag')
+            tfr = mne.AverageTFR(
+                info, 
+                data[np.newaxis, :], 
+                times, 
+                freqs, 
+                1)
+
+            title = labels[1] + ' (' + labels[0] + ')'
+
+            # prevent interaction as no topology is involved now
+            def onselect(*args, **kwargs):
+                pass
+
+            tfr._onselect = onselect
+
+            tfr.plot(baseline=bline, mode=mode,
+                     title=title)
 
 
 def group_average_tfr(experiment, tfr_name):

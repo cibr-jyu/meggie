@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Meggie - Compute TFR</string>
+   <string>Meggie - Plot TFR</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0">
@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>538</width>
-        <height>241</height>
+        <width>524</width>
+        <height>273</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -71,7 +71,7 @@
              <widget class="QComboBox" name="comboBoxBaselineMode">
               <item>
                <property name="text">
-                <string>logratio</string>
+                <string>mean</string>
                </property>
               </item>
               <item>
@@ -81,12 +81,12 @@
               </item>
               <item>
                <property name="text">
-                <string>percent</string>
+                <string>logratio</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>mean</string>
+                <string>percent</string>
                </property>
               </item>
               <item>
@@ -162,6 +162,32 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd"/>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBoxOutputOptions">
+         <property name="title">
+          <string>Output options</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButtonAllChannels">
+            <property name="text">
+             <string>All channels</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButtonChannelAverages">
+            <property name="text">
+             <string>Channel averages</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
