@@ -386,19 +386,39 @@ def group_average_psd(experiment, spectrum_name, groups):
     spectrum.save_data()
 
 
-def create_tfr(experiment, subject, tfr_name, epochs_name, 
+def create_tfr(experiment, subject, tfr_name, epochs_names, 
                freqs, decim, ncycles, subtract_evoked):
 
-    epochs = subject.epochs[epochs_name].raw
+    # check that lengths are same
+    time_arrays = []
+    for name in epochs_names:
+        collection = subject.epochs.get(name)
+        if collection:
+            time_arrays.append(collection.raw.times)
 
-    if subtract_evoked:
-        logging.getLogger('ui_logger').info('Subtracting evoked...')
-        epochs = epochs.copy().subtract_evoked()
+    for ix, i_times in enumerate(time_arrays):
+        for jx, j_times in enumerate(time_arrays):
+            if ix != jx:
+                try:
+                    np.testing.assert_array_almost_equal(i_times, j_times)
+                except AssertionError:
+                    raise Exception('Epochs collections of different time'
+                                    'scales are not allowed')
 
-    logging.getLogger('ui_logger').info('Computing TFR...')
+    tfrs = {}
+    for epoch_name in epochs_names:
+        epochs = subject.epochs[epoch_name].raw
+        if subtract_evoked:
+            logging.getLogger('ui_logger').info('Subtracting evoked...')
+            epochs = epochs.copy().subtract_evoked()
 
-    tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, decim=decim,
-                         average=True, return_itc=False)
+        logging.getLogger('ui_logger').info('Computing TFR...')
+
+        tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles, 
+                             decim=decim, average=True, 
+                             return_itc=False)
+        tfr.comment = epoch_name
+        tfrs[epoch_name] = tfr
 
     logging.getLogger('ui_logger').info('Saving TFR...')
 
@@ -406,7 +426,7 @@ def create_tfr(experiment, subject, tfr_name, epochs_name,
     if hasattr(ncycles, '__len__'):
         ncycles = list(ncycles)
 
-    meggie_tfr = TFR(tfr, tfr_name, subject, decim, ncycles, subtract_evoked)
+    meggie_tfr = TFR(tfrs, tfr_name, subject, decim, ncycles, subtract_evoked)
 
     experiment.active_subject.add_tfr(meggie_tfr) 
 

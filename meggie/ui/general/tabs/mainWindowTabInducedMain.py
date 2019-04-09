@@ -70,9 +70,12 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         tfr = experiment.active_subject.tfrs.get(tfr_name)
         info = 'Name: ' + str(tfr_name) + '\n'
 
-        freqs = tfr.tfr.freqs
-        fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
-        info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+        try:
+            freqs = list(tfr.tfrs.values())[0].freqs
+            fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
+            info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+        except:
+            pass
 
         decim = tfr.decim
         info += 'Decim: ' + str(decim) + '\n'
@@ -235,20 +238,16 @@ class MainWindowTabInduced(QtWidgets.QDialog):
             return
         
         if self.epochList.currentItem() is None:
-            message = 'You must select epochs before TFR.'
+            message = ('You must select at least one epochs collection '
+                       'before TFR.')
             messagebox(self, message)
             return
         
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+
+        names = [item.text() for item in selected_items]
         
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        self.tfr_dialog = TFRDialog(self, experiment, collection_name)
+        self.tfr_dialog = TFRDialog(self, experiment, names)
         self.tfr_dialog.show()
         
 
