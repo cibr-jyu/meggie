@@ -1,33 +1,26 @@
 # Guide to the most basic things in Meggie
 
 ## Installation
-### Install from anaconda cloud (works in 64bit linux environments)
-1. Install meggie from anaconda cloud in an isolated conda environment using command: *conda create -c conda-forge -c CIBR -n meggie-env meggie*
-1. Activate the environment using: *source activate meggie-env*
-1. Run with command: *meggie* 
 
-[//]: # (Hello)
-
-Installation with this method would be possible for other operating systems too, but conda packages are yet to be built.
-
-### Install from source
-My suggestion is to first install MNE-python with all its dependencies to your python environment, and then install meggie to that same environment. Here's one way to do this:
+Suggested way to install meggie is to first install MNE-python with all its dependencies to python environment, and then install meggie to that same environment. Here's one way to do this in Unix with the help of anaconda distribution:
 1. Create new python environment: *conda create -n meggie-env python=3*
 1. Activate the environment using: *source activate meggie-env*
-1. Install mne to environment: *conda install -c conda-forge mne==0.17.0*
-1. Clone this repository and go inside.
-1. Install meggie to environment using: *python setup.py install*
+1. Install mne to environment: *conda install -c conda-forge mne*
+1. Clone or download this repository and go inside.
+1. Install meggie to the environment using: *python setup.py install*
 1. Run Meggie with command: *meggie* 
 
 [//]: # (Hello)
 
-The idea of installing meggie over mne with dependencies should work on any major platform (Windows, Linux, Mac).
+Note that installing MNE-python with "pip install mne" does not install dependencies. If you don't want to use conda-forge channel for MNE-python installation, please consult https://www.martinos.org/mne/stable/install\_mne\_python.html for official instructions.
+
+[//]: # (Hello)
 
 ### Debugging
 
 * If command *meggie* is not found, you should ensure that you are in the correct python environment.
 * If the command is found, but the software crashes during startup to an *ImportError*, you should ensure that you are using *Python 3* and that the dependencies are installed. Individual missing dependencies can often be installed with either *conda install* or *pip install*.
-* If the software crashes during analysis, and the terminal window does not show you the stack trace, you may start meggie using command *meggie debug* and reproduce the crash.
+* If the software crashes during analysis, and the terminal window does not show you the stack trace, you may start meggie using command *meggie debug* and reproduce the crash with stacktrace.
 
 ## Set up meggie experiment and add first dataset
 
