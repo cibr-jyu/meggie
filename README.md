@@ -12,7 +12,7 @@ Suggested way to install meggie is to first install MNE-python with all its depe
 
 [//]: # (Hello)
 
-Note that installing MNE-python with "pip install mne" does not install dependencies. If you don't want to use conda-forge channel for MNE-python installation, please consult https://www.martinos.org/mne/stable/install\_mne\_python.html for official instructions.
+Note that installing MNE-python with "pip install mne" does not install dependencies. If you don't want to use conda-forge channel for MNE-python installation, please consult https://www.martinos.org/mne/stable/install_mne_python.html for official instructions.
 
 [//]: # (Hello)
 
