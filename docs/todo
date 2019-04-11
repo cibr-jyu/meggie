@@ -6,12 +6,10 @@ TODO:
 - we need tests
 - check that "all" functionalities are wrapped in try except
 
-
 features:
+- plot tse for induced (iter_topography, no baseline correction, allow minfreq, maxfreq, ci if wanter)
+- whole new cluster based statistics world
 - mixed data topomaps poorly supported (eeg isnt plotted always when possible).
-- multi-groupaverage (maybe some dialog from group average, where can set number for each subject)
-- add batch for tfrs
-- channel groups for visualization and saving in tfrs. 
 - set tabstops properly
 - set channel groups for experiment; channel groups can then be used in many places with eeg also. (for eeg default is all channels)
 - bad channel interpolation
@@ -21,6 +19,4 @@ features:
 - add delay to triggers
 - add simple trigger filtering (only triggers followed by something)
 - maybe a mock subject possibility combined with epoch or evoked or event import
-- allow defining of colors for spectrums
 - unify names of accept-buttons
-

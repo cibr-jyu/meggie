@@ -160,8 +160,19 @@ def draw_evoked_potentials(experiment, evokeds, output, title=None):
 
     if output == 'all_channels':
 
+        # little fix for evoked scalings for meg data
+        scalings = dict(eeg=1e6, grad=1e13, mag=1e15)
+        evoked = new_evokeds[0].copy()
+        grad_picks = mne.pick_types(evoked.info, meg='grad')
+        mag_picks = mne.pick_types(evoked.info, meg='mag')
+        if grad_picks.size > 0 and mag_picks.size > 0:
+            mag_val = np.percentile(new_evokeds[0].data[mag_picks], 95)
+            grad_val = np.percentile(new_evokeds[0].data[grad_picks], 95)
+            grad_scaling = mag_val * 1e15 / grad_val
+            scalings['grad'] = grad_scaling
+            
         fig = mne.plot_evoked_topo(new_evokeds, layout,
-            color=colors, title=title)
+            color=colors, title=title, scalings=scalings)
 
         conditions = [e.comment for e in new_evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
