@@ -498,30 +498,42 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
                      title=title)
 
 
-def group_average_tfr(experiment, tfr_name):
+def group_average_tfr(experiment, tfr_name, groups):
     logging.getLogger('ui_logger').info('Calculating group average for tfrs') 
 
     # check data coherence
+    keys = []
     freqs = []
     times = []
     ch_names = []
     decims = []
     subtracts = []
 
-    for subject in experiment.subjects.values():
-        tfr = subject.tfrs.get(tfr_name)
-        if not tfr:
-            continue
-        freqs.append(tuple(tfr.tfr.freqs))
-        times.append(tuple(tfr.tfr.times))
-        ch_names.append(tuple(tfr.tfr.info['ch_names']))
-        decims.append(tfr.decim)
-        subtracts.append(tfr.evoked_subtracted)
+    for group_key, group_subjects in groups.items():
+        for subject_name in group_subjects:
+            subject = experiment.subjects.get(subject_name)
+            if not subject:
+                continue
+            meggie_tfr = subject.tfrs.get(tfr_name)
+            if not meggie_tfr:
+                continue
 
+            tfr = list(meggie_tfr.tfrs.values())[0]
+            
+            keys.append(tuple(list(meggie_tfr.tfrs.keys())))
+
+            freqs.append(tuple(tfr.freqs))
+            times.append(tuple(tfr.times))
+            ch_names.append(tuple([ch_name.replace(" ", "") for ch_name in 
+                                   tfr.info['ch_names']]))
+            decims.append(meggie_tfr.decim)
+            subtracts.append(meggie_tfr.evoked_subtracted)
+
+    
+    if len(set(keys)) != 1:
+        raise Exception("TFR's contain different sets of conditions")
     if len(set(freqs)) != 1:
         raise Exception("TFR's contain different sets of freqs")
-    if len(set(ch_names)) != 1:
-        raise Exception("TFR's contain different sets of channels")
     if len(set(times)) != 1:
         raise Exception("TFR's contain different sets of times")
     if len(set(decims)) != 1:
@@ -529,25 +541,62 @@ def group_average_tfr(experiment, tfr_name):
     if len(set(subtracts)) != 1:
         raise Exception("TFR's contain different evoked subtraction settings")
 
-    tfrs = []
-    for subject in experiment.subjects.values():
-        tfr = subject.tfrs.get(tfr_name)
-        if not tfr:
-            continue
-        tfrs.append(tfr.tfr)
+    if len(set(ch_names)) != 1:
+        logging.getLogger('ui_logger').info("TFR's contain different sets of channels. Identifying common ones..")
+        common_ch_names = list(set.intersection(*map(set, ch_names)))
+        logging.getLogger('ui_logger').info(str(len(common_ch_names)) + 
+                                            ' common channels found.')
+        logging.getLogger('ui_logger').debug('Common channels are ' + str(ch_names))
+    else:
+        common_ch_names = ch_names[0]
 
-    if len(tfrs) < 2:
-        raise Exception('No other subject with a corresponding TFR found')
+    grand_tfrs = {}
+    for group_key, group_subjects in groups.items():
+        for subject in experiment.subjects.values():
+            if subject.subject_name not in group_subjects:
+                continue
+            meggie_tfr = subject.tfrs.get(tfr_name)
+            if not meggie_tfr:
+                continue
+            for tfr_item_key, tfr_item in meggie_tfr.tfrs.items():
+                grand_key = (group_key, tfr_item_key)
+                
+                idxs = []
+                # get common channels in "subject specific space"
+                for ch_idx, ch_name in enumerate(
+                    [ch.replace(' ', '') for ch in tfr_item.info['ch_names']]
+                ):
+                    if ch_name in common_ch_names:
+                        idxs.append(ch_idx)
+                tfr_item = tfr_item.copy().drop_channels(
+                    [ch_name for ch_idx, ch_name in enumerate(tfr_item.info['ch_names'])
+                     if ch_idx not in idxs])
+
+                # sanity check
+                if len(tfr_item.info['ch_names']) != len(common_ch_names):
+                    raise Exception('Something wrong with the channels')
+
+                if grand_key in grand_tfrs:
+                    grand_tfrs[grand_key].append(tfr_item)
+                else:
+                    grand_tfrs[grand_key] = [tfr_item]
+
+    grand_averages = {}
+    for key, grand_tfr in grand_tfrs.items():
+        new_key = str(key[1]) + '_group_' + str(key[0])
+        if len(grand_tfr) == 1:
+            grand_averages[new_key] = grand_tfr[0].copy()
+        else:
+            grand_averages[new_key] = mne.grand_average(grand_tfr, drop_bads=False)
 
     active_subject = experiment.active_subject
-    tfr = active_subject.tfrs.get(tfr_name)
+    meggie_tfr = active_subject.tfrs.get(tfr_name)
 
-    average_tfr = mne.grand_average(tfrs, drop_bads=False)
-    decim = tfr.decim
-    n_cycles = tfr.n_cycles
-    evoked_subtracted = tfr.evoked_subtracted
+    decim = meggie_tfr.decim
+    n_cycles = meggie_tfr.n_cycles
+    evoked_subtracted = meggie_tfr.evoked_subtracted
 
-    meggie_tfr = TFR(average_tfr, 'group_' + tfr_name, 
+    meggie_tfr = TFR(grand_averages, 'group_' + tfr_name, 
                      active_subject, 
                      decim, n_cycles, evoked_subtracted)
 

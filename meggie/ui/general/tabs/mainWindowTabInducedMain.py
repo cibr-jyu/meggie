@@ -14,6 +14,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
+from meggie.ui.general.groupAverageDialogMain import GroupAverageDialog
 
 from meggie.code_meggie.analysis.spectral import group_average_tfr
 
@@ -144,18 +145,22 @@ class MainWindowTabInduced(QtWidgets.QDialog):
 
         tfr_name = tfr_item.text()
 
-        @threaded
-        def group_average(*args, **kwargs):
-            group_average_tfr(experiment, tfr_name)
+        def average_groups_handler(groups):
+            try:
+                @threaded
+                def group_average(*args, **kwargs):
+                    group_average_tfr(experiment, tfr_name, groups)
 
-        try:
-            group_average(do_meanwhile=self.update_ui)
-        except Exception as e:
-            exc_messagebox(self, e)
-            return
+                group_average(do_meanwhile=self.update_ui)
+                self.initialize_ui()
+                experiment.save_experiment_settings()
+            except Exception as e:
+                exc_messagebox(self, e)
+                return
 
-        experiment.save_experiment_settings()
-        self.initialize_ui()
+        handler = average_groups_handler
+        self.group_average_dialog = GroupAverageDialog(experiment, handler) 
+        self.group_average_dialog.show()
 
 
     def on_pushButtonDeleteTFR_clicked(self, checked=None):

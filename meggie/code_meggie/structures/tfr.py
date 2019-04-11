@@ -45,6 +45,9 @@ class TFR(object):
             tfr.save(fname, overwrite=True)
 
     def delete_tfr(self):
+        if not self._tfrs:
+            return
+
         for tfr_name, tfr in self._tfrs.items():
             fname = self._get_fname(tfr_name)
             os.remove(fname)
