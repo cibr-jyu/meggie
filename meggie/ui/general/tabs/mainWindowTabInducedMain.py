@@ -70,6 +70,10 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         tfr = experiment.active_subject.tfrs.get(tfr_name)
         info = 'Name: ' + str(tfr_name) + '\n'
 
+        conditions = list(tfr.tfrs.keys())
+        if conditions and any(conditions):
+            info += 'Conditions: ' + ', '.join(conditions) + '\n'
+
         try:
             freqs = list(tfr.tfrs.values())[0].freqs
             fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]

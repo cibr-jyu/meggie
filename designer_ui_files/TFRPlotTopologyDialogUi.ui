@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>556</width>
-    <height>300</height>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>524</width>
-        <height>273</height>
+        <height>302</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -173,6 +173,13 @@
          </property>
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0">
+           <widget class="QLabel" name="labelChannels">
+            <property name="text">
+             <string>Type:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
            <widget class="QRadioButton" name="radioButtonAllChannels">
             <property name="text">
              <string>All channels</string>
@@ -182,12 +189,22 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="1" column="1">
            <widget class="QRadioButton" name="radioButtonChannelAverages">
             <property name="text">
              <string>Channel averages</string>
             </property>
            </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelCondition">
+            <property name="text">
+             <string>Condition:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="comboBoxCondition"/>
           </item>
          </layout>
         </widget>
