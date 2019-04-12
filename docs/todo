@@ -5,7 +5,6 @@ TODO:
  * remove active_subject-references from code_meggie analysis-sections (pass by parameter)
 - we need tests
 - check that "all" functionalities are wrapped in try except
-- ensure that source analysis pipeline is coherent and works, now relies a lot freesurfer, need to be more understandable
 
 features:
 - plot tse for induced (iter_topography, no baseline correction, allow minfreq, maxfreq, ci if wanter)

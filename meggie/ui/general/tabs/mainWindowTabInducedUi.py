@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainWindowTabInducedUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/mainWindowTabInducedUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -69,6 +69,9 @@ class Ui_mainWindowTabInduced(object):
         self.pushButtonPlotTFR = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButtonPlotTFR.setObjectName("pushButtonPlotTFR")
         self.horizontalLayout_2.addWidget(self.pushButtonPlotTFR)
+        self.pushButtonPlotTSE = QtWidgets.QPushButton(self.groupBox_2)
+        self.pushButtonPlotTSE.setObjectName("pushButtonPlotTSE")
+        self.horizontalLayout_2.addWidget(self.pushButtonPlotTSE)
         self.gridLayout_21.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBox_2, 1, 0, 1, 1)
         self.gridLayout = QtWidgets.QGridLayout()
@@ -99,6 +102,7 @@ class Ui_mainWindowTabInduced(object):
         self.groupBoxTFRActions.setTitle(_translate("mainWindowTabInduced", "Available actions for TFR\'s:"))
         self.groupBox_2.setTitle(_translate("mainWindowTabInduced", "Visualization:"))
         self.pushButtonPlotTFR.setText(_translate("mainWindowTabInduced", "Plot TFR..."))
+        self.pushButtonPlotTSE.setText(_translate("mainWindowTabInduced", "Plot TSE..."))
         self.pushButtonDeleteTFR.setText(_translate("mainWindowTabInduced", "Delete selected TFR"))
         self.pushButtonGroupAverage.setText(_translate("mainWindowTabInduced", "Group average for all subjects"))
         self.pushButtonGroupDeleteTFR.setText(_translate("mainWindowTabInduced", "Group delete selected TFR"))

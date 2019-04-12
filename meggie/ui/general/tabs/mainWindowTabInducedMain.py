@@ -8,6 +8,7 @@ from meggie.ui.general.tabs.mainWindowTabInducedUi import Ui_mainWindowTabInduce
 
 from meggie.ui.analysis.TFRDialogMain import TFRDialog
 from meggie.ui.analysis.TFRPlotTopologyDialogMain import TFRPlotTopologyDialog
+from meggie.ui.analysis.TSEPlotDialogMain import TSEPlotDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
@@ -127,6 +128,28 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         self.tfr_plot_dialog = TFRPlotTopologyDialog(
             self, experiment, tfr_item.text())
         self.tfr_plot_dialog.show()
+
+    def on_pushButtonPlotTSE_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        self.tse_plot_dialog = TSEPlotDialog(
+            self, experiment, tfr_item.text())
+        self.tse_plot_dialog.show()
 
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         if checked is None:

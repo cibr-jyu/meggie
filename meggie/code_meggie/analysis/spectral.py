@@ -103,6 +103,10 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
     spectrum.save_data()
 
 
+def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
+    pass
+
+
 def plot_power_spectrum(experiment, name, output):
     """
     """
