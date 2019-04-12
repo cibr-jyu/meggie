@@ -144,6 +144,9 @@
             <property name="suffix">
              <string> s</string>
             </property>
+            <property name="maximum">
+             <double>9999.989999999999782</double>
+            </property>
            </widget>
           </item>
          </layout>
@@ -174,6 +177,9 @@
            <widget class="QDoubleSpinBox" name="doubleSpinBoxEndTime">
             <property name="suffix">
              <string> s</string>
+            </property>
+            <property name="maximum">
+             <double>9999.989999999999782</double>
             </property>
            </widget>
           </item>

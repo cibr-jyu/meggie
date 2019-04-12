@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../covarianceRawDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/covarianceRawDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -80,6 +80,7 @@ class Ui_covarianceRawDialog(object):
         self.horizontalLayout_3.addItem(spacerItem)
         self.doubleSpinBoxStartTime = QtWidgets.QDoubleSpinBox(self.groupBoxStartEnd)
         self.doubleSpinBoxStartTime.setPrefix("")
+        self.doubleSpinBoxStartTime.setMaximum(9999.99)
         self.doubleSpinBoxStartTime.setObjectName("doubleSpinBoxStartTime")
         self.horizontalLayout_3.addWidget(self.doubleSpinBoxStartTime)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -91,6 +92,7 @@ class Ui_covarianceRawDialog(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.doubleSpinBoxEndTime = QtWidgets.QDoubleSpinBox(self.groupBoxStartEnd)
+        self.doubleSpinBoxEndTime.setMaximum(9999.99)
         self.doubleSpinBoxEndTime.setObjectName("doubleSpinBoxEndTime")
         self.horizontalLayout_2.addWidget(self.doubleSpinBoxEndTime)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
