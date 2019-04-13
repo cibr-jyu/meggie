@@ -7,7 +7,6 @@ TODO:
 - check that "all" functionalities are wrapped in try except
 
 features:
-- plot tse for induced (iter_topography, no baseline correction, allow minfreq, maxfreq, ci if wanter)
 - whole new cluster based statistics world
 - mixed data topomaps poorly supported (eeg isnt plotted always when possible).
 - set tabstops properly
