@@ -24,7 +24,7 @@ class TFRDialog(QtWidgets.QDialog):
     """
     """
     
-    def __init__(self, parent, experiment, epoch_name):
+    def __init__(self, parent, experiment, epoch_names):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -32,13 +32,13 @@ class TFRDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.parent = parent
-        self.epoch_name = epoch_name
+        self.epoch_names = epoch_names
         self.experiment = experiment
 
         subject = experiment.active_subject
-        epochs = subject.epochs[epoch_name].raw
+        epochs = subject.epochs[epoch_names[0]].raw
 
-        self.ui.lineEditEpochName.setText(epoch_name)
+        self.ui.lineEditEpochName.setText(', '.join(epoch_names))
 
         if epochs.info.get('highpass'):
             self.ui.doubleSpinBoxMinFreq.setValue(
@@ -104,7 +104,7 @@ class TFRDialog(QtWidgets.QDialog):
 
         @threaded
         def do_tfr(*args, **kwargs):
-            create_tfr(experiment, subject, tfr_name, self.epoch_name, 
+            create_tfr(experiment, subject, tfr_name, self.epoch_names, 
                        freqs=freqs, decim=decim, ncycles=ncycles, 
                        subtract_evoked=subtract_evoked)
                 
@@ -153,8 +153,9 @@ class TFRDialog(QtWidgets.QDialog):
 
                     @threaded
                     def do_tfr(*args, **kwargs):
-                        create_tfr(experiment, subject, tfr_name, self.epoch_name, 
-                                   freqs=freqs, decim=decim, ncycles=ncycles, 
+                        create_tfr(experiment, subject, tfr_name, 
+                                   self.epoch_names, freqs=freqs, 
+                                   decim=decim, ncycles=ncycles, 
                                    subtract_evoked=subtract_evoked)
                             
                     do_tfr(do_meanwhile=self.parent.update_ui)

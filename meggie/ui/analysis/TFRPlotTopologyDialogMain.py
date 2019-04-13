@@ -25,7 +25,10 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
 
         active_subject = self.experiment.active_subject
 
-        tfr = active_subject.tfrs[self.tfr_name].tfr
+        meggie_tfr = active_subject.tfrs[self.tfr_name]
+
+        tfr = list(meggie_tfr.tfrs.values())[0]
+        keys = list(meggie_tfr.tfrs.keys())
 
         start, end = tfr.times[0], tfr.times[-1]
         self.ui.doubleSpinBoxBaselineStart.setMinimum(start)
@@ -35,11 +38,22 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxBaselineEnd.setMaximum(end)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
 
+        for key in keys:
+            self.ui.comboBoxCondition.addItem(key)
+
+        if len(keys) == 1:
+            self.ui.comboBoxCondition.setEnabled(False)
+
+
     def accept(self):
 
         active_subject = self.experiment.active_subject
 
-        tfr = active_subject.tfrs[self.tfr_name].tfr
+        condition = self.ui.comboBoxCondition.currentText()
+
+        tfr = active_subject.tfrs[self.tfr_name].tfrs.get(condition)
+        if not tfr:
+            return
 
         if self.ui.checkBoxBaselineCorrection.isChecked():
             blmode = self.ui.comboBoxBaselineMode.currentText()

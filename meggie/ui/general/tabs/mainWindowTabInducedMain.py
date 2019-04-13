@@ -8,12 +8,14 @@ from meggie.ui.general.tabs.mainWindowTabInducedUi import Ui_mainWindowTabInduce
 
 from meggie.ui.analysis.TFRDialogMain import TFRDialog
 from meggie.ui.analysis.TFRPlotTopologyDialogMain import TFRPlotTopologyDialog
+from meggie.ui.analysis.TSEPlotDialogMain import TSEPlotDialog
 
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.decorators import threaded
 
 from meggie.ui.widgets.epochWidgetMain import EpochWidget
+from meggie.ui.general.groupAverageDialogMain import GroupAverageDialog
 
 from meggie.code_meggie.analysis.spectral import group_average_tfr
 
@@ -70,9 +72,16 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         tfr = experiment.active_subject.tfrs.get(tfr_name)
         info = 'Name: ' + str(tfr_name) + '\n'
 
-        freqs = tfr.tfr.freqs
-        fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
-        info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+        conditions = list(tfr.tfrs.keys())
+        if conditions and any(conditions):
+            info += 'Conditions: ' + ', '.join(conditions) + '\n'
+
+        try:
+            freqs = list(tfr.tfrs.values())[0].freqs
+            fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
+            info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
+        except:
+            pass
 
         decim = tfr.decim
         info += 'Decim: ' + str(decim) + '\n'
@@ -120,6 +129,28 @@ class MainWindowTabInduced(QtWidgets.QDialog):
             self, experiment, tfr_item.text())
         self.tfr_plot_dialog.show()
 
+    def on_pushButtonPlotTSE_clicked(self, checked=None):
+        """
+        """
+        if checked is None:
+            return
+
+        experiment = self.parent.experiment
+        if not experiment:
+            return
+
+        active_subject = experiment.active_subject
+        if not active_subject:
+            return
+
+        tfr_item = self.ui.listWidgetTFR.currentItem()
+        if not tfr_item:
+            return
+
+        self.tse_plot_dialog = TSEPlotDialog(
+            self, experiment, tfr_item.text())
+        self.tse_plot_dialog.show()
+
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         if checked is None:
             return
@@ -137,18 +168,22 @@ class MainWindowTabInduced(QtWidgets.QDialog):
 
         tfr_name = tfr_item.text()
 
-        @threaded
-        def group_average(*args, **kwargs):
-            group_average_tfr(experiment, tfr_name)
+        def average_groups_handler(groups):
+            try:
+                @threaded
+                def group_average(*args, **kwargs):
+                    group_average_tfr(experiment, tfr_name, groups)
 
-        try:
-            group_average(do_meanwhile=self.update_ui)
-        except Exception as e:
-            exc_messagebox(self, e)
-            return
+                group_average(do_meanwhile=self.update_ui)
+                self.initialize_ui()
+                experiment.save_experiment_settings()
+            except Exception as e:
+                exc_messagebox(self, e)
+                return
 
-        experiment.save_experiment_settings()
-        self.initialize_ui()
+        handler = average_groups_handler
+        self.group_average_dialog = GroupAverageDialog(experiment, handler) 
+        self.group_average_dialog.show()
 
 
     def on_pushButtonDeleteTFR_clicked(self, checked=None):
@@ -235,20 +270,16 @@ class MainWindowTabInduced(QtWidgets.QDialog):
             return
         
         if self.epochList.currentItem() is None:
-            message = 'You must select epochs before TFR.'
+            message = ('You must select at least one epochs collection '
+                       'before TFR.')
             messagebox(self, message)
             return
         
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
+
+        names = [item.text() for item in selected_items]
         
-        if len(selected_items) == 1:
-            collection_name = selected_items[0].text()
-        else:
-            message = 'Select exactly one epoch collection.'
-            messagebox(self, message)
-            return
-        
-        self.tfr_dialog = TFRDialog(self, experiment, collection_name)
+        self.tfr_dialog = TFRDialog(self, experiment, names)
         self.tfr_dialog.show()
         
 

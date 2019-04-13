@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../lcmvDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/lcmvDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -86,15 +86,6 @@ class Ui_lcmvDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.labelLabel = QtWidgets.QLabel(self.groupBoxStcParameters)
-        self.labelLabel.setObjectName("labelLabel")
-        self.horizontalLayout_7.addWidget(self.labelLabel)
-        self.comboBoxLabel = QtWidgets.QComboBox(self.groupBoxStcParameters)
-        self.comboBoxLabel.setObjectName("comboBoxLabel")
-        self.horizontalLayout_7.addWidget(self.comboBoxLabel)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.labelReg = QtWidgets.QLabel(self.groupBoxStcParameters)
@@ -155,7 +146,6 @@ class Ui_lcmvDialog(object):
         self.labelNoiseCovariance.setText(_translate("lcmvDialog", "Noise covariance:"))
         self.labelDataCovariance.setText(_translate("lcmvDialog", "Data covariance:"))
         self.groupBoxStcParameters.setTitle(_translate("lcmvDialog", "Source estimate parameters:"))
-        self.labelLabel.setText(_translate("lcmvDialog", "Label:"))
         self.labelReg.setText(_translate("lcmvDialog", "Regularization parameter:"))
         self.groupBoxTimeParameters.setTitle(_translate("lcmvDialog", "Time parameters (only for raw data)"))
         self.labelStart.setText(_translate("lcmvDialog", "Start:"))

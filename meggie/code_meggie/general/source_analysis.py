@@ -109,22 +109,36 @@ def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type,
         evokeds = subject.evokeds[inst_name].mne_evokeds
         stc_insts = {}
         for key, inst in evokeds.items():
-            stc_insts[key] = mne.apply_inverse(inst, inv, lambda2, 
-                                                method, label)
+            stc_insts[key] = mne.apply_inverse(inst, 
+                                               inv, 
+                                               lambda2=lambda2, 
+                                               method=method, 
+                                               label=label)
 
         stc = SourceEstimateEvoked(stc_name, stcs=stc_insts)
             
     elif inst_type == 'epochs':
         inst = subject.epochs[inst_name].raw
-        stc_insts = mne.apply_inverse_epochs(inst, inv, lambda2, method, label)
+        stc_insts = mne.apply_inverse_epochs(inst, 
+                                             inv, 
+                                             lambda2=lambda2, 
+                                             method=method, 
+                                             label=label)
+
         stc = SourceEstimateEpochs(stc_name, stcs=stc_insts)
 
     elif inst_type == 'raw':
-        inst = subject.get_working_file().copy().copy()
+        inst = subject.get_working_file().copy()
         inst.apply_proj()
 
-        stc_inst = mne.apply_inverse_raw(inst, inv, lambda2, method, label, 
-                                         start, stop)
+        stc_inst = mne.apply_inverse_raw(inst, 
+                                         inv, 
+                                         lambda2=lambda2, 
+                                         method=method, 
+                                         label=label, 
+                                         start=start, 
+                                         stop=stop)
+
         stc = SourceEstimateRaw(stc_name, stc=stc_inst)
 
 
@@ -135,7 +149,7 @@ def create_linear_source_estimate(experiment, stc_name, inst_name, inst_type,
     experiment.save_experiment_settings()
     
 
-def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity, include_eeg, include_meg):
+def create_forward_solution(subject, solution_name, decim, triang_ico, conductivity):
     """
     """
 
@@ -158,12 +172,10 @@ def create_forward_solution(subject, solution_name, decim, triang_ico, conductiv
     # gather parameters
     trans = subject.transfile_path
     info = subject.get_working_file().info
-    meg = include_meg
-    eeg = include_eeg
     
     logging.getLogger('ui_logger').info('Creating forward solution...')
     fwd = mne.make_forward_solution(info, trans=trans, src=src, bem=bem,
-        meg=meg, eeg=eeg, mindist=5.0)
+        meg=True, eeg=False, mindist=5.0)
 
     # save the file
     fname = solution_name + '-' + decim + '-src-fwd.fif'

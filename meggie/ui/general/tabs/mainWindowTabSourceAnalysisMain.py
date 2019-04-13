@@ -200,33 +200,6 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-    def on_pushButtonCheckTalairach_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        logging.getLogger('ui_logger').info("Check Talairach clicked")
-
-
-    def on_pushButtonSkullStrip_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        logging.getLogger('ui_logger').info("Skull Strip clicked")
-
-
-    def on_pushButtonCheckSurfaces_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        logging.getLogger('ui_logger').info("Check surfaces clicked")
-
-    def on_pushButtonCheckSegmentations_clicked(self, checked=None):
-        if checked is None:
-            return
-
-        logging.getLogger('ui_logger').info("Check Segmentations clicked")
-
-
     def on_pushButtonCoregistrationGUI_clicked(self, checked=None):
         if checked is None:
             return

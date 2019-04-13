@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>372</height>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,135 +83,21 @@
       <string>BEM model setup parameters:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="3" column="0">
-       <widget class="QLabel" name="labelHomog">
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelConductivity">
         <property name="text">
-         <string>Compartment model (homog) :</string>
-        </property>
-        <property name="buddy">
-         <cstring>comboBoxCompartmentModel</cstring>
+         <string>Single-layer conductivity:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBoxCompartmentModel">
-        <item>
-         <property name="text">
-          <string>single (usually used with MEG)</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>three layer</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QFrame" name="frame_2">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="labelConductivity">
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Conductivity:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelBrainComp">
-           <property name="text">
-            <string>inner skull:</string>
-           </property>
-           <property name="buddy">
-            <cstring>doubleSpinBoxBrainConductivity</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxBrainConductivity">
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="suffix">
-            <string> S/m</string>
-           </property>
-           <property name="decimals">
-            <number>2</number>
-           </property>
-           <property name="value">
-            <double>0.300000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelSkullComp">
-           <property name="text">
-            <string>outer skull:</string>
-           </property>
-           <property name="buddy">
-            <cstring>doubleSpinBoxSkullConductivity</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxSkullConductivity">
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="prefix">
-            <string/>
-           </property>
-           <property name="suffix">
-            <string> S/m</string>
-           </property>
-           <property name="decimals">
-            <number>3</number>
-           </property>
-           <property name="value">
-            <double>0.006000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="labelScalpComp">
-           <property name="text">
-            <string>outer skin:</string>
-           </property>
-           <property name="buddy">
-            <cstring>doubleSpinBoxScalpConductivity</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxScalpConductivity">
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="suffix">
-            <string> S/m</string>
-           </property>
-           <property name="value">
-            <double>0.030000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="2" column="0">
+      <item row="0" column="0">
        <widget class="QLabel" name="labelTriangIco">
         <property name="text">
          <string>Triangulation files ico-number:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="0" column="1">
        <widget class="QSpinBox" name="spinBoxTriangFilesIco">
         <property name="enabled">
          <bool>true</bool>
@@ -224,40 +110,19 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelIncludeMEG">
-        <property name="text">
-         <string>Include MEG:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBoxIncludeMEG">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelIncludeEEG">
-        <property name="text">
-         <string>Include EEG:</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBoxIncludeEEG">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxBrainConductivity">
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="text">
-         <string/>
+        <property name="suffix">
+         <string> S/m</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="value">
+         <double>0.300000000000000</double>
         </property>
        </widget>
       </item>
@@ -285,8 +150,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>569</x>
-     <y>552</y>
+     <x>562</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -301,8 +166,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>569</x>
-     <y>552</y>
+     <x>562</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

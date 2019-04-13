@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TFRPlotTopologyDialog</class>
- <widget class="QDialog" name="TFRPlotTopologyDialog">
+ <class>TSEPlotDialog</class>
+ <widget class="QDialog" name="TSEPlotDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>337</height>
+    <width>463</width>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>524</width>
-        <height>302</height>
+        <width>445</width>
+        <height>290</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -58,108 +58,81 @@
           <string>Preferences</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLabel" name="labelBaselineMode">
+             <widget class="QLabel" name="labelMinFreq">
               <property name="text">
-               <string>Baseline mode:</string>
+               <string>Minimum frequency (Hz):</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="comboBoxBaselineMode">
-              <item>
-               <property name="text">
-                <string>mean</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ratio</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>logratio</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>percent</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zscore</string>
-               </property>
-              </item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
+              <property name="maximum">
+               <double>999.990000000000009</double>
+              </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="labelBaselineCorrection">
+             <widget class="QLabel" name="labelMaxFreq">
               <property name="text">
-               <string>Baseline correction:</string>
+               <string>Maximum frequency (Hz):</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBoxBaselineCorrection">
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
+              <property name="maximum">
+               <double>999.990000000000009</double>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLabel" name="labelBaselineStart">
               <property name="text">
-               <string>Start:</string>
+               <string>Baseline start (s):</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+              <property name="minimum">
+               <double>-99.989999999999995</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
           <item row="3" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QLabel" name="labelBaselineEnd">
               <property name="text">
-               <string>End:</string>
+               <string>Baseline end (s):</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+              <property name="minimum">
+               <double>-99.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -196,16 +169,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelCondition">
-            <property name="text">
-             <string>Condition:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBoxCondition"/>
-          </item>
          </layout>
         </widget>
        </item>
@@ -224,7 +187,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>TFRPlotTopologyDialog</receiver>
+   <receiver>TSEPlotDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -240,7 +203,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>TFRPlotTopologyDialog</receiver>
+   <receiver>TSEPlotDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -250,54 +213,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBaselineCorrection</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBoxBaselineMode</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>152</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBaselineCorrection</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxBaselineStart</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxBaselineCorrection</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxBaselineEnd</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>519</x>
-     <y>76</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>305</y>
     </hint>
    </hints>
   </connection>

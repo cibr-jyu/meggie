@@ -7,6 +7,8 @@ from meggie.ui.source_analysis.lcmvDialogUi import Ui_lcmvDialog  # noqa
 
 from meggie.code_meggie.general.source_analysis import create_lcmv_estimate
 
+from meggie.code_meggie.utils.validators import validate_name
+
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
@@ -39,7 +41,9 @@ class LCMVDialog(QtWidgets.QDialog):
         self.ui.lineEditBasedOn.setText(fwd_name)
         self.ui.lineEditData.setText(inst_name)
 
-        self.populate_labels()
+        # temporarily removed
+        # self.populate_labels()
+
         self.populate_covariances()
 
 
@@ -80,7 +84,12 @@ class LCMVDialog(QtWidgets.QDialog):
         """
 
         # collect parameters
-        stc_name = str(self.ui.lineEditSourceEstimateName.text())
+        try:
+            stc_name = validate_name(str(self.ui.lineEditSourceEstimateName.text()))
+        except Exception as exc:
+            exc_messagebox(self, exc, exec_=True)
+            return
+
         if not stc_name:
             messagebox(self, "Please give a name for the source estimate", 
                        exec_=True)
@@ -105,12 +114,13 @@ class LCMVDialog(QtWidgets.QDialog):
         if inst_type == 'raw':
             start, end = None, None
 
-        label = str(self.ui.comboBoxLabel.currentText())
-        if label == 'None':
-            label = None
-        else:
-            labels = self.read_labels()
-            label = [lbl for lbl in labels if lbl.name == label][0]
+        # label = str(self.ui.comboBoxLabel.currentText())
+        # if label == 'None':
+        #     label = None
+        # else:
+        #     labels = self.read_labels()
+        #     label = [lbl for lbl in labels if lbl.name == label][0]
+        label = None
 
         subject = self.experiment.active_subject
 

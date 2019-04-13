@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../linearSourceEstimateDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/linearSourceEstimateDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_linearSourceEstimateDialog(object):
     def setupUi(self, linearSourceEstimateDialog):
         linearSourceEstimateDialog.setObjectName("linearSourceEstimateDialog")
-        linearSourceEstimateDialog.resize(587, 529)
+        linearSourceEstimateDialog.resize(587, 540)
         linearSourceEstimateDialog.setModal(True)
         self.formLayout_3 = QtWidgets.QFormLayout(linearSourceEstimateDialog)
         self.formLayout_3.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
@@ -101,15 +101,6 @@ class Ui_linearSourceEstimateDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.labelLabel = QtWidgets.QLabel(self.groupBoxStcParameters)
-        self.labelLabel.setObjectName("labelLabel")
-        self.horizontalLayout_7.addWidget(self.labelLabel)
-        self.comboBoxLabel = QtWidgets.QComboBox(self.groupBoxStcParameters)
-        self.comboBoxLabel.setObjectName("comboBoxLabel")
-        self.horizontalLayout_7.addWidget(self.comboBoxLabel)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.labelLambda = QtWidgets.QLabel(self.groupBoxStcParameters)
@@ -183,7 +174,6 @@ class Ui_linearSourceEstimateDialog(object):
         self.labelLoose.setText(_translate("linearSourceEstimateDialog", "Loose:"))
         self.labelDepth.setText(_translate("linearSourceEstimateDialog", "Depth:"))
         self.groupBoxStcParameters.setTitle(_translate("linearSourceEstimateDialog", "Source estimate parameters:"))
-        self.labelLabel.setText(_translate("linearSourceEstimateDialog", "Label:"))
         self.labelLambda.setText(_translate("linearSourceEstimateDialog", "Regularization parameter:"))
         self.labelMethod.setText(_translate("linearSourceEstimateDialog", "Method:"))
         self.comboBoxMethod.setItemText(0, _translate("linearSourceEstimateDialog", "dSPM"))
