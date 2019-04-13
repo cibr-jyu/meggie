@@ -1,10 +1,19 @@
 Changelog
 =========
 
-0.12.1 (unreleased)
+0.13.1 (unreleased)
 ------------------
 
 - nothing changed yet.
+
+0.13.0 (unreleased)
+------------------
+
+- Fix source analysis pipeline
+- Fix epochs plot scale
+- Allow multiple conditions in TFR's
+- Implement multi-group-average for TFR's
+- Add TSE plot
 
 0.12.0 (2019-04-03)
 ------------------
