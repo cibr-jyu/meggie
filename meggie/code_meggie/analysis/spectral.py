@@ -104,7 +104,109 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
 
 
 def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
-    pass
+
+    subject = experiment.active_subject
+    subject_name = subject.subject_name
+
+    meggie_tfr = subject.tfrs.get(tfr_name)
+
+    lout = fileManager.read_layout(experiment.layout)
+
+    data = meggie_tfr.tfrs
+    example_tfr = list(data.values())[0]
+    ch_names = example_tfr.info['ch_names']
+    times = example_tfr.times
+
+    lfreq_idx = np.where(example_tfr.freqs >= minfreq)[0][0]
+    hfreq_idx = np.where(example_tfr.freqs <= maxfreq)[0][-1]
+
+    if hfreq_idx <= lfreq_idx:
+        raise Exception('Something wrong with the frequencies')
+
+    channel_groups = experiment.channel_groups
+    
+    colors = color_cycle(len(data))
+
+    # in contrast to spectrum plot, here the channels and locations 
+    # are both contained in the tfr object, which simplifies things
+
+    if output == 'all_channels':
+        logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
+
+        def individual_plot(ax, ch_idx):
+            """
+            Callback for the interactive plot.
+            Opens a channel specific plot.
+            """
+
+            ch_name = example_tfr.info['ch_names'][ch_idx]
+
+            fig = plt.gcf()
+            fig.canvas.set_window_title(''.join(['tse_', subject_name,
+                                        '_', ch_name]))
+
+            conditions = [str(key) for key in data]
+            positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+
+            for cond, col, pos in zip(conditions, colors, positions):
+                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+
+            color_idx = 0
+            for tfr in data.values():
+                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+                times = tfr.times
+                plt.plot(times, tse[ch_idx], color=colors[color_idx])
+                color_idx += 1
+
+            plt.xlabel('Time (s)')
+
+            plt.ylabel('Power ({})'.format(get_power_unit(
+                mne.channel_type(example_tfr.info, ch_idx),
+                False
+            )))
+
+            plt.show()
+
+        for ax, ch_idx in mne.iter_topography(example_tfr.info, fig_facecolor='white',
+                                           axis_spinecolor='white',
+                                           axis_facecolor='white', layout=lout,
+                                           on_pick=individual_plot):
+
+            for color_idx, tfr in enumerate(data.values()):
+                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+                ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
+
+        plt.gcf().canvas.set_window_title('tse_' + subject_name)
+        plt.show()
+
+    elif output == 'channel_averages':
+        logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
+
+        averages = {}
+        for idx, (key, tfr) in enumerate(data.items()):
+
+            data_labels, averaged_data = average_data_to_channel_groups(
+                tfr.data, ch_names, channel_groups)
+
+            averages[key] = data_labels, averaged_data
+            shape = averaged_data.shape
+
+        for ii in range(shape[0]):
+            fig, ax = plt.subplots()
+            for color_idx, key in enumerate(data.keys()):
+                ax.set_xlabel('Time (s)')
+                ax.set_ylabel('Power ({})'.format(get_power_unit(
+                    averages[key][0][ii][0],
+                    False
+                )))
+                tse = np.mean(averages[key][1][ii][lfreq_idx:hfreq_idx, :], axis=0)
+                ax.plot(times, tse, color=colors[color_idx])
+            ch_type, ch_group = averages[key][0][ii]
+            title = 'TSE ({0}, {1})'.format(ch_type, ch_group)
+            fig.canvas.set_window_title(title)
+            fig.suptitle(title)
+
+        plt.show()
 
 
 def plot_power_spectrum(experiment, name, output):
