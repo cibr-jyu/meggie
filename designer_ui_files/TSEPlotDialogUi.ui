@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>463</width>
-    <height>280</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
         <x>0</x>
         <y>0</y>
         <width>445</width>
-        <height>230</height>
+        <height>290</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -63,7 +63,7 @@
             <item>
              <widget class="QLabel" name="labelMinFreq">
               <property name="text">
-               <string>Minimum frequency:</string>
+               <string>Minimum frequency (Hz):</string>
               </property>
              </widget>
             </item>
@@ -81,7 +81,7 @@
             <item>
              <widget class="QLabel" name="labelMaxFreq">
               <property name="text">
-               <string>Maximum frequency:</string>
+               <string>Maximum frequency (Hz):</string>
               </property>
              </widget>
             </item>
@@ -89,6 +89,48 @@
              <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
               <property name="maximum">
                <double>999.990000000000009</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="labelBaselineStart">
+              <property name="text">
+               <string>Baseline start (s):</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+              <property name="minimum">
+               <double>-99.989999999999995</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="labelBaselineEnd">
+              <property name="text">
+               <string>Baseline end (s):</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+              <property name="minimum">
+               <double>-99.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
               </property>
              </widget>
             </item>

@@ -32,8 +32,13 @@ class TSEPlotDialog(QtWidgets.QDialog):
         minfreq = tfr.freqs[0]
         maxfreq = tfr.freqs[-1]
 
+        tmin = tfr.times[0]
+
         self.ui.doubleSpinBoxMinFreq.setValue(minfreq)
         self.ui.doubleSpinBoxMaxFreq.setValue(maxfreq)
+
+        self.ui.doubleSpinBoxBaselineStart.setValue(tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setValue(0)
 
 
     def accept(self):
@@ -46,7 +51,13 @@ class TSEPlotDialog(QtWidgets.QDialog):
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
 
-        plot_tse(self.experiment, self.tfr_name, minfreq, maxfreq, output)
+        bstart = self.ui.doubleSpinBoxBaselineStart.value()
+        bend = self.ui.doubleSpinBoxBaselineEnd.value()
+        
+        baseline = (bstart, bend)
+
+        plot_tse(self.experiment, self.tfr_name, minfreq, maxfreq, 
+                 baseline, output)
    
         self.close()
 

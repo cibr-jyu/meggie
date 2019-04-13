@@ -103,7 +103,7 @@ def create_power_spectrum(experiment, spectrum_name, params, raw_block_groups,
     spectrum.save_data()
 
 
-def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
+def plot_tse(experiment, tfr_name, minfreq, maxfreq, baseline, output):
 
     subject = experiment.active_subject
     subject_name = subject.subject_name
@@ -153,9 +153,15 @@ def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
 
             color_idx = 0
             for tfr in data.values():
-                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
                 times = tfr.times
+
+                # average over freqs
+                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+                # correct to baseline
+                tse = mne.rescale(tse, times, baseline=baseline)
+
                 plt.plot(times, tse[ch_idx], color=colors[color_idx])
+                plt.axhline(0)
                 color_idx += 1
 
             plt.xlabel('Time (s)')
@@ -173,7 +179,11 @@ def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
                                            on_pick=individual_plot):
 
             for color_idx, tfr in enumerate(data.values()):
+                # average over freqs
                 tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+                # correct to baseline
+                tse = mne.rescale(tse, times, baseline=baseline)
+
                 ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
 
         plt.gcf().canvas.set_window_title('tse_' + subject_name)
@@ -199,8 +209,14 @@ def plot_tse(experiment, tfr_name, minfreq, maxfreq, output):
                     averages[key][0][ii][0],
                     False
                 )))
+
+                # average over freqs
                 tse = np.mean(averages[key][1][ii][lfreq_idx:hfreq_idx, :], axis=0)
+                # correct to baseline
+                tse = mne.rescale(tse, times, baseline=baseline)
+
                 ax.plot(times, tse, color=colors[color_idx])
+                ax.axhline(0)
             ch_type, ch_group = averages[key][0][ii]
             title = 'TSE ({0}, {1})'.format(ch_type, ch_group)
             fig.canvas.set_window_title(title)
