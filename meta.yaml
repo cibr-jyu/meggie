@@ -5,14 +5,19 @@ package:
 source:
   path: .
 
+app:
+  entry: meggie
+  summary: User-friendly graphical interface to do M/EEG analysis
+  type: desk
+
 requirements:
   build:
-    - python >=3.0.0
+    - python
     - setuptools
     - mne ==0.17.2
 
   run:
-    - python >=3.0.0
+    - python
     - mne ==0.17.2
     - pyqt >=5.0.0
     - xlwt
