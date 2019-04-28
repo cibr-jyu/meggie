@@ -1,12 +1,19 @@
 Changelog
 =========
 
-0.13.1 (unreleased)
+0.13.2 (unreleased)
 ------------------
 
 - nothing changed yet.
 
-0.13.0 (unreleased)
+0.13.1 (2019-04-28)
+------------------
+
+- Fix log dialog filtering
+- Clean up code base
+- Fix crashes when no subject is activated
+
+0.13.0 (2019-04-13)
 ------------------
 
 - Fix source analysis pipeline
