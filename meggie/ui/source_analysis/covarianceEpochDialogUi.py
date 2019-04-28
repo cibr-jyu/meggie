@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../covarianceEpochDialogUi.ui'
+# Form implementation generated from reading ui file 'covarianceEpochDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_covarianceEpochDialog(object):
     def setupUi(self, covarianceEpochDialog):
         covarianceEpochDialog.setObjectName("covarianceEpochDialog")
-        covarianceEpochDialog.resize(397, 320)
+        covarianceEpochDialog.resize(397, 345)
         self.gridLayout = QtWidgets.QGridLayout(covarianceEpochDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.buttonBox = QtWidgets.QDialogButtonBox(covarianceEpochDialog)
@@ -43,7 +43,7 @@ class Ui_covarianceEpochDialog(object):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBoxEpochs)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.listWidgetEpochs = QtWidgets.QListWidget(self.groupBoxEpochs)
-        self.listWidgetEpochs.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.listWidgetEpochs.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.listWidgetEpochs.setObjectName("listWidgetEpochs")
         self.gridLayout_2.addWidget(self.listWidgetEpochs, 0, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.groupBoxEpochs)

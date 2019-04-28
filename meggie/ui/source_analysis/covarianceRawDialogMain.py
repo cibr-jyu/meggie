@@ -62,6 +62,7 @@ class CovarianceRawDialog(QtWidgets.QDialog):
                 raw.info['bads'] = subject_raw.info['bads']
                 raw.add_proj([pp.copy() for pp in subject_raw.info['projs']])
                 raw.apply_proj()
+                raw.info['projs'] = []
 
             except Exception as exc:
                 exc_messagebox(self, exc, exec_=True)
@@ -69,6 +70,7 @@ class CovarianceRawDialog(QtWidgets.QDialog):
         else:
             raw = self.experiment.active_subject.get_working_file().copy()
             raw.apply_proj()
+            raw.info['projs'] = []
 
         try:
             @threaded
