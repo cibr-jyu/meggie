@@ -1,11 +1,5 @@
 TODO:
 
-- refactoring:
- * check proper style with pylint
- * remove active_subject-references from code_meggie analysis-sections (pass by parameter)
-- we need tests
-- check that "all" functionalities are wrapped in try except
-
 features:
 - whole new cluster based statistics world
 - mixed data topomaps poorly supported (eeg isnt plotted always when possible).
@@ -15,7 +9,8 @@ features:
 - add more ui_logger logs, they are useful e.g via "grep Meggie meggie.log"
 - unified ssp projection utility
 - plot accuracy as preference
-- add delay to triggers
-- add simple trigger filtering (only triggers followed by something)
+- add simple trigger filtering (only triggers followed by something), and delay
 - maybe a mock subject possibility combined with epoch or evoked or event import
 - unify names of accept-buttons
+- we need tests
+- check that "all" functionalities are wrapped in try except
