@@ -69,7 +69,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
-        if active_subject is None:
+        if not active_subject:
             return
 
         # Check if the reconstructions have been copied to experiment folder
@@ -146,6 +146,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
+        if not active_subject:
+            return
+
         if active_subject.check_reconFiles_copied():
             reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
                                                    "Do you really want to change "
@@ -186,6 +189,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             return
 
         active_subject = self.parent.experiment.active_subject
+
+        if not active_subject:
+            return
 
         # set environment variables
         os.environ['SUBJECTS_DIR'] = active_subject.source_analysis_directory
