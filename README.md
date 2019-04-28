@@ -16,25 +16,46 @@ Note that installing MNE-python with "pip install mne" does not install dependen
 
 [//]: # (Hello)
 
-### Debugging
+Meggie can be installed directly using conda too:
+1. Create environment: *conda create -n meggie-env python=3*
+1. Activate environment: *source activate meggie-env*
+1. Install meggie: *conda install -c conda-forge -c cibr meggie*
+1. Run meggie with: *meggie*
+
+[//]: # (Hello)
+
+Given that we routinely release conda packages, meggie can even be installed with no Terminal what so ever if in Windows:
+1. Download Anaconda 3 and install it.
+1. Open Anaconda Navigator from Start menu.
+1. Add channels cibr and conda-forge to channels list.
+1. Go to Environments tab, and create environment called *meggie-env* and initialize it with Python version 3.7
+1. Go to Home tab again and select *meggie-env* from the environments list at the top.
+1. Meggie icon should appear in the main view. Click install.
+1. And then launch.
+
+## Debugging
 
 * If command *meggie* is not found, you should ensure that you are in the correct python environment.
 * If the command is found, but the software crashes during startup to an *ImportError*, you should ensure that you are using *Python 3* and that the dependencies are installed. Individual missing dependencies can often be installed with either *conda install* or *pip install*.
 * If the software crashes during analysis, and the terminal window does not show you the stack trace, you may start meggie using command *meggie debug* and reproduce the crash with stacktrace.
 
-## Set up meggie experiment and add first dataset
+## Using meggie
+
+Here's a small tutorial for simple single subject evoked responses.
+
+### Set up meggie experiment and add first dataset
 
 1. Let's ensure first that preferences are set up correctly, so go and select **Tools** from the menu, and then **Preferences**. Most important setting for now is the working directory. It is the place where all things created by meggie will go. It could be for example *your\_home\_directory/meggie-experiments*. After setting that, click **ok**.
 1. You can then create a new meggie experiment. Click **File** and then **Create new experiment**. Fill the fields as you like (you must give a name.) Good practice is to avoid spaces and special characters in the name. Then click **ok**. A folder for the experiment is created inside the working directory. An experiment will be a container for datasets, or as they are called in Meggie, subjects, that you can run analysis on.
 1. Then, add a subject to this experiment. Click **Add new...** on the left panel, and then click **Browse...** Locate a raw dataset in .fif format from your file system, select it, and then click **Open** and **ok**. Rest of the text will assume that you selected *sample\_audvis\_raw.fif* from the mne software package. When a subject is added, Meggie will copy (but not cut) the original raw data file to experiment folder. 
 1. To start analysing the added subject, select the name *sample\_audvis\_raw.fif* from the list on the left panel, and click **Activate selected**. Shortly, some info appears on the bottom left of the window, and perhaps in other parts of the window too, and the analysis tools become available.
 
-## Taking the first look
+### Taking the first look
 
 * We can take a look at the data by clicking **Raw plot**. You can use arrow keys to move through time or through channels. More functionality can be found by clicking the **Help** button. 
 * Bad channels can be set via **Customize channels..** on the right so that they are not taken into account in the further analysis.
 
-## Artifact removal via ICA
+### Artifact removal via ICA
 
 1. Select **ICA...** in the *Available actions* section. 
 1. Click **Compute** to start a temporal FastICA-algorithm. When the computation is done, the upper list box below is populated with the found ICA components.
@@ -43,7 +64,7 @@ Note that installing MNE-python with "pip install mne" does not install dependen
 1. **Plot changes** button creates a plot where one can compare the data before component removal and after component removal, without actually changing the data yet.
 1. If it looks like that the artifacts are getting removed properly, close the plot and press **Apply** to remove the components from the data. Data is modified in-place, and cannot be reversed (note that original data is still unchanged as Meggie makes a copy of it when adding a subject.) In the main window, *ICA applied* -checkbox should be now toggled.
 
-## Computing evoked responses
+### Computing evoked responses
 
 1. Select *Epoching* tab from the upper part of the main window.
 1. Select **Create new collection..** from the *Available actions* section. 
