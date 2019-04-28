@@ -6,6 +6,7 @@
 *.swp
 *~
 build
+conda-bld
 dist
 meggie.egg-info
 preferences.cfg
