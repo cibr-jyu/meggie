@@ -120,8 +120,6 @@ class LogDialog(QtWidgets.QDialog):
             self.show_mne_call = False
         self.update_contents()
 
-
-
     def on_pushButtonBufferSize_clicked(self, checked=None):
         if checked is None:
             return
