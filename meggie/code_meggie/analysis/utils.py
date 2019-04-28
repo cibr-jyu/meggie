@@ -7,6 +7,7 @@ import numpy as np
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+
 def color_cycle(n):
     cycler = itertools.cycle(['b', 'r', 'g', 'y', 'm', 'c', 'k', 'pink'])
     return list(itertools.islice(cycler, n))
@@ -29,8 +30,8 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
                         mne.read_selection(selection),
                         remove_whitespace=True)
 
-                    cleaned_ch_names = mne._clean_names(ch_names, 
-                        remove_whitespace=True)
+                    cleaned_ch_names = mne._clean_names(ch_names,
+                                                        remove_whitespace=True)
 
                     if ch_type == 'grad':
                         ch_names_filt = [ch_name for ch_name in selected_ch_names
@@ -43,7 +44,8 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
                                          'MEG' in ch_name]
                         average_type = 'mean'
 
-                    if not set(cleaned_ch_names).intersection(set(ch_names_filt)):
+                    if not set(cleaned_ch_names).intersection(
+                            set(ch_names_filt)):
                         continue
 
                     # calculate average
@@ -53,13 +55,14 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
                     if average_type == 'mean':
                         ch_average = np.mean(data_in_chs, axis=0)
                     else:
-                        ch_average = np.sqrt(np.sum(np.array(data_in_chs)**2, axis=0))
+                        ch_average = np.sqrt(
+                            np.sum(np.array(data_in_chs)**2, axis=0))
 
                     averaged_data.append(ch_average)
                     data_labels.append((ch_type, selection))
             elif ch_type == 'eeg':
-                cleaned_ch_names = mne._clean_names(ch_names, 
-                    remove_whitespace=True)
+                cleaned_ch_names = mne._clean_names(ch_names,
+                                                    remove_whitespace=True)
 
                 # without further knowledge, we average all channels for eeg
                 eeg_ch_names = [ch_name for ch_name in cleaned_ch_names

@@ -30,7 +30,7 @@ def threaded(func):
             """ Helper to get exception info out of thread """
             try:
                 result = func(*args, **kwargs)
-            except:
+            except BaseException:
                 bucket.put(exc_info())
             return result
 

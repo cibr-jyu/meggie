@@ -13,6 +13,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.decorators import threaded
 
+
 class ForwardSolutionDialog(QtWidgets.QDialog):
     """
     """
@@ -31,7 +32,8 @@ class ForwardSolutionDialog(QtWidgets.QDialog):
 
         # collect parameters
         try:
-            name = validate_name(str(self.ui.lineEditForwardSolutionName.text()))
+            name = validate_name(
+                str(self.ui.lineEditForwardSolutionName.text()))
         except Exception as exc:
             exc_messagebox(self, exc, exec_=True)
             return
@@ -49,7 +51,7 @@ class ForwardSolutionDialog(QtWidgets.QDialog):
 
         try:
             update_ui = self.parent.parent.update_ui
-            fwd_solution(subject, name, decim, triang_ico, conductivity, 
+            fwd_solution(subject, name, decim, triang_ico, conductivity,
                          do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self, exc)
@@ -59,4 +61,3 @@ class ForwardSolutionDialog(QtWidgets.QDialog):
             self.on_close()
 
         self.close()
-

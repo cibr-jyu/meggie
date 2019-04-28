@@ -32,7 +32,6 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-
     def initialize_ui(self):
 
         if not self.parent.experiment:
@@ -49,7 +48,6 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         for name in active_subject.spectrums:
             item = QtWidgets.QListWidgetItem(name)
             self.ui.listWidgetSpectrums.addItem(item)
-
 
     def on_listWidgetSpectrums_currentItemChanged(self, item):
         if not item:
@@ -68,14 +66,14 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         keys = spectrum.data.keys()
         if keys:
-            info += 'Condition labels: ' + ', '.join([str(key) for key in keys])
+            info += 'Condition labels: ' + \
+                ', '.join([str(key) for key in keys])
             info += '\n'
 
-        log_transformed = spectrum.log_transformed 
+        log_transformed = spectrum.log_transformed
         info += 'Log transformed: ' + str(log_transformed) + '\n'
 
-        self.ui.textBrowserSpectrumInfo.setText(info) 
-
+        self.ui.textBrowserSpectrumInfo.setText(info)
 
     def on_pushButtonComputeSpectrum_clicked(self, checked=None):
         """Open the power spectrum dialog."""
@@ -85,8 +83,8 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         if self.parent.experiment.active_subject is None:
             return
 
-        self.spectrumDialog = PowerSpectrumDialog(self, 
-            self.parent.experiment)
+        self.spectrumDialog = PowerSpectrumDialog(self,
+                                                  self.parent.experiment)
         self.spectrumDialog.show()
 
     def on_pushButtonVisualizeSpectrum_clicked(self, checked=None):
@@ -107,13 +105,12 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         def output_options_handler(row_setting):
             logging.getLogger('ui_logger').info('Plotting spectrum..')
-            plot_power_spectrum(self.parent.experiment, spectrum_item.text(), 
+            plot_power_spectrum(self.parent.experiment, spectrum_item.text(),
                                 output=row_setting)
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)
         self.output_options_dialog.show()
-
 
     def on_pushButtonDeleteSpectrum_clicked(self, checked=None):
         if checked is None:
@@ -133,9 +130,9 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         message = 'Permanently remove a spectrum?'
         reply = QtWidgets.QMessageBox.question(self, 'Delete spectrum',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             try:
@@ -148,7 +145,6 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
             self.parent.experiment.save_experiment_settings()
             self.initialize_ui()
 
-
     def on_pushButtonGroupAverage_clicked(self, checked=None):
         if checked is None:
             return
@@ -159,13 +155,13 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         if experiment.active_subject is None:
             return
-        
+
         if self.ui.listWidgetSpectrums.currentItem() is None:
             messagebox(self, 'No spectrum selected')
             return
 
         spectrum_name = self.ui.listWidgetSpectrums.currentItem().text()
-        
+
         def average_groups_handler(groups):
             try:
                 @threaded
@@ -189,7 +185,7 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         experiment = self.parent.experiment
         if not experiment:
-            return 
+            return
 
         if experiment.active_subject is None:
             return
@@ -201,9 +197,9 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         message = 'Permanently remove spectrum from all subjects?'
         reply = QtWidgets.QMessageBox.question(self, 'Delete spectrums',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
@@ -215,7 +211,6 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
         logging.getLogger('ui_logger').info('Removed spectrums.')
         experiment.save_experiment_settings()
         self.initialize_ui()
-
 
     def on_pushButtonGroupSaveSpectrum_clicked(self, checked=None):
         if checked is None:
@@ -238,7 +233,8 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         def output_options_handler(row_setting):
             logging.getLogger('ui_logger').info('Saving spectrum')
-            save_data_psd(experiment, subjects, row_setting, spectrum_item.text())
+            save_data_psd(experiment, subjects,
+                          row_setting, spectrum_item.text())
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)
@@ -262,7 +258,8 @@ class MainWindowTabSpectrums(QtWidgets.QDialog):
 
         def output_options_handler(row_setting):
             logging.getLogger('ui_logger').info('Saving spectrum')
-            save_data_psd(experiment, [active_subject], row_setting, spectrum_item.text())
+            save_data_psd(experiment, [active_subject],
+                          row_setting, spectrum_item.text())
 
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)

@@ -9,14 +9,15 @@ import logging
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+
 class TFR(object):
-    
+
     """
     A class for creating and handling TFR's
-    
+
     """
 
-    def __init__(self, tfrs, name, subject, decim, n_cycles, 
+    def __init__(self, tfrs, name, subject, decim, n_cycles,
                  evoked_subtracted):
         """
         """
@@ -34,10 +35,9 @@ class TFR(object):
         else:
             name = self._name + '-' + tfr_name + '-tfr.h5'
 
-        fname = os.path.join(self._tfr_directory, 
+        fname = os.path.join(self._tfr_directory,
                              name)
         return fname
-
 
     def save_tfr(self):
         for tfr_name, tfr in self._tfrs.items():
@@ -54,7 +54,7 @@ class TFR(object):
 
     def _load_tfrs(self):
         self._tfrs = {}
-        template = self._name + '-' + '([a-zA-Z1-9_]+)\-tfr\.h5'
+        template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
         for fname in os.listdir(self._tfr_directory):
             path = None
             if fname == self._name + '-tfr.h5':
@@ -68,7 +68,7 @@ class TFR(object):
                     except Exception as exc:
                         raise Exception("Unknown file name format.")
 
-                    path = os.path.join(self._tfr_directory, 
+                    path = os.path.join(self._tfr_directory,
                                         fname)
             if path:
                 logging.getLogger('ui_logger').debug(

@@ -12,11 +12,13 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 from meggie.ui.general.logDialogUi import Ui_LogDialog
 
+
 class LogDialog(QtWidgets.QDialog):
     """
     Class containing the logic for logDialogUi. It is used for displaying the
     MNE calls and params of the current experiment.
     """
+
     def __init__(self, parent):
         """
         """
@@ -29,7 +31,7 @@ class LogDialog(QtWidgets.QDialog):
 
         self.show_meggie = False
         self.show_mne = False
-        
+
         if self.ui.checkBoxShowMeggie.checkState() == QtCore.Qt.Checked:
             self.show_meggie = True
         if self.ui.checkBoxShowMNE.checkState() == QtCore.Qt.Checked:
@@ -39,13 +41,13 @@ class LogDialog(QtWidgets.QDialog):
 
     def update_contents(self):
         try:
-            logfile_path = os.path.join(self.parent.experiment.workspace, 
-                self.parent.experiment.experiment_name, 'meggie.log')
+            logfile_path = os.path.join(self.parent.experiment.workspace,
+                                        self.parent.experiment.experiment_name, 'meggie.log')
             log_file = open(logfile_path, 'r')
 
             # logging.getLogger('ui_logger').info(
             #     'Showing last 10000 lines of ' + logfile_path)
-            
+
             last_lines = fileManager.tail(log_file, lines=self.lines)
 
             mne_idxs = []
@@ -70,7 +72,8 @@ class LogDialog(QtWidgets.QDialog):
                     if line_idx not in mne_idxs:
                         continue
                     if idx_idx != len(all_idxs) - 1:
-                        selected_lines.extend(last_lines[line_idx:all_idxs[idx_idx+1]])
+                        selected_lines.extend(
+                            last_lines[line_idx:all_idxs[idx_idx + 1]])
                     else:
                         selected_lines.extend(last_lines[line_idx:])
             elif self.show_meggie and not self.show_mne:
@@ -79,7 +82,8 @@ class LogDialog(QtWidgets.QDialog):
                     if line_idx not in meggie_idxs:
                         continue
                     if idx_idx != len(all_idxs) - 1:
-                        selected_lines.extend(last_lines[line_idx:all_idxs[idx_idx+1]])
+                        selected_lines.extend(
+                            last_lines[line_idx:all_idxs[idx_idx + 1]])
                     else:
                         selected_lines.extend(last_lines[line_idx:])
             else:
@@ -97,7 +101,7 @@ class LogDialog(QtWidgets.QDialog):
         else:
             self.show_meggie = False
         self.update_contents()
-        
+
     def on_checkBoxShowMNE_stateChanged(self, state):
         if state == QtCore.Qt.Checked:
             self.show_mne = True

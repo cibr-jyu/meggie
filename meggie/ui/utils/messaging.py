@@ -4,6 +4,7 @@
 import logging
 from meggie.ui.general import messageBoxes
 
+
 def exc_messagebox(parent, exc, exec_=False):
     """ Pops up a messagebox for exceptions
     """
@@ -14,7 +15,7 @@ def exc_messagebox(parent, exc, exec_=False):
         else:
             error_message = str(exc)
             if not error_message:
-                error_message = ('(empty message of type ' + 
+                error_message = ('(empty message of type ' +
                                  str(exc.__repr__()) + ')')
     except Exception as e:
         error_message = ''
@@ -34,6 +35,7 @@ def exc_messagebox(parent, exc, exec_=False):
         parent.messagebox.exec_()
     else:
         parent.messagebox.show()
+
 
 def messagebox(parent, msg, title='Info', exec_=False):
     """ Pops up a messagebox

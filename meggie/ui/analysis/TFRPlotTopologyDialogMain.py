@@ -12,7 +12,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 
 class TFRPlotTopologyDialog(QtWidgets.QDialog):
-    
+
     def __init__(self, parent, experiment, tfr_name):
         """
         """
@@ -44,7 +44,6 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
         if len(keys) == 1:
             self.ui.comboBoxCondition.setEnabled(False)
 
-
     def accept(self):
 
         active_subject = self.experiment.active_subject
@@ -67,9 +66,8 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
 
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
-   
-        plot_tfr(self.experiment, tfr, self.tfr_name, 
+
+        plot_tfr(self.experiment, tfr, self.tfr_name,
                  blmode, blstart, blend, output)
 
         self.close()
-

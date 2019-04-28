@@ -14,17 +14,17 @@ def wrap(log_level, original_func):
     def wrapped(*args, **kwargs):
         logger = logging.getLogger("mne_wrapper_logger")
         numeric_level = getattr(logging, log_level.upper())
-        
+
         try:
             # if function
             callargs = inspect.getcallargs(original_func, *args, **kwargs)
-        except:
+        except BaseException:
             # if class
-            callargs = inspect.getcallargs(original_func.__init__, 
-                *((object(),) + args), **kwargs)
-        
-        message = ("Calling " + str(original_func.__name__) + 
-            " with args " + str(callargs))
+            callargs = inspect.getcallargs(original_func.__init__,
+                                           *((object(),) + args), **kwargs)
+
+        message = ("Calling " + str(original_func.__name__) +
+                   " with args " + str(callargs))
 
         logger.log(numeric_level, message)
 
@@ -33,16 +33,17 @@ def wrap(log_level, original_func):
 
 
 read_raw_fif = wrap('debug', mne.io.read_raw_fif)
-_has_eeg_average_ref_proj = wrap('debug', mne.io.proj._has_eeg_average_ref_proj)
+_has_eeg_average_ref_proj = wrap(
+    'debug', mne.io.proj._has_eeg_average_ref_proj)
 make_fixed_length_events = wrap('debug', mne.make_fixed_length_events)
-read_layout = wrap('debug', mne.channels.layout.read_layout) 
+read_layout = wrap('debug', mne.channels.layout.read_layout)
 read_evokeds = wrap('debug', mne.read_evokeds)
 read_epochs = wrap('debug', mne.read_epochs)
 _merge_grad_data = wrap('debug', mne.channels.layout._merge_grad_data)
 plot_evoked_topo = wrap('debug', mne.viz.plot_evoked_topo)
 iter_topography = wrap('debug', mne.viz.iter_topography)
 create_info = wrap('debug', mne.create_info)
-_clean_names = wrap('debug', mne.utils._clean_names)    
+_clean_names = wrap('debug', mne.utils._clean_names)
 tfr_morlet = wrap('debug', mne.time_frequency.tfr.tfr_morlet)
 psd_welch = wrap('debug', mne.time_frequency.psd_welch)
 compute_proj_ecg = wrap('debug', mne.preprocessing.compute_proj_ecg)
@@ -94,4 +95,3 @@ read_tfrs = wrap('debug', mne.time_frequency.read_tfrs)
 ICA = wrap('debug', mne.preprocessing.ICA)
 AverageTFR = wrap('debug', mne.time_frequency.AverageTFR)
 Epochs = wrap('debug', mne.Epochs)
-

@@ -30,14 +30,13 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         self.ui = Ui_mainWindowTabInduced()
         self.ui.setupUi(self)
 
-        self.epochList = EpochWidget(self, 
-            epoch_getter=self.parent.get_epochs)
+        self.epochList = EpochWidget(self,
+                                     epoch_getter=self.parent.get_epochs)
         self.epochList.setParent(self.ui.groupBoxEpochs)
         self.epochList.setSelectionMode(
             QtWidgets.QAbstractItemView.MultiSelection)
 
         self.initialize_ui()
-
 
     def initialize_ui(self):
 
@@ -80,7 +79,7 @@ class MainWindowTabInduced(QtWidgets.QDialog):
             freqs = list(tfr.tfrs.values())[0].freqs
             fmin, fmax = "%.1f" % freqs[0], "%.1f" % freqs[-1]
             info += 'Freqs: ' + fmin + ' - ' + fmax + ' hz\n'
-        except:
+        except BaseException:
             pass
 
         decim = tfr.decim
@@ -90,7 +89,7 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         info += 'Evoked subtracted: ' + str(evoked_subtracted) + '\n'
 
         n_cycles = tfr.n_cycles
-        if type(n_cycles) is list:
+        if isinstance(n_cycles, list):
             cmin, cmax = "%.1f" % n_cycles[0], "%.1f" % n_cycles[-1]
             info += 'Cycles: ' + cmin + ' - ' + cmax + '\n'
         else:
@@ -105,7 +104,6 @@ class MainWindowTabInduced(QtWidgets.QDialog):
     @property
     def update_ui(self):
         return self.parent.update_ui
-
 
     def on_pushButtonPlotTFR_clicked(self, checked=None):
         """
@@ -182,9 +180,8 @@ class MainWindowTabInduced(QtWidgets.QDialog):
                 return
 
         handler = average_groups_handler
-        self.group_average_dialog = GroupAverageDialog(experiment, handler) 
+        self.group_average_dialog = GroupAverageDialog(experiment, handler)
         self.group_average_dialog.show()
-
 
     def on_pushButtonDeleteTFR_clicked(self, checked=None):
         if checked is None:
@@ -204,9 +201,9 @@ class MainWindowTabInduced(QtWidgets.QDialog):
 
         message = 'Permanently remove a TFR?'
         reply = QtWidgets.QMessageBox.question(self, 'Delete TFR',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             try:
@@ -218,7 +215,6 @@ class MainWindowTabInduced(QtWidgets.QDialog):
 
             self.parent.experiment.save_experiment_settings()
             self.initialize_ui()
-
 
     def on_pushButtonGroupDeleteTFR_clicked(self, checked=None):
         if checked is None:
@@ -240,9 +236,9 @@ class MainWindowTabInduced(QtWidgets.QDialog):
 
         message = 'Permanently remove TFR from all subjects?'
         reply = QtWidgets.QMessageBox.question(self, "Delete TFR's",
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
@@ -254,7 +250,6 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         logging.getLogger('ui_logger').info("Removed TFR's.")
         experiment.save_experiment_settings()
         self.initialize_ui()
-
 
     def on_pushButtonComputeTFR_clicked(self, checked=None):
         """Open the dialog for plotting TFR from a single channel."""
@@ -268,18 +263,16 @@ class MainWindowTabInduced(QtWidgets.QDialog):
         active_subject = experiment.active_subject
         if not experiment.active_subject:
             return
-        
+
         if self.epochList.currentItem() is None:
             message = ('You must select at least one epochs collection '
                        'before TFR.')
             messagebox(self, message)
             return
-        
+
         selected_items = self.epochList.ui.listWidgetEpochs.selectedItems()
 
         names = [item.text() for item in selected_items]
-        
+
         self.tfr_dialog = TFRDialog(self, experiment, names)
         self.tfr_dialog.show()
-        
-

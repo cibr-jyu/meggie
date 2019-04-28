@@ -7,9 +7,11 @@ import numpy as np
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+
 class SourceEstimate(object):
     """ Abstract class for source estimates
     """
+
     def __init__(self, name):
         self._name = name
         self._type = None
@@ -19,7 +21,7 @@ class SourceEstimate(object):
         """
         """
         return self._name
-    
+
     @name.setter
     def name(self, name):
         """
@@ -31,7 +33,7 @@ class SourceEstimate(object):
         """
         """
         return self._type
-    
+
     @type.setter
     def type(self, type_):
         """
@@ -46,6 +48,7 @@ class SourceEstimate(object):
 
     def get_data(self, experiment):
         pass
+
 
 class SourceEstimateRaw(SourceEstimate):
     """
@@ -99,7 +102,8 @@ class SourceEstimateEpochs(SourceEstimate):
             os.makedirs(path)
         for idx, stc in enumerate(self._stcs):
             # use number as filename (and pad proper amount of zeros)
-            fname = str(idx).zfill(int(np.ceil(np.log10(len(self._stcs)+1))) + 1)
+            fname = str(idx).zfill(
+                int(np.ceil(np.log10(len(self._stcs) + 1))) + 1)
             stc.save(os.path.join(path, fname))
 
     def load(self, experiment):
@@ -124,6 +128,7 @@ class SourceEstimateEpochs(SourceEstimate):
         fnames = os.listdir(path)
         keys = sorted(list(set([fname.split('-')[0] for fname in fnames])))
         return keys
+
 
 class SourceEstimateEvoked(SourceEstimate):
     """
@@ -160,4 +165,3 @@ class SourceEstimateEvoked(SourceEstimate):
         else:
             # load from files
             return self.load(experiment)
-

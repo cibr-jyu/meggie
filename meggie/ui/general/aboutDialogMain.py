@@ -19,19 +19,19 @@ class AboutDialog(QtWidgets.QDialog):
         Constructor
         """
         QtWidgets.QDialog.__init__(self)
-        self.ui = Ui_Dialog() 
+        self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
         version = ''
         try:
             import pkg_resources
             version = pkg_resources.get_distribution("meggie").version
-        except:
+        except BaseException:
             pass
 
         self.ui.lineEditVersion.setText(str(version))
 
     def on_pushButtonClose_clicked(self, checked=None):
-        if checked is None: 
+        if checked is None:
             return
         self.close()

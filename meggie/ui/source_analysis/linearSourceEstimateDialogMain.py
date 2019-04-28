@@ -17,11 +17,13 @@ from meggie.ui.utils.decorators import threaded
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+
 class LinearSourceEstimateDialog(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, parent, fwd_name, inst_type, inst_name, experiment=None, on_close=None):
+    def __init__(self, parent, fwd_name, inst_type,
+                 inst_name, experiment=None, on_close=None):
         QtWidgets.QDialog.__init__(self)
         self.parent = parent
         self.ui = Ui_linearSourceEstimateDialog()
@@ -36,7 +38,8 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
             self.ui.groupBoxTimeParameters.setEnabled(True)
             self.ui.doubleSpinBoxStart.setEnabled(True)
             self.ui.doubleSpinBoxEnd.setEnabled(True)
-            raw = self.experiment.active_subject.get_working_file(preload=False)
+            raw = self.experiment.active_subject.get_working_file(
+                preload=False)
             self.ui.doubleSpinBoxStart.setValue(raw.times[0])
             self.ui.doubleSpinBoxEnd.setValue(raw.times[-1])
 
@@ -47,11 +50,10 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
         # try:
         #     self.populate_labels()
         # except Exception as exc:
-        #     messagebox(self, "Could not populate labels.", 
+        #     messagebox(self, "Could not populate labels.",
         #                exec_=True)
 
         self.populate_covariances()
-
 
     def read_labels(self):
         active_subject = self.experiment.active_subject
@@ -59,7 +61,7 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
         subjects_dir = active_subject.source_analysis_directory
 
         labels = mne.read_labels_from_annot(subject=subject, parc='aparc',
-            subjects_dir=subjects_dir)
+                                            subjects_dir=subjects_dir)
 
         return labels
 
@@ -88,18 +90,19 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
 
         # collect parameters
         try:
-            stc_name = validate_name(str(self.ui.lineEditSourceEstimateName.text()))
+            stc_name = validate_name(
+                str(self.ui.lineEditSourceEstimateName.text()))
         except Exception as exc:
             exc_messagebox(self, exc, exec_=True)
             return
 
         if not stc_name:
-            messagebox(self, "Please give a name for the source estimate", 
+            messagebox(self, "Please give a name for the source estimate",
                        exec_=True)
             return
 
         if stc_name in self.experiment.active_subject.stcs:
-            messagebox(self, "Source estimate with this name already exists", 
+            messagebox(self, "Source estimate with this name already exists",
                        exec_=True)
             return
 
@@ -142,8 +145,8 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
 
         try:
             update_ui = self.parent.parent.update_ui
-            linear_stc(self.experiment, stc_name, inst_name, inst_type, 
-                       covfile, fwd_name, loose, depth, label, lambda2, 
+            linear_stc(self.experiment, stc_name, inst_name, inst_type,
+                       covfile, fwd_name, loose, depth, label, lambda2,
                        method, start, end, do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self.parent, exc, exec_=True)
@@ -153,4 +156,3 @@ class LinearSourceEstimateDialog(QtWidgets.QDialog):
             self.on_close()
 
         self.close()
-

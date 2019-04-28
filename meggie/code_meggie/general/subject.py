@@ -14,13 +14,14 @@ import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.code_meggie.structures.events import Events
 
+
 class Subject(object):
-    
+
     def __init__(self, experiment, subject_name, working_file_name,
-                  ica_applied=False, rereferenced=False):
+                 ica_applied=False, rereferenced=False):
         """
         Constructor for the subject class.
-        
+
         Keyword arguments:
         experiment        -- experiment for the subject
         subject_name      -- the name of the subject
@@ -45,13 +46,13 @@ class Subject(object):
                                           subject_name)
 
         self._mri_subject_name = 'reconFiles'
-        
+
         self._epochs_directory = os.path.join(self._subject_path, 'epochs')
 
-        self._evokeds_directory = os.path.join(self._epochs_directory, 
+        self._evokeds_directory = os.path.join(self._epochs_directory,
                                                'average')
 
-        self._source_analysis_directory = os.path.join(self._subject_path, 
+        self._source_analysis_directory = os.path.join(self._subject_path,
                                                        'sourceAnalysis')
         self._reconfiles_directory = os.path.join(
             self._source_analysis_directory, self._mri_subject_name)
@@ -59,19 +60,19 @@ class Subject(object):
         self._forward_solutions_directory = os.path.join(
             self._source_analysis_directory, 'forwardSolutions')
 
-        self._stc_directory = os.path.join(self._source_analysis_directory, 
+        self._stc_directory = os.path.join(self._source_analysis_directory,
                                            'stc')
 
-        self._transfile_path = os.path.join(self._source_analysis_directory, 
+        self._transfile_path = os.path.join(self._source_analysis_directory,
                                             'mri_meg-trans.fif')
 
-        self._cov_directory = os.path.join(self._source_analysis_directory, 
+        self._cov_directory = os.path.join(self._source_analysis_directory,
                                            'cov')
 
-        self._spectrums_directory = os.path.join(self._subject_path, 
+        self._spectrums_directory = os.path.join(self._subject_path,
                                                  'spectrums')
 
-        self._tfr_directory = os.path.join(self._subject_path, 
+        self._tfr_directory = os.path.join(self._subject_path,
                                            'tfrs')
 
         self._experiment = experiment
@@ -83,22 +84,22 @@ class Subject(object):
     @property
     def evokeds_directory(self):
         return self._evokeds_directory
-    
+
     @property
     def source_analysis_directory(self):
         return self._source_analysis_directory
-    
+
     @property
     def reconfiles_directory(self):
         return self._reconfiles_directory
-    
+
     @property
     def forward_solutions_directory(self):
-        return self._forward_solutions_directory  
+        return self._forward_solutions_directory
 
     @property
     def inverse_operators_directory(self):
-        return self._inverse_operators_directory  
+        return self._inverse_operators_directory
 
     @property
     def stc_directory(self):
@@ -154,24 +155,24 @@ class Subject(object):
         Returns the subject_name of the subject.
         """
         return self._subject_name
-        
+
     @property
     def subject_path(self):
         """
         Returns the subject_path of the subject.
         """
         return self._subject_path
-    
+
     @property
     def working_file_path(self):
         path = os.path.join(self._subject_path,
                             self._working_file_name)
         return path
-    
+
     @property
     def working_file_name(self):
         return self._working_file_name
-    
+
     @working_file_name.setter
     def working_file_name(self, name):
         self._working_file_name = name
@@ -196,7 +197,7 @@ class Subject(object):
     @property
     def layout(self):
         return self._layout
-    
+
     @layout.setter
     def layout(self, layout):
         self._layout = layout
@@ -204,7 +205,7 @@ class Subject(object):
     @property
     def epochs(self):
         return self._epochs
-    
+
     @property
     def evokeds(self):
         return self._evokeds
@@ -220,30 +221,31 @@ class Subject(object):
     @property
     def stcs(self):
         return self._stcs
-    
+
     def load_working_file(self, preload=True):
         """Loads raw file from subject folder and sets it on
         subject._working_file property.
-         
+
         Keyword arguments:
         subject    -- Subject object
         """
         if self._working_file is None:
             path = self.subject_path
             try:
-                return fileManager.open_raw(os.path.join(path, self.working_file_name), preload=preload)
+                return fileManager.open_raw(os.path.join(
+                    path, self.working_file_name), preload=preload)
             except OSError:
                 raise IOError("Couldn't find raw file.")
-            
+
     def release_memory(self):
         """Releases memory from previously processed subject by removing
         references from raw files.
         """
         try:
             working_file = self.get_working_file()
-        except:
+        except BaseException:
             working_file = None
-        
+
         if working_file is not None:
             self.set_working_file(None)
             if len(self.epochs) > 0:
@@ -266,7 +268,7 @@ class Subject(object):
             return 'STI 014'
         elif 'STI014' in channels:
             return 'STI014'
-    
+
     def create_event_set(self):
         """
         Creates an event set where the first element is the id
@@ -277,22 +279,22 @@ class Subject(object):
         events = self.get_events()
         if events is None:
             return
-        bins = np.bincount(events[:,2]) #number of events stored in an array
+        bins = np.bincount(events[:, 2])  # number of events stored in an array
         d = dict()
-        for i in set(events[:,2]):
+        for i in set(events[:, 2]):
             d[i] = bins[i]
         return d
 
     def get_events(self):
         """Helper for reading the events."""
-        
+
         stim_channel = self.find_stim_channel()
         if not stim_channel:
             return
 
         return Events(self._experiment, self.get_working_file(),
                       stim_ch=stim_channel).events
-        
+
     def add_epochs(self, epochs):
         """
         Adds Epochs object to the epochs dictionary.
@@ -311,9 +313,9 @@ class Subject(object):
 
         self._epochs.pop(str(str(collection_name)), None)
 
-        files_to_delete = list(filter(os.path.isfile, 
-            glob.glob(os.path.join(self._epochs_directory, 
-                                   collection_name + '.fif'))))
+        files_to_delete = list(filter(os.path.isfile,
+                                      glob.glob(os.path.join(self._epochs_directory,
+                                                             collection_name + '.fif'))))
 
         for i in range(len(files_to_delete)):
             files_to_delete[i] = os.path.basename(files_to_delete[i])
@@ -373,7 +375,7 @@ class Subject(object):
         Adds SourceEstimate object to the stcs dictionary.
 
         """
-        if not stc.name in self._stcs:
+        if stc.name not in self._stcs:
             self._stcs[stc.name] = stc
 
     def remove_stc(self, name):
@@ -385,8 +387,8 @@ class Subject(object):
         try:
             shutil.rmtree(path)
         except OSError:
-            raise IOError('Source estimate could not be removed from the file system')
-
+            raise IOError(
+                'Source estimate could not be removed from the file system')
 
     def check_sss_applied(self):
         """
@@ -411,10 +413,10 @@ class Subject(object):
 
     def check_reconFiles_copied(self):
         reconDir = self.reconfiles_directory
-        mriDir = os.path.join(reconDir, 'mri') 
+        mriDir = os.path.join(reconDir, 'mri')
         if os.path.isdir(mriDir):
             return True
-        else: 
+        else:
             return False
 
     def check_bem_surfaces(self):
@@ -429,7 +431,7 @@ class Subject(object):
 
     def check_mne_setup_mri_run(self):
         reconDir = self.reconfiles_directory
-        mriDir = os.path.join(reconDir, 'mri') 
+        mriDir = os.path.join(reconDir, 'mri')
         T1NeuroMagDir = os.path.join(mriDir, 'T1-neuromag')
         brainNeuroMagDir = os.path.join(mriDir, 'brain-neuromag')
         if os.path.isdir(T1NeuroMagDir) and os.path.isdir(brainNeuroMagDir):
@@ -438,7 +440,7 @@ class Subject(object):
             return False
 
     def get_forward_solution_names(self):
-        names = list(filter(lambda x: x.endswith('fwd.fif'), 
+        names = list(filter(lambda x: x.endswith('fwd.fif'),
                             os.listdir(self.forward_solutions_directory)))
         return names
 
@@ -448,7 +450,7 @@ class Subject(object):
         return fnames
 
     def get_inverse_operator_names(self):
-        names = list(filter(lambda x: x.endswith('inv.fif'), 
+        names = list(filter(lambda x: x.endswith('inv.fif'),
                             os.listdir(self.inverse_operators_directory)))
         return names
 

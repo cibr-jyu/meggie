@@ -39,7 +39,6 @@ class stcPlotDialog(QtWidgets.QDialog):
             for key in meggie_stc.keys(experiment):
                 self.ui.comboBoxSource.addItem(key)
 
-           
     def accept(self):
         """
         """
@@ -66,5 +65,3 @@ class stcPlotDialog(QtWidgets.QDialog):
             message = ("You need to install pysurfer for 3d visualization."
                        "This can be done with e.g `pip install pysurfer`")
             messagebox(self, message, exec_=True)
-
-        
