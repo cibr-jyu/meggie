@@ -38,7 +38,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-
     def initialize_ui(self):
 
         if not self.parent.experiment:
@@ -80,7 +79,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
     def update_ui(self):
         self.parent.update_ui()
 
-
     class RawBadsPlot(object):
         def __init__(self, parent, experiment):
 
@@ -99,7 +97,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         def handle_close(self, event):
             self.raw = None
-
 
     def on_pushButtonRawPlot_clicked(self, checked=None):
         """Call ``raw.plot``."""
@@ -124,7 +121,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.badChannelsDialog = BadChannelsDialog(self, experiment)
         self.badChannelsDialog.show()
-
 
     def on_pushButtonPlotProjections_clicked(self, checked=None):
         """Plots added projections as topomaps."""
@@ -176,7 +172,6 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
         fname = os.path.join(directory, subject_name)
         fileManager.save_raw(experiment, raw, fname)
         self.initialize_ui()
-
 
     def on_pushButtonICA_clicked(self, checked=None):
         """
@@ -231,4 +226,3 @@ class MainWindowTabPreprocessing(QtWidgets.QDialog):
 
         self.rereferencingDialog = RereferencingDialog(self, experiment)
         self.rereferencingDialog.show()
-

@@ -55,6 +55,9 @@ class Ui_LogDialog(object):
         self.checkBoxShowMNE = QtWidgets.QCheckBox(LogDialog)
         self.checkBoxShowMNE.setObjectName("checkBoxShowMNE")
         self.horizontalLayout_2.addWidget(self.checkBoxShowMNE)
+        self.checkBoxShowMNEcall = QtWidgets.QCheckBox(LogDialog)
+        self.checkBoxShowMNEcall.setObjectName("checkBoxShowMNEcall")
+        self.horizontalLayout_2.addWidget(self.checkBoxShowMNEcall)
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
 
         self.retranslateUi(LogDialog)
@@ -69,4 +72,5 @@ class Ui_LogDialog(object):
         self.pushButtonBufferSize.setText(_translate("LogDialog", "Accept"))
         self.checkBoxShowMeggie.setText(_translate("LogDialog", "Meggie"))
         self.checkBoxShowMNE.setText(_translate("LogDialog", "MNE"))
+        self.checkBoxShowMNEcall.setText(_translate("LogDialog", "MNE call"))
 

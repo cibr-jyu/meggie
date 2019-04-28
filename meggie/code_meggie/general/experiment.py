@@ -27,7 +27,7 @@ from PyQt5.QtCore import QObject
 
 
 class Experiment(QObject):
-    
+
     """A class that holds experiment info.
 
     Experiment stores path of the experiment file, author, description and
@@ -56,12 +56,11 @@ class Experiment(QObject):
         self._workspace = None
         self._layout = 'Infer from data'
         self._channel_groups = 'MNE'
-        
 
     @property
     def workspace(self):
         return self._workspace
-    
+
     @workspace.setter
     def workspace(self, workspace):
         self._workspace = workspace
@@ -76,7 +75,8 @@ class Experiment(QObject):
     def experiment_name(self, experiment_name):
         """
         """
-        self._experiment_name = validate_name(experiment_name, fieldname='name')
+        self._experiment_name = validate_name(
+            experiment_name, fieldname='name')
 
     @property
     def author(self):
@@ -105,11 +105,11 @@ class Experiment(QObject):
         if len(description) <= 1000:
 
             if (re.match(
-                "^[A-Za-zäÄöÖåÅ0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
-                 description) or len(description) == 0):
+                r"^[A-Za-zäÄöÖåÅ0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
+                    description) or len(description) == 0):
                 self._description = description
             else:
-                raise ValueError("Use only letters and " + 
+                raise ValueError("Use only letters and " +
                                  "numbers in your description")
         else:
             raise ValueError("Too long description")
@@ -117,7 +117,7 @@ class Experiment(QObject):
     @property
     def layout(self):
         return self._layout
-    
+
     @layout.setter
     def layout(self, layout):
         self._layout = layout
@@ -125,7 +125,7 @@ class Experiment(QObject):
     @property
     def channel_groups(self):
         return self._channel_groups
-    
+
     @channel_groups.setter
     def channel_groups(self, channel_groups):
         self._channel_groups = channel_groups
@@ -147,7 +147,7 @@ class Experiment(QObject):
     def add_subject(self, subject):
         """
         Adds subject to the current experiment.
-        
+
         Keyword arguments:
         subject    -- the subject object created by subject class
         """
@@ -170,19 +170,21 @@ class Experiment(QObject):
         sname        -- name of the subject to remove
         main_window -- MainWindow object
         """
-        
-        if getattr(self, 'active_subject', None) and self.active_subject.subject_name == sname:
+
+        if getattr(self, 'active_subject',
+                   None) and self.active_subject.subject_name == sname:
             self.active_subject = None
-        
+
         subject = self.subjects.pop(sname)
-    
+
         @threaded
-        def remove_data(): 
+        def remove_data():
             try:
                 shutil.rmtree(subject.subject_path)
             except OSError:
-                raise OSError('Could not remove the contents of the subject folder.')    
-        
+                raise OSError(
+                    'Could not remove the contents of the subject folder.')
+
         remove_data()
 
     def activate_subject(self, subject_name):
@@ -197,10 +199,11 @@ class Experiment(QObject):
 
         self.active_subject = self.subjects[subject_name]
         return self.active_subject
- 
-    def create_subject(self, subject_name, experiment, working_file_name, raw_path=None):
+
+    def create_subject(self, subject_name, experiment,
+                       working_file_name, raw_path=None):
         """Creates a Subject when adding a new one to the experiment.
-        
+
         Keyword arguments:
         subject_name    -- name of the subject
         experiment      -- Experiment object
@@ -211,12 +214,11 @@ class Experiment(QObject):
             fileManager.save_subject_raw(subject, raw_path)
         self.add_subject(subject)
 
-
     def save_experiment_settings(self):
         """
         Saves the experiment settings into a file in the root of
         the experiment directory structure.
-        """        
+        """
         subjects = []
 
         for subject in self.subjects.values():
@@ -225,7 +227,7 @@ class Experiment(QObject):
                 'working_file_name': subject.working_file_name,
                 'ica_applied': subject.ica_applied,
                 'rereferenced': subject.rereferenced,
-                'epochs': [], 
+                'epochs': [],
                 'evokeds': [],
                 'spectrums': [],
                 'tfrs': [],
@@ -288,7 +290,7 @@ class Experiment(QObject):
                 subject_dict['tfrs'].append(tfr_dict)
 
             subjects.append(subject_dict)
-        
+
         save_dict = {
             'subjects': subjects,
             'name': self.experiment_name,
@@ -302,7 +304,7 @@ class Experiment(QObject):
         try:
             import pkg_resources
             version = pkg_resources.get_distribution("meggie").version
-        except:
+        except BaseException:
             pass
 
         save_dict['version'] = version
@@ -315,15 +317,15 @@ class Experiment(QObject):
         # save to file
         with open(os.path.join(self.workspace, self.experiment_name, self.experiment_name + '.exp'), 'w') as f:  # noqa
             json.dump(save_dict, f, sort_keys=True, indent=4)
-            
+
 
 class ExperimentHandler(QObject):
     """
     Class for handling the creation of a new experiment.
-    
+
     TODO: should also handle switching active experiment.
     """
-    
+
     def __init__(self, parent):
         """
         Constructor
@@ -335,10 +337,10 @@ class ExperimentHandler(QObject):
     def initialize_new_experiment(self, expDict):
         """
         Initializes the experiment object with the given data.
-        
+
         """
         prefs = self.parent.preferencesHandler
-      
+
         try:
             experiment = Experiment()
             experiment.author = expDict['author']
@@ -346,34 +348,36 @@ class ExperimentHandler(QObject):
             experiment.description = expDict['description']
         except AttributeError:
             raise Exception('Cannot assign attribute to experiment.')
-      
+
         experiment.workspace = prefs.working_directory
 
-        if os.path.exists(os.path.join(experiment.workspace, experiment.experiment_name)):
+        if os.path.exists(os.path.join(experiment.workspace,
+                                       experiment.experiment_name)):
             raise Exception('Experiment with same name already exists.')
-        
+
         experiment.save_experiment_settings()
-        
-        prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
+
+        prefs.previous_experiment_name = os.path.join(
+            experiment.workspace, experiment.experiment_name)
         prefs.write_preferences_to_disk()
-        
+
         return experiment
 
     def open_existing_experiment(self, prefs, path=None):
         """
         Opens an existing experiment, which is assumed to be in the working
         directory.
-        
+
         Keyword arguments:
-        
+
         name        -- name of the existing experiment to be opened
         """
-        
+
         if path:
             if path.endswith('.exp'):
                 exp_file = path
             else:
-                exp_file = os.path.join(path, os.path.basename(path) + '.exp') 
+                exp_file = os.path.join(path, os.path.basename(path) + '.exp')
         else:
             if prefs.previous_experiment_name == '':
                 return
@@ -382,17 +386,19 @@ class ExperimentHandler(QObject):
                 prefs.previous_experiment_name,
                 os.path.basename(prefs.previous_experiment_name) + '.exp'
             )
-        
+
         if not os.path.isfile(exp_file):
-            raise ValueError('Trying to open experiment without settings file (.exp).')
-        
+            raise ValueError(
+                'Trying to open experiment without settings file (.exp).')
+
         try:
             with open(exp_file, 'r') as f:
                 data = json.load(f)
         except ValueError as exc:
-            import traceback; traceback.print_exc()
+            import traceback
+            traceback.print_exc()
 
-            raise ValueError('Experiment from ' + exp_file + ' could not be ' + 
+            raise ValueError('Experiment from ' + exp_file + ' could not be ' +
                              'opened. There might be a problem with ' +
                              'coherence of the experiment file.')
 
@@ -401,7 +407,7 @@ class ExperimentHandler(QObject):
         experiment.author = data['author']
         experiment.experiment_name = data['name']
         experiment.description = data['description']
-        
+
         if 'layout' in data.keys():
             experiment.layout = data['layout']
         else:
@@ -411,48 +417,48 @@ class ExperimentHandler(QObject):
             experiment.channel_groups = data['channel_groups']
         else:
             experiment.channel_groups = 'MNE'
-        
+
         if path:
             experiment.workspace = os.path.dirname(path)
         else:
             experiment.workspace = os.path.dirname(
                 prefs.previous_experiment_name)
-        
+
         if len(data['subjects']) > 0:
-                
+
             for subject_data in data['subjects']:
 
-                
-                subject = Subject(experiment, 
+                subject = Subject(experiment,
                                   subject_data['subject_name'],
                                   subject_data['working_file_name'],
                                   subject_data.get('ica_applied', False),
                                   subject_data.get('rereferenced', False)
-                )
-                
+                                  )
+
                 for epoch_data in subject_data.get('epochs', []):
                     epochs = Epochs(epoch_data['collection_name'], subject,
-                        epoch_data['params'])
+                                    epoch_data['params'])
                     epochs.collection_name = epoch_data['collection_name']
                     epochs.params = epoch_data['params']
                     subject.add_epochs(epochs)
-                
+
                 for evoked_data in subject_data.get('evokeds', []):
-                    mne_evokeds = dict([(name, None) for name in evoked_data['event_names']])
+                    mne_evokeds = dict([(name, None)
+                                        for name in evoked_data['event_names']])
                     evoked = Evoked(evoked_data['name'], subject, mne_evokeds)
                     if 'info' in evoked_data:
                         evoked.info = evoked_data['info']
                     subject.add_evoked(evoked)
 
                 for spectrum_data in subject_data.get('spectrums', []):
-                    spectrum = Spectrum(spectrum_data['name'], subject, 
-                        spectrum_data['log_transformed'], None, None, None)
+                    spectrum = Spectrum(spectrum_data['name'], subject,
+                                        spectrum_data['log_transformed'], None, None, None)
                     subject.add_spectrum(spectrum)
 
                 for tfr_data in subject_data.get('tfrs', []):
-                    tfr = TFR(None, tfr_data['name'], subject, 
-                        tfr_data['decim'], tfr_data['n_cycles'], 
-                        tfr_data['evoked_subtracted'])
+                    tfr = TFR(None, tfr_data['name'], subject,
+                              tfr_data['decim'], tfr_data['n_cycles'],
+                              tfr_data['evoked_subtracted'])
                     subject.add_tfr(tfr)
 
                 for stc_data in subject_data.get('stcs', []):
@@ -462,7 +468,8 @@ class ExperimentHandler(QObject):
                     if type_ == 'raw':
                         stc = SourceEstimateRaw(name)
                     elif type_ == 'evoked':
-                        stc_dict = dict([(key, None) for key in stc_data['keys']])
+                        stc_dict = dict([(key, None)
+                                         for key in stc_data['keys']])
                         stc = SourceEstimateEvoked(name, stc_dict)
                     elif type_ == 'epochs':
                         stc = SourceEstimateEpochs(name)
@@ -471,10 +478,11 @@ class ExperimentHandler(QObject):
 
                 experiment.add_subject(subject)
 
-                # ensure that the folder structure exists 
+                # ensure that the folder structure exists
                 # (to not crash on updates)
                 subject.ensure_folders()
 
-        prefs.previous_experiment_name = os.path.join(experiment.workspace, experiment.experiment_name)
+        prefs.previous_experiment_name = os.path.join(
+            experiment.workspace, experiment.experiment_name)
 
         return experiment

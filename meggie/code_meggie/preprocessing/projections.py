@@ -32,9 +32,8 @@ def preview_projections(raw, projs):
     raw.add_proj(projs)
     raw.plot()
 
+
 def plot_projs_topomap(experiment, raw):
     fig = raw.plot_projs_topomap()
     name = experiment.active_subject.subject_name
     fig.canvas.set_window_title('Projections for ' + name)
-
-

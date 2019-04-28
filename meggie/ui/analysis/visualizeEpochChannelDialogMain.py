@@ -12,17 +12,17 @@ from meggie.ui.analysis.visualizeEpochChannelDialogUi import Ui_VisualizeEpochCh
 
 
 class VisualizeEpochChannelDialog(QtWidgets.QDialog):
-    
+
     """A dialog for visualizing epoch channels with custom parameters
     """
-    
+
     def __init__(self, epochs=None):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_VisualizeEpochChannelDialog()
         self.ui.setupUi(self)
         self.epochs = epochs
 
-        if epochs is None: 
+        if epochs is None:
             return
 
         # fills channels list with epoch collection channel names.
@@ -30,19 +30,19 @@ class VisualizeEpochChannelDialog(QtWidgets.QDialog):
             item = QtWidgets.QListWidgetItem()
             item.setText(channel)
             self.ui.listWidgetChannels.addItem(item)
-        
+
     def on_pushButtonVisualizeChannel_clicked(self, checked=None):
-        
-        if checked is None: 
+
+        if checked is None:
             return
-        
+
         pick = self.epochs.raw.ch_names.index(
             self.ui.listWidgetChannels.currentItem().text())
         sigma = self.ui.doubleSpinBoxSigma.value()
 
         fig = mne.plot_epochs_image(self.epochs.raw, pick, sigma=sigma,
-                                        colorbar=True,
-                                        order=None, show=True)
+                                    colorbar=True,
+                                    order=None, show=True)
 
         fig[0].canvas.set_window_title(
             self.epochs.collection_name + ' on channel ' +

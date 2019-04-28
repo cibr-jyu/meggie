@@ -15,36 +15,35 @@ from meggie.ui.general.createExperimentDialogUi import Ui_CreateExperimentDialog
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
- 
+
 class CreateExperimentDialog(QtWidgets.QDialog):
     """
-    Class containing the logic for CreateExperimentDialog. It is used for 
+    Class containing the logic for CreateExperimentDialog. It is used for
     setting up a new experiment for analyzing MEG data.
     """
     fname = ''
     experimentCreated = pyqtSignal(Experiment)
-    
+
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self)
         self.fname = ''
-        
+
         # Reference to main dialog window
         self.parent = parent
-        
+
         # Refers to class in file CreateProjecDialog
-        self.ui = Ui_CreateExperimentDialog() 
+        self.ui = Ui_CreateExperimentDialog()
         self.ui.setupUi(self)
-                
-                
+
     def accept(self):
         """Send parameters to experimentHandler for the creation of a
         new experiment."""
-        
+
         if self.ui.lineEditExperimentName.text() == '':
             message = 'Give experiment a name.'
             messagebox(self.parent, message)
-            return  
-        
+            return
+
         expDict = {
             'name': self.ui.lineEditExperimentName.text(),
             'author': self.ui.lineEditAuthor.text(),
@@ -57,7 +56,6 @@ class CreateExperimentDialog(QtWidgets.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
             return
-        
+
         self.experimentCreated.emit(experiment)
         self.close()
-        

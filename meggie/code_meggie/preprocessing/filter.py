@@ -28,8 +28,8 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
 
     logging.getLogger('ui_logger').info("Filtering.")
     dataToFilter.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
-        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
-        method='fft', fir_design='firwin')
+                        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
+                        method='fft', fir_design='firwin')
 
     freqs = list()
     if dic['bandstop1']:
@@ -42,7 +42,7 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
 
         logging.getLogger('ui_logger').info("Band-stop filtering.")
         dataToFilter.notch_filter(freqs, picks=None, filter_length=length,
-            notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
+                                  notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
 
     if not preview:
         fname = dataToFilter.filenames[0]

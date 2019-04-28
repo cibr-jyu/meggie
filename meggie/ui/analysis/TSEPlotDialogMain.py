@@ -12,7 +12,7 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 
 class TSEPlotDialog(QtWidgets.QDialog):
-    
+
     def __init__(self, parent, experiment, tfr_name):
         """
         """
@@ -40,7 +40,6 @@ class TSEPlotDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxBaselineStart.setValue(tmin)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
 
-
     def accept(self):
 
         if self.ui.radioButtonAllChannels.isChecked():
@@ -53,11 +52,10 @@ class TSEPlotDialog(QtWidgets.QDialog):
 
         bstart = self.ui.doubleSpinBoxBaselineStart.value()
         bend = self.ui.doubleSpinBoxBaselineEnd.value()
-        
+
         baseline = (bstart, bend)
 
-        plot_tse(self.experiment, self.tfr_name, minfreq, maxfreq, 
+        plot_tse(self.experiment, self.tfr_name, minfreq, maxfreq,
                  baseline, output)
-   
-        self.close()
 
+        self.close()

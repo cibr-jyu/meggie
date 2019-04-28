@@ -2,7 +2,7 @@
 
 """
 """
- 
+
 import os
 import pickle
 import shutil
@@ -18,6 +18,7 @@ from distutils import dir_util
 
 import meggie.code_meggie.general.mne_wrapper as mne
 
+
 def read_layout(layout):
     if not layout or layout == "Infer from data":
         return
@@ -28,8 +29,10 @@ def read_layout(layout):
         return mne.read_layout(fname, folder)
 
     import pkg_resources
-    path_mne = pkg_resources.resource_filename('mne', os.path.join('channels', 'data', 'layouts'))
-    path_meggie = pkg_resources.resource_filename('meggie', os.path.join('data', 'layouts'))
+    path_mne = pkg_resources.resource_filename(
+        'mne', os.path.join('channels', 'data', 'layouts'))
+    path_meggie = pkg_resources.resource_filename(
+        'meggie', os.path.join('data', 'layouts'))
 
     if os.path.exists(os.path.join(path_mne, layout)):
         return mne.read_layout(layout, path_mne)
@@ -41,36 +44,36 @@ def read_layout(layout):
 def copy_recon_files(activeSubject, sourceDirectory):
     """
     Copies mri and surf files from the given directory to under the active
-    subject's reconFiles directory (after creating the said directory, 
+    subject's reconFiles directory (after creating the said directory,
     if need be).
-    
+
     Keyword arguments:
-    
+
     activeSubject            -- currently active subject
-    sourceDirectory     -- directory including the mri and surf file 
-    
+    sourceDirectory     -- directory including the mri and surf file
+
     Returns True if copying was successful, else returns False.
-    
-    """         
+
+    """
     reconDir = activeSubject.reconfiles_directory
-    
+
     # Empty the destination directory first by removing it, then make it
     # again.
     if os.path.isdir(reconDir):
         dir_util.remove_tree(reconDir)
 
     logger = logging.getLogger('ui_logger')
-    
+
     logger.info('Copying recon files...')
     dir_util.copy_tree(sourceDirectory, reconDir)
     logger.info('Recon files copying complete!')
-    
+
 
 def remove_files_with_regex(directory, pattern):
     """
     Removes, from the given directory, files with a given regex pattern in
     their names.
-    
+
     Keyword arguments:
     directory    -- directory to search the files for.
     pattern      -- regex pattern to match.
@@ -82,9 +85,9 @@ def remove_files_with_regex(directory, pattern):
 
 def delete_file_at(folder, files):
     """Delete files from a folder.
-    
+
     Keyword arguments:
-    
+
     folder -- The location of the deleted files
     files  -- The files to be deleted. Can be a single file or a list of
               files in the same folder.
@@ -94,14 +97,14 @@ def delete_file_at(folder, files):
             os.remove(os.path.join(folder, f))
         return
     os.remove(os.path.join(folder, files))
-    
-    
+
+
 def load_epochs(fname):
     """Load epochs from a folder.
-    
+
     Keyword arguments:
     fname         -- the name of the fif-file containing epochs.
-    
+
     """
     try:
         epochs = mne.read_epochs(fname)
@@ -146,22 +149,22 @@ def open_raw(fname, preload=True):
 
 
 def save_raw(experiment, raw, fname, overwrite=True):
-    
+
     folder = os.path.dirname(fname)
     bname = os.path.basename(fname)
-    
+
     # be protective and save with other name first and move afterwards
-    temp_fname = os.path.join(folder, '_' + bname) 
+    temp_fname = os.path.join(folder, '_' + bname)
     raw.save(temp_fname, overwrite=True)
 
-    # assumes filename ends with .fif 
+    # assumes filename ends with .fif
     pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
     pat_new = re.compile('_' + bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
-    
+
     contents = os.listdir(folder)
     old_files = [fname_ for fname_ in contents if pat_old.match(fname_)]
     new_files = [fname_ for fname_ in contents if pat_new.match(fname_)]
-    
+
     if len(old_files) != len(new_files):
         logger = logging.getLogger('ui_logger')
         logger.warning("Be warned, amount of parts has changed!")
@@ -171,7 +174,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
         logger.debug("New parts: ")
         for part in new_files:
             logger.debug(part)
-        
+
     moved_paths = []
     for file_ in new_files:
         tmp_path = os.path.join(folder, os.path.basename(file_))
@@ -188,7 +191,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
     experiment.active_subject.working_file_name = os.path.basename(fname)
     raw._filenames[0] = fname
 
-    
+
 def save_epoch(epoch, overwrite=False):
     """
     """
@@ -202,42 +205,47 @@ def get_layouts():
     """
     """
     from pkg_resources import resource_filename
-    
+
     files = []
-    
+
     try:
-        path_meggie = resource_filename('meggie', os.path.join('data', 'layouts'))
+        path_meggie = resource_filename(
+            'meggie', os.path.join('data', 'layouts'))
 
         files.extend([f for f in os.listdir(path_meggie)])
-    except:
-        pass        
-    
-    try:    
-        path = resource_filename('mne', os.path.join('channels', 'data', 'layouts'))
-        
-        files.extend([f for f in os.listdir(path) 
-                      if os.path.isfile(os.path.join(path,f)) 
-                      and f.endswith('.lout')])
-    except:
+    except BaseException:
         pass
-    
+
+    try:
+        path = resource_filename(
+            'mne', os.path.join('channels', 'data', 'layouts'))
+
+        files.extend([f for f in os.listdir(path)
+                      if os.path.isfile(os.path.join(path, f))
+                      and f.endswith('.lout')])
+    except BaseException:
+        pass
+
     return files
+
 
 def ensure_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 def ensure_folders(paths):
     for path in paths:
         ensure_folder(path)
-        
+
+
 def create_timestamped_folder(experiment):
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     path = os.path.join(experiment.workspace,
                         experiment.experiment_name, 'output')
     timestamped_folder = os.path.join(path, current_time_str)
 
-    import errno;
+    import errno
     try:
         os.makedirs(timestamped_folder)
     except OSError as e:
@@ -246,39 +254,40 @@ def create_timestamped_folder(experiment):
 
     return timestamped_folder
 
+
 def save_subject_raw(subject, path):
     """ when subject is created,
     copy data from src destination to subject directory
     """
-    
+
     filename = os.path.basename(path)
     os.chdir(os.path.dirname(path))
     files = glob.glob(filename[:-4] + '*.fif')
-   
-    p = re.compile(re.escape(filename[:-4]) + '(.fif|-\d{1,}.fif)')
-    
+
+    p = re.compile(re.escape(filename[:-4]) + r'(.fif|-\d{1,}.fif)')
+
     for f in files:
         if p.match(f):
-            shutil.copyfile(f, os.path.join(subject.subject_path, 
+            shutil.copyfile(f, os.path.join(subject.subject_path,
                                             os.path.basename(f)))
 
 
 def save_csv(path, data, column_names, row_names):
-    
+
     # gather all the data to list of rows
     all_data = []
 
-    # freqs data, assume same lengths 
+    # freqs data, assume same lengths
     all_data.append([''] + column_names)
 
     for idx in range(len(data)):
         row_name = row_names[idx]
         row = [row_name] + data[idx]
         all_data.append(row)
- 
+
     # save to file
     all_data = np.array(all_data)
-    np.savetxt(path, all_data, fmt='%s', delimiter=', ')    
+    np.savetxt(path, all_data, fmt='%s', delimiter=', ')
 
 
 def load_csv(path):
@@ -319,7 +328,7 @@ def tail(f, lines=1, _buffer=4098):
         block_counter -= 1
 
     return lines_found[-lines:]
-    
+
 
 def homepath():
     """ Tries to find correct path for file from user's home folder """

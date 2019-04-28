@@ -11,11 +11,12 @@ import numpy as np
 
 import meggie.code_meggie.general.fileManager as fileManager
 
+
 class Spectrum(object):
-    
+
     """
     A class for creating and handling spectrums
-    
+
     """
 
     def __init__(self, name, subject, log_transformed, data, freqs, ch_names):
@@ -33,9 +34,9 @@ class Spectrum(object):
         self._spectrums_directory = subject.spectrums_directory
         self._ch_names = ch_names
         self._log_transformed = log_transformed
-   
+
     def _load_data(self):
-        template = self.name + '_' + '([a-zA-Z1-9_]+)\.csv'
+        template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrums_directory):
             match = re.match(template, fname)
             if match:
@@ -57,7 +58,7 @@ class Spectrum(object):
 
     def save_data(self):
 
-        # if exists, delete first 
+        # if exists, delete first
         self.delete_data()
 
         for key, psd in self.data.items():
@@ -66,19 +67,18 @@ class Spectrum(object):
             column_names = self._freqs.tolist()
             data = psd.tolist()
 
-            path = os.path.join(self._spectrums_directory, 
+            path = os.path.join(self._spectrums_directory,
                                 self.name + '_' + str(key) + '.csv')
- 
+
             fileManager.save_csv(path, data, column_names, row_names)
 
     def delete_data(self):
-        template = self.name + '_' + '[0-9]*\.csv'
+        template = self.name + '_' + r'[0-9]*\.csv'
         for fname in os.listdir(self._spectrums_directory):
             if re.match(template, fname):
                 logging.getLogger('ui_logger').debug(
                     'Removing existing spectrum file: ' + str(fname))
                 os.remove(os.path.join(self._spectrums_directory, fname))
-
 
     @property
     def data(self):
@@ -86,7 +86,7 @@ class Spectrum(object):
             self._load_data()
 
         return self._data
-            
+
     @property
     def freqs(self):
         if self._freqs is None:
@@ -108,5 +108,3 @@ class Spectrum(object):
     @property
     def log_transformed(self):
         return self._log_transformed
-
-

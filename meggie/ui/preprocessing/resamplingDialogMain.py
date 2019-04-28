@@ -14,7 +14,7 @@ from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
 
 
 class ResamplingDialog(QtWidgets.QDialog):
-    
+
     def __init__(self, parent, experiment):
         """
         """
@@ -39,7 +39,7 @@ class ResamplingDialog(QtWidgets.QDialog):
 
     def experiment_getter(self):
         return self.experiment
-        
+
     def accept(self):
         experiment = self.experiment
         raw = experiment.active_subject.get_working_file()
@@ -52,7 +52,6 @@ class ResamplingDialog(QtWidgets.QDialog):
         def resample_fun():
             resample(experiment, raw, fname, rate)
         resample_fun(do_meanwhile=self.parent.update_ui)
-
 
         logging.getLogger('ui_logger').info('Resampling done successfully from ' +
                                             str(old_rate) + ' to ' + str(rate))
@@ -84,7 +83,8 @@ class ResamplingDialog(QtWidgets.QDialog):
 
                     resample_fun(do_meanwhile=self.parent.update_ui)
                 except Exception as e:
-                    self.batching_widget.failed_subjects.append((subject, str(e)))
+                    self.batching_widget.failed_subjects.append(
+                        (subject, str(e)))
                     logging.getLogger('ui_logger').exception(str(e))
 
         experiment.activate_subject(recently_active_subject)
@@ -93,4 +93,3 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         self.parent.parent.initialize_ui()
         self.close()
-

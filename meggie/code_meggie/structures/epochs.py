@@ -8,11 +8,12 @@ import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.code_meggie.general.fileManager import load_epochs
 
+
 class Epochs(object):
-    
+
     """
     A class for creating and handling epochs.
-    
+
     """
 
     def __init__(self, collection_name, subject, params, raw=None):
@@ -22,7 +23,8 @@ class Epochs(object):
         self._collection_name = collection_name
         self._raw = raw
         self._params = params
-        self._path = os.path.join(subject.epochs_directory, collection_name + '.fif')
+        self._path = os.path.join(
+            subject.epochs_directory, collection_name + '.fif')
 
     @property
     def raw(self):
@@ -34,16 +36,16 @@ class Epochs(object):
         else:
             raw = self.load_working_file()
             return raw
- 
+
     @raw.setter
     def raw(self, raw):
         """
-        Sets the raw data for the epoch collection. 
+        Sets the raw data for the epoch collection.
         Keyword arguments:
         raw    -- the raw .fif of the collection
         """
         self._raw = raw
-        
+
     @property
     def collection_name(self):
         """
@@ -54,14 +56,14 @@ class Epochs(object):
     @collection_name.setter
     def collection_name(self, collection_name):
         """
-        Sets the name for the epoch collection. 
+        Sets the name for the epoch collection.
         Keyword arguments:
         collection_name    -- the name of the collection
         """
         # TODO: Add name checks, see experiment_name setter. At
         # this moment UI probably handlet interval s the name check.
         self._collection_name = collection_name
-        
+
     @property
     def params(self):
         """
@@ -72,7 +74,7 @@ class Epochs(object):
     @params.setter
     def params(self, params):
         """
-        Sets the parameters for the epoch collection. 
+        Sets the parameters for the epoch collection.
         Keyword arguments:
         params    -- dictionary of the parameters of the collection
         """
@@ -86,4 +88,3 @@ class Epochs(object):
     @property
     def path(self):
         return self._path
-                  

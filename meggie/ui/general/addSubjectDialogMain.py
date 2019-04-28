@@ -41,7 +41,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
         while counter < 1000:
             if counter != 0:
                 name = name + '_' + str(counter)
-                
+
             if name not in self.parent.experiment.subjects:
                 return name
 
@@ -81,7 +81,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
             return
 
         self.fnames = QtWidgets.QFileDialog.getOpenFileNames(self,
-            'Select one or more files to open.', os.path.expanduser("~"))[0]
+                                                             'Select one or more files to open.', os.path.expanduser("~"))[0]
 
         if len(self.fnames) > 0:
             for name in self.fnames:

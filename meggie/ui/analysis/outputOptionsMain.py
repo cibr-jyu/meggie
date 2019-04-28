@@ -9,8 +9,8 @@ from meggie.ui.utils.messaging import exc_messagebox
 
 
 class OutputOptions(QtWidgets.QDialog):
-    
-    def __init__(self, parent, handler=None, 
+
+    def __init__(self, parent, handler=None,
                  row_setting=None):
         """
         """
@@ -22,7 +22,7 @@ class OutputOptions(QtWidgets.QDialog):
 
         if row_setting == 'channel_averages':
             self.ui.radioButtonChannelAverages.setChecked(True)
-        
+
     def accept(self):
 
         if self.ui.radioButtonChannelAverages.isChecked():
@@ -37,4 +37,3 @@ class OutputOptions(QtWidgets.QDialog):
                 exc_messagebox(self.parent, exc)
 
         self.close()
-

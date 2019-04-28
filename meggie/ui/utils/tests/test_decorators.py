@@ -9,6 +9,7 @@ from meggie.ui.utils.decorators import threaded
 
 from PyQt5.Qt import QApplication
 
+
 class TestDecorators(unittest.TestCase):
     """ Test cases for decorators """
 

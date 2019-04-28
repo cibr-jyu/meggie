@@ -17,6 +17,7 @@ from meggie.code_meggie.preprocessing.filter import filter_data
 from meggie.ui.utils.messaging import messagebox
 from meggie.ui.utils.messaging import exc_messagebox
 
+
 class FilterDialog(QtWidgets.QDialog):
     """
     Class containing the logic for filterDialog. It collects the parameters
@@ -69,7 +70,7 @@ class FilterDialog(QtWidgets.QDialog):
                               preview=True,
                               do_meanwhile=self.parent.update_ui)
             raw.plot(block=True)
-        except:
+        except BaseException:
             pass
 
     def accept(self):
@@ -115,7 +116,8 @@ class FilterDialog(QtWidgets.QDialog):
                     self.filter(subject, params)
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception(str(exc))
-                    self.batching_widget.failed_subjects.append((subject, str(exc)))
+                    self.batching_widget.failed_subjects.append(
+                        (subject, str(exc)))
 
         self.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()

@@ -3,6 +3,36 @@
 """
 """
 
+from meggie.code_meggie.utils.units import get_unit
+from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.preferences import PreferencesHandler
+from meggie.code_meggie.general.experiment import Experiment
+from meggie.code_meggie.general.experiment import ExperimentHandler
+from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
+from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
+from meggie.ui.general.tabs.mainWindowTabEvokedMain import MainWindowTabEvoked
+from meggie.ui.general.tabs.mainWindowTabEpochsMain import MainWindowTabEpochs
+from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
+from meggie.ui.general.tabs.mainWindowTabPreprocessingMain import MainWindowTabPreprocessing
+from meggie.ui.utils.decorators import threaded
+from meggie.ui.utils.messaging import messagebox
+from meggie.ui.utils.messaging import exc_messagebox
+from meggie.ui.general.logDialogMain import LogDialog
+from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
+from meggie.ui.general.aboutDialogMain import AboutDialog
+from meggie.ui.general.preferencesDialogMain import PreferencesDialog
+from meggie.ui.general.infoDialogMain import InfoDialog
+from meggie.ui.general.layoutDialogMain import LayoutDialog
+from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
+from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
+from meggie.ui.general.mainWindowUi import Ui_MainWindow
+from meggie.ui.icons import mainWindowIcons_rc
+import meggie.code_meggie.general.mne_wrapper as mne
+from PyQt5.Qt import QApplication
+from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 import os
 import sys
 import warnings
@@ -11,41 +41,6 @@ import logging
 
 import matplotlib
 matplotlib.use('Qt5Agg')
-
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QAbstractItemView
-from PyQt5.Qt import QApplication
-
-import meggie.code_meggie.general.mne_wrapper as mne
-
-from meggie.ui.icons import mainWindowIcons_rc
-from meggie.ui.general.mainWindowUi import Ui_MainWindow
-from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
-from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
-from meggie.ui.general.layoutDialogMain import LayoutDialog
-from meggie.ui.general.infoDialogMain import InfoDialog
-from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.general.aboutDialogMain import AboutDialog
-from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
-from meggie.ui.general.logDialogMain import LogDialog
-from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.decorators import threaded
-
-from meggie.ui.general.tabs.mainWindowTabPreprocessingMain import MainWindowTabPreprocessing
-from meggie.ui.general.tabs.mainWindowTabSpectrumsMain import MainWindowTabSpectrums
-from meggie.ui.general.tabs.mainWindowTabEpochsMain import MainWindowTabEpochs
-from meggie.ui.general.tabs.mainWindowTabEvokedMain import MainWindowTabEvoked
-from meggie.ui.general.tabs.mainWindowTabInducedMain import MainWindowTabInduced
-from meggie.ui.general.tabs.mainWindowTabSourceAnalysisMain import MainWindowTabSourceAnalysis
-
-from meggie.code_meggie.general.experiment import ExperimentHandler
-from meggie.code_meggie.general.experiment import Experiment
-from meggie.code_meggie.general.preferences import PreferencesHandler
-from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.utils.units import get_unit
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -60,7 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.experiment = None
 
-        self.setup_loggers()        
+        self.setup_loggers()
 
         # Direct output to console
         if 'debug' not in sys.argv:
@@ -89,20 +84,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment:
             exp = None
-            
+
             try:
                 exp = self.experimentHandler.open_existing_experiment(
                     self.preferencesHandler)
             except Exception as e:
                 exc_messagebox(self, e)
-            
+
             if exp:
                 self.experiment = exp
                 self.initialize_ui()
             else:
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
-
 
     def on_actionQuit_triggered(self, checked=None):
         """Closes the program, possibly after a confirmation by the user."""
@@ -111,9 +105,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.preferencesHandler.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
-                'Are you sure you want to quit Meggie?', 
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                QtWidgets.QMessageBox.No)
+                                                   'Are you sure you want to quit Meggie?',
+                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.Yes:
                 self.close()
@@ -148,12 +142,12 @@ class MainWindow(QtWidgets.QMainWindow):
             directory = ''
 
         path = QtCore.QDir.toNativeSeparators(
-            str(QtWidgets.QFileDialog.getExistingDirectory(self, 
-                "Select experiment directory", directory)))
+            str(QtWidgets.QFileDialog.getExistingDirectory(self,
+                                                           "Select experiment directory", directory)))
 
         if path == '':
             return
-        
+
         logging.getLogger('ui_logger').info('Opening experiment ' + path)
 
         try:
@@ -195,15 +189,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         message = 'Permanently remove the selected subjects and the related files?'
         reply = QtWidgets.QMessageBox.question(self, 'Delete selected subjects',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         failures = []
         if reply == QtWidgets.QMessageBox.Yes:
             for index in selIndexes:
                 subject_name = index.data()
-        
+
                 try:
                     self.experiment.remove_subject(subject_name, self)
                 except Exception:
@@ -223,10 +217,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.preferencesHandler.confirm_quit:
             reply = QtWidgets.QMessageBox.question(self, 'Close Meggie',
-                                               'Are you sure you want to '
-                                               'quit?', QtWidgets.QMessageBox.Yes | 
-                                               QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
+                                                   'Are you sure you want to '
+                                                   'quit?', QtWidgets.QMessageBox.Yes |
+                                                   QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.Yes:
                 event.accept()
@@ -298,7 +292,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not self.experiment:
             return
-        
+
         self.layoutDialog = LayoutDialog(self)
         self.layoutDialog.show()
 
@@ -313,10 +307,10 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
-        
+
         if len(selIndexes) > 1:
             return
-        
+
         subject_name = selIndexes[0].data()
 
         if self.experiment.active_subject:
@@ -344,13 +338,12 @@ class MainWindow(QtWidgets.QMainWindow):
         experiment = self.experiment
         if not experiment:
             return
-        
+
         active_subject = experiment.active_subject
         if not active_subject:
             return
 
         return active_subject.epochs.get(epoch_name)
-
 
     def update_ui(self):
         """
@@ -364,7 +357,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Temporary setter for experiment."""
         self.experiment = newExperiment
         gc.collect()
-        
+
         self.initialize_ui()
 
     def initialize_ui(self):
@@ -392,17 +385,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.populate_subject_list()
 
         active_subject = self.experiment.active_subject
-        
+
         if active_subject is None:
             self.statusLabel.setText('Add or activate subjects before '
                                      'continuing.')
-            return        
-        
+            return
+
         raw = active_subject.get_working_file()
-        
+
         name = active_subject.working_file_name
         status = "Current working file: " + name
-        
+
         self.statusLabel.setText(status)
 
         # This updates the 'Subject info' section below the subject list.
@@ -428,7 +421,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setFont(font)
             self.ui.listWidgetSubjects.addItem(item)
 
-        
     def populate_raw_tab_event_list(self):
         """
         Fill the raw tab event list with info about event IDs and
@@ -448,16 +440,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_tabs(self):
         """Method for initializing the tabs."""
 
-        current_tab = self.ui.tabWidget.currentIndex()                                  
+        current_tab = self.ui.tabWidget.currentIndex()
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
 
-        self.ui.tabWidget.insertTab(1, self.mainWindowTabPreprocessing, "Preprocessing")
-        self.ui.tabWidget.insertTab(2, self.mainWindowTabSpectrums, "Spectrums")
+        self.ui.tabWidget.insertTab(
+            1, self.mainWindowTabPreprocessing, "Preprocessing")
+        self.ui.tabWidget.insertTab(
+            2, self.mainWindowTabSpectrums, "Spectrums")
         self.ui.tabWidget.insertTab(3, self.mainWindowTabEpochs, "Epoching")
-        self.ui.tabWidget.insertTab(4, self.mainWindowTabEvoked, "Evoked responses")
-        self.ui.tabWidget.insertTab(5, self.mainWindowTabInduced, "Induced responses")
-        self.ui.tabWidget.insertTab(6, self.mainWindowTabSourceAnalysis, "Source Analysis")
+        self.ui.tabWidget.insertTab(
+            4, self.mainWindowTabEvoked, "Evoked responses")
+        self.ui.tabWidget.insertTab(
+            5, self.mainWindowTabInduced, "Induced responses")
+        self.ui.tabWidget.insertTab(
+            6, self.mainWindowTabSourceAnalysis, "Source Analysis")
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
@@ -469,13 +466,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainWindowTabEpochs.initialize_ui()
         self.mainWindowTabEvoked.initialize_ui()
         self.mainWindowTabInduced.initialize_ui()
-        
+
     def directOutput(self):
         """
         Method for directing stdout to the console and back.
         """
         if self.ui.actionDirectToConsole.isChecked():
-            stdout_stream = EmittingStream(textWritten=self.normalOutputWritten)
+            stdout_stream = EmittingStream(
+                textWritten=self.normalOutputWritten)
             stdout_stream.orig_stream = sys.__stdout__
             stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
             stderr_stream.orig_stream = sys.__stderr__
@@ -499,7 +497,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
- 
+
     def normalOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
@@ -512,7 +510,7 @@ class MainWindow(QtWidgets.QMainWindow):
         cursor.insertText(text)
         self.ui.textEditConsole.setTextCursor(cursor)
         self.ui.textEditConsole.ensureCursorVisible()
- 
+
     def errorOutputWritten(self, text):
         """
         Appends text to 'console' at the bottom of the dialog.
@@ -538,7 +536,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # logger for mne wrapper functions
         mne_wrapper_logger = logging.getLogger('mne_wrapper_logger')
         formatter = logging.Formatter('MNE call: %(asctime)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
+                                      datefmt='%Y-%m-%d %H:%M:%S')
 
         mne_wrapper_logger.handlers = []
 
@@ -561,7 +559,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # logger for ui output
         ui_logger = logging.getLogger('ui_logger')
         formatter = logging.Formatter('Meggie: %(asctime)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
+                                      datefmt='%Y-%m-%d %H:%M:%S')
 
         ui_logger.handlers = []
 
@@ -584,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # logger for real mne
         mne_logger = logging.getLogger('mne')
         formatter = logging.Formatter('MNE: %(asctime)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
+                                      datefmt='%Y-%m-%d %H:%M:%S')
 
         mne_logger.handlers = []
 
@@ -626,5 +624,5 @@ def main():
     window = MainWindow(app)
 
     window.showMaximized()
-    
+
     sys.exit(app.exec_())

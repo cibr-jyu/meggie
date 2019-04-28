@@ -30,9 +30,9 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         self.ui = Ui_mainWindowTabEpochs()
         self.ui.setupUi(self)
 
-        self.epochList = EpochWidget(self, 
-            epoch_getter=self.parent.get_epochs,
-            parameter_setter=self.show_epoch_collection_parameters)
+        self.epochList = EpochWidget(self,
+                                     epoch_getter=self.parent.get_epochs,
+                                     parameter_setter=self.show_epoch_collection_parameters)
         self.epochList.setParent(self.ui.groupBoxEpochCollections)
 
         mode = QtWidgets.QAbstractItemView.SingleSelection
@@ -139,7 +139,6 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         self.ui.textBrowserWorkingFile.setText(
             epochs.path)
 
-
     def on_pushButtonDeleteEpochs_clicked(self, checked=None):
         """Delete the selected epoch collection."""
         if checked is None:
@@ -159,9 +158,9 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
         message = 'Permanently remove epochs?'
         reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             try:
@@ -170,11 +169,10 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
                 )
             except Exception as e:
                 exc_messagebox(self, e)
-	    
+
             experiment.save_experiment_settings()
             # update mainwindow ui, as epochs are shown in multiple tabs
             self.parent.initialize_ui()
-
 
     def on_pushButtonGroupDeleteEpochs_clicked(self, checked=None):
 
@@ -195,9 +193,9 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
 
         message = 'Permanently remove epoch collection from all subjects?'
         reply = QtWidgets.QMessageBox.question(self, 'delete epochs',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
@@ -275,4 +273,3 @@ class MainWindowTabEpochs(QtWidgets.QDialog):
         fig = epochs.raw.plot(block=True, show=True)
 
         fig.canvas.mpl_connect('close_event', handle_close)
-

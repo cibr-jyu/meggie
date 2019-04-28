@@ -42,9 +42,9 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         self.ui = Ui_mainWindowTabEvoked()
         self.ui.setupUi(self)
 
-        self.epochList = EpochWidget(self, 
-            epoch_getter=self.parent.get_epochs,
-            parameter_setter=None)
+        self.epochList = EpochWidget(self,
+                                     epoch_getter=self.parent.get_epochs,
+                                     parameter_setter=None)
         self.epochList.setParent(self.ui.groupBoxEpochs)
 
         mode = QtWidgets.QAbstractItemView.MultiSelection
@@ -52,7 +52,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         self.evokeds_batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
-            parent=self, 
+            parent=self,
             geometry=self.ui.widgetBatchContainer.geometry(),
             container=self.ui.widgetBatchContainer,
             pushButtonCompute=self.ui.pushButtonCreateEvoked,
@@ -123,7 +123,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-
     def on_pushButtonCreateEvokedBatch_clicked(self, checked=None):
         """
         """
@@ -157,7 +156,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         self.evokeds_batching_widget.cleanup(self)
         self.initialize_ui()
 
-
     def on_pushButtonGroupSaveEvoked_clicked(self, checked=None):
         if checked is None:
             return
@@ -189,12 +187,10 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         self.save_data(subjects)
 
-
     def on_pushButtonEvokedTopomaps_clicked(self, checked=None):
         if checked is None:
             return
 
-   
         experiment = self.parent.experiment
         if not experiment or experiment.active_subject is None:
             return
@@ -215,9 +211,12 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
                 evoked = list(mne_evokeds.values())[idx]
                 evoked_name = list(mne_evokeds.keys())[idx]
                 for ch_type in ['mag', 'grad', 'eeg']:
-                    n_eeg_channels = len(list(mne.pick_types(evoked.info, eeg=True)))
-                    n_mag_channels = len(list(mne.pick_types(evoked.info, meg='mag')))
-                    n_grad_channels = len(list(mne.pick_types(evoked.info, meg='grad')))
+                    n_eeg_channels = len(
+                        list(mne.pick_types(evoked.info, eeg=True)))
+                    n_mag_channels = len(
+                        list(mne.pick_types(evoked.info, meg='mag')))
+                    n_grad_channels = len(
+                        list(mne.pick_types(evoked.info, meg='grad')))
 
                     # if mixed data, plot only mag and grad
                     if ch_type == 'eeg' and (n_eeg_channels == 0 or
@@ -231,9 +230,9 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
                     times = np.linspace(0,
                                         evoked.times[-1],
-                                        number_of_timepoints+1)[:-1]
+                                        number_of_timepoints + 1)[:-1]
 
-                    fig, axes = plt.subplots(2, int(number_of_timepoints/2))
+                    fig, axes = plt.subplots(2, int(number_of_timepoints / 2))
                     axes = axes.reshape(-1)
 
                     title = evoked_name + ' (' + ch_type + ')'
@@ -250,7 +249,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         except Exception as e:
             exc_messagebox(self, e)
-
 
     def on_pushButtonVisualizeEvokedDataset_clicked(self, checked=None):
         """Plot the evoked data as a topology."""
@@ -269,7 +267,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         evoked = experiment.active_subject.evokeds[evoked_name]
         mne_evokeds = evoked.mne_evokeds
 
-        message = 'Visualizing evoked collection %s...\n' % evoked_name
+        message = 'Visualizing evoked collection %s...' % evoked_name
         logging.getLogger('ui_logger').info(message)
 
         def output_options_handler(row_setting):
@@ -311,8 +309,8 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
                     experiment, evoked_name, groups,
                     do_meanwhile=self.update_ui)
 
-                self.save_evoked(experiment.active_subject, evokeds, 
-                                 'group_' + evoked_name, 
+                self.save_evoked(experiment.active_subject, evokeds,
+                                 'group_' + evoked_name,
                                  subjects_info=subjects_info)
 
                 self.initialize_ui()
@@ -346,9 +344,9 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         message = 'Permanently remove evokeds?'
         reply = QtWidgets.QMessageBox.question(self, 'delete evokeds',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             try:
@@ -363,7 +361,6 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             self.ui.listWidgetEvoked.takeItem(row)
             experiment.save_experiment_settings()
             self.initialize_ui()
-
 
     def on_pushButtonGroupDeleteEvoked_clicked(self, checked=None):
         if checked is None:
@@ -384,9 +381,9 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         message = 'Permanently remove evokeds from all subjects?'
         reply = QtWidgets.QMessageBox.question(self, 'delete evokeds',
-                                           message, QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               message, QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:
             for subject in experiment.subjects.values():
@@ -403,12 +400,11 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
     def hideHook(self):
         self.initialize_ui()
 
-
     def on_listWidgetEvoked_currentItemChanged(self, item):
         if not item:
             self.ui.textBrowserEvokedInfo.clear()
             return
-  
+
         experiment = self.parent.experiment
 
         evoked_name = str(item.text())
@@ -424,12 +420,10 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         self.ui.textBrowserEvokedInfo.setText(info)
 
-
     def collect_evoked_parameter_values(self):
         collection_names = [str(item.text()) for item
-                in self.epochList.ui.listWidgetEpochs.selectedItems()]
+                            in self.epochList.ui.listWidgetEpochs.selectedItems()]
         return collection_names
-
 
     def calculate_evokeds(self, subject, collection_names):
 
@@ -472,7 +466,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             '_evoked.fif'
         )
 
-        epoch_info = {} 
+        epoch_info = {}
         for key in evokeds:
             epoch = getattr(subject.epochs.get(key, object()), 'raw', None)
             events = epoch.event_id
@@ -485,11 +479,11 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         subjects_info = {}
         subjects_info[subject.subject_name] = epoch_info
- 
+
         self.save_evoked(subject, evokeds, evoked_name,
                          subjects_info)
 
-    def save_evoked(self, subject, evokeds, evoked_name, 
+    def save_evoked(self, subject, evokeds, evoked_name,
                     subjects_info):
 
         # Save evoked into evoked (average) directory with name evoked_name
@@ -506,7 +500,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
             message = 'Writing evoked data as ' + evoked_name + ' ...'
             logging.getLogger('ui_logger').info(message)
 
-            mne.write_evokeds(os.path.join(saveFolder, evoked_name), 
+            mne.write_evokeds(os.path.join(saveFolder, evoked_name),
                               list(evokeds.values()))
         except IOError:
             message = ('Writing to selected folder is not allowed. You can '
@@ -532,7 +526,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
 
         def output_options_handler(row_setting):
             try:
-                save_data_evoked(self.parent.experiment, subjects, 
+                save_data_evoked(self.parent.experiment, subjects,
                                  row_setting, evoked_name)
             except Exception as exc:
                 exc_messagebox(self, exc)
@@ -541,4 +535,3 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         handler = output_options_handler
         self.output_options_dialog = OutputOptions(self, handler=handler)
         self.output_options_dialog.show()
-

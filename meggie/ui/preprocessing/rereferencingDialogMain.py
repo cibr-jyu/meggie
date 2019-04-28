@@ -15,7 +15,7 @@ import meggie.code_meggie.general.fileManager as fileManager
 
 
 class RereferencingDialog(QtWidgets.QDialog):
-    
+
     def __init__(self, parent, experiment):
         """
         """
@@ -32,7 +32,7 @@ class RereferencingDialog(QtWidgets.QDialog):
 
         # fill the combobox
         picks = mne.pick_types(raw.info, eeg=True, meg=False, eog=True)
-        ch_names = [ch_name for ch_idx, ch_name in 
+        ch_names = [ch_name for ch_idx, ch_name in
                     enumerate(raw.info['ch_names']) if ch_idx in picks]
 
         for ch_name in ch_names:
@@ -40,7 +40,7 @@ class RereferencingDialog(QtWidgets.QDialog):
 
     def accept(self):
         experiment = self.experiment
-        
+
         raw = experiment.active_subject.get_working_file()
         path = experiment.active_subject.working_file_path
 
@@ -67,7 +67,8 @@ class RereferencingDialog(QtWidgets.QDialog):
         experiment.active_subject.rereferenced = True
         experiment.save_experiment_settings()
 
-        logging.getLogger('ui_logger').info('Data was successfully rereferenced using setting: ' + selection)
+        logging.getLogger('ui_logger').info(
+            'Data was successfully rereferenced using setting: ' + selection)
 
         self.close()
         self.parent.initialize_ui()

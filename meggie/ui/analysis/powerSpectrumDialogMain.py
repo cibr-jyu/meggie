@@ -51,7 +51,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         # set nfft initially to ~2 seconds and overlap to ~1 seconds
         sfreq = raw.info['sfreq']
         window_in_seconds = 2
-        nfft = int(np.power(2, np.ceil(np.log(sfreq * window_in_seconds)/np.log(2))))
+        nfft = int(
+            np.power(2, np.ceil(np.log(sfreq * window_in_seconds) / np.log(2))))
         overlap = nfft / 2
 
         self.ui.spinBoxNfft.setValue(nfft)
@@ -59,7 +60,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         if raw.info.get('highpass'):
             if self.ui.spinBoxFmin.value() < raw.info['highpass']:
-                self.ui.spinBoxFmin.setValue(int(np.ceil(raw.info['highpass'])))
+                self.ui.spinBoxFmin.setValue(
+                    int(np.ceil(raw.info['highpass'])))
 
         if raw.info.get('lowpass'):
             if self.ui.spinBoxFmax.value() > raw.info['lowpass']:
@@ -81,21 +83,21 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         tmin = self.ui.doubleSpinBoxTmin.value()
         tmax = self.ui.doubleSpinBoxTmax.value()
         if tmin >= tmax:
-            messagebox(self.parent, "End time must be higher than the starting time")
+            messagebox(
+                self.parent, "End time must be higher than the starting time")
             return
-        
+
         self.add_intervals([(group, tmin, tmax)])
 
-                
     def add_intervals(self, intervals):
         for interval in intervals:
             self.intervals.append(interval)
             item = QtWidgets.QListWidgetItem(
                 '%s: %s - %s s' % (
-                interval[0],
-                round(interval[1], 4),
-                round(interval[2], 4)
-            ))
+                    interval[0],
+                    round(interval[1], 4),
+                    round(interval[2], 4)
+                ))
             self.ui.listWidgetIntervals.addItem(item)
 
     def on_pushButtonClear_clicked(self, checked=None):
@@ -103,14 +105,14 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             return
         self.intervals = []
         self.ui.listWidgetIntervals.clear()
-        
+
     def on_pushButtonClearRow_clicked(self, checked=None):
         if checked is None:
             return
         current_row = self.ui.listWidgetIntervals.currentRow()
         self.ui.listWidgetIntervals.takeItem(current_row)
         self.intervals.pop(current_row)
-        
+
     def on_pushButtonAddEvents_clicked(self, checked=None):
         if checked is None:
             return
@@ -122,11 +124,13 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             raise Exception("Must have at least one interval")
 
         if fmin >= fmax:
-            raise Exception("End frequency must be higher than the starting frequency")
-   
+            raise Exception(
+                "End frequency must be higher than the starting frequency")
+
         valid = True
         for interval in times:
-            if (interval[2] - interval[1]) * sfreq < float(self.ui.spinBoxNfft.value()):
+            if (interval[2] - interval[1]) * \
+                    sfreq < float(self.ui.spinBoxNfft.value()):
                 valid = False
 
         if not valid:
@@ -150,7 +154,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         subject = experiment.active_subject
         sfreq = subject.get_working_file().info['sfreq']
-        
+
         try:
             self.validate_settings(name, times, fmin, fmax, sfreq)
         except Exception as exc:
@@ -163,9 +167,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['nfft'] = self.ui.spinBoxNfft.value()
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
-       
+
         raw = subject.get_working_file()
-        
+
         try:
             raw_blocks = OrderedDict()
             for interval in times:
@@ -176,9 +180,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                     raw_blocks[interval[0]] = []
 
                 raw_blocks[interval[0]].append(block)
-            
+
             update_ui = self.parent.update_ui
-            create_power_spectrum(experiment, name, params, raw_blocks, 
+            create_power_spectrum(experiment, name, params, raw_blocks,
                                   update_ui=update_ui)
         except Exception as e:
             exc_messagebox(self.parent, e)
@@ -205,7 +209,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
 
         subject = experiment.active_subject
         sfreq = subject.get_working_file().info['sfreq']
-        
+
         try:
             self.validate_settings(name, times, fmin, fmax, sfreq)
         except Exception as exc:
@@ -231,15 +235,16 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                     raw_blocks = OrderedDict()
                     for interval in times:
 
-                        block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
+                        block = raw.copy().crop(
+                            tmin=interval[1], tmax=interval[2])
 
                         if interval[0] not in raw_blocks:
                             raw_blocks[interval[0]] = []
 
                         raw_blocks[interval[0]].append(block)
-                    
+
                     update_ui = self.parent.update_ui
-                    create_power_spectrum(experiment, name, params, raw_blocks, 
+                    create_power_spectrum(experiment, name, params, raw_blocks,
                                           update_ui=update_ui)
                 except Exception as e:
                     self.batching_widget.failed_subjects.append((subject,

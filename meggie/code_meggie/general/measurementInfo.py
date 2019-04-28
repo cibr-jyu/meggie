@@ -37,7 +37,7 @@ class MeasurementInfo(object):
         if self._info.get('highpass') is None:
             raise Exception('Field highpass does not exist.')
         else:
-            return round(self._info.get('highpass'),2)
+            return round(self._info.get('highpass'), 2)
 
     @property
     def low_pass(self):
@@ -48,7 +48,7 @@ class MeasurementInfo(object):
         if self._info.get('lowpass') is None:
             raise Exception('Field lowpass does not exist.')
         else:
-            return round(self._info.get('lowpass'),2)
+            return round(self._info.get('lowpass'), 2)
 
     @property
     def sampling_freq(self):
@@ -59,7 +59,7 @@ class MeasurementInfo(object):
         if self._info.get('sfreq') is None:
             raise Exception('Field sfreq does not exist.')
         else:
-            return round(self._info.get('sfreq'),2)
+            return round(self._info.get('sfreq'), 2)
 
     @property
     def mag_channels(self):
@@ -71,9 +71,9 @@ class MeasurementInfo(object):
             raise Exception('Could not find magnetometers.')
         else:
             return len(mne.pick_types(self._info, meg='mag',
-                                           exclude=[]))
+                                      exclude=[]))
 
-    @property    
+    @property
     def grad_channels(self):
         """
         Returns the number of gradiometer channels.
@@ -83,20 +83,20 @@ class MeasurementInfo(object):
             raise Exception('Could not find gradiometers.')
         else:
             return len(mne.pick_types(self._info, meg='grad',
-                                           exclude=[]))
+                                      exclude=[]))
 
-    @property    
+    @property
     def EEG_channels(self):
         """
         Returns the number of EEG channels.
         Raises an exception if an error occurs while picking types.
         """
         if mne.pick_types(self._info, meg=False,
-                               eeg=True, exclude=[]) is None:
+                          eeg=True, exclude=[]) is None:
             raise Exception('Could not find EEG channels.')
         else:
             return len(mne.pick_types(self._info, meg=False,
-                                           eeg=True, exclude=[]))
+                                      eeg=True, exclude=[]))
 
     @property
     def date(self):
@@ -107,14 +107,14 @@ class MeasurementInfo(object):
         """
         if self._info.get('meas_date') is None:
             raise Exception('Field meas_date does not exist.')
-        elif not isinstance(datetime.datetime.fromtimestamp\
-                        (self._info.get('meas_date')[0]), datetime.datetime):
+        elif not isinstance(datetime.datetime.fromtimestamp
+                            (self._info.get('meas_date')[0]), datetime.datetime):
             raise TypeError('Field meas_date is not a valid timestamp.')
         else:
             d = datetime.datetime.fromtimestamp(self._info.get('meas_date')[0])
             return d.strftime('%Y-%m-%d')
 
-    @property    
+    @property
     def stim_channel_names(self):
         """
         Returns the names of stimulus channels.
@@ -126,7 +126,7 @@ class MeasurementInfo(object):
             chNames = self._info.get('ch_names')
             return [s for s in chNames if 'STI' in s]
 
-    @property    
+    @property
     def MEG_channel_names(self):
         """
         Returns the names of MEG channels.
@@ -136,9 +136,9 @@ class MeasurementInfo(object):
             raise Exception('Field ch_names does not exist.')
         else:
             chNames = self._info.get('ch_names')
-            return [s for s in chNames if not 'STI' in s]
+            return [s for s in chNames if 'STI' not in s]
 
-    @property    
+    @property
     def subject_name(self):
         """
         Returns the subjects name. If some of the name fields are nonexistent

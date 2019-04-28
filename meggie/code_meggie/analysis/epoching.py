@@ -26,9 +26,9 @@ from meggie.code_meggie.utils.validators import validate_name
 
 
 def create_epochs(experiment, params, subject):
-    """ Epochs are created in a way that one collection consists of such 
-    things that belong together. We wanted multiple collections because 
-    MNE Epochs don't allow multiple id's for one event name, so doing 
+    """ Epochs are created in a way that one collection consists of such
+    things that belong together. We wanted multiple collections because
+    MNE Epochs don't allow multiple id's for one event name, so doing
     subselections for averaging and visualizing purposes from one collection
     is not feasible.
     """
@@ -39,9 +39,9 @@ def create_epochs(experiment, params, subject):
     for key in ['grad', 'mag', 'eog', 'eeg']:
         if key in reject_data:
             reject_data[key] /= get_scaling(key)
-    
+
     raw = subject.get_working_file()
-         
+
     events = []
     event_params = params_copy['events']
     fixed_length_event_params = params_copy['fixed_length_events']
@@ -54,37 +54,37 @@ def create_epochs(experiment, params, subject):
     if len(event_params) > 0:
         for event_params_dic in event_params:
             event_id = event_params_dic['event_id']
-            
+
             category_id = 'id_' + str(event_id)
             if event_params_dic['mask']:
                 category_id += '_mask_' + str(event_params_dic['mask'])
-            
+
             category[category_id] = event_id_counter + 1
             new_events = np.array(create_eventlist(
                 experiment, event_params_dic, subject))
 
             if len(new_events) == 0:
                 raise ValueError('No events found with selected id.')
-            
+
             new_events[:, 2] = event_id_counter + 1
             events.extend([event for event in new_events])
             event_id_counter += 1
-            
 
     if len(fixed_length_event_params) > 0:
         for idx, event_params_dic in enumerate(fixed_length_event_params):
             category['fixed_' + str(idx + 1)] = event_id_counter + 1
             event_params_dic['event_id'] = event_id_counter + 1
-            events.extend(mne.make_fixed_length_events(raw, 
-                event_params_dic['event_id'],
-                event_params_dic['tmin'],
-                event_params_dic['tmax'], 
-                event_params_dic['interval']
-            ))
+            events.extend(mne.make_fixed_length_events(raw,
+                                                       event_params_dic['event_id'],
+                                                       event_params_dic['tmin'],
+                                                       event_params_dic['tmax'],
+                                                       event_params_dic['interval']
+                                                       ))
             event_id_counter += 1
 
     if len(events) == 0:
-        raise ValueError('Could not create epochs for subject: No events found with given params.')
+        raise ValueError(
+            'Could not create epochs for subject: No events found with given params.')
 
     if not isinstance(raw, mne.RAW_TYPE):
         raise TypeError('Working file is of wrong type.')
@@ -97,23 +97,23 @@ def create_epochs(experiment, params, subject):
         params_copy['meg'] = 'grad'
     else:
         params_copy['meg'] = False
-   
+
     # find all proper picks, dont exclude bads
     picks = mne.pick_types(raw.info, meg=params_copy['meg'],
                            eeg=params_copy['eeg'], eog=params_copy['eog'],
                            exclude=[])
-    
+
     if len(picks) == 0:
         raise ValueError('Picks cannot be empty. Select picks by ' +
                          'checking the checkboxes.')
 
-    epochs = mne.Epochs(raw, np.array(events), 
-        category, params_copy['tmin'], params_copy['tmax'],
-        baseline=(params_copy['bstart'], params_copy['bend']),
-        picks=picks, reject=params_copy['reject'])
-        
+    epochs = mne.Epochs(raw, np.array(events),
+                        category, params_copy['tmin'], params_copy['tmax'],
+                        baseline=(params_copy['bstart'], params_copy['bend']),
+                        picks=picks, reject=params_copy['reject'])
+
     if len(epochs.get_data()) == 0:
-        raise ValueError('Could not find any data. Perhaps the ' + 
+        raise ValueError('Could not find any data. Perhaps the ' +
                          'rejection thresholds are too strict...')
 
     try:
@@ -125,13 +125,16 @@ def create_epochs(experiment, params, subject):
     epochs_object = Epochs(params['collection_name'], subject, params, epochs)
     fileManager.save_epoch(epochs_object, overwrite=True)
     subject.add_epochs(epochs_object)
-    
+
     events = epochs.event_id
     events_str = ''
     for event_name, event_id in events.items():
-        events_str += event_name + ' [' + str(len(epochs[event_name])) + ' events found]\n'
-    
-    return subject.subject_name + ', ' + params['collection_name'] + ':\n' + events_str
+        events_str += event_name + \
+            ' [' + str(len(epochs[event_name])) + ' events found]\n'
+
+    return subject.subject_name + ', ' + \
+        params['collection_name'] + ':\n' + events_str
+
 
 def create_eventlist(experiment, params, subject):
     """
@@ -139,7 +142,8 @@ def create_eventlist(experiment, params, subject):
     """
     stim_channel = subject.find_stim_channel()
     raw = subject.get_working_file()
-    e = Events(experiment, raw, stim_channel, params['mask'], params['event_id'])
+    e = Events(experiment, raw, stim_channel,
+               params['mask'], params['event_id'])
 
     return e.events
 
@@ -170,23 +174,24 @@ def draw_evoked_potentials(experiment, evokeds, output, title=None):
             grad_val = np.percentile(new_evokeds[0].data[grad_picks], 95)
             grad_scaling = mag_val * 1e15 / grad_val
             scalings['grad'] = grad_scaling
-            
+
         fig = mne.plot_evoked_topo(new_evokeds, layout,
-            color=colors, title=title, scalings=scalings)
+                                   color=colors, title=title, scalings=scalings)
 
         conditions = [e.comment for e in new_evokeds]
         positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
-                
+
         for cond, col, pos in zip(conditions, colors, positions):
             plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-            
+
         window_title = '_'.join(conditions)
         fig.canvas.set_window_title(window_title)
         fig.show()
-        
+
         def onclick(event):
             channel = plt.getp(plt.gca(), 'title')
-            plt.gcf().canvas.set_window_title('_'.join([window_title, channel]))
+            plt.gcf().canvas.set_window_title(
+                '_'.join([window_title, channel]))
             plt.show(block=False)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -209,7 +214,7 @@ def draw_evoked_potentials(experiment, evokeds, output, title=None):
                 ax.set_ylabel('{}'.format(get_unit(
                     averages[evoked_idx][0][ii][0]
                 )))
-                ax.plot(times, averages[evoked_idx][1][ii], 
+                ax.plot(times, averages[evoked_idx][1][ii],
                         color=colors[evoked_idx])
             ch_type, ch_group = averages[evoked_idx][0][ii]
             title = 'Evoked ({0}, {1})'.format(ch_type, ch_group)
@@ -239,7 +244,8 @@ def save_data_evoked(experiment, subjects, output_rows, evoked_name):
             tmins.append(evoked.times[0])
             tmaxs.append(evoked.times[-1])
 
-    if len(set(time_lengths)) > 1 or len(set(tmins)) > 1 or len(set(tmaxs)) > 1:
+    if len(set(time_lengths)) > 1 or len(
+            set(tmins)) > 1 or len(set(tmaxs)) > 1:
         raise Exception("Time settings are not all equal")
 
     cleaned_evoked_name = evoked_name.split('.')[0]
@@ -247,7 +253,7 @@ def save_data_evoked(experiment, subjects, output_rows, evoked_name):
     if len(subjects) > 1:
         filename = 'group_spectrum_' + cleaned_evoked_name + '.csv'
     else:
-        filename = (list(subjects.values())[0].subject_name + 
+        filename = (list(subjects.values())[0].subject_name +
                     '_spectrum_' + cleaned_evoked_name + '.csv')
 
     logging.getLogger('ui_logger').info('Saving evokeds..')
@@ -276,22 +282,23 @@ def save_data_evoked(experiment, subjects, output_rows, evoked_name):
 
                     for ch_type, sel in data_labels:
                         row_name = ('[' + sub_name + '] ' +
-                                    '{' + name + '} ' + 
+                                    '{' + name + '} ' +
                                     '(' + ch_type + ') ' + sel)
                         row_names.append(row_name)
-                    
+
                 else:
                     data.extend(evoked.data.tolist())
                     for ch_name in evoked.info['ch_names']:
                         if ch_name in evoked.info['bads']:
                             ch_name = ch_name + ' (bad)'
                         row_name = ('[' + sub_name + '] ' +
-                                    '{' + name + '] ' + 
+                                    '{' + name + '] ' +
                                     ch_name)
                         row_names.append(row_name)
 
     fileManager.save_csv(os.path.join(path, filename), data, column_names,
                          row_names)
+
 
 @threaded
 def group_average(experiment, evoked_name, groups):

@@ -146,7 +146,6 @@ class ICADialog(QtWidgets.QDialog):
             exc_messagebox(self, e)
             return
 
-
     def on_pushButtonPlotSources_clicked(self, checked=None):
         """
         """
@@ -160,8 +159,6 @@ class ICADialog(QtWidgets.QDialog):
         except Exception as e:
             exc_messagebox(self, e)
             return
-
-
 
     def on_pushButtonPlotProperties_clicked(self, checked=None):
         """ Plot the property windows for all selected items

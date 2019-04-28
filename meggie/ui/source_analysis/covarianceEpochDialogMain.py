@@ -14,6 +14,7 @@ from meggie.ui.utils.decorators import threaded
 from meggie.ui.utils.messaging import exc_messagebox
 from meggie.ui.utils.messaging import messagebox
 
+
 class CovarianceEpochDialog(QtWidgets.QDialog):
     """
     The class containing the logic for the dialog for collecting the
@@ -32,12 +33,13 @@ class CovarianceEpochDialog(QtWidgets.QDialog):
         for collection_name in epochs.keys():
             item = QtWidgets.QListWidgetItem(collection_name)
             self.ui.listWidgetEpochs.addItem(item)
-            
+
     def accept(self):
         """
         """
         try:
-            collection_name = str(self.ui.listWidgetEpochs.currentItem().text())
+            collection_name = str(
+                self.ui.listWidgetEpochs.currentItem().text())
             tmin = self.ui.doubleSpinBoxTmin.value()
             tmax = self.ui.doubleSpinBoxTmax.value()
         except Exception as exc:
@@ -49,12 +51,12 @@ class CovarianceEpochDialog(QtWidgets.QDialog):
         try:
             name = validate_name(str(self.ui.lineEditName.text()))
         except Exception as exc:
-            exc_messagebox(self, exc, exec_=True) 
+            exc_messagebox(self, exc, exec_=True)
             return
 
         name = name + '-cov.fif'
         if name in self.experiment.active_subject.get_covfiles():
-            messagebox(self, "Covariance matrix of this name already exists", 
+            messagebox(self, "Covariance matrix of this name already exists",
                        exec_=True)
             return
 
@@ -70,14 +72,14 @@ class CovarianceEpochDialog(QtWidgets.QDialog):
             compute_cov(do_meanwhile=self.parent.parent.update_ui)
 
         except Exception as exc:
-            exc_messagebox(self, exc, exec_=True) 
+            exc_messagebox(self, exc, exec_=True)
             return
 
-     
-        logging.getLogger('ui_logger').info('Covariance matrix has been successfully computed.')
+        logging.getLogger('ui_logger').info(
+            'Covariance matrix has been successfully computed.')
 
         if self.on_close:
-            self.on_close() 
+            self.on_close()
 
         self.close()
 
@@ -91,4 +93,3 @@ class CovarianceEpochDialog(QtWidgets.QDialog):
 
         self.ui.doubleSpinBoxTmin.setValue(tmin)
         self.ui.doubleSpinBoxTmax.setValue(tmax)
-         

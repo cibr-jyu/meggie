@@ -36,19 +36,23 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
     def on_currentChanged(self):
         pass
 
-
     def update_tabs(self):
 
         while self.ui.tabWidgetSourceAnalysis.count() > 0:
             self.ui.tabWidgetSourceAnalysis.removeTab(0)
 
-        self.ui.tabWidgetSourceAnalysis.insertTab(1, self.ui.tabSourcePreparation, "Source modelling preparation")
-        self.ui.tabWidgetSourceAnalysis.insertTab(2, self.ui.tabCoregistration, "Coregistration")
-        self.ui.tabWidgetSourceAnalysis.insertTab(3, self.ui.tabForwardSolution, "Forward solution")
-        self.ui.tabWidgetSourceAnalysis.insertTab(4, self.ui.tabNoiseCovariance, "Covariance matrix")
-        self.ui.tabWidgetSourceAnalysis.insertTab(5, self.ui.tabSourceEstimate, "Source estimate")
-        self.ui.tabWidgetSourceAnalysis.insertTab(6, self.ui.tabAnalysis, "Analysis")
-
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            1, self.ui.tabSourcePreparation, "Source modelling preparation")
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            2, self.ui.tabCoregistration, "Coregistration")
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            3, self.ui.tabForwardSolution, "Forward solution")
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            4, self.ui.tabNoiseCovariance, "Covariance matrix")
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            5, self.ui.tabSourceEstimate, "Source estimate")
+        self.ui.tabWidgetSourceAnalysis.insertTab(
+            6, self.ui.tabAnalysis, "Analysis")
 
     def initialize_ui(self):
 
@@ -65,7 +69,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
-        if active_subject is None:
+        if not active_subject:
             return
 
         # Check if the reconstructions have been copied to experiment folder
@@ -115,7 +119,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         # set transfile state to selected if transfile exists
         if active_subject.check_transfile_exists():
             self.ui.checkBoxCoregistrationSelected.setChecked(True)
-        
+
     def on_pushButtonBrowseRecon_clicked(self, checked=None):
         """
         Copies reconstructed mri files from the directory supplied by the user
@@ -126,7 +130,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         path = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getExistingDirectory(self,
-                "Select directory of the reconstructed MRI image")))
+                                                           "Select directory of the reconstructed MRI image")))
 
         if path == '':
             return
@@ -142,13 +146,16 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
+        if not active_subject:
+            return
+
         if active_subject.check_reconFiles_copied():
             reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
-                                               "Do you really want to change "
-                                               "the reconstructed files?",
-                                               QtWidgets.QMessageBox.Yes |
-                                               QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
+                                                   "Do you really want to change "
+                                                   "the reconstructed files?",
+                                                   QtWidgets.QMessageBox.Yes |
+                                                   QtWidgets.QMessageBox.No,
+                                                   QtWidgets.QMessageBox.No)
 
             if reply == QtWidgets.QMessageBox.No:
                 return
@@ -183,6 +190,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         active_subject = self.parent.experiment.active_subject
 
+        if not active_subject:
+            return
+
         # set environment variables
         os.environ['SUBJECTS_DIR'] = active_subject.source_analysis_directory
         os.environ['SUBJECT'] = active_subject.mri_subject_name
@@ -193,7 +203,8 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         try:
             @threaded
             def watershed_bem():
-                mne.make_watershed_bem(active_subject.mri_subject_name, atlas=use_atlas, overwrite=True)
+                mne.make_watershed_bem(
+                    active_subject.mri_subject_name, atlas=use_atlas, overwrite=True)
             watershed_bem(do_meanwhile=self.parent.update_ui)
         except Exception as e:
             exc_messagebox(self, e)
@@ -217,7 +228,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         inst = subject.working_file_path
         try:
-            mne.coregistration(inst=inst, subject=subject.mri_subject_name, 
+            mne.coregistration(inst=inst, subject=subject.mri_subject_name,
                                head_high_res=False)
         except Exception as exc:
             exc_messagebox(self, exc)
@@ -237,7 +248,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         path = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select the coordinate MEG-MRI coordinate transformation file")[0]))
+                                                      "Select the coordinate MEG-MRI coordinate transformation file")[0]))
 
         if path == '':
             return
@@ -265,10 +276,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         if not self.parent.experiment.active_subject:
             return
 
-        self.forwardSolutionDialog = ForwardSolutionDialog(self, 
-            experiment=self.parent.experiment, on_close=self.initialize_ui)
+        self.forwardSolutionDialog = ForwardSolutionDialog(self,
+                                                           experiment=self.parent.experiment, on_close=self.initialize_ui)
         self.forwardSolutionDialog.show()
-
 
     def on_pushButtonImportForwardSolution_clicked(self, checked=None):
         if checked is None:
@@ -281,15 +291,15 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         path = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getOpenFileName(self,
-            "Select a forward solution file")[0]))
+                                                      "Select a forward solution file")[0]))
 
         if not path.endswith('fwd.fif'):
             messagebox(self, "Forward solution file should end with -fwd.fif")
-            return 
+            return
 
         src = path
         dst = os.path.join(subject.forward_solutions_directory,
-            os.path.basename(path))
+                           os.path.basename(path))
 
         logging.getLogger('ui_logger').info('Copying ' + src + ' to ' + dst)
         try:
@@ -298,7 +308,6 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             exc_messagebox(self, exc)
 
         self.initialize_ui()
-
 
     def on_pushButtonRemoveForwardSolution_clicked(self, checked=None):
         if checked is None:
@@ -313,20 +322,20 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         active_subject = self.parent.experiment.active_subject
 
         try:
-            sol = str(self.ui.listWidgetForwardSolutionsFwd.currentItem().text())
+            sol = str(
+                self.ui.listWidgetForwardSolutionsFwd.currentItem().text())
         except AttributeError:
             return
 
         reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
-                                           "Do you really want to remove "
-                                           "the the selected solution?",
-                                           QtWidgets.QMessageBox.Yes |
-                                           QtWidgets.QMessageBox.No,
-                                           QtWidgets.QMessageBox.No)
+                                               "Do you really want to remove "
+                                               "the the selected solution?",
+                                               QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.No:
             return
-
 
         path = os.path.join(active_subject.forward_solutions_directory,
                             sol)
@@ -351,8 +360,8 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             return
 
         self.covarianceRawDialog = CovarianceRawDialog(self,
-            self.parent.experiment, 
-            on_close=self.initialize_ui)
+                                                       self.parent.experiment,
+                                                       on_close=self.initialize_ui)
 
         self.covarianceRawDialog.show()
 
@@ -371,7 +380,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
             return
 
         self.covarianceEpochDialog = CovarianceEpochDialog(self,
-            self.parent.experiment, on_close=self.initialize_ui)
+                                                           self.parent.experiment, on_close=self.initialize_ui)
 
         self.covarianceEpochDialog.show()
 
@@ -390,8 +399,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         active_subject = self.parent.experiment.active_subject
 
         try:
-            fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
-        except:
+            fwd_name = str(
+                self.ui.listWidgetForwardSolutionsStc.currentItem().text())
+        except BaseException:
             messagebox(self, "Have you selected the forward solution?")
             return
 
@@ -401,17 +411,19 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
                 inst_name = active_subject.working_file_name
             elif self.ui.radioButtonStcEpochs.isChecked():
                 inst_type = 'epochs'
-                inst_name = str(self.ui.listWidgetStcEpochs.currentItem().text())
+                inst_name = str(
+                    self.ui.listWidgetStcEpochs.currentItem().text())
             elif self.ui.radioButtonStcEvoked.isChecked():
                 inst_type = 'evoked'
-                inst_name = str(self.ui.listWidgetStcEvoked.currentItem().text())
+                inst_name = str(
+                    self.ui.listWidgetStcEvoked.currentItem().text())
         except Exception as e:
             messagebox(self, "Have you selected the dataset?")
             return
 
         self.linearSourceEstimateDialog = LinearSourceEstimateDialog(self,
-            fwd_name, inst_type, inst_name, self.parent.experiment, 
-            on_close=self.initialize_ui)
+                                                                     fwd_name, inst_type, inst_name, self.parent.experiment,
+                                                                     on_close=self.initialize_ui)
 
         self.linearSourceEstimateDialog.show()
 
@@ -430,8 +442,9 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         active_subject = self.parent.experiment.active_subject
 
         try:
-            fwd_name = str(self.ui.listWidgetForwardSolutionsStc.currentItem().text())
-        except:
+            fwd_name = str(
+                self.ui.listWidgetForwardSolutionsStc.currentItem().text())
+        except BaseException:
             messagebox(self, "Have you selected the forward solution?")
             return
 
@@ -441,20 +454,21 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
                 inst_name = active_subject.working_file_name
             elif self.ui.radioButtonStcEpochs.isChecked():
                 inst_type = 'epochs'
-                inst_name = str(self.ui.listWidgetStcEpochs.currentItem().text())
+                inst_name = str(
+                    self.ui.listWidgetStcEpochs.currentItem().text())
             elif self.ui.radioButtonStcEvoked.isChecked():
                 inst_type = 'evoked'
-                inst_name = str(self.ui.listWidgetStcEvoked.currentItem().text())
+                inst_name = str(
+                    self.ui.listWidgetStcEvoked.currentItem().text())
         except Exception as e:
             messagebox(self, "Have you selected the dataset?")
             return
 
         self.lcmvDialog = LCMVDialog(self,
-            fwd_name, inst_type, inst_name, self.parent.experiment, 
-            on_close=self.initialize_ui)
+                                     fwd_name, inst_type, inst_name, self.parent.experiment,
+                                     on_close=self.initialize_ui)
 
         self.lcmvDialog.show()
-
 
     def on_pushButtonStcRemove_clicked(self, checked=None):
         """
@@ -475,7 +489,7 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
         """ """
         if checked is None:
             return
-        
+
         if not self.parent.experiment:
             return
 
@@ -486,13 +500,13 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         info = active_subject.get_working_file(preload=False).info
 
-        current_covfile = str(self.ui.listWidgetCovariances.currentItem().text())
+        current_covfile = str(
+            self.ui.listWidgetCovariances.currentItem().text())
 
         path = os.path.join(active_subject.cov_directory,
                             current_covfile)
         cov = mne.read_cov(path)
         cov.plot(info)
-
 
     def on_pushButtonCovarianceRemove_clicked(self, checked=None):
         if checked is None:
@@ -508,14 +522,15 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         try:
 
-            current_covfile = str(self.ui.listWidgetCovariances.currentItem().text())
+            current_covfile = str(
+                self.ui.listWidgetCovariances.currentItem().text())
         except AttributeError:
             return
 
         reply = QtWidgets.QMessageBox.question(self, 'Please confirm',
-            "Do you really want to remove the the selected covariance matrix?",
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-            QtWidgets.QMessageBox.No)
+                                               "Do you really want to remove the the selected covariance matrix?",
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.No:
             return
@@ -530,7 +545,6 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         self.initialize_ui()
 
-
     def on_pushButtonPlotSourceEstimate_clicked(self, checked=None):
         if checked is None:
             return
@@ -540,14 +554,12 @@ class MainWindowTabSourceAnalysis(QtWidgets.QDialog):
 
         logging.getLogger('ui_logger').info("Plotting source estimate..")
 
-        stc_item = self.ui.listWidgetSourceEstimatesAna.currentItem() 
+        stc_item = self.ui.listWidgetSourceEstimatesAna.currentItem()
         try:
             stc_name = str(stc_item.text())
         except AttributeError as e:
             messagebox(self, "You should select the source estimate first.")
             return
 
-
         self.stcPlotDialog = stcPlotDialog(self.parent.experiment, stc_name)
         self.stcPlotDialog.show()
-

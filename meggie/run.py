@@ -5,8 +5,9 @@
 Boilerplate script to run the application.
 """
 
-#from mne.gui._coreg_gui import CoregFrame, _make_view
+# from mne.gui._coreg_gui import CoregFrame, _make_view
 # For interoperability with Canopy and to remove need to mess with QStrings.
+from meggie.ui.general import mainWindowMain
 import os
 import sip
 # For interoperability with mayavi and traits, everything needs to be imported
@@ -18,10 +19,10 @@ os.environ['QT_API'] = 'pyqt'
 
 # from pyface.qt import QtGui, QtCore  # Mayavi needs these from pyface
 
-from meggie.ui.general import mainWindowMain
 
 def main():
     mainWindowMain.main()
+
 
 if __name__ == '__main__':
     main()
