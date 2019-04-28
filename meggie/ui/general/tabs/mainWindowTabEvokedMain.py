@@ -267,7 +267,7 @@ class MainWindowTabEvoked(QtWidgets.QDialog):
         evoked = experiment.active_subject.evokeds[evoked_name]
         mne_evokeds = evoked.mne_evokeds
 
-        message = 'Visualizing evoked collection %s...\n' % evoked_name
+        message = 'Visualizing evoked collection %s...' % evoked_name
         logging.getLogger('ui_logger').info(message)
 
         def output_options_handler(row_setting):

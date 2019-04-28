@@ -114,6 +114,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxShowMNEcall">
+       <property name="text">
+        <string>MNE call</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

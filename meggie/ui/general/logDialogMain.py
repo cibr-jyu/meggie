@@ -31,11 +31,16 @@ class LogDialog(QtWidgets.QDialog):
 
         self.show_meggie = False
         self.show_mne = False
+        self.show_mne_call = False
 
         if self.ui.checkBoxShowMeggie.checkState() == QtCore.Qt.Checked:
             self.show_meggie = True
+
         if self.ui.checkBoxShowMNE.checkState() == QtCore.Qt.Checked:
             self.show_mne = True
+
+        if self.ui.checkBoxShowMNEcall.checkState() == QtCore.Qt.Checked:
+            self.show_mne_call = True
 
         self.update_contents()
 
@@ -50,44 +55,43 @@ class LogDialog(QtWidgets.QDialog):
 
             last_lines = fileManager.tail(log_file, lines=self.lines)
 
-            mne_idxs = []
+            # track lines that start log entries as there can be multiline entries.
+
             meggie_idxs = []
+            mne_idxs = []
+            mne_call_idxs = []
             all_idxs = []
             for line_idx, line in enumerate(last_lines):
                 if line.startswith('Meggie:'):
                     meggie_idxs.append(line_idx)
                     all_idxs.append(line_idx)
                 elif line.startswith('MNE call:'):
+                    mne_call_idxs.append(line_idx)
+                    all_idxs.append(line_idx)
+                elif line.startswith('MNE:'):
                     mne_idxs.append(line_idx)
                     all_idxs.append(line_idx)
 
             self.ui.textEditBrowser.clear()
 
-            if not self.show_mne and not self.show_meggie:
-                selected_lines = []
-
-            elif self.show_mne and not self.show_meggie:
-                selected_lines = []
-                for idx_idx, line_idx in enumerate(all_idxs):
-                    if line_idx not in mne_idxs:
-                        continue
-                    if idx_idx != len(all_idxs) - 1:
+            selected_lines = []
+            for idx_idx, line_idx in enumerate(all_idxs):
+                if idx_idx != len(all_idxs) - 1:
+                    next_idx = all_idxs[idx_idx+1]
+                else:
+                    next_idx = -1
+                if line_idx in meggie_idxs:
+                    if self.show_meggie:
                         selected_lines.extend(
-                            last_lines[line_idx:all_idxs[idx_idx + 1]])
-                    else:
-                        selected_lines.extend(last_lines[line_idx:])
-            elif self.show_meggie and not self.show_mne:
-                selected_lines = []
-                for idx_idx, line_idx in enumerate(all_idxs):
-                    if line_idx not in meggie_idxs:
-                        continue
-                    if idx_idx != len(all_idxs) - 1:
+                            last_lines[line_idx:next_idx])
+                elif line_idx in mne_idxs:
+                    if self.show_mne:
                         selected_lines.extend(
-                            last_lines[line_idx:all_idxs[idx_idx + 1]])
-                    else:
-                        selected_lines.extend(last_lines[line_idx:])
-            else:
-                selected_lines = last_lines
+                            last_lines[line_idx:next_idx])
+                elif line_idx in mne_call_idxs:
+                    if self.show_mne_call:
+                        selected_lines.extend(
+                            last_lines[line_idx:next_idx])
 
             for line in selected_lines:
                 self.ui.textEditBrowser.append(line.strip('\n'))
@@ -108,6 +112,15 @@ class LogDialog(QtWidgets.QDialog):
         else:
             self.show_mne = False
         self.update_contents()
+
+    def on_checkBoxShowMNEcall_stateChanged(self, state):
+        if state == QtCore.Qt.Checked:
+            self.show_mne_call = True
+        else:
+            self.show_mne_call = False
+        self.update_contents()
+
+
 
     def on_pushButtonBufferSize_clicked(self, checked=None):
         if checked is None:
