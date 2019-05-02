@@ -7,14 +7,14 @@ from time import sleep
 
 from meggie.ui.utils.decorators import threaded
 
-from PyQt4 import QtGui
+from PyQt5.Qt import QApplication
 
 
 class TestDecorators(unittest.TestCase):
     """ Test cases for decorators """
 
     def setUp(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QApplication(sys.argv)
 
     def tearDown(self):
         self.app = None
