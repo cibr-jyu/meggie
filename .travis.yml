@@ -4,6 +4,13 @@ language: c
 os:
   - linux
 
+branches:
+  only:
+    - master
+    - develop
+
+sudo: required
+
 install:
   # download and install miniconda
   - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -19,4 +26,4 @@ install:
 script:
   # run the tests
   - conda activate
-  - nosetests
+  - xvfb-run --server-args="-screen 0 1024x768x24" nosetests
