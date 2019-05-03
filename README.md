@@ -5,7 +5,7 @@
 Suggested way to install meggie is to first install MNE-python with all its dependencies to python environment, and then install meggie to that same environment. Here's one way to do this in Unix with the help of anaconda distribution:
 1. Create new python environment: *conda create -n meggie-env python=3*
 1. Activate the environment using: *source activate meggie-env*
-1. Install mne to environment: *conda install -c conda-forge mne*
+1. Install mne to environment: *conda install -c defaults -c conda-forge mne*
 1. Clone or download this repository and go inside.
 1. Install meggie to the environment using: *python setup.py install*
 1. Run Meggie with command: *meggie* 
@@ -19,7 +19,7 @@ Note that installing MNE-python with "pip install mne" does not install dependen
 Meggie can be installed directly using conda too:
 1. Create environment: *conda create -n meggie-env python=3*
 1. Activate environment: *source activate meggie-env*
-1. Install meggie: *conda install -c conda-forge -c cibr meggie*
+1. Install meggie: *conda install -c defaults -c conda-forge -c cibr meggie*
 1. Run meggie with: *meggie*
 
 [//]: # (Hello)
