@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo "Building package for local platform.."
-conda-build -c conda-forge --output-folder conda-bld/ --python 3 .
+conda-build -c conda-forge --output-folder conda-bld/ --python 36 .
+conda-build -c conda-forge --output-folder conda-bld/ --python 37 .
 
 echo "Converting package to other platforms"
 platforms=( osx-64 linux-32 linux-64 win-32 win-64 )
@@ -12,6 +13,7 @@ do
     do
        conda convert --platform $platform $file  -o conda-bld/
     done
+
 done
 
 echo "Uploading packages to anaconda coud"
