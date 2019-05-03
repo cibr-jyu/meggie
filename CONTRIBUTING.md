@@ -13,7 +13,7 @@ We use a simplified variant of GitFlow-model, and have two main branches: master
 1. Clone the forked repository to your computer and cd in.
 1. Run following command to create isolated environment for development: conda create -n meggie-dev python=3
 1. Activate the environment using: source activate meggie-dev
-1. Install dependencies from conda-forge: conda install -c conda-forge mne
+1. Install dependencies from conda-forge: conda install -c defaults -c conda-forge mne
 1. Install meggie in develop mode: python setup.py develop
 1. Try if meggie runs by running: meggie
 
