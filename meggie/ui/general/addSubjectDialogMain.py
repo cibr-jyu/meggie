@@ -10,8 +10,6 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 from meggie.ui.general.addSubjectDialogUi import Ui_AddSubject
-from meggie.ui.general.infoDialogUi import Ui_infoDialog
-from meggie.ui.general.infoDialogMain import InfoDialog
 
 from meggie.code_meggie.general import fileManager
 
@@ -92,27 +90,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
                        name, QtCore.Qt.MatchExactly)) > 0:
                     continue
                 self.ui.listWidgetFileNames.addItem(item)
-
-    def on_pushButtonShowFileInfo_clicked(self, checked=None):
-        """Opens the infoDialog for the raw file selected."""
-        if checked is None:
-            return
-
-        try:
-            self.raw = fileManager.open_raw(self.ui.listWidgetFileNames.
-                                            currentItem().text(),
-                                            preload=False)
-            self.ui.pushButtonShowFileInfo.setEnabled(True)
-
-        except Exception as e:
-            exc_messagebox(self, e)
-            return
-
-        info = Ui_infoDialog()
-        self.infoDialog = InfoDialog(self.raw, info, True)
-        self.infoDialog.show()
-
-        QtWidgets.QApplication.processEvents()
 
     def on_pushButtonRemove_clicked(self, checked=None):
         """Removes selected filenames on the listWidgetFileNames."""

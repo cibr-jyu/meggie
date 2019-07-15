@@ -71,14 +71,14 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1165</width>
+          <width>1195</width>
           <height>839</height>
          </rect>
         </property>
         <property name="minimumSize">
          <size>
           <width>800</width>
-          <height>750</height>
+          <height>600</height>
          </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
@@ -194,8 +194,8 @@
   <widget class="QDockWidget" name="dockWidgetSubjects">
    <property name="minimumSize">
     <size>
-     <width>330</width>
-     <height>757</height>
+     <width>300</width>
+     <height>500</height>
     </size>
    </property>
    <property name="floating">
@@ -209,13 +209,76 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_9">
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="groupBoxSubjects">
+       <property name="title">
+        <string>Subjects (active in bold):</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_12">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item row="1" column="0">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButtonActivateSubject">
+            <property name="text">
+             <string>Activate selected</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButtonAddSubjects">
+            <property name="text">
+             <string>Add new...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButtonRemoveSubject">
+            <property name="text">
+             <string>Remove selected</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButtonLayout">
+            <property name="text">
+             <string>Change layout...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QListWidget" name="listWidgetSubjects">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QGroupBox" name="groupBoxSubjectInfo">
        <property name="title">
-        <string>Subject info</string>
+        <string/>
        </property>
        <layout class="QGridLayout" name="gridLayout_10">
-        <item row="3" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="labelEvents">
           <property name="font">
            <font>
@@ -228,289 +291,8 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_12">
-          <item>
-           <widget class="QLabel" name="labelFilters">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Filters:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_30">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelLow">
-              <property name="lineWidth">
-               <number>1</number>
-              </property>
-              <property name="text">
-               <string>Low-pass:</string>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-              <property name="wordWrap">
-               <bool>false</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelLowValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_31">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelHigh">
-              <property name="text">
-               <string>High-pass:</string>
-              </property>
-              <property name="wordWrap">
-               <bool>false</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelHighValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item row="2" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_11">
-          <item>
-           <widget class="QLabel" name="labelChannels">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Channels:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_25">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelEEG">
-              <property name="text">
-               <string>EEG channels:</string>
-              </property>
-              <property name="wordWrap">
-               <bool>false</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelEEGValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_27">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelGradMEG">
-              <property name="text">
-               <string>Gradiometers:</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelGradMEGValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_28">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelMagMEG">
-              <property name="text">
-               <string>Magnetometers:</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelMagMEGValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_29">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelSamples">
-              <property name="text">
-               <string>Sampling frequency:</string>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelSamplesValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout_9">
-          <item>
-           <widget class="QLabel" name="labelSubjectGeneral">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>General:</string>
-            </property>
-            <property name="textFormat">
-             <enum>Qt::AutoText</enum>
-            </property>
-           </widget>
-          </item>
+         <layout class="QVBoxLayout" name="verticalLayoutSubjectInfo">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_23">
             <property name="leftMargin">
@@ -619,9 +401,129 @@
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_29">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelSamples">
+              <property name="text">
+               <string>Sampling frequency:</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelSamplesValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_30">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelLow">
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="text">
+               <string>Low-pass:</string>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelLowValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_31">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelHigh">
+              <property name="text">
+               <string>High-pass:</string>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelHighValue">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </item>
-        <item row="4" column="0">
+        <item row="2" column="0">
          <widget class="QTextBrowser" name="textBrowserEvents">
           <property name="palette">
            <palette>
@@ -662,69 +564,6 @@
           </property>
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBoxSubject_2">
-       <property name="title">
-        <string>Subjects (active in bold):</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_12">
-        <property name="leftMargin">
-         <number>9</number>
-        </property>
-        <property name="topMargin">
-         <number>9</number>
-        </property>
-        <property name="rightMargin">
-         <number>9</number>
-        </property>
-        <property name="bottomMargin">
-         <number>9</number>
-        </property>
-        <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout_5">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetDefaultConstraint</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="pushButtonActivateSubject">
-            <property name="text">
-             <string>Activate selected</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButtonAddSubjects">
-            <property name="text">
-             <string>Add new...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="pushButtonRemoveSubject">
-            <property name="text">
-             <string>Remove selected</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pushButtonLayout">
-            <property name="text">
-             <string>Change layout...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="0">
-         <widget class="QListWidget" name="listWidgetSubjects">
-          <property name="selectionMode">
-           <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
          </widget>
         </item>

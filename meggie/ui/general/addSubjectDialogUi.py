@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../addSubjectDialogUi.ui'
+# Form implementation generated from reading ui file 'designer_ui_files/addSubjectDialogUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,9 +41,6 @@ class Ui_AddSubject(object):
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 3)
-        self.pushButtonShowFileInfo = QtWidgets.QPushButton(AddSubject)
-        self.pushButtonShowFileInfo.setObjectName("pushButtonShowFileInfo")
-        self.gridLayout.addWidget(self.pushButtonShowFileInfo, 2, 0, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(AddSubject)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -57,7 +54,7 @@ class Ui_AddSubject(object):
         self.pushButtonRemove = QtWidgets.QPushButton(AddSubject)
         self.pushButtonRemove.setEnabled(False)
         self.pushButtonRemove.setObjectName("pushButtonRemove")
-        self.gridLayout.addWidget(self.pushButtonRemove, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.pushButtonRemove, 2, 0, 1, 1)
 
         self.retranslateUi(AddSubject)
         self.buttonBox.accepted.connect(AddSubject.accept)
@@ -69,6 +66,5 @@ class Ui_AddSubject(object):
         AddSubject.setWindowTitle(_translate("AddSubject", "Meggie - Add subject"))
         self.label.setText(_translate("AddSubject", "Add subject file to the experiment:"))
         self.pushButtonBrowse.setText(_translate("AddSubject", "Browse..."))
-        self.pushButtonShowFileInfo.setText(_translate("AddSubject", "Show file info"))
         self.pushButtonRemove.setText(_translate("AddSubject", "Remove"))
 

@@ -5,6 +5,7 @@
 
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.general import fileManager
+from meggie.code_meggie.general.measurementInfo import MeasurementInfo
 from meggie.code_meggie.general.preferences import PreferencesHandler
 from meggie.code_meggie.general.experiment import Experiment
 from meggie.code_meggie.general.experiment import ExperimentHandler
@@ -21,7 +22,6 @@ from meggie.ui.general.logDialogMain import LogDialog
 from meggie.ui.general.experimentInfoDialogMain import ExperimentInfoDialog
 from meggie.ui.general.aboutDialogMain import AboutDialog
 from meggie.ui.general.preferencesDialogMain import PreferencesDialog
-from meggie.ui.general.infoDialogMain import InfoDialog
 from meggie.ui.general.layoutDialogMain import LayoutDialog
 from meggie.ui.general.addSubjectDialogMain import AddSubjectDialog
 from meggie.ui.general.createExperimentDialogMain import CreateExperimentDialog
@@ -491,7 +491,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.initialize_ui()
 
     def initialize_ui(self):
-        """
+        """ 
         """
 
         self.update_tabs()
@@ -502,11 +502,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.textBrowserEvents.clear()
         self.ui.labelDateValue.clear()
         self.ui.labelLengthValue.clear()
-        self.ui.labelEEGValue.clear()
-        self.ui.labelGradMEGValue.clear()
         self.ui.labelHighValue.clear()
         self.ui.labelLowValue.clear()
-        self.ui.labelMagMEGValue.clear()
         self.ui.labelSamplesValue.clear()
         self.ui.labelSubjectValue.clear()
 
@@ -528,13 +525,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.statusLabel.setText(status)
 
-        # This updates the 'Subject info' section below the subject list.
         try:
-            InfoDialog(raw, self.ui, False)
+            mi = MeasurementInfo(raw)
+            self.ui.labelDateValue.setText(mi.date)
+            self.ui.labelLengthValue.setText('%0.2f' % raw.times[-1] + ' s')
+            self.ui.labelHighValue.setText(str(mi.high_pass) + ' Hz')
+            self.ui.labelLowValue.setText(str(mi.low_pass) + ' Hz')
+            self.ui.labelSamplesValue.setText(str(mi.sampling_freq) + ' Hz')
+            self.ui.labelSubjectValue.setText(mi.subject_name)
+        except:
+            pass
+        try:
             self.populate_raw_tab_event_list()
-        except Exception as err:
-            exc_messagebox(self, err)
-            return
+        except:
+            pass
 
     def populate_subject_list(self):
         """ """
@@ -558,12 +562,13 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         events = self.experiment.active_subject.create_event_set()
 
-        if events is None:
-            return
+        if not events:
+            events_string = 'No events found.'
+        else:
 
-        events_string = ''
-        for key, value in events.items():
-            events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+            events_string = ''
+            for key, value in events.items():
+                events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
 
         self.ui.textBrowserEvents.setText(events_string)
 

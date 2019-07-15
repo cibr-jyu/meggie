@@ -4,7 +4,16 @@
             "id": "preprocessing",
             "name": "Preprocessing",
             "inputs": [],
-            "actions": ["plot", "ica", "filter", "resample", "rereference"]
+            "actions": ["plot", "ica", "filter", 
+                        "resample", "rereference", "bad_channels",
+                        "projections", "events"]
+        },
+        {
+            "id": "spectrums",
+            "name": "Spectrums",
+            "outputs": ["spectrum"],
+            "transforms": ["compute"],
+            "actions": ["plot_spectrum", "save"]
         },
         {
             "id": "epoching",
@@ -12,7 +21,7 @@
             "inputs": [],
             "transforms": ["create"],
             "outputs": ["epochs"],
-            "actions": ["plot"]
+            "actions": ["plot_epochs"]
         },
         {
             "id": "averaging",
@@ -20,7 +29,7 @@
             "inputs": ["epochs"],
             "outputs": ["evoked"],
             "transforms": ["compute"],
-            "actions": ["plot", "save"]
+            "actions": ["plot_evoked_potential", "plot_topomaps", "save"]
         },
         {
             "id": "induced",
@@ -28,7 +37,7 @@
             "inputs": ["epochs"],
             "outputs": ["tfr"],
             "transforms": ["compute"],
-            "actions": ["plot", "save"]
+            "actions": ["plot_tfr", "plot_tse", "save"]
         }
  
     ]
