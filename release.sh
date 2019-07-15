@@ -16,7 +16,7 @@ do
 
 done
 
-echo "Uploading packages to anaconda coud"
+echo "Uploading packages to anaconda cloud"
 find conda-bld/ -name *.tar.bz2 | while read file
 do
     echo "Uploading file $file"
