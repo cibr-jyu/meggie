@@ -1,0 +1,34 @@
+{
+    "tabs": [
+        {
+            "id": "preprocessing",
+            "name": "Preprocessing",
+            "inputs": [],
+            "actions": ["plot", "ica", "filter", "resample", "rereference"]
+        },
+        {
+            "id": "epoching",
+            "name": "Epoching",
+            "inputs": [],
+            "outputs": ["epochs"],
+            "actions": ["plot"]
+        },
+        {
+            "id": "averaging",
+            "name": "Averaging",
+            "inputs": ["epochs"],
+            "outputs": ["evoked"],
+            "transforms": ["compute"],
+            "actions": ["plot", "save"]
+        },
+        {
+            "id": "induced",
+            "name": "Induced responses",
+            "inputs": ["epochs"],
+            "outputs": ["tfr"],
+            "transforms": ["compute"],
+            "actions": ["plot", "save"]
+        }
+ 
+    ]
+}

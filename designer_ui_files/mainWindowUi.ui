@@ -108,56 +108,8 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>-1</number>
              </property>
-             <widget class="QWidget" name="tabPreprocessing">
-              <property name="minimumSize">
-               <size>
-                <width>500</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <attribute name="title">
-               <string>Preprocessing</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="tabSpectrums">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <attribute name="title">
-               <string>Spectrums</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="tabEpoching">
-              <attribute name="title">
-               <string>Epoching</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="tabEvoked">
-              <attribute name="title">
-               <string>Evoked responses</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="tabInduced">
-              <attribute name="title">
-               <string>Induced responses</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="tabSourceAnalysis">
-              <attribute name="title">
-               <string>Source analysis</string>
-              </attribute>
-             </widget>
             </widget>
            </item>
           </layout>

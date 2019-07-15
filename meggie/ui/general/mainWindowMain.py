@@ -69,13 +69,118 @@ class MainWindow(QtWidgets.QMainWindow):
         # For handling initialization and switching of experiments.
         self.experimentHandler = ExperimentHandler(self)
 
+        self.tabs = []
+        import pkg_resources, json
+        config_path = pkg_resources.resource_filename(
+            'meggie', 'configuration.json')
+        with open(config_path, 'r') as f:
+            tab_config = json.load(f)
+
+        def construct_tab(tab_spec):
+
+            class DynamicTab(QtWidgets.QDialog):
+                def __init__(self, parent):
+                    QtWidgets.QDialog.__init__(self)
+                    self.parent = parent
+                    self.name = tab_spec["name"]
+
+                    # first create basic layout
+
+                    self.gridLayoutRoot = QtWidgets.QGridLayout(self)
+
+                    self.groupBoxOutputs = QtWidgets.QGroupBox(self)
+                    self.groupBoxOutputs.setTitle('Outputs')
+                    self.gridLayoutOutputs = QtWidgets.QGridLayout(self.groupBoxOutputs)
+                    self.gridLayoutRoot.addWidget(self.groupBoxOutputs, 0, 2, 1, 1)
+
+                    self.groupBoxActions = QtWidgets.QGroupBox(self)
+                    self.groupBoxActions.setTitle('Actions')
+                    self.gridLayoutActions = QtWidgets.QGridLayout(self.groupBoxActions)
+                    self.gridLayoutRoot.addWidget(self.groupBoxActions, 1, 2, 1, 1)
+
+                    self.groupBoxTransforms = QtWidgets.QGroupBox(self)
+                    self.groupBoxTransforms.setTitle('Transforms')
+                    self.gridLayoutTransforms = QtWidgets.QGridLayout(self.groupBoxTransforms)
+                    self.gridLayoutRoot.addWidget(self.groupBoxTransforms, 1, 0, 1, 1)
+                    
+                    self.groupBoxInputs = QtWidgets.QGroupBox(self)
+                    self.groupBoxInputs.setTitle('Inputs')
+                    self.gridLayoutInputs = QtWidgets.QGridLayout(self.groupBoxInputs)
+                    self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 1, 1)
+
+                    spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+                    self.gridLayoutRoot.addItem(spacerItem, 2, 0, 1, 1)
+                    spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+                    self.gridLayoutRoot.addItem(spacerItem1, 0, 3, 1, 1)
+
+                    # then fill the contents
+
+                    for idx, input_item in enumerate(tab_spec.get('inputs', [])):
+                        groupBoxInputElement = QtWidgets.QGroupBox(self.groupBoxInputs)
+                        groupBoxInputElement.setTitle(input_item.capitalize())
+                        gridLayoutInputElement = QtWidgets.QGridLayout(groupBoxInputElement)
+                        listWidgetInputElement = QtWidgets.QListWidget(groupBoxInputElement)
+
+                        gridLayoutInputElement.addWidget(listWidgetInputElement, idx, 0, 1, 1)
+                        self.gridLayoutInputs.addWidget(groupBoxInputElement)
+
+                        setattr(self, 'groupBoxInputElement_' + str(idx+1), 
+                                groupBoxInputElement)
+                        setattr(self, 'gridLayoutInputElement_' + str(idx+1), 
+                                gridLayoutInputElement)
+                        setattr(self, 'listWidgetInputElement_' + str(idx+1), 
+                                listWidgetInputElement)
+
+                    for idx, output_item in enumerate(tab_spec.get('outputs', [])):
+                        groupBoxOutputElement = QtWidgets.QGroupBox(self.groupBoxOutputs)
+                        groupBoxOutputElement.setTitle(output_item.capitalize())
+                        gridLayoutOutputElement = QtWidgets.QGridLayout(groupBoxOutputElement)
+                        listWidgetOutputElement = QtWidgets.QListWidget(groupBoxOutputElement)
+
+                        gridLayoutOutputElement.addWidget(listWidgetOutputElement, idx, 0, 1, 1)
+                        self.gridLayoutOutputs.addWidget(groupBoxOutputElement)
+
+                        setattr(self, 'groupBoxOutputElement_' + str(idx+1), 
+                                groupBoxOutputElement)
+                        setattr(self, 'gridLayoutOutputElement_' + str(idx+1), 
+                                gridLayoutOutputElement)
+                        setattr(self, 'listWidgetOutputElement_' + str(idx+1), 
+                                listWidgetOutputElement)
+
+                    for idx, transform_item in enumerate(tab_spec.get('transforms', [])):
+                        pushButtonTransformElement = QtWidgets.QPushButton(self.groupBoxTransforms)
+                        pushButtonTransformElement.setText(transform_item.capitalize())
+                        self.gridLayoutTransforms.addWidget(pushButtonTransformElement, idx, 0, 1, 1)
+                        setattr(self, 'pushButtonTransformElement_' + str(idx+1), 
+                                pushButtonTransformElement)
+
+                    for idx, action_item in enumerate(tab_spec.get('actions', [])):
+                        pushButtonActionElement = QtWidgets.QPushButton(self.groupBoxActions)
+                        pushButtonActionElement.setText(action_item.capitalize())
+                        self.gridLayoutActions.addWidget(pushButtonActionElement, idx, 0, 1, 1)
+                        setattr(self, 'pushButtonActionElement_' + str(idx+1), 
+                                pushButtonActionElement)
+
+                def initialize_ui(self):
+                    pass
+
+            DynamicTab.__name__ = 'MainWindowTab' + tab_spec['id'].capitalize()
+
+            tab = DynamicTab(self)
+
+            return tab
+
+        for tab_spec in tab_config['tabs']:
+            tab = construct_tab(tab_spec)
+            self.tabs.append(tab)
+
         # Create the tab contents
-        self.mainWindowTabPreprocessing = MainWindowTabPreprocessing(self)
-        self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
-        self.mainWindowTabEpochs = MainWindowTabEpochs(self)
-        self.mainWindowTabEvoked = MainWindowTabEvoked(self)
-        self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
-        self.mainWindowTabInduced = MainWindowTabInduced(self)
+        # self.mainWindowTabPreprocessing = MainWindowTabPreprocessing(self)
+        # self.mainWindowTabSpectrums = MainWindowTabSpectrums(self)
+        # self.mainWindowTabEpochs = MainWindowTabEpochs(self)
+        # self.mainWindowTabEvoked = MainWindowTabEvoked(self)
+        # self.mainWindowTabSourceAnalysis = MainWindowTabSourceAnalysis(self)
+        # self.mainWindowTabInduced = MainWindowTabInduced(self)
 
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtWidgets.QLabel()
@@ -438,34 +543,41 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.textBrowserEvents.setText(events_string)
 
     def update_tabs(self):
-        """Method for initializing the tabs."""
+        """ method for initializing the tabs. """
 
         current_tab = self.ui.tabWidget.currentIndex()
         while self.ui.tabWidget.count() > 0:
             self.ui.tabWidget.removeTab(0)
 
-        self.ui.tabWidget.insertTab(
-            1, self.mainWindowTabPreprocessing, "Preprocessing")
-        self.ui.tabWidget.insertTab(
-            2, self.mainWindowTabSpectrums, "Spectrums")
-        self.ui.tabWidget.insertTab(3, self.mainWindowTabEpochs, "Epoching")
-        self.ui.tabWidget.insertTab(
-            4, self.mainWindowTabEvoked, "Evoked responses")
-        self.ui.tabWidget.insertTab(
-            5, self.mainWindowTabInduced, "Induced responses")
-        self.ui.tabWidget.insertTab(
-            6, self.mainWindowTabSourceAnalysis, "Source Analysis")
+        for tab_idx, tab in enumerate(self.tabs):
+            self.ui.tabWidget.insertTab(
+                tab_idx+1, tab, tab.name)
+
+        # self.ui.tabWidget.insertTab(
+        #     1, self.mainWindowTabPreprocessing, "Preprocessing")
+        # self.ui.tabWidget.insertTab(
+        #     2, self.mainWindowTabSpectrums, "Spectrums")
+        # self.ui.tabWidget.insertTab(3, self.mainWindowTabEpochs, "Epoching")
+        # self.ui.tabWidget.insertTab(
+        #     4, self.mainWindowTabEvoked, "Evoked responses")
+        # self.ui.tabWidget.insertTab(
+        #     5, self.mainWindowTabInduced, "Induced responses")
+        # self.ui.tabWidget.insertTab(
+        #     6, self.mainWindowTabSourceAnalysis, "Source Analysis")
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
-        self.mainWindowTabSourceAnalysis.update_tabs()
-        self.mainWindowTabSourceAnalysis.initialize_ui()
+        # self.mainWindowTabSourceAnalysis.update_tabs()
+        # self.mainWindowTabSourceAnalysis.initialize_ui()
 
-        self.mainWindowTabPreprocessing.initialize_ui()
-        self.mainWindowTabSpectrums.initialize_ui()
-        self.mainWindowTabEpochs.initialize_ui()
-        self.mainWindowTabEvoked.initialize_ui()
-        self.mainWindowTabInduced.initialize_ui()
+        for tab in self.tabs:
+            tab.initialize_ui()
+
+        # self.mainWindowTabPreprocessing.initialize_ui()
+        # self.mainWindowTabSpectrums.initialize_ui()
+        # self.mainWindowTabEpochs.initialize_ui()
+        # self.mainWindowTabEvoked.initialize_ui()
+        # self.mainWindowTabInduced.initialize_ui()
 
     def directOutput(self):
         """
@@ -626,3 +738,4 @@ def main():
     window.showMaximized()
 
     sys.exit(app.exec_())
+
