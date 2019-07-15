@@ -7,147 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>665</width>
-    <height>460</height>
+    <height>717</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="2">
-    <widget class="QGroupBox" name="groupBoxOutputs">
-     <property name="title">
-      <string>Outputs</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="groupBoxOutputElement_1">
-        <property name="title">
-         <string>Output list 1</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_9">
-         <item row="0" column="0">
-          <widget class="QListWidget" name="listWidgetOutputIElement_1">
-           <item>
-            <property name="text">
-             <string>output_1</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>output_2</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QGroupBox" name="groupBoxActions">
-     <property name="title">
-      <string>Actions</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButtonActionElement_1">
-        <property name="text">
-         <string>Action 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButtonActionElement_2">
-        <property name="text">
-         <string>Action 2</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBoxTransforms">
-     <property name="title">
-      <string>Transforms</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButtonTransformElement_1">
-        <property name="text">
-         <string>Transform 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButtonTransformElement_2">
-        <property name="text">
-         <string>Transform 2</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBoxInputs">
-     <property name="title">
-      <string>Inputs</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QGroupBox" name="groupBoxInputElement_1">
-        <property name="title">
-         <string>Input list 1</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_7">
-         <item row="0" column="0">
-          <widget class="QListWidget" name="listWidgetInputElement_1">
-           <item>
-            <property name="text">
-             <string>input_11</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>input_12</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QGroupBox" name="groupBoxInputElement_2">
-        <property name="title">
-         <string>Input list 2</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="0">
-          <widget class="QListWidget" name="listWidgetInputElement_2">
-           <item>
-            <property name="text">
-             <string>input_21</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>input_22</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0" colspan="3">
     <spacer name="verticalSpacerBottom">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -160,7 +27,144 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="3">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
+      <widget class="QGroupBox" name="groupBoxOutputs">
+       <property name="title">
+        <string>Outputs</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBoxOutputElement_1">
+          <property name="title">
+           <string>Output list 1</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="0">
+            <widget class="QListWidget" name="listWidgetOutputIElement_1">
+             <item>
+              <property name="text">
+               <string>output_1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>output_2</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QGroupBox" name="groupBoxInputs">
+       <property name="title">
+        <string>Inputs</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBoxInputElement_1">
+          <property name="title">
+           <string>Input list 1</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="0" column="0">
+            <widget class="QListWidget" name="listWidgetInputElement_1">
+             <item>
+              <property name="text">
+               <string>input_11</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>input_12</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="groupBoxInputElement_2">
+          <property name="title">
+           <string>Input list 2</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="0" column="0">
+            <widget class="QListWidget" name="listWidgetInputElement_2">
+             <item>
+              <property name="text">
+               <string>input_21</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>input_22</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QGroupBox" name="groupBoxTransforms">
+       <property name="title">
+        <string>Transforms</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButtonTransformElement_1">
+          <property name="text">
+           <string>Transform 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButtonTransformElement_2">
+          <property name="text">
+           <string>Transform 2</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QGroupBox" name="groupBoxActions">
+       <property name="title">
+        <string>Actions</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButtonActionElement_1">
+          <property name="text">
+           <string>Action 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButtonActionElement_2">
+          <property name="text">
+           <string>Action 2</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="2">
     <spacer name="horizontalSpacerRight">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

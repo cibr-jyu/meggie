@@ -86,32 +86,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     # first create basic layout
 
-                    self.gridLayoutRoot = QtWidgets.QGridLayout(self)
+                    self.gridLayoutContainer = QtWidgets.QGridLayout(self)
 
-                    self.groupBoxOutputs = QtWidgets.QGroupBox(self)
-                    self.groupBoxOutputs.setTitle('Outputs')
-                    self.gridLayoutOutputs = QtWidgets.QGridLayout(self.groupBoxOutputs)
-                    self.gridLayoutRoot.addWidget(self.groupBoxOutputs, 0, 2, 1, 1)
+                    self.gridLayoutRoot = QtWidgets.QGridLayout()
+                    self.gridLayoutContainer.addLayout(self.gridLayoutRoot, 0, 0, 1, 1)
 
-                    self.groupBoxActions = QtWidgets.QGroupBox(self)
-                    self.groupBoxActions.setTitle('Actions')
-                    self.gridLayoutActions = QtWidgets.QGridLayout(self.groupBoxActions)
-                    self.gridLayoutRoot.addWidget(self.groupBoxActions, 1, 2, 1, 1)
+                    if tab_spec.get('outputs'):
+                        self.groupBoxOutputs = QtWidgets.QGroupBox(self)
+                        self.groupBoxOutputs.setTitle('Outputs')
+                        self.gridLayoutOutputs = QtWidgets.QGridLayout(self.groupBoxOutputs)
 
-                    self.groupBoxTransforms = QtWidgets.QGroupBox(self)
-                    self.groupBoxTransforms.setTitle('Transforms')
-                    self.gridLayoutTransforms = QtWidgets.QGridLayout(self.groupBoxTransforms)
-                    self.gridLayoutRoot.addWidget(self.groupBoxTransforms, 1, 0, 1, 1)
-                    
-                    self.groupBoxInputs = QtWidgets.QGroupBox(self)
-                    self.groupBoxInputs.setTitle('Inputs')
-                    self.gridLayoutInputs = QtWidgets.QGridLayout(self.groupBoxInputs)
-                    self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 1, 1)
+                    if tab_spec.get('actions'):
+                        self.groupBoxActions = QtWidgets.QGroupBox(self)
+                        self.groupBoxActions.setTitle('Actions')
+                        self.gridLayoutActions = QtWidgets.QGridLayout(self.groupBoxActions)
 
-                    spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-                    self.gridLayoutRoot.addItem(spacerItem, 2, 0, 1, 1)
-                    spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-                    self.gridLayoutRoot.addItem(spacerItem1, 0, 3, 1, 1)
+                    if tab_spec.get('transforms'):
+                        self.groupBoxTransforms = QtWidgets.QGroupBox(self)
+                        self.groupBoxTransforms.setTitle('Transforms')
+                        self.gridLayoutTransforms = QtWidgets.QGridLayout(self.groupBoxTransforms)
+                        
+                    if tab_spec.get('inputs'):
+                        self.groupBoxInputs = QtWidgets.QGroupBox(self)
+                        self.groupBoxInputs.setTitle('Inputs')
+                        self.gridLayoutInputs = QtWidgets.QGridLayout(self.groupBoxInputs)
+
 
                     # then fill the contents
 
@@ -160,6 +159,32 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.gridLayoutActions.addWidget(pushButtonActionElement, idx, 0, 1, 1)
                         setattr(self, 'pushButtonActionElement_' + str(idx+1), 
                                 pushButtonActionElement)
+
+                    if tab_spec.get('inputs') and not tab_spec.get('transforms'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 2, 1)
+                    elif tab_spec.get('inputs'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 1, 1)
+
+                    if tab_spec.get('outputs') and not tab_spec.get('actions'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxOutputs, 0, 1, 2, 1)
+                    elif tab_spec.get('outputs'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxOutputs, 0, 1, 1, 1)
+
+                    if tab_spec.get('transforms') and not tab_spec.get('inputs'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxTransforms, 0, 0, 2, 1)
+                    elif tab_spec.get('transforms'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxTransforms, 1, 0, 1, 1)
+
+                    if tab_spec.get('actions') and not tab_spec.get('outputs'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxActions, 0, 1, 2, 1)
+                    elif tab_spec.get('actions'):
+                        self.gridLayoutRoot.addWidget(self.groupBoxActions, 1, 1, 1, 1)
+
+                    spacerItemVertical = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+                    self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
+                    spacerItemHorizontal = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+                    self.gridLayoutContainer.addItem(spacerItemHorizontal, 0, 1, 1, 1)
+
 
                 def initialize_ui(self):
                     pass
