@@ -11,7 +11,7 @@
         {
             "id": "spectrums",
             "name": "Spectrums",
-            "outputs": ["spectrum"],
+            "outputs": ["spectrums"],
             "transforms": ["compute"],
             "actions": ["plot_spectrum", "save"]
         },
@@ -24,10 +24,10 @@
             "actions": ["plot_epochs"]
         },
         {
-            "id": "averaging",
+            "id": "evoked",
             "name": "Averaging",
             "inputs": ["epochs"],
-            "outputs": ["evoked"],
+            "outputs": ["evokeds"],
             "transforms": ["compute"],
             "actions": ["plot_evoked_potential", "plot_topomaps", "save"]
         },
@@ -35,7 +35,7 @@
             "id": "induced",
             "name": "Induced responses",
             "inputs": ["epochs"],
-            "outputs": ["tfr"],
+            "outputs": ["tfrs"],
             "transforms": ["compute"],
             "actions": ["plot_tfr", "plot_tse", "save"]
         }
