@@ -5,6 +5,8 @@ import logging
 
 from PyQt5 import QtWidgets
 
+from meggie.utilities.messaging import exc_messagebox
+
 """
 """
 def construct_tab(tab_spec, parent):
@@ -108,7 +110,10 @@ def construct_tab(tab_spec, parent):
                                 continue
                             data.append((name, selected_items))
 
-                        handler(subject, data)
+                        try:
+                            handler(subject, data)
+                        except Exception as e:
+                            exc_messagebox(self, e)
                         
                     if handler:
                         button.clicked.connect(handler_wrapper)

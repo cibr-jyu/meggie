@@ -7,7 +7,6 @@ from PyQt5 import QtCore
 
 from PyQt5.QtWidgets import QAbstractItemView
 
-
 from meggie.ui.general.tabs.mainWindowTabPreprocessingUi import Ui_mainWindowTabPreprocessing  # noqa
 
 from meggie.ui.utils.messaging import messagebox
