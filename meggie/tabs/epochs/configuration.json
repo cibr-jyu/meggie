@@ -2,7 +2,12 @@
 	"id": "epoching",
 	"name": "Epoching",
 	"inputs": [],
-	"transforms": ["create"],
+	"transforms": ["create", "delete", "delete_from_all"],
 	"outputs": ["epochs"],
-	"actions": ["plot_epochs"]
+	"actions": ["plot_epochs"],
+    "info": ["epochs_info"],
+    "translations": {"create": "Create new collection",
+                     "delete": "Delete selected collection",
+                     "delete_from_all": "Delete selected collection from all",
+                     "plot_epochs": "Plot epochs"}
 }

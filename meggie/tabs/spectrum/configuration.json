@@ -3,6 +3,16 @@
 	"name": "Spectrums",
 	"outputs": ["spectrums"],
 	"transforms": ["compute"],
-	"actions": ["plot_spectrum", "save"],
-    "translations": {"plot_spectrum": "Plot spectrum"}
+	"actions": ["group_average",
+                "delete_spectrum",
+                "delete_from_all",
+                "plot_spectrum",
+                "save",
+                "save_from_all"],
+    "translations": {"plot_spectrum": "Plot spectrum",
+                     "group_average": "Average over subjects",
+                     "delete_spectrum": "Delete selected spectrum",
+                     "delete_from_all": "Delete selected spectrum from all",
+                     "save": "Save selected spectrum",
+                     "save_from_all": "Save selected spectrum from all"}
 }

@@ -61,6 +61,10 @@ def construct_tab(package, tab_spec, parent):
                 self.groupBoxInputs.setTitle('Inputs')
                 self.gridLayoutInputs = QtWidgets.QGridLayout(self.groupBoxInputs)
 
+            if tab_spec.get('info'):
+                self.groupBoxInfo = QtWidgets.QGroupBox(self)
+                self.groupBoxInfo.setTitle('Info')
+                self.gridLayoutInfo = QtWidgets.QGridLayout(self.groupBoxInfo)
 
             # then fill the contents
 
@@ -113,20 +117,26 @@ def construct_tab(package, tab_spec, parent):
                         if not subject:
                             return
 
-                        data = []
-                        for idx, name in enumerate(self.tab_spec.get(data_type, [])):
-                            if data_type == 'inputs':
-                                ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
-                            elif data_type == 'outputs':
-                                ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
+                        data = {'inputs': [],
+                                'outputs': []}
 
+                        inputs = [] 
+                        for idx, name in enumerate(self.tab_spec.get('inputs', [])):
+                            ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
+                            try:
+                                selected_items = [item.text() for item in ui_element.selectedItems()]
+                            except:
+                                continue
+                            data['inputs'].append((name, selected_items))
+                    
+                        for idx, name in enumerate(self.tab_spec.get('outputs', [])):
+                            ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
                             try:
                                 selected_items = [item.text() for item in 
                                                   ui_element.selectedItems()]
                             except:
                                 continue
-
-                            data.append((name, selected_items))
+                            data['outputs'].append((name, selected_items))
 
                         try:
                             handler(experiment, data, parent)
@@ -169,6 +179,22 @@ def construct_tab(package, tab_spec, parent):
 
                 connect_to_handler(pushButtonActionElement, action_element, 'outputs')
 
+            for idx, info_element in enumerate(tab_spec.get('info', [])):
+                groupBoxInfoElement = QtWidgets.QGroupBox(self.groupBoxInfo)
+                groupBoxInfoElement.setTitle(info_element.capitalize())
+                gridLayoutInfoElement = QtWidgets.QGridLayout(groupBoxInfoElement)
+                listWidgetInfoElement = QtWidgets.QListWidget(groupBoxInfoElement)
+
+                gridLayoutInfoElement.addWidget(listWidgetInfoElement, idx, 0, 1, 1)
+                self.gridLayoutInfo.addWidget(groupBoxInfoElement)
+
+                setattr(self, 'groupBoxInfoElement_' + str(idx+1), 
+                        groupBoxInfoElement)
+                setattr(self, 'gridLayoutInfoElement_' + str(idx+1), 
+                        gridLayoutInfoElement)
+                setattr(self, 'listWidgetInfoElement_' + str(idx+1), 
+                        listWidgetInfoElement)
+
             if tab_spec.get('inputs') and not tab_spec.get('transforms'):
                 self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 2, 1)
             elif tab_spec.get('inputs'):
@@ -188,6 +214,9 @@ def construct_tab(package, tab_spec, parent):
                 self.gridLayoutRoot.addWidget(self.groupBoxActions, 0, 1, 2, 1)
             elif tab_spec.get('actions'):
                 self.gridLayoutRoot.addWidget(self.groupBoxActions, 1, 1, 1, 1)
+
+            if tab_spec.get('info'):
+                self.gridLayoutRoot.addWidget(self.groupBoxInfo, 0, 2, 2, 1)
 
             spacerItemVertical = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
             self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
