@@ -378,6 +378,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.labelSamplesValue.clear()
         self.ui.labelSubjectValue.clear()
 
+        self.ui.checkBoxMaxfiltered.setChecked(False)
+        self.ui.checkBoxICAApplied.setChecked(False)
+        self.ui.checkBoxRereferenced.setChecked(False)
+
+
         self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
 
         self.populate_subject_list()
@@ -410,6 +415,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.populate_raw_tab_event_list()
         except:
             pass
+
+        # Check whether sss/tsss method is applied.
+        if active_subject.check_sss_applied():
+            self.ui.checkBoxMaxfiltered.setChecked(True)
+
+        # Check whether ICA method is applied.
+        if active_subject.ica_applied:
+            self.ui.checkBoxICAApplied.setChecked(True)
+
+        # Check whether Rereferenceing is applied.
+        if active_subject.rereferenced:
+            self.ui.checkBoxRereferenced.setChecked(True)
 
     def populate_subject_list(self):
         """ """
