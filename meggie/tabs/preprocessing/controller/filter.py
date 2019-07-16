@@ -3,9 +3,9 @@
 
 import logging
 
-import meggie.code_meggie.general.fileManager as fileManager
+import meggie.utilities.fileManager as fileManager
 
-from meggie.ui.utils.decorators import threaded
+from meggie.utilities.decorators import threaded
 
 
 @threaded
@@ -16,10 +16,10 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
     lowpass, highpass and bandstop (notch) filter.
     """
 
-    dataToFilter = subject.get_working_file()
+    raw = subject.get_working_file()
 
     if preview:
-        dataToFilter = dataToFilter.copy()
+        raw = raw.copy()
 
     hfreq = dic['low_cutoff_freq'] if dic['lowpass'] else None
     lfreq = dic['high_cutoff_freq'] if dic['highpass'] else None
@@ -27,7 +27,7 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
     trans_bw = dic['trans_bw']
 
     logging.getLogger('ui_logger').info("Filtering.")
-    dataToFilter.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
+    raw.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
                         l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
                         method='fft', fir_design='firwin')
 
@@ -41,12 +41,12 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
         trans_bw = dic['bandstop_transbw']
 
         logging.getLogger('ui_logger').info("Band-stop filtering.")
-        dataToFilter.notch_filter(freqs, picks=None, filter_length=length,
-                                  notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
+        raw.notch_filter(freqs, picks=None, filter_length=length,
+                         notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
 
     if not preview:
-        fname = dataToFilter.filenames[0]
-        fileManager.save_raw(experiment, dataToFilter,
+        fname = raw.filenames[0]
+        fileManager.save_raw(experiment, raw,
                              fname, overwrite=True)
 
-    return dataToFilter
+    return raw 

@@ -1,16 +1,11 @@
 """
 """
 
-import sys
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from meggie.ui.widgets.batchingWidgetUi import Ui_BatchingWidget
-
-from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.messaging import exc_messagebox
-
-from copy import deepcopy
+from meggie.utilities.widgets.batchingWidgetUi import Ui_BatchingWidget
+from meggie.utilities.messaging import messagebox
 
 
 class BatchingWidget(QtWidgets.QWidget):

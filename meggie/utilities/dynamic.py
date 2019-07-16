@@ -119,7 +119,8 @@ def construct_tab(tab_spec, parent):
                         
                     if handler:
                         button.clicked.connect(handler_wrapper)
-                except ModuleNotFoundError:
+                except ModuleNotFoundError as exc:
+                    # If buttons stop working, debug here
                     pass
                 except AttributeError:
                     pass

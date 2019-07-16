@@ -9,30 +9,28 @@ from copy import deepcopy
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from meggie.ui.preprocessing.filterDialogUi import Ui_DialogFilter
-from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+from meggie.tabs.preprocessing.dialogs.filterDialogUi import Ui_DialogFilter
+from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
+from meggie.utilities.compare import compare_raws
 
-from meggie.code_meggie.preprocessing.filter import filter_data
+from meggie.tabs.preprocessing.controller.filter import filter_data
 
-from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
 class FilterDialog(QtWidgets.QDialog):
     """
-    Class containing the logic for filterDialog. It collects the parameters
-    needed for filtering and shows the preview for the filter if required.
     """
 
     def __init__(self, parent, experiment):
-        QtWidgets.QDialog.__init__(self)
-        self.parent = parent
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_DialogFilter()
         self.ui.setupUi(self)
 
+        self.parent = parent
         self.experiment = experiment
 
-        self.filterParameterDictionary = None
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
             parent=self,
@@ -51,7 +49,7 @@ class FilterDialog(QtWidgets.QDialog):
 
         params = self.collect_parameter_values()
         if not params:
-            message = 'Please select filter(s) to preview'
+            message = 'No filter(s) selected.'
             messagebox(self.parent, message)
             return
 
@@ -64,14 +62,15 @@ class FilterDialog(QtWidgets.QDialog):
         params['bandstop_length'] = params['bandstop_length'] + 's'
 
         try:
-            raw = filter_data(self.experiment,
-                              params,
-                              subject,
-                              preview=True,
-                              do_meanwhile=self.parent.update_ui)
-            raw.plot(block=True)
-        except BaseException:
-            pass
+            raw_to = filter_data(self.experiment,
+                                 params,
+                                 subject,
+                                 preview=True,
+                                 do_meanwhile=self.parent.update_ui)
+            raw_from = subject.get_working_file()
+            compare_raws(raw_from, raw_to)
+        except Exception as exc:
+            exc_messagebox(self.parent, exc)
 
     def accept(self):
         """
@@ -81,7 +80,7 @@ class FilterDialog(QtWidgets.QDialog):
         subject = self.experiment.active_subject
         params = self.collect_parameter_values()
         if not params:
-            message = 'Please select some filters first'
+            message = 'No filter(s) selected'
             messagebox(self.parent, message)
             return
 
@@ -93,7 +92,7 @@ class FilterDialog(QtWidgets.QDialog):
             exc_messagebox(self.parent, exc)
             logging.getLogger('ui_logger').exception(str(exc))
 
-        self.parent.parent.initialize_ui()
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
@@ -104,7 +103,7 @@ class FilterDialog(QtWidgets.QDialog):
         subject_names = self.batching_widget.selected_subjects
         params = self.collect_parameter_values()
         if not params:
-            message = 'Please select some filters first'
+            message = 'No filter(s) selected'
             messagebox(self.parent, message)
             return
 
@@ -122,7 +121,7 @@ class FilterDialog(QtWidgets.QDialog):
         self.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
 
-        self.parent.parent.initialize_ui()
+        self.parent.initialize_ui()
         self.close()
 
     def collect_parameter_values(self):
@@ -171,11 +170,7 @@ class FilterDialog(QtWidgets.QDialog):
         return dictionary
 
     def filter(self, subject, params):
-        """Calls filter_data for filtering the given
-        subject and passes errors to accept method.
-
-        Keyword arguments:
-        subject               -- Subject object
+        """
         """
         # mne-python wants the lengths to be human-readable values
         params = deepcopy(params)
