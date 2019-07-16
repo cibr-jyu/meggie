@@ -1,0 +1,8 @@
+{
+	"id": "induced",
+	"name": "Induced responses",
+	"inputs": ["epochs"],
+	"outputs": ["tfrs"],
+	"transforms": ["compute"],
+	"actions": ["plot_tfr", "plot_tse", "save"]
+}

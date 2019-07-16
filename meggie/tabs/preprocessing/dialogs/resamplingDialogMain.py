@@ -4,26 +4,24 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.preprocessing.resamplingDialogUi import Ui_resamplingDialog
-from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.decorators import threaded
+from meggie.tabs.preprocessing.dialogs.resamplingDialogUi import Ui_resamplingDialog
+from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
-from meggie.code_meggie.preprocessing.resampling import resample
-
-from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
-
+from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.decorators import threaded
+from meggie.tabs.preprocessing.controller.resampling import resample
 
 class ResamplingDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, experiment):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_resamplingDialog()
         self.ui.setupUi(self)
-        self.parent = parent
 
         self.experiment = experiment
+        self.parent = parent
 
         subject = self.experiment.active_subject
         raw = subject.get_working_file()
@@ -56,7 +54,7 @@ class ResamplingDialog(QtWidgets.QDialog):
         logging.getLogger('ui_logger').info('Resampling done successfully from ' +
                                             str(old_rate) + ' to ' + str(rate))
 
-        self.parent.parent.initialize_ui()
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
@@ -91,5 +89,5 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         self.batching_widget.cleanup()
 
-        self.parent.parent.initialize_ui()
+        self.parent.initialize_ui()
         self.close()

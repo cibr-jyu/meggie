@@ -2,6 +2,8 @@
 """
 from meggie.tabs.preprocessing.dialogs.icaDialogMain import ICADialog
 from meggie.tabs.preprocessing.dialogs.filterDialogMain import FilterDialog
+from meggie.tabs.preprocessing.dialogs.resamplingDialogMain import ResamplingDialog
+from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import RereferencingDialog
 
 
 def plot(experiment, data, parent):
@@ -54,3 +56,25 @@ def filter(experiment, data, parent):
 
     filter_dialog = FilterDialog(parent, experiment)
     filter_dialog.show()
+
+
+def resample(experiment, data, parent):
+    """
+    """
+    subject = experiment.active_subject
+    if not subject:
+        return
+
+    resampling_dialog = ResamplingDialog(parent, experiment)
+    resampling_dialog.show()
+
+
+def rereference(experiment, data, parent):
+    """
+    """
+    subject = experiment.active_subject
+    if not subject:
+        return
+
+    rereferencing_dialog = RereferencingDialog(parent, experiment)
+    rereferencing_dialog.show()

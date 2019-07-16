@@ -1,4 +1,4 @@
-import meggie.code_meggie.general.fileManager as fileManager
+import meggie.utilities.fileManager as fileManager
 
 
 def resample(experiment, raw, fname, rate):

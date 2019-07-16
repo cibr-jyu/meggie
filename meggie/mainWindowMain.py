@@ -14,6 +14,7 @@ import meggie.utilities.mne_wrapper as mne
 import meggie.utilities.fileManager as fileManager
 
 from meggie.utilities.dynamic import construct_tab
+from meggie.utilities.dynamic import find_tab_spec_by_id
 
 from meggie.mainWindowUi import Ui_MainWindow
 from meggie.icons import mainWindowIcons_rc
@@ -69,13 +70,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.experimentHandler = ExperimentHandler(self)
 
         self.tabs = []
+
         config_path = pkg_resources.resource_filename(
             'meggie', 'configuration.json')
         with open(config_path, 'r') as f:
-            tab_config = json.load(f)
+            config = json.load(f)
 
-        for tab_spec in tab_config['tabs']:
-            tab = construct_tab(tab_spec, self)
+        for tab_id in config['tabs']:
+            package, tab_spec = find_tab_spec_by_id(tab_id)
+            tab = construct_tab(package, tab_spec, self)
             self.tabs.append(tab)
 
         # Creates a label on status bar to show current working file message.

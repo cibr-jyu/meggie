@@ -1,5 +1,8 @@
 # coding: utf-8
 
+import os
+import json
+import pkg_resources
 import importlib
 import logging
 
@@ -7,9 +10,23 @@ from PyQt5 import QtWidgets
 
 from meggie.utilities.messaging import exc_messagebox
 
-"""
-"""
-def construct_tab(tab_spec, parent):
+
+def find_tab_spec_by_id(tab_id):
+    tab_path = pkg_resources.resource_filename('meggie', 'tabs')
+    for package in os.listdir(tab_path):
+        config_path = os.path.join(tab_path, package, 'configuration.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+                if config.get('id') == tab_id:
+                    return package, config
+    raise Exception('Tab specified in root configuration file not present ' +
+                    'in the tabs folder')
+
+
+def construct_tab(package, tab_spec, parent):
+    """
+    """
 
     class DynamicTab(QtWidgets.QDialog):
         def __init__(self, parent):
@@ -81,7 +98,7 @@ def construct_tab(tab_spec, parent):
 
             # connect to handler
             def connect_to_handler(button, element, data_type):
-                module_name = tab_spec['id']
+                module_name = package
                 try:
                     module = importlib.import_module(
                         '.'.join(['meggie', 'tabs', module_name, 'ui']))
@@ -91,7 +108,6 @@ def construct_tab(tab_spec, parent):
                         experiment = self.parent.experiment
                         if not experiment:
                             return
-
 
                         subject = experiment.active_subject
                         if not subject:
@@ -126,8 +142,13 @@ def construct_tab(tab_spec, parent):
                     pass
 
             for idx, transform_element in enumerate(tab_spec.get('transforms', [])):
+                if transform_element in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][transform_element]
+                else:
+                    title = transform_element.capitalize()
+
                 pushButtonTransformElement = QtWidgets.QPushButton(self.groupBoxTransforms)
-                pushButtonTransformElement.setText(transform_element.capitalize())
+                pushButtonTransformElement.setText(title)
                 self.gridLayoutTransforms.addWidget(pushButtonTransformElement, idx, 0, 1, 1)
                 setattr(self, 'pushButtonTransformElement_' + str(idx+1), 
                         pushButtonTransformElement)
@@ -135,8 +156,13 @@ def construct_tab(tab_spec, parent):
                 connect_to_handler(pushButtonTransformElement, transform_element, 'inputs')
 
             for idx, action_element in enumerate(tab_spec.get('actions', [])):
+                if action_element in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][action_element]
+                else:
+                    title = action_element.capitalize()
+
                 pushButtonActionElement = QtWidgets.QPushButton(self.groupBoxActions)
-                pushButtonActionElement.setText(action_element.capitalize())
+                pushButtonActionElement.setText(title)
                 self.gridLayoutActions.addWidget(pushButtonActionElement, idx, 0, 1, 1)
                 setattr(self, 'pushButtonActionElement_' + str(idx+1), 
                         pushButtonActionElement)

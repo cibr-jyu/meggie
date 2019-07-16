@@ -1,0 +1,8 @@
+{
+	"id": "preprocessing",
+	"name": "Preprocessing",
+	"inputs": [],
+	"actions": ["plot", "ica", "filter",
+				"resample", "rereference",
+				"projections"]
+}

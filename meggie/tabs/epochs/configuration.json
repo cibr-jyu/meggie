@@ -1,0 +1,8 @@
+{
+	"id": "epoching",
+	"name": "Epoching",
+	"inputs": [],
+	"transforms": ["create"],
+	"outputs": ["epochs"],
+	"actions": ["plot_epochs"]
+}

@@ -1,0 +1,8 @@
+{
+	"id": "spectrums",
+	"name": "Spectrums",
+	"outputs": ["spectrums"],
+	"transforms": ["compute"],
+	"actions": ["plot_spectrum", "save"],
+    "translations": {"plot_spectrum": "Plot spectrum"}
+}

@@ -6,12 +6,12 @@ import numpy as np
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.preprocessing.rereferencingDialogUi import Ui_rereferencingDialog
-from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.decorators import threaded
+from meggie.tabs.preprocessing.dialogs.rereferencingDialogUi import Ui_rereferencingDialog
+from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.decorators import threaded
 
-import meggie.code_meggie.general.mne_wrapper as mne
-import meggie.code_meggie.general.fileManager as fileManager
+import meggie.utilities.mne_wrapper as mne
+import meggie.utilities.fileManager as fileManager
 
 
 class RereferencingDialog(QtWidgets.QDialog):
@@ -19,12 +19,12 @@ class RereferencingDialog(QtWidgets.QDialog):
     def __init__(self, parent, experiment):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_rereferencingDialog()
         self.ui.setupUi(self)
-        self.parent = parent
 
         self.experiment = experiment
+        self.parent = parent
 
         subject = self.experiment.active_subject
         raw = subject.get_working_file()

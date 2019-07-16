@@ -1,0 +1,8 @@
+{
+	"id": "evoked",
+	"name": "Averaging",
+	"inputs": ["epochs"],
+	"outputs": ["evokeds"],
+	"transforms": ["compute"],
+	"actions": ["plot_evoked_potential", "plot_topomaps", "save"]
+}
