@@ -1,2 +1,9 @@
+"""
+"""
+
 def plot(subject, data):
-    print("Plot success for " + subject.subject_name)
+    raw = subject.get_working_file()
+    if raw:
+        raw.plot()
+    
+
