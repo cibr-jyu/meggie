@@ -10,6 +10,8 @@ import numpy as np
 import meggie.utilities.mne_wrapper as mne
 import meggie.utilities.fileManager as fileManager
 
+from meggie.utilities.compare import compare_raws
+
 
 def compute_ica(raw, n_components, method, max_iter):
     """
@@ -80,60 +82,9 @@ def plot_properties(raw, ica, picks, layout):
 def plot_changes(raw, ica, indices):
     """
     """
-
     raw_removed = raw.copy()
-    raw_old = raw.copy()
     ica.apply(raw_removed, exclude=indices)
-
-    # remove bads
-    bads = raw.info['bads']
-    raw_removed.drop_channels(bads)
-    raw_old.drop_channels(bads)
-
-    changes_raw = _prepare_raw_for_changes(raw_removed, raw_old)
-    changes_raw.plot(color='red', bad_color='blue')
-
-
-def _prepare_raw_for_changes(raw_new, raw_old):
-    """ Modifies first raw object in place so that the second raw object is
-    interleaved to first one
-    """
-
-    new_info = raw_old.info.copy()
-    new_info['nchan'] = 2 * raw_old.info['nchan']
-
-    ch_names = []
-    for ch_name in raw_old.info['ch_names']:
-        ch_names.append(ch_name + ' (old)')
-        ch_names.append(ch_name + ' (new)')
-    new_info['ch_names'] = ch_names
-
-    chs = []
-    for idx, ch in enumerate(raw_old.info['chs']):
-        ch_1 = deepcopy(ch)
-        ch_1['ch_name'] = new_info['ch_names'][idx * 2]
-        chs.append(ch_1)
-
-        ch_2 = deepcopy(ch)
-        ch_2['ch_name'] = new_info['ch_names'][idx * 2 + 1]
-        chs.append(ch_2)
-    new_info['chs'] = chs
-
-    new_info['bads'] = [name for idx, name in enumerate(new_info['ch_names'])
-                        if idx % 2 == 0]
-
-    raw_new.info = new_info
-
-    raw_old_data = raw_old._data
-    raw_new_data = raw_new._data
-
-    data = np.zeros((raw_old_data.shape[0] * 2, raw_old_data.shape[1]))
-    data[0::2, :] = raw_old_data
-    data[1::2, :] = raw_new_data
-
-    raw_new._data = data
-
-    return raw_new
+    compare_raws(raw, raw_removed)
 
 
 def apply_ica(raw, experiment, ica, indices):
