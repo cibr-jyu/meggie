@@ -7,17 +7,18 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.preprocessing.icaDialogUi import Ui_Dialog
-from meggie.ui.utils.decorators import threaded
+from meggie.tabs.preprocessing.dialogs.icaDialogUi import Ui_Dialog
 
-from meggie.code_meggie.preprocessing.ica import plot_topographies
-from meggie.code_meggie.preprocessing.ica import plot_sources
-from meggie.code_meggie.preprocessing.ica import plot_properties
-from meggie.code_meggie.preprocessing.ica import plot_changes
-from meggie.code_meggie.preprocessing.ica import compute_ica
-from meggie.code_meggie.preprocessing.ica import apply_ica
+from meggie.utilities.decorators import threaded
 
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.tabs.preprocessing.controller.ica import plot_topographies
+from meggie.tabs.preprocessing.controller.ica import plot_sources
+from meggie.tabs.preprocessing.controller.ica import plot_properties
+from meggie.tabs.preprocessing.controller.ica import plot_changes
+from meggie.tabs.preprocessing.controller.ica import compute_ica
+from meggie.tabs.preprocessing.controller.ica import apply_ica
+
+from meggie.utilities.messaging import exc_messagebox
 
 
 class ICADialog(QtWidgets.QDialog):
@@ -25,11 +26,11 @@ class ICADialog(QtWidgets.QDialog):
     """
 
     def __init__(self, parent, experiment):
-        QtWidgets.QDialog.__init__(self)
-        self.parent = parent
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.parent = parent
         self.experiment = experiment
 
         # change normal list widgets to multiselect widgets
@@ -38,9 +39,9 @@ class ICADialog(QtWidgets.QDialog):
         self.ui.listWidgetRemoved.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
 
-        self.initialize()
+        self.reset()
 
-    def initialize(self):
+    def reset(self):
         """ Resets all the storage
         """
         self.ica = None
@@ -57,7 +58,7 @@ class ICADialog(QtWidgets.QDialog):
             return
 
         # start by clearing out the previous things
-        self.initialize()
+        self.reset()
 
         n_components = self.ui.doubleSpinBoxNComponents.value()
         method = 'fastica'
@@ -236,6 +237,7 @@ class ICADialog(QtWidgets.QDialog):
 
         logging.getLogger('ui_logger').info('ICA applied successfully.')
 
-        self.initialize()
+        self.reset()
         self.parent.initialize_ui()
+
         self.close()

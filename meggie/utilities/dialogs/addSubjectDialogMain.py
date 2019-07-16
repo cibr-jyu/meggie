@@ -31,7 +31,6 @@ class AddSubjectDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.parent = parent
-        self.ui.pushButtonShowFileInfo.setEnabled(False)
 
     def find_next_available_name(self, name):
         # Check if the subject is already added to the experiment.
@@ -106,7 +105,3 @@ class AddSubjectDialog(QtWidgets.QDialog):
             self.ui.pushButtonRemove.setEnabled(True)
         else:
             self.ui.pushButtonRemove.setEnabled(False)
-        if len(items) == 1:
-            self.ui.pushButtonShowFileInfo.setEnabled(True)
-        else:
-            self.ui.pushButtonShowFileInfo.setEnabled(False)

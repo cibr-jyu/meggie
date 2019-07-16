@@ -335,20 +335,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.initialize_ui()
 
-    # def get_epochs(self, epoch_name):
-    #     experiment = self.experiment
-    #     if not experiment:
-    #         return
-
-    #     active_subject = experiment.active_subject
-    #     if not active_subject:
-    #         return
-
-    #     return active_subject.epochs.get(epoch_name)
-
     def update_ui(self):
         """
-        Method for repainting the ui.
         Used for keeping the ui responsive when threading.
         """
         QApplication.processEvents()

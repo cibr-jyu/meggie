@@ -92,6 +92,7 @@ def construct_tab(tab_spec, parent):
                         if not experiment:
                             return
 
+
                         subject = experiment.active_subject
                         if not subject:
                             return
@@ -108,10 +109,11 @@ def construct_tab(tab_spec, parent):
                                                   ui_element.selectedItems()]
                             except:
                                 continue
+
                             data.append((name, selected_items))
 
                         try:
-                            handler(subject, data)
+                            handler(experiment, data, parent)
                         except Exception as e:
                             exc_messagebox(self, e)
                         
