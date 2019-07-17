@@ -64,7 +64,7 @@ class ICADialog(QtWidgets.QDialog):
         method = 'fastica'
         max_iter = self.ui.spinBoxMaxIter.value()
 
-        raw = self.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_raw()
 
         @threaded
         def _compute_ica():
@@ -153,7 +153,7 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_raw()
 
         try:
             plot_sources(raw, self.ica)
@@ -172,7 +172,7 @@ class ICADialog(QtWidgets.QDialog):
         if not picks:
             return
 
-        raw = self.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_raw()
 
         layout = self.experiment.layout
 
@@ -188,7 +188,7 @@ class ICADialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        raw = self.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_raw()
 
         indices = [self.component_info[name] for name in self.removed]
 
@@ -222,7 +222,7 @@ class ICADialog(QtWidgets.QDialog):
         if not self.ica:
             return
 
-        raw = self.experiment.active_subject.get_working_file()
+        raw = self.experiment.active_subject.get_raw()
 
         indices = [self.component_info[name] for name in self.removed]
 

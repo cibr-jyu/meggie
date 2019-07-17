@@ -15,27 +15,23 @@ import meggie.utilities.fileManager as fileManager
 class Spectrum(object):
 
     """
-    A class for creating and handling spectrums
-
     """
-
-    def __init__(self, name, subject, log_transformed, data, freqs, ch_names):
+    def __init__(self, name, spectrum_directory, params, content=None):
         """
         """
         # name has no group number and no '.fif'
         self._name = name
 
-        if not data:
-            self._data = {}
+        if not content:
+            self._content = {}
         else:
-            self._data = data
+            self._content = content
 
-        self._freqs = freqs
-        self._spectrums_directory = subject.spectrums_directory
-        self._ch_names = ch_names
-        self._log_transformed = log_transformed
+        self._spectrums_directory = spectrums_directory
 
-    def _load_data(self):
+        self._params = params
+
+    def _load_content(self):
         template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrums_directory):
             match = re.match(template, fname)
@@ -52,16 +48,14 @@ class Spectrum(object):
 
                 freqs = np.array(freqs).astype(np.float)
 
-                self._ch_names = ch_names
-                self._freqs = np.array(freqs)
-                self._data[key] = np.array(psd)
+                self._content[key] = np.array(psd)
 
-    def save_data(self):
+    def save_content(self):
 
         # if exists, delete first
-        self.delete_data()
+        self.delete_content()
 
-        for key, psd in self.data.items():
+        for key, psd in self.content.items():
 
             row_names = self._ch_names
             column_names = self._freqs.tolist()
@@ -72,7 +66,7 @@ class Spectrum(object):
 
             fileManager.save_csv(path, data, column_names, row_names)
 
-    def delete_data(self):
+    def delete_content(self):
         template = self.name + '_' + r'[0-9]*\.csv'
         for fname in os.listdir(self._spectrums_directory):
             if re.match(template, fname):
@@ -81,30 +75,34 @@ class Spectrum(object):
                 os.remove(os.path.join(self._spectrums_directory, fname))
 
     @property
-    def data(self):
-        if not self._data:
-            self._load_data()
+    def content(self):
+        if not self._content:
+            self._load_content()
 
-        return self._data
+        return self._content
 
     @property
     def freqs(self):
-        if self._freqs is None:
-            self._load_data()
-
-        return self._freqs
+        return self._params['freqs']
 
     @property
     def ch_names(self):
-        if self._ch_names is None:
-            self._load_data()
+        return self._params['ch_names']
 
-        return self._ch_names
+    @property
+    def log_transformed(self):
+        return self._params['log_transformed']
 
     @property
     def name(self):
         return self._name
 
     @property
-    def log_transformed(self):
-        return self._log_transformed
+    def params(self):
+        return self._params
+
+    @params.setter
+    def params(self):
+        self._params = params
+
+

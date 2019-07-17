@@ -54,7 +54,7 @@ class FilterDialog(QtWidgets.QDialog):
             return
 
         subject = self.experiment.active_subject
-        info = subject.get_working_file().info
+        info = subject.get_raw(preload=False).info
 
         # mne-python's filter_data takes filter_length in human-readable format
         params = deepcopy(params)
@@ -67,7 +67,7 @@ class FilterDialog(QtWidgets.QDialog):
                                  subject,
                                  preview=True,
                                  do_meanwhile=self.parent.update_ui)
-            raw_from = subject.get_working_file()
+            raw_from = subject.get_raw()
             compare_raws(raw_from, raw_to)
         except Exception as exc:
             exc_messagebox(self.parent, exc)
@@ -84,7 +84,7 @@ class FilterDialog(QtWidgets.QDialog):
             messagebox(self.parent, message)
             return
 
-        info = subject.get_working_file().info
+        info = subject.get_raw(preload=False).info
 
         try:
             self.filter(subject, params)
@@ -98,7 +98,7 @@ class FilterDialog(QtWidgets.QDialog):
     def acceptBatch(self):
         """
         """
-        recently_active_subject = self.experiment.active_subject.subject_name
+        recently_active_subject = self.experiment.active_subject.name
 
         subject_names = self.batching_widget.selected_subjects
         params = self.collect_parameter_values()
@@ -111,7 +111,7 @@ class FilterDialog(QtWidgets.QDialog):
             if name in subject_names:
                 try:
                     self.experiment.activate_subject(name)
-                    info = subject.get_working_file().info
+                    info = subject.get_raw(preload=False).info
                     self.filter(subject, params)
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception(str(exc))

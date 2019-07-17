@@ -22,8 +22,10 @@ from meggie.icons import mainWindowIcons_rc
 from meggie.utilities.units import get_unit
 from meggie.utilities.measurementInfo import MeasurementInfo
 from meggie.utilities.preferences import PreferencesHandler
-from meggie.model.experiment import Experiment
-from meggie.model.experiment import ExperimentHandler
+from meggie.utilities.events import create_event_set
+
+from meggie.experiment import Experiment
+from meggie.experiment import ExperimentHandler
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.messaging import messagebox
@@ -193,7 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 subject_name = index.data()
 
                 try:
-                    self.experiment.remove_subject(subject_name, self)
+                    self.experiment.remove_subject(subject_name)
                 except Exception:
                     failures.append(subject_name)
 
@@ -404,8 +406,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.checkBoxICAApplied.setChecked(False)
         self.ui.checkBoxRereferenced.setChecked(False)
 
+        if not self.experiment:
+            return
 
-        self.setWindowTitle('Meggie - ' + self.experiment.experiment_name)
+        self.setWindowTitle('Meggie - ' + self.experiment.name)
 
         self.populate_subject_list()
 
@@ -416,9 +420,9 @@ class MainWindow(QtWidgets.QMainWindow):
                                      'continuing.')
             return
 
-        raw = active_subject.get_working_file()
+        raw = active_subject.get_raw()
 
-        name = active_subject.working_file_name
+        name = active_subject.raw_fname
         status = "Current working file: " + name
 
         self.statusLabel.setText(status)
@@ -454,7 +458,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """ """
         active_subject_name = None
         if self.experiment and self.experiment.active_subject:
-            active_subject_name = self.experiment.active_subject.subject_name
+            active_subject_name = self.experiment.active_subject.name
 
         for subject_name in sorted(self.experiment.subjects.keys()):
             item = QtWidgets.QListWidgetItem()
@@ -471,13 +475,14 @@ class MainWindow(QtWidgets.QMainWindow):
         amount of events with those IDs.
         """
         events = self.experiment.active_subject.create_event_set()
+        event_counts = create_event_set(
+            self.experiment.active_subject.get_raw(preload=True))
 
-        if not events:
+        if not event_counts:
             events_string = 'No events found.'
         else:
-
             events_string = ''
-            for key, value in events.items():
+            for key, value in event_counts.items():
                 events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
 
         self.ui.textBrowserEvents.setText(events_string)
@@ -575,7 +580,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.experiment:
             logfile = os.path.join(
                 self.experiment.workspace,
-                self.experiment.experiment_name,
+                self.experiment.name,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')
@@ -598,7 +603,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.experiment:
             logfile = os.path.join(
                 self.experiment.workspace,
-                self.experiment.experiment_name,
+                self.experiment.name,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')
@@ -621,7 +626,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.experiment:
             logfile = os.path.join(
                 self.experiment.workspace,
-                self.experiment.experiment_name,
+                self.experiment.name,
                 'meggie.log')
             file_handler = logging.FileHandler(logfile)
             file_handler.setLevel('DEBUG')

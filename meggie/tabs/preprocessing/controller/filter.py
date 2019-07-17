@@ -16,7 +16,7 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
     lowpass, highpass and bandstop (notch) filter.
     """
 
-    raw = subject.get_working_file()
+    raw = subject.get_raw()
 
     if preview:
         raw = raw.copy()

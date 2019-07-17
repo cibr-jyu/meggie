@@ -4,11 +4,12 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.analysis.powerSpectrumEventsDialogUi import Ui_Advanced
-from meggie.ui.utils.messaging import messagebox
-from meggie.ui.epoching.bitSelectionDialogMain import BitSelectionDialog
+from meggie.tabs.spectrums.dialogs.powerSpectrumEventsDialogUi import Ui_Advanced
+from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
+from meggie.utilities.messaging import messagebox
 
-from meggie.code_meggie.structures.events import Events
+from meggie.utilities.events import Events
+from meggie.utilities.events import find_stim_channel
 
 
 class PowerSpectrumEvents(QtWidgets.QDialog):
@@ -49,7 +50,7 @@ class PowerSpectrumEvents(QtWidgets.QDialog):
             messagebox(self, "Please check your inputs")
             return
 
-        raw = self.parent.experiment.active_subject.get_working_file()
+        raw = self.parent.experiment.active_subject.get_raw()
 
         def find_triggers(event_code):
             try:
@@ -57,9 +58,11 @@ class PowerSpectrumEvents(QtWidgets.QDialog):
             except ValueError:
                 id_, mask = int(event_code), 0
 
+            stim_ch = find_stim_channel(raw)
+
             subject = self.parent.experiment.active_subject
             triggers = Events(self.parent.experiment, raw,
-                              stim_ch=subject.find_stim_channel(),
+                              stim_ch=stim_ch,
                               mask=mask, id_=id_).events
 
             return triggers

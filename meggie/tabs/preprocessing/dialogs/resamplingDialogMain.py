@@ -24,7 +24,7 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.parent = parent
 
         subject = self.experiment.active_subject
-        raw = subject.get_working_file()
+        raw = subject.get_raw()
         sfreq = raw.info['sfreq']
 
         self.ui.labelCurrentRateValue.setText(str(sfreq))
@@ -40,8 +40,8 @@ class ResamplingDialog(QtWidgets.QDialog):
 
     def accept(self):
         experiment = self.experiment
-        raw = experiment.active_subject.get_working_file()
-        fname = experiment.active_subject.working_file_path
+        raw = experiment.active_subject.get_raw()
+        fname = experiment.active_subject.raw_fname
 
         old_rate = raw.info['sfreq']
         rate = self.ui.doubleSpinBoxNewRate.value()
@@ -63,14 +63,14 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         selected_subject_names = self.batching_widget.selected_subjects
 
-        recently_active_subject = experiment.active_subject.subject_name
+        recently_active_subject = experiment.active_subject.name
 
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
                     experiment.activate_subject(name)
-                    raw = subject.get_working_file()
-                    fname = subject.working_file_path
+                    raw = subject.get_raw()
+                    fname = subject.raw_fname
 
                     old_rate = raw.info['sfreq']
                     rate = self.ui.doubleSpinBoxNewRate.value()

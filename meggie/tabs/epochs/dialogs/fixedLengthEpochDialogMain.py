@@ -2,32 +2,29 @@
 """
 from PyQt5 import QtWidgets
 
-import meggie.code_meggie.general.mne_wrapper as mne
-import meggie.code_meggie.general.fileManager as fileManager
+import meggie.utilities.mne_wrapper as mne
+import meggie.utilities.fileManager as fileManager
 
-from meggie.ui.epoching.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
+from meggie.tabs.epochs.dialogs.fixedLengthEpochDialogUi import Ui_FixedLengthEpochDialog
 
 
 class FixedLengthEpochDialog(QtWidgets.QDialog):
     """
-    Class containing the logic for FixedLengthEpochDialog. It is used for
-    creating fixed length events.
     """
 
     def __init__(self, parent, experiment):
-        """Initialize the event selection dialog.
-
-        Keyword arguments:
-
-        parent -- Set the parent of this dialog
+        """
         """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_FixedLengthEpochDialog()
         self.ui.setupUi(self)
+
         self.parent = parent
         self.experiment = experiment
+
         self.ui.buttonBox.button(
             QtWidgets.QDialogButtonBox.Ok).setText('Add events')
+
         self.raw = (self.experiment.active_subject
                     .get_working_file(temporary=True))
         tmax = int(self.raw.times[-1])

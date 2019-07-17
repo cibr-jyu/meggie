@@ -11,7 +11,7 @@ from PyQt5 import QtCore
 
 from meggie.utilities.dialogs.createExperimentDialogUi import Ui_CreateExperimentDialog
 
-from meggie.model.experiment import Experiment
+from meggie.experiment import Experiment
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 

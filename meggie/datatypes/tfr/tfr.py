@@ -11,22 +11,14 @@ import meggie.utilities.mne_wrapper as mne
 
 
 class TFR(object):
-
     """
-    A class for creating and handling TFR's
-
     """
-
-    def __init__(self, tfrs, name, subject, decim, n_cycles,
-                 evoked_subtracted):
+    def __init__(self, name, tfr_directory, params, content=None):
         """
         """
-        self._tfrs = tfrs
         self._name = name
-        self._tfr_directory = subject.tfr_directory
-        self._decim = decim
-        self._n_cycles = n_cycles
-        self._evoked_subtracted = evoked_subtracted
+        self._content = content
+        self._tfr_directory = tfr_directory
 
     def _get_fname(self, tfr_name):
         # for backward compatibility
@@ -39,21 +31,21 @@ class TFR(object):
                              name)
         return fname
 
-    def save_tfr(self):
-        for tfr_name, tfr in self._tfrs.items():
+    def save_content(self):
+        for tfr_name, tfr in self._content.items():
             fname = self._get_fname(tfr_name)
             tfr.save(fname, overwrite=True)
 
-    def delete_tfr(self):
-        if not self._tfrs:
+    def delete_content(self):
+        if not self._content:
             return
 
-        for tfr_name, tfr in self._tfrs.items():
+        for tfr_name, tfr in self._content.items():
             fname = self._get_fname(tfr_name)
             os.remove(fname)
 
-    def _load_tfrs(self):
-        self._tfrs = {}
+    def _load_content(self):
+        self._content = {}
         template = self._name + '-' + r'([a-zA-Z1-9_]+)\-tfr\.h5'
         for fname in os.listdir(self._tfr_directory):
             path = None
@@ -74,13 +66,21 @@ class TFR(object):
                 logging.getLogger('ui_logger').debug(
                     'Reading tfr file: ' + str(path))
 
-                self._tfrs[key] = mne.read_tfrs(path)[0]
+                self._content[key] = mne.read_tfrs(path)[0]
 
     @property
-    def tfrs(self):
-        if self._tfrs is None:
-            self._load_tfrs()
-        return self._tfrs
+    def content(self):
+        if self._content is None:
+            self._load_content()
+        return self._content
+
+    @property
+    def params(self):
+        return self._params
+
+    @params.setter
+    def params(self, params):
+        self._params = params
 
     @property
     def name(self):
@@ -88,12 +88,12 @@ class TFR(object):
 
     @property
     def decim(self):
-        return self._decim
+        return self._params['decim']
 
     @property
     def n_cycles(self):
-        return self._n_cycles
+        return self._params['n_cycles']
 
     @property
     def evoked_subtracted(self):
-        return self._evoked_subtracted
+        return self._params['evoked_subtracted']

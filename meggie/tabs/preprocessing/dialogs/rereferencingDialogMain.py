@@ -27,7 +27,7 @@ class RereferencingDialog(QtWidgets.QDialog):
         self.parent = parent
 
         subject = self.experiment.active_subject
-        raw = subject.get_working_file()
+        raw = subject.get_raw()
         sfreq = raw.info['sfreq']
 
         # fill the combobox
@@ -41,7 +41,7 @@ class RereferencingDialog(QtWidgets.QDialog):
     def accept(self):
         experiment = self.experiment
 
-        raw = experiment.active_subject.get_working_file()
+        raw = experiment.active_subject.get_raw()
         path = experiment.active_subject.working_file_path
 
         selection = self.ui.comboBoxChannel.currentText()

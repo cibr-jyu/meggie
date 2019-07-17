@@ -11,18 +11,17 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-import meggie.code_meggie.general.mne_wrapper as mne
+import meggie.utilities.mne_wrapper as mne
+import meggie.utilities.fileManager as fileManager
 
-from meggie.code_meggie.analysis.utils import color_cycle
-from meggie.code_meggie.analysis.utils import average_data_to_channel_groups
+from meggie.utilities.groups import color_cycle
+from meggie.utilities.groups import average_data_to_channel_groups
 
-from meggie.ui.utils.decorators import threaded
-from meggie.code_meggie.general import fileManager
-from meggie.code_meggie.structures.epochs import Epochs
-from meggie.code_meggie.structures.events import Events
-from meggie.code_meggie.utils.units import get_scaling
-from meggie.code_meggie.utils.units import get_unit
-from meggie.code_meggie.utils.validators import validate_name
+from meggie.utilities.decorators import threaded
+from meggie.utilities.units import get_scaling
+from meggie.utilities.units import get_unit
+from meggie.utilities.validators import validate_name
+from meggie.utilities.events import find_stim_channel
 
 
 def create_epochs(experiment, params, subject):
@@ -40,7 +39,7 @@ def create_epochs(experiment, params, subject):
         if key in reject_data:
             reject_data[key] /= get_scaling(key)
 
-    raw = subject.get_working_file()
+    raw = subject.get_raw()
 
     events = []
     event_params = params_copy['events']
@@ -140,8 +139,8 @@ def create_eventlist(experiment, params, subject):
     """
     Pick desired events from the raw data.
     """
-    stim_channel = subject.find_stim_channel()
-    raw = subject.get_working_file()
+    raw = subject.get_raw()
+    stim_channel = find_stim_channel(raw)
     e = Events(experiment, raw, stim_channel,
                params['mask'], params['event_id'])
 

@@ -10,18 +10,47 @@ import numpy as np
 import meggie.utilities.mne_wrapper as mne
 
 
+def find_stim_channel(raw):
+    """
+    Finds the appropriate stim channel from raw
+    """
+    channels = self.get_raw(preload=False).info.get('ch_names')
+    if 'STI101' in channels:
+        return 'STI101'
+    elif 'STI 101' in channels:
+        return 'STI 101'
+    elif 'STI 014' in channels:
+        return 'STI 014'
+    elif 'STI014' in channels:
+        return 'STI014'
+
+def create_event_set(raw):
+    """
+    Creates an event set where the first element is the id
+    and the second element is the number of the events.
+    """
+    stim_ch = find_stim_channel(raw)
+    if not stim_ch:
+        return
+
+    events = Events(raw, stim_ch=stim_ch).events
+    if events is None:
+        return
+
+    bins = np.bincount(events[:, 2])
+    result = dict()
+    for idx in set(events[:, 2]):
+        result[idx] = bins[idx]
+    return result
+
+
 class Events(object):
     """
     Class for getting events from the raw file, by type if need be.
     """
 
-    def __init__(self, experiment, raw, stim_ch=None, mask=0, id_=None):
+    def __init__(self, raw, stim_ch=None, mask=0, id_=None):
         """
-        Constructor
-        Keyword arguments:
-        raw           -- A raw object
-        stim_ch       -- Name of the stimulus channel
-        mask          -- Mask for excluding bits.
         """
 
         events = mne.find_events(raw, stim_channel=stim_ch, shortest_event=1,

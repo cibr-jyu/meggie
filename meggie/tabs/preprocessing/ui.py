@@ -13,7 +13,7 @@ def plot(experiment, data, parent):
     if not subject:
         return
 
-    raw = subject.get_working_file()
+    raw = subject.get_raw()
     if raw:
         raw.plot()
 
@@ -25,14 +25,14 @@ def projections(experiment, data, parent):
     if not subject:
         return
 
-    raw = subject.get_working_file()
+    raw = subject.get_raw()
     if not raw.info['projs']:
         messagebox(self, "No added projections.")
         return
 
     fig = raw.plot_projs_topomap()
 
-    name = subject.subject_name 
+    name = subject.name 
     fig.canvas.set_window_title('Projections for ' + name)
 
 

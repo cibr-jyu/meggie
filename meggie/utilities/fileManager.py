@@ -255,7 +255,7 @@ def create_timestamped_folder(experiment):
     return timestamped_folder
 
 
-def save_subject_raw(subject, path):
+def copy_subject_raw(subject, path):
     """ when subject is created,
     copy data from src destination to subject directory
     """
@@ -268,7 +268,7 @@ def save_subject_raw(subject, path):
 
     for f in files:
         if p.match(f):
-            shutil.copyfile(f, os.path.join(subject.subject_path,
+            shutil.copyfile(f, os.path.join(subject.path,
                                             os.path.basename(f)))
 
 
