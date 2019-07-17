@@ -87,18 +87,11 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBoxMisc">
      <property name="title">
       <string>Miscellaneous preferences:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QCheckBox" name="checkBoxConfirmQuit">
         <property name="text">
@@ -116,7 +109,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -124,6 +117,22 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBoxTabs">
+     <property name="title">
+      <string>Tabs</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayoutTabs">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radioButtonCustom">
+        <property name="text">
+         <string>Custom</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

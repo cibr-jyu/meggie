@@ -69,18 +69,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # For handling initialization and switching of experiments.
         self.experimentHandler = ExperimentHandler(self)
 
-        self.tabs = []
-
-        config_path = pkg_resources.resource_filename(
-            'meggie', 'configuration.json')
-        with open(config_path, 'r') as f:
-            config = json.load(f)
-
-        for tab_id in config['tabs']:
-            package, tab_spec = find_tab_spec_by_id(tab_id)
-            tab = construct_tab(package, tab_spec, self)
-            self.tabs.append(tab)
-
         # Creates a label on status bar to show current working file message.
         self.statusLabel = QtWidgets.QLabel()
         self.ui.statusbar.addWidget(self.statusLabel)
@@ -97,10 +85,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if exp:
                 self.experiment = exp
-                self.initialize_ui()
             else:
                 self.preferencesHandler.previous_experiment_name = ''
                 self.preferencesHandler.write_preferences_to_disk()
+
+        self.reconstruct_tabs()
+        self.initialize_ui()
 
     def on_actionQuit_triggered(self, checked=None):
         """Closes the program, possibly after a confirmation by the user."""
@@ -352,6 +342,47 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.initialize_ui()
 
+    def reconstruct_tabs(self):
+        """
+        """
+
+        self.preferencesHandler = PreferencesHandler()
+
+        self.tabs = []
+
+        config_path = pkg_resources.resource_filename(
+            'meggie', 'configuration.json')
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+
+        tab_presets = config.get('tab_presets')
+        enabled_tabs = self.preferencesHandler.enabled_tabs
+        user_preset = self.preferencesHandler.tab_preset
+
+        found = False
+        try:
+            if user_preset and user_preset == 'custom':
+                enabled_tabs = self.preferencesHandler.enabled_tabs
+                found = True
+            elif user_preset:
+                for idx, preset in enumerate(tab_presets):
+                    if preset['id'] == user_preset:
+                        enabled_tabs = tab_presets[idx]['tabs']
+                        found = True
+                        break
+        except Exception as exc:
+            pass
+
+        if not found:
+            enabled_tabs = tab_presets[0]['tabs']
+
+        for tab_id in config['tabs']:
+            if enabled_tabs and tab_id not in enabled_tabs:
+                continue
+            package, tab_spec = find_tab_spec_by_id(tab_id)
+            tab = construct_tab(package, tab_spec, self)
+            self.tabs.append(tab)
+
     def initialize_ui(self):
         """ 
         """
@@ -463,9 +494,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 tab_idx+1, tab, tab.name)
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
-
-        # self.mainWindowTabSourceAnalysis.update_tabs()
-        # self.mainWindowTabSourceAnalysis.initialize_ui()
 
         for tab in self.tabs:
             tab.initialize_ui()

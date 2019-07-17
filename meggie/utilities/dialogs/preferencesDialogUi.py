@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
+# Form implementation generated from reading ui file '../../../designer_ui_files/preferencesDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -57,26 +57,30 @@ class Ui_DialogPreferences(object):
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
         self.gridLayout.addLayout(self.verticalLayout_6, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBoxEnv, 1, 0, 1, 1)
-        self.groupBox = QtWidgets.QGroupBox(DialogPreferences)
-        self.groupBox.setObjectName("groupBox")
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBox)
+        self.groupBoxMisc = QtWidgets.QGroupBox(DialogPreferences)
+        self.groupBoxMisc.setObjectName("groupBoxMisc")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBoxMisc)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.label_2 = QtWidgets.QLabel(self.groupBox)
-        self.label_2.setText("")
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_4.addWidget(self.label_2, 5, 0, 1, 1)
-        self.checkBoxConfirmQuit = QtWidgets.QCheckBox(self.groupBox)
+        self.checkBoxConfirmQuit = QtWidgets.QCheckBox(self.groupBoxMisc)
         self.checkBoxConfirmQuit.setObjectName("checkBoxConfirmQuit")
         self.gridLayout_4.addWidget(self.checkBoxConfirmQuit, 1, 0, 1, 1)
-        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBox)
+        self.checkBoxAutomaticOpenPreviousExperiment = QtWidgets.QCheckBox(self.groupBoxMisc)
         self.checkBoxAutomaticOpenPreviousExperiment.setObjectName("checkBoxAutomaticOpenPreviousExperiment")
         self.gridLayout_4.addWidget(self.checkBoxAutomaticOpenPreviousExperiment, 0, 0, 1, 1)
-        self.gridLayout_3.addWidget(self.groupBox, 2, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.groupBoxMisc, 2, 0, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(DialogPreferences)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout_3.addWidget(self.buttonBox, 3, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.buttonBox, 4, 0, 1, 1)
+        self.groupBoxTabs = QtWidgets.QGroupBox(DialogPreferences)
+        self.groupBoxTabs.setObjectName("groupBoxTabs")
+        self.gridLayoutTabs = QtWidgets.QGridLayout(self.groupBoxTabs)
+        self.gridLayoutTabs.setObjectName("gridLayoutTabs")
+        self.radioButtonCustom = QtWidgets.QRadioButton(self.groupBoxTabs)
+        self.radioButtonCustom.setObjectName("radioButtonCustom")
+        self.gridLayoutTabs.addWidget(self.radioButtonCustom, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.groupBoxTabs, 3, 0, 1, 1)
 
         self.retranslateUi(DialogPreferences)
         self.buttonBox.accepted.connect(DialogPreferences.accept)
@@ -93,7 +97,9 @@ class Ui_DialogPreferences(object):
         self.groupBoxEnv.setTitle(_translate("DialogPreferences", "Environment variables:"))
         self.labelFreeSurferHome.setText(_translate("DialogPreferences", "Select FREESURFER_HOME directory (needed for source analysis):"))
         self.pushButtonBrowseFreeSurferHome.setText(_translate("DialogPreferences", "Browse..."))
-        self.groupBox.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:"))
+        self.groupBoxMisc.setTitle(_translate("DialogPreferences", "Miscellaneous preferences:"))
         self.checkBoxConfirmQuit.setText(_translate("DialogPreferences", "Show confirmation dialog on Meggie quit"))
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
+        self.groupBoxTabs.setTitle(_translate("DialogPreferences", "Tabs"))
+        self.radioButtonCustom.setText(_translate("DialogPreferences", "Custom"))
 

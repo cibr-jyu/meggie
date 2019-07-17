@@ -4,6 +4,9 @@
 """
 
 import os
+import json
+import logging
+import pkg_resources
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
@@ -42,6 +45,40 @@ class PreferencesDialog(QtWidgets.QDialog):
 
         self.ui.LineEditFilePath.setText(workDirectory)
         self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
+
+        config_path = pkg_resources.resource_filename(
+            'meggie', 'configuration.json')
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+
+        tab_presets = config['tab_presets']
+
+        enabled_tabs = self.parent.preferencesHandler.enabled_tabs
+        user_preset = self.parent.preferencesHandler.tab_preset
+
+        # create buttons for presets
+        checked = False
+        self.tabButtons = []
+        for idx, preset in enumerate(tab_presets):
+            radioButtonPreset = QtWidgets.QRadioButton(self.ui.groupBoxTabs)
+            radioButtonPreset.setText(preset['text'])
+
+            self.ui.gridLayoutTabs.addWidget(radioButtonPreset, idx+1, 0, 1, 1)
+
+            self.tabButtons.append(radioButtonPreset)
+
+            if user_preset == preset['id']:
+                radioButtonPreset.setChecked(True)
+                checked = True
+
+        if user_preset == 'custom':
+            self.ui.radioButtonCustom.setChecked(True)
+            checked = True
+
+        # first preset as default to be saved
+        if not checked:
+            self.tabButtons[0].setChecked(True)
+            
 
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
         """
@@ -88,6 +125,30 @@ class PreferencesDialog(QtWidgets.QDialog):
         self.parent.preferencesHandler.freesurfer_home = freesurfer_path
         self.parent.preferencesHandler.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
         self.parent.preferencesHandler.confirm_quit = confirmQuit
+
+        config_path = pkg_resources.resource_filename(
+            'meggie', 'configuration.json')
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+
+        tab_presets = config['tab_presets']
+
+        selected_preset = 'custom'
+        for idx, button in enumerate(self.tabButtons):
+            if button.isChecked():
+                selected_preset = tab_presets[idx]['id']
+                break
+
+        if (self.parent.preferencesHandler.tab_preset != 'custom' and 
+                selected_preset == 'custom'):
+            logging.getLogger('ui_logger').warning('Custom setting cannot be set through UI')
+        else:
+            self.parent.preferencesHandler.tab_preset = selected_preset
+
         self.parent.preferencesHandler.write_preferences_to_disk()
         self.parent.preferencesHandler.set_env_variables()
+
+        self.parent.reconstruct_tabs()
+        self.parent.initialize_ui()
+
         self.close()

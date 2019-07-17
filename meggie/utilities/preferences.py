@@ -33,10 +33,10 @@ class PreferencesHandler(object):
         config.add_section('MiscOptions')
         config.add_section('Workspace')
         config.add_section('EnvVariables')
+        config.add_section('Tabs')
 
         # Sanity of these values is assumed to be checked by the calling method
-        # (should only be preferencesDialog).
-        config.set('MiscOptions', 'previous_experiment_name',
+        config.set('MiscOptions', 'previousExperimentName',
                    self.previous_experiment_name)
         config.set('Workspace', 'workspaceDir', self.working_directory)
         config.set('EnvVariables', 'FreeSurferHomeDir', self.freesurfer_home)
@@ -56,6 +56,11 @@ class PreferencesHandler(object):
         else:
             config.set('MiscOptions', 'saveBads', 'False')
 
+        config.set('Tabs', 'enabledTabs', ','.join(self.enabled_tabs or []))
+        config.set('Tabs', 'preset', self.tab_preset)
+
+        # test this!
+
         with open(os.path.join(homepath(), '.meggieprefs'), 'w') as configfile:
             config.write(configfile)
 
@@ -67,39 +72,51 @@ class PreferencesHandler(object):
         if os.path.isfile(filename):
             config = configparser.RawConfigParser()
             config.read(filename)
-        else:
-            return
 
-        # If some preference is not present yet, just skip it (it will be set
-        # right next time).
         try:
             self.working_directory = config.get('Workspace', 'workspaceDir')
+        except:
+            self.working_directory = ''
+
+        try:
             self.freesurfer_home = config.get(
                 'EnvVariables', 'FreeSurferHomeDir')
+        except:
+            self.freesurfer_home = ''
 
-            # No automatic typecasting to boolean here, so have to do this.
+        try:
             if config.get('MiscOptions',
                           'autoreloadpreviousexperiment') == 'True':
                 self.auto_load_last_open_experiment = True
             else:
                 self.auto_load_last_open_experiment = False
+        except:
+            self.auto_load_last_open_experiment = False
 
+        try:
             if config.get('MiscOptions', 'confirmQuit') == 'True':
                 self.confirm_quit = True
             else:
                 self.confirm_quit = False
+        except:
+            self.confirm_quit = False
 
-            if config.get('MiscOptions', 'saveBads') == 'True':
-                self.save_bads = True
-            else:
-                self.save_bads = False
-
+        try:
             self.previous_experiment_name = config.get(
-                'MiscOptions', 'previous_experiment_name')
+                'MiscOptions', 'previousExperimentName')
+        except:
+            self.previous_experiment_name = ''
 
-        except configparser.NoOptionError:
-            pass
-
+        try:
+            self.enabled_tabs = config.get('Tabs', 'enabledTabs')
+            self.enabled_tabs = self.enabled_tabs.split(',')
+        except:
+            self.enabled_tabs = ''
+        try:
+            self.tab_preset = config.get('Tabs', 'preset')
+        except:
+            self.tab_preset = ''
+                
     def set_env_variables(self):
         """
         """
