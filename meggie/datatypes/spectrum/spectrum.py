@@ -48,6 +48,8 @@ class Spectrum(object):
 
                 freqs = np.array(freqs).astype(np.float)
 
+                self._freqs = freqs
+                self._ch_names = ch_names
                 self._content[key] = np.array(psd)
 
     def save_content(self):
@@ -78,16 +80,19 @@ class Spectrum(object):
     def content(self):
         if not self._content:
             self._load_content()
-
         return self._content
 
     @property
     def freqs(self):
-        return self._params['freqs']
+        if not self._content:
+            self._load_content()
+        return self._freqs
 
     @property
     def ch_names(self):
-        return self._params['ch_names']
+        if not self._content:
+            self._load_content()
+        return self._ch_names
 
     @property
     def log_transformed(self):

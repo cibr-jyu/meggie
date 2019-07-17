@@ -21,17 +21,18 @@ class Evoked(object):
     def content(self):
         """
         """
-        if None in self._content.values():
-            # load everything
-            evokeds = load_evoked(self._path)
-            for key in self._content:
-                for evoked in evokeds:
-                    if key == evoked.comment:
-                        self._content[key] = evoked
-                        break
-            if None in self._content.keys():
-                raise ValueError('Event name ' + key +
-                                 ' missing from Evoked FIF file.')
+        if self._content:
+            return self._content
+
+        self._content = {}
+
+        evokeds = load_evoked(self._path)
+        for key in self._params['event_names']:
+            for evoked in evokeds:
+                if key == evoked.comment:
+                    self._content[key] = evoked
+                    break
+
         return self._content
 
     @property

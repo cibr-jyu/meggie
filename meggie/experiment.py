@@ -8,6 +8,7 @@ import re
 import json
 import shutil
 import logging
+import pkg_resources
 
 import meggie.utilities.fileManager as fileManager
 
@@ -211,50 +212,9 @@ class Experiment(QObject):
                     datatype_dict['name'] = inst.name
 
                     if save_key not in subject_dict.keys():
-                        subject_dict[save_key] = []
+                        subject_dict[save_key] = []
 
                     subject_dict[save_key].append(datatype_dict)
-
-            # for epoch in subject.epochs.values():
-            #     try:
-            #         epoch_dict = {
-            #             'collection_name': epoch.collection_name,
-            #             'params': epoch.params
-            #         }
-            #         subject_dict['epochs'].append(epoch_dict)
-            #     except IOError:
-            #         del subject.epochs[epoch.collection_name]
-            #         message = 'Missing epochs response file. Experiment updated.'
-            #         logging.getLogger('ui_logger').warning(message)
-
-            # for evoked in subject.evokeds.values():
-            #     try:
-            #         evoked_dict = {
-            #             'name': evoked.name,
-            #             'event_names': list(evoked.mne_evokeds.keys()),
-            #             'info': evoked.info,
-            #         }
-            #         subject_dict['evokeds'].append(evoked_dict)
-            #     except IOError:
-            #         del subject.evokeds[evoked.name]
-            #         message = 'Missing evoked response file. Experiment updated.'
-            #         logging.getLogger('ui_logger').warning(message)
-
-            # for spectrum in subject.spectrums.values():
-            #     spectrum_dict = {
-            #         'name': spectrum.name,
-            #         'log_transformed': spectrum.log_transformed,
-            #     }
-            #     subject_dict['spectrums'].append(spectrum_dict)
-
-            # for tfr in subject.tfrs.values():
-            #     tfr_dict = {
-            #         'name': tfr.name,
-            #         'decim': tfr.decim,
-            #         'n_cycles': tfr.n_cycles,
-            #         'evoked_subtracted': tfr.evoked_subtracted,
-            #     }
-            #     subject_dict['tfrs'].append(tfr_dict)
 
             subjects.append(subject_dict)
 
@@ -267,14 +227,16 @@ class Experiment(QObject):
             'channel_groups': self.channel_groups
         }
 
-        version = ''
         try:
-            import pkg_resources
             version = pkg_resources.get_distribution("meggie").version
         except BaseException:
             version = ''
 
         save_dict['version'] = version
+
+        from meggie.utilities.debug import debug_trace;
+        debug_trace()
+        # to not overwrite settings
 
         try:
             os.makedirs(os.path.join(self.workspace, self.name))
@@ -282,7 +244,8 @@ class Experiment(QObject):
             pass
 
         # save to file
-        with open(os.path.join(self.workspace, self.name, self.name + '.exp'), 'w') as f:  # noqa
+        with open(os.path.join(self.workspace, self.name, 
+                               self.name + '.exp'), 'w') as f:
             json.dump(save_dict, f, sort_keys=True, indent=4)
 
 
@@ -293,26 +256,20 @@ class ExperimentHandler(QObject):
 
     def __init__(self, parent):
         """
-        Constructor
-        Keyword arguments:
-        parent        -- Parent of this object.
         """
         self.parent = parent
 
-    def initialize_new_experiment(self, expDict):
+    def initialize_new_experiment(self, exp_dict):
         """
         Initializes the experiment object with the given data.
 
         """
         prefs = self.parent.preferencesHandler
 
-        try:
-            experiment = Experiment()
-            experiment.author = expDict['author']
-            experiment.name = os.path.basename(expDict['name'])
-            experiment.description = expDict['description']
-        except AttributeError:
-            raise Exception('Cannot assign attribute to experiment.')
+        experiment = Experiment()
+        experiment.author = exp_dict['author']
+        experiment.name = os.path.basename(exp_dict['name'])
+        experiment.description = exp_dict['description']
 
         experiment.workspace = prefs.working_directory
 
@@ -324,25 +281,17 @@ class ExperimentHandler(QObject):
 
         prefs.previous_experiment_name = os.path.join(
             experiment.workspace, experiment.name)
+
         prefs.write_preferences_to_disk()
 
         return experiment
 
     def open_existing_experiment(self, prefs, path=None):
         """
-        Opens an existing experiment, which is assumed to be in the working
-        directory.
-
-        Keyword arguments:
-
-        name        -- name of the existing experiment to be opened
         """
 
         if path:
-            if path.endswith('.exp'):
-                exp_file = path
-            else:
-                exp_file = os.path.join(path, os.path.basename(path) + '.exp')
+            exp_file = os.path.join(path, os.path.basename(path) + '.exp')
         else:
             if prefs.previous_experiment_name == '':
                 return
@@ -383,8 +332,10 @@ class ExperimentHandler(QObject):
         else:
             experiment.channel_groups = 'MNE'
 
+        # if opening old experiment manually
         if path:
             experiment.workspace = os.path.dirname(path)
+        # if opening old experiment automatically on open
         else:
             experiment.workspace = os.path.dirname(
                 prefs.previous_experiment_name)
@@ -395,8 +346,8 @@ class ExperimentHandler(QObject):
 
                 subject_name = subject_data['subject_name']
 
-                # backward compatibility
                 raw_fname = subject_data.get('raw_fname')
+                # for backwards compatibility
                 if not raw_fname:
                     raw_fname = subject_data.get('working_file_name')
                 if not raw_fname:
@@ -409,31 +360,54 @@ class ExperimentHandler(QObject):
                                   subject_data.get('rereferenced', False)
                                   )
 
-                for epoch_data in subject_data.get('epochs', []):
-                    epochs = Epochs(epoch_data['collection_name'], subject,
-                                    epoch_data['params'])
-                    epochs.collection_name = epoch_data['collection_name']
-                    epochs.params = epoch_data['params']
-                    subject.add_epochs(epochs)
+		datatypes = []
+		datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
+		for package in os.listdir(datatype_path):
+		    config_path = os.path.join(datatype_path, package, 'configuration.json')
+		    if os.path.exists(config_path):
+			with open(config_path, 'r') as f:
+			    config = json.load(f)
+			    datatype = config['id']
+			    key = config['save_key']
+			    datatypes.append((key, package, entry, datatype))
 
-                for evoked_data in subject_data.get('evokeds', []):
-                    mne_evokeds = dict([(name, None)
-                                        for name in evoked_data['event_names']])
-                    evoked = Evoked(evoked_data['name'], subject, mne_evokeds)
-                    if 'info' in evoked_data:
-                        evoked.info = evoked_data['info']
-                    subject.add_evoked(evoked)
+		for save_key, package, entry, datatype in datatypes:
+		    for inst_data in subject_data.get(save_key, []):
+                        module_name, class_name = entry.split('.')
+                        module = importlib.import_module(
+                            '.'.join(['meggie', 'datatypes', package, module_name]))
+                        inst_class = getattr(module, class_name, None)
 
-                for spectrum_data in subject_data.get('spectrums', []):
-                    spectrum = Spectrum(spectrum_data['name'], subject,
-                                        spectrum_data['log_transformed'], None, None, None)
-                    subject.add_spectrum(spectrum)
+                        name = inst_data.get('name')
+                        # backward compatibility
+                        if not name and 'collection_name' in inst_data:
+                            name = inst_data.get('collection_name')
+                        if not name:
+                            raise Exception('No name attribute found')
+ 
+                        directory = None
 
-                for tfr_data in subject_data.get('tfrs', []):
-                    tfr = TFR(None, tfr_data['name'], subject,
-                              tfr_data['decim'], tfr_data['n_cycles'],
-                              tfr_data['evoked_subtracted'])
-                    subject.add_tfr(tfr)
+                        params = inst_data.get('params', {})
+                        # for backwards compatibility
+                        if not params:
+                            if datatype == 'evoked' and 'event_names' in inst_data:
+                                params['event_names'] = inst_data['event_names']
+                            if datatype == 'spectrum' and 'log_transformed' in inst_data:
+                                params['log_transformed'] = inst_data['log_transformed']
+                            if datatype == 'tfr' and 'decim' in inst_data:
+                                params['decim'] = inst_data['decim']
+                            if datatype == 'tfr' and 'n_cycles' in inst_data:
+                                params['n_cycles'] = inst_data['n_cycles']
+                            if datatype == 'tfr' and 'evoked_subtracted' in inst_data:
+                                params['evoked_subtracted'] = inst_data['evoked_subtracted']
+
+                        if inst_class:
+                            inst = inst_class(
+                                name,
+                                directory,
+                                params,
+                            )
+                            subject.add(inst, datatype)
 
                 experiment.add_subject(subject)
 
