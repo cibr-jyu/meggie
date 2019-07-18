@@ -9,7 +9,6 @@ from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
-from meggie.tabs.preprocessing.controller.resampling import resample
 
 class ResamplingDialog(QtWidgets.QDialog):
 
@@ -39,16 +38,17 @@ class ResamplingDialog(QtWidgets.QDialog):
         return self.experiment
 
     def accept(self):
-        experiment = self.experiment
-        raw = experiment.active_subject.get_raw()
-        fname = experiment.active_subject.raw_path
+        subject = self.experiment.active_subject
+        raw = subject.get_raw()
 
         old_rate = raw.info['sfreq']
         rate = self.ui.doubleSpinBoxNewRate.value()
 
         @threaded
         def resample_fun():
-            resample(experiment, raw, fname, rate)
+            raw.resample(rate)
+            subject.save()
+
         resample_fun(do_meanwhile=self.parent.update_ui)
 
         logging.getLogger('ui_logger').info('Resampling done successfully from ' +
@@ -77,7 +77,8 @@ class ResamplingDialog(QtWidgets.QDialog):
 
                     @threaded
                     def resample_fun():
-                        resample(experiment, raw, fname, rate)
+                        raw.resample(rate)
+                        subject.save()
 
                     resample_fun(do_meanwhile=self.parent.update_ui)
                 except Exception as e:

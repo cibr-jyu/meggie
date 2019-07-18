@@ -11,7 +11,6 @@ from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
 import meggie.utilities.mne_wrapper as mne
-import meggie.utilities.fileManager as fileManager
 
 
 class RereferencingDialog(QtWidgets.QDialog):
@@ -62,7 +61,7 @@ class RereferencingDialog(QtWidgets.QDialog):
             self.close()
             return
 
-        fileManager.save_raw(experiment, raw, path)
+        experiment.active_subject.save()
 
         experiment.active_subject.rereferenced = True
         experiment.save_experiment_settings()

@@ -70,9 +70,6 @@ class Subject(object):
                             self.raw_fname)
         return path
 
-    def set_raw(self, raw):
-        self._raw = raw
-
     def get_raw(self, preload=True):
         if isinstance(self._raw, mne.RAW_TYPE):
             if preload:
@@ -87,12 +84,15 @@ class Subject(object):
 
             return raw
 
+    def save(self):
+        fileManager.save_raw(self._raw, self.raw_path)
+
+
     def release_memory(self):
-        """Releases memory from previously processed subject by removing
-        references from raw files.
         """
-        if raw is not None:
-            self.set_raw(None)
+        """
+        if self._raw is not None:
+            self._raw = None
 
     def check_sss_applied(self):
         """

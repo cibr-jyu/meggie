@@ -107,16 +107,16 @@ def open_raw(fname, preload=True):
         raise ValueError('A problem occurred while opening: ' + str(e))
 
 
-def save_raw(experiment, raw, fname, overwrite=True):
+def save_raw(raw, path, overwrite=True):
     """ Makes saving raw more atomic
     """
 
-    folder = os.path.dirname(fname)
-    bname = os.path.basename(fname)
+    folder = os.path.dirname(path)
+    bname = os.path.basename(path)
 
     # be protective and save with other name first and move afterwards
-    temp_fname = os.path.join(folder, '_' + bname)
-    raw.save(temp_fname, overwrite=True)
+    temp_path = os.path.join(folder, '_' + bname)
+    raw.save(temp_path, overwrite=True)
 
     # assumes filename ends with .fif
     pat_old = re.compile(bname[:-4] + r'(-[0-9]+)?' + bname[-4:])
@@ -149,8 +149,7 @@ def save_raw(experiment, raw, fname, overwrite=True):
             logger.warning('Removing unused part: ' + str(old_file_path))
             os.remove(old_file_path)
 
-    experiment.active_subject.working_file_name = os.path.basename(fname)
-    raw._filenames[0] = fname
+    raw._filenames[0] = path
 
 
 def ensure_folders(paths):

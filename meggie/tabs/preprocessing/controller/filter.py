@@ -45,8 +45,6 @@ def filter_data(experiment, dic, subject, preview=False, **kwargs):
                          notch_widths=dic['bandstop_bw'], trans_bandwidth=trans_bw)
 
     if not preview:
-        fname = raw.filenames[0]
-        fileManager.save_raw(experiment, raw,
-                             fname, overwrite=True)
+        subject.save()
 
     return raw 

@@ -236,8 +236,6 @@ class Experiment(QObject):
 
         save_dict['version'] = version
 
-        from meggie.utilities.debug import debug_trace;
-        debug_trace()
         # to not overwrite settings
 
         try:
