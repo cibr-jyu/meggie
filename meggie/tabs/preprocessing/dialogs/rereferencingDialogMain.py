@@ -42,7 +42,7 @@ class RereferencingDialog(QtWidgets.QDialog):
         experiment = self.experiment
 
         raw = experiment.active_subject.get_raw()
-        path = experiment.active_subject.working_file_path
+        path = experiment.active_subject.raw_path
 
         selection = self.ui.comboBoxChannel.currentText()
 

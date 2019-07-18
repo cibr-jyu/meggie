@@ -41,7 +41,7 @@ class ResamplingDialog(QtWidgets.QDialog):
     def accept(self):
         experiment = self.experiment
         raw = experiment.active_subject.get_raw()
-        fname = experiment.active_subject.raw_fname
+        fname = experiment.active_subject.raw_path
 
         old_rate = raw.info['sfreq']
         rate = self.ui.doubleSpinBoxNewRate.value()
@@ -70,7 +70,7 @@ class ResamplingDialog(QtWidgets.QDialog):
                 try:
                     experiment.activate_subject(name)
                     raw = subject.get_raw()
-                    fname = subject.raw_fname
+                    fname = subject.raw_path
 
                     old_rate = raw.info['sfreq']
                     rate = self.ui.doubleSpinBoxNewRate.value()

@@ -238,6 +238,8 @@ def construct_tab(package, tab_spec, parent):
             for idx, input_name in enumerate(self.tab_spec.get('inputs', [])):
                 ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
 
+                ui_element.clear()
+
                 data = getattr(subject, input_name, None)
                 if not data:
                     logging.getLogger('ui_logger').info(
@@ -250,6 +252,8 @@ def construct_tab(package, tab_spec, parent):
 
             for idx, output_name in enumerate(self.tab_spec.get('outputs', [])):
                 ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
+
+                ui_element.clear()
 
                 data = getattr(subject, output_name, None)
                 if not data:

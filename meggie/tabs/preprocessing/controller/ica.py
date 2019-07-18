@@ -94,7 +94,7 @@ def apply_ica(raw, experiment, ica, indices):
         'Subtracting the components out of the data.')
     ica.apply(raw, exclude=indices)
 
-    fname = experiment.active_subject.working_file_path
+    path = experiment.active_subject.raw_path
 
     fileManager.save_raw(experiment, raw,
-                         fname, overwrite=True)
+                         path, overwrite=True)
