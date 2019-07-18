@@ -126,11 +126,22 @@
      </property>
      <layout class="QGridLayout" name="gridLayoutTabs">
       <item row="0" column="0">
-       <widget class="QRadioButton" name="radioButtonCustom">
-        <property name="text">
-         <string>Custom</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayoutCustom">
+        <item>
+         <widget class="QRadioButton" name="radioButtonCustom">
+          <property name="text">
+           <string>Custom</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonCustom">
+          <property name="text">
+           <string>Specify...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

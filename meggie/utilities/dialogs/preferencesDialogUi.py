@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../../../designer_ui_files/preferencesDialogUi.ui'
+# Form implementation generated from reading ui file 'preferencesDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -77,9 +77,15 @@ class Ui_DialogPreferences(object):
         self.groupBoxTabs.setObjectName("groupBoxTabs")
         self.gridLayoutTabs = QtWidgets.QGridLayout(self.groupBoxTabs)
         self.gridLayoutTabs.setObjectName("gridLayoutTabs")
+        self.horizontalLayoutCustom = QtWidgets.QHBoxLayout()
+        self.horizontalLayoutCustom.setObjectName("horizontalLayoutCustom")
         self.radioButtonCustom = QtWidgets.QRadioButton(self.groupBoxTabs)
         self.radioButtonCustom.setObjectName("radioButtonCustom")
-        self.gridLayoutTabs.addWidget(self.radioButtonCustom, 0, 0, 1, 1)
+        self.horizontalLayoutCustom.addWidget(self.radioButtonCustom)
+        self.pushButtonCustom = QtWidgets.QPushButton(self.groupBoxTabs)
+        self.pushButtonCustom.setObjectName("pushButtonCustom")
+        self.horizontalLayoutCustom.addWidget(self.pushButtonCustom)
+        self.gridLayoutTabs.addLayout(self.horizontalLayoutCustom, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBoxTabs, 3, 0, 1, 1)
 
         self.retranslateUi(DialogPreferences)
@@ -102,4 +108,5 @@ class Ui_DialogPreferences(object):
         self.checkBoxAutomaticOpenPreviousExperiment.setText(_translate("DialogPreferences", "Automatically open previous experiment upon application startup"))
         self.groupBoxTabs.setTitle(_translate("DialogPreferences", "Tabs"))
         self.radioButtonCustom.setText(_translate("DialogPreferences", "Custom"))
+        self.pushButtonCustom.setText(_translate("DialogPreferences", "Specify..."))
 

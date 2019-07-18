@@ -13,6 +13,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
 from meggie.utilities.dialogs.preferencesDialogUi import Ui_DialogPreferences
+from meggie.utilities.dialogs.customTabsDialogMain import CustomTabsDialog
 
 from meggie.utilities.messaging import messagebox
 
@@ -32,6 +33,8 @@ class PreferencesDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.parent = parent
+
+        self.new_enabled_tabs = None
 
         # Prefill previous values to UI and attributes from config file.
         workDirectory = self.parent.preferencesHandler.working_directory
@@ -101,6 +104,23 @@ class PreferencesDialog(QtWidgets.QDialog):
                 self, "Point Meggie to your FreeSurfer home directory")))
         self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
 
+    def on_pushButtonCustom_clicked(self, checked=None):
+        if checked is None:
+            return
+
+        preferencesHandler = self.parent.preferencesHandler
+        enabled_tabs = preferencesHandler.enabled_tabs
+
+        customTabsDialog = CustomTabsDialog(enabled_tabs)
+        customTabsDialog.exec_()
+
+        try:
+            self.new_enabled_tabs = customTabsDialog.enabled_tabs
+            logging.getLogger('ui_logger').info(
+                'Tabs ' + str(self.new_enabled_tabs) + ' were selected')
+        except AttributeError:
+            pass
+
     def accept(self):
 
         workFilepath = self.ui.LineEditFilePath.text()
@@ -139,9 +159,16 @@ class PreferencesDialog(QtWidgets.QDialog):
                 selected_preset = tab_presets[idx]['id']
                 break
 
-        if (self.parent.preferencesHandler.tab_preset != 'custom' and 
-                selected_preset == 'custom'):
-            logging.getLogger('ui_logger').warning('Custom setting cannot be set through UI')
+        if selected_preset == 'custom':
+            if self.new_enabled_tabs:
+                self.parent.preferencesHandler.tab_preset = 'custom'
+                self.parent.preferencesHandler.enabled_tabs = self.new_enabled_tabs
+            elif (self.parent.preferencesHandler.enabled_tabs or 
+                  self.parent.preferencesHandler.tab_preset == 'custom'):
+                self.parent.preferencesHandler.tab_preset = 'custom'
+            else:
+                logging.getLogger('ui_logger').warning(
+                    'Custom tab setting was not set because tabs were not specified')
         else:
             self.parent.preferencesHandler.tab_preset = selected_preset
 
