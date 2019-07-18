@@ -3,8 +3,6 @@
 
 import os
 
-from meggie.utilities.fileManager import load_evoked
-
 
 class Evoked(object):
     """
@@ -17,6 +15,12 @@ class Evoked(object):
         self._path = os.path.join(evoked_directory, name)
         self._params = params
 
+        # for backwards compatbility, 
+        # evokeds used to be stored in epochs/average
+        if 'bwc_path' in self._params:
+            self._bwc_path = os.path.join(self._params.pop('bwc_path'),
+                                          name)
+
     @property
     def content(self):
         """
@@ -26,7 +30,17 @@ class Evoked(object):
 
         self._content = {}
 
-        evokeds = load_evoked(self._path)
+        # for backwards compatibility,
+        # try first from the new path,
+        # and then from the old path
+        try:
+            evokeds = mne.read_evokeds(self._path)
+        except Exception:
+            try:
+                evokeds = mne.read_evokeds(self._bwc_path)
+            except Exception:
+                raise IOError('Reading evokeds failed.')
+
         for key in self._params['event_names']:
             for evoked in evokeds:
                 if key == evoked.comment:
@@ -51,7 +65,7 @@ class Evoked(object):
     def info(self):
         return str(self._params)
     
-    @proprty
+    @property
     def params(self):
         """
         """

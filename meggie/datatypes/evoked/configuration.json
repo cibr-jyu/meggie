@@ -2,6 +2,6 @@
     "id": "evoked",
     "name": "Evoked",
     "entry": "evoked.Evoked",
-    "dir": "epochs/average",
+    "dir": "evokeds",
     "save_key": "evokeds"
 }

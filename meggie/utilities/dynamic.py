@@ -11,18 +11,19 @@ from PyQt5 import QtWidgets
 from meggie.utilities.messaging import exc_messagebox
 
 
-def find_tab_spec_by_id(tab_id):
+def find_all_tab_specs():
+    """
+    """
+    tab_specs = {}
     tab_path = pkg_resources.resource_filename('meggie', 'tabs')
     for package in os.listdir(tab_path):
         config_path = os.path.join(tab_path, package, 'configuration.json')
         if os.path.exists(config_path):
             with open(config_path, 'r') as f:
                 config = json.load(f)
-                if config.get('id') == tab_id:
-                    return package, config
-    raise Exception('Tab specified in root configuration file not present ' +
-                    'in the tabs folder')
-
+                if config:
+                    tab_specs[config['id']] = package, config
+    return tab_specs
 
 def construct_tab(package, tab_spec, parent):
     """

@@ -5,7 +5,6 @@
 import os
 
 import meggie.utilities.mne_wrapper as mne
-from meggie.utilities.fileManager import load_epochs
 
 
 class Epochs:
@@ -26,7 +25,10 @@ class Epochs:
         if isinstance(self._content, mne.EPOCHS_TYPE):
             return self._content
         else:
-            return load_epochs(self._path)
+            try:
+                return mne.read_epochs(self._path)
+            except IOError:
+                raise Exception('Reading epochs failed.')
 
     @content.setter
     def content(self, content):

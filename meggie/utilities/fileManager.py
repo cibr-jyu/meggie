@@ -20,6 +20,8 @@ import meggie.utilities.mne_wrapper as mne
 
 
 def read_layout(layout):
+    """
+    """
     if not layout or layout == "Infer from data":
         return
 
@@ -41,19 +43,39 @@ def read_layout(layout):
         return mne.read_layout(layout, path_meggie)
 
 
+def get_layouts():
+    """
+    """
+    from pkg_resources import resource_filename
+
+    files = []
+
+    try:
+        path_meggie = resource_filename(
+            'meggie', os.path.join('data', 'layouts'))
+
+        files.extend([f for f in os.listdir(path_meggie)])
+    except BaseException:
+        pass
+
+    try:
+        path = resource_filename(
+            'mne', os.path.join('channels', 'data', 'layouts'))
+
+        files.extend([f for f in os.listdir(path)
+                      if os.path.isfile(os.path.join(path, f))
+                      and f.endswith('.lout')])
+    except BaseException:
+        pass
+
+    return files
+
+
 def copy_recon_files(activeSubject, sourceDirectory):
     """
     Copies mri and surf files from the given directory to under the active
     subject's reconFiles directory (after creating the said directory,
     if need be).
-
-    Keyword arguments:
-
-    activeSubject            -- currently active subject
-    sourceDirectory     -- directory including the mri and surf file
-
-    Returns True if copying was successful, else returns False.
-
     """
     reconDir = activeSubject.reconfiles_directory
 
@@ -69,71 +91,8 @@ def copy_recon_files(activeSubject, sourceDirectory):
     logger.info('Recon files copying complete!')
 
 
-def remove_files_with_regex(directory, pattern):
-    """
-    Removes, from the given directory, files with a given regex pattern in
-    their names.
-
-    Keyword arguments:
-    directory    -- directory to search the files for.
-    pattern      -- regex pattern to match.
-    """
-    for f in os.listdir(directory):
-        if re.search(pattern, f):
-            os.remove(os.path.join(directory, f))
-
-
-def delete_file_at(folder, files):
-    """Delete files from a folder.
-
-    Keyword arguments:
-
-    folder -- The location of the deleted files
-    files  -- The files to be deleted. Can be a single file or a list of
-              files in the same folder.
-    """
-    if isinstance(files, list):
-        for f in files:
-            os.remove(os.path.join(folder, f))
-        return
-    os.remove(os.path.join(folder, files))
-
-
-def load_epochs(fname):
-    """Load epochs from a folder.
-
-    Keyword arguments:
-    fname         -- the name of the fif-file containing epochs.
-
-    """
-    try:
-        epochs = mne.read_epochs(fname)
-    except IOError:
-        raise Exception('Reading epochs failed.')
-    return epochs
-
-
-def load_evoked(fname):
-    """Load evokeds to the list when mainWindow is initialized
-
-    Keyword arguments:
-    fName -- the name of the fif-file containing evokeds.
-    """
-    try:
-        evokeds = mne.read_evokeds(fname)
-    except IOError:
-        raise IOError('Reading evokeds failed.')
-    return evokeds
-
-
 def open_raw(fname, preload=True):
     """
-    Opens a raw file.
-    Keyword arguments:
-    fname         -- A file to open
-    preload      -- A boolean telling, whether to read the entire data
-                     in the file.
-    Raises an exception if the file cannot be opened.
     """
     try:
         logging.getLogger('ui_logger').info('Reading ' + fname)
@@ -149,6 +108,8 @@ def open_raw(fname, preload=True):
 
 
 def save_raw(experiment, raw, fname, overwrite=True):
+    """ Makes saving raw more atomic
+    """
 
     folder = os.path.dirname(fname)
     bname = os.path.basename(fname)
@@ -192,54 +153,17 @@ def save_raw(experiment, raw, fname, overwrite=True):
     raw._filenames[0] = fname
 
 
-def save_epoch(epoch, overwrite=False):
-    """
-    """
-    if os.path.exists(epoch.path) and overwrite is False:
-        return
-    # First save the epochs
-    epoch.raw.save(epoch.path)
-
-
-def get_layouts():
-    """
-    """
-    from pkg_resources import resource_filename
-
-    files = []
-
-    try:
-        path_meggie = resource_filename(
-            'meggie', os.path.join('data', 'layouts'))
-
-        files.extend([f for f in os.listdir(path_meggie)])
-    except BaseException:
-        pass
-
-    try:
-        path = resource_filename(
-            'mne', os.path.join('channels', 'data', 'layouts'))
-
-        files.extend([f for f in os.listdir(path)
-                      if os.path.isfile(os.path.join(path, f))
-                      and f.endswith('.lout')])
-    except BaseException:
-        pass
-
-    return files
-
-
-def ensure_folder(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-
 def ensure_folders(paths):
+    """
+    """
     for path in paths:
-        ensure_folder(path)
+        if not os.path.exists(path):
+            os.makedirs(path)
 
 
 def create_timestamped_folder(experiment):
+    """
+    """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     path = os.path.join(experiment.workspace,
                         experiment.experiment_name, 'output')
@@ -256,8 +180,7 @@ def create_timestamped_folder(experiment):
 
 
 def copy_subject_raw(subject, path):
-    """ when subject is created,
-    copy data from src destination to subject directory
+    """ Makes copy of the raw file at subject creation
     """
 
     filename = os.path.basename(path)

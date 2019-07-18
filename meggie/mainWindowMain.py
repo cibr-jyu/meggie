@@ -14,7 +14,7 @@ import meggie.utilities.mne_wrapper as mne
 import meggie.utilities.fileManager as fileManager
 
 from meggie.utilities.dynamic import construct_tab
-from meggie.utilities.dynamic import find_tab_spec_by_id
+from meggie.utilities.dynamic import find_all_tab_specs
 
 from meggie.mainWindowUi import Ui_MainWindow
 from meggie.icons import mainWindowIcons_rc
@@ -378,10 +378,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if not found:
             enabled_tabs = tab_presets[0]['tabs']
 
-        for tab_id in config['tabs']:
-            if enabled_tabs and tab_id not in enabled_tabs:
+        tab_specs = find_all_tab_specs()
+
+        for tab_id in enabled_tabs:
+            try:
+                package, tab_spec = tab_specs[tab_id]
+            except Exception:
                 continue
-            package, tab_spec = find_tab_spec_by_id(tab_id)
             tab = construct_tab(package, tab_spec, self)
             self.tabs.append(tab)
 

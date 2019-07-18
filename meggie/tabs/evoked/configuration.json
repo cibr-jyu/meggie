@@ -2,7 +2,7 @@
 	"id": "evoked",
 	"name": "Averaging",
 	"inputs": ["epochs"],
-	"outputs": ["evokeds"],
+	"outputs": ["evoked"],
 	"transforms": ["compute"],
 	"actions": ["plot_evoked_potential", "plot_topomaps", "save"]
 }

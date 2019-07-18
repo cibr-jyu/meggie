@@ -6,9 +6,11 @@
 import os
 import re
 import json
+import importlib
 import shutil
 import logging
 import pkg_resources
+import copy
 
 import meggie.utilities.fileManager as fileManager
 
@@ -208,7 +210,7 @@ class Experiment(QObject):
 
             for save_key, datatype in datatypes:
                 for inst in getattr(subject, datatype).values():
-                    datatype_dict = inst.params.deepcopy()
+                    datatype_dict = copy.deepcopy(inst.params)
                     datatype_dict['name'] = inst.name
 
                     if save_key not in subject_dict.keys():
@@ -360,19 +362,20 @@ class ExperimentHandler(QObject):
                                   subject_data.get('rereferenced', False)
                                   )
 
-		datatypes = []
-		datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
-		for package in os.listdir(datatype_path):
-		    config_path = os.path.join(datatype_path, package, 'configuration.json')
-		    if os.path.exists(config_path):
-			with open(config_path, 'r') as f:
-			    config = json.load(f)
-			    datatype = config['id']
-			    key = config['save_key']
-			    datatypes.append((key, package, entry, datatype))
+                datatypes = []
+                datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
+                for package in os.listdir(datatype_path):
+                    config_path = os.path.join(datatype_path, package, 'configuration.json')
+                    if os.path.exists(config_path):
+                        with open(config_path, 'r') as f:
+                            config = json.load(f)
+                            datatype = config['id']
+                            key = config['save_key']
+                            entry = config['entry']
+                            datatypes.append((key, package, entry, datatype))
 
-		for save_key, package, entry, datatype in datatypes:
-		    for inst_data in subject_data.get(save_key, []):
+                for save_key, package, entry, datatype in datatypes:
+                    for inst_data in subject_data.get(save_key, []):
                         module_name, class_name = entry.split('.')
                         module = importlib.import_module(
                             '.'.join(['meggie', 'datatypes', package, module_name]))
@@ -385,13 +388,15 @@ class ExperimentHandler(QObject):
                         if not name:
                             raise Exception('No name attribute found')
  
-                        directory = None
-
+                        directory = getattr(subject, datatype + '_directory')
                         params = inst_data.get('params', {})
                         # for backwards compatibility
                         if not params:
                             if datatype == 'evoked' and 'event_names' in inst_data:
                                 params['event_names'] = inst_data['event_names']
+                            if datatype == 'evoked':
+                                params['bwc_path'] = os.path.join(subject.path,
+                                    'epochs/average')
                             if datatype == 'spectrum' and 'log_transformed' in inst_data:
                                 params['log_transformed'] = inst_data['log_transformed']
                             if datatype == 'tfr' and 'decim' in inst_data:
@@ -400,7 +405,6 @@ class ExperimentHandler(QObject):
                                 params['n_cycles'] = inst_data['n_cycles']
                             if datatype == 'tfr' and 'evoked_subtracted' in inst_data:
                                 params['evoked_subtracted'] = inst_data['evoked_subtracted']
-
                         if inst_class:
                             inst = inst_class(
                                 name,
