@@ -64,10 +64,6 @@ class Epochs:
     def path(self):
         return self._path
 
-    @property
-    def info(self):
-        return str(self._params)
-
     def delete_content(self):
         try:
             os.remove(self._path)

@@ -1,15 +1,24 @@
 """
 """
-counter = 0
+from pprint import pformat
+
 
 def epochs_info(experiment, data, parent):
-    global counter
-    counter += 1
-    message = '\n'.join(["Info about the list element on the left", "",
-                         "Where to begin",
-                         "Where to go",
-                         "To the sea", " (" + str(counter) + ")",
-                         "And a long line at the bottom."])
+
+    try:
+        for key, values in data['outputs']:
+            if key == 'epochs':
+                selected_name = values[0]
+                break
+        epochs = experiment.active_subject.epochs[selected_name]
+        params = epochs.params
+
+        filtered = {key: params[key] for key in 
+                    ['bstart', 'bend', 'tmin', 'tmax', 'events']}
+        message = pformat(filtered)
+    except:
+        message = ""
+
     return message
 
 

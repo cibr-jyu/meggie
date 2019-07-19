@@ -210,8 +210,10 @@ class Experiment(QObject):
 
             for save_key, datatype in datatypes:
                 for inst in getattr(subject, datatype).values():
-                    datatype_dict = copy.deepcopy(inst.params)
-                    datatype_dict['name'] = inst.name
+                    datatype_dict = {
+                        'name': inst.name,
+                        'params': inst.params
+                    }
 
                     if save_key not in subject_dict.keys():
                         subject_dict[save_key] = []
@@ -235,8 +237,6 @@ class Experiment(QObject):
             version = ''
 
         save_dict['version'] = version
-
-        # to not overwrite settings
 
         try:
             os.makedirs(os.path.join(self.workspace, self.name))
