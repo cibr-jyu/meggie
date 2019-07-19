@@ -4,5 +4,6 @@
 	"inputs": ["epochs"],
 	"outputs": ["evoked"],
 	"transforms": ["compute"],
-	"actions": ["plot_evoked_potential", "plot_topomaps", "save"]
+	"actions": ["delete", "delete_from_all", "plot", "plot_topo", "plot_joint", "group_average", "save", "save_from_all"],
+    "info": ["evoked_info"]
 }

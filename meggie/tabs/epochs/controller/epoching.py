@@ -29,9 +29,8 @@ def create_epochs_from_events(params, subject):
     reject_params = params['reject']
 
     # convert data from human readable units to standard units
-    # for key in ['grad', 'mag', 'eog', 'eeg']:
-    #     if key in reject_params:
-    #         reject_params[key] /= get_scaling(key)
+    for key in reject_params:
+        reject_params[key] /= get_scaling(key)
 
 
     events = []
