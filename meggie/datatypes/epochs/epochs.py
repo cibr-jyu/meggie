@@ -65,11 +65,8 @@ class Epochs:
         return self._path
 
     def delete_content(self):
-        try:
-            os.remove(self._path)
-        except OSError:
-            raise IOError('Epochs could not be deleted from epochs folder.')
+        os.remove(self._path)
 
     def save_content(self):
-        pass
+        self._content.save(self._path)
 

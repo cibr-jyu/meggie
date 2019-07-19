@@ -54,7 +54,6 @@ class FilterDialog(QtWidgets.QDialog):
             return
 
         subject = self.experiment.active_subject
-        info = subject.get_raw(preload=False).info
 
         # mne-python's filter_data takes filter_length in human-readable format
         params = deepcopy(params)
@@ -62,8 +61,7 @@ class FilterDialog(QtWidgets.QDialog):
         params['bandstop_length'] = params['bandstop_length'] + 's'
 
         try:
-            raw_to = filter_data(self.experiment,
-                                 params,
+            raw_to = filter_data(params,
                                  subject,
                                  preview=True,
                                  do_meanwhile=self.parent.update_ui)
@@ -84,8 +82,6 @@ class FilterDialog(QtWidgets.QDialog):
             messagebox(self.parent, message)
             return
 
-        info = subject.get_raw(preload=False).info
-
         try:
             self.filter(subject, params)
         except Exception as exc:
@@ -98,8 +94,6 @@ class FilterDialog(QtWidgets.QDialog):
     def acceptBatch(self):
         """
         """
-        recently_active_subject = self.experiment.active_subject.name
-
         subject_names = self.batching_widget.selected_subjects
         params = self.collect_parameter_values()
         if not params:
@@ -110,15 +104,12 @@ class FilterDialog(QtWidgets.QDialog):
         for name, subject in self.experiment.subjects.items():
             if name in subject_names:
                 try:
-                    self.experiment.activate_subject(name)
-                    info = subject.get_raw(preload=False).info
                     self.filter(subject, params)
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception(str(exc))
                     self.batching_widget.failed_subjects.append(
                         (subject, str(exc)))
 
-        self.experiment.activate_subject(recently_active_subject)
         self.batching_widget.cleanup()
 
         self.parent.initialize_ui()
@@ -177,6 +168,5 @@ class FilterDialog(QtWidgets.QDialog):
         params['length'] = params['length'] + 's'
         params['bandstop_length'] = params['bandstop_length'] + 's'
 
-        filter_data(self.experiment,
-                    params, subject,
+        filter_data(params, subject,
                     do_meanwhile=self.parent.update_ui)

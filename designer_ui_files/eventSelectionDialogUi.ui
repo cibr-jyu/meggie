@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>763</width>
+    <width>776</width>
     <height>821</height>
    </rect>
   </property>
@@ -92,7 +92,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>731</width>
+        <width>744</width>
         <height>850</height>
        </rect>
       </property>
@@ -102,19 +102,6 @@
         <height>850</height>
        </size>
       </property>
-      <widget class="QPushButton" name="pushButtonFixedLength">
-       <property name="geometry">
-        <rect>
-         <x>570</x>
-         <y>430</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Fixed length events...</string>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="groupBox">
        <property name="geometry">
         <rect>
@@ -235,7 +222,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Picks and rejection paremeters</string>
+        <string>Channel types to include and their rejection limits</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
@@ -256,7 +243,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxGradReject_3">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxGradReject">
               <property name="prefix">
                <string/>
               </property>
@@ -295,7 +282,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject_3">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxMagReject">
               <property name="suffix">
                <string> fT</string>
               </property>
@@ -331,7 +318,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject_3">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxEEGReject">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -346,42 +333,6 @@
               </property>
               <property name="value">
                <double>70.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_34">
-            <item>
-             <widget class="QCheckBox" name="checkBoxEog">
-              <property name="toolTip">
-               <string>Include or exclude eog channels</string>
-              </property>
-              <property name="text">
-               <string>EOG</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxEOGReject_3">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="suffix">
-               <string> uV</string>
-              </property>
-              <property name="minimum">
-               <double>-1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1000000000.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>250.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -542,12 +493,6 @@
         </item>
        </layout>
       </widget>
-      <zorder>groupBox</zorder>
-      <zorder>widgetBatchContainer</zorder>
-      <zorder>groupBoxEvent</zorder>
-      <zorder>groupBoxRejection</zorder>
-      <zorder>groupBoxEpoch</zorder>
-      <zorder>pushButtonFixedLength</zorder>
      </widget>
     </widget>
    </item>
@@ -559,13 +504,11 @@
   <tabstop>doubleSpinBoxTmin</tabstop>
   <tabstop>doubleSpinBoxTmax</tabstop>
   <tabstop>checkBoxGrad</tabstop>
-  <tabstop>doubleSpinBoxGradReject_3</tabstop>
+  <tabstop>doubleSpinBoxGradReject</tabstop>
   <tabstop>checkBoxMag</tabstop>
-  <tabstop>doubleSpinBoxMagReject_3</tabstop>
+  <tabstop>doubleSpinBoxMagReject</tabstop>
   <tabstop>checkBoxEeg</tabstop>
-  <tabstop>doubleSpinBoxEEGReject_3</tabstop>
-  <tabstop>checkBoxEog</tabstop>
-  <tabstop>doubleSpinBoxEOGReject_3</tabstop>
+  <tabstop>doubleSpinBoxEEGReject</tabstop>
   <tabstop>pushButtonCancel</tabstop>
   <tabstop>pushButtonCompute</tabstop>
  </tabstops>
@@ -606,7 +549,7 @@
   <connection>
    <sender>checkBoxGrad</sender>
    <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxGradReject_3</receiver>
+   <receiver>doubleSpinBoxGradReject</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -622,7 +565,7 @@
   <connection>
    <sender>checkBoxMag</sender>
    <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxMagReject_3</receiver>
+   <receiver>doubleSpinBoxMagReject</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -638,7 +581,7 @@
   <connection>
    <sender>checkBoxEeg</sender>
    <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxEEGReject_3</receiver>
+   <receiver>doubleSpinBoxEEGReject</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -648,22 +591,6 @@
     <hint type="destinationlabel">
      <x>327</x>
      <y>580</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxEog</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxEOGReject_3</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>167</x>
-     <y>617</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>338</x>
-     <y>621</y>
     </hint>
    </hints>
   </connection>

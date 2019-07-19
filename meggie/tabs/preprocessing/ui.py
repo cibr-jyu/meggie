@@ -6,25 +6,19 @@ from meggie.tabs.preprocessing.dialogs.resamplingDialogMain import ResamplingDia
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import RereferencingDialog
 
 
-def plot(experiment, data, parent):
+def plot(experiment, data, window):
     """
     """
     subject = experiment.active_subject
-    if not subject:
-        return
-
     raw = subject.get_raw()
     if raw:
         raw.plot()
 
 
-def projections(experiment, data, parent):
+def projections(experiment, data, window):
     """
     """
     subject = experiment.active_subject
-    if not subject:
-        return
-
     raw = subject.get_raw()
     if not raw.info['projs']:
         messagebox(self, "No added projections.")
@@ -36,45 +30,29 @@ def projections(experiment, data, parent):
     fig.canvas.set_window_title('Projections for ' + name)
 
 
-def ica(experiment, data, parent):
+def ica(experiment, data, window):
     """
     """
-    subject = experiment.active_subject
-    if not subject:
-        return
-
-    ica_dialog = ICADialog(parent, experiment)
+    ica_dialog = ICADialog(window, experiment)
     ica_dialog.show()
 
 
-def filter(experiment, data, parent):
+def filter(experiment, data, window):
     """
     """
-    subject = experiment.active_subject
-    if not subject:
-        return
-
-    filter_dialog = FilterDialog(parent, experiment)
+    filter_dialog = FilterDialog(window, experiment)
     filter_dialog.show()
 
 
-def resample(experiment, data, parent):
+def resample(experiment, data, window):
     """
     """
-    subject = experiment.active_subject
-    if not subject:
-        return
-
-    resampling_dialog = ResamplingDialog(parent, experiment)
+    resampling_dialog = ResamplingDialog(window, experiment)
     resampling_dialog.show()
 
 
-def rereference(experiment, data, parent):
+def rereference(experiment, data, window):
     """
     """
-    subject = experiment.active_subject
-    if not subject:
-        return
-
-    rereferencing_dialog = RereferencingDialog(parent, experiment)
+    rereferencing_dialog = RereferencingDialog(window, experiment)
     rereferencing_dialog.show()

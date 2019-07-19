@@ -63,12 +63,9 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         selected_subject_names = self.batching_widget.selected_subjects
 
-        recently_active_subject = experiment.active_subject.name
-
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    experiment.activate_subject(name)
                     raw = subject.get_raw()
                     fname = subject.raw_path
 
@@ -85,8 +82,6 @@ class ResamplingDialog(QtWidgets.QDialog):
                     self.batching_widget.failed_subjects.append(
                         (subject, str(e)))
                     logging.getLogger('ui_logger').exception(str(e))
-
-        experiment.activate_subject(recently_active_subject)
 
         self.batching_widget.cleanup()
 

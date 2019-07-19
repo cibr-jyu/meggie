@@ -14,7 +14,7 @@ def find_stim_channel(raw):
     """
     Finds the appropriate stim channel from raw
     """
-    channels = self.get_raw(preload=False).info.get('ch_names')
+    channels = raw.info.get('ch_names')
     if 'STI101' in channels:
         return 'STI101'
     elif 'STI 101' in channels:

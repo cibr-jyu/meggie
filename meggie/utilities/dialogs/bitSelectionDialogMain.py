@@ -3,7 +3,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.Qt import QPushButton, pyqtSlot
 
-from meggie.ui.epoching.bitSelectionDialogUi import Ui_Dialog
+from meggie.utilities.dialogs.bitSelectionDialogUi import Ui_Dialog
 
 
 class BitSelectionDialog(QtWidgets.QDialog):
