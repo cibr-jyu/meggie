@@ -12,7 +12,7 @@ from meggie.utilities.messaging import exc_messagebox
 
 
 def find_all_tab_specs():
-    """
+    """ Finds all valid tab packages under tabs-folder.
     """
     tab_specs = {}
     tab_path = pkg_resources.resource_filename('meggie', 'tabs')
@@ -26,7 +26,10 @@ def find_all_tab_specs():
     return tab_specs
 
 def construct_tab(package, tab_spec, parent):
-    """
+    """ Constructs analysis tab dynamically.
+
+    Constructs analysis tab dynamically from python package
+    containing an configuration file and code
     """
 
     class DynamicTab(QtWidgets.QDialog):
@@ -67,11 +70,16 @@ def construct_tab(package, tab_spec, parent):
                 self.groupBoxInfo.setTitle('Info')
                 self.gridLayoutInfo = QtWidgets.QGridLayout(self.groupBoxInfo)
 
-            # then fill the contents
+            # add the (empty) input lists
+            for idx, input_name in enumerate(tab_spec.get('inputs', [])):
 
-            for idx, input_element in enumerate(tab_spec.get('inputs', [])):
+                if input_name in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][input_name]
+                else:
+                    title = input_name.capitalize()
+
                 groupBoxInputElement = QtWidgets.QGroupBox(self.groupBoxInputs)
-                groupBoxInputElement.setTitle(input_element.capitalize())
+                groupBoxInputElement.setTitle(title)
                 gridLayoutInputElement = QtWidgets.QGridLayout(groupBoxInputElement)
                 listWidgetInputElement = QtWidgets.QListWidget(groupBoxInputElement)
 
@@ -85,9 +93,15 @@ def construct_tab(package, tab_spec, parent):
                 setattr(self, 'listWidgetInputElement_' + str(idx+1), 
                         listWidgetInputElement)
 
-            for idx, output_element in enumerate(tab_spec.get('outputs', [])):
+            # add the (empty) output lists
+            for idx, output_name in enumerate(tab_spec.get('outputs', [])):
+                if output_name in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][output_name]
+                else:
+                    title = output_name.capitalize()
+
                 groupBoxOutputElement = QtWidgets.QGroupBox(self.groupBoxOutputs)
-                groupBoxOutputElement.setTitle(output_element.capitalize())
+                groupBoxOutputElement.setTitle(title)
                 gridLayoutOutputElement = QtWidgets.QGridLayout(groupBoxOutputElement)
                 listWidgetOutputElement = QtWidgets.QListWidget(groupBoxOutputElement)
 
@@ -101,62 +115,12 @@ def construct_tab(package, tab_spec, parent):
                 setattr(self, 'listWidgetOutputElement_' + str(idx+1), 
                         listWidgetOutputElement)
 
-            # connect to handler
-            def connect_to_handler(button, element, data_type):
-                module_name = package
-                try:
-                    module = importlib.import_module(
-                        '.'.join(['meggie', 'tabs', module_name, 'ui']))
-                    handler = getattr(module, element)
-
-                    def handler_wrapper(checked):
-                        experiment = self.parent.experiment
-                        if not experiment:
-                            return
-
-                        subject = experiment.active_subject
-                        if not subject:
-                            return
-
-                        data = {'inputs': [],
-                                'outputs': []}
-
-                        inputs = [] 
-                        for idx, name in enumerate(self.tab_spec.get('inputs', [])):
-                            ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
-                            try:
-                                selected_items = [item.text() for item in ui_element.selectedItems()]
-                            except:
-                                continue
-                            data['inputs'].append((name, selected_items))
-                    
-                        for idx, name in enumerate(self.tab_spec.get('outputs', [])):
-                            ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
-                            try:
-                                selected_items = [item.text() for item in 
-                                                  ui_element.selectedItems()]
-                            except:
-                                continue
-                            data['outputs'].append((name, selected_items))
-
-                        try:
-                            handler(experiment, data, parent)
-                        except Exception as e:
-                            exc_messagebox(self, e)
-                        
-                    if handler:
-                        button.clicked.connect(handler_wrapper)
-                except ModuleNotFoundError as exc:
-                    # If buttons stop working, debug here
-                    pass
-                except AttributeError:
-                    pass
-
-            for idx, transform_element in enumerate(tab_spec.get('transforms', [])):
-                if transform_element in list(tab_spec.get('translations', {}).keys()):
-                    title = tab_spec['translations'][transform_element]
+            # add transform buttons
+            for idx, transform_name in enumerate(tab_spec.get('transforms', [])):
+                if transform_name in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][transform_name]
                 else:
-                    title = transform_element.capitalize()
+                    title = transform_name.capitalize()
 
                 pushButtonTransformElement = QtWidgets.QPushButton(self.groupBoxTransforms)
                 pushButtonTransformElement.setText(title)
@@ -164,13 +128,12 @@ def construct_tab(package, tab_spec, parent):
                 setattr(self, 'pushButtonTransformElement_' + str(idx+1), 
                         pushButtonTransformElement)
 
-                connect_to_handler(pushButtonTransformElement, transform_element, 'inputs')
-
-            for idx, action_element in enumerate(tab_spec.get('actions', [])):
-                if action_element in list(tab_spec.get('translations', {}).keys()):
-                    title = tab_spec['translations'][action_element]
+            # add action buttons
+            for idx, action_name in enumerate(tab_spec.get('actions', [])):
+                if action_name in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][action_name]
                 else:
-                    title = action_element.capitalize()
+                    title = action_name.capitalize()
 
                 pushButtonActionElement = QtWidgets.QPushButton(self.groupBoxActions)
                 pushButtonActionElement.setText(title)
@@ -178,24 +141,31 @@ def construct_tab(package, tab_spec, parent):
                 setattr(self, 'pushButtonActionElement_' + str(idx+1), 
                         pushButtonActionElement)
 
-                connect_to_handler(pushButtonActionElement, action_element, 'outputs')
+            # add info text boxes
+            for idx, info_name in enumerate(tab_spec.get('info', [])):
 
-            for idx, info_element in enumerate(tab_spec.get('info', [])):
+                if info_name in list(tab_spec.get('translations', {}).keys()):
+                    title = tab_spec['translations'][info_name]
+                else:
+                    title = info_name.capitalize()
+
                 groupBoxInfoElement = QtWidgets.QGroupBox(self.groupBoxInfo)
-                groupBoxInfoElement.setTitle(info_element.capitalize())
+                groupBoxInfoElement.setTitle(title)
                 gridLayoutInfoElement = QtWidgets.QGridLayout(groupBoxInfoElement)
-                listWidgetInfoElement = QtWidgets.QListWidget(groupBoxInfoElement)
+                plainTextEditInfoElement = QtWidgets.QTextBrowser(groupBoxInfoElement)
 
-                gridLayoutInfoElement.addWidget(listWidgetInfoElement, idx, 0, 1, 1)
+                gridLayoutInfoElement.addWidget(plainTextEditInfoElement, idx, 0, 1, 1)
                 self.gridLayoutInfo.addWidget(groupBoxInfoElement)
 
                 setattr(self, 'groupBoxInfoElement_' + str(idx+1), 
                         groupBoxInfoElement)
                 setattr(self, 'gridLayoutInfoElement_' + str(idx+1), 
                         gridLayoutInfoElement)
-                setattr(self, 'listWidgetInfoElement_' + str(idx+1), 
-                        listWidgetInfoElement)
+                setattr(self, 'plainTextEditInfoElement_' + str(idx+1), 
+                        plainTextEditInfoElement)
 
+            # lay out inputs, transforms, outputs, actions and info elements
+            # in a nice way to a grid
             if tab_spec.get('inputs') and not tab_spec.get('transforms'):
                 self.gridLayoutRoot.addWidget(self.groupBoxInputs, 0, 0, 2, 1)
             elif tab_spec.get('inputs'):
@@ -219,13 +189,111 @@ def construct_tab(package, tab_spec, parent):
             if tab_spec.get('info'):
                 self.gridLayoutRoot.addWidget(self.groupBoxInfo, 0, 2, 2, 1)
 
+            # add spacers to bottom and right to keep the window concise
             spacerItemVertical = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
             self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
             spacerItemHorizontal = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.gridLayoutContainer.addItem(spacerItemHorizontal, 0, 1, 1, 1)
 
+            # add handlers for list selection changed -> info updates
+            def connect_to_handler(list_element, info_element, info_name):
+                module = importlib.import_module(
+                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                handler = getattr(module, info_name)
+
+                def handler_wrapper():
+                    experiment = self.parent.experiment
+                    if not experiment:
+                        return
+                    subject = experiment.active_subject
+                    if not subject:
+                        return
+
+                    data = self._get_data()
+
+                    try:
+                        info_content = handler(experiment, data, parent)
+                    except Exception as e:
+                        exc_messagebox(self, e)
+
+                    info_element.setPlainText(info_content)
+                    
+                list_element.itemSelectionChanged.connect(handler_wrapper)
+
+            for idx, info_name in enumerate(self.tab_spec.get('info', [])):
+                info_element = getattr(self, 'plainTextEditInfoElement_' + 
+                                       str(idx+1))
+
+                for idx, input_name in enumerate(tab_spec.get('inputs', [])):
+
+                    input_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
+                    connect_to_handler(input_element, info_element, info_name)
+
+                for idx, output_name in enumerate(tab_spec.get('outputs', [])):
+
+                    output_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
+                    connect_to_handler(output_element, info_element, info_name)
+
+
+            # add button handlers
+            def connect_to_handler(button, name):
+                module = importlib.import_module(
+                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                handler = getattr(module, name)
+
+                def handler_wrapper(checked):
+                    experiment = self.parent.experiment
+                    if not experiment:
+                        return
+
+                    subject = experiment.active_subject
+                    if not subject:
+                        return
+
+                    data = self._get_data()
+
+                    try:
+                        handler(experiment, data, parent)
+                    except Exception as e:
+                        exc_messagebox(self, e)
+                    
+                button.clicked.connect(handler_wrapper)
+
+            for idx, action_name in enumerate(tab_spec.get('actions', [])):
+                action_element = getattr(self, 'pushButtonActionElement_' + str(idx+1))
+                connect_to_handler(action_element, action_name)
+            for idx, transform_name in enumerate(tab_spec.get('transforms', [])):
+                transform_element = getattr(self, 'pushButtonTransformElement_' + str(idx+1))
+                connect_to_handler(transform_element, transform_name)
+
+        def _get_data(self):
+            """ Returns data from input and output lists
+            """
+            data = {'inputs': [],
+                    'outputs': []}
+
+            inputs = [] 
+            for idx, name in enumerate(self.tab_spec.get('inputs', [])):
+                ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
+                try:
+                    selected_items = [item.text() for item in ui_element.selectedItems()]
+                except:
+                    continue
+                data['inputs'].append((name, selected_items))
+        
+            for idx, name in enumerate(self.tab_spec.get('outputs', [])):
+                ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
+                try:
+                    selected_items = [item.text() for item in 
+                                      ui_element.selectedItems()]
+                except:
+                    continue
+                data['outputs'].append((name, selected_items))
+            return data
 
         def initialize_ui(self):
+            """ Updates (empties and refills) ui contents when called
+            """
 
             experiment = self.parent.experiment
             if not experiment:
@@ -235,6 +303,7 @@ def construct_tab(package, tab_spec, parent):
             if not subject:
                 return
 
+            # fill input lists with contents
             for idx, input_name in enumerate(self.tab_spec.get('inputs', [])):
                 ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
 
@@ -250,6 +319,7 @@ def construct_tab(package, tab_spec, parent):
                 for key in sorted(list(data.keys())):
                     ui_element.addItem(key)
 
+            # fill output lists with contents
             for idx, output_name in enumerate(self.tab_spec.get('outputs', [])):
                 ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
 
@@ -264,6 +334,18 @@ def construct_tab(package, tab_spec, parent):
 
                 for key in sorted(list(data.keys())):
                     ui_element.addItem(key)
+
+            # allow to fill info element already here.
+            # there are also handlers to update info element 
+            # on list selection changes
+            for idx, info_name in enumerate(self.tab_spec.get('info', [])):
+                ui_element = getattr(self, 'plainTextEditInfoElement_' + str(idx+1))
+
+                module = importlib.import_module(
+                    '.'.join(['meggie', 'tabs', package, 'ui']))
+                handler = getattr(module, info_name)
+                info_content = handler(experiment, None, self.parent)
+                ui_element.setPlainText(info_content)
 
         @property
         def name(self):

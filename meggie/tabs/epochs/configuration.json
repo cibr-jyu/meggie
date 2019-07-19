@@ -9,5 +9,6 @@
     "translations": {"create": "Create new collection",
                      "delete": "Delete selected collection",
                      "delete_from_all": "Delete selected collection from all",
-                     "plot_epochs": "Plot epochs"}
+                     "plot_epochs": "Plot epochs",
+                     "epochs_info": "Epochs info"}
 }

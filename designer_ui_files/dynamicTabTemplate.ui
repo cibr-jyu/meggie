@@ -162,6 +162,37 @@
        </layout>
       </widget>
      </item>
+     <item row="0" column="2" rowspan="3">
+      <widget class="QGroupBox" name="groupBoxInfo">
+       <property name="title">
+        <string>Info</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBoxInfoElement_1">
+          <property name="title">
+           <string>Info 1</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_11">
+           <item row="0" column="0">
+            <widget class="QPlainTextEdit" name="plainTextEditInfoElement_1">
+             <property name="plainText">
+              <string>Info about the list element on the left
+
+Where to begin
+Where to go
+To the sea
+
+And a long line at the bottom.</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="2">
