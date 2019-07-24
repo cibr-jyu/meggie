@@ -32,7 +32,6 @@ def create_epochs_from_events(params, subject):
     for key in reject_params:
         reject_params[key] /= get_scaling(key)
 
-
     events = []
     category = {}
 

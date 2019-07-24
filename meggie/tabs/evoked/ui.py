@@ -2,9 +2,19 @@
 """
 import logging
 
+import meggie.utilities.mne_wrapper as mne
+import matplotlib.pyplot as plt 
 
-def compute(experiment, data, window):
-    pass
+import meggie.utilities.fileManager as fileManager
+
+from meggie.utilities.channels import get_channels
+
+from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
+
+
+def create(experiment, data, window):
+    dialog = CreateEvokedDialog(experiment, window)
+    dialog.show()
 
 
 def delete(experiment, data, window):
@@ -15,17 +25,50 @@ def delete_from_all(experiment, data, window):
     pass
 
 
-def plot(experiment, data, window):
-    pass
-
-
 def plot_topo(experiment, data, window):
-    pass
+    subject = experiment.active_subject
+    try:
+        for key, values in data['outputs']:
+            if key == 'evoked':
+                selected_name = values[0]
+                break
+    except IndexError as exc:
+        return
 
+    evoked = subject.evoked.get(selected_name)
 
-def plot_joint(experiment, data, window):
-    pass
+    evokeds = []
+    for key, evoked in evoked.content.items():
+        evokeds.append(evoked)
 
+    def onclick(event):
+        plt.show()
+
+    fig = mne.plot_evoked_topo(evokeds)
+    fig.canvas.mpl_connect('button_press_event', onclick)
+
+def plot_topomap(experiment, data, window):
+    subject = experiment.active_subject
+    try:
+        for key, values in data['outputs']:
+            if key == 'evoked':
+                selected_name = values[0]
+                break
+    except IndexError as exc:
+        return
+
+    layout = experiment.layout
+    layout = fileManager.read_layout(layout)
+
+    evoked = subject.evoked.get(selected_name)
+
+    for key, evoked in evoked.content.items():
+        channels = get_channels(evoked.info)
+        for ch_type in channels.keys():
+            title = key + ' (' + ch_type + ')'
+            mne.plot_evoked_topomap(
+                evoked, ch_type=ch_type, layout=layout,
+                title=title)
 
 def group_average(experiment, data, window):
     pass

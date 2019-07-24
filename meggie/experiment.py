@@ -388,21 +388,23 @@ class ExperimentHandler(QObject):
  
                         directory = getattr(subject, datatype + '_directory')
                         params = inst_data.get('params', {})
+
                         # for backwards compatibility
-                        if not params:
-                            if datatype == 'evoked' and 'event_names' in inst_data:
+                        if datatype == 'evoked':
+                            if not params.get('event_names') and 'event_names' in inst_data:
                                 params['event_names'] = inst_data['event_names']
-                            if datatype == 'evoked':
-                                params['bwc_path'] = os.path.join(subject.path,
-                                    'epochs/average')
-                            if datatype == 'spectrum' and 'log_transformed' in inst_data:
+                            params['bwc_path'] = os.path.join(subject.path, 'epochs/average')
+                        if datatype == 'spectrum':
+                            if not params.get('log_transformed') and 'log_transformed' in inst_data:
                                 params['log_transformed'] = inst_data['log_transformed']
-                            if datatype == 'tfr' and 'decim' in inst_data:
+                        if datatype == 'tfr':
+                            if not params.get('decim') and 'decim' in inst_data:
                                 params['decim'] = inst_data['decim']
-                            if datatype == 'tfr' and 'n_cycles' in inst_data:
+                            if not params.get('n_cycles') and 'n_cycles' in inst_data:
                                 params['n_cycles'] = inst_data['n_cycles']
-                            if datatype == 'tfr' and 'evoked_subtracted' in inst_data:
+                            if not params.get('evoked_subtracted') and 'evoked_subtracted' in inst_data:
                                 params['evoked_subtracted'] = inst_data['evoked_subtracted']
+
                         if inst_class:
                             inst = inst_class(
                                 name,

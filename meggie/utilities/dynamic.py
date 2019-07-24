@@ -83,6 +83,9 @@ def construct_tab(package, tab_spec, parent):
                 gridLayoutInputElement = QtWidgets.QGridLayout(groupBoxInputElement)
                 listWidgetInputElement = QtWidgets.QListWidget(groupBoxInputElement)
 
+                listWidgetInputElement.setSelectionMode(
+                    QtWidgets.QAbstractItemView.ExtendedSelection)
+
                 gridLayoutInputElement.addWidget(listWidgetInputElement, idx, 0, 1, 1)
                 self.gridLayoutInputs.addWidget(groupBoxInputElement)
 
@@ -104,6 +107,9 @@ def construct_tab(package, tab_spec, parent):
                 groupBoxOutputElement.setTitle(title)
                 gridLayoutOutputElement = QtWidgets.QGridLayout(groupBoxOutputElement)
                 listWidgetOutputElement = QtWidgets.QListWidget(groupBoxOutputElement)
+
+                listWidgetOutputElement.setSelectionMode(
+                    QtWidgets.QAbstractItemView.ExtendedSelection)
 
                 gridLayoutOutputElement.addWidget(listWidgetOutputElement, idx, 0, 1, 1)
                 self.gridLayoutOutputs.addWidget(groupBoxOutputElement)

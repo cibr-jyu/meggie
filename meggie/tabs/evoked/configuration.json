@@ -3,7 +3,7 @@
 	"name": "Averaging",
 	"inputs": ["epochs"],
 	"outputs": ["evoked"],
-	"transforms": ["compute"],
-	"actions": ["delete", "delete_from_all", "plot", "plot_topo", "plot_joint", "group_average", "save", "save_from_all"],
+	"transforms": ["create"],
+	"actions": ["delete", "delete_from_all", "plot_topo", "plot_topomap", "group_average", "save", "save_from_all"],
     "info": ["evoked_info"]
 }

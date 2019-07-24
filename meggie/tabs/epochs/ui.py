@@ -77,7 +77,7 @@ def plot_epochs(experiment, data, window):
                 selected_name = values[0]
                 break
     except IndexError as exc:
-        raise Exception('Could not delete. Is collection selected?')
+        return
 
     epochs = subject.epochs.get(selected_name)
     epochs.content.plot()
@@ -90,9 +90,8 @@ def plot_image(experiment, data, window):
                 selected_name = values[0]
                 break
     except IndexError as exc:
-        raise Exception('Could not delete. Is collection selected?')
+        return
 
     epochs = subject.epochs.get(selected_name)
     epochs.content.plot_image()
-
 

@@ -4,6 +4,9 @@
 import os
 
 
+import meggie.utilities.mne_wrapper as mne
+
+
 class Evoked(object):
     """
     """
