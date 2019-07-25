@@ -165,7 +165,7 @@ def create_timestamped_folder(experiment):
     """
     current_time_str = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     path = os.path.join(experiment.workspace,
-                        experiment.experiment_name, 'output')
+                        experiment.name, 'output')
     timestamped_folder = os.path.join(path, current_time_str)
 
     import errno

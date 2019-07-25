@@ -13,7 +13,7 @@ from PyQt5 import QtWidgets
 import numpy as np
 
 from meggie.tabs.epochs.controller.epoching import create_epochs_from_events
-from meggie.tabs.epochs.dialogs.eventSelectionDialogUi import Ui_EventSelectionDialog
+from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogUi import Ui_CreateEpochsFromEventsDialog
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.dialogs.bitSelectionDialogMain import BitSelectionDialog
@@ -24,7 +24,7 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.validators import validate_name
 
 
-class EventSelectionDialog(QtWidgets.QDialog):
+class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
     """
     """
 
@@ -33,7 +33,7 @@ class EventSelectionDialog(QtWidgets.QDialog):
 
         """
         QtWidgets.QDialog.__init__(self, parent)
-        self.ui = Ui_EventSelectionDialog()
+        self.ui = Ui_CreateEpochsFromEventsDialog()
         self.ui.setupUi(self)
 
         self.parent = parent
@@ -44,8 +44,9 @@ class EventSelectionDialog(QtWidgets.QDialog):
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
             parent=self,
-            container=self.ui.scrollAreaWidgetContents,
-            geometry=self.ui.widgetBatchContainer.geometry())
+            container=self.ui.groupBoxBatching,
+            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+        self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
     def experiment_getter(self):
         return self.experiment

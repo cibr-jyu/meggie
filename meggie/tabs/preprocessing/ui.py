@@ -56,3 +56,9 @@ def rereference(experiment, data, window):
     """
     rereferencing_dialog = RereferencingDialog(window, experiment)
     rereferencing_dialog.show()
+
+
+def crop(experiment, data, window):
+    """
+    """
+    pass

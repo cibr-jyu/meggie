@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>683</width>
-    <height>604</height>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,80 +25,69 @@
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
         <width>665</width>
-        <height>549</height>
+        <height>224</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>645</width>
-        <height>540</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>2</y>
-         <width>641</width>
-         <height>522</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Experiment information</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="3" column="0">
-            <widget class="QTextEdit" name="textEditDescription"/>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="labelAuthor">
-               <property name="text">
-                <string>Experiment author:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditAuthor"/>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="labelExperimentName">
-               <property name="text">
-                <string>Experiment name:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditExperimentName"/>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelDescription">
-             <property name="text">
-              <string>Experiment description:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBoxInfo">
+         <property name="title">
+          <string>Experiment information</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelExperimentName">
+            <property name="text">
+             <string>Experiment name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelDescription">
+            <property name="text">
+             <string>Experiment description:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditExperimentName"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditAuthor"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAuthor">
+            <property name="text">
+             <string>Experiment author:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QTextEdit" name="textEditDescription">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>100</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -116,9 +105,6 @@
  </widget>
  <tabstops>
   <tabstop>scrollArea</tabstop>
-  <tabstop>lineEditExperimentName</tabstop>
-  <tabstop>lineEditAuthor</tabstop>
-  <tabstop>textEditDescription</tabstop>
   <tabstop>cancelOkButtonBox</tabstop>
  </tabstops>
  <resources/>

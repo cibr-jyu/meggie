@@ -20,7 +20,7 @@ class ExperimentInfoDialog(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.parent = parent
         self.ui.lineEditExperimentName.setText(
-            parent.experiment.experiment_name)
+            parent.experiment.name)
 
         self.ui.lineEditExperimentAuthor.setText(parent.experiment.author)
 

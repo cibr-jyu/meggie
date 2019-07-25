@@ -4,5 +4,5 @@
 	"inputs": [],
 	"actions": ["plot", "ica", "filter",
 				"resample", "rereference",
-				"projections"]
+				"projections", "crop"]
 }

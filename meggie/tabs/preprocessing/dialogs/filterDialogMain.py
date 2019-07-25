@@ -34,8 +34,9 @@ class FilterDialog(QtWidgets.QDialog):
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
             parent=self,
-            container=self.ui.scrollAreaWidgetContents,
-            geometry=self.ui.widget.geometry())
+            container=self.ui.groupBoxBatching,
+            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+        self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
     def experiment_getter(self):
         return self.experiment

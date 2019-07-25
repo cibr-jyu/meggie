@@ -4,7 +4,7 @@ import logging
 
 from pprint import pformat
 
-from meggie.tabs.epochs.dialogs.eventSelectionDialogMain import EventSelectionDialog
+from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogMain import CreateEpochsFromEventsDialog
 
 
 def epochs_info(experiment, data, window):
@@ -27,7 +27,7 @@ def epochs_info(experiment, data, window):
 
 
 def create_from_events(experiment, data, window):
-    dialog = EventSelectionDialog(experiment, window)
+    dialog = CreateEpochsFromEventsDialog(experiment, window)
     dialog.show()
 
 def delete(experiment, data, window):

@@ -46,8 +46,8 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         return self.experiment
 
     def accept(self):
-        pass
+        self.close()
 
     def acceptBatch(self):
-        pass
+        self.close()
 

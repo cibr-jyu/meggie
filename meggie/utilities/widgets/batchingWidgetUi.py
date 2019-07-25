@@ -11,9 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_BatchingWidget(object):
     def setupUi(self, BatchingWidget):
         BatchingWidget.setObjectName("BatchingWidget")
-        BatchingWidget.resize(291, 293)
+        BatchingWidget.resize(291, 276)
         self.layoutWidget = QtWidgets.QWidget(BatchingWidget)
-        self.layoutWidget.setGeometry(QtCore.QRect(0, 10, 289, 41))
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 0, 289, 31))
         self.layoutWidget.setObjectName("layoutWidget")
         self.headingLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
         self.headingLayout.setContentsMargins(0, 0, 0, 0)
@@ -29,7 +29,7 @@ class Ui_BatchingWidget(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.headingLayout.addItem(spacerItem)
         self.functionalityWidget = QtWidgets.QWidget(BatchingWidget)
-        self.functionalityWidget.setGeometry(QtCore.QRect(0, 48, 289, 241))
+        self.functionalityWidget.setGeometry(QtCore.QRect(0, 30, 289, 241))
         self.functionalityWidget.setObjectName("functionalityWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.functionalityWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
