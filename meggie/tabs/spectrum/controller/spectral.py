@@ -11,8 +11,8 @@ from collections import OrderedDict
 
 import numpy as np
 import matplotlib.pyplot as plt
+import mne
 
-import meggie.code_meggie.general.mne_wrapper as mne
 
 from meggie.code_meggie.analysis.utils import color_cycle
 from meggie.code_meggie.analysis.utils import average_data_to_channel_groups

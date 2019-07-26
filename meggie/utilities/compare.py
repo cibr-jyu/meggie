@@ -7,9 +7,6 @@ from copy import deepcopy
 
 import numpy as np
 
-import meggie.utilities.mne_wrapper as mne
-import meggie.utilities.fileManager as fileManager
-
 
 def _prepare_raw_for_changes(raw_from, raw_to):
     """ Modifies first raw object in place so that the second raw object is

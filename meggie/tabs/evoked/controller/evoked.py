@@ -7,13 +7,13 @@ import copy
 import logging
 import os
 
+import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
-import meggie.utilities.mne_wrapper as mne
 import meggie.utilities.fileManager as fileManager
 
-from meggie.utilities.groups import color_cycle
+from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
 
 from meggie.utilities.decorators import threaded
@@ -23,7 +23,7 @@ from meggie.utilities.validators import validate_name
 from meggie.utilities.events import find_stim_channel
 
 
-def draw_evoked_potentials(experiment, evokeds, output, title=None):
+def plot_channel_averages(experiment, selected_evokeds):
     """
     Draws a topography representation of the evoked potentials.
 
@@ -31,72 +31,39 @@ def draw_evoked_potentials(experiment, evokeds, output, title=None):
     layout = fileManager.read_layout(experiment.layout)
     colors = color_cycle(len(evokeds))
 
+    # get evokeds
+    evokeds = None
+
     channel_groups = experiment.channel_groups
 
     new_evokeds = []
     for evoked_idx, evoked in enumerate(evokeds):
         new_evokeds.append(evoked.copy().drop_channels(evoked.info['bads']))
 
-    if output == 'all_channels':
+    averages = []
+    for evoked_idx, evoked in enumerate(new_evokeds):
+        data_labels, averaged_data = average_data_to_channel_groups(
+            evoked.data, evoked.info['ch_names'], channel_groups)
+        averages.append((data_labels, averaged_data))
+        shape = averaged_data.shape
 
-        # little fix for evoked scalings for meg data
-        scalings = dict(eeg=1e6, grad=1e13, mag=1e15)
-        evoked = new_evokeds[0].copy()
-        grad_picks = mne.pick_types(evoked.info, meg='grad')
-        mag_picks = mne.pick_types(evoked.info, meg='mag')
-        if grad_picks.size > 0 and mag_picks.size > 0:
-            mag_val = np.percentile(new_evokeds[0].data[mag_picks], 95)
-            grad_val = np.percentile(new_evokeds[0].data[grad_picks], 95)
-            grad_scaling = mag_val * 1e15 / grad_val
-            scalings['grad'] = grad_scaling
+    for ii in range(shape[0]):
+        fig, ax = plt.subplots()
+        for evoked_idx in range(len(new_evokeds)):
+            evoked_name = new_evokeds[evoked_idx].comment
+            times = new_evokeds[evoked_idx].times
+            ax.set_xlabel('Time (s)')
+            ax.set_ylabel('{}'.format(get_unit(
+                averages[evoked_idx][0][ii][0]
+            )))
+            ax.plot(times, averages[evoked_idx][1][ii],
+                    color=colors[evoked_idx])
+        ch_type, ch_group = averages[evoked_idx][0][ii]
+        title = 'Evoked ({0}, {1})'.format(ch_type, ch_group)
+        fig.canvas.set_window_title(title)
+        fig.suptitle(title)
 
-        fig = mne.plot_evoked_topo(new_evokeds, layout,
-                                   color=colors, title=title, scalings=scalings)
-
-        conditions = [e.comment for e in new_evokeds]
-        positions = np.arange(0.025, 0.025 + 0.04 * len(new_evokeds), 0.04)
-
-        for cond, col, pos in zip(conditions, colors, positions):
-            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
-        window_title = '_'.join(conditions)
-        fig.canvas.set_window_title(window_title)
-        fig.show()
-
-        def onclick(event):
-            channel = plt.getp(plt.gca(), 'title')
-            plt.gcf().canvas.set_window_title(
-                '_'.join([window_title, channel]))
-            plt.show(block=False)
-
-        fig.canvas.mpl_connect('button_press_event', onclick)
-
-    elif output == 'channel_averages':
-
-        averages = []
-        for evoked_idx, evoked in enumerate(new_evokeds):
-            data_labels, averaged_data = average_data_to_channel_groups(
-                evoked.data, evoked.info['ch_names'], channel_groups)
-            averages.append((data_labels, averaged_data))
-            shape = averaged_data.shape
-
-        for ii in range(shape[0]):
-            fig, ax = plt.subplots()
-            for evoked_idx in range(len(new_evokeds)):
-                evoked_name = new_evokeds[evoked_idx].comment
-                times = new_evokeds[evoked_idx].times
-                ax.set_xlabel('Time (s)')
-                ax.set_ylabel('{}'.format(get_unit(
-                    averages[evoked_idx][0][ii][0]
-                )))
-                ax.plot(times, averages[evoked_idx][1][ii],
-                        color=colors[evoked_idx])
-            ch_type, ch_group = averages[evoked_idx][0][ii]
-            title = 'Evoked ({0}, {1})'.format(ch_type, ch_group)
-            fig.canvas.set_window_title(title)
-            fig.suptitle(title)
-
-        plt.show()
+    plt.show()
 
 
 def save_data_evoked(experiment, subjects, output_rows, evoked_name):

@@ -7,7 +7,8 @@ import os
 import re
 import logging
 
-import meggie.utilities.mne_wrapper as mne
+import mne
+
 
 
 class TFR(object):

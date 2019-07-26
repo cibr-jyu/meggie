@@ -2,18 +2,25 @@
 """
 import logging
 
-import meggie.utilities.mne_wrapper as mne
+import mne
 import matplotlib.pyplot as plt 
 
-import meggie.utilities.fileManager as fileManager
-
+from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 
 
 def create(experiment, data, window):
-    dialog = CreateEvokedDialog(experiment, window)
+    try:
+        for key, values in data['inputs']:
+            if key == 'epochs':
+                selected_names = values
+                break
+    except IndexError as exc:
+        return
+
+    dialog = CreateEvokedDialog(experiment, window, selected_names)
     dialog.show()
 
 
@@ -58,7 +65,7 @@ def plot_topomap(experiment, data, window):
         return
 
     layout = experiment.layout
-    layout = fileManager.read_layout(layout)
+    layout = read_layout(layout)
 
     evoked = subject.evoked.get(selected_name)
 

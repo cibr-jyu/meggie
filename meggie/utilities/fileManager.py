@@ -12,11 +12,11 @@ import sys
 import datetime
 import logging
 
-import numpy as np
-
 from distutils import dir_util
 
-import meggie.utilities.mne_wrapper as mne
+import numpy as np
+
+import mne
 
 
 def read_layout(layout):
@@ -96,7 +96,7 @@ def open_raw(fname, preload=True):
     """
     try:
         logging.getLogger('ui_logger').info('Reading ' + fname)
-        raw = mne.read_raw_fif(fname, preload=preload, allow_maxshield=True)
+        raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True)
 
         return raw
     except IOError as e:

@@ -7,7 +7,7 @@ import logging
 
 import numpy as np
 
-import meggie.utilities.mne_wrapper as mne
+import mne
 
 
 def find_stim_channel(raw):

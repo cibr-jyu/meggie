@@ -3,14 +3,13 @@
 import logging
 
 import numpy as np
+import mne
 
 from PyQt5 import QtWidgets
 
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogUi import Ui_rereferencingDialog
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
-
-import meggie.utilities.mne_wrapper as mne
 
 
 class RereferencingDialog(QtWidgets.QDialog):

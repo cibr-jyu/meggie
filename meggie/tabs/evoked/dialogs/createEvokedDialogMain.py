@@ -24,7 +24,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, experiment, parent):
+    def __init__(self, experiment, parent, selected_epochs):
         """Initialize the event selection dialog.
 
         """
@@ -34,6 +34,8 @@ class CreateEvokedDialog(QtWidgets.QDialog):
 
         self.parent = parent
         self.experiment = experiment
+
+        self.selected_epochs = selected_epochs
 
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
@@ -46,6 +48,21 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         return self.experiment
 
     def accept(self):
+        subject = self.experiment.active_subject
+        selected_epochs = self.selected_epochs
+
+        # check that array lengths are similar
+        # average separately
+        # add epochs name to comment
+        # create dict
+        # create evoked object
+        # use its save method
+        # add to subject
+        # save experiment settings
+
+        from meggie.utilities.debug import debug_trace;
+        debug_trace()
+
         self.close()
 
     def acceptBatch(self):

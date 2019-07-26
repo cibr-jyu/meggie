@@ -6,17 +6,16 @@ import logging
 from copy import deepcopy
 
 import numpy as np
+import mne
 
-import meggie.utilities.mne_wrapper as mne
-import meggie.utilities.fileManager as fileManager
-
+from meggie.utilities.channels import read_layout
 from meggie.utilities.compare import compare_raws
 
 
 def compute_ica(raw, n_components, method, max_iter):
     """
     """
-    ica = mne.ICA(
+    ica = mne.preprocessing.ICA(
         n_components=n_components,
         method=method,
         max_iter=max_iter)
@@ -31,7 +30,7 @@ def compute_ica(raw, n_components, method, max_iter):
 def plot_topographies(ica, n_components, layout):
     """
     """
-    layout = fileManager.read_layout(layout)
+    layout = read_layout(layout)
 
     figs = ica.plot_components(layout=layout)
 
@@ -65,7 +64,7 @@ def plot_sources(raw, ica):
 def plot_properties(raw, ica, picks, layout):
     """
     """
-    layout = fileManager.read_layout(layout)
+    layout = read_layout(layout)
     figs = ica.plot_properties(
         raw, picks, topomap_args={'layout': layout})
 

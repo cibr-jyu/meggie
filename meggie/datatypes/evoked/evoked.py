@@ -3,8 +3,7 @@
 
 import os
 
-
-import meggie.utilities.mne_wrapper as mne
+import mne
 
 
 class Evoked(object):

@@ -4,7 +4,7 @@
 """
 import os
 
-import meggie.utilities.mne_wrapper as mne
+import mne
 
 
 class Epochs:
@@ -22,7 +22,7 @@ class Epochs:
     def content(self):
         """
         """
-        if isinstance(self._content, mne.EPOCHS_TYPE):
+        if self._content is not None:
             return self._content
         else:
             try:

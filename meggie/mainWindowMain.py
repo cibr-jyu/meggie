@@ -10,9 +10,6 @@ import logging
 import warnings
 import pkg_resources
 
-import meggie.utilities.mne_wrapper as mne
-import meggie.utilities.fileManager as fileManager
-
 from meggie.utilities.dynamic import construct_tab
 from meggie.utilities.dynamic import find_all_tab_specs
 
@@ -23,6 +20,7 @@ from meggie.utilities.units import get_unit
 from meggie.utilities.measurementInfo import MeasurementInfo
 from meggie.utilities.preferences import PreferencesHandler
 from meggie.utilities.events import create_event_set
+from meggie.utilities.mne_wrapper import wrap_mne
 
 from meggie.experiment import Experiment
 from meggie.experiment import ExperimentHandler
@@ -30,6 +28,7 @@ from meggie.experiment import ExperimentHandler
 from meggie.utilities.decorators import threaded
 from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
+
 from meggie.utilities.dialogs.logDialogMain import LogDialog
 from meggie.utilities.dialogs.experimentInfoDialogMain import ExperimentInfoDialog
 from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
@@ -58,6 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.experiment = None
 
         self.setup_loggers()
+        wrap_mne()
 
         # Direct output to console
         if 'debug' not in sys.argv:

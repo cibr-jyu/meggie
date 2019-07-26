@@ -7,8 +7,7 @@ import copy
 import logging
 
 import numpy as np
-
-import meggie.utilities.mne_wrapper as mne
+import mne
 
 from meggie.utilities.units import get_scaling
 from meggie.utilities.events import find_stim_channel

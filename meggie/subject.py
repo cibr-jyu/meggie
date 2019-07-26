@@ -11,7 +11,6 @@ import pkg_resources
 
 import numpy as np
 
-import meggie.utilities.mne_wrapper as mne
 import meggie.utilities.fileManager as fileManager
 
 from meggie.utilities.events import Events
@@ -71,7 +70,7 @@ class Subject(object):
         return path
 
     def get_raw(self, preload=True):
-        if isinstance(self._raw, mne.RAW_TYPE):
+        if self._raw is not None:
             if preload:
                 self._raw.load_data()
             return self._raw

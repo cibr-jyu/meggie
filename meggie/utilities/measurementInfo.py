@@ -7,7 +7,7 @@ import datetime
 import logging
 import re
 
-import meggie.utilities.mne_wrapper as mne
+import mne
 
 
 class MeasurementInfo(object):
@@ -18,10 +18,7 @@ class MeasurementInfo(object):
     def __init__(self, raw):
         """
         """
-        if isinstance(raw, mne.RAW_TYPE):
-            self._info = raw.info
-        else:
-            raise TypeError('Not a Raw object.')
+        self._info = raw.info
 
     @property
     def high_pass(self):

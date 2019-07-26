@@ -1,16 +1,9 @@
 """
 """
 
-import itertools
-
 import numpy as np
 
-import meggie.code_meggie.general.mne_wrapper as mne
-
-
-def color_cycle(n):
-    cycler = itertools.cycle(['b', 'r', 'g', 'y', 'm', 'c', 'k', 'pink'])
-    return list(itertools.islice(cycler, n))
+import mne
 
 
 def average_data_to_channel_groups(data, ch_names, channel_groups):
@@ -24,7 +17,7 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
     if channel_groups == 'MNE':
         for ch_type in ch_types:
             if ch_type in ['mag', 'grad']:
-                selections = mne.SELECTIONS
+                selections = mne.selection._SELECTIONS
                 for selection in selections:
                     selected_ch_names = mne._clean_names(
                         mne.read_selection(selection),
