@@ -275,8 +275,8 @@ def construct_tab(package, tab_spec, parent):
         def _get_data(self):
             """ Returns data from input and output lists
             """
-            data = {'inputs': [],
-                    'outputs': []}
+            data = {'inputs': {},
+                    'outputs': {}}
 
             inputs = [] 
             for idx, name in enumerate(self.tab_spec.get('inputs', [])):
@@ -285,7 +285,8 @@ def construct_tab(package, tab_spec, parent):
                     selected_items = [item.text() for item in ui_element.selectedItems()]
                 except:
                     continue
-                data['inputs'].append((name, selected_items))
+
+                data['inputs'][name] = selected_items
         
             for idx, name in enumerate(self.tab_spec.get('outputs', [])):
                 ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
@@ -294,7 +295,8 @@ def construct_tab(package, tab_spec, parent):
                                       ui_element.selectedItems()]
                 except:
                     continue
-                data['outputs'].append((name, selected_items))
+                data['outputs'][name] = selected_items
+
             return data
 
         def initialize_ui(self):

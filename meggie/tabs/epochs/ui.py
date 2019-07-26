@@ -10,10 +10,7 @@ from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogMain import CreateEp
 def epochs_info(experiment, data, window):
 
     try:
-        for key, values in data['outputs']:
-            if key == 'epochs':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['epochs'][0]
         epochs = experiment.active_subject.epochs[selected_name]
         params = epochs.params
 
@@ -35,10 +32,7 @@ def delete(experiment, data, window):
     """
     subject = experiment.active_subject
     try:
-        for key, values in data['outputs']:
-            if key == 'epochs':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['epochs'][0]
     except IndexError as exc:
         raise Exception('Could not delete. Is collection selected?')
 
@@ -50,10 +44,7 @@ def delete_from_all(experiment, data, window):
     """ Deletes selected epochs from all subjects
     """
     try:
-        for key, values in data['outputs']:
-            if key == 'epochs':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['epochs'][0]
     except IndexError as exc:
         raise Exception('Could not delete. Is collection selected?')
 
@@ -72,10 +63,7 @@ def delete_from_all(experiment, data, window):
 def plot_epochs(experiment, data, window):
     subject = experiment.active_subject
     try:
-        for key, values in data['outputs']:
-            if key == 'epochs':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['epochs'][0]
     except IndexError as exc:
         return
 
@@ -85,10 +73,7 @@ def plot_epochs(experiment, data, window):
 def plot_image(experiment, data, window):
     subject = experiment.active_subject
     try:
-        for key, values in data['outputs']:
-            if key == 'epochs':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['epochs'][0]
     except IndexError as exc:
         return
 

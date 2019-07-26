@@ -12,12 +12,9 @@ from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 
 
 def create(experiment, data, window):
-    try:
-        for key, values in data['inputs']:
-            if key == 'epochs':
-                selected_names = values
-                break
-    except IndexError as exc:
+    selected_names = data['inputs']['epochs']
+
+    if not selected_names:
         return
 
     dialog = CreateEvokedDialog(experiment, window, selected_names)
@@ -34,11 +31,9 @@ def delete_from_all(experiment, data, window):
 
 def plot_topo(experiment, data, window):
     subject = experiment.active_subject
+
     try:
-        for key, values in data['outputs']:
-            if key == 'evoked':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['evoked'][0]
     except IndexError as exc:
         return
 
@@ -57,10 +52,7 @@ def plot_topo(experiment, data, window):
 def plot_topomap(experiment, data, window):
     subject = experiment.active_subject
     try:
-        for key, values in data['outputs']:
-            if key == 'evoked':
-                selected_name = values[0]
-                break
+        selected_name = data['outputs']['evoked'][0]
     except IndexError as exc:
         return
 
@@ -77,6 +69,7 @@ def plot_topomap(experiment, data, window):
                 evoked, ch_type=ch_type, layout=layout,
                 title=title)
 
+
 def group_average(experiment, data, window):
     pass
 
@@ -91,3 +84,4 @@ def save_from_all(experiment, data, window):
 
 def evoked_info(experiment, data, window):
     return ""
+
