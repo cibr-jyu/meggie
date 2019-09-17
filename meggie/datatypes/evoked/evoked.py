@@ -14,11 +14,11 @@ class Evoked(object):
         """
         self._name = name
         self._content = content
-        self._path = os.path.join(evoked_directory, name)
+        self._path = os.path.join(evoked_directory, name + '.fif')
         self._params = params
 
         # for backwards compatbility, 
-        # evokeds used to be stored in epochs/average
+        # evokeds used to be stored in epochs/average, names also end .fif
         if 'bwc_path' in self._params:
             self._bwc_path = os.path.join(self._params.pop('bwc_path'),
                                           name)
@@ -80,7 +80,14 @@ class Evoked(object):
         self._params = params
 
     def save_content(self):
-        pass
+        """
+        """
+        try:
+            from meggie.utilities.debug import debug_trace;
+            debug_trace()
+            mne.write_evokeds(self._path, list(self.content.values()))
+        except Exception as exc:
+            raise IOError('Writing evokeds failed')
 
     def delete_content(self):
         os.remove(self._path)

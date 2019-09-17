@@ -14,10 +14,12 @@ from meggie.tabs.evoked.dialogs.createEvokedDialogUi import Ui_CreateEvokedDialo
 
 from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
+from meggie.datatypes.evoked.evoked import Evoked
+
 from meggie.utilities.decorators import threaded
+from meggie.utilities.validators import validate_name
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
-from meggie.utilities.validators import validate_name
 
 
 class CreateEvokedDialog(QtWidgets.QDialog):
@@ -44,27 +46,88 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
+        self.ui.lineEditSource.setText(', '.join(selected_epochs))
+        
+
     def experiment_getter(self):
         return self.experiment
+
+    def create_evoked(self, subject, selected_epochs):
+
+        time_arrays = []
+        for name in selected_epochs:
+            epochs = subject.epochs.get(name)
+            if epochs:
+                time_arrays.append(epochs.content.times)
+
+        for i, i_times in enumerate(time_arrays):
+            for j, j_times in enumerate(time_arrays):
+                if i != j:
+                    try:
+                        np.testing.assert_array_almost_equal(i_times, j_times)
+                    except AssertionError:
+                        raise Exception('Epoch collection of different '
+                                        'timescales are not allowed')
+
+        evokeds = {}
+        for name in selected_epochs:
+            try:
+                epochs = subject.epochs[name]
+            except KeyError:
+                raise KeyError('No epoch collection called ' + str(name))
+
+            mne_epochs = epochs.content
+
+            @threaded
+            def average():
+                return mne_epochs.average()
+
+            mne_evoked = average(do_meanwhile=self.parent.update_ui)
+
+            mne_evoked.comment = name
+            evokeds[name] = mne_evoked
+
+        evoked_name = self.ui.lineEditName.text()
+        params = {'event_names': selected_epochs}
+
+        evoked_directory = subject.evoked_directory
+        evoked = Evoked(evoked_name, evoked_directory, params, content=evokeds)
+        evoked.save_content()
+        subject.add(evoked, 'evoked')
 
     def accept(self):
         subject = self.experiment.active_subject
         selected_epochs = self.selected_epochs
 
-        # check that array lengths are similar
-        # average separately
-        # add epochs name to comment
-        # create dict
-        # create evoked object
-        # use its save method
-        # add to subject
-        # save experiment settings
+        try:
+            self.create_evoked(subject, selected_epochs)
+        except Exception as exc:
+            exc_messagebox(self, exc)
+            return
 
-        from meggie.utilities.debug import debug_trace;
-        debug_trace()
-
+        self.experiment.save_experiment_settings()
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
+        selected_epochs = self.selected_epochs
+        experiment = self.experiment
+
+        selected_subject_names = self.batching_widget.selected_subjects
+
+        for name, subject in self.experiment.subjects.items():
+            if name in selected_subject_names:
+                try:
+                    self.create_evoked(subject, selected_epochs)
+                except Exception as exc:
+                    self.batching_widget.failed_subjects.append((subject,
+                                                                 str(e)))
+                    logging.getLogger('ui_logger').error(
+                        'Params: ' + str(params))
+                    logging.getLogger('ui_logger').exception(str(e))
+
+        self.batching_widget.cleanup()
+        self.experiment.save_experiment_settings()
+        self.parent.initialize_ui()
         self.close()
 

@@ -89,8 +89,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         if eeg:
             reject['eeg'] = self.ui.doubleSpinBoxEEGReject.value()
 
-        subject = self.experiment.active_subject
-
         params = {'mag': mag, 'grad': grad, 'eeg': eeg,
                   'reject': reject,
                   'tmin': float(tmin), 'tmax': float(tmax),
@@ -168,17 +166,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
-        active_subject = experiment.active_subject
         selected_subject_names = self.batching_widget.selected_subjects
-
-        for subject_name in selected_subject_names:
-            subject = experiment.subjects[subject_name]
-            if params['collection_name'] in subject.epochs:
-                message = ('Epoch collection with the name exists in ' 
-                           'one or more subjects')
-                messagebox(self.parent, message)
-                return
-
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
@@ -192,7 +180,6 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
-
         self.parent.initialize_ui()
         self.close()
 

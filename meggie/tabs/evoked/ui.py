@@ -2,12 +2,15 @@
 """
 import logging
 
+from pprint import pformat
+
 import mne
 import matplotlib.pyplot as plt 
 
 from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 
+from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
 
 
@@ -71,7 +74,26 @@ def plot_topomap(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    pass
+    subject = experiment.active_subject
+
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+
+    # evoked = subject.evoked.get(selected_name)
+
+    def handler(groups):
+        pass
+        # varmista että threaded kaikkialla mahollisessa käytössä
+        # group averarge
+        # save
+        # initialize ui
+        # save experiment settings
+
+
+    dialog = GroupAverageDialog(experiment, handler)
+    dialog.show()
 
 
 def save(experiment, data, window):
@@ -83,5 +105,13 @@ def save_from_all(experiment, data, window):
 
 
 def evoked_info(experiment, data, window):
-    return ""
+    try:
+        selected_name = data['outputs']['evoked'][0]
+        evoked = experiment.active_subject.evoked[selected_name]
+        filtered = {key: evoked.params[key] for key in ['event_names']}
+        message = pformat(filtered)
+    except Exception as exc:
+        message = ""
+
+    return message
 

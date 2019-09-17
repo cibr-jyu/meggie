@@ -5,9 +5,9 @@ import logging
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from meggie.ui.general.groupAverageDialogUi import Ui_groupAverageDialog
-from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.decorators import threaded
+from meggie.utilities.dialogs.groupAverageDialogUi import Ui_groupAverageDialog
+from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.decorators import threaded
 
 
 class GroupAverageDialog(QtWidgets.QDialog):

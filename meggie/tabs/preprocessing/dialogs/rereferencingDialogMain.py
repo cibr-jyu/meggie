@@ -64,9 +64,9 @@ class RereferencingDialog(QtWidgets.QDialog):
 
         experiment.active_subject.rereferenced = True
         experiment.save_experiment_settings()
+        self.parent.initialize_ui()
 
         logging.getLogger('ui_logger').info(
             'Data was successfully rereferenced using setting: ' + selection)
 
         self.close()
-        self.parent.initialize_ui()
