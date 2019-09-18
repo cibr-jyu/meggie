@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 
 def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
@@ -17,3 +18,14 @@ def validate_name(name, minlength=1, maxlength=30, fieldname='name'):
                         'characters or underscores')
 
     return name
+
+
+def assert_array_lengths(arrays):
+    for i, i_times in enumerate(arrays):
+        for j, j_times in enumerate(arrays):
+            if i != j:
+                try:
+                    np.testing.assert_array_almost_equal(i_times, j_times)
+                except AssertionError:
+                    raise Exception('Times do not match')
+

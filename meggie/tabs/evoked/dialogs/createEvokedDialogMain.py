@@ -18,6 +18,7 @@ from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
+from meggie.utilities.validators import assert_array_lengths
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 
@@ -60,14 +61,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             if epochs:
                 time_arrays.append(epochs.content.times)
 
-        for i, i_times in enumerate(time_arrays):
-            for j, j_times in enumerate(time_arrays):
-                if i != j:
-                    try:
-                        np.testing.assert_array_almost_equal(i_times, j_times)
-                    except AssertionError:
-                        raise Exception('Epoch collection of different '
-                                        'timescales are not allowed')
+        assert_array_lengths(time_arrays)
 
         evokeds = {}
         for name in selected_epochs:
@@ -87,7 +81,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             mne_evoked.comment = name
             evokeds[name] = mne_evoked
 
-        evoked_name = self.ui.lineEditName.text()
+        evoked_name = validate_name(self.ui.lineEditName.text())
         params = {'event_names': selected_epochs}
 
         evoked_directory = subject.evoked_directory

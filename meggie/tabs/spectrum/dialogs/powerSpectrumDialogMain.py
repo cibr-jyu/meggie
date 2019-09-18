@@ -9,7 +9,6 @@ from PyQt5 import QtWidgets
 
 import numpy as np
 
-import meggie.code_meggie.general.fileManager as fileManager
 
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents

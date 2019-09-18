@@ -19,12 +19,12 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
             if ch_type in ['mag', 'grad']:
                 selections = mne.selection._SELECTIONS
                 for selection in selections:
-                    selected_ch_names = mne._clean_names(
+                    selected_ch_names = mne.utils._clean_names(
                         mne.read_selection(selection),
                         remove_whitespace=True)
 
-                    cleaned_ch_names = mne._clean_names(ch_names,
-                                                        remove_whitespace=True)
+                    cleaned_ch_names = mne.utils._clean_names(ch_names,
+                        remove_whitespace=True)
 
                     if ch_type == 'grad':
                         ch_names_filt = [ch_name for ch_name in selected_ch_names
@@ -54,8 +54,8 @@ def average_data_to_channel_groups(data, ch_names, channel_groups):
                     averaged_data.append(ch_average)
                     data_labels.append((ch_type, selection))
             elif ch_type == 'eeg':
-                cleaned_ch_names = mne._clean_names(ch_names,
-                                                    remove_whitespace=True)
+                cleaned_ch_names = mne.utils._clean_names(ch_names,
+                    remove_whitespace=True)
 
                 # without further knowledge, we average all channels for eeg
                 eeg_ch_names = [ch_name for ch_name in cleaned_ch_names

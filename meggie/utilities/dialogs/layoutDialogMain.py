@@ -4,7 +4,9 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
+
+from meggie.utilities.channels import get_layouts
 
 from meggie.utilities.dialogs.layoutDialogUi import Ui_Layout
 
@@ -16,7 +18,7 @@ class LayoutDialog(QtWidgets.QDialog):
         self.parent = parent
         self.ui = Ui_Layout()
         self.ui.setupUi(self)
-        layouts = fileManager.get_layouts()
+        layouts = get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
         self.ui.labelLayoutActive.setText(self.parent.experiment.layout)
 
@@ -28,7 +30,7 @@ class LayoutDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        home = fileManager.homepath()
+        home = filemanager.homepath()
 
         fname = QtCore.QDir.toNativeSeparators(
             str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file',

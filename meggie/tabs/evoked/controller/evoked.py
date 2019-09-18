@@ -11,16 +11,13 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
 
 from meggie.utilities.decorators import threaded
-from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
-from meggie.utilities.validators import validate_name
-from meggie.utilities.events import find_stim_channel
 
 
 def plot_channel_averages(experiment, selected_evokeds):
@@ -28,7 +25,7 @@ def plot_channel_averages(experiment, selected_evokeds):
     Draws a topography representation of the evoked potentials.
 
     """
-    layout = fileManager.read_layout(experiment.layout)
+    layout = filemanager.read_layout(experiment.layout)
     colors = color_cycle(len(evokeds))
 
     # get evokeds
@@ -46,6 +43,9 @@ def plot_channel_averages(experiment, selected_evokeds):
             evoked.data, evoked.info['ch_names'], channel_groups)
         averages.append((data_labels, averaged_data))
         shape = averaged_data.shape
+
+    # create averages
+    # then plot, maybe using plot_timeseries of mne, or using this.
 
     for ii in range(shape[0]):
         fig, ax = plt.subplots()
@@ -66,80 +66,15 @@ def plot_channel_averages(experiment, selected_evokeds):
     plt.show()
 
 
-def save_data_evoked(experiment, subjects, output_rows, evoked_name):
-
-    path = fileManager.create_timestamped_folder(experiment)
-
+def create_averages(experiment, mne_evoked):
     channel_groups = experiment.channel_groups
 
-    time_lengths = []
-    tmins = []
-    tmaxs = []
-    for subject in subjects.values():
-        meggie_evoked = subject.evokeds.get(evoked_name, None)
-        if meggie_evoked is None:
-            continue
-        for evoked in meggie_evoked.mne_evokeds.values():
-            if not evoked:
-                continue
-            time_lengths.append(len(evoked.times))
-            tmins.append(evoked.times[0])
-            tmaxs.append(evoked.times[-1])
+    mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
 
-    if len(set(time_lengths)) > 1 or len(
-            set(tmins)) > 1 or len(set(tmaxs)) > 1:
-        raise Exception("Time settings are not all equal")
+    data_labels, averaged_data = average_data_to_channel_groups(
+        mne_evoked.data, mne_evoked.info['ch_names'], channel_groups)
 
-    cleaned_evoked_name = evoked_name.split('.')[0]
-
-    if len(subjects) > 1:
-        filename = 'group_spectrum_' + cleaned_evoked_name + '.csv'
-    else:
-        filename = (list(subjects.values())[0].subject_name +
-                    '_spectrum_' + cleaned_evoked_name + '.csv')
-
-    logging.getLogger('ui_logger').info('Saving evokeds..')
-
-    data = []
-    row_names = []
-
-    for sub_name, subject in subjects.items():
-        names = []
-        evokeds = []
-        meggie_evoked = subject.evokeds.get(evoked_name)
-        if meggie_evoked:
-            for name, evoked in meggie_evoked.mne_evokeds.items():
-                if not evoked:
-                    continue
-
-                column_names = evoked.times.tolist()
-
-                if output_rows == 'channel_averages':
-                    evoked = evoked.copy().drop_channels(evoked.info['bads'])
-
-                    data_labels, averaged_data = average_data_to_channel_groups(
-                        evoked.data, evoked.info['ch_names'], channel_groups)
-
-                    data.extend(averaged_data.tolist())
-
-                    for ch_type, sel in data_labels:
-                        row_name = ('[' + sub_name + '] ' +
-                                    '{' + name + '} ' +
-                                    '(' + ch_type + ') ' + sel)
-                        row_names.append(row_name)
-
-                else:
-                    data.extend(evoked.data.tolist())
-                    for ch_name in evoked.info['ch_names']:
-                        if ch_name in evoked.info['bads']:
-                            ch_name = ch_name + ' (bad)'
-                        row_name = ('[' + sub_name + '] ' +
-                                    '{' + name + '] ' +
-                                    ch_name)
-                        row_names.append(row_name)
-
-    fileManager.save_csv(os.path.join(path, filename), data, column_names,
-                         row_names)
+    return data_labels, averaged_data
 
 
 @threaded

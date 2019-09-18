@@ -6,7 +6,7 @@ import logging
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.dialogs.logDialogUi import Ui_LogDialog
@@ -52,7 +52,7 @@ class LogDialog(QtWidgets.QDialog):
             # logging.getLogger('ui_logger').info(
             #     'Showing last 10000 lines of ' + logfile_path)
 
-            last_lines = fileManager.tail(log_file, lines=self.lines)
+            last_lines = filemanager.tail(log_file, lines=self.lines)
 
             # track lines that start log entries as there can be multiline entries.
 

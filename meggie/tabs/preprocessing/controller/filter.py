@@ -3,8 +3,6 @@
 
 import logging
 
-import meggie.utilities.fileManager as fileManager
-
 from meggie.utilities.decorators import threaded
 
 

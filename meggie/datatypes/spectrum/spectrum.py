@@ -9,7 +9,7 @@ import logging
 
 import numpy as np
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
 
 
 class Spectrum(object):
@@ -43,7 +43,7 @@ class Spectrum(object):
                 except Exception as exc:
                     raise Exception("Unknown file name format.")
 
-                freqs, ch_names, psd = fileManager.load_csv(
+                freqs, ch_names, psd = filemanager.load_csv(
                     os.path.join(self._spectrums_directory, fname))
 
                 freqs = np.array(freqs).astype(np.float)
@@ -66,7 +66,7 @@ class Spectrum(object):
             path = os.path.join(self._spectrums_directory,
                                 self.name + '_' + str(key) + '.csv')
 
-            fileManager.save_csv(path, data, column_names, row_names)
+            filemanager.save_csv(path, data, column_names, row_names)
 
     def delete_content(self):
         template = self.name + '_' + r'[0-9]*\.csv'

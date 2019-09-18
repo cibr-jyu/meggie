@@ -6,8 +6,6 @@ import logging
 from PyQt5 import QtWidgets
 import numpy as np
 
-from meggie.code_meggie.general import fileManager
-
 from meggie.code_meggie.analysis.spectral import create_tfr
 
 from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog

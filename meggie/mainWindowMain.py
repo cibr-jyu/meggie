@@ -17,7 +17,7 @@ from meggie.mainWindowUi import Ui_MainWindow
 from meggie.icons import mainWindowIcons_rc
 
 from meggie.utilities.units import get_unit
-from meggie.utilities.measurementInfo import MeasurementInfo
+from meggie.utilities.measurement_info import MeasurementInfo
 from meggie.utilities.preferences import PreferencesHandler
 from meggie.utilities.events import create_event_set
 from meggie.utilities.mne_wrapper import wrap_mne

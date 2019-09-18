@@ -17,8 +17,9 @@ import mne
 from meggie.code_meggie.analysis.utils import color_cycle
 from meggie.code_meggie.analysis.utils import average_data_to_channel_groups
 
+import meggie.utilities.filemanager as filemanager
+
 from meggie.ui.utils.decorators import threaded
-from meggie.code_meggie.general import fileManager
 from meggie.code_meggie.utils.units import get_scaling
 from meggie.code_meggie.utils.units import get_unit
 from meggie.code_meggie.utils.units import get_power_unit
@@ -111,7 +112,7 @@ def plot_tse(experiment, tfr_name, minfreq, maxfreq, baseline, output):
 
     meggie_tfr = subject.tfrs.get(tfr_name)
 
-    lout = fileManager.read_layout(experiment.layout)
+    lout = filemanager.read_layout(experiment.layout)
 
     data = meggie_tfr.tfrs
     example_tfr = list(data.values())[0]
@@ -236,7 +237,7 @@ def plot_power_spectrum(experiment, name, output):
 
     spectrum = subject.spectrums.get(name)
 
-    lout = fileManager.read_layout(experiment.layout)
+    lout = filemanager.read_layout(experiment.layout)
 
     data = spectrum.data
     freqs = spectrum.freqs
@@ -368,7 +369,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     channel_groups = experiment.channel_groups
 
     logging.getLogger('ui_logger').info('Saving..')
-    path = fileManager.create_timestamped_folder(experiment)
+    path = filemanager.create_timestamped_folder(experiment)
     data = []
     row_names = []
 
@@ -425,7 +426,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
             row_names.extend(subject_row_names)
             data.extend(subject_data.tolist())
 
-    fileManager.save_csv(os.path.join(path, filename), data,
+    filemanager.save_csv(os.path.join(path, filename), data,
                          column_names, row_names)
 
 
@@ -575,7 +576,7 @@ def create_tfr(experiment, subject, tfr_name, epochs_names,
 def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
              output):
 
-    layout = fileManager.read_layout(experiment.layout)
+    layout = filemanager.read_layout(experiment.layout)
 
     if blmode:
         bline = (blstart, blend)

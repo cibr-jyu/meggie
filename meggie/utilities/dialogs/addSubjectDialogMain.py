@@ -9,8 +9,6 @@ import logging
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-import meggie.utilities.fileManager as fileManager
-
 from meggie.utilities.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox

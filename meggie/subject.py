@@ -11,7 +11,7 @@ import pkg_resources
 
 import numpy as np
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.events import Events
 
@@ -76,7 +76,7 @@ class Subject(object):
             return self._raw
         else:
             try:
-                raw = fileManager.open_raw(self.raw_path, preload=preload)
+                raw = filemanager.open_raw(self.raw_path, preload=preload)
             except OSError:
                 raise IOError("Couldn't find raw file.")
             self._raw = raw
@@ -84,7 +84,7 @@ class Subject(object):
             return raw
 
     def save(self):
-        fileManager.save_raw(self._raw, self.raw_path)
+        filemanager.save_raw(self._raw, self.raw_path)
 
 
     def release_memory(self):
@@ -121,7 +121,7 @@ class Subject(object):
                     paths.append(path)
 
         try:
-            fileManager.ensure_folders(
+            filemanager.ensure_folders(
                 [self.path] + paths)
         except OSError:
             raise OSError("Couldn't create all the necessary folders. "

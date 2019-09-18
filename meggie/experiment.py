@@ -12,7 +12,7 @@ import logging
 import pkg_resources
 import copy
 
-import meggie.utilities.fileManager as fileManager
+import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
@@ -175,7 +175,7 @@ class Experiment(QObject):
         subject = Subject(experiment, subject_name, raw_fname)
         if raw_path:
             subject.ensure_folders()
-            fileManager.copy_subject_raw(subject, raw_path)
+            filemanager.copy_subject_raw(subject, raw_path)
         self.add_subject(subject)
 
     def save_experiment_settings(self):
