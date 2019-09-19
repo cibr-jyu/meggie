@@ -11,8 +11,7 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
-import meggie.utilities.filemanager as filemanager
-
+from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
 
@@ -20,46 +19,37 @@ from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_unit
 
 
-def plot_channel_averages(experiment, selected_evokeds):
+def plot_channel_averages(experiment, evoked):
     """
     Draws a topography representation of the evoked potentials.
 
     """
-    layout = filemanager.read_layout(experiment.layout)
-    colors = color_cycle(len(evokeds))
+    
+    # average and restructure for ease of plotting
+    averages = {}
+    for key, mne_evoked in evoked.content.items():
+        data_labels, averaged_data = create_averages(experiment, mne_evoked)
+        for idx in range(len(data_labels)):
+            if not data_labels[idx] in averages:
+                averages[data_labels[idx]] = []
+            averages[data_labels[idx]].append(averaged_data[idx])
 
-    # get evokeds
-    evokeds = None
+    layout = read_layout(experiment.layout)
+    colors = color_cycle(len(list(averages.values())[0]))
 
-    channel_groups = experiment.channel_groups
-
-    new_evokeds = []
-    for evoked_idx, evoked in enumerate(evokeds):
-        new_evokeds.append(evoked.copy().drop_channels(evoked.info['bads']))
-
-    averages = []
-    for evoked_idx, evoked in enumerate(new_evokeds):
-        data_labels, averaged_data = average_data_to_channel_groups(
-            evoked.data, evoked.info['ch_names'], channel_groups)
-        averages.append((data_labels, averaged_data))
-        shape = averaged_data.shape
-
-    # create averages
-    # then plot, maybe using plot_timeseries of mne, or using this.
-
-    for ii in range(shape[0]):
+    for type_key, item in averages.items():
         fig, ax = plt.subplots()
-        for evoked_idx in range(len(new_evokeds)):
-            evoked_name = new_evokeds[evoked_idx].comment
-            times = new_evokeds[evoked_idx].times
+        for evoked_idx, evoked_data in enumerate(item):
+            mne_evoked = list(evoked.content.values())[evoked_idx]
+            evoked_name = mne_evoked.comment
+            times = mne_evoked.times
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('{}'.format(get_unit(
-                averages[evoked_idx][0][ii][0]
+                type_key[0]
             )))
-            ax.plot(times, averages[evoked_idx][1][ii],
+            ax.plot(times, evoked_data,
                     color=colors[evoked_idx])
-        ch_type, ch_group = averages[evoked_idx][0][ii]
-        title = 'Evoked ({0}, {1})'.format(ch_type, ch_group)
+        title = 'Evoked ({0}, {1})'.format(type_key[0], type_key[1])
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 

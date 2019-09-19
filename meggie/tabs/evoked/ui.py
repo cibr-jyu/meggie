@@ -9,6 +9,7 @@ import mne
 import matplotlib.pyplot as plt 
 
 from meggie.tabs.evoked.controller.evoked import create_averages
+from meggie.tabs.evoked.controller.evoked import plot_channel_averages
 
 import meggie.utilities.filemanager as filemanager
 
@@ -69,7 +70,14 @@ def delete_from_all(experiment, data, window):
 def plot_averages(experiment, data, window):
     """ Plots channel averages of selected item 
     """
-    pass
+    subject = experiment.active_subject
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+
+    evoked = subject.evoked.get(selected_name)
+    plot_channel_averages(experiment, evoked)
 
 
 def plot_topo(experiment, data, window):
