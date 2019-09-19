@@ -11,10 +11,10 @@
                      "plot_topo": "Plot all channels",
                      "plot_topomap": "Plot topomaps",
                      "plot_averages": "Plot channel averages",
-                     "group_average": "Average over groups of subjects",
+                     "group_average": "Average over subjects",
                      "save": "Save to csv",
-                     "save_from_all": "Save to csv from all subjects",
+                     "save_from_all": "Save to csv from all",
                      "save_averages": "Save averages to csv",
-                     "save_averages_from_all": "Save averages to csv from all subjects",
+                     "save_averages_from_all": "Save averages to csv from all",
                      "evoked_info": "Evoked info"}
 }
