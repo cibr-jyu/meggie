@@ -11,9 +11,12 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+from meggie.datatypes.evoked.evoked import Evoked
+
 from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
+from meggie.utilities.validators import assert_arrays_same
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_unit
@@ -48,7 +51,9 @@ def plot_channel_averages(experiment, evoked):
                 type_key[0]
             )))
             ax.plot(times, evoked_data,
-                    color=colors[evoked_idx])
+                    color=colors[evoked_idx], 
+                    label=evoked_name)
+            ax.legend()
         title = 'Evoked ({0}, {1})'.format(type_key[0], type_key[1])
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
@@ -57,6 +62,8 @@ def plot_channel_averages(experiment, evoked):
 
 
 def create_averages(experiment, mne_evoked):
+    """
+    """
     channel_groups = experiment.channel_groups
 
     mne_evoked = mne_evoked.copy().drop_channels(mne_evoked.info['bads'])
@@ -71,74 +78,61 @@ def create_averages(experiment, mne_evoked):
 def group_average(experiment, evoked_name, groups):
     """
     """
-
-    # sanity checks
     sfreqs = []
-    tmins = []
-    tmaxs = []
+    times = []
     for group_key, group_subjects in groups.items():
         for subject_name in group_subjects:
-            subject = experiment.subjects.get(subject_name)
-            if not subject:
+            try:
+                subject = experiment.subjects.get(subject_name)
+                evoked = subject.evoked.get(evoked_name)
+
+                mne_evokeds = evoked.content
+                for mne_evoked in mne_evokeds.values():
+                    sfreqs.append(mne_evoked.info['sfreq'])
+                    times.append(mne_evoked.times)
+            except Exception as exc:
                 continue
-            evoked = subject.evokeds.get(evoked_name)
-            if not evoked:
-                continue
 
-            mne_evokeds = evoked.mne_evokeds
-            for mne_evoked in mne_evokeds.values():
-                sfreqs.append(mne_evoked.info['sfreq'])
-                tmins.append(mne_evoked.times[0])
-                tmaxs.append(mne_evoked.times[-1])
-
-    if len(set(sfreqs)) > 1:
-        raise Exception('Sampling rates do not match')
-    if len(set(tmins)) > 1 or len(set(tmaxs)) > 1:
-        raise Exception('Times do not match')
-
-    count = 0
-    found_subjects = []
-    group_info = {}
-    for subject in experiment.subjects.values():
-        subject_in_groups = False
-        for group_key, group_subjects in groups.items():
-            if subject.subject_name in group_subjects:
-                subject_in_groups = True
-        if not subject_in_groups:
-            continue
-
-        if subject.evokeds.get(evoked_name):
-            count += 1
-            evoked = subject.evokeds.get(evoked_name)
-            info = evoked.info['epoch_collections'][subject.subject_name]
-            group_info[subject.subject_name] = {'epoch_collections': info}
-            found_subjects.append(subject)
-
-    if count == 0:
-        raise ValueError('No evoked responses found from any subject.')
+    assert_arrays_same(times)
+    assert_arrays_same(sfreqs, message='Sampling rates do not match')
 
     grand_evokeds = {}
+    
     for group_key, group_subjects in groups.items():
-        for subject in found_subjects:
-            if subject.subject_name not in group_subjects:
+        for subject in experiment.subjects.values():
+            if subject.name not in group_subjects:
                 continue
-            evoked = subject.evokeds.get(evoked_name)
-            for evoked_item_key, evoked_item in evoked.mne_evokeds.items():
+            evoked = subject.evoked.get(evoked_name)
+            for evoked_item_key, evoked_item in evoked.content.items():
                 grand_key = (group_key, evoked_item_key)
-                if grand_key in grand_evokeds:
-                    grand_evokeds[grand_key].append(evoked_item)
-                else:
-                    grand_evokeds[grand_key] = [evoked_item]
+
+                if grand_key not in grand_evokeds:
+                    grand_evokeds[grand_key] = []
+                grand_evokeds[grand_key].append(evoked_item)
 
     grand_averages = {}
+    new_keys = []
     for key, grand_evoked in grand_evokeds.items():
         new_key = str(key[1]) + '_' + str(key[0])
         if len(grand_evoked) == 1:
             grand_averages[new_key] = grand_evoked[0].copy()
-
         else:
             grand_averages[new_key] = mne.grand_average(grand_evoked)
+        new_keys.append(new_key)
 
         grand_averages[new_key].comment = new_key
 
-    return grand_averages, group_info
+    if not grand_averages:
+        raise Exception('Did not find any data with given selection.')
+
+    subject = experiment.active_subject
+    name = 'group_' + evoked_name
+    params = {'event_names': new_keys}
+    evoked_directory = subject.evoked_directory
+    grand_average_evoked = Evoked(name, evoked_directory, params, 
+                                  content=grand_averages)
+
+    grand_average_evoked.save_content()
+    subject.add(grand_average_evoked, 'evoked')
+
+    return grand_average_evoked

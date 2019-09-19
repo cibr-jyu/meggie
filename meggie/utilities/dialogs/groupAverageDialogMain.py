@@ -12,10 +12,10 @@ from meggie.utilities.decorators import threaded
 
 class GroupAverageDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, handler):
+    def __init__(self, experiment, parent, handler):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_groupAverageDialog()
         self.ui.setupUi(self)
 

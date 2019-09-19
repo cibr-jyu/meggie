@@ -83,8 +83,6 @@ class Evoked(object):
         """
         """
         try:
-            from meggie.utilities.debug import debug_trace;
-            debug_trace()
             mne.write_evokeds(self._path, list(self.content.values()))
         except Exception as exc:
             raise IOError('Writing evokeds failed')

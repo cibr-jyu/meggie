@@ -68,7 +68,15 @@ blacklist = ['tests',
              'write_ctf_comp',
              'plt_show',
              'read_layout',
-             'figure_nobar']
+             'figure_nobar',
+             'einsum',
+             'sizeof_fmt',
+             'equalize_channels',
+             'combine_evoked',
+             'apply_trans',
+             'parallel_func',
+             'find_layout',
+             'add_background_image']
 
 blacklist.extend(['pick_types',
                   'pick_channels',

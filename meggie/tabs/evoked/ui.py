@@ -10,12 +10,13 @@ import matplotlib.pyplot as plt
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
+from meggie.tabs.evoked.controller.evoked import group_average as group_ave
 
 import meggie.utilities.filemanager as filemanager
 
 from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
-from meggie.utilities.validators import assert_array_lengths
+from meggie.utilities.validators import assert_arrays_same
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
@@ -42,7 +43,7 @@ def delete(experiment, data, window):
     except IndexError as exc:
         return
 
-    subject.remove(selected_name, 'epochs')
+    subject.remove(selected_name, 'evoked')
     experiment.save_experiment_settings()
     window.initialize_ui()
 
@@ -136,17 +137,13 @@ def group_average(experiment, data, window):
     except IndexError as exc:
         return
 
-    # evoked = subject.evoked.get(selected_name)
-
     def handler(groups):
-        pass
-        # varmista että threaded kaikkialla mahollisessa käytössä
-        # group averarge
-        # save
-        # initialize ui
-        # save experiment settings
+        group_ave(experiment, selected_name, groups,
+                  do_meanwhile=window.update_ui)
+        experiment.save_experiment_settings()
+        window.initialize_ui()
 
-    dialog = GroupAverageDialog(experiment, handler)
+    dialog = GroupAverageDialog(experiment, window, handler)
     dialog.show()
 
 
@@ -198,19 +195,18 @@ def save_from_all(experiment, data, window):
     # validate array lengths
     time_arrays = []
     for subject in experiment.subjects.values():
-        try:
-            evoked = subject.evoked.get(selected_name)
-        except Exception as exc:
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
             continue
+
         for mne_evoked in evoked.content.values():
             time_arrays.append(mne_evoked.times)
-    assert_array_lengths(time_arrays)
+    assert_arrays_same(time_arrays)
 
     # accumulate csv contents
     for subject in experiment.subjects.values():
-        try:
-            evoked = subject.evoked.get(selected_name)
-        except Exception as exc:
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
             continue
 
         for key, mne_evoked in evoked.content.items():
@@ -224,7 +220,7 @@ def save_from_all(experiment, data, window):
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + evoked.name + '.csv'
+    fname = 'all_subjects_' + selected_name + '.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_names)
@@ -281,17 +277,19 @@ def save_averages_from_all(experiment, data, window):
     # validate array lengths
     time_arrays = []
     for subject in experiment.subjects.values():
-        try:
-            evoked = subject.evoked.get(selected_name)
-        except Exception as exc:
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
             continue
         for mne_evoked in evoked.content.values():
             time_arrays.append(mne_evoked.times)
-    assert_array_lengths(time_arrays)
+    assert_arrays_same(time_arrays)
 
     # accumulate csv contents
     for subject in experiment.subjects.values():
         evoked = subject.evoked.get(selected_name)
+        if not evoked: 
+            continue
+
         for key, mne_evoked in evoked.content.items():
 
             data_labels, averaged_data = create_averages(experiment, mne_evoked)
@@ -305,7 +303,7 @@ def save_averages_from_all(experiment, data, window):
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + evoked.name + '.csv'
+    fname = 'all_subjects_' + selected_name + '.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_names)

@@ -18,7 +18,7 @@ from meggie.datatypes.evoked.evoked import Evoked
 
 from meggie.utilities.decorators import threaded
 from meggie.utilities.validators import validate_name
-from meggie.utilities.validators import assert_array_lengths
+from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
 
@@ -61,7 +61,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             if epochs:
                 time_arrays.append(epochs.content.times)
 
-        assert_array_lengths(time_arrays)
+        assert_arrays_same(time_arrays)
 
         evokeds = {}
         for name in selected_epochs:

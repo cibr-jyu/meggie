@@ -310,7 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
         subject_name = selIndexes[0].data()
 
         if self.experiment.active_subject:
-            if subject_name == self.experiment.active_subject.subject_name:
+            if subject_name == self.experiment.active_subject.name:
                 return
 
         previous_subject = self.experiment.active_subject
@@ -326,7 +326,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if previous_subject:
                 message = "Couldn't activate the subject, resuming to previous one."
                 logging.getLogger('ui_logger').info(message)
-                self.experiment.activate_subject(previous_subject.subject_name)
+                self.experiment.activate_subject(previous_subject.name)
 
         self.initialize_ui()
 
