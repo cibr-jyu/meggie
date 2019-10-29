@@ -4,7 +4,7 @@
 	"inputs": ["epochs"],
 	"outputs": ["evoked"],
 	"transforms": ["create"],
-	"actions": ["delete", "delete_from_all", "plot_topo", "plot_topomap", "plot_averages", "group_average", "save", "save_from_all", "save_averages", "save_averages_from_all"],
+	"actions": ["delete", "delete_from_all", "plot_topo", "plot_topomap", "plot_averages", "group_average", "save", "save_averages"],
     "info": ["evoked_info"],
     "translations": {"delete": "Delete selected evoked",
                      "delete_from_all": "Delete selected evoked from all",
@@ -13,8 +13,6 @@
                      "plot_averages": "Plot channel averages",
                      "group_average": "Average over subjects",
                      "save": "Save to csv",
-                     "save_from_all": "Save to csv from all",
                      "save_averages": "Save averages to csv",
-                     "save_averages_from_all": "Save averages to csv from all",
                      "evoked_info": "Evoked info"}
 }

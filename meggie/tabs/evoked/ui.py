@@ -148,39 +148,6 @@ def group_average(experiment, data, window):
 
 
 def save(experiment, data, window):
-    """ Saves all channels to csv from selected item
-    """
-    column_names = []
-    row_names = []
-    csv_data = []
-
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    subject = experiment.active_subject
-    evoked = subject.evoked.get(selected_name)
-
-    for key, mne_evoked in evoked.content.items():
-        csv_data.extend(mne_evoked.data.tolist())
-        column_names = mne_evoked.times.tolist()
-
-        for ch_name in mne_evoked.info['ch_names']:
-            name = key + '[' + ch_name + ']'
-            if ch_name in mne_evoked.info['bads']:
-                name = name + ' (bad)'
-            row_names.append(name)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = subject.name + '_' + evoked.name + '.csv'
-    path = os.path.join(folder, fname)
-
-    filemanager.save_csv(path, csv_data, column_names, row_names)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
-
-def save_from_all(experiment, data, window):
     """ Saves all channels to csv from selected item from all subjects
     """
     column_names = []
@@ -228,41 +195,6 @@ def save_from_all(experiment, data, window):
 
 
 def save_averages(experiment, data, window):
-    """ Saves averages to csv from selected item
-    """
-    column_names = []
-    row_names = []
-    csv_data = []
-
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    subject = experiment.active_subject
-    evoked = subject.evoked.get(selected_name)
-
-    # accumulate csv contents
-    for key, mne_evoked in evoked.content.items():
-
-        data_labels, averaged_data = create_averages(experiment, mne_evoked)
-
-        csv_data.extend(averaged_data.tolist())
-        column_names = mne_evoked.times.tolist()
-
-        for ch_type, area in data_labels:
-            name = key + '[' + ch_type + '|' + area + ']'
-            row_names.append(name)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = subject.name + '_' + evoked.name + '.csv'
-    path = os.path.join(folder, fname)
-
-    filemanager.save_csv(path, csv_data, column_names, row_names)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
-
-def save_averages_from_all(experiment, data, window):
     """ Saves averages to csv from selected item from all subjects
     """
     column_names = []
