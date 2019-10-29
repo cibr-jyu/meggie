@@ -101,7 +101,7 @@ class Subject(object):
 
         raw = self.get_raw()
         for item in raw.info['proc_history']:
-            if 'maxfilter' in item['creator']:
+            if 'maxfilter' in item.get('creator', []):
                 return True
 
         return False
