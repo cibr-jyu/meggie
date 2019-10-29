@@ -16,7 +16,7 @@ class Spectrum(object):
 
     """
     """
-    def __init__(self, name, spectrum_directory, params, content=None):
+    def __init__(self, name, spectrums_directory, params, content=None):
         """
         """
         # name has no group number and no '.fif'
@@ -31,7 +31,12 @@ class Spectrum(object):
 
         self._params = params
 
+
     def _load_content(self):
+
+        from meggie.utilities.debug import debug_trace;
+        debug_trace()
+
         template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrums_directory):
             match = re.match(template, fname)

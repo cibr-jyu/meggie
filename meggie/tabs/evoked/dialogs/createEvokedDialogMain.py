@@ -5,7 +5,6 @@
 
 import logging
 
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 import numpy as np
@@ -28,8 +27,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
     """
 
     def __init__(self, experiment, parent, selected_epochs):
-        """Initialize the event selection dialog.
-
+        """
         """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_CreateEvokedDialog()

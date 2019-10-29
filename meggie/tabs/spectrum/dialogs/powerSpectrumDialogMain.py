@@ -9,13 +9,12 @@ from PyQt5 import QtWidgets
 
 import numpy as np
 
-
 from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
 from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
 
-from meggie.code_meggie.analysis.spectral import create_power_spectrum
-
 from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+
+from meggie.tabs.spectrum.controller.spectral import create_power_spectrum
 
 from meggie.code_meggie.utils.validators import validate_name
 from meggie.ui.utils.messaging import exc_messagebox
@@ -24,21 +23,19 @@ from meggie.ui.utils.messaging import messagebox
 
 class PowerSpectrumDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent, experiment):
+    def __init__(self, experiment, parent):
         """
-        Init method for the dialog.
-        Constructs a set of time series from the given parameters.
-        Parameters:
-        parent     - The parent window for this dialog.
         """
-        QtWidgets.QDialog.__init__(self)
-        self.intervals = []
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_PowerSpectrumDialog()
         self.ui.setupUi(self)
+
         self.parent = parent
         self.experiment = experiment
 
-        raw = self.experiment.active_subject.get_working_file()
+        self.intervals = []
+
+        raw = self.experiment.active_subject.get_raw()
 
         tmax = np.floor(raw.times[raw.n_times - 1]) - 0.1
         self.ui.doubleSpinBoxTmin.setValue(0)
@@ -68,8 +65,9 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         self.batching_widget = BatchingWidget(
             experiment_getter=self.experiment_getter,
             parent=self,
-            container=self.ui.scrollAreaWidgetContents,
-            geometry=self.ui.widgetBatchContainer.geometry())
+            container=self.ui.groupBoxBatching,
+            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+        self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
     def experiment_getter(self):
         return self.experiment

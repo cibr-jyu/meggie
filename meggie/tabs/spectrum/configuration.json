@@ -1,7 +1,7 @@
 {
 	"id": "spectrums",
 	"name": "Spectrums",
-	"outputs": ["spectrums"],
+	"outputs": ["spectrum"],
 	"transforms": ["create"],
 	"actions": ["delete",
                 "delete_from_all",
@@ -9,9 +9,7 @@
                 "plot_averages",
                 "group_average",
                 "save",
-                "save_from_all",
-                "save_averages",
-                "save_averages_from_all"],
+                "save_averages"],
     "info": ["spectrum_info"],
     "translations": {"plot_spectrum": "Plot all channels",
                      "plot_averages": "Plot channel averages",
@@ -19,9 +17,7 @@
                      "delete": "Delete selected spectrum",
                      "delete_from_all": "Delete selected spectrum from all",
                      "save": "Save to csv",
-                     "save_from_all": "Save to csv from all",
                      "save_averages": "Save averages to csv",
-                     "save_averages_from_all": "Save averages to csv from all",
                      "spectrum_info": "Spectrum info"}
 
 }

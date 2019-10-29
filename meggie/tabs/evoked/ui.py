@@ -64,6 +64,7 @@ def delete_from_all(experiment, data, window):
                 logging.getLogger('ui_logger').warning(
                     'Could not remove evoked for ' +
                     subject.name)
+
     experiment.save_experiment_settings()
     window.initialize_ui()
 
