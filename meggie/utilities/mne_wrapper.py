@@ -79,12 +79,16 @@ blacklist = ['tests',
              'add_background_image',
              'psd_array_welch',
              'get_spectrogram',
-             'check_version']
+             'check_version',
+             'get_config_path',
+             'get_config',
+             'set_config']
 
 blacklist.extend(['pick_types',
                   'pick_channels',
                   'rescale',
-                  'make_projector'])
+                  'make_projector',
+                  'plot_raw'])
 
 
 def wrap(log_level, original_func):

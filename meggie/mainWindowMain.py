@@ -440,6 +440,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.labelSubjectValue.setText(mi.subject_name)
         except:
             pass
+
         try:
             self.populate_raw_tab_event_list()
         except:
@@ -477,9 +478,8 @@ class MainWindow(QtWidgets.QMainWindow):
         Fill the raw tab event list with info about event IDs and
         amount of events with those IDs.
         """
-        events = self.experiment.active_subject.create_event_set()
         event_counts = create_event_set(
-            self.experiment.active_subject.get_raw(preload=True))
+            self.experiment.active_subject.get_raw())
 
         if not event_counts:
             events_string = 'No events found.'

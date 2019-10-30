@@ -13,20 +13,23 @@ import mne
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.events import find_stim_channel
+from meggie.utilities.events import Events
+
+from meggie.datatypes.spectrum.spectrum import Spectrum
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
-from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
-from meggie.datatypes.spectrum.spectrum import Spectrum
+from meggie.utilities.decorators import threaded
 
 
 def find_event_times(raw, event_id, mask):
     stim_ch = find_stim_channel(raw)
     sfreq = raw.info['sfreq']
 
-    triggers = Events(raw, stim_ch, mask, event_id).events
+    events = Events(raw, stim_ch, mask, event_id).events
     times = [(event[0] - raw.first_samp) / sfreq for event in events]
     return times
 
