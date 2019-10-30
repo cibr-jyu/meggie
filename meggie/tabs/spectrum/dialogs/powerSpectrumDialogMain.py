@@ -143,7 +143,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         """
 
         try:
-            name = validate_name(self.ui.lineEditName.text())
+            spectrum_name = validate_name(self.ui.lineEditName.text())
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -164,7 +164,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
         try:
-            create_power_spectrum(subject, name, params, intervals, 
+            create_power_spectrum(subject, spectrum_name, params, intervals, 
                                   do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self, exc)
@@ -177,7 +177,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
     def acceptBatch(self, *args):
 
         try:
-            name = validate_name(self.ui.lineEditName.text())
+            spectrum_name = validate_name(self.ui.lineEditName.text())
         except Exception as exc:
             exc_messagebox(self, exc)
             return
@@ -198,10 +198,10 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         update_ui = self.parent.update_ui
 
         selected_subject_names = self.batching_widget.selected_subjects
-        for name, subject in self.experiment.subjects.items:
+        for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
                 try:
-                    create_power_spectrum(experiment, name, params, intervals,
+                    create_power_spectrum(subject, spectrum_name, params, intervals,
                                           do_meanwhile=update_ui)
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,

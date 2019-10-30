@@ -113,7 +113,7 @@ class BatchingWidget(QtWidgets.QWidget):
             rows.append('Failed calculation for subjects:')
 
             for subject, message in self.failed_subjects:
-                rows.append(subject.subject_name + ' (' + message + ')')
+                rows.append(subject.name + ' (' + message + ')')
 
             if not parent:
                 parent = self.parent.parent

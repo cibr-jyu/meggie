@@ -57,7 +57,7 @@ def delete_from_all(experiment, data, window):
         return
 
     for subject in experiment.subjects.values():
-        if selected_name in subject.epochs:
+        if selected_name in subject.evoked:
             try:
                 subject.remove(selected_name, 'evoked')
             except Exception as exc:
