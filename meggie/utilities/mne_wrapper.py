@@ -76,7 +76,10 @@ blacklist = ['tests',
              'apply_trans',
              'parallel_func',
              'find_layout',
-             'add_background_image']
+             'add_background_image',
+             'psd_array_welch',
+             'get_spectrogram',
+             'check_version']
 
 blacklist.extend(['pick_types',
                   'pick_channels',

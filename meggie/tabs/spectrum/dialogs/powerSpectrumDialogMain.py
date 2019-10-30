@@ -160,7 +160,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmin'] = fmin
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
-        params['log'] = self.ui.checkBoxLogarithm.isChecked()
+        params['log_transformed'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
         try:
@@ -192,7 +192,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['fmin'] = fmin
         params['fmax'] = fmax
         params['nfft'] = self.ui.spinBoxNfft.value()
-        params['log'] = self.ui.checkBoxLogarithm.isChecked()
+        params['log_transformed'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
         update_ui = self.parent.update_ui

@@ -79,10 +79,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     """
     """
     # get raw objects organized with average groups as keys
-    raw_blocks = get_raw_blocks_from_intervals(subject, intervals)
-
-    from meggie.utilities.debug import debug_trace;
-    debug_trace()
+    raw_block_groups = get_raw_blocks_from_intervals(subject, intervals)
 
     info = subject.get_raw().info
 
@@ -93,24 +90,25 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     fmax = params['fmax']
     nfft = params['nfft']
     overlap = params['overlap']
+    log = params['log_transformed']
 
     # compute psd's
     psd_groups = OrderedDict()
     for key, raw_blocks in raw_block_groups.items():
         for raw_block in raw_blocks:
             length = len(raw_block.times)
-            psds, freqs = mne.psd_welch(raw_block, fmin=fmin, fmax=fmax,
-                                        n_fft=nfft, n_overlap=overlap, picks=picks,
-                                        proj=True)
+            psds, freqs = mne.time_frequency.psd_welch(
+                raw_block, fmin=fmin, fmax=fmax,
+                n_fft=nfft, n_overlap=overlap, picks=picks,
+                proj=True)
 
-            if params['log']:
+            if log:
                 psds = 10 * np.log10(psds)
 
             if key not in psd_groups:
                 psd_groups[key] = []
 
             psd_groups[key].append((psds, freqs, length))
-
 
     for psd_list in psd_groups.values():
         freqs = psd_list[0][1]
@@ -120,7 +118,6 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     for psd_list in psd_groups.values():
         # do a weighted (raw block lengths as weights) average of psds inside a
         # group
-
         weights = np.array([length for psds_, freqs, length in psd_list])
         weights = weights.astype(float) / np.sum(weights)
         psd = np.average([psds_ for psds_, freqs, length in psd_list],
@@ -135,12 +132,12 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
 
     psd_data = dict(zip(psd_groups.keys(), psds))
 
-    spectrum = Spectrum(spectrum_name, experiment.active_subject,
-                        params['log'], psd_data, freqs, picked_ch_names)
+    spectrum = Spectrum(spectrum_name, subject.spectrum_directory,
+                        params, psd_data, freqs, picked_ch_names)
 
-    experiment.active_subject.add_spectrum(spectrum)
+    spectrum.save_content()
+    subject.add(spectrum, 'spectrum')
 
-    spectrum.save_data()
 
 
 def plot_power_spectrum(experiment, name, output):

@@ -16,29 +16,34 @@ class Spectrum(object):
 
     """
     """
-    def __init__(self, name, spectrums_directory, params, content=None):
+    def __init__(self, name, spectrum_directory, params, content=None, freqs=None, ch_names=None):
         """
         """
         # name has no group number and no '.fif'
         self._name = name
+        self._spectrum_directory = spectrum_directory
+        self._params = params
 
-        if not content:
+        if content is not None:
             self._content = {}
         else:
             self._content = content
 
-        self._spectrums_directory = spectrums_directory
+        if freqs is not None:
+            self._freqs = freqs
+        else:
+            self._freqs = None
 
-        self._params = params
+        if ch_names is not None:
+            self._ch_names = ch_names
+        else:
+            self._ch_names = None
 
 
     def _load_content(self):
 
-        from meggie.utilities.debug import debug_trace;
-        debug_trace()
-
         template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
-        for fname in os.listdir(self._spectrums_directory):
+        for fname in os.listdir(self._spectrum_directory):
             match = re.match(template, fname)
             if match:
                 logging.getLogger('ui_logger').debug(
@@ -49,7 +54,7 @@ class Spectrum(object):
                     raise Exception("Unknown file name format.")
 
                 freqs, ch_names, psd = filemanager.load_csv(
-                    os.path.join(self._spectrums_directory, fname))
+                    os.path.join(self._spectrum_directory, fname))
 
                 freqs = np.array(freqs).astype(np.float)
 
@@ -62,24 +67,24 @@ class Spectrum(object):
         # if exists, delete first
         self.delete_content()
 
-        for key, psd in self.content.items():
+        for key, psd in self._content.items():
 
             row_names = self._ch_names
             column_names = self._freqs.tolist()
             data = psd.tolist()
 
-            path = os.path.join(self._spectrums_directory,
-                                self.name + '_' + str(key) + '.csv')
+            path = os.path.join(self._spectrum_directory,
+                                self._name + '_' + str(key) + '.csv')
 
             filemanager.save_csv(path, data, column_names, row_names)
 
     def delete_content(self):
         template = self.name + '_' + r'[0-9]*\.csv'
-        for fname in os.listdir(self._spectrums_directory):
+        for fname in os.listdir(self._spectrum_directory):
             if re.match(template, fname):
                 logging.getLogger('ui_logger').debug(
                     'Removing existing spectrum file: ' + str(fname))
-                os.remove(os.path.join(self._spectrums_directory, fname))
+                os.remove(os.path.join(self._spectrum_directory, fname))
 
     @property
     def content(self):
