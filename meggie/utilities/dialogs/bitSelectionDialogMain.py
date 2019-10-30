@@ -8,20 +8,22 @@ from meggie.utilities.dialogs.bitSelectionDialogUi import Ui_Dialog
 
 class BitSelectionDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent, target, target_spinbox=None):
+    def __init__(self, parent, target_mask, target_id):
         """
         Init method for the dialog.
         Parameters:
         parent     - The parent window for this dialog.
         """
         QtWidgets.QDialog.__init__(self)
-        self.intervals = []
-        self.button_count = 16
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+
+        self.intervals = []
+        self.button_count = 16
+
         self.parent = parent
-        self.target = target
-        self.target_spinbox = target_spinbox
+        self.target_mask = target_mask
+        self.target_id = target_id
 
         self.ui.labelID.setText('0')
         # 2^0 + 2^1 + ... + 2^(button_count - 1)
@@ -68,10 +70,6 @@ class BitSelectionDialog(QtWidgets.QDialog):
         self.ui.labelMask.setText(str(new_mask))
 
     def accept(self):
-        if self.target_spinbox is None:
-            self.target.setText(self.ui.labelID.text() +
-                                '|' + self.ui.labelMask.text())
-        else:
-            self.target_spinbox.setValue(int(self.ui.labelID.text()))
-            self.target.setText(self.ui.labelMask.text())
+        self.target_id.setValue(int(self.ui.labelID.text()))
+        self.target_mask.setValue(int(self.ui.labelMask.text()))
         self.close()

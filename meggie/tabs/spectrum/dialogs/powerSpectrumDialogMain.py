@@ -9,16 +9,16 @@ from PyQt5 import QtWidgets
 
 import numpy as np
 
-from meggie.ui.analysis.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
-from meggie.ui.analysis.powerSpectrumEventsDialogMain import PowerSpectrumEvents
+from meggie.tabs.spectrum.dialogs.powerSpectrumDialogUi import Ui_PowerSpectrumDialog
+from meggie.tabs.spectrum.dialogs.powerSpectrumAddAdvancedDialogMain import PowerSpectrumAddAdvancedDialog
 
-from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
-from meggie.tabs.spectrum.controller.spectral import create_power_spectrum
+from meggie.tabs.spectrum.controller.spectrum import create_power_spectrum
 
-from meggie.code_meggie.utils.validators import validate_name
-from meggie.ui.utils.messaging import exc_messagebox
-from meggie.ui.utils.messaging import messagebox
+from meggie.utilities.validators import validate_name
+from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.messaging import messagebox
 
 
 class PowerSpectrumDialog(QtWidgets.QDialog):
@@ -83,17 +83,36 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                 self.parent, "End time must be higher than the starting time")
             return
 
-        self.add_intervals([(group, tmin, tmax)])
+        self.add_intervals([('fixed', (group, tmin, tmax))])
 
     def add_intervals(self, intervals):
-        for interval in intervals:
-            self.intervals.append(interval)
-            item = QtWidgets.QListWidgetItem(
-                '%s: %s - %s s' % (
-                    interval[0],
-                    round(interval[1], 4),
-                    round(interval[2], 4)
-                ))
+        for ival_type, interval in intervals:
+            self.intervals.append((ival_type, interval))
+            if ival_type == 'fixed':
+                item = QtWidgets.QListWidgetItem(
+                    '%s: %s - %s s (fixed)' % (
+                        interval[0],
+                        round(interval[1], 4),
+                        round(interval[2], 4)
+                    ))
+            else:
+                item_string = str(interval[0]) + ': ['
+                if interval[1][0]:
+                    item_string += ', '.join([str(elem) for elem in interval[1]])
+                else:
+                    item_string += 'start, ' + str(interval[1][2])
+
+                item_string += '] – [' 
+
+                if interval[2][0]:
+                    item_string += ', '.join([str(elem) for elem in interval[2]])
+                else:
+                    item_string += 'end, ' + str(interval[2][2])
+
+                item_string += '] (dynamic)'
+
+                item = QtWidgets.QListWidgetItem(
+                    item_string)
             self.ui.listWidgetIntervals.addItem(item)
 
     def on_pushButtonClear_clicked(self, checked=None):
@@ -105,36 +124,23 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
     def on_pushButtonClearRow_clicked(self, checked=None):
         if checked is None:
             return
+
         current_row = self.ui.listWidgetIntervals.currentRow()
+        if current_row == -1:
+            return
+
         self.ui.listWidgetIntervals.takeItem(current_row)
         self.intervals.pop(current_row)
 
-    def on_pushButtonAddEvents_clicked(self, checked=None):
+    def on_pushButtonAddAdvanced_clicked(self, checked=None):
         if checked is None:
             return
-        self.event_dialog = PowerSpectrumEvents(self)
-        self.event_dialog.show()
-
-    def validate_settings(self, name, times, fmin, fmax, sfreq):
-        if not times:
-            raise Exception("Must have at least one interval")
-
-        if fmin >= fmax:
-            raise Exception(
-                "End frequency must be higher than the starting frequency")
-
-        valid = True
-        for interval in times:
-            if (interval[2] - interval[1]) * \
-                    sfreq < float(self.ui.spinBoxNfft.value()):
-                valid = False
-
-        if not valid:
-            raise Exception("Sampling rate times shortest interval "
-                            "should be more than window size")
+        dialog = PowerSpectrumAddAdvancedDialog(self)
+        dialog.show()
 
     def accept(self, *args, **kwargs):
-        """Starts the computation."""
+        """ Starts the computation. 
+        """
 
         try:
             name = validate_name(self.ui.lineEditName.text())
@@ -142,20 +148,13 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
-        times = self.intervals
+        intervals = self.intervals
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
 
-        experiment = self.experiment
+        subject = self.experiment.active_subject
 
-        subject = experiment.active_subject
-        sfreq = subject.get_working_file().info['sfreq']
-
-        try:
-            self.validate_settings(name, times, fmin, fmax, sfreq)
-        except Exception as exc:
-            messagebox(self.parent, str(exc))
-            return
+        update_ui = self.parent.update_ui
 
         params = dict()
         params['fmin'] = fmin
@@ -164,29 +163,15 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
-        raw = subject.get_working_file()
-
         try:
-            raw_blocks = OrderedDict()
-            for interval in times:
-
-                block = raw.copy().crop(tmin=interval[1], tmax=interval[2])
-
-                if interval[0] not in raw_blocks:
-                    raw_blocks[interval[0]] = []
-
-                raw_blocks[interval[0]].append(block)
-
-            update_ui = self.parent.update_ui
-            create_power_spectrum(experiment, name, params, raw_blocks,
-                                  update_ui=update_ui)
-        except Exception as e:
-            exc_messagebox(self.parent, e)
+            create_power_spectrum(subject, name, params, intervals, 
+                                  do_meanwhile=update_ui)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
-        experiment.save_experiment_settings()
+        self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
-
         self.close()
 
     def acceptBatch(self, *args):
@@ -197,20 +182,11 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             exc_messagebox(self, exc)
             return
 
-        times = self.intervals
+        intervals = self.intervals
         fmin = self.ui.spinBoxFmin.value()
         fmax = self.ui.spinBoxFmax.value()
 
-        experiment = self.experiment
-
-        subject = experiment.active_subject
-        sfreq = subject.get_working_file().info['sfreq']
-
-        try:
-            self.validate_settings(name, times, fmin, fmax, sfreq)
-        except Exception as exc:
-            messagebox(self.parent, str(exc))
-            return
+        subject = self.experiment.active_subject
 
         params = dict()
         params['fmin'] = fmin
@@ -219,38 +195,22 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['log'] = self.ui.checkBoxLogarithm.isChecked()
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
+        update_ui = self.parent.update_ui
+
         selected_subject_names = self.batching_widget.selected_subjects
-        recently_active_subject = experiment.active_subject.subject_name
-
-        for subject_name, subject in self.experiment.subjects.items():
-            if subject_name in selected_subject_names:
+        for name, subject in self.experiment.subjects.items:
+            if name in selected_subject_names:
                 try:
-                    experiment.activate_subject(subject_name)
-                    raw = subject.get_working_file()
-
-                    raw_blocks = OrderedDict()
-                    for interval in times:
-
-                        block = raw.copy().crop(
-                            tmin=interval[1], tmax=interval[2])
-
-                        if interval[0] not in raw_blocks:
-                            raw_blocks[interval[0]] = []
-
-                        raw_blocks[interval[0]].append(block)
-
-                    update_ui = self.parent.update_ui
-                    create_power_spectrum(experiment, name, params, raw_blocks,
-                                          update_ui=update_ui)
-                except Exception as e:
+                    create_power_spectrum(experiment, name, params, intervals,
+                                          do_meanwhile=update_ui)
+                except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
-                                                                 str(e)))
-                    logging.getLogger('ui_logger').exception(str(e))
-
-        experiment.activate_subject(recently_active_subject)
+                                                                 str(exc)))
+                    logging.getLogger('ui_logger').error(
+                        'Params: ' + str(params))
+                    logging.getLogger('ui_logger').exception(str(exc))
 
         self.batching_widget.cleanup()
-        experiment.save_experiment_settings()
-
+        self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
         self.close()

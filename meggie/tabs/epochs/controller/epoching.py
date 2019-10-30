@@ -41,7 +41,7 @@ def create_epochs_from_events(params, subject):
     if len(event_params) > 0:
         for idx, item in enumerate(event_params):
             event_id = item['event_id']
-            mask = item['event_id']
+            mask = item['mask']
             category_id = (
                 'id_' + str(event_id) + '_mask_' + str(mask))
 

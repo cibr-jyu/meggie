@@ -7,7 +7,6 @@ import logging
 
 from copy import deepcopy
 
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 import numpy as np
@@ -75,9 +74,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         bstart = float(self.ui.doubleSpinBoxBaselineStart.value())
         bend = float(self.ui.doubleSpinBoxBaselineEnd.value())
 
-        mag = self.ui.checkBoxMag.checkState() == QtCore.Qt.Checked
-        grad = self.ui.checkBoxGrad.checkState() == QtCore.Qt.Checked
-        eeg = self.ui.checkBoxEeg.checkState() == QtCore.Qt.Checked
+        mag = self.ui.checkBoxMag.isChecked()
+        grad = self.ui.checkBoxGrad.isChecked()
+        eeg = self.ui.checkBoxEeg.isChecked()
 
         collection_name = validate_name(
             str(self.ui.lineEditCollectionName.text()))
@@ -105,7 +104,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             return
 
         event_params = {
-            'mask': int(self.ui.lineEditMask.text()),
+            'mask': self.ui.spinBoxMask.value(),
             'event_id': self.ui.spinBoxEventID.value(),
         }
 
@@ -172,12 +171,12 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             if name in selected_subject_names:
                 try:
                     self.calculate_epochs(subject, params)
-                except Exception as e:
+                except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
-                                                                 str(e)))
+                                                                 str(exc)))
                     logging.getLogger('ui_logger').error(
                         'Params: ' + str(params))
-                    logging.getLogger('ui_logger').exception(str(e))
+                    logging.getLogger('ui_logger').exception(str(exc))
 
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
@@ -189,7 +188,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             return
 
         self.bitDialog = BitSelectionDialog(self, 
-            self.ui.lineEditMask, self.ui.spinBoxEventID)
+            self.ui.spinBoxMask, self.ui.spinBoxEventID)
 
         self.bitDialog.show()
 

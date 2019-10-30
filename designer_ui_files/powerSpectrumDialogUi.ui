@@ -23,15 +23,15 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-139</y>
+        <y>-189</y>
         <width>562</width>
-        <height>800</height>
+        <height>850</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
         <width>550</width>
-        <height>800</height>
+        <height>850</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -177,28 +177,28 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0" colspan="2">
+          <item row="4" column="0" colspan="2">
            <widget class="QPushButton" name="pushButtonAddAdvanced">
             <property name="text">
              <string>Add advanced...</string>
             </property>
            </widget>
           </item>
-          <item row="9" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="QPushButton" name="pushButtonClearRow">
             <property name="text">
              <string>Clear row</string>
             </property>
            </widget>
           </item>
-          <item row="10" column="0" colspan="2">
+          <item row="6" column="0" colspan="2">
            <widget class="QPushButton" name="pushButtonClear">
             <property name="text">
              <string>Clear list</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" rowspan="11">
+          <item row="0" column="2" rowspan="7">
            <widget class="QListWidget" name="listWidgetIntervals">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -324,7 +324,7 @@
          <property name="title">
           <string>Batching</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_5">
+         <layout class="QGridLayout" name="gridLayoutBatching">
           <item row="0" column="0">
            <widget class="QWidget" name="batchingWidgetPlaceholder" native="true">
             <property name="minimumSize">
