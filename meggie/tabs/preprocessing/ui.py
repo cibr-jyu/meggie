@@ -5,6 +5,9 @@ from meggie.tabs.preprocessing.dialogs.filterDialogMain import FilterDialog
 from meggie.tabs.preprocessing.dialogs.resamplingDialogMain import ResamplingDialog
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogMain import RereferencingDialog
 
+from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
+
 
 def plot(experiment, data, window):
     """
@@ -21,7 +24,7 @@ def projections(experiment, data, window):
     subject = experiment.active_subject
     raw = subject.get_raw()
     if not raw.info['projs']:
-        messagebox(self, "No added projections.")
+        messagebox(window, "No added projections.")
         return
 
     fig = raw.plot_projs_topomap()

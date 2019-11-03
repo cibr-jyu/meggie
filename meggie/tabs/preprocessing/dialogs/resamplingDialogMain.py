@@ -77,6 +77,7 @@ class ResamplingDialog(QtWidgets.QDialog):
                     def resample_fun():
                         raw.resample(rate)
                         subject.save()
+                        subject.release_memory()
 
                     resample_fun(do_meanwhile=self.parent.update_ui)
                 except Exception as e:

@@ -156,6 +156,7 @@ class TFRDialog(QtWidgets.QDialog):
                                    self.epoch_names, freqs=freqs,
                                    decim=decim, ncycles=ncycles,
                                    subtract_evoked=subtract_evoked)
+                        subject.release_memory()
 
                     do_tfr(do_meanwhile=self.parent.update_ui)
                 except Exception as e:

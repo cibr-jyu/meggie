@@ -171,6 +171,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             if name in selected_subject_names:
                 try:
                     self.calculate_epochs(subject, params)
+                    subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
                                                                  str(exc)))

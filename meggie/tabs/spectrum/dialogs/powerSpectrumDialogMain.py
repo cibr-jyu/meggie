@@ -203,6 +203,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
                 try:
                     create_power_spectrum(subject, spectrum_name, params, intervals,
                                           do_meanwhile=update_ui)
+                    subject.release_memory()
                 except Exception as exc:
                     self.batching_widget.failed_subjects.append((subject,
                                                                  str(exc)))

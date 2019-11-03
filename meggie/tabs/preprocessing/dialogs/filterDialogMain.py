@@ -106,6 +106,7 @@ class FilterDialog(QtWidgets.QDialog):
             if name in subject_names:
                 try:
                     self.filter(subject, params)
+                    subject.release_memory()
                 except Exception as exc:
                     logging.getLogger('ui_logger').exception(str(exc))
                     self.batching_widget.failed_subjects.append(

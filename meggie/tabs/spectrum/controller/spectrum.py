@@ -397,6 +397,7 @@ def group_average_spectrum(experiment, spectrum_name, groups):
 
     if len(set(keys)) != 1:
         raise Exception("PSD's contain different conditions")
+
     if len(set(freqs)) != 1:
         raise Exception("PSD's contain different sets of freqs")
     if len(set(logs)) != 1:
