@@ -4,11 +4,13 @@
 
 import os
 import logging
+
 from copy import deepcopy
 from collections import OrderedDict
 
 import numpy as np
 import matplotlib.pyplot as plt
+
 import mne
 
 import meggie.utilities.filemanager as filemanager
@@ -23,6 +25,7 @@ from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
 from meggie.utilities.decorators import threaded
+from meggie.utilities.channels import read_layout
 
 
 def find_event_times(raw, event_id, mask):
@@ -142,119 +145,143 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     subject.add(spectrum, 'spectrum')
 
 
-
-def plot_power_spectrum(experiment, name, output):
+def plot_spectrum_averages(experiment, name):
     """
     """
 
     subject = experiment.active_subject
-    subject_name = subject.subject_name
+    subject_name = subject.name
 
-    spectrum = subject.spectrums.get(name)
+    spectrum = subject.spectrum.get(name)
 
-    lout = filemanager.read_layout(experiment.layout)
+    lout = read_layout(experiment.layout)
 
-    data = spectrum.data
+    data = spectrum.content
     freqs = spectrum.freqs
     ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
     log_transformed = spectrum.log_transformed
 
     channel_groups = experiment.channel_groups
 
-    raw_info = subject.get_working_file().info
+    raw_info = subject.get_raw().info
 
     colors = color_cycle(len(data))
 
-    if output == 'all_channels':
-        logging.getLogger('ui_logger').info(
-            'Plotting spectrum from all channels..')
+    logging.getLogger('ui_logger').info(
+        'Plotting spectrum channel averages..')
 
-        def individual_plot(ax, ch_idx):
-            """
-            Callback for the interactive plot.
-            Opens a channel specific plot.
-            """
+    averages = {}
+    for idx, (key, psd) in enumerate(data.items()):
 
-            # notice that ch_idx is index in the original ch_names,
-            # and ch_names from spectrum object are only the data channels
-            ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
-            psd_idx = ch_names.index(ch_name)
+        if log_transformed:
+            psd = 10 ** (psd / 10.0)
 
-            fig = plt.gcf()
-            fig.canvas.set_window_title(''.join(['spectrum_', subject_name,
-                                                 '_', ch_name]))
+        data_labels, averaged_data = average_data_to_channel_groups(
+            psd, ch_names, channel_groups)
 
-            conditions = [str(key) for key in data]
-            positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+        if log_transformed:
+            averaged_data = 10 * np.log10(averaged_data)
 
-            for cond, col, pos in zip(conditions, colors, positions):
-                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+        averages[key] = data_labels, averaged_data
+        shape = averaged_data.shape
 
-            color_idx = 0
-            for psd in data.values():
-                plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
-                color_idx += 1
-
-            plt.xlabel('Frequency (Hz)')
-
-            plt.ylabel('Power ({})'.format(get_power_unit(
-                mne.channel_type(raw_info, ch_idx),
+    for ii in range(shape[0]):
+        fig, ax = plt.subplots()
+        for color_idx, key in enumerate(data.keys()):
+            ax.set_xlabel('Frequency (Hz)')
+            ax.set_ylabel('Power ({})'.format(get_power_unit(
+                averages[key][0][ii][0],
                 log_transformed
             )))
+            ax.plot(freqs, averages[key][1][ii], color=colors[color_idx])
+        ch_type, ch_group = averages[key][0][ii]
+        title = 'Spectrum ({0}, {1}, {2})'.format(name, ch_type, ch_group)
+        fig.canvas.set_window_title(title)
+        fig.suptitle(title)
 
-            plt.show()
+    plt.show()
 
-        for ax, idx in mne.iter_topography(raw_info, fig_facecolor='white',
+
+def plot_spectrum_topo(experiment, name):
+    """
+    """
+
+    subject = experiment.active_subject
+    subject_name = subject.name
+
+    spectrum = subject.spectrum.get(name)
+
+    lout = read_layout(experiment.layout)
+
+    data = spectrum.content
+    freqs = spectrum.freqs
+    ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
+    log_transformed = spectrum.log_transformed
+
+    channel_groups = experiment.channel_groups
+
+    raw_info = subject.get_raw().info
+
+    colors = color_cycle(len(data))
+
+    logging.getLogger('ui_logger').info(
+        'Plotting spectrum from all channels..')
+
+    def individual_plot(ax, ch_idx):
+        """
+        Callback for the interactive plot.
+        Opens a channel specific plot.
+        """
+
+        # notice that ch_idx is index in the original ch_names,
+        # and ch_names from spectrum object are only the data channels
+        ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
+        psd_idx = ch_names.index(ch_name)
+
+        fig = plt.gcf()
+
+        title = 'Spectrum ({0}, {1})'.format(name, ch_name)
+        fig.canvas.set_window_title(title)
+        fig.suptitle(title)
+
+        conditions = [str(key) for key in data]
+        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+
+        for cond, col, pos in zip(conditions, colors, positions):
+            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+
+        color_idx = 0
+        for psd in data.values():
+            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
+            color_idx += 1
+
+        plt.xlabel('Frequency (Hz)')
+
+        plt.ylabel('Power ({})'.format(get_power_unit(
+            mne.io.pick.channel_type(raw_info, ch_idx),
+            log_transformed
+        )))
+
+        plt.show()
+
+    for ax, idx in mne.viz.iter_topography(raw_info, fig_facecolor='white',
                                            axis_spinecolor='white',
                                            axis_facecolor='white', layout=lout,
                                            on_pick=individual_plot):
 
-            ch_name = raw_info['ch_names'][idx].replace(' ', '')
-            if ch_name not in ch_names:
-                continue
+        ch_name = raw_info['ch_names'][idx].replace(' ', '')
+        if ch_name not in ch_names:
+            continue
 
-            psd_idx = ch_names.index(ch_name)
+        psd_idx = ch_names.index(ch_name)
 
-            for color_idx, psd in enumerate(data.values()):
-                ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
+        for color_idx, psd in enumerate(data.values()):
+            ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
 
-        plt.gcf().canvas.set_window_title('spectrum_' + subject_name)
-        plt.show()
 
-    elif output == 'channel_averages':
-        logging.getLogger('ui_logger').info(
-            'Plotting spectrum channel averages..')
-
-        averages = {}
-        for idx, (key, psd) in enumerate(spectrum.data.items()):
-
-            if log_transformed:
-                psd = 10 ** (psd / 10.0)
-
-            data_labels, averaged_data = average_data_to_channel_groups(
-                psd, ch_names, channel_groups)
-
-            if log_transformed:
-                averaged_data = 10 * np.log10(averaged_data)
-
-            averages[key] = data_labels, averaged_data
-            shape = averaged_data.shape
-
-        for ii in range(shape[0]):
-            fig, ax = plt.subplots()
-            for color_idx, key in enumerate(spectrum.data.keys()):
-                ax.set_xlabel('Frequency (Hz)')
-                ax.set_ylabel('Power ({})'.format(get_power_unit(
-                    averages[key][0][ii][0],
-                    log_transformed
-                )))
-                ax.plot(freqs, averages[key][1][ii], color=colors[color_idx])
-            ch_type, ch_group = averages[key][0][ii]
-            title = 'Spectrum ({0}, {1})'.format(ch_type, ch_group)
-            fig.canvas.set_window_title(title)
-            fig.suptitle(title)
-
-        plt.show()
+    title = 'Spectrum ({0})'.format(name)
+    plt.gcf().canvas.set_window_title(title)
+    plt.show()
 
 
 def save_data_psd(experiment, subjects, output_rows, spectrum_name):
@@ -263,7 +290,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
     freq_lengths = []
     ch_name_lengths = []
     for subject in subjects:
-        spectrum = subject.spectrums.get(spectrum_name, None)
+        spectrum = subject.spectrum.get(spectrum_name, None)
         if spectrum is None:
             continue
         freq_lengths.append(len(spectrum.freqs))
@@ -294,7 +321,7 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
         fname_stem = 'subjects'
 
     for subject in subjects:
-        spectrum = subject.spectrums.get(spectrum_name, None)
+        spectrum = subject.spectrum.get(spectrum_name, None)
         if spectrum is None:
             continue
 
@@ -345,10 +372,11 @@ def save_data_psd(experiment, subjects, output_rows, spectrum_name):
                          column_names, row_names)
 
 
-def group_average_psd(experiment, spectrum_name, groups):
+@threaded
+def group_average_spectrum(experiment, spectrum_name, groups):
     logging.getLogger('ui_logger').info('Calculating group average for psds')
 
-    # check data coherence
+    # check data cohesion
     keys = []
     ch_names = []
     freqs = []
@@ -358,10 +386,10 @@ def group_average_psd(experiment, spectrum_name, groups):
             subject = experiment.subjects.get(subject_name)
             if not subject:
                 continue
-            spectrum = subject.spectrums.get(spectrum_name)
+            spectrum = subject.spectrum.get(spectrum_name)
             if not spectrum:
                 continue
-            keys.append(tuple(spectrum.data.keys()))
+            keys.append(tuple(spectrum.content.keys()))
             ch_names.append(tuple([ch_name.replace(" ", "")
                                    for ch_name in spectrum.ch_names]))
             freqs.append(tuple(spectrum.freqs))
@@ -389,32 +417,24 @@ def group_average_psd(experiment, spectrum_name, groups):
     grand_psds = {}
     for group_key, group_subjects in groups.items():
         for subject in experiment.subjects.values():
-            if subject.subject_name not in group_subjects:
+            if subject.name not in group_subjects:
                 continue
-            spectrums = subject.spectrums.get(spectrum_name)
-            if not spectrums:
+            spectrum = subject.spectrum.get(spectrum_name)
+            if not spectrum:
                 continue
-            for spectrum_item_key, spectrum_item in spectrums.data.items():
+            for spectrum_item_key, spectrum_item in spectrum.content.items():
                 grand_key = (group_key, spectrum_item_key)
 
                 idxs = []
-                # get common channels in "subject specific space"
-                for ch_idx, ch_name in enumerate(
-                    [ch.replace(' ', '') for ch in spectrums.ch_names]
-                ):
-                    if ch_name in common_ch_names:
-                        idxs.append(ch_idx)
-
+                for ch_name in common_ch_names:
+                    # find the channel from current subject
+                    idxs.append([ch.replace(' ', '') for ch in 
+                                 spectrum.ch_names].index(ch_name))
                 spectrum_item = spectrum_item[idxs]
 
-                # sanity check
-                if spectrum_item.shape[0] != len(common_ch_names):
-                    raise Exception('Something wrong with the channels')
-
-                if grand_key in grand_psds:
-                    grand_psds[grand_key].append(spectrum_item)
-                else:
-                    grand_psds[grand_key] = [spectrum_item]
+                if grand_key not in grand_psds:
+                    grand_psds[grand_key] = []
+                grand_psds[grand_key].append(spectrum_item)
 
     grand_averages = {}
     for key, grand_psd in grand_psds.items():
@@ -424,19 +444,26 @@ def group_average_psd(experiment, spectrum_name, groups):
         else:
             grand_averages[new_key] = np.mean(grand_psd, axis=0)
 
-    active_subject = experiment.active_subject
-    spectrum = active_subject.spectrums.get(spectrum_name)
+    subject = experiment.active_subject
+    name = 'group_' + spectrum_name
+
+    try:
+        spectrum = subject.spectrum.get(spectrum_name)
+    except Exception as exc:
+        raise Exception('Active subject should be included in the groups')
+
+    spectrum_directory = subject.spectrum_directory
 
     freqs = spectrum.freqs
     ch_names = common_ch_names
-    log_transformed = spectrum.log_transformed
+    data = grand_averages
 
-    name = 'group_' + spectrum_name
+    params = deepcopy(spectrum.params)
+    params['groups'] = groups
 
-    spectrum = Spectrum(name, active_subject,
-                        log_transformed, grand_averages, freqs, ch_names)
+    spectrum = Spectrum(name, subject.spectrum_directory,
+                        params, data, freqs, ch_names)
 
-    experiment.active_subject.add_spectrum(spectrum)
-
-    spectrum.save_data()
+    spectrum.save_content()
+    subject.add(spectrum, 'spectrum')
 

@@ -82,13 +82,23 @@ blacklist = ['tests',
              'check_version',
              'get_config_path',
              'get_config',
-             'set_config']
+             'set_config',
+             'check_n_jobs',
+             'jcal2jd',
+             'jd2jcal',
+             'tridi_inverse_iteration',
+             'dpss_windows',
+             'tridisolve',
+             'next_fast_len']
 
 blacklist.extend(['pick_types',
                   'pick_channels',
                   'rescale',
                   'make_projector',
                   'plot_raw'])
+
+# could we find api some other way, like reading the
+# __init__.py's and filtering with them keywords
 
 
 def wrap(log_level, original_func):

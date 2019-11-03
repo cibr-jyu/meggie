@@ -131,8 +131,6 @@ def plot_topomap(experiment, data, window):
 def group_average(experiment, data, window):
     """ Handles group average item creation
     """
-    subject = experiment.active_subject
-
     try:
         selected_name = data['outputs']['evoked'][0]
     except IndexError as exc:

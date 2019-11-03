@@ -24,9 +24,8 @@ class Spectrum(object):
         self._spectrum_directory = spectrum_directory
         self._params = params
 
+        self._content = {}
         if content is not None:
-            self._content = {}
-        else:
             self._content = content
 
         if freqs is not None:

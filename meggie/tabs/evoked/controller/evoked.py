@@ -97,7 +97,6 @@ def group_average(experiment, evoked_name, groups):
     assert_arrays_same(sfreqs, message='Sampling rates do not match')
 
     grand_evokeds = {}
-    
     for group_key, group_subjects in groups.items():
         for subject in experiment.subjects.values():
             if subject.name not in group_subjects:
@@ -119,16 +118,16 @@ def group_average(experiment, evoked_name, groups):
         else:
             grand_averages[new_key] = mne.grand_average(grand_evoked)
         new_keys.append(new_key)
-
         grand_averages[new_key].comment = new_key
-
-    if not grand_averages:
-        raise Exception('Did not find any data with given selection.')
 
     subject = experiment.active_subject
     name = 'group_' + evoked_name
-    params = {'event_names': new_keys}
+
     evoked_directory = subject.evoked_directory
+
+    params = {'event_names': new_keys,
+              'groups': groups}
+
     grand_average_evoked = Evoked(name, evoked_directory, params, 
                                   content=grand_averages)
 

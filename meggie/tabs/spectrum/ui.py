@@ -9,6 +9,9 @@ from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.spectrum.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 
+from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_topo
+from meggie.tabs.spectrum.controller.spectrum import plot_spectrum_averages
+from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 
 
 def create(experiment, data, window):
@@ -54,15 +57,41 @@ def delete_from_all(experiment, data, window):
 
 
 def plot_spectrum(experiment, data, window):
-    pass
+    """ Plots spectrum topography of selected item
+    """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+    plot_spectrum_topo(experiment, selected_name)
 
 
 def plot_averages(experiment, data, window):
-    pass
+    """ Plots spectrum averages of selected item
+    """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+    plot_spectrum_averages(experiment, selected_name)
 
 
 def group_average(experiment, data, window):
-    pass
+    """ Handles group average item creation
+    """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+
+    def handler(groups):
+        group_average_spectrum(experiment, selected_name, groups,
+                               do_meanwhile=window.update_ui)
+        experiment.save_experiment_settings()
+        window.initialize_ui()
+
+    dialog = GroupAverageDialog(experiment, window, handler)
+    dialog.show()
 
 
 def save(experiment, data, window):

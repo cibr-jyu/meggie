@@ -31,7 +31,7 @@ def read_layout(layout):
     if os.path.isabs(layout):
         fname = os.path.basename(layout)
         folder = os.path.dirname(layout)
-        return mne.read_layout(fname, folder)
+        return mne.channels.read_layout(fname, folder)
 
     import pkg_resources
     path_mne = pkg_resources.resource_filename(
