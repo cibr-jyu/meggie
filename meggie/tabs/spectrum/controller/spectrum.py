@@ -138,6 +138,8 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
 
     psd_data = dict(zip(psd_groups.keys(), psds))
 
+    params['conditions'] = [elem for elem in psd_groups.keys()]
+
     spectrum = Spectrum(spectrum_name, subject.spectrum_directory,
                         params, psd_data, freqs, picked_ch_names)
 
@@ -193,7 +195,9 @@ def plot_spectrum_averages(experiment, name):
                 averages[key][0][ii][0],
                 log_transformed
             )))
-            ax.plot(freqs, averages[key][1][ii], color=colors[color_idx])
+            ax.plot(freqs, averages[key][1][ii], color=colors[color_idx],
+                    label=key)
+        ax.legend()
         ch_type, ch_group = averages[key][0][ii]
         title = 'Spectrum ({0}, {1}, {2})'.format(name, ch_type, ch_group)
         fig.canvas.set_window_title(title)
@@ -244,20 +248,16 @@ def plot_spectrum_topo(experiment, name):
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 
-        conditions = [str(key) for key in data]
-        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
-
-        for cond, col, pos in zip(conditions, colors, positions):
-            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
-
         color_idx = 0
-        for psd in data.values():
-            plt.plot(freqs, psd[psd_idx], color=colors[color_idx])
+        for key, psd in data.items():
+            ax.plot(freqs, psd[psd_idx], color=colors[color_idx],
+                    label=key)
             color_idx += 1
 
-        plt.xlabel('Frequency (Hz)')
+        ax.legend()
 
-        plt.ylabel('Power ({})'.format(get_power_unit(
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Power ({})'.format(get_power_unit(
             mne.io.pick.channel_type(raw_info, ch_idx),
             log_transformed
         )))
@@ -277,7 +277,6 @@ def plot_spectrum_topo(experiment, name):
 
         for color_idx, psd in enumerate(data.values()):
             ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
-
 
     title = 'Spectrum ({0})'.format(name)
     plt.gcf().canvas.set_window_title(title)
@@ -461,6 +460,7 @@ def group_average_spectrum(experiment, spectrum_name, groups):
 
     params = deepcopy(spectrum.params)
     params['groups'] = groups
+    params['conditions'] = [elem for elem in grand_averages.keys()]
 
     spectrum = Spectrum(name, subject.spectrum_directory,
                         params, data, freqs, ch_names)

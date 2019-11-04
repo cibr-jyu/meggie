@@ -45,12 +45,20 @@ class Spectrum(object):
         for fname in os.listdir(self._spectrum_directory):
             match = re.match(template, fname)
             if match:
-                logging.getLogger('ui_logger').debug(
-                    'Reading spectrum file: ' + str(fname))
                 try:
                     key = str(match.group(1))
                 except Exception as exc:
                     raise Exception("Unknown file name format.")
+
+                # if proper condition parameters set,
+                # check if the key is in there.
+                if 'conditions' in self._params:
+                    if key not in [str(elem) for elem in 
+                                   self._params['conditions']]:
+                        continue
+
+                logging.getLogger('ui_logger').debug(
+                    'Reading spectrum file: ' + str(fname))
 
                 freqs, ch_names, psd = filemanager.load_csv(
                     os.path.join(self._spectrum_directory, fname))
@@ -78,9 +86,23 @@ class Spectrum(object):
             filemanager.save_csv(path, data, column_names, row_names)
 
     def delete_content(self):
-        template = self.name + '_' + r'[0-9]*\.csv'
+
+        template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
         for fname in os.listdir(self._spectrum_directory):
-            if re.match(template, fname):
+            match = re.match(template, fname)
+            if match:
+                try:
+                    key = str(match.group(1))
+                except Exception as exc:
+                    continue
+
+                # if proper condition parameters set,
+                # check if the key is in there.
+                if 'conditions' in self._params:
+                    if key not in [str(elem) for elem in 
+                                   self._params['conditions']]:
+                        continue
+
                 logging.getLogger('ui_logger').debug(
                     'Removing existing spectrum file: ' + str(fname))
                 os.remove(os.path.join(self._spectrum_directory, fname))
