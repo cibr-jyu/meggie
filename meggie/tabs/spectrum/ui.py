@@ -5,6 +5,7 @@ from pprint import pformat
 from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.messaging import exc_messagebox
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.spectrum.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
@@ -85,8 +86,13 @@ def group_average(experiment, data, window):
         return
 
     def handler(groups):
-        group_average_spectrum(experiment, selected_name, groups,
-                               do_meanwhile=window.update_ui)
+        try:
+            group_average_spectrum(experiment, selected_name, groups,
+                                   do_meanwhile=window.update_ui)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+            return
+
         experiment.save_experiment_settings()
         window.initialize_ui()
 
