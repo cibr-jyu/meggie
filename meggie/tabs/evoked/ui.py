@@ -163,7 +163,7 @@ def save(experiment, data, window):
     except IndexError as exc:
         return
 
-    # validate array lengths
+    # validate times
     time_arrays = []
     for subject in experiment.subjects.values():
         evoked = subject.evoked.get(selected_name)
