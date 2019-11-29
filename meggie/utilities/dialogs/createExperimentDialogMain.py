@@ -18,15 +18,11 @@ from meggie.utilities.messaging import messagebox
 
 class CreateExperimentDialog(QtWidgets.QDialog):
     """
-    Class containing the logic for CreateExperimentDialog. It is used for
-    setting up a new experiment for analyzing MEG data.
     """
-    fname = ''
     experimentCreated = QtCore.pyqtSignal(Experiment)
 
     def __init__(self, parent):
-        QtWidgets.QDialog.__init__(self)
-        self.fname = ''
+        QtWidgets.QDialog.__init__(self, parent)
 
         # Reference to main dialog window
         self.parent = parent

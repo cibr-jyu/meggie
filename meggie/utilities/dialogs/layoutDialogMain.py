@@ -14,10 +14,12 @@ from meggie.utilities.dialogs.layoutDialogUi import Ui_Layout
 class LayoutDialog(QtWidgets.QDialog):
 
     def __init__(self, parent):
-        QtWidgets.QDialog.__init__(self)
-        self.parent = parent
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Layout()
         self.ui.setupUi(self)
+
+        self.parent = parent
+
         layouts = get_layouts()
         self.ui.comboBoxLayout.addItems(layouts)
         self.ui.labelLayoutActive.setText(self.parent.experiment.layout)

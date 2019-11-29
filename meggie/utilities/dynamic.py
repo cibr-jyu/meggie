@@ -308,14 +308,15 @@ def construct_tab(package, tab_spec, parent):
                 return
 
             subject = experiment.active_subject
-            if not subject:
-                return
 
             # fill input lists with contents
             for idx, input_name in enumerate(self.tab_spec.get('inputs', [])):
                 ui_element = getattr(self, 'listWidgetInputElement_' + str(idx+1))
 
                 ui_element.clear()
+
+                if not subject:
+                    continue
 
                 data = getattr(subject, input_name, None)
                 if not data:
@@ -332,6 +333,9 @@ def construct_tab(package, tab_spec, parent):
                 ui_element = getattr(self, 'listWidgetOutputElement_' + str(idx+1))
 
                 ui_element.clear()
+
+                if not subject:
+                    continue
 
                 data = getattr(subject, output_name, None)
                 if not data:

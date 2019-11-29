@@ -15,7 +15,7 @@ class ExperimentInfoDialog(QtWidgets.QDialog):
     def __init__(self, parent):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_experimentInfoDialog()
         self.ui.setupUi(self)
         self.parent = parent

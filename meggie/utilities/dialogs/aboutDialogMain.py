@@ -11,15 +11,12 @@ from meggie.utilities.dialogs.aboutDialogUi import Ui_Dialog
 
 class AboutDialog(QtWidgets.QDialog):
     """
-    Dialog to set the preferences for the application. Only allows choosing the
-    calibration file for the experiment.
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         """
-        Constructor
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 

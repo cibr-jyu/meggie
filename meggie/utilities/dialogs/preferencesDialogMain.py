@@ -20,15 +20,12 @@ from meggie.utilities.messaging import messagebox
 
 class PreferencesDialog(QtWidgets.QDialog):
     """
-    Dialog to set the preferences for the application (workspace directory
-    and Freesurfer directory etc.
     """
 
     def __init__(self, parent):
         """
-        Constructor
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_DialogPreferences()
         self.ui.setupUi(self)
 

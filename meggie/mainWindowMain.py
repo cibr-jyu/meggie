@@ -111,24 +111,29 @@ class MainWindow(QtWidgets.QMainWindow):
             self.close()
 
     def on_actionCreate_experiment_triggered(self, checked=None):
-        """Create a new CreateExperimentDialog and show it"""
+        """
+        """
         if checked is None:
             return
 
-        if self.preferencesHandler.working_directory != '':
-            self.dialog = CreateExperimentDialog(self)
-            self.dialog.experimentCreated.connect(self.setExperiment)
-            self.dialog.show()
-        else:
+        if not self.preferencesHandler.working_directory:
+            messagebox(self, "Please set up a working directory before creating experiments")
             self.check_workspace()
-            if self.preferencesHandler.working_directory != '':
-                self.dialog = CreateExperimentDialog(self)
-                self.dialog.experimentCreated.connect(self.setExperiment)
-                self.dialog.show()
+        else:
+            dialog = CreateExperimentDialog(self)
+            dialog.experimentCreated.connect(self.set_experiment)
+            dialog.show()
+
+    @QtCore.pyqtSlot(Experiment)
+    def set_experiment(self, experiment):
+        """
+        """
+        self.experiment = experiment
+        self.initialize_ui()
 
     def on_actionOpen_experiment_triggered(self, checked=None):
-        """ Open an existing _experiment. """
-
+        """
+        """
         if checked is None:
             return
 
@@ -137,9 +142,9 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             directory = ''
 
-        path = QtCore.QDir.toNativeSeparators(
-            str(QtWidgets.QFileDialog.getExistingDirectory(self,
-                                                           "Select experiment directory", directory)))
+        path = QtCore.QDir.toNativeSeparators(str(
+            QtWidgets.QFileDialog.getExistingDirectory(self,
+                "Select experiment directory", directory)))
 
         if path == '':
             return
@@ -154,27 +159,26 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as e:
             exc_messagebox(self, e)
 
-        # Saves at least the previous experiment name
         self.preferencesHandler.write_preferences_to_disk()
 
     def on_pushButtonAddSubjects_clicked(self, checked=None):
-        """Open subject dialog."""
-
+        """
+        """
         if checked is None:
             return
 
         # Check that we have an experiment that we can add a subject to
-        if self.experiment is None:
+        if not self.experiment:
             msg = ('No active experiment to add a subject to. Load an '
                    'experiment or make a new one, then try again.')
             messagebox(self, msg)
             return
 
-        self.subject_dialog = AddSubjectDialog(self)
-        self.subject_dialog.exec_()
+        dialog = AddSubjectDialog(self)
+        dialog.show()
 
     def on_pushButtonRemoveSubject_clicked(self, checked=None):
-        """Delete the selected subject item and the files related to it."""
+        """ Completely removes selected subjects from the experiment """
         if checked is None:
             return
 
@@ -225,58 +229,51 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             event.accept()
 
-    def on_actionSet_workspace_triggered(self, checked=None):
-        """
-        Open the preferences dialog the for specific purpose of initial setting
-        of workspace.
-        """
-        if checked is None:
-            return
-
-        self.check_workspace()
-
     def on_actionShow_log_triggered(self, checked=None):
         if checked is None:
             return
 
-        if self.experiment is None:
+        if not self.experiment:
             message = 'Please open an experiment first.'
             messagebox(self, message)
             return
 
-        self.log_dialog = LogDialog(self)
-        self.log_dialog.show()
+        dialog = LogDialog(self)
+        dialog.show()
 
     def on_actionPreferences_triggered(self, checked=None):
         """Open the preferences-dialog."""
         if checked is None:
             return
 
-        self.dialogPreferences = PreferencesDialog(self)
-        self.dialogPreferences.show()
+        dialog = PreferencesDialog(self)
+        dialog.show()
 
     def on_actionAbout_triggered(self, checked=None):
         """Open the About-dialog."""
         if checked is None:
             return
 
-        self.dialogAbout = AboutDialog()
-        self.dialogAbout.show()
+        dialog = AboutDialog(self)
+        dialog.show()
 
     def on_actionShowExperimentInfo_triggered(self, checked=None):
         """Open the experiment info dialog """
         if checked is None:
             return
-        if self.experiment is None:
-            messagebox(self, 'You do not currently have an experiment activated.')  # noqa
+
+        if not self.experiment:
+            messagebox(self, 
+                       'You do not currently have an experiment activated.')
             return
 
-        self.expInfoDialog = ExperimentInfoDialog(self)
-        self.expInfoDialog.show()
+        dialog = ExperimentInfoDialog(self)
+        dialog.show()
 
     def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
         if checked is None:
             return
+
         if self.ui.dockWidgetSubjects.isVisible():
             self.ui.dockWidgetSubjects.hide()
         else:
@@ -289,8 +286,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.experiment:
             return
 
-        self.layoutDialog = LayoutDialog(self)
-        self.layoutDialog.show()
+        dialog = LayoutDialog(self)
+        dialog.show()
 
     def on_pushButtonActivateSubject_clicked(self, checked=None):
         """
@@ -299,15 +296,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if checked is None:
             return
 
-        if self.ui.listWidgetSubjects.selectedIndexes() == []:
+        items = self.ui.listWidgetSubjects.selectedItems()
+        if not items:
             return
 
-        selIndexes = self.ui.listWidgetSubjects.selectedIndexes()
-
-        if len(selIndexes) > 1:
-            return
-
-        subject_name = selIndexes[0].data()
+        subject_name = items[0].text()
 
         if self.experiment.active_subject:
             if subject_name == self.experiment.active_subject.name:
@@ -320,9 +313,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.experiment.activate_subject(subject_name)
             activate(subject_name, do_meanwhile=self.update_ui)
 
-        except Exception as e:
+        except Exception as exc:
             self.experiment.active_subject = None
-            exc_messagebox(self, "Couldn't activate the subject.")
+            messagebox(self, "Could not activate the subject.")
+
             if previous_subject:
                 message = "Couldn't activate the subject, resuming to previous one."
                 logging.getLogger('ui_logger').info(message)
@@ -336,18 +330,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         QApplication.processEvents()
 
-    @QtCore.pyqtSlot(Experiment)
-    def setExperiment(self, newExperiment):
-        """Temporary setter for experiment."""
-        self.experiment = newExperiment
-        gc.collect()
-
-        self.initialize_ui()
-
     def reconstruct_tabs(self):
         """
         """
-
         self.preferencesHandler = PreferencesHandler()
 
         self.tabs = []
@@ -527,15 +512,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Open the preferences dialog, in this case for choosing the workspace.
         """
-        preferencesDialog = PreferencesDialog(self)
-        preferencesDialog.exec_()
-
-    def __del__(self):
-        """
-        Restores stdout at the end.
-        """
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
+        dialog = PreferencesDialog(self)
+        dialog.exec_()
 
     def normalOutputWritten(self, text):
         """

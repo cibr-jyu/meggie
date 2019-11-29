@@ -17,14 +17,10 @@ from meggie.utilities.messaging import messagebox
 
 class AddSubjectDialog(QtWidgets.QDialog):
     """
-    Class for creating subjects from raw measurement data files.
-
-    Properties:
-    parent    -- mainWindowMain is the parent class
     """
 
     def __init__(self, parent):
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_AddSubject()
         self.ui.setupUi(self)
 

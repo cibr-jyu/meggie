@@ -14,14 +14,12 @@ from meggie.utilities.dialogs.logDialogUi import Ui_LogDialog
 
 class LogDialog(QtWidgets.QDialog):
     """
-    Class containing the logic for logDialogUi. It is used for displaying the
-    MNE calls and params of the current experiment.
     """
 
     def __init__(self, parent):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.parent = parent
         self.ui = Ui_LogDialog()
         self.ui.setupUi(self)
