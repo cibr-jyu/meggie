@@ -61,7 +61,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Direct output to console
         if 'debug' not in sys.argv:
-            self.ui.actionDirectToConsole.triggered.connect(self.directOutput)
             self.directOutput()
 
         # For storing and handling program wide prefences.
@@ -110,7 +109,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.close()
 
-    def on_actionCreate_experiment_triggered(self, checked=None):
+    def on_actionCreateExperiment_triggered(self, checked=None):
         """
         """
         if checked is None:
@@ -131,7 +130,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.experiment = experiment
         self.initialize_ui()
 
-    def on_actionOpen_experiment_triggered(self, checked=None):
+    def on_actionOpenExperiment_triggered(self, checked=None):
         """
         """
         if checked is None:
@@ -229,7 +228,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             event.accept()
 
-    def on_actionShow_log_triggered(self, checked=None):
+    def on_actionShowLog_triggered(self, checked=None):
         if checked is None:
             return
 
@@ -269,15 +268,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         dialog = ExperimentInfoDialog(self)
         dialog.show()
-
-    def on_actionHide_Show_subject_list_and_info_triggered(self, checked=None):
-        if checked is None:
-            return
-
-        if self.ui.dockWidgetSubjects.isVisible():
-            self.ui.dockWidgetSubjects.hide()
-        else:
-            self.ui.dockWidgetSubjects.show()
 
     def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
@@ -495,18 +485,14 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Method for directing stdout to the console and back.
         """
-        if self.ui.actionDirectToConsole.isChecked():
-            stdout_stream = EmittingStream(
-                textWritten=self.normalOutputWritten)
-            stdout_stream.orig_stream = sys.__stdout__
-            stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
-            stderr_stream.orig_stream = sys.__stderr__
+        stdout_stream = EmittingStream(
+            textWritten=self.normalOutputWritten)
+        stdout_stream.orig_stream = sys.__stdout__
+        stderr_stream = EmittingStream(textWritten=self.errorOutputWritten)
+        stderr_stream.orig_stream = sys.__stderr__
 
-            sys.stdout = stdout_stream
-            sys.stderr = stderr_stream
-        else:
-            sys.stdout = sys.__stdout__
-            sys.stderr = sys.__stderr__
+        sys.stdout = stdout_stream
+        sys.stderr = stderr_stream
 
     def check_workspace(self):
         """

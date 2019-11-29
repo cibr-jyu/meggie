@@ -1,4 +1,3 @@
 {
-    "tab_presets": [{"id": "sensor_level_analysis", "text": "Sensor level analysis", "tabs": ["preprocessing", "spectrums", "epoching", "evoked", "induced"]},
-                    {"id": "source_level_analysis", "text": "Source level analysis", "tabs": ["preprocessing", "epoching", "evoked"]}]
+    "tab_presets": [{"id": "sensor_level_analysis", "text": "Sensor level analysis", "tabs": ["preprocessing", "spectrums", "epoching", "evoked", "induced"]}]
 }

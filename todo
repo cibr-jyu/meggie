@@ -1,0 +1,6 @@
+- And check that figure saving works and dpi to preferences (yes it cropped very weirdly did not it)
+- For user, info boxes are very important
+- Implement induced
+- Implement crop!
+- Remove data not found messages
+- Remove more of those logged messages
