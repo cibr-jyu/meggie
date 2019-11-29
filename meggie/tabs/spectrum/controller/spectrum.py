@@ -43,13 +43,16 @@ def get_raw_blocks_from_intervals(subject, intervals):
     raw = subject.get_raw()
 
     raw_blocks = OrderedDict()
+    times = {}
     for ival_type, (avg_group, start, end) in intervals:
         if avg_group not in raw_blocks:
             raw_blocks[avg_group] = []
+            times[avg_group] = []
 
         if ival_type == 'fixed':
             block = raw.copy().crop(tmin=start, tmax=end)
             raw_blocks[avg_group].append(block)
+            times[avg_group].append((start, end))
         else:
             # the following code finds all start points of intervals by events or
             # start of recording. then matching end point is found by 
@@ -66,18 +69,22 @@ def get_raw_blocks_from_intervals(subject, intervals):
                     end_times = find_event_times(raw, end[0], end[1])
                     found = False
                     for end_time in end_times:
-                        if end_time > start_time:
+                        # use equality so that one can also specify same trigger for
+                        # start and end (with different offsets)
+                        if end_time >= start_time:
                             found = True
                             break
                     if not found:
                         raise Exception('Found start event with no matching end event')
 
-                # crop with offsetS
+                # crop with offsets
+                times[avg_group].append((start_time+start[2],
+                                         end_time+end[2]))
                 block = raw.copy().crop(tmin=start_time+start[2], 
                                         tmax=end_time+end[2])
                 raw_blocks[avg_group].append(block)
 
-    return raw_blocks
+    return times, raw_blocks
 
 
 @threaded
@@ -85,7 +92,8 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     """
     """
     # get raw objects organized with average groups as keys
-    raw_block_groups = get_raw_blocks_from_intervals(subject, intervals)
+    ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject, 
+                                                                 intervals)
 
     info = subject.get_raw().info
 
@@ -139,6 +147,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     psd_data = dict(zip(psd_groups.keys(), psds))
 
     params['conditions'] = [elem for elem in psd_groups.keys()]
+    params['intervals'] = ival_times
 
     spectrum = Spectrum(spectrum_name, subject.spectrum_directory,
                         params, psd_data, freqs, picked_ch_names)
