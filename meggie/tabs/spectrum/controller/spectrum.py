@@ -55,7 +55,7 @@ def get_raw_blocks_from_intervals(subject, intervals):
             times[avg_group].append((start, end))
         else:
             # the following code finds all start points of intervals by events or
-            # start of recording. then matching end point is found by 
+            # start of recording. then matching end point is found by
             # (can be same) other events or end of recording.
             if not start[0]:
                 start_times = [raw.times[0]]
@@ -75,13 +75,14 @@ def get_raw_blocks_from_intervals(subject, intervals):
                             found = True
                             break
                     if not found:
-                        raise Exception('Found start event with no matching end event')
+                        raise Exception(
+                            'Found start event with no matching end event')
 
                 # crop with offsets
-                times[avg_group].append((start_time+start[2],
-                                         end_time+end[2]))
-                block = raw.copy().crop(tmin=start_time+start[2], 
-                                        tmax=end_time+end[2])
+                times[avg_group].append((start_time + start[2],
+                                         end_time + end[2]))
+                block = raw.copy().crop(tmin=start_time + start[2],
+                                        tmax=end_time + end[2])
                 raw_blocks[avg_group].append(block)
 
     return times, raw_blocks
@@ -92,7 +93,7 @@ def create_power_spectrum(subject, spectrum_name, params, intervals):
     """
     """
     # get raw objects organized with average groups as keys
-    ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject, 
+    ival_times, raw_block_groups = get_raw_blocks_from_intervals(subject,
                                                                  intervals)
 
     info = subject.get_raw().info
@@ -349,7 +350,7 @@ def group_average_spectrum(experiment, spectrum_name, groups):
                 idxs = []
                 for ch_name in common_ch_names:
                     # find the channel from current subject
-                    idxs.append([ch.replace(' ', '') for ch in 
+                    idxs.append([ch.replace(' ', '') for ch in
                                  spectrum.ch_names].index(ch_name))
                 spectrum_item = spectrum_item[idxs]
 
@@ -388,4 +389,3 @@ def group_average_spectrum(experiment, spectrum_name, groups):
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
-

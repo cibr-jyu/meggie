@@ -8,8 +8,9 @@ import mne
 
 
 class Epochs:
-    """ 
     """
+    """
+
     def __init__(self, name, epochs_directory, params, content=None):
         """
         """
@@ -69,4 +70,3 @@ class Epochs:
 
     def save_content(self):
         self._content.save(self._path)
-

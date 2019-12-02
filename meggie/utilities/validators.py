@@ -28,4 +28,3 @@ def assert_arrays_same(arrays, message='Times do not match'):
                     np.testing.assert_array_almost_equal(i_times, j_times)
                 except AssertionError:
                     raise Exception(message)
-

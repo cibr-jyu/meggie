@@ -75,13 +75,13 @@ class PreferencesHandler(object):
 
         try:
             self.working_directory = config.get('Workspace', 'workspaceDir')
-        except:
+        except BaseException:
             self.working_directory = ''
 
         try:
             self.freesurfer_home = config.get(
                 'EnvVariables', 'FreeSurferHomeDir')
-        except:
+        except BaseException:
             self.freesurfer_home = ''
 
         try:
@@ -90,7 +90,7 @@ class PreferencesHandler(object):
                 self.auto_load_last_open_experiment = True
             else:
                 self.auto_load_last_open_experiment = False
-        except:
+        except BaseException:
             self.auto_load_last_open_experiment = False
 
         try:
@@ -98,25 +98,25 @@ class PreferencesHandler(object):
                 self.confirm_quit = True
             else:
                 self.confirm_quit = False
-        except:
+        except BaseException:
             self.confirm_quit = False
 
         try:
             self.previous_experiment_name = config.get(
                 'MiscOptions', 'previousExperimentName')
-        except:
+        except BaseException:
             self.previous_experiment_name = ''
 
         try:
             self.enabled_tabs = config.get('Tabs', 'enabledTabs')
             self.enabled_tabs = self.enabled_tabs.split(',')
-        except:
+        except BaseException:
             self.enabled_tabs = ''
         try:
             self.tab_preset = config.get('Tabs', 'preset')
-        except:
+        except BaseException:
             self.tab_preset = ''
-                
+
     def set_env_variables(self):
         """
         """

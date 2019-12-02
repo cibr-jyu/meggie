@@ -16,7 +16,9 @@ class Spectrum(object):
 
     """
     """
-    def __init__(self, name, spectrum_directory, params, content=None, freqs=None, ch_names=None):
+
+    def __init__(self, name, spectrum_directory, params,
+                 content=None, freqs=None, ch_names=None):
         """
         """
         # name has no group number and no '.fif'
@@ -38,7 +40,6 @@ class Spectrum(object):
         else:
             self._ch_names = None
 
-
     def _load_content(self):
 
         template = self.name + '_' + r'([a-zA-Z1-9_]+)\.csv'
@@ -53,7 +54,7 @@ class Spectrum(object):
                 # if proper condition parameters set,
                 # check if the key is in there.
                 if 'conditions' in self._params:
-                    if key not in [str(elem) for elem in 
+                    if key not in [str(elem) for elem in
                                    self._params['conditions']]:
                         continue
 
@@ -99,7 +100,7 @@ class Spectrum(object):
                 # if proper condition parameters set,
                 # check if the key is in there.
                 if 'conditions' in self._params:
-                    if key not in [str(elem) for elem in 
+                    if key not in [str(elem) for elem in
                                    self._params['conditions']]:
                         continue
 
@@ -140,5 +141,3 @@ class Spectrum(object):
     @params.setter
     def params(self):
         self._params = params
-
-

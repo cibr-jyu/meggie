@@ -15,10 +15,10 @@ def epochs_info(experiment, data, window):
         epochs = experiment.active_subject.epochs[selected_name]
         params = epochs.params
 
-        filtered = {key: params[key] for key in 
+        filtered = {key: params[key] for key in
                     ['bstart', 'bend', 'tmin', 'tmax', 'events']}
         message = pformat(filtered)
-    except:
+    except BaseException:
         message = ""
 
     return message
@@ -59,7 +59,7 @@ def delete_from_all(experiment, data, window):
                 subject.remove(selected_name, 'epochs')
             except Exception as exc:
                 logging.getLogger('ui_logger').warning(
-                    'Could not remove epochs for ' + 
+                    'Could not remove epochs for ' +
                     subject.name)
     experiment.save_experiment_settings()
     window.initialize_ui()
@@ -89,4 +89,3 @@ def plot_image(experiment, data, window):
 
     epochs = subject.epochs.get(selected_name)
     epochs.content.plot_image()
-

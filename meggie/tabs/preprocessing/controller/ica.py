@@ -93,4 +93,4 @@ def apply_ica(raw, experiment, ica, indices):
         'Subtracting the components out of the data.')
     ica.apply(raw, exclude=indices)
 
-    experiment.active_subject.save() 
+    experiment.active_subject.save()

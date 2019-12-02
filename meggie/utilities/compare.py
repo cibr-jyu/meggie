@@ -54,6 +54,7 @@ def _prepare_raw_for_changes(raw_from, raw_to):
 
     return raw_to
 
+
 def compare_raws(raw_from, raw_to):
     changes_raw = _prepare_raw_for_changes(raw_from, raw_to)
     changes_raw.plot(color='red', bad_color='blue')

@@ -46,7 +46,6 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
         self.ui.lineEditSource.setText(', '.join(selected_epochs))
-        
 
     def experiment_getter(self):
         return self.experiment
@@ -122,4 +121,3 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
         self.close()
-

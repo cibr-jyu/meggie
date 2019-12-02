@@ -98,14 +98,16 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             else:
                 item_string = str(interval[0]) + ': ['
                 if interval[1][0]:
-                    item_string += ', '.join([str(elem) for elem in interval[1]])
+                    item_string += ', '.join([str(elem)
+                                              for elem in interval[1]])
                 else:
                     item_string += 'start, ' + str(interval[1][2])
 
-                item_string += '] – [' 
+                item_string += '] – ['
 
                 if interval[2][0]:
-                    item_string += ', '.join([str(elem) for elem in interval[2]])
+                    item_string += ', '.join([str(elem)
+                                              for elem in interval[2]])
                 else:
                     item_string += 'end, ' + str(interval[2][2])
 
@@ -139,7 +141,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         dialog.show()
 
     def accept(self, *args, **kwargs):
-        """ Starts the computation. 
+        """ Starts the computation.
         """
 
         try:
@@ -164,7 +166,7 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
         params['overlap'] = self.ui.spinBoxOverlap.value()
 
         try:
-            create_power_spectrum(subject, spectrum_name, params, intervals, 
+            create_power_spectrum(subject, spectrum_name, params, intervals,
                                   do_meanwhile=update_ui)
         except Exception as exc:
             exc_messagebox(self, exc)

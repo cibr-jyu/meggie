@@ -188,8 +188,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         if checked is None:
             return
 
-        self.bitDialog = BitSelectionDialog(self, 
-            self.ui.spinBoxMask, self.ui.spinBoxEventID)
+        self.bitDialog = BitSelectionDialog(self,
+                                            self.ui.spinBoxMask, self.ui.spinBoxEventID)
 
         self.bitDialog.show()
 

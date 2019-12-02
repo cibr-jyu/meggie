@@ -198,9 +198,11 @@ class Experiment(QObject):
             }
 
             datatypes = []
-            datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
+            datatype_path = pkg_resources.resource_filename(
+                'meggie', 'datatypes')
             for package in os.listdir(datatype_path):
-                config_path = os.path.join(datatype_path, package, 'configuration.json')
+                config_path = os.path.join(
+                    datatype_path, package, 'configuration.json')
                 if os.path.exists(config_path):
                     with open(config_path, 'r') as f:
                         config = json.load(f)
@@ -244,7 +246,7 @@ class Experiment(QObject):
             pass
 
         # save to file
-        with open(os.path.join(self.workspace, self.name, 
+        with open(os.path.join(self.workspace, self.name,
                                self.name + '.exp'), 'w') as f:
             json.dump(save_dict, f, sort_keys=True, indent=4)
 
@@ -361,9 +363,11 @@ class ExperimentHandler(QObject):
                                   )
 
                 datatypes = []
-                datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
+                datatype_path = pkg_resources.resource_filename(
+                    'meggie', 'datatypes')
                 for package in os.listdir(datatype_path):
-                    config_path = os.path.join(datatype_path, package, 'configuration.json')
+                    config_path = os.path.join(
+                        datatype_path, package, 'configuration.json')
                     if os.path.exists(config_path):
                         with open(config_path, 'r') as f:
                             config = json.load(f)
@@ -385,24 +389,30 @@ class ExperimentHandler(QObject):
                             name = inst_data.get('collection_name')
                         if not name:
                             raise Exception('No name attribute found')
- 
+
                         directory = getattr(subject, datatype + '_directory')
                         params = inst_data.get('params', {})
 
                         # for backwards compatibility
                         if datatype == 'evoked':
-                            if not params.get('event_names') and 'event_names' in inst_data:
+                            if not params.get(
+                                    'event_names') and 'event_names' in inst_data:
                                 params['event_names'] = inst_data['event_names']
-                            params['bwc_path'] = os.path.join(subject.path, 'epochs/average')
+                            params['bwc_path'] = os.path.join(
+                                subject.path, 'epochs/average')
                         if datatype == 'spectrum':
-                            if not params.get('log_transformed') and 'log_transformed' in inst_data:
+                            if not params.get(
+                                    'log_transformed') and 'log_transformed' in inst_data:
                                 params['log_transformed'] = inst_data['log_transformed']
                         if datatype == 'tfr':
-                            if not params.get('decim') and 'decim' in inst_data:
+                            if not params.get(
+                                    'decim') and 'decim' in inst_data:
                                 params['decim'] = inst_data['decim']
-                            if not params.get('n_cycles') and 'n_cycles' in inst_data:
+                            if not params.get(
+                                    'n_cycles') and 'n_cycles' in inst_data:
                                 params['n_cycles'] = inst_data['n_cycles']
-                            if not params.get('evoked_subtracted') and 'evoked_subtracted' in inst_data:
+                            if not params.get(
+                                    'evoked_subtracted') and 'evoked_subtracted' in inst_data:
                                 params['evoked_subtracted'] = inst_data['evoked_subtracted']
 
                         if inst_class:

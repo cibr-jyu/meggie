@@ -52,7 +52,8 @@ class LogDialog(QtWidgets.QDialog):
 
             last_lines = filemanager.tail(log_file, lines=self.lines)
 
-            # track lines that start log entries as there can be multiline entries.
+            # track lines that start log entries as there can be multiline
+            # entries.
 
             meggie_idxs = []
             mne_idxs = []
@@ -74,7 +75,7 @@ class LogDialog(QtWidgets.QDialog):
             selected_lines = []
             for idx_idx, line_idx in enumerate(all_idxs):
                 if idx_idx != len(all_idxs) - 1:
-                    next_idx = all_idxs[idx_idx+1]
+                    next_idx = all_idxs[idx_idx + 1]
                 else:
                     next_idx = -1
                 if line_idx in meggie_idxs:

@@ -24,6 +24,7 @@ def find_stim_channel(raw):
     elif 'STI014' in channels:
         return 'STI014'
 
+
 def create_event_set(raw):
     """
     Creates an event set where the first element is the id

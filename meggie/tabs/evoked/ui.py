@@ -6,7 +6,7 @@ import os
 from pprint import pformat
 
 import mne
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
@@ -71,7 +71,7 @@ def delete_from_all(experiment, data, window):
 
 
 def plot_averages(experiment, data, window):
-    """ Plots channel averages of selected item 
+    """ Plots channel averages of selected item
     """
     subject = experiment.active_subject
     try:
@@ -223,18 +223,19 @@ def save_averages(experiment, data, window):
     # accumulate csv contents
     for subject in experiment.subjects.values():
         evoked = subject.evoked.get(selected_name)
-        if not evoked: 
+        if not evoked:
             continue
 
         for key, mne_evoked in evoked.content.items():
 
-            data_labels, averaged_data = create_averages(experiment, mne_evoked)
+            data_labels, averaged_data = create_averages(
+                experiment, mne_evoked)
 
             csv_data.extend(averaged_data.tolist())
             column_names = mne_evoked.times.tolist()
 
             for ch_type, area in data_labels:
-                name = (subject.name + '{' + key + '}' + '[' + 
+                name = (subject.name + '{' + key + '}' + '[' +
                         ch_type + '|' + area + ']')
                 row_names.append(name)
 
@@ -258,4 +259,3 @@ def evoked_info(experiment, data, window):
         message = ""
 
     return message
-

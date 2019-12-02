@@ -50,4 +50,3 @@ def save_tse_averages(experiment, data, window):
 
 def tfr_info(experiment, data, window):
     pass
-

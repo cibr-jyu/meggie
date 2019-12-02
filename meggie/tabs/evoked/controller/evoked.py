@@ -27,7 +27,7 @@ def plot_channel_averages(experiment, evoked):
     Draws a topography representation of the evoked potentials.
 
     """
-    
+
     # average and restructure for ease of plotting
     averages = {}
     for key, mne_evoked in evoked.content.items():
@@ -51,7 +51,7 @@ def plot_channel_averages(experiment, evoked):
                 type_key[0]
             )))
             ax.plot(times, evoked_data,
-                    color=colors[evoked_idx], 
+                    color=colors[evoked_idx],
                     label=evoked_name)
             ax.legend()
         title = 'Evoked ({0}, {1})'.format(type_key[0], type_key[1])
@@ -128,7 +128,7 @@ def group_average(experiment, evoked_name, groups):
     params = {'event_names': new_keys,
               'groups': groups}
 
-    grand_average_evoked = Evoked(name, evoked_directory, params, 
+    grand_average_evoked = Evoked(name, evoked_directory, params,
                                   content=grand_averages)
 
     grand_average_evoked.save_content()

@@ -36,7 +36,8 @@ class Subject(object):
 
         datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
         for package in os.listdir(datatype_path):
-            config_path = os.path.join(datatype_path, package, 'configuration.json')
+            config_path = os.path.join(
+                datatype_path, package, 'configuration.json')
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:
                     config = json.load(f)
@@ -60,9 +61,9 @@ class Subject(object):
         try:
             dataobject.delete_content()
         except Exception:
-            raise IOError('Could not delete ' + str(datatype) + 
+            raise IOError('Could not delete ' + str(datatype) +
                           ' from folders')
- 
+
     @property
     def raw_path(self):
         path = os.path.join(self.path,
@@ -85,7 +86,6 @@ class Subject(object):
 
     def save(self):
         filemanager.save_raw(self._raw, self.raw_path)
-
 
     def release_memory(self):
         """
@@ -111,7 +111,7 @@ class Subject(object):
         paths = []
         datatype_path = pkg_resources.resource_filename('meggie', 'datatypes')
         for package in os.listdir(datatype_path):
-            config_path = os.path.join(datatype_path, package, 
+            config_path = os.path.join(datatype_path, package,
                                        'configuration.json')
             if os.path.exists(config_path):
                 with open(config_path, 'r') as f:

@@ -115,7 +115,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         if not self.preferencesHandler.working_directory:
-            messagebox(self, "Please set up a working directory before creating experiments")
+            messagebox(
+                self, "Please set up a working directory before creating experiments")
             self.check_workspace()
         else:
             dialog = CreateExperimentDialog(self)
@@ -142,7 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         path = QtCore.QDir.toNativeSeparators(str(
             QtWidgets.QFileDialog.getExistingDirectory(self,
-                "Select experiment directory", directory)))
+                                                       "Select experiment directory", directory)))
 
         if path == '':
             return
@@ -261,7 +262,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         if not self.experiment:
-            messagebox(self, 
+            messagebox(self,
                        'You do not currently have an experiment activated.')
             return
 
@@ -363,7 +364,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tabs.append(tab)
 
     def initialize_ui(self):
-        """ 
+        """
         """
 
         self.update_tabs()
@@ -412,12 +413,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.labelLowValue.setText(str(mi.low_pass) + ' Hz')
             self.ui.labelSamplesValue.setText(str(mi.sampling_freq) + ' Hz')
             self.ui.labelSubjectValue.setText(mi.subject_name)
-        except:
+        except BaseException:
             pass
 
         try:
             self.populate_raw_tab_event_list()
-        except:
+        except BaseException:
             pass
 
         # Check whether sss/tsss method is applied.
@@ -460,7 +461,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             events_string = ''
             for key, value in event_counts.items():
-                events_string += 'Trigger %s, %s events\n' % (str(key), str(value))
+                events_string += 'Trigger %s, %s events\n' % (
+                    str(key), str(value))
 
         self.ui.textBrowserEvents.setText(events_string)
 
@@ -473,7 +475,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for tab_idx, tab in enumerate(self.tabs):
             self.ui.tabWidget.insertTab(
-                tab_idx+1, tab, tab.name)
+                tab_idx + 1, tab, tab.name)
 
         self.ui.tabWidget.setCurrentIndex(current_tab)
 
@@ -628,4 +630,3 @@ def main():
     window.showMaximized()
 
     sys.exit(app.exec_())
-

@@ -10,10 +10,10 @@ import logging
 import mne
 
 
-
 class TFR(object):
     """
     """
+
     def __init__(self, name, tfr_directory, params, content=None):
         """
         """

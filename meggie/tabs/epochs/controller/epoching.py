@@ -45,11 +45,11 @@ def create_epochs_from_events(params, subject):
             category_id = (
                 'id_' + str(event_id) + '_mask_' + str(mask))
 
-            new_events = Events(raw, stim_channel, mask, 
+            new_events = Events(raw, stim_channel, mask,
                                 event_id).events
 
             if len(new_events) == 0:
-                logging.warning('No events found with setting ' + 
+                logging.warning('No events found with setting ' +
                                 str(category_id))
 
             category[category_id] = idx + 1
@@ -89,10 +89,9 @@ def create_epochs_from_events(params, subject):
 
     epochs_directory = subject.epochs_directory
     epochs = Epochs(params['collection_name'],
-                    epochs_directory, 
+                    epochs_directory,
                     params,
                     content=mne_epochs)
 
     epochs.save_content()
     subject.add(epochs, 'epochs')
-

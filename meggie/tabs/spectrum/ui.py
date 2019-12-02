@@ -144,7 +144,7 @@ def save(experiment, data, window):
 
 
 def save_averages(experiment, data, window):
-    """ Save channel averages to csv from selected spectrum from 
+    """ Save channel averages to csv from selected spectrum from
     all subjects
     """
     column_names = []
@@ -192,7 +192,7 @@ def save_averages(experiment, data, window):
             column_names = freqs.tolist()
 
             for ch_type, area in data_labels:
-                name = (subject.name + '{' + key + '}[' + 
+                name = (subject.name + '{' + key + '}[' +
                         ch_type + '|' + area + ']')
                 row_names.append(name)
 
@@ -215,4 +215,3 @@ def spectrum_info(experiment, data, window):
         message = ""
 
     return message
-

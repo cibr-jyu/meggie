@@ -63,7 +63,8 @@ class PreferencesDialog(QtWidgets.QDialog):
             radioButtonPreset = QtWidgets.QRadioButton(self.ui.groupBoxTabs)
             radioButtonPreset.setText(preset['text'])
 
-            self.ui.gridLayoutTabs.addWidget(radioButtonPreset, idx+1, 0, 1, 1)
+            self.ui.gridLayoutTabs.addWidget(
+                radioButtonPreset, idx + 1, 0, 1, 1)
 
             self.tabButtons.append(radioButtonPreset)
 
@@ -78,7 +79,6 @@ class PreferencesDialog(QtWidgets.QDialog):
         # first preset as default to be saved
         if not checked:
             self.tabButtons[0].setChecked(True)
-            
 
     def on_ButtonBrowseWorkingDir_clicked(self, checked=None):
         """
@@ -160,7 +160,7 @@ class PreferencesDialog(QtWidgets.QDialog):
             if self.new_enabled_tabs:
                 self.parent.preferencesHandler.tab_preset = 'custom'
                 self.parent.preferencesHandler.enabled_tabs = self.new_enabled_tabs
-            elif (self.parent.preferencesHandler.enabled_tabs or 
+            elif (self.parent.preferencesHandler.enabled_tabs or
                   self.parent.preferencesHandler.tab_preset == 'custom'):
                 self.parent.preferencesHandler.tab_preset = 'custom'
             else:

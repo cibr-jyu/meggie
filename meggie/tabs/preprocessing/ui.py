@@ -29,7 +29,7 @@ def projections(experiment, data, window):
 
     fig = raw.plot_projs_topomap()
 
-    name = subject.name 
+    name = subject.name
     fig.canvas.set_window_title('Projections for ' + name)
 
 

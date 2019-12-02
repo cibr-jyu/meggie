@@ -1,4 +1,4 @@
-import os 
+import os
 import logging
 import inspect
 import importlib
@@ -10,9 +10,9 @@ from types import FunctionType
 import mne
 
 
-blacklist = ['tests', 
-             'externals', 
-             'splitext', 
+blacklist = ['tests',
+             'externals',
+             'splitext',
              'isfunction',
              'basename',
              'wraps',
@@ -20,7 +20,7 @@ blacklist = ['tests',
              'contextmanager',
              'namedtuple',
              'getmembers',
-             'verbose', 
+             'verbose',
              'get_channel_types',
              'dir_tree_find',
              'read_big',
@@ -128,7 +128,7 @@ def wrap_package(root, path):
             continue
 
         if item.ispkg:
-            paths.append((item.name, os.path.join(item.module_finder.path, 
+            paths.append((item.name, os.path.join(item.module_finder.path,
                                                   item.name)))
         else:
             module = importlib.import_module('.'.join([root, item.name]))
@@ -147,7 +147,7 @@ def wrap_package(root, path):
                     continue
 
                 wrapped = wrap('debug', member[1])
-                setattr(module[1], member[0], 
+                setattr(module[1], member[0],
                         wrapped)
             # if isinstance(member[1], MethodType)
             # ...
@@ -155,6 +155,6 @@ def wrap_package(root, path):
     for path in paths:
         wrap_package('.'.join([root, path[0]]), [path[1]])
 
+
 def wrap_mne():
     wrap_package('mne', mne.__path__)
-

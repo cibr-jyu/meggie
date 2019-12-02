@@ -14,7 +14,7 @@ setup(
     install_requires=[
         'setuptools',
     ],
-    entry_points = {
+    entry_points={
         'console_scripts': ['meggie=meggie.run:main'],
     },
 )

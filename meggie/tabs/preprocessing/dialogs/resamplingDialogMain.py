@@ -10,6 +10,7 @@ from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
+
 class ResamplingDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, experiment):

@@ -42,6 +42,6 @@ class CustomTabsDialog(QtWidgets.QDialog):
                 item.setSelected(True)
 
     def accept(self):
-        self.enabled_tabs = [str(item.text()) for item in 
+        self.enabled_tabs = [str(item.text()) for item in
                              self.ui.listWidgetTabs.selectedItems()]
         self.close()

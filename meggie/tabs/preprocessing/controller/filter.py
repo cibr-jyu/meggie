@@ -26,8 +26,8 @@ def filter_data(params, subject, preview=False, **kwargs):
 
     logging.getLogger('ui_logger').info("Filtering.")
     raw.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
-                        l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
-                        method='fft', fir_design='firwin')
+               l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
+               method='fft', fir_design='firwin')
 
     freqs = list()
     if params['bandstop1']:
@@ -45,4 +45,4 @@ def filter_data(params, subject, preview=False, **kwargs):
     if not preview:
         subject.save()
 
-    return raw 
+    return raw
