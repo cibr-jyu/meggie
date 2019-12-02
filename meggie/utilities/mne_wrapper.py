@@ -11,6 +11,7 @@ import mne
 
 
 blacklist = ['tests',
+             'conftest',
              'externals',
              'splitext',
              'isfunction',
