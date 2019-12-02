@@ -21,9 +21,9 @@ class Ui_rereferencingDialog(object):
         self.pushButtonCancel = QtWidgets.QPushButton(rereferencingDialog)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
         self.horizontalLayout.addWidget(self.pushButtonCancel)
-        self.pushButtonAccept = QtWidgets.QPushButton(rereferencingDialog)
-        self.pushButtonAccept.setObjectName("pushButtonAccept")
-        self.horizontalLayout.addWidget(self.pushButtonAccept)
+        self.pushButtonApply = QtWidgets.QPushButton(rereferencingDialog)
+        self.pushButtonApply.setObjectName("pushButtonApply")
+        self.horizontalLayout.addWidget(self.pushButtonApply)
         self.gridLayout_2.addLayout(self.horizontalLayout, 1, 0, 1, 1)
         self.scrollArea = QtWidgets.QScrollArea(rereferencingDialog)
         self.scrollArea.setWidgetResizable(True)
@@ -53,14 +53,14 @@ class Ui_rereferencingDialog(object):
 
         self.retranslateUi(rereferencingDialog)
         self.pushButtonCancel.clicked.connect(rereferencingDialog.reject)
-        self.pushButtonAccept.clicked.connect(rereferencingDialog.accept)
+        self.pushButtonApply.clicked.connect(rereferencingDialog.accept)
         QtCore.QMetaObject.connectSlotsByName(rereferencingDialog)
 
     def retranslateUi(self, rereferencingDialog):
         _translate = QtCore.QCoreApplication.translate
         rereferencingDialog.setWindowTitle(_translate("rereferencingDialog", "Rereferencing"))
         self.pushButtonCancel.setText(_translate("rereferencingDialog", "Cancel"))
-        self.pushButtonAccept.setText(_translate("rereferencingDialog", "Accept"))
+        self.pushButtonApply.setText(_translate("rereferencingDialog", "Apply"))
         self.groupBoxRereference.setTitle(_translate("rereferencingDialog", "Rereferencing options:"))
         self.labelSelectChannel.setText(_translate("rereferencingDialog", "Select channel:"))
         self.comboBoxChannel.setCurrentText(_translate("rereferencingDialog", "Use average"))

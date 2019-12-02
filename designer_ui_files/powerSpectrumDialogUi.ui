@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
+    <width>561</width>
     <height>712</height>
    </rect>
   </property>
@@ -23,15 +23,15 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-189</y>
-        <width>562</width>
-        <height>850</height>
+        <y>0</y>
+        <width>527</width>
+        <height>867</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>550</width>
-        <height>850</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -343,7 +343,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayoutButtons">
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
@@ -365,14 +365,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonComputeBatch">
+      <widget class="QPushButton" name="pushButtonBatch">
        <property name="text">
         <string>Batch</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonCompute">
+      <widget class="QPushButton" name="pushButtonApply">
        <property name="text">
         <string>Apply</string>
        </property>
@@ -385,7 +385,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButtonCompute</sender>
+   <sender>pushButtonApply</sender>
    <signal>clicked()</signal>
    <receiver>PowerSpectrumDialog</receiver>
    <slot>accept()</slot>
@@ -417,7 +417,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonComputeBatch</sender>
+   <sender>pushButtonBatch</sender>
    <signal>clicked()</signal>
    <receiver>PowerSpectrumDialog</receiver>
    <slot>acceptBatch()</slot>

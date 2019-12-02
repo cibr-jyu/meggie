@@ -3,27 +3,28 @@
 """
 """
 import logging
-from PyQt5 import QtWidgets
+
 import numpy as np
 
-from meggie.code_meggie.analysis.spectral import create_tfr
+from PyQt5 import QtWidgets
 
-from meggie.ui.analysis.TFRDialogUi import Ui_TFRDialog
+from meggie.tabs.tfr.controller.tfr import create_tfr
 
-from meggie.code_meggie.utils.validators import validate_name
+from meggie.tabs.tfr.dialogs.TFRDialogUi import Ui_TFRDialog
 
-from meggie.ui.widgets.batchingWidgetMain import BatchingWidget
+from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 
-from meggie.ui.utils.decorators import threaded
-from meggie.ui.utils.messaging import messagebox
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.utilities.validators import validate_name
+from meggie.utilities.decorators import threaded
+from meggie.utilities.messaging import messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
 class TFRDialog(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, parent, experiment, epoch_names):
+    def __init__(self, experiment, parent, epoch_names):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -35,7 +36,7 @@ class TFRDialog(QtWidgets.QDialog):
         self.experiment = experiment
 
         subject = experiment.active_subject
-        epochs = subject.epochs[epoch_names[0]].raw
+        epochs = subject.epochs[epoch_names[0]].content
 
         self.ui.lineEditEpochName.setText(', '.join(epoch_names))
 
@@ -68,7 +69,8 @@ class TFRDialog(QtWidgets.QDialog):
             experiment_getter=self.experiment_getter,
             parent=self,
             container=self.ui.groupBoxBatching,
-            geometry=self.ui.widgetBatchContainer.geometry())
+            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+        self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
 
     def experiment_getter(self):
         return self.experiment
@@ -101,20 +103,18 @@ class TFRDialog(QtWidgets.QDialog):
         experiment = self.experiment
         subject = experiment.active_subject
 
-        @threaded
-        def do_tfr(*args, **kwargs):
-            create_tfr(experiment, subject, tfr_name, self.epoch_names,
-                       freqs=freqs, decim=decim, ncycles=ncycles,
-                       subtract_evoked=subtract_evoked)
-
         try:
-            do_tfr(do_meanwhile=self.parent.update_ui)
-            experiment.save_experiment_settings()
-            self.parent.initialize_ui()
-        except Exception as e:
-            exc_messagebox(self.parent, e)
+            create_tfr(subject, tfr_name, self.epoch_names,
+                       freqs=freqs, decim=decim, ncycles=ncycles,
+                       subtract_evoked=subtract_evoked,
+                       do_meanwhile=self.parent.update_ui)
+
+        except Exception as exc:
+            exc_messagebox(self.parent, exc)
             return
 
+        experiment.save_experiment_settings()
+        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
@@ -140,34 +140,22 @@ class TFRDialog(QtWidgets.QDialog):
         elif self.ui.radioButtonAdapted.isChecked():
             ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
-        experiment = self.experiment
-
-        recently_active_subject = experiment.active_subject.subject_name
         selected_subject_names = self.batching_widget.selected_subjects
-
-        for subject_name, subject in self.experiment.subjects.items():
-            if subject_name in selected_subject_names:
+        for name, subject in self.experiment.subjects.items():
+            if name in selected_subject_names:
                 try:
-                    experiment.activate_subject(subject_name)
-
-                    @threaded
-                    def do_tfr(*args, **kwargs):
-                        create_tfr(experiment, subject, tfr_name,
-                                   self.epoch_names, freqs=freqs,
-                                   decim=decim, ncycles=ncycles,
-                                   subtract_evoked=subtract_evoked)
-                        subject.release_memory()
-
-                    do_tfr(do_meanwhile=self.parent.update_ui)
-                except Exception as e:
+                    create_tfr(subject, tfr_name,
+                               self.epoch_names, freqs=freqs,
+                               decim=decim, ncycles=ncycles,
+                               subtract_evoked=subtract_evoked,
+                               do_meanwhile=self.parent.update_ui)
+                    subject.release_memory()
+                except Exception as exc:
                     self.batching_widget.failed_subjects.append(
-                        (subject, str(e)))
-                    logging.getLogger('ui_logger').exception(str(e))
-
-        experiment.activate_subject(recently_active_subject)
+                        (subject, str(exc)))
+                    logging.getLogger('ui_logger').exception(str(exc))
 
         self.batching_widget.cleanup()
         experiment.save_experiment_settings()
-
         self.parent.initialize_ui()
         self.close()

@@ -149,14 +149,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonComputeBatch">
+      <widget class="QPushButton" name="pushButtonBatch">
        <property name="text">
         <string>Batch</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonCompute">
+      <widget class="QPushButton" name="pushButtonApply">
        <property name="text">
         <string>Apply</string>
        </property>
@@ -185,7 +185,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonCompute</sender>
+   <sender>pushButtonApply</sender>
    <signal>clicked()</signal>
    <receiver>resamplingDialog</receiver>
    <slot>accept()</slot>
@@ -201,7 +201,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonComputeBatch</sender>
+   <sender>pushButtonBatch</sender>
    <signal>clicked()</signal>
    <receiver>resamplingDialog</receiver>
    <slot>acceptBatch()</slot>

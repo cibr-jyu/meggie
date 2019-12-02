@@ -5,9 +5,9 @@
 
 import logging
 
-from PyQt5 import QtWidgets
-
 import numpy as np
+
+from PyQt5 import QtWidgets
 
 from meggie.tabs.evoked.dialogs.createEvokedDialogUi import Ui_CreateEvokedDialog
 
@@ -44,8 +44,6 @@ class CreateEvokedDialog(QtWidgets.QDialog):
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
-
-        self.ui.lineEditSource.setText(', '.join(selected_epochs))
 
     def experiment_getter(self):
         return self.experiment

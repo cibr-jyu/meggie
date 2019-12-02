@@ -37,9 +37,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonAccept">
+      <widget class="QPushButton" name="pushButtonApply">
        <property name="text">
-        <string>Accept</string>
+        <string>Apply</string>
        </property>
       </widget>
      </item>
@@ -132,7 +132,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonAccept</sender>
+   <sender>pushButtonApply</sender>
    <signal>clicked()</signal>
    <receiver>rereferencingDialog</receiver>
    <slot>accept()</slot>

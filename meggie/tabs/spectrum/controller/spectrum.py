@@ -19,6 +19,7 @@ from meggie.utilities.events import find_stim_channel
 from meggie.utilities.events import Events
 
 from meggie.datatypes.spectrum.spectrum import Spectrum
+
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
 from meggie.utilities.units import get_scaling

@@ -8,5 +8,5 @@
     "translations": {"plot": "Plot raw",
                      "ica": "Remove artifacts using ICA",
                      "rereference": "Rereference EEG data",
-                     "projections": "Plot SSP projection vectors"}
+                     "projections": "Plot SSP vectors"}
 }

@@ -14,28 +14,28 @@ class BatchingWidget(QtWidgets.QWidget):
 
     def __init__(self, experiment_getter, parent, geometry,
                  container=None,
-                 pushButtonCompute=None,
-                 pushButtonComputeBatch=None,
+                 pushButtonApply=None,
+                 pushButtonBatch=None,
                  hideHook=None):
         super(BatchingWidget, self).__init__(container)
         self.ui = Ui_BatchingWidget()
         self.ui.setupUi(self)
         self.parent = parent
 
-        if not pushButtonCompute:
-            pushButtonCompute = self.parent.ui.pushButtonCompute
-        if not pushButtonComputeBatch:
-            pushButtonComputeBatch = self.parent.ui.pushButtonComputeBatch
+        if not pushButtonApply:
+            pushButtonApply = self.parent.ui.pushButtonApply
+        if not pushButtonBatch:
+            pushButtonBatch = self.parent.ui.pushButtonBatch
 
         self.experiment_getter = experiment_getter
         self.experiment = None
         self.hideHook = hideHook
 
-        self.pushButtonComputeBatch = pushButtonComputeBatch
-        self.pushButtonCompute = pushButtonCompute
+        self.pushButtonBatch = pushButtonBatch
+        self.pushButtonApply = pushButtonApply
 
-        self.pushButtonCompute.setEnabled(True)
-        self.pushButtonComputeBatch.setEnabled(False)
+        self.pushButtonBatch.setEnabled(False)
+        self.pushButtonApply.setEnabled(True)
 
         self.ui.functionalityWidget.hide()
         self.setGeometry(geometry)
@@ -51,8 +51,8 @@ class BatchingWidget(QtWidgets.QWidget):
         if enabled:
             self.ui.functionalityWidget.show()
             self.adjustSize()
-            self.pushButtonCompute.setEnabled(False)
-            self.pushButtonComputeBatch.setEnabled(True)
+            self.pushButtonApply.setEnabled(False)
+            self.pushButtonBatch.setEnabled(True)
 
             subject_names = sorted(self.experiment.subjects.keys())
 
@@ -66,8 +66,8 @@ class BatchingWidget(QtWidgets.QWidget):
             self.ui.listWidgetSubjects.clear()
             self.ui.functionalityWidget.hide()
             self.adjustSize()
-            self.pushButtonCompute.setEnabled(True)
-            self.pushButtonComputeBatch.setEnabled(False)
+            self.pushButtonApply.setEnabled(True)
+            self.pushButtonBatch.setEnabled(False)
 
             if self.hideHook:
                 self.hideHook()

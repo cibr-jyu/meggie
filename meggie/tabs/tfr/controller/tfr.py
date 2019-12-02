@@ -4,8 +4,6 @@
 
 import os
 import logging
-from copy import deepcopy
-from collections import OrderedDict
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,15 +16,14 @@ from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
 
-from meggie.code_meggie.structures.tfr import TFR
+from meggie.datatypes.tfr.tfr import TFR
 
 import meggie.utilities.filemanager as filemanager
 
 
-def plot_tse(experiment, tfr_name, minfreq, maxfreq, baseline, output):
+def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
 
-    subject = experiment.active_subject
-    subject_name = subject.subject_name
+    subject_name = subject.name
 
     meggie_tfr = subject.tfrs.get(tfr_name)
 
@@ -146,7 +143,8 @@ def plot_tse(experiment, tfr_name, minfreq, maxfreq, baseline, output):
         plt.show()
 
 
-def create_tfr(experiment, subject, tfr_name, epochs_names,
+@threaded
+def create_tfr(subject, tfr_name, epochs_names,
                freqs, decim, ncycles, subtract_evoked):
 
     # check that lengths are same
@@ -188,9 +186,9 @@ def create_tfr(experiment, subject, tfr_name, epochs_names,
 
     meggie_tfr = TFR(tfrs, tfr_name, subject, decim, ncycles, subtract_evoked)
 
-    experiment.active_subject.add_tfr(meggie_tfr)
+    meggie_tfr.save_content()
+    subject.add(meggie_tfr, "tfr")
 
-    meggie_tfr.save_tfr()
 
 
 def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
@@ -241,11 +239,7 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
                                    sfreq=sfreq,
                                    ch_types='mag')
             tfr = mne.AverageTFR(
-                info,
-                data[np.newaxis, :],
-                times,
-                freqs,
-                1)
+                info, data[np.newaxis, :], times, freqs, 1)
 
             title = labels[1] + ' (' + labels[0] + ')'
 
@@ -363,6 +357,6 @@ def group_average_tfr(experiment, tfr_name, groups):
                      active_subject,
                      decim, n_cycles, evoked_subtracted)
 
-    experiment.active_subject.add_tfr(meggie_tfr)
+    meggie_tfr.save_content()
+    experiment.active_subject.add(meggie_tfr, "tfr")
 
-    meggie_tfr.save_tfr()

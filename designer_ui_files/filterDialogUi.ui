@@ -37,14 +37,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonComputeBatch">
+      <widget class="QPushButton" name="pushButtonBatch">
        <property name="text">
         <string>Batch</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonCompute">
+      <widget class="QPushButton" name="pushButtonApply">
        <property name="text">
         <string>Apply</string>
        </property>
@@ -417,7 +417,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButtonCompute</sender>
+   <sender>pushButtonApply</sender>
    <signal>clicked()</signal>
    <receiver>DialogFilter</receiver>
    <slot>accept()</slot>
@@ -449,7 +449,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButtonComputeBatch</sender>
+   <sender>pushButtonBatch</sender>
    <signal>clicked()</signal>
    <receiver>DialogFilter</receiver>
    <slot>acceptBatch()</slot>
