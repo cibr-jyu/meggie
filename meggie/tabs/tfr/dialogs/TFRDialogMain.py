@@ -145,6 +145,8 @@ class TFRDialog(QtWidgets.QDialog):
         elif self.ui.radioButtonAdapted.isChecked():
             ncycles = freqs / self.ui.doubleSpinBoxCycleFactor.value()
 
+        experiment = self.experiment
+
         selected_subject_names = self.batching_widget.selected_subjects
         for name, subject in self.experiment.subjects.items():
             if name in selected_subject_names:
