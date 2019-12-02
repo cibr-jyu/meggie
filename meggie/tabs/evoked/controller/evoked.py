@@ -134,4 +134,3 @@ def group_average(experiment, evoked_name, groups):
     grand_average_evoked.save_content()
     subject.add(grand_average_evoked, 'evoked')
 
-    return grand_average_evoked

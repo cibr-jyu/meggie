@@ -24,7 +24,6 @@ def filter_data(params, subject, preview=False, **kwargs):
     length = params['length']
     trans_bw = params['trans_bw']
 
-    logging.getLogger('ui_logger').info("Filtering.")
     raw.filter(l_freq=lfreq, h_freq=hfreq, filter_length=length,
                l_trans_bandwidth=trans_bw, h_trans_bandwidth=trans_bw,
                method='fft', fir_design='firwin')
@@ -38,7 +37,6 @@ def filter_data(params, subject, preview=False, **kwargs):
         length = params['bandstop_length']
         trans_bw = params['bandstop_transbw']
 
-        logging.getLogger('ui_logger').info("Band-stop filtering.")
         raw.notch_filter(freqs, picks=None, filter_length=length,
                          notch_widths=params['bandstop_bw'], trans_bandwidth=trans_bw)
 

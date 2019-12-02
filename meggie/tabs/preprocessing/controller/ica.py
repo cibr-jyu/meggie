@@ -89,8 +89,6 @@ def plot_changes(raw, ica, indices):
 def apply_ica(raw, experiment, ica, indices):
     """
     """
-    logging.getLogger('ui_logger').info(
-        'Subtracting the components out of the data.')
     ica.apply(raw, exclude=indices)
 
     experiment.active_subject.save()

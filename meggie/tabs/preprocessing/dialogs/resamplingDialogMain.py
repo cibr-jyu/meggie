@@ -53,10 +53,10 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         resample_fun(do_meanwhile=self.parent.update_ui)
 
+        self.parent.initialize_ui()
+
         logging.getLogger('ui_logger').info('Resampling done successfully from ' +
                                             str(old_rate) + ' to ' + str(rate))
-
-        self.parent.initialize_ui()
         self.close()
 
     def acceptBatch(self):
@@ -89,4 +89,8 @@ class ResamplingDialog(QtWidgets.QDialog):
         self.batching_widget.cleanup()
 
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Resampling done successfully from ' +
+                                            str(old_rate) + ' to ' + str(rate))
+ 
         self.close()

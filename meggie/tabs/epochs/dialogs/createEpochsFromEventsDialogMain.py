@@ -148,6 +148,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
 
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+
         self.close()
 
     def acceptBatch(self):
@@ -182,6 +185,9 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+
         self.close()
 
     def on_pushButtonEdit_clicked(self, checked=None):

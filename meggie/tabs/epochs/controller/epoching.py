@@ -95,3 +95,4 @@ def create_epochs_from_events(params, subject):
 
     epochs.save_content()
     subject.add(epochs, 'epochs')
+

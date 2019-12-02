@@ -296,7 +296,6 @@ def plot_spectrum_topo(experiment, name):
 
 @threaded
 def group_average_spectrum(experiment, spectrum_name, groups):
-    logging.getLogger('ui_logger').info('Calculating group average for psds')
 
     # check data cohesion
     keys = []
@@ -390,3 +389,4 @@ def group_average_spectrum(experiment, spectrum_name, groups):
 
     spectrum.save_content()
     subject.add(spectrum, 'spectrum')
+

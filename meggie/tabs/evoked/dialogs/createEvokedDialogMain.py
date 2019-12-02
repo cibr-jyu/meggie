@@ -96,7 +96,11 @@ class CreateEvokedDialog(QtWidgets.QDialog):
 
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+
         self.close()
+
 
     def acceptBatch(self):
         selected_epochs = self.selected_epochs
@@ -118,4 +122,7 @@ class CreateEvokedDialog(QtWidgets.QDialog):
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+
         self.close()

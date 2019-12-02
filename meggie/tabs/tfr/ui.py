@@ -64,4 +64,13 @@ def save_tse_averages(experiment, data, window):
 
 
 def tfr_info(experiment, data, window):
-    pass
+    """ Fills info element
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+        evoked = experiment.active_subject.tfr[selected_name]
+        message = pformat(evoked.params)
+    except Exception as exc:
+        message = ""
+
+    return message

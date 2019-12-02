@@ -15,6 +15,7 @@ from meggie.utilities.decorators import threaded
 from meggie.utilities.units import get_scaling
 from meggie.utilities.units import get_unit
 from meggie.utilities.units import get_power_unit
+from meggie.utilities.validators import assert_arrays_same
 
 from meggie.datatypes.tfr.tfr import TFR
 
@@ -75,7 +76,7 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
                 # average over freqs
                 tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
                 # correct to baseline
-                tse = mne.rescale(tse, times, baseline=baseline)
+                tse = mne.baseline.rescale(tse, times, baseline=baseline)
 
                 plt.plot(times, tse[ch_idx], color=colors[color_idx])
                 plt.axhline(0)
@@ -84,13 +85,13 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
             plt.xlabel('Time (s)')
 
             plt.ylabel('Power ({})'.format(get_power_unit(
-                mne.channel_type(example_tfr.info, ch_idx),
+                mne.io.pick.channel_type(example_tfr.info, ch_idx),
                 False
             )))
 
             plt.show()
 
-        for ax, ch_idx in mne.iter_topography(example_tfr.info, fig_facecolor='white',
+        for ax, ch_idx in mne.viz.iter_topography(example_tfr.info, fig_facecolor='white',
                                               axis_spinecolor='white',
                                               axis_facecolor='white', layout=lout,
                                               on_pick=individual_plot):
@@ -99,7 +100,7 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
                 # average over freqs
                 tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
                 # correct to baseline
-                tse = mne.rescale(tse, times, baseline=baseline)
+                tse = mne.baseline.rescale(tse, times, baseline=baseline)
 
                 ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
 
@@ -131,7 +132,7 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
                 tse = np.mean(averages[key][1][ii]
                               [lfreq_idx:hfreq_idx, :], axis=0)
                 # correct to baseline
-                tse = mne.rescale(tse, times, baseline=baseline)
+                tse = mne.baseline.rescale(tse, times, baseline=baseline)
 
                 ax.plot(times, tse, color=colors[color_idx])
                 ax.axhline(0)
@@ -147,48 +148,43 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
 def create_tfr(subject, tfr_name, epochs_names,
                freqs, decim, ncycles, subtract_evoked):
 
-    # check that lengths are same
     time_arrays = []
     for name in epochs_names:
         collection = subject.epochs.get(name)
         if collection:
-            time_arrays.append(collection.raw.times)
-
-    for ix, i_times in enumerate(time_arrays):
-        for jx, j_times in enumerate(time_arrays):
-            if ix != jx:
-                try:
-                    np.testing.assert_array_almost_equal(i_times, j_times)
-                except AssertionError:
-                    raise Exception('Epochs collections of different time'
-                                    'scales are not allowed')
+            time_arrays.append(collection.content.times)
+    assert_arrays_same(time_arrays)
 
     tfrs = {}
     for epoch_name in epochs_names:
-        epochs = subject.epochs[epoch_name].raw
+        epochs = subject.epochs[epoch_name].content
         if subtract_evoked:
-            logging.getLogger('ui_logger').info('Subtracting evoked...')
             epochs = epochs.copy().subtract_evoked()
 
-        logging.getLogger('ui_logger').info('Computing TFR...')
-
-        tfr = mne.tfr_morlet(epochs, freqs=freqs, n_cycles=ncycles,
-                             decim=decim, average=True,
-                             return_itc=False)
+        tfr = mne.time_frequency.tfr.tfr_morlet(epochs, 
+                                                freqs=freqs, 
+                                                n_cycles=ncycles,
+                                                decim=decim, 
+                                                average=True,
+                                                return_itc=False)
         tfr.comment = epoch_name
         tfrs[epoch_name] = tfr
-
-    logging.getLogger('ui_logger').info('Saving TFR...')
 
     # convert list-like to list
     if hasattr(ncycles, '__len__'):
         ncycles = list(ncycles)
 
-    meggie_tfr = TFR(tfrs, tfr_name, subject, decim, ncycles, subtract_evoked)
+    params = {
+        'decim': decim,
+        'ncycles': ncycles,
+        'subtract_evoked': subtract_evoked,
+        'conditions': epochs_names
+    }
+
+    meggie_tfr = TFR(tfr_name, subject.tfr_directory, params, tfrs)
 
     meggie_tfr.save_content()
     subject.add(meggie_tfr, "tfr")
-
 
 
 def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
@@ -203,9 +199,9 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
         bline = None
         mode = None
 
-    logging.getLogger('ui_logger').info("Plotting TFR...")
 
     if output == 'all_channels':
+        logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
         fig = tfr.plot_topo(layout=layout, show=False,
                             baseline=bline, mode=mode)
 
@@ -220,6 +216,7 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
         fig.canvas.mpl_connect('button_press_event', onclick)
         fig.show()
     else:
+        logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
 
         data = tfr.data
         ch_names = tfr.info['ch_names']
@@ -238,7 +235,7 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
             info = mne.create_info(ch_names=['grandaverage'],
                                    sfreq=sfreq,
                                    ch_types='mag')
-            tfr = mne.AverageTFR(
+            tfr = mne.time_frequency.tfr.AverageTFR(
                 info, data[np.newaxis, :], times, freqs, 1)
 
             title = labels[1] + ' (' + labels[0] + ')'
@@ -254,7 +251,6 @@ def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
 
 
 def group_average_tfr(experiment, tfr_name, groups):
-    logging.getLogger('ui_logger').info('Calculating group average for tfrs')
 
     # check data coherence
     keys = []

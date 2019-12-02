@@ -19,6 +19,7 @@ class TFR(object):
         """
         self._name = name
         self._content = content
+        self._params = params
         self._tfr_directory = tfr_directory
 
     def _get_fname(self, tfr_name):

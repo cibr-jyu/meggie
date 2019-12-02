@@ -115,9 +115,14 @@ class TFRDialog(QtWidgets.QDialog):
 
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+
         self.close()
 
     def acceptBatch(self):
+        """
+        """
 
         tfr_name = self.ui.lineEditTFRName.text()
 
@@ -158,4 +163,7 @@ class TFRDialog(QtWidgets.QDialog):
         self.batching_widget.cleanup()
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished')
+
         self.close()
