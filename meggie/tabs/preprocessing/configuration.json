@@ -4,10 +4,9 @@
 	"inputs": [],
 	"actions": ["plot", "ica", "filter",
 				"resample", "rereference",
-				"projections", "crop"],
+				"projections"],
     "translations": {"plot": "Plot raw",
                      "ica": "Remove artifacts using ICA",
                      "rereference": "Rereference EEG data",
-                     "projections": "Plot SSP projection vectors",
-                     "crop": "Crop raw"}
+                     "projections": "Plot SSP projection vectors"}
 }

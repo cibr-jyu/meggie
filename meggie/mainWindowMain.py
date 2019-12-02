@@ -14,7 +14,6 @@ from meggie.utilities.dynamic import construct_tab
 from meggie.utilities.dynamic import find_all_tab_specs
 
 from meggie.mainWindowUi import Ui_MainWindow
-from meggie.icons import mainWindowIcons_rc
 
 from meggie.utilities.units import get_unit
 from meggie.utilities.measurement_info import MeasurementInfo

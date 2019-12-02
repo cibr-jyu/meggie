@@ -89,16 +89,15 @@ blacklist = ['tests',
              'tridi_inverse_iteration',
              'dpss_windows',
              'tridisolve',
-             'next_fast_len']
+             'next_fast_len',
+             'make_eeg_layout',
+             'tight_layout']
 
 blacklist.extend(['pick_types',
                   'pick_channels',
                   'rescale',
                   'make_projector',
-                  'plot_raw'])
-
-# could we find api some other way, like reading the
-# __init__.py's and filtering with them keywords
+                  'plot_topomap'])
 
 
 def wrap(log_level, original_func):
@@ -106,7 +105,7 @@ def wrap(log_level, original_func):
         logger = logging.getLogger("mne_wrapper_logger")
         numeric_level = getattr(logging, log_level.upper())
 
-        print("Wrapped function called: " + str(original_func))
+        # print("Wrapped function called: " + str(original_func))
 
         callargs = inspect.getcallargs(original_func, *args, **kwargs)
 

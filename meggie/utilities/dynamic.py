@@ -320,7 +320,7 @@ def construct_tab(package, tab_spec, parent):
 
                 data = getattr(subject, input_name, None)
                 if not data:
-                    logging.getLogger('ui_logger').info(
+                    logging.getLogger('ui_logger').debug(
                         "Data not found for " + str(input_name) + 
                         " in " + self.name + " tab.")
                     continue
@@ -339,7 +339,7 @@ def construct_tab(package, tab_spec, parent):
 
                 data = getattr(subject, output_name, None)
                 if not data:
-                    logging.getLogger('ui_logger').info(
+                    logging.getLogger('ui_logger').debug(
                         "Data not found for " + str(output_name) + 
                         " in " + self.name + " tab.")
                     continue
