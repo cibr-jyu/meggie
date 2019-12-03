@@ -55,8 +55,7 @@ class ResamplingDialog(QtWidgets.QDialog):
 
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Resampling done successfully from ' +
-                                            str(old_rate) + ' to ' + str(rate))
+        logging.getLogger('ui_logger').info('Finished.')
         self.close()
 
     def acceptBatch(self):
@@ -69,8 +68,6 @@ class ResamplingDialog(QtWidgets.QDialog):
             if name in selected_subject_names:
                 try:
                     raw = subject.get_raw()
-                    fname = subject.raw_path
-
                     old_rate = raw.info['sfreq']
                     rate = self.ui.doubleSpinBoxNewRate.value()
 
@@ -81,16 +78,14 @@ class ResamplingDialog(QtWidgets.QDialog):
                         subject.release_memory()
 
                     resample_fun(do_meanwhile=self.parent.update_ui)
-                except Exception as e:
+                except Exception as exc:
                     self.batching_widget.failed_subjects.append(
-                        (subject, str(e)))
-                    logging.getLogger('ui_logger').exception(str(e))
+                        (subject, str(exc)))
+                    logging.getLogger('ui_logger').exception(str(exc))
 
         self.batching_widget.cleanup()
 
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info('Resampling done successfully from ' +
-                                            str(old_rate) + ' to ' + str(rate))
- 
+        logging.getLogger('ui_logger').info('Finished.')
         self.close()

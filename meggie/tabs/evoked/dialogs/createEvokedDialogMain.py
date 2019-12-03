@@ -113,11 +113,11 @@ class CreateEvokedDialog(QtWidgets.QDialog):
                 try:
                     self.create_evoked(subject, selected_epochs)
                 except Exception as exc:
-                    self.batching_widget.failed_subjects.append((subject,
-                                                                 str(e)))
+                    self.batching_widget.failed_subjects.append(
+                        (subject, str(exc)))
                     logging.getLogger('ui_logger').error(
                         'Params: ' + str(params))
-                    logging.getLogger('ui_logger').exception(str(e))
+                    logging.getLogger('ui_logger').exception(str(exc))
 
         self.batching_widget.cleanup()
         self.experiment.save_experiment_settings()

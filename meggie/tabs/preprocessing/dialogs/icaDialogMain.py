@@ -72,8 +72,8 @@ class ICADialog(QtWidgets.QDialog):
 
         try:
             self.ica = _compute_ica(do_meanwhile=self.parent.update_ui)
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
         for idx in range(self.ica.n_components_):
@@ -143,8 +143,8 @@ class ICADialog(QtWidgets.QDialog):
 
         try:
             plot_topographies(self.ica, len(self.component_info), layout)
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
     def on_pushButtonPlotSources_clicked(self, checked=None):
@@ -157,8 +157,8 @@ class ICADialog(QtWidgets.QDialog):
 
         try:
             plot_sources(raw, self.ica)
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
     def on_pushButtonPlotProperties_clicked(self, checked=None):
@@ -178,8 +178,8 @@ class ICADialog(QtWidgets.QDialog):
 
         try:
             plot_properties(raw, self.ica, picks, layout)
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
     def on_pushButtonPlotChanges_clicked(self, checked=None):
@@ -194,8 +194,8 @@ class ICADialog(QtWidgets.QDialog):
 
         try:
             plot_changes(raw, self.ica, indices)
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
             return
 
     def get_picks(self):

@@ -246,8 +246,8 @@ def construct_tab(package, tab_spec, parent):
 
                     try:
                         info_content = handler(experiment, data, parent)
-                    except Exception as e:
-                        exc_messagebox(self, e)
+                    except Exception as exc:
+                        exc_messagebox(self, exc)
 
                     info_element.setPlainText(info_content)
 
@@ -289,8 +289,8 @@ def construct_tab(package, tab_spec, parent):
 
                     try:
                         handler(experiment, data, parent)
-                    except Exception as e:
-                        exc_messagebox(self, e)
+                    except Exception as exc:
+                        exc_messagebox(self, exc)
 
                 button.clicked.connect(handler_wrapper)
 

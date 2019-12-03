@@ -47,12 +47,12 @@ def open_raw(fname, preload=True):
         raw = mne.io.read_raw_fif(fname, preload=preload, allow_maxshield=True)
 
         return raw
-    except IOError as e:
-        raise IOError(str(e))
-    except OSError as e:
-        raise OSError('You do not have permission to read the file. ' + str(e))
-    except ValueError as e:
-        raise ValueError('A problem occurred while opening: ' + str(e))
+    except IOError as exc:
+        raise IOError(str(exc))
+    except OSError as exc:
+        raise OSError('You do not have permission to read the file. ' + str(exc))
+    except ValueError as exc:
+        raise ValueError('A problem occurred while opening: ' + str(exc))
 
 
 def save_raw(raw, path, overwrite=True):

@@ -55,8 +55,8 @@ class AddSubjectDialog(QtWidgets.QDialog):
                                                       self.parent.experiment,
                                                       basename,
                                                       raw_path=raw_path)
-            except Exception as e:
-                exc_messagebox(self.parent, e)
+            except Exception as exc:
+                exc_messagebox(self.parent, exc)
 
         # Set source file path here temporarily. create_active_subject in
         # experiment sets the real value for this attribute.

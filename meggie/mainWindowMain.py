@@ -80,8 +80,8 @@ class MainWindow(QtWidgets.QMainWindow):
             try:
                 exp = self.experimentHandler.open_existing_experiment(
                     self.preferencesHandler)
-            except Exception as e:
-                exc_messagebox(self, e)
+            except Exception as exc:
+                exc_messagebox(self, exc)
 
             if exp:
                 self.experiment = exp
@@ -155,8 +155,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.preferencesHandler, path=path)
             self.experiment = exp
             self.initialize_ui()
-        except Exception as e:
-            exc_messagebox(self, e)
+        except Exception as exc:
+            exc_messagebox(self, exc)
 
         self.preferencesHandler.write_preferences_to_disk()
 

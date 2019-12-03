@@ -8,6 +8,8 @@ import mne
 from PyQt5 import QtWidgets
 
 from meggie.tabs.preprocessing.dialogs.rereferencingDialogUi import Ui_rereferencingDialog
+
+from meggie.utilities.widgets.batchingWidgetMain import BatchingWidget
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
 
@@ -36,12 +38,22 @@ class RereferencingDialog(QtWidgets.QDialog):
         for ch_name in ch_names:
             self.ui.comboBoxChannel.addItem(ch_name)
 
+        self.batching_widget = BatchingWidget(
+            experiment_getter=self.experiment_getter,
+            parent=self,
+            container=self.ui.groupBoxBatching,
+            geometry=self.ui.batchingWidgetPlaceholder.geometry())
+        self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
+
+    def experiment_getter(self):
+        return self.experiment
+
     def accept(self):
+        """
+        """
         experiment = self.experiment
 
         raw = experiment.active_subject.get_raw()
-        path = experiment.active_subject.raw_path
-
         selection = self.ui.comboBoxChannel.currentText()
 
         @threaded
@@ -61,12 +73,51 @@ class RereferencingDialog(QtWidgets.QDialog):
             return
 
         experiment.active_subject.save()
-
         experiment.active_subject.rereferenced = True
+
         experiment.save_experiment_settings()
         self.parent.initialize_ui()
 
-        logging.getLogger('ui_logger').info(
-            'Data was successfully rereferenced using setting: ' + selection)
-
+        logging.getLogger('ui_logger').info('Finished.')
         self.close()
+
+    def acceptBatch(self):
+        """
+        """
+        experiment = self.experiment
+        selection = self.ui.comboBoxChannel.currentText()
+
+        selected_subject_names = self.batching_widget.selected_subjects
+
+        for name, subject in experiment.subjects.items():
+            if name in selected_subject_names:
+                try:
+                    raw = subject.get_raw()
+
+                    @threaded
+                    def rereference_fun():
+                        if selection == 'Use average':
+                            raw.set_eeg_reference(ref_channels='average', 
+                                                  projection=False)
+                        elif selection == '':
+                            raise Exception('Empty selection')
+                        else:
+                            raw.set_eeg_reference(ref_channels=[selection])
+
+                    rereference_fun(do_meanwhile=self.parent.update_ui)
+                    subject.save()
+                    subject.rereferenced = True
+
+                except Exception as exc:
+                    self.batching_widget.failed_subjects.append(
+                        (subject, str(exc)))
+                    logging.getLogger('ui_logger').exception(str(exc))
+
+        self.batching_widget.cleanup()
+
+        experiment.save_experiment_settings()
+        self.parent.initialize_ui()
+
+        logging.getLogger('ui_logger').info('Finished.')
+        self.close()
+
