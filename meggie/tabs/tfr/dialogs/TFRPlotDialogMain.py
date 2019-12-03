@@ -4,20 +4,21 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.analysis.TFRPlotTopologyDialogUi import Ui_TFRPlotTopologyDialog
+from meggie.tabs.tfr.dialogs.TFRPlotDialogUi import Ui_TFRPlotDialog
 
-from meggie.code_meggie.analysis.spectral import plot_tfr
+from meggie.tabs.tfr.controller.tfr import plot_tfr_topo
+from meggie.tabs.tfr.controller.tfr import plot_tfr_averages
 
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
-class TFRPlotTopologyDialog(QtWidgets.QDialog):
+class TFRPlotDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, experiment, tfr_name):
         """
         """
-        QtWidgets.QDialog.__init__(self)
-        self.ui = Ui_TFRPlotTopologyDialog()
+        QtWidgets.QDialog.__init__(self, parent)
+        self.ui = Ui_TFRPlotDialog()
         self.ui.setupUi(self)
         self.parent = parent
         self.experiment = experiment
@@ -25,10 +26,10 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
 
         active_subject = self.experiment.active_subject
 
-        meggie_tfr = active_subject.tfrs[self.tfr_name]
+        meggie_tfr = active_subject.tfr[tfr_name]
 
-        tfr = list(meggie_tfr.tfrs.values())[0]
-        keys = list(meggie_tfr.tfrs.keys())
+        tfr = list(meggie_tfr.content.values())[0]
+        keys = list(meggie_tfr.content.keys())
 
         start, end = tfr.times[0], tfr.times[-1]
         self.ui.doubleSpinBoxBaselineStart.setMinimum(start)
@@ -46,28 +47,22 @@ class TFRPlotTopologyDialog(QtWidgets.QDialog):
 
     def accept(self):
 
-        active_subject = self.experiment.active_subject
-
+        subject = self.experiment.active_subject
         condition = self.ui.comboBoxCondition.currentText()
-
-        tfr = active_subject.tfrs[self.tfr_name].tfrs.get(condition)
-        if not tfr:
-            return
 
         if self.ui.checkBoxBaselineCorrection.isChecked():
             blmode = self.ui.comboBoxBaselineMode.currentText()
         else:
             blmode = None
 
-        if self.ui.radioButtonAllChannels.isChecked():
-            output = 'all_channels'
-        else:
-            output = 'channel_averages'
-
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
 
-        plot_tfr(self.experiment, tfr, self.tfr_name,
-                 blmode, blstart, blend, output)
+        if self.ui.radioButtonAllChannels.isChecked():
+            plot_tfr_topo(self.experiment, subject, self.tfr_name,
+                          condition, blmode, blstart, blend)
+        else:
+            plot_tfr_averages(self.experiment, subject, self.tfr_name,
+                              condition, blmode, blstart, blend)
 
         self.close()

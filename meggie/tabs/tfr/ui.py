@@ -4,6 +4,8 @@ import os
 from pprint import pformat
 
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
+from meggie.tabs.tfr.dialogs.TFRPlotDialogMain import TFRPlotDialog
+from meggie.tabs.tfr.dialogs.TSEPlotDialogMain import TSEPlotDialog
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 
 
@@ -55,15 +57,26 @@ def delete_from_all(experiment, data, window):
 
 
 def plot_tfr(experiment, data, window):
+    """ Plot TFR topography or averages from selected item
     """
-    """
-    pass
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
 
+    dialog = TFRPlotDialog(window, experiment, selected_name)
+    dialog.show()
 
 def plot_tse(experiment, data, window):
+    """ Plot TSE topography or averages from selected item
     """
-    """
-    pass
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    dialog = TSEPlotDialog(window, experiment, selected_name)
+    dialog.show()
 
 
 def save_tfr(experiment, data, window):

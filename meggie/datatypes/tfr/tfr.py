@@ -68,7 +68,7 @@ class TFR(object):
                 logging.getLogger('ui_logger').debug(
                     'Reading tfr file: ' + str(path))
 
-                self._content[key] = mne.read_tfrs(path)[0]
+                self._content[key] = mne.time_frequency.read_tfrs(path)[0]
 
     @property
     def content(self):

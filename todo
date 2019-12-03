@@ -1,7 +1,8 @@
-- And check that figure saving works and dpi to preferences (yes it cropped very weirdly did not it)
-- For user, info boxes are very important
-- Implement induced
+tärketä:
+  - And check that figure saving works and dpi to preferences (yes it cropped very weirdly did not it), should set_window_title always have underscores?
+  - think about why does tse plot look like a spider? ( should i just automatically compute extra and then crop something always out? )
+  - For user, info boxes are very important
+  - Implement induced
+
 - Remove more of those logged messages
 - if you do itc, ensure that plot units are right
-- perhaps implement the average/allchannels selection in the output options way.
-- rereferenceen batch.

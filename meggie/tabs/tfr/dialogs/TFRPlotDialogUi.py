@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'TFRPlotTopologyDialogUi.ui'
+# Form implementation generated from reading ui file 'TFRPlotDialogUi.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -8,21 +8,21 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_TFRPlotTopologyDialog(object):
-    def setupUi(self, TFRPlotTopologyDialog):
-        TFRPlotTopologyDialog.setObjectName("TFRPlotTopologyDialog")
-        TFRPlotTopologyDialog.resize(556, 337)
-        self.gridLayout_2 = QtWidgets.QGridLayout(TFRPlotTopologyDialog)
+class Ui_TFRPlotDialog(object):
+    def setupUi(self, TFRPlotDialog):
+        TFRPlotDialog.setObjectName("TFRPlotDialog")
+        TFRPlotDialog.resize(556, 337)
+        self.gridLayout_2 = QtWidgets.QGridLayout(TFRPlotDialog)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.buttonBox = QtWidgets.QDialogButtonBox(TFRPlotTopologyDialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(TFRPlotDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
         self.gridLayout_2.addLayout(self.verticalLayout, 1, 0, 1, 1)
-        self.scrollArea = QtWidgets.QScrollArea(TFRPlotTopologyDialog)
+        self.scrollArea = QtWidgets.QScrollArea(TFRPlotDialog)
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
@@ -107,31 +107,31 @@ class Ui_TFRPlotTopologyDialog(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
 
-        self.retranslateUi(TFRPlotTopologyDialog)
-        self.buttonBox.accepted.connect(TFRPlotTopologyDialog.accept)
-        self.buttonBox.rejected.connect(TFRPlotTopologyDialog.reject)
+        self.retranslateUi(TFRPlotDialog)
+        self.buttonBox.accepted.connect(TFRPlotDialog.accept)
+        self.buttonBox.rejected.connect(TFRPlotDialog.reject)
         self.checkBoxBaselineCorrection.toggled['bool'].connect(self.comboBoxBaselineMode.setEnabled)
         self.checkBoxBaselineCorrection.toggled['bool'].connect(self.doubleSpinBoxBaselineStart.setEnabled)
         self.checkBoxBaselineCorrection.toggled['bool'].connect(self.doubleSpinBoxBaselineEnd.setEnabled)
-        QtCore.QMetaObject.connectSlotsByName(TFRPlotTopologyDialog)
-        TFRPlotTopologyDialog.setTabOrder(self.scrollArea, self.buttonBox)
+        QtCore.QMetaObject.connectSlotsByName(TFRPlotDialog)
+        TFRPlotDialog.setTabOrder(self.scrollArea, self.buttonBox)
 
-    def retranslateUi(self, TFRPlotTopologyDialog):
+    def retranslateUi(self, TFRPlotDialog):
         _translate = QtCore.QCoreApplication.translate
-        TFRPlotTopologyDialog.setWindowTitle(_translate("TFRPlotTopologyDialog", "Meggie - Plot TFR"))
-        self.groupBoxPreferences.setTitle(_translate("TFRPlotTopologyDialog", "Preferences"))
-        self.labelBaselineMode.setText(_translate("TFRPlotTopologyDialog", "Baseline mode:"))
-        self.comboBoxBaselineMode.setItemText(0, _translate("TFRPlotTopologyDialog", "mean"))
-        self.comboBoxBaselineMode.setItemText(1, _translate("TFRPlotTopologyDialog", "ratio"))
-        self.comboBoxBaselineMode.setItemText(2, _translate("TFRPlotTopologyDialog", "logratio"))
-        self.comboBoxBaselineMode.setItemText(3, _translate("TFRPlotTopologyDialog", "percent"))
-        self.comboBoxBaselineMode.setItemText(4, _translate("TFRPlotTopologyDialog", "zscore"))
-        self.labelBaselineCorrection.setText(_translate("TFRPlotTopologyDialog", "Baseline correction:"))
-        self.labelBaselineStart.setText(_translate("TFRPlotTopologyDialog", "Start:"))
-        self.labelBaselineEnd.setText(_translate("TFRPlotTopologyDialog", "End:"))
-        self.groupBoxOutputOptions.setTitle(_translate("TFRPlotTopologyDialog", "Output options"))
-        self.labelChannels.setText(_translate("TFRPlotTopologyDialog", "Type:"))
-        self.radioButtonAllChannels.setText(_translate("TFRPlotTopologyDialog", "All channels"))
-        self.radioButtonChannelAverages.setText(_translate("TFRPlotTopologyDialog", "Channel averages"))
-        self.labelCondition.setText(_translate("TFRPlotTopologyDialog", "Condition:"))
+        TFRPlotDialog.setWindowTitle(_translate("TFRPlotDialog", "Meggie - Plot TFR"))
+        self.groupBoxPreferences.setTitle(_translate("TFRPlotDialog", "Preferences"))
+        self.labelBaselineMode.setText(_translate("TFRPlotDialog", "Baseline mode:"))
+        self.comboBoxBaselineMode.setItemText(0, _translate("TFRPlotDialog", "mean"))
+        self.comboBoxBaselineMode.setItemText(1, _translate("TFRPlotDialog", "ratio"))
+        self.comboBoxBaselineMode.setItemText(2, _translate("TFRPlotDialog", "logratio"))
+        self.comboBoxBaselineMode.setItemText(3, _translate("TFRPlotDialog", "percent"))
+        self.comboBoxBaselineMode.setItemText(4, _translate("TFRPlotDialog", "zscore"))
+        self.labelBaselineCorrection.setText(_translate("TFRPlotDialog", "Baseline correction:"))
+        self.labelBaselineStart.setText(_translate("TFRPlotDialog", "Start:"))
+        self.labelBaselineEnd.setText(_translate("TFRPlotDialog", "End:"))
+        self.groupBoxOutputOptions.setTitle(_translate("TFRPlotDialog", "Output options"))
+        self.labelChannels.setText(_translate("TFRPlotDialog", "Type:"))
+        self.radioButtonAllChannels.setText(_translate("TFRPlotDialog", "All channels"))
+        self.radioButtonChannelAverages.setText(_translate("TFRPlotDialog", "Channel averages"))
+        self.labelCondition.setText(_translate("TFRPlotDialog", "Condition:"))
 

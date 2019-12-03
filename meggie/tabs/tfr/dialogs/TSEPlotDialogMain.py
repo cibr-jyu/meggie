@@ -4,11 +4,12 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.ui.analysis.TSEPlotDialogUi import Ui_TSEPlotDialog
+from meggie.tabs.tfr.dialogs.TSEPlotDialogUi import Ui_TSEPlotDialog
 
-from meggie.code_meggie.analysis.spectral import plot_tse
+from meggie.tabs.tfr.controller.tfr import plot_tse_topo
+from meggie.tabs.tfr.controller.tfr import plot_tse_averages
 
-from meggie.ui.utils.messaging import exc_messagebox
+from meggie.utilities.messaging import exc_messagebox
 
 
 class TSEPlotDialog(QtWidgets.QDialog):
@@ -16,7 +17,7 @@ class TSEPlotDialog(QtWidgets.QDialog):
     def __init__(self, parent, experiment, tfr_name):
         """
         """
-        QtWidgets.QDialog.__init__(self)
+        QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_TSEPlotDialog()
         self.ui.setupUi(self)
         self.parent = parent
@@ -25,9 +26,9 @@ class TSEPlotDialog(QtWidgets.QDialog):
 
         active_subject = self.experiment.active_subject
 
-        meggie_tfr = active_subject.tfrs[self.tfr_name]
+        meggie_tfr = active_subject.tfr[self.tfr_name]
 
-        tfr = list(meggie_tfr.tfrs.values())[0]
+        tfr = list(meggie_tfr.content.values())[0]
 
         minfreq = tfr.freqs[0]
         maxfreq = tfr.freqs[-1]
@@ -42,10 +43,7 @@ class TSEPlotDialog(QtWidgets.QDialog):
 
     def accept(self):
 
-        if self.ui.radioButtonAllChannels.isChecked():
-            output = 'all_channels'
-        else:
-            output = 'channel_averages'
+        subject = self.experiment.active_subject
 
         minfreq = self.ui.doubleSpinBoxMinFreq.value()
         maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
@@ -55,7 +53,12 @@ class TSEPlotDialog(QtWidgets.QDialog):
 
         baseline = (bstart, bend)
 
-        plot_tse(self.experiment, self.tfr_name, minfreq, maxfreq,
-                 baseline, output)
+        if self.ui.radioButtonAllChannels.isChecked():
+            plot_tse_topo(self.experiment, subject, self.tfr_name, 
+                          minfreq, maxfreq, baseline)
+        else:
+            plot_tse_averages(self.experiment, subject, self.tfr_name, 
+                              minfreq, maxfreq, baseline)
 
         self.close()
+

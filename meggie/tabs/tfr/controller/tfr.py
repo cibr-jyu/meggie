@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mne
 
+from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
 from meggie.utilities.decorators import threaded
@@ -19,18 +20,17 @@ from meggie.utilities.validators import assert_arrays_same
 
 from meggie.datatypes.tfr.tfr import TFR
 
-import meggie.utilities.filemanager as filemanager
 
-
-def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
-
+def plot_tse_topo(experiment, subject, tfr_name, minfreq, maxfreq, baseline):
+    """
+    """
     subject_name = subject.name
 
-    meggie_tfr = subject.tfrs.get(tfr_name)
+    meggie_tfr = subject.tfr.get(tfr_name)
 
-    lout = filemanager.read_layout(experiment.layout)
+    lout = read_layout(experiment.layout)
 
-    data = meggie_tfr.tfrs
+    data = meggie_tfr.content
     example_tfr = list(data.values())[0]
     ch_names = example_tfr.info['ch_names']
     times = example_tfr.times
@@ -48,100 +48,206 @@ def plot_tse(subject, tfr_name, minfreq, maxfreq, baseline, output):
     # in contrast to spectrum plot, here the channels and locations
     # are both contained in the tfr object, which simplifies things
 
-    if output == 'all_channels':
-        logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
+    logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
 
-        def individual_plot(ax, ch_idx):
-            """
-            Callback for the interactive plot.
-            Opens a channel specific plot.
-            """
+    def individual_plot(ax, ch_idx):
+        """
+        Callback for the interactive plot.
+        Opens a channel specific plot.
+        """
 
-            ch_name = example_tfr.info['ch_names'][ch_idx]
+        ch_name = example_tfr.info['ch_names'][ch_idx]
 
-            fig = plt.gcf()
-            fig.canvas.set_window_title(''.join(['tse_', subject_name,
-                                                 '_', ch_name]))
+        fig = plt.gcf()
+        fig.canvas.set_window_title(''.join(['tse_', subject_name,
+                                             '_', ch_name]))
 
-            conditions = [str(key) for key in data]
-            positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
+        conditions = [str(key) for key in data]
+        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
 
-            for cond, col, pos in zip(conditions, colors, positions):
-                plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+        for cond, col, pos in zip(conditions, colors, positions):
+            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
 
-            color_idx = 0
-            for tfr in data.values():
-                times = tfr.times
+        color_idx = 0
+        for tfr in data.values():
+            times = tfr.times
 
-                # average over freqs
-                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
-                # correct to baseline
-                tse = mne.baseline.rescale(tse, times, baseline=baseline)
+            # average over freqs
+            tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+            # correct to baseline
+            tse = mne.baseline.rescale(tse, times, baseline=baseline)
 
-                plt.plot(times, tse[ch_idx], color=colors[color_idx])
-                plt.axhline(0)
-                color_idx += 1
+            plt.plot(times, tse[ch_idx], color=colors[color_idx])
+            plt.axhline(0)
+            color_idx += 1
 
-            plt.xlabel('Time (s)')
+        plt.xlabel('Time (s)')
 
-            plt.ylabel('Power ({})'.format(get_power_unit(
-                mne.io.pick.channel_type(example_tfr.info, ch_idx),
+        plt.ylabel('Power ({})'.format(get_power_unit(
+            mne.io.pick.channel_type(example_tfr.info, ch_idx),
+            False
+        )))
+
+        plt.show()
+
+    for ax, ch_idx in mne.viz.iter_topography(example_tfr.info, fig_facecolor='white',
+                                          axis_spinecolor='white',
+                                          axis_facecolor='white', layout=lout,
+                                          on_pick=individual_plot):
+
+        for color_idx, tfr in enumerate(data.values()):
+            # average over freqs
+            tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
+            # correct to baseline
+            tse = mne.baseline.rescale(tse, times, baseline=baseline)
+
+            ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
+
+    plt.gcf().canvas.set_window_title('tse_' + subject_name)
+    plt.show()
+
+
+def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline):
+    """
+    """
+    subject_name = subject.name
+
+    meggie_tfr = subject.tfr.get(tfr_name)
+
+    lout = read_layout(experiment.layout)
+
+    data = meggie_tfr.content
+    example_tfr = list(data.values())[0]
+    ch_names = example_tfr.info['ch_names']
+    times = example_tfr.times
+
+    lfreq_idx = np.where(example_tfr.freqs >= minfreq)[0][0]
+    hfreq_idx = np.where(example_tfr.freqs <= maxfreq)[0][-1]
+
+    if hfreq_idx <= lfreq_idx:
+        raise Exception('Something wrong with the frequencies')
+
+    channel_groups = experiment.channel_groups
+
+    colors = color_cycle(len(data))
+
+    # in contrast to spectrum plot, here the channels and locations
+    # are both contained in the tfr object, which simplifies things
+
+    logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
+
+    averages = {}
+    for idx, (key, tfr) in enumerate(data.items()):
+
+        data_labels, averaged_data = average_data_to_channel_groups(
+            tfr.data, ch_names, channel_groups)
+
+        averages[key] = data_labels, averaged_data
+        shape = averaged_data.shape
+
+    for ii in range(shape[0]):
+        fig, ax = plt.subplots()
+        for color_idx, key in enumerate(data.keys()):
+            ax.set_xlabel('Time (s)')
+            ax.set_ylabel('Power ({})'.format(get_power_unit(
+                averages[key][0][ii][0],
                 False
             )))
 
-            plt.show()
+            # average over freqs
+            tse = np.mean(averages[key][1][ii]
+                          [lfreq_idx:hfreq_idx, :], axis=0)
+            # correct to baseline
+            tse = mne.baseline.rescale(tse, times, baseline=baseline)
 
-        for ax, ch_idx in mne.viz.iter_topography(example_tfr.info, fig_facecolor='white',
-                                              axis_spinecolor='white',
-                                              axis_facecolor='white', layout=lout,
-                                              on_pick=individual_plot):
+            ax.plot(times, tse, color=colors[color_idx])
+            ax.axhline(0)
+        ch_type, ch_group = averages[key][0][ii]
+        title = 'TSE ({0}, {1})'.format(ch_type, ch_group)
+        fig.canvas.set_window_title(title)
+        fig.suptitle(title)
 
-            for color_idx, tfr in enumerate(data.values()):
-                # average over freqs
-                tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
-                # correct to baseline
-                tse = mne.baseline.rescale(tse, times, baseline=baseline)
+    plt.show()
 
-                ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
 
-        plt.gcf().canvas.set_window_title('tse_' + subject_name)
-        plt.show()
+def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition, 
+                      blmode, blstart, blend):
 
-    elif output == 'channel_averages':
-        logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
+    layout = read_layout(experiment.layout)
 
-        averages = {}
-        for idx, (key, tfr) in enumerate(data.items()):
+    if blmode:
+        bline = (blstart, blend)
+        mode = blmode
+    else:
+        bline = None
+        mode = None
 
-            data_labels, averaged_data = average_data_to_channel_groups(
-                tfr.data, ch_names, channel_groups)
+    tfr = subject.tfr[tfr_name].content.get(tfr_condition)
 
-            averages[key] = data_labels, averaged_data
-            shape = averaged_data.shape
+    logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
 
-        for ii in range(shape[0]):
-            fig, ax = plt.subplots()
-            for color_idx, key in enumerate(data.keys()):
-                ax.set_xlabel('Time (s)')
-                ax.set_ylabel('Power ({})'.format(get_power_unit(
-                    averages[key][0][ii][0],
-                    False
-                )))
+    data = tfr.data
+    ch_names = tfr.info['ch_names']
+    channel_groups = experiment.channel_groups
 
-                # average over freqs
-                tse = np.mean(averages[key][1][ii]
-                              [lfreq_idx:hfreq_idx, :], axis=0)
-                # correct to baseline
-                tse = mne.baseline.rescale(tse, times, baseline=baseline)
+    data_labels, averaged_data = average_data_to_channel_groups(
+        data, ch_names, channel_groups)
 
-                ax.plot(times, tse, color=colors[color_idx])
-                ax.axhline(0)
-            ch_type, ch_group = averages[key][0][ii]
-            title = 'TSE ({0}, {1})'.format(ch_type, ch_group)
-            fig.canvas.set_window_title(title)
-            fig.suptitle(title)
+    sfreq = tfr.info['sfreq']
+    times = tfr.times
+    freqs = tfr.freqs
 
-        plt.show()
+    for idx in range(len(data_labels)):
+        data = averaged_data[idx]
+        labels = data_labels[idx]
+        info = mne.create_info(ch_names=['grandaverage'],
+                               sfreq=sfreq,
+                               ch_types='mag')
+        tfr = mne.time_frequency.tfr.AverageTFR(
+            info, data[np.newaxis, :], times, freqs, 1)
+
+        title = labels[1] + ' (' + labels[0] + ')'
+
+        # prevent interaction as no topology is involved now
+        def onselect(*args, **kwargs):
+            pass
+
+        tfr._onselect = onselect
+
+        tfr.plot(baseline=bline, mode=mode,
+                 title=title)
+
+
+def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
+                  blmode, blstart, blend):
+
+    layout = read_layout(experiment.layout)
+
+    if blmode:
+        bline = (blstart, blend)
+        mode = blmode
+    else:
+        bline = None
+        mode = None
+
+    tfr = subject.tfr[tfr_name].content.get(tfr_condition)
+
+    logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
+
+    fig = tfr.plot_topo(layout=layout, show=False,
+                        baseline=bline, mode=mode)
+
+    fig.canvas.set_window_title('TFR (' + tfr_name + ', ' + 
+                                tfr_condition + ')')
+
+    def onclick(event):
+        channel = plt.getp(plt.gca(), 'title')
+        plt.gcf().canvas.set_window_title('_'.join(['TFR', tfr_name,
+                                                    channel]))
+        plt.show(block=False)
+
+    fig.canvas.mpl_connect('button_press_event', onclick)
+    fig.show()
 
 
 @threaded
@@ -185,69 +291,6 @@ def create_tfr(subject, tfr_name, epochs_names,
 
     meggie_tfr.save_content()
     subject.add(meggie_tfr, "tfr")
-
-
-def plot_tfr(experiment, tfr, name, blmode, blstart, blend,
-             output):
-
-    layout = filemanager.read_layout(experiment.layout)
-
-    if blmode:
-        bline = (blstart, blend)
-        mode = blmode
-    else:
-        bline = None
-        mode = None
-
-
-    if output == 'all_channels':
-        logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
-        fig = tfr.plot_topo(layout=layout, show=False,
-                            baseline=bline, mode=mode)
-
-        fig.canvas.set_window_title('TFR' + '_' + name)
-
-        def onclick(event):
-            channel = plt.getp(plt.gca(), 'title')
-            plt.gcf().canvas.set_window_title('_'.join(['TFR', name,
-                                                        channel]))
-            plt.show(block=False)
-
-        fig.canvas.mpl_connect('button_press_event', onclick)
-        fig.show()
-    else:
-        logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
-
-        data = tfr.data
-        ch_names = tfr.info['ch_names']
-        channel_groups = experiment.channel_groups
-
-        data_labels, averaged_data = average_data_to_channel_groups(
-            data, ch_names, channel_groups)
-
-        sfreq = tfr.info['sfreq']
-        times = tfr.times
-        freqs = tfr.freqs
-
-        for idx in range(len(data_labels)):
-            data = averaged_data[idx]
-            labels = data_labels[idx]
-            info = mne.create_info(ch_names=['grandaverage'],
-                                   sfreq=sfreq,
-                                   ch_types='mag')
-            tfr = mne.time_frequency.tfr.AverageTFR(
-                info, data[np.newaxis, :], times, freqs, 1)
-
-            title = labels[1] + ' (' + labels[0] + ')'
-
-            # prevent interaction as no topology is involved now
-            def onselect(*args, **kwargs):
-                pass
-
-            tfr._onselect = onselect
-
-            tfr.plot(baseline=bline, mode=mode,
-                     title=title)
 
 
 def group_average_tfr(experiment, tfr_name, groups):
