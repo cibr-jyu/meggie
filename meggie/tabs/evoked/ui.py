@@ -14,6 +14,8 @@ from meggie.tabs.evoked.controller.evoked import group_average as group_ave
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
+
 from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 from meggie.utilities.validators import assert_arrays_same
@@ -70,31 +72,11 @@ def delete_from_all(experiment, data, window):
     window.initialize_ui()
 
 
-def plot_averages(experiment, data, window):
-    """ Plots channel averages of selected item
-    """
-    subject = experiment.active_subject
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    evoked = subject.evoked.get(selected_name)
+def _plot_evoked_averages(experiment, evoked):
     plot_channel_averages(experiment, evoked)
 
 
-def plot_topo(experiment, data, window):
-    """ Plots topo of selected item
-    """
-    subject = experiment.active_subject
-
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    evoked = subject.evoked.get(selected_name)
-
+def _plot_evoked_topo(experiment, evoked):
     evokeds = []
     for key, evoked in evoked.content.items():
         evokeds.append(evoked)
@@ -104,6 +86,31 @@ def plot_topo(experiment, data, window):
 
     fig = mne.viz.plot_evoked_topo(evokeds)
     fig.canvas.mpl_connect('button_press_event', onclick)
+
+
+def plot_evoked(experiment, data, window):
+    """ Plots topo or averages of selected item
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+    subject = experiment.active_subject
+    evoked = subject.evoked.get(selected_name)
+
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                _plot_evoked_averages(
+                    experiment, evoked)
+            else:
+                _plot_evoked_topo(
+                    experiment, evoked)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
 
 
 def plot_topomap(experiment, data, window):
@@ -151,28 +158,12 @@ def group_average(experiment, data, window):
     dialog.show()
 
 
-def save(experiment, data, window):
+def _save_all_channels(experiment, selected_name):
     """ Saves all channels to csv from selected item from all subjects
     """
     column_names = []
     row_names = []
     csv_data = []
-
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    # validate times
-    time_arrays = []
-    for subject in experiment.subjects.values():
-        evoked = subject.evoked.get(selected_name)
-        if not evoked:
-            continue
-
-        for mne_evoked in evoked.content.values():
-            time_arrays.append(mne_evoked.times)
-    assert_arrays_same(time_arrays)
 
     # accumulate csv contents
     for subject in experiment.subjects.values():
@@ -191,34 +182,18 @@ def save(experiment, data, window):
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + selected_name + '.csv'
+    fname = selected_name + '_all_subjects_all_channels.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_names)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
-def save_averages(experiment, data, window):
-    """ Saves averages to csv from selected item from all subjects
-    """
+def _save_channel_averages(experiment, selected_name):
+
     column_names = []
     row_names = []
     csv_data = []
-
-    try:
-        selected_name = data['outputs']['evoked'][0]
-    except IndexError as exc:
-        return
-
-    # validate array lengths
-    time_arrays = []
-    for subject in experiment.subjects.values():
-        evoked = subject.evoked.get(selected_name)
-        if not evoked:
-            continue
-        for mne_evoked in evoked.content.values():
-            time_arrays.append(mne_evoked.times)
-    assert_arrays_same(time_arrays)
 
     # accumulate csv contents
     for subject in experiment.subjects.values():
@@ -240,11 +215,49 @@ def save_averages(experiment, data, window):
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + selected_name + '.csv'
+    fname = selected_name + '_all_subjects_channel_averages.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_names)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
+def save(experiment, data, window):
+    """ Saves averages or channels to csv from selected item from all subjects
+    """
+    try:
+        selected_name = data['outputs']['evoked'][0]
+    except IndexError as exc:
+        return
+
+    # validate times
+    time_arrays = []
+    for subject in experiment.subjects.values():
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
+            continue
+
+        for mne_evoked in evoked.content.values():
+            time_arrays.append(mne_evoked.times)
+    assert_arrays_same(time_arrays)
+
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                _save_channel_averages(
+                    experiment, selected_name)
+            else:
+                _save_all_channels(
+                    experiment, selected_name)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
+
+
+
+
+
 
 
 def evoked_info(experiment, data, window):

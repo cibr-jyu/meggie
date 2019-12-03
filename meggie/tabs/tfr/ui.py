@@ -20,26 +20,49 @@ def create(experiment, data, window):
 
 
 def delete(experiment, data, window):
-    pass
+    """ Deletes selected tfr item for active subject
+    """
+    subject = experiment.active_subject
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    subject.remove(selected_name, 'tfr')
+    experiment.save_experiment_settings()
+    window.initialize_ui()
 
 
 def delete_from_all(experiment, data, window):
-    pass
+    """ Deletes selected spetrum item from all subjects
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    for subject in experiment.subjects.values():
+        if selected_name in subject.tfr:
+            try:
+                subject.remove(selected_name, 'tfr')
+            except Exception as exc:
+                logging.getLogger('ui_logger').warning(
+                    'Could not remove tfr for ' +
+                    subject.name)
+    
+    experiment.save_experiment_settings()
+    window.initialize_ui()
 
 
 def plot_tfr(experiment, data, window):
+    """
+    """
     pass
 
 
 def plot_tse(experiment, data, window):
-    pass
-
-
-def plot_tfr_averages(experiment, data, window):
-    pass
-
-
-def plot_tse_averages(experiment, data, window):
+    """
+    """
     pass
 
 
@@ -52,14 +75,6 @@ def save_tse(experiment, data, window):
 
 
 def group_average(experiment, data, window):
-    pass
-
-
-def save_tfr_averages(experiment, data, window):
-    pass
-
-
-def save_tse_averages(experiment, data, window):
     pass
 
 

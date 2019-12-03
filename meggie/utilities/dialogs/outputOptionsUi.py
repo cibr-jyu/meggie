@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'outputOptions.ui'
+# Form implementation generated from reading ui file 'outputOptionsUi.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,11 +12,7 @@ class Ui_outputOptions(object):
     def setupUi(self, outputOptions):
         outputOptions.setObjectName("outputOptions")
         outputOptions.resize(255, 149)
-        self.formLayout = QtWidgets.QFormLayout(outputOptions)
-        self.formLayout.setObjectName("formLayout")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout = QtWidgets.QGridLayout(outputOptions)
         self.gridLayout.setObjectName("gridLayout")
         self.groupBoxType = QtWidgets.QGroupBox(outputOptions)
         self.groupBoxType.setObjectName("groupBoxType")
@@ -30,7 +26,6 @@ class Ui_outputOptions(object):
         self.radioButtonChannelAverages.setObjectName("radioButtonChannelAverages")
         self.gridLayout_2.addWidget(self.radioButtonChannelAverages, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBoxType, 0, 0, 1, 1)
-        self.verticalLayout.addLayout(self.gridLayout)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -41,8 +36,9 @@ class Ui_outputOptions(object):
         self.pushButtonAccept = QtWidgets.QPushButton(outputOptions)
         self.pushButtonAccept.setObjectName("pushButtonAccept")
         self.horizontalLayout.addWidget(self.pushButtonAccept)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.formLayout.setLayout(0, QtWidgets.QFormLayout.LabelRole, self.verticalLayout)
+        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem1, 1, 0, 1, 1)
 
         self.retranslateUi(outputOptions)
         self.pushButtonCancel.clicked.connect(outputOptions.reject)

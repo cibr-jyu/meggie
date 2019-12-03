@@ -6,10 +6,10 @@
 	"outputs": ["epochs"],
 	"actions": ["delete", "delete_from_all", "plot_epochs", "plot_image"],
     "info": ["epochs_info"],
-    "translations": {"create_from_events": "Create epochs from events",
-                     "delete": "Delete selected epochs",
-                     "delete_from_all": "Delete selected epochs from all",
+    "translations": {"create_from_events": "Create from events",
+                     "delete": "Delete epochs",
+                     "delete_from_all": "Delete epochs from all",
                      "plot_epochs": "Plot epochs",
-                     "plot_image": "Plot image",
+                     "plot_image": "Plot epochs image",
                      "epochs_info": "Epochs info"}
 }

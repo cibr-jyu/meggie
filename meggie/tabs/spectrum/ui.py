@@ -1,6 +1,8 @@
 import logging
 import os
 
+import numpy as np
+
 from pprint import pformat
 
 from meggie.utilities.channels import read_layout
@@ -11,6 +13,7 @@ from meggie.utilities.groups import average_data_to_channel_groups
 
 import meggie.utilities.filemanager as filemanager
 
+from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.spectrum.dialogs.powerSpectrumDialogMain import PowerSpectrumDialog
 
@@ -62,23 +65,24 @@ def delete_from_all(experiment, data, window):
 
 
 def plot_spectrum(experiment, data, window):
-    """ Plots spectrum topography of selected item
+    """ Plots spectrum topography or averages of selected item
     """
     try:
         selected_name = data['outputs']['spectrum'][0]
     except IndexError as exc:
         return
-    plot_spectrum_topo(experiment, selected_name)
 
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                plot_spectrum_averages(experiment, selected_name)
+            else:
+                plot_spectrum_topo(experiment, selected_name)
+        except Exception as exc:
+            exc_messagebox(window, exc)
 
-def plot_averages(experiment, data, window):
-    """ Plots spectrum averages of selected item
-    """
-    try:
-        selected_name = data['outputs']['spectrum'][0]
-    except IndexError as exc:
-        return
-    plot_spectrum_averages(experiment, selected_name)
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
 
 
 def group_average(experiment, data, window):
@@ -104,26 +108,10 @@ def group_average(experiment, data, window):
     dialog.show()
 
 
-def save(experiment, data, window):
-    """ Saves all channels to csv from selected item from all subjects
-    """
+def _save_all_channels(experiment, selected_name):
     column_names = []
     row_names = []
     csv_data = []
-
-    try:
-        selected_name = data['outputs']['spectrum'][0]
-    except IndexError as exc:
-        return
-
-    # validate freqs
-    freq_arrays = []
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrum.get(selected_name)
-        if not spectrum:
-            continue
-        freq_arrays.append(spectrum.freqs)
-    assert_arrays_same(freq_arrays)
 
     for subject in experiment.subjects.values():
         spectrum = subject.spectrum.get(selected_name)
@@ -136,34 +124,19 @@ def save(experiment, data, window):
             for ch_name in spectrum.ch_names:
                 name = subject.name + '{' + key + '}[' + ch_name + ']'
                 row_names.append(name)
+
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + selected_name + '.csv'
+    fname = selected_name + '_all_subjects_all_channels.csv'
     path = os.path.join(folder, fname)
+
     filemanager.save_csv(path, csv_data, column_names, row_names)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
-def save_averages(experiment, data, window):
-    """ Save channel averages to csv from selected spectrum from
-    all subjects
-    """
+def _save_averages(experiment, selected_name):
     column_names = []
     row_names = []
     csv_data = []
-
-    try:
-        selected_name = data['outputs']['spectrum'][0]
-    except IndexError as exc:
-        return
-
-    # validate freqs
-    freq_arrays = []
-    for subject in experiment.subjects.values():
-        spectrum = subject.spectrum.get(selected_name)
-        if not spectrum:
-            continue
-        freq_arrays.append(spectrum.freqs)
-    assert_arrays_same(freq_arrays)
 
     channel_groups = experiment.channel_groups
 
@@ -197,11 +170,42 @@ def save_averages(experiment, data, window):
                 row_names.append(name)
 
     folder = filemanager.create_timestamped_folder(experiment)
-    fname = 'all_subjects_' + selected_name + '.csv'
+    fname = selected_name + '_all_subjects_channel_averages.csv'
     path = os.path.join(folder, fname)
 
     filemanager.save_csv(path, csv_data, column_names, row_names)
     logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
+
+def save(experiment, data, window):
+    """ Saves all channels or averages to csv from selected item from all 
+    subjects
+    """
+    try:
+        selected_name = data['outputs']['spectrum'][0]
+    except IndexError as exc:
+        return
+
+    # validate freqs
+    freq_arrays = []
+    for subject in experiment.subjects.values():
+        spectrum = subject.spectrum.get(selected_name)
+        if not spectrum:
+            continue
+        freq_arrays.append(spectrum.freqs)
+    assert_arrays_same(freq_arrays)
+
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                _save_averages(experiment, selected_name)
+            else:
+                _save_all_channels(experiment, selected_name)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
 
 
 def spectrum_info(experiment, data, window):
