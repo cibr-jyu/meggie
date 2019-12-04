@@ -29,8 +29,9 @@ def projections(experiment, data, window):
 
     fig = raw.plot_projs_topomap()
 
-    name = subject.name
-    fig.canvas.set_window_title('Projections for ' + name)
+    title = 'projections_{0}'.format(subject.name)
+    fig.canvas.set_window_title(title)
+    fig.suptitle(title)
 
 
 def ica(experiment, data, window):

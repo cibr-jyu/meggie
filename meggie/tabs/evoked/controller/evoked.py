@@ -47,14 +47,15 @@ def plot_channel_averages(experiment, evoked):
             evoked_name = mne_evoked.comment
             times = mne_evoked.times
             ax.set_xlabel('Time (s)')
-            ax.set_ylabel('{}'.format(get_unit(
+            ax.set_ylabel('Amplitude ({})'.format(get_unit(
                 type_key[0]
             )))
             ax.plot(times, evoked_data,
                     color=colors[evoked_idx],
                     label=evoked_name)
             ax.legend()
-        title = 'Evoked ({0}, {1})'.format(type_key[0], type_key[1])
+
+        title = 'evoked_{0}_{1}'.format(type_key[0], type_key[1])
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 

@@ -13,16 +13,16 @@ class Evoked(object):
     def __init__(self, name, evoked_directory, params, content=None):
         """
         """
-        self._name = name
+        self._name = name.strip('.fif')
         self._content = content
         self._path = os.path.join(evoked_directory, name + '.fif')
         self._params = params
 
         # for backwards compatbility,
-        # evokeds used to be stored in epochs/average, names also end .fif
+        # evokeds used to be stored in epochs/average
         if 'bwc_path' in self._params:
             self._bwc_path = os.path.join(self._params.pop('bwc_path'),
-                                          name)
+                                          self._name + '.fif')
 
     @property
     def content(self):

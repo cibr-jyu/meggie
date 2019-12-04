@@ -167,8 +167,6 @@ def plot_spectrum_averages(experiment, name):
 
     spectrum = subject.spectrum.get(name)
 
-    lout = read_layout(experiment.layout)
-
     data = spectrum.content
     freqs = spectrum.freqs
     ch_names = [ch_name.replace(' ', '') for ch_name in spectrum.ch_names]
@@ -200,7 +198,7 @@ def plot_spectrum_averages(experiment, name):
 
     for ii in range(shape[0]):
         fig, ax = plt.subplots()
-        for color_idx, key in enumerate(data.keys()):
+        for color_idx, key in enumerate(averages.keys()):
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Power ({})'.format(get_power_unit(
                 averages[key][0][ii][0],
@@ -210,7 +208,7 @@ def plot_spectrum_averages(experiment, name):
                     label=key)
         ax.legend()
         ch_type, ch_group = averages[key][0][ii]
-        title = 'Spectrum ({0}, {1}, {2})'.format(name, ch_type, ch_group)
+        title = 'spectrum_{0}_{1}_{2}'.format(name, ch_type, ch_group)
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 
@@ -226,7 +224,7 @@ def plot_spectrum_topo(experiment, name):
 
     spectrum = subject.spectrum.get(name)
 
-    lout = read_layout(experiment.layout)
+    layout = read_layout(experiment.layout)
 
     data = spectrum.content
     freqs = spectrum.freqs
@@ -253,9 +251,11 @@ def plot_spectrum_topo(experiment, name):
         ch_name = raw_info['ch_names'][ch_idx].replace(' ', '')
         psd_idx = ch_names.index(ch_name)
 
+        plt.gca().set_title('')
+
         fig = plt.gcf()
 
-        title = 'Spectrum ({0}, {1})'.format(name, ch_name)
+        title = 'spectrum_{0}_{1}'.format(name, ch_name)
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 
@@ -277,7 +277,7 @@ def plot_spectrum_topo(experiment, name):
 
     for ax, idx in mne.viz.iter_topography(raw_info, fig_facecolor='white',
                                            axis_spinecolor='white',
-                                           axis_facecolor='white', layout=lout,
+                                           axis_facecolor='white', layout=layout,
                                            on_pick=individual_plot):
 
         ch_name = raw_info['ch_names'][idx].replace(' ', '')
@@ -289,8 +289,9 @@ def plot_spectrum_topo(experiment, name):
         for color_idx, psd in enumerate(data.values()):
             ax.plot(psd[psd_idx], linewidth=0.2, color=colors[color_idx])
 
-    title = 'Spectrum ({0})'.format(name)
+    title = 'spectrum_{0}'.format(name)
     plt.gcf().canvas.set_window_title(title)
+    plt.gcf().suptitle(title)
     plt.show()
 
 

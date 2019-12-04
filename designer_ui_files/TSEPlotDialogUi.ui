@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>340</height>
+    <width>556</width>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Meggie - Plot TFR</string>
+   <string>Meggie - Plot TSE</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="1" column="0">
@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>445</width>
-        <height>290</height>
+        <width>538</width>
+        <height>428</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -52,94 +52,116 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBoxPreferences">
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBoxCrop">
          <property name="title">
-          <string>Preferences</string>
+          <string>Crop</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_9">
+         <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLabel" name="labelMinFreq">
-              <property name="text">
-               <string>Minimum frequency (Hz):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxMinFreq">
-              <property name="maximum">
-               <double>999.990000000000009</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QLabel" name="labelCropStart">
+            <property name="text">
+             <string>Start (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropStart"/>
           </item>
           <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="labelMaxFreq">
-              <property name="text">
-               <string>Maximum frequency (Hz):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxFreq">
-              <property name="maximum">
-               <double>999.990000000000009</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QLabel" name="labelCropEnd">
+            <property name="text">
+             <string>End (s):</string>
+            </property>
+           </widget>
           </item>
-          <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="labelBaselineStart">
-              <property name="text">
-               <string>Baseline start (s):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
-              <property name="minimum">
-               <double>-99.989999999999995</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="labelBaselineEnd">
-              <property name="text">
-               <string>Baseline end (s):</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
-              <property name="minimum">
-               <double>-99.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropEnd"/>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBoxBaseline">
+         <property name="title">
+          <string>Baseline</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelBaselineStart">
+            <property name="text">
+             <string>Baseline start (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelBaselineEnd">
+            <property name="text">
+             <string>Baseline end (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd">
+            <property name="minimum">
+             <double>-99.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart">
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="groupBoxAveraging">
+         <property name="title">
+          <string>Averaging</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelAveMinFreq">
+            <property name="text">
+             <string>Minimum frequency (Hz):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxAveMinFreq">
+            <property name="maximum">
+             <double>999.990000000000009</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAveMaxFreq">
+            <property name="text">
+             <string>Maximum frequency (Hz):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxAveMaxFreq">
+            <property name="maximum">
+             <double>999.990000000000009</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="5" column="0">
         <widget class="QGroupBox" name="groupBoxOutputOptions">
          <property name="title">
           <string>Output options</string>
@@ -171,6 +193,19 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="6" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

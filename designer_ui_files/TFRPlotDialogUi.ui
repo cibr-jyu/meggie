@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>337</height>
+    <width>546</width>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,8 +41,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>524</width>
-        <height>302</height>
+        <width>528</width>
+        <height>474</height>
        </rect>
       </property>
       <property name="minimumSize">
@@ -53,120 +53,91 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBoxPreferences">
+        <widget class="QGroupBox" name="groupBoxBaseline">
          <property name="title">
-          <string>Preferences</string>
+          <string>Baseline</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <item row="1" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="labelBaselineMode">
-              <property name="text">
-               <string>Baseline mode:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxBaselineMode">
-              <item>
-               <property name="text">
-                <string>mean</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ratio</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>logratio</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>percent</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>zscore</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <widget class="QLabel" name="labelBaselineCorrection">
+            <property name="text">
+             <string>Baseline correction:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="comboBoxBaselineMode">
             <item>
-             <widget class="QLabel" name="labelBaselineCorrection">
-              <property name="text">
-               <string>Baseline correction:</string>
-              </property>
-             </widget>
+             <property name="text">
+              <string>mean</string>
+             </property>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
+             <property name="text">
+              <string>ratio</string>
+             </property>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBoxBaselineCorrection">
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
+             <property name="text">
+              <string>logratio</string>
+             </property>
             </item>
-           </layout>
+            <item>
+             <property name="text">
+              <string>percent</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>zscore</string>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLabel" name="labelBaselineStart">
-              <property name="text">
-               <string>Start:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineStart"/>
-            </item>
-           </layout>
+           <widget class="QLabel" name="labelBaselineStart">
+            <property name="text">
+             <string>Baseline start (s):</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="labelBaselineEnd">
-              <property name="text">
-               <string>End:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxBaselineEnd"/>
-            </item>
-           </layout>
+           <widget class="QLabel" name="labelBaselineEnd">
+            <property name="text">
+             <string>Baseline end (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelBaselineMode">
+            <property name="text">
+             <string>Baseline mode:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="checkBoxBaselineCorrection">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QGroupBox" name="groupBoxOutputOptions">
          <property name="title">
           <string>Output options</string>
@@ -208,6 +179,90 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBoxCrop">
+         <property name="title">
+          <string>Crop</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelCropMaxFreq">
+            <property name="text">
+             <string>Maximum frequency (Hz):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelCropMinFreq">
+            <property name="text">
+             <string>Minimum frequency (Hz):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropMinFreq">
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropMaxFreq">
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelCropStart">
+            <property name="text">
+             <string>Start (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropStart">
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelCropEnd">
+            <property name="text">
+             <string>End (s):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxCropEnd">
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

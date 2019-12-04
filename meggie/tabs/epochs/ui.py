@@ -88,4 +88,9 @@ def plot_image(experiment, data, window):
         return
 
     epochs = subject.epochs.get(selected_name)
-    epochs.content.plot_image()
+    figs = epochs.content.plot_image()
+    for fig in figs:
+        ch_type = fig.canvas.get_window_title()
+        title = '{0}_{1}'.format(selected_name, ch_type)
+        fig.canvas.set_window_title(title)
+

@@ -21,149 +21,145 @@ from meggie.utilities.validators import assert_arrays_same
 from meggie.datatypes.tfr.tfr import TFR
 
 
-def plot_tse_topo(experiment, subject, tfr_name, minfreq, maxfreq, baseline):
+def _compute_tse(meggie_tfr, minfreq, maxfreq, crop_start, crop_end, baseline=None):
     """
     """
-    subject_name = subject.name
+    tfrs = meggie_tfr.content
 
-    meggie_tfr = subject.tfr.get(tfr_name)
+    times = meggie_tfr.times
 
-    lout = read_layout(experiment.layout)
-
-    data = meggie_tfr.content
-    example_tfr = list(data.values())[0]
-    ch_names = example_tfr.info['ch_names']
-    times = example_tfr.times
-
-    lfreq_idx = np.where(example_tfr.freqs >= minfreq)[0][0]
-    hfreq_idx = np.where(example_tfr.freqs <= maxfreq)[0][-1]
+    lfreq_idx = np.where(meggie_tfr.freqs >= minfreq)[0][0]
+    hfreq_idx = np.where(meggie_tfr.freqs <= maxfreq)[0][-1]
 
     if hfreq_idx <= lfreq_idx:
         raise Exception('Something wrong with the frequencies')
 
-    channel_groups = experiment.channel_groups
+    crop_start_idx = np.where(times >= crop_start)[0][0]
+    crop_end_idx = np.where(times <= crop_end)[0][-1]
 
-    colors = color_cycle(len(data))
+    tses = {}
+    for key, tfr in tfrs.items():
+        tse = np.mean(tfr.data[:, 
+                               lfreq_idx:hfreq_idx+1, 
+                               crop_start_idx:crop_end_idx+1], axis=1)
 
-    # in contrast to spectrum plot, here the channels and locations
-    # are both contained in the tfr object, which simplifies things
+        if baseline:
+            if baseline[0] < crop_start:
+                raise Exception(
+                    'Baseline start should not be earlier than crop start.')
+
+            if baseline[1] > crop_end:
+                raise Exception(
+                    'Baseline end should not be later than crop end.')
+
+            # correct to baseline
+            tse = mne.baseline.rescale(tse, times, baseline=baseline)
+
+        tses[key] = tse
+
+    return times[crop_start_idx:crop_end_idx+1], tses
+
+
+def plot_tse_topo(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
+                  crop_start, crop_end):
+    """
+    """
+    meggie_tfr = subject.tfr.get(tfr_name)
+
+    times, tses = _compute_tse(meggie_tfr, minfreq, maxfreq, 
+                               crop_start, crop_end, baseline)
+
+    ch_names = meggie_tfr.ch_names
+    info = meggie_tfr.info
+    layout = read_layout(experiment.layout)
+    colors = color_cycle(len(tses))
 
     logging.getLogger('ui_logger').info('Plotting TSE from all channels..')
 
     def individual_plot(ax, ch_idx):
         """
-        Callback for the interactive plot.
-        Opens a channel specific plot.
         """
-
-        ch_name = example_tfr.info['ch_names'][ch_idx]
+        ch_name = ch_names[ch_idx]
+        plt.gca().set_title('')
 
         fig = plt.gcf()
-        fig.canvas.set_window_title(''.join(['tse_', subject_name,
-                                             '_', ch_name]))
 
-        conditions = [str(key) for key in data]
-        positions = np.arange(0.025, 0.025 + 0.04 * len(conditions), 0.04)
-
-        for cond, col, pos in zip(conditions, colors, positions):
-            plt.figtext(0.775, pos, cond, color=col, fontsize=12)
+        title = 'TSE_{0}_{1}'.format(tfr_name, ch_name)
+        fig.canvas.set_window_title(title)
+        fig.suptitle(title)
 
         color_idx = 0
-        for tfr in data.values():
-            times = tfr.times
-
-            # average over freqs
-            tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
-            # correct to baseline
-            tse = mne.baseline.rescale(tse, times, baseline=baseline)
-
-            plt.plot(times, tse[ch_idx], color=colors[color_idx])
+        for key, tse in tses.items():
+            plt.plot(times, tse[ch_idx], color=colors[color_idx], label=key)
             plt.axhline(0)
             color_idx += 1
 
-        plt.xlabel('Time (s)')
+        ax.legend()
 
+        plt.xlabel('Time (s)')
         plt.ylabel('Power ({})'.format(get_power_unit(
-            mne.io.pick.channel_type(example_tfr.info, ch_idx),
+            mne.io.pick.channel_type(info, ch_idx),
             False
         )))
 
         plt.show()
 
-    for ax, ch_idx in mne.viz.iter_topography(example_tfr.info, fig_facecolor='white',
-                                          axis_spinecolor='white',
-                                          axis_facecolor='white', layout=lout,
-                                          on_pick=individual_plot):
+    for ax, ch_idx in mne.viz.iter_topography(info, fig_facecolor='white',
+                                              axis_spinecolor='white',
+                                              axis_facecolor='white', layout=layout,
+                                              on_pick=individual_plot):
 
-        for color_idx, tfr in enumerate(data.values()):
-            # average over freqs
-            tse = np.mean(tfr.data[:, lfreq_idx:hfreq_idx, :], axis=1)
-            # correct to baseline
-            tse = mne.baseline.rescale(tse, times, baseline=baseline)
-
+        for color_idx, tse in enumerate(tses.values()):
             ax.plot(tse[ch_idx], linewidth=0.2, color=colors[color_idx])
 
-    plt.gcf().canvas.set_window_title('tse_' + subject_name)
+    title = 'TSE_{0}'.format(tfr_name)
+    plt.gcf().canvas.set_window_title(title)
+    plt.gcf().suptitle(title)
     plt.show()
 
 
-def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline):
+def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
+                      crop_start, crop_end):
     """
     """
-    subject_name = subject.name
-
     meggie_tfr = subject.tfr.get(tfr_name)
 
-    lout = read_layout(experiment.layout)
+    times, tses = _compute_tse(meggie_tfr, minfreq, maxfreq, 
+                               crop_start, crop_end, baseline)
 
-    data = meggie_tfr.content
-    example_tfr = list(data.values())[0]
-    ch_names = example_tfr.info['ch_names']
-    times = example_tfr.times
-
-    lfreq_idx = np.where(example_tfr.freqs >= minfreq)[0][0]
-    hfreq_idx = np.where(example_tfr.freqs <= maxfreq)[0][-1]
-
-    if hfreq_idx <= lfreq_idx:
-        raise Exception('Something wrong with the frequencies')
+    ch_names = meggie_tfr.ch_names
+    info = meggie_tfr.info
+    layout = read_layout(experiment.layout)
+    colors = color_cycle(len(tses))
 
     channel_groups = experiment.channel_groups
-
-    colors = color_cycle(len(data))
-
-    # in contrast to spectrum plot, here the channels and locations
-    # are both contained in the tfr object, which simplifies things
 
     logging.getLogger('ui_logger').info('Plotting TSE channel averages..')
 
     averages = {}
-    for idx, (key, tfr) in enumerate(data.items()):
+    for idx, (key, tse) in enumerate(tses.items()):
 
         data_labels, averaged_data = average_data_to_channel_groups(
-            tfr.data, ch_names, channel_groups)
+            tse, ch_names, channel_groups)
 
         averages[key] = data_labels, averaged_data
         shape = averaged_data.shape
 
     for ii in range(shape[0]):
         fig, ax = plt.subplots()
-        for color_idx, key in enumerate(data.keys()):
+        for color_idx, key in enumerate(averages.keys()):
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Power ({})'.format(get_power_unit(
                 averages[key][0][ii][0],
                 False
             )))
 
-            # average over freqs
-            tse = np.mean(averages[key][1][ii]
-                          [lfreq_idx:hfreq_idx, :], axis=0)
-            # correct to baseline
-            tse = mne.baseline.rescale(tse, times, baseline=baseline)
-
-            ax.plot(times, tse, color=colors[color_idx])
-            ax.axhline(0)
+            ax.plot(times, averages[key][1][ii], color=colors[color_idx],
+                    label=key)
+        ax.axhline(0)
+        ax.legend()
         ch_type, ch_group = averages[key][0][ii]
-        title = 'TSE ({0}, {1})'.format(ch_type, ch_group)
+        title = 'TSE_{0}_{1}_{2}'.format(tfr_name, ch_type, ch_group)
         fig.canvas.set_window_title(title)
         fig.suptitle(title)
 
@@ -171,9 +167,10 @@ def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline)
 
 
 def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition, 
-                      blmode, blstart, blend):
+                      blmode, blstart, blend,
+                      crop_start, crop_end, crop_minfreq, crop_maxfreq):
 
-    layout = read_layout(experiment.layout)
+    meggie_tfr = subject.tfr[tfr_name]
 
     if blmode:
         bline = (blstart, blend)
@@ -182,46 +179,50 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
         bline = None
         mode = None
 
-    tfr = subject.tfr[tfr_name].content.get(tfr_condition)
+    tfr = meggie_tfr.content.get(tfr_condition)
 
     logging.getLogger('ui_logger').info("Plotting TFR channel averages...")
 
+    layout = read_layout(experiment.layout)
     data = tfr.data
-    ch_names = tfr.info['ch_names']
+    ch_names = meggie_tfr.ch_names
     channel_groups = experiment.channel_groups
 
     data_labels, averaged_data = average_data_to_channel_groups(
         data, ch_names, channel_groups)
 
-    sfreq = tfr.info['sfreq']
-    times = tfr.times
-    freqs = tfr.freqs
+    sfreq = meggie_tfr.info['sfreq']
+    times = meggie_tfr.times
+    freqs = meggie_tfr.freqs
 
     for idx in range(len(data_labels)):
         data = averaged_data[idx]
         labels = data_labels[idx]
-        info = mne.create_info(ch_names=['grandaverage'],
+        info = mne.create_info(ch_names=['grand_average'],
                                sfreq=sfreq,
                                ch_types='mag')
-        tfr = mne.time_frequency.tfr.AverageTFR(
-            info, data[np.newaxis, :], times, freqs, 1)
+        tfr = mne.time_frequency.tfr.AverageTFR(info, 
+            data[np.newaxis, :], 
+            times, freqs, 1)
 
-        title = labels[1] + ' (' + labels[0] + ')'
+        title = 'TFR_{0}_{1}'.format(labels[1], labels[0])
 
-        # prevent interaction as no topology is involved now
+        # prevent interaction as no topography is involved now
         def onselect(*args, **kwargs):
             pass
-
         tfr._onselect = onselect
 
-        tfr.plot(baseline=bline, mode=mode,
-                 title=title)
+        fig = tfr.plot(baseline=bline, mode=mode, title=title, 
+                       fmin=crop_minfreq, fmax=crop_maxfreq, 
+                       tmin=crop_start, tmax=crop_end)
+        fig.canvas.set_window_title(title)
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
-                  blmode, blstart, blend):
+                  blmode, blstart, blend,
+                  crop_start, crop_end, crop_minfreq, crop_maxfreq):
 
-    layout = read_layout(experiment.layout)
+    meggie_tfr = subject.tfr[tfr_name]
 
     if blmode:
         bline = (blstart, blend)
@@ -230,20 +231,29 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
         bline = None
         mode = None
 
-    tfr = subject.tfr[tfr_name].content.get(tfr_condition)
+    tfr = meggie_tfr.content.get(tfr_condition)
 
     logging.getLogger('ui_logger').info("Plotting TFR from all channels...")
 
-    fig = tfr.plot_topo(layout=layout, show=False,
-                        baseline=bline, mode=mode)
+    layout = read_layout(experiment.layout)
 
-    fig.canvas.set_window_title('TFR (' + tfr_name + ', ' + 
-                                tfr_condition + ')')
+    title = 'TFR_{0}_{1}'.format(tfr_name, tfr_condition)
+    fig = tfr.plot_topo(layout=layout, show=False,
+                        baseline=bline, mode=mode,
+                        tmin=crop_start, tmax=crop_end,
+                        fmin=crop_minfreq, fmax=crop_maxfreq,
+                        title=title)
+
+    fig.canvas.set_window_title(title)
 
     def onclick(event):
         channel = plt.getp(plt.gca(), 'title')
-        plt.gcf().canvas.set_window_title('_'.join(['TFR', tfr_name,
-                                                    channel]))
+        plt.gca().set_title('')
+
+        title = 'TFR_{0}_{1}'.format(tfr_name, channel)
+        plt.gcf().canvas.set_window_title(title)
+        plt.gcf().suptitle(title)
+
         plt.show(block=False)
 
     fig.canvas.mpl_connect('button_press_event', onclick)

@@ -30,35 +30,52 @@ class TSEPlotDialog(QtWidgets.QDialog):
 
         tfr = list(meggie_tfr.content.values())[0]
 
-        minfreq = tfr.freqs[0]
-        maxfreq = tfr.freqs[-1]
+        minfreq, maxfreq = tfr.freqs[0], tfr.freqs[-1]
+        tmin, tmax = tfr.times[0], tfr.times[-1]
 
-        tmin = tfr.times[0]
-
-        self.ui.doubleSpinBoxMinFreq.setValue(minfreq)
-        self.ui.doubleSpinBoxMaxFreq.setValue(maxfreq)
-
+        self.ui.doubleSpinBoxBaselineStart.setMinimum(tmin)
+        self.ui.doubleSpinBoxBaselineStart.setMaximum(tmax)
+        self.ui.doubleSpinBoxBaselineEnd.setMinimum(tmin)
+        self.ui.doubleSpinBoxBaselineEnd.setMaximum(tmax)
+        self.ui.doubleSpinBoxAveMinFreq.setMinimum(minfreq)
+        self.ui.doubleSpinBoxAveMinFreq.setMaximum(maxfreq)
+        self.ui.doubleSpinBoxAveMaxFreq.setMinimum(minfreq)
+        self.ui.doubleSpinBoxAveMaxFreq.setMaximum(maxfreq)
+        self.ui.doubleSpinBoxCropStart.setMinimum(tmin)
+        self.ui.doubleSpinBoxCropStart.setMaximum(tmax)
+        self.ui.doubleSpinBoxCropEnd.setMinimum(tmin)
+        self.ui.doubleSpinBoxCropEnd.setMaximum(tmax)
+ 
         self.ui.doubleSpinBoxBaselineStart.setValue(tmin)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
+        self.ui.doubleSpinBoxAveMinFreq.setValue(minfreq)
+        self.ui.doubleSpinBoxAveMaxFreq.setValue(maxfreq)
+        self.ui.doubleSpinBoxCropStart.setValue(tmin)
+        self.ui.doubleSpinBoxCropEnd.setValue(tmax)
 
     def accept(self):
 
         subject = self.experiment.active_subject
 
-        minfreq = self.ui.doubleSpinBoxMinFreq.value()
-        maxfreq = self.ui.doubleSpinBoxMaxFreq.value()
+        minfreq = self.ui.doubleSpinBoxAveMinFreq.value()
+        maxfreq = self.ui.doubleSpinBoxAveMaxFreq.value()
 
         bstart = self.ui.doubleSpinBoxBaselineStart.value()
         bend = self.ui.doubleSpinBoxBaselineEnd.value()
+
+        crop_start = self.ui.doubleSpinBoxCropStart.value()
+        crop_end = self.ui.doubleSpinBoxCropEnd.value()
 
         baseline = (bstart, bend)
 
         if self.ui.radioButtonAllChannels.isChecked():
             plot_tse_topo(self.experiment, subject, self.tfr_name, 
-                          minfreq, maxfreq, baseline)
+                          minfreq, maxfreq, baseline,
+                          crop_start, crop_end)
         else:
             plot_tse_averages(self.experiment, subject, self.tfr_name, 
-                              minfreq, maxfreq, baseline)
+                              minfreq, maxfreq, baseline,
+                              crop_start, crop_end)
 
         self.close()
 

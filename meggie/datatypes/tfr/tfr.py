@@ -97,5 +97,21 @@ class TFR(object):
         return self._params['n_cycles']
 
     @property
+    def ch_names(self):
+        return list(self.content.values())[0].info['ch_names']
+
+    @property
+    def times(self):
+        return list(self.content.values())[0].times
+
+    @property
+    def freqs(self):
+        return list(self.content.values())[0].freqs
+
+    @property
+    def info(self):
+        return list(self.content.values())[0].info
+
+    @property
     def evoked_subtracted(self):
         return self._params['evoked_subtracted']

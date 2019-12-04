@@ -9,7 +9,7 @@
     "translations": {"create_from_events": "Create from events",
                      "delete": "Delete epochs",
                      "delete_from_all": "Delete epochs from all",
-                     "plot_epochs": "Plot epochs",
+                     "plot_epochs": "Plot all epochs",
                      "plot_image": "Plot epochs image",
                      "epochs_info": "Epochs info"}
 }

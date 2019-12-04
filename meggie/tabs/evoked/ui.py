@@ -78,14 +78,24 @@ def _plot_evoked_averages(experiment, evoked):
 
 def _plot_evoked_topo(experiment, evoked):
     evokeds = []
-    for key, evoked in evoked.content.items():
-        evokeds.append(evoked)
+    for key, evok in evoked.content.items():
+        evokeds.append(evok)
 
     def onclick(event):
+        channel = plt.getp(plt.gca(), 'title')
+        plt.gca().set_title('')
+
+        title = "evoked_{0}_{1}".format(evoked.name, channel)
+
+        plt.gcf().canvas.set_window_title(title)
+        plt.gcf().suptitle(title)
         plt.show()
 
     fig = mne.viz.plot_evoked_topo(evokeds)
     fig.canvas.mpl_connect('button_press_event', onclick)
+    title = "evoked_{0}".format(evoked.name)
+    fig.canvas.set_window_title(title)
+    fig.suptitle(title)
 
 
 def plot_evoked(experiment, data, window):
@@ -130,10 +140,11 @@ def plot_topomap(experiment, data, window):
     for key, evoked in evoked.content.items():
         channels = get_channels(evoked.info)
         for ch_type in channels.keys():
-            title = key + ' (' + ch_type + ')'
-            mne.viz.plot_evoked_topomap(
+            title = '{0}_{1}_{2}'.format(selected_name, key, ch_type)
+            fig = mne.viz.plot_evoked_topomap(
                 evoked, ch_type=ch_type, layout=layout,
                 title=title)
+            fig.canvas.set_window_title(title)
 
 
 def group_average(experiment, data, window):

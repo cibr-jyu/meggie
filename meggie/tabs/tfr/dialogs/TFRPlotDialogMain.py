@@ -32,12 +32,27 @@ class TFRPlotDialog(QtWidgets.QDialog):
         keys = list(meggie_tfr.content.keys())
 
         start, end = tfr.times[0], tfr.times[-1]
+        minfreq, maxfreq = tfr.freqs[0], tfr.freqs[-1]
+
         self.ui.doubleSpinBoxBaselineStart.setMinimum(start)
         self.ui.doubleSpinBoxBaselineStart.setMaximum(end)
-        self.ui.doubleSpinBoxBaselineStart.setValue(start)
         self.ui.doubleSpinBoxBaselineEnd.setMinimum(start)
         self.ui.doubleSpinBoxBaselineEnd.setMaximum(end)
+        self.ui.doubleSpinBoxCropStart.setMinimum(start)
+        self.ui.doubleSpinBoxCropStart.setMaximum(end)
+        self.ui.doubleSpinBoxCropEnd.setMinimum(start)
+        self.ui.doubleSpinBoxCropEnd.setMaximum(end)
+        self.ui.doubleSpinBoxCropMinFreq.setMinimum(minfreq)
+        self.ui.doubleSpinBoxCropMinFreq.setMaximum(maxfreq)
+        self.ui.doubleSpinBoxCropMaxFreq.setMinimum(minfreq)
+        self.ui.doubleSpinBoxCropMaxFreq.setMaximum(maxfreq)
+ 
+        self.ui.doubleSpinBoxBaselineStart.setValue(start)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
+        self.ui.doubleSpinBoxCropStart.setValue(start)
+        self.ui.doubleSpinBoxCropEnd.setValue(end)
+        self.ui.doubleSpinBoxCropMinFreq.setValue(minfreq)
+        self.ui.doubleSpinBoxCropMaxFreq.setValue(maxfreq)
 
         for key in keys:
             self.ui.comboBoxCondition.addItem(key)
@@ -57,12 +72,18 @@ class TFRPlotDialog(QtWidgets.QDialog):
 
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
+        crop_start = self.ui.doubleSpinBoxCropStart.value()
+        crop_end = self.ui.doubleSpinBoxCropEnd.value()
+        crop_minfreq = self.ui.doubleSpinBoxCropMinFreq.value()
+        crop_maxfreq = self.ui.doubleSpinBoxCropMaxFreq.value()
 
         if self.ui.radioButtonAllChannels.isChecked():
             plot_tfr_topo(self.experiment, subject, self.tfr_name,
-                          condition, blmode, blstart, blend)
+                          condition, blmode, blstart, blend, 
+                          crop_start, crop_end, crop_minfreq, crop_maxfreq)
         else:
             plot_tfr_averages(self.experiment, subject, self.tfr_name,
-                              condition, blmode, blstart, blend)
+                              condition, blmode, blstart, blend,
+                              crop_start, crop_end, crop_minfreq, crop_maxfreq)
 
         self.close()

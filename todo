@@ -3,6 +3,13 @@ tärketä:
   - think about why does tse plot look like a spider? ( should i just automatically compute extra and then crop something always out? )
   - For user, info boxes are very important
   - Implement induced
+  - Voisiko tse:n plotata compare_evokedsilla?
+  - pitäisikö kaikki nimet laittaa säädettäväksi ja kaikille nimille laittaa joku fiksuhko oletus?
 
 - Remove more of those logged messages
 - if you do itc, ensure that plot units are right
+
+- käy lisäämässä oletusnimet kaikkiin createihin
+- group_averageen myös uutena nimeämismahdollisuus
+- are you sure to remove kaikkialle.
+- noihin titleihin tolower()
