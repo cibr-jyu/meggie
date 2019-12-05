@@ -8,33 +8,30 @@ from PyQt5 import QtCore
 from meggie.utilities.dialogs.groupAverageDialogUi import Ui_groupAverageDialog
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.decorators import threaded
+from meggie.utilities.validators import validate_name
 
 
 class GroupAverageDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, parent, handler):
+    def __init__(self, experiment, parent, handler, default_name):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_groupAverageDialog()
         self.ui.setupUi(self)
 
-        self.experiment = experiment
         self.handler = handler
 
-        subjects = self.experiment.subjects.keys()
+        subjects = experiment.subjects.keys()
         subject_count = len(subjects)
 
         # fill the dialog with subjects
         for idx, subject_name in enumerate(subjects):
             self.add_item(idx, subject_name)
 
-        # adjust scroll area accordingly
-        row_height, width = 25, 300
-        self.ui.scrollAreaWidgetContents.setMinimumSize(
-            width, row_height * subject_count)
-
         self.subjects = subjects
+
+        self.ui.lineEditName.setText(default_name)
 
     def add_item(self, idx, name):
         """ creates label-spinbox item and adds it to screen """
@@ -87,6 +84,8 @@ class GroupAverageDialog(QtWidgets.QDialog):
             else:
                 groups[group_id] = [subject]
 
-        self.handler(groups)
+        name = validate_name(self.ui.lineEditName.text())
+
+        self.handler(name, groups)
 
         self.close()

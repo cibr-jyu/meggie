@@ -10,6 +10,7 @@ from meggie.utilities.channels import get_channels
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.groups import average_data_to_channel_groups
+from meggie.utilities.names import next_available_name
 
 import meggie.utilities.filemanager as filemanager
 
@@ -25,7 +26,10 @@ from meggie.tabs.spectrum.controller.spectrum import group_average_spectrum
 def create(experiment, data, window):
     """ Opens spectrum creation dialog
     """
-    dialog = PowerSpectrumDialog(experiment, window)
+    default_name = next_available_name(
+        experiment.active_subject.spectrum.keys(), 'Spectrum')
+
+    dialog = PowerSpectrumDialog(experiment, window, default_name)
     dialog.show()
 
 
@@ -93,9 +97,9 @@ def group_average(experiment, data, window):
     except IndexError as exc:
         return
 
-    def handler(groups):
+    def handler(name, groups):
         try:
-            group_average_spectrum(experiment, selected_name, groups,
+            group_average_spectrum(experiment, selected_name, groups, name,
                                    do_meanwhile=window.update_ui)
         except Exception as exc:
             exc_messagebox(window, exc)
@@ -103,8 +107,12 @@ def group_average(experiment, data, window):
 
         experiment.save_experiment_settings()
         window.initialize_ui()
-
-    dialog = GroupAverageDialog(experiment, window, handler)
+    
+    default_name = next_available_name(
+       experiment.active_subject.spectrum.keys(), 
+       'group_' + selected_name)
+    dialog = GroupAverageDialog(experiment, window, handler,
+                                default_name)
     dialog.show()
 
 

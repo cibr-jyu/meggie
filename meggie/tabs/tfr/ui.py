@@ -3,10 +3,11 @@ import os
 
 from pprint import pformat
 
+from meggie.utilities.names import next_available_name
+
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
 from meggie.tabs.tfr.dialogs.TFRPlotDialogMain import TFRPlotDialog
 from meggie.tabs.tfr.dialogs.TSEPlotDialogMain import TSEPlotDialog
-from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 
 
 def create(experiment, data, window):
@@ -17,7 +18,14 @@ def create(experiment, data, window):
     if not selected_names:
         return
 
-    dialog = TFRDialog(experiment, window, selected_names)
+    if len(selected_names) == 1:
+        stem = selected_names[0]
+    else:
+        stem = 'TFR'
+    default_name = next_available_name(
+        experiment.active_subject.spectrum.keys(), stem)
+
+    dialog = TFRDialog(experiment, window, selected_names, default_name)
     dialog.show()
 
 

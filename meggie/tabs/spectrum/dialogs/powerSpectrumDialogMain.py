@@ -23,7 +23,7 @@ from meggie.utilities.messaging import messagebox
 
 class PowerSpectrumDialog(QtWidgets.QDialog):
 
-    def __init__(self, experiment, parent):
+    def __init__(self, experiment, parent, default_name):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -68,6 +68,8 @@ class PowerSpectrumDialog(QtWidgets.QDialog):
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
+
+        self.ui.lineEditName.setText(default_name)
 
     def experiment_getter(self):
         return self.experiment

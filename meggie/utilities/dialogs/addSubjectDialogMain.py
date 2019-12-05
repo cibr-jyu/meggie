@@ -13,6 +13,7 @@ from meggie.utilities.dialogs.addSubjectDialogUi import Ui_AddSubject
 
 from meggie.utilities.messaging import exc_messagebox
 from meggie.utilities.messaging import messagebox
+from meggie.utilities.names import next_available_name
 
 
 class AddSubjectDialog(QtWidgets.QDialog):
@@ -26,20 +27,7 @@ class AddSubjectDialog(QtWidgets.QDialog):
 
         self.parent = parent
 
-    def find_next_available_name(self, name):
-        # Check if the subject is already added to the experiment.
-        counter = 0
-        while counter < 1000:
-            if counter != 0:
-                name = name + '_' + str(counter)
-
-            if name not in self.parent.experiment.subjects:
-                return name
-
-            counter += 1
-
-        raise Exception('Could not find available name')
-
+    
     def accept(self):
         """ Add the new subject. """
         failed_subjects = []
@@ -48,13 +36,14 @@ class AddSubjectDialog(QtWidgets.QDialog):
             raw_path = item.text()
             basename = os.path.basename(raw_path)
             subject_name = basename.split('.')[0]
+            experiment = self.parent.experiment
+            old_names = experiment.subjects.keys()
 
             try:
-                subject_name = self.find_next_available_name(subject_name)
-                self.parent.experiment.create_subject(subject_name,
-                                                      self.parent.experiment,
-                                                      basename,
-                                                      raw_path=raw_path)
+                subject_name = next_available_name(old_names, subject_name)
+                experiment.create_subject(subject_name,
+                                          basename,
+                                          raw_path)
             except Exception as exc:
                 exc_messagebox(self.parent, exc)
 

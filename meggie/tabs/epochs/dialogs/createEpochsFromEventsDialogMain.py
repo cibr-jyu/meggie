@@ -28,7 +28,7 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, experiment, parent):
+    def __init__(self, experiment, parent, default_name):
         """Initialize the event selection dialog.
 
         """
@@ -47,6 +47,8 @@ class CreateEpochsFromEventsDialog(QtWidgets.QDialog):
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
+
+        self.ui.lineEditCollectionName.setText(default_name)
 
     def experiment_getter(self):
         return self.experiment

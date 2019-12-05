@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
-from meggie.tabs.evoked.controller.evoked import group_average as group_ave
+from meggie.tabs.evoked.controller.evoked import group_average_evoked
 
 import meggie.utilities.filemanager as filemanager
 
@@ -20,6 +20,7 @@ from meggie.utilities.channels import read_layout
 from meggie.utilities.channels import get_channels
 from meggie.utilities.validators import assert_arrays_same
 from meggie.utilities.messaging import exc_messagebox
+from meggie.utilities.names import next_available_name
 
 from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 from meggie.tabs.evoked.dialogs.createEvokedDialogMain import CreateEvokedDialog
@@ -33,7 +34,15 @@ def create(experiment, data, window):
     if not selected_names:
         return
 
-    dialog = CreateEvokedDialog(experiment, window, selected_names)
+    if len(selected_names) == 1:
+        stem = selected_names[0]
+    else:
+        stem = 'Evoked'
+    default_name = next_available_name(
+        experiment.active_subject.evoked.keys(), stem)
+
+    dialog = CreateEvokedDialog(experiment, window, selected_names, 
+                                default_name)
     dialog.show()
 
 
@@ -155,17 +164,22 @@ def group_average(experiment, data, window):
     except IndexError as exc:
         return
 
-    def handler(groups):
+    def handler(name, groups):
         try:
-            group_ave(experiment, selected_name, groups,
-                      do_meanwhile=window.update_ui)
+            group_average_evoked(experiment, selected_name, groups, name,
+                                 do_meanwhile=window.update_ui)
         except Exception as exc:
             exc_messagebox(window, exc)
             return
+
         experiment.save_experiment_settings()
         window.initialize_ui()
 
-    dialog = GroupAverageDialog(experiment, window, handler)
+    default_name = next_available_name(
+        experiment.active_subject.evoked.keys(), 
+        'group_' + selected_name)
+    dialog = GroupAverageDialog(experiment, window, handler,
+                                default_name)
     dialog.show()
 
 
@@ -254,10 +268,10 @@ def save(experiment, data, window):
     def handler(selected_option):
         try:
             if selected_option == 'channel_averages':
-                _save_channel_averages(
+                save_channel_averages(
                     experiment, selected_name)
             else:
-                _save_all_channels(
+                save_all_channels(
                     experiment, selected_name)
         except Exception as exc:
             exc_messagebox(window, exc)

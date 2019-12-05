@@ -76,7 +76,7 @@ def create_averages(experiment, mne_evoked):
 
 
 @threaded
-def group_average(experiment, evoked_name, groups):
+def group_average_evoked(experiment, evoked_name, groups, new_name):
     """
     """
     sfreqs = []
@@ -122,14 +122,13 @@ def group_average(experiment, evoked_name, groups):
         grand_averages[new_key].comment = new_key
 
     subject = experiment.active_subject
-    name = 'group_' + evoked_name
 
     evoked_directory = subject.evoked_directory
 
     params = {'event_names': new_keys,
               'groups': groups}
 
-    grand_average_evoked = Evoked(name, evoked_directory, params,
+    grand_average_evoked = Evoked(new_name, evoked_directory, params,
                                   content=grand_averages)
 
     grand_average_evoked.save_content()

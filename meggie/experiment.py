@@ -168,14 +168,13 @@ class Experiment(QObject):
         self.active_subject = self.subjects[subject_name]
         return self.active_subject
 
-    def create_subject(self, subject_name, experiment,
-                       raw_fname, raw_path=None):
+    def create_subject(self, subject_name, raw_fname, raw_path):
         """
         """
-        subject = Subject(experiment, subject_name, raw_fname)
-        if raw_path:
-            subject.ensure_folders()
-            filemanager.copy_subject_raw(subject, raw_path)
+        subject = Subject(self, subject_name, raw_fname)
+        subject.ensure_folders()
+
+        filemanager.copy_subject_raw(subject, raw_path)
         self.add_subject(subject)
 
     def save_experiment_settings(self):

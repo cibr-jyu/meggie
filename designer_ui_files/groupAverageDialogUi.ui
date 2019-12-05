@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
-    <height>568</height>
+    <width>402</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,22 +39,22 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>504</width>
-        <height>1000</height>
+        <width>382</width>
+        <height>554</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
-        <width>350</width>
-        <height>1000</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QGroupBox" name="groupBoxAverageGroups">
          <property name="minimumSize">
           <size>
-           <width>300</width>
+           <width>350</width>
            <height>0</height>
           </size>
          </property>
@@ -64,7 +64,7 @@
          <layout class="QGridLayout" name="gridLayout"/>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -76,6 +76,25 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBoxGeneral">
+         <property name="title">
+          <string>General</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelName">
+            <property name="text">
+             <string>Name:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditName"/>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>

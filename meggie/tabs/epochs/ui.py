@@ -4,6 +4,8 @@ import logging
 
 from pprint import pformat
 
+from meggie.utilities.names import next_available_name
+
 from meggie.tabs.epochs.dialogs.createEpochsFromEventsDialogMain import CreateEpochsFromEventsDialog
 
 
@@ -27,7 +29,10 @@ def epochs_info(experiment, data, window):
 def create_from_events(experiment, data, window):
     """ Opens epoch creation dialog
     """
-    dialog = CreateEpochsFromEventsDialog(experiment, window)
+
+    default_name = next_available_name(
+        experiment.active_subject.epochs.keys(), 'Epochs')
+    dialog = CreateEpochsFromEventsDialog(experiment, window, default_name)
     dialog.show()
 
 

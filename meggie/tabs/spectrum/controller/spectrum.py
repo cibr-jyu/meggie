@@ -296,7 +296,7 @@ def plot_spectrum_topo(experiment, name):
 
 
 @threaded
-def group_average_spectrum(experiment, spectrum_name, groups):
+def group_average_spectrum(experiment, spectrum_name, groups, new_name):
 
     # check data cohesion
     keys = []
@@ -368,7 +368,6 @@ def group_average_spectrum(experiment, spectrum_name, groups):
             grand_averages[new_key] = np.mean(grand_psd, axis=0)
 
     subject = experiment.active_subject
-    name = 'group_' + spectrum_name
 
     try:
         spectrum = subject.spectrum.get(spectrum_name)
@@ -385,7 +384,7 @@ def group_average_spectrum(experiment, spectrum_name, groups):
     params['groups'] = groups
     params['conditions'] = [elem for elem in grand_averages.keys()]
 
-    spectrum = Spectrum(name, subject.spectrum_directory,
+    spectrum = Spectrum(new_name, subject.spectrum_directory,
                         params, data, freqs, ch_names)
 
     spectrum.save_content()

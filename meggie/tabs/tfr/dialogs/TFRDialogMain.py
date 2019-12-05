@@ -24,7 +24,7 @@ class TFRDialog(QtWidgets.QDialog):
     """
     """
 
-    def __init__(self, experiment, parent, epoch_names):
+    def __init__(self, experiment, parent, epoch_names, default_name):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
@@ -71,6 +71,8 @@ class TFRDialog(QtWidgets.QDialog):
             container=self.ui.groupBoxBatching,
             geometry=self.ui.batchingWidgetPlaceholder.geometry())
         self.ui.gridLayoutBatching.addWidget(self.batching_widget, 0, 0, 1, 1)
+
+        self.ui.lineEditTFRName.setText(default_name)
 
     def experiment_getter(self):
         return self.experiment
