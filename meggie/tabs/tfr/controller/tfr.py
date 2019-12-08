@@ -24,53 +24,54 @@ from meggie.utilities.validators import assert_arrays_same
 from meggie.datatypes.tfr.tfr import TFR
 
 
-def _compute_tse(meggie_tfr, minfreq, maxfreq, crop_start, crop_end, baseline=None):
+def _compute_tse(meggie_tfr, fmin, fmax, tmin, tmax, blmode, blstart, blend):
     """
     """
     tfrs = meggie_tfr.content
 
     times = meggie_tfr.times
 
-    lfreq_idx = np.where(meggie_tfr.freqs >= minfreq)[0][0]
-    hfreq_idx = np.where(meggie_tfr.freqs <= maxfreq)[0][-1]
+    fmin_idx = np.where(meggie_tfr.freqs >= fmin)[0][0]
+    fmax_idx = np.where(meggie_tfr.freqs <= fmax)[0][-1]
 
-    if hfreq_idx <= lfreq_idx:
+    if fmax_idx <= fmin_idx:
         raise Exception('Something wrong with the frequencies')
 
-    crop_start_idx = np.where(times >= crop_start)[0][0]
-    crop_end_idx = np.where(times <= crop_end)[0][-1]
+    tmin_idx = np.where(times >= tmin)[0][0]
+    tmax_idx = np.where(times <= tmax)[0][-1]
 
     tses = {}
     for key, tfr in tfrs.items():
         tse = np.mean(tfr.data[:, 
-                               lfreq_idx:hfreq_idx+1, 
-                               crop_start_idx:crop_end_idx+1], axis=1)
+                               fmin_idx:fmax_idx+1, 
+                               tmin_idx:tmax_idx+1], axis=1)
 
-        if baseline:
-            if baseline[0] < crop_start:
+        if blmode:
+            if blstart < tmin:
                 raise Exception(
                     'Baseline start should not be earlier than crop start.')
 
-            if baseline[1] > crop_end:
+            if blend > tmax:
                 raise Exception(
                     'Baseline end should not be later than crop end.')
 
             # correct to baseline
-            tse = mne.baseline.rescale(tse, times, baseline=baseline)
+            tse = mne.baseline.rescale(tse, times, baseline=(blstart, blend), 
+                                       mode=blmode)
 
         tses[key] = tse
 
-    return times[crop_start_idx:crop_end_idx+1], tses
+    return times[tmin_idx:tmax_idx+1], tses
 
 
-def plot_tse_topo(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
-                  crop_start, crop_end):
+def plot_tse_topo(experiment, subject, tfr_name, blmode, blstart, blend, 
+                  tmin, tmax, fmin, fmax):
     """
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
-    times, tses = _compute_tse(meggie_tfr, minfreq, maxfreq, 
-                               crop_start, crop_end, baseline)
+    times, tses = _compute_tse(meggie_tfr, fmin, fmax, 
+                               tmin, tmax, blmode, blstart, blend)
 
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
@@ -121,14 +122,14 @@ def plot_tse_topo(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
     plt.show()
 
 
-def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
-                      crop_start, crop_end):
+def plot_tse_averages(experiment, subject, tfr_name, blmode, blstart, blend,
+                      tmin, tmax, fmin, fmax):
     """
     """
     meggie_tfr = subject.tfr.get(tfr_name)
 
-    times, tses = _compute_tse(meggie_tfr, minfreq, maxfreq, 
-                               crop_start, crop_end, baseline)
+    times, tses = _compute_tse(meggie_tfr, fmin, fmax, 
+                               tmin, tmax, blmode, blstart, blend)
 
     ch_names = meggie_tfr.ch_names
     info = meggie_tfr.info
@@ -171,7 +172,7 @@ def plot_tse_averages(experiment, subject, tfr_name, minfreq, maxfreq, baseline,
 
 def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition, 
                       blmode, blstart, blend,
-                      crop_start, crop_end, crop_minfreq, crop_maxfreq):
+                      tmin, tmax, fmin, fmax):
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -216,14 +217,14 @@ def plot_tfr_averages(experiment, subject, tfr_name, tfr_condition,
         tfr._onselect = onselect
 
         fig = tfr.plot(baseline=bline, mode=mode, title=title, 
-                       fmin=crop_minfreq, fmax=crop_maxfreq, 
-                       tmin=crop_start, tmax=crop_end)
+                       fmin=fmin, fmax=fmax, 
+                       tmin=tmin, tmax=tmax)
         fig.canvas.set_window_title(title)
 
 
 def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition, 
                   blmode, blstart, blend,
-                  crop_start, crop_end, crop_minfreq, crop_maxfreq):
+                  tmin, tmax, fmin, fmax):
 
     meggie_tfr = subject.tfr[tfr_name]
 
@@ -243,8 +244,8 @@ def plot_tfr_topo(experiment, subject, tfr_name, tfr_condition,
     title = 'TFR_{0}_{1}'.format(tfr_name, tfr_condition)
     fig = tfr.plot_topo(layout=layout, show=False,
                         baseline=bline, mode=mode,
-                        tmin=crop_start, tmax=crop_end,
-                        fmin=crop_minfreq, fmax=crop_maxfreq,
+                        tmin=tmin, tmax=tmax,
+                        fmin=fmin, fmax=fmax,
                         title=title)
 
     fig.canvas.set_window_title(title)
@@ -413,9 +414,12 @@ def group_average_tfr(experiment, tfr_name, groups):
     experiment.active_subject.add(meggie_tfr, "tfr")
 
 
-def save_tfr_all_channels(experiment, selected_name):
+def save_tfr_all_channels(experiment, selected_name,
+                          blmode, blstart, blend,
+                          tmin, tmax, fmin, fmax):
     """
     """
+    raise Exception('Apply options')
     column_names = []
     row_names = []
     csv_data = []
@@ -450,9 +454,12 @@ def save_tfr_all_channels(experiment, selected_name):
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
-def save_tfr_channel_averages(experiment, selected_name):
+def save_tfr_channel_averages(experiment, selected_name,
+                              blmode, blstart, blend,
+                              tmin, tmax, fmin, fmax):
     """
     """
+    raise Exception('Apply output options')
     column_names = []
     row_names = []
     csv_data = []
@@ -493,10 +500,10 @@ def save_tfr_channel_averages(experiment, selected_name):
         logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 
-
 def save_tse_all_channels(experiment, selected_name):
-    pass
-
+    """
+    """
 
 def save_tse_channel_averages(experiment, selected_name):
-    pass
+    """
+    """

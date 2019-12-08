@@ -4,7 +4,7 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from meggie.tabs.tfr.dialogs.TFRPlotDialogUi import Ui_TFRPlotDialog
+from meggie.tabs.tfr.dialogs.TFROutputOptionsUi import Ui_TFROutputOptions
 
 from meggie.tabs.tfr.controller.tfr import plot_tfr_topo
 from meggie.tabs.tfr.controller.tfr import plot_tfr_averages
@@ -12,17 +12,21 @@ from meggie.tabs.tfr.controller.tfr import plot_tfr_averages
 from meggie.utilities.messaging import exc_messagebox
 
 
-class TFRPlotDialog(QtWidgets.QDialog):
+class TFROutputOptions(QtWidgets.QDialog):
 
-    def __init__(self, parent, experiment, tfr_name):
+    def __init__(self, parent, experiment, tfr_name, handler, ask_condition=False):
         """
         """
         QtWidgets.QDialog.__init__(self, parent)
-        self.ui = Ui_TFRPlotDialog()
+        self.ui = Ui_TFROutputOptions()
         self.ui.setupUi(self)
         self.parent = parent
         self.experiment = experiment
-        self.tfr_name = tfr_name
+        self.handler = handler
+        self.ask_condition = ask_condition
+
+        if not ask_condition:
+            self.ui.groupBoxCondition.hide()
 
         active_subject = self.experiment.active_subject
 
@@ -38,21 +42,21 @@ class TFRPlotDialog(QtWidgets.QDialog):
         self.ui.doubleSpinBoxBaselineStart.setMaximum(end)
         self.ui.doubleSpinBoxBaselineEnd.setMinimum(start)
         self.ui.doubleSpinBoxBaselineEnd.setMaximum(end)
-        self.ui.doubleSpinBoxCropStart.setMinimum(start)
-        self.ui.doubleSpinBoxCropStart.setMaximum(end)
-        self.ui.doubleSpinBoxCropEnd.setMinimum(start)
-        self.ui.doubleSpinBoxCropEnd.setMaximum(end)
-        self.ui.doubleSpinBoxCropMinFreq.setMinimum(minfreq)
-        self.ui.doubleSpinBoxCropMinFreq.setMaximum(maxfreq)
-        self.ui.doubleSpinBoxCropMaxFreq.setMinimum(minfreq)
-        self.ui.doubleSpinBoxCropMaxFreq.setMaximum(maxfreq)
+        self.ui.doubleSpinBoxTimeStart.setMinimum(start)
+        self.ui.doubleSpinBoxTimeStart.setMaximum(end)
+        self.ui.doubleSpinBoxTimeEnd.setMinimum(start)
+        self.ui.doubleSpinBoxTimeEnd.setMaximum(end)
+        self.ui.doubleSpinBoxFrequencyMin.setMinimum(minfreq)
+        self.ui.doubleSpinBoxFrequencyMax.setMaximum(maxfreq)
+        self.ui.doubleSpinBoxFrequencyMin.setMinimum(minfreq)
+        self.ui.doubleSpinBoxFrequencyMax.setMaximum(maxfreq)
  
         self.ui.doubleSpinBoxBaselineStart.setValue(start)
         self.ui.doubleSpinBoxBaselineEnd.setValue(0)
-        self.ui.doubleSpinBoxCropStart.setValue(start)
-        self.ui.doubleSpinBoxCropEnd.setValue(end)
-        self.ui.doubleSpinBoxCropMinFreq.setValue(minfreq)
-        self.ui.doubleSpinBoxCropMaxFreq.setValue(maxfreq)
+        self.ui.doubleSpinBoxTimeStart.setValue(start)
+        self.ui.doubleSpinBoxTimeEnd.setValue(end)
+        self.ui.doubleSpinBoxFrequencyMin.setValue(minfreq)
+        self.ui.doubleSpinBoxFrequencyMax.setValue(maxfreq)
 
         for key in keys:
             self.ui.comboBoxCondition.addItem(key)
@@ -63,7 +67,11 @@ class TFRPlotDialog(QtWidgets.QDialog):
     def accept(self):
 
         subject = self.experiment.active_subject
-        condition = self.ui.comboBoxCondition.currentText()
+
+        if self.ask_condition:
+            condition = self.ui.comboBoxCondition.currentText()
+        else:
+            condition = None
 
         if self.ui.checkBoxBaselineCorrection.isChecked():
             blmode = self.ui.comboBoxBaselineMode.currentText()
@@ -72,18 +80,17 @@ class TFRPlotDialog(QtWidgets.QDialog):
 
         blstart = self.ui.doubleSpinBoxBaselineStart.value()
         blend = self.ui.doubleSpinBoxBaselineEnd.value()
-        crop_start = self.ui.doubleSpinBoxCropStart.value()
-        crop_end = self.ui.doubleSpinBoxCropEnd.value()
-        crop_minfreq = self.ui.doubleSpinBoxCropMinFreq.value()
-        crop_maxfreq = self.ui.doubleSpinBoxCropMaxFreq.value()
+        tmin = self.ui.doubleSpinBoxTimeStart.value()
+        tmax = self.ui.doubleSpinBoxTimeEnd.value()
+        fmin = self.ui.doubleSpinBoxFrequencyMin.value()
+        fmax = self.ui.doubleSpinBoxFrequencyMax.value()
 
         if self.ui.radioButtonAllChannels.isChecked():
-            plot_tfr_topo(self.experiment, subject, self.tfr_name,
-                          condition, blmode, blstart, blend, 
-                          crop_start, crop_end, crop_minfreq, crop_maxfreq)
+            output = 'all_channels'
         else:
-            plot_tfr_averages(self.experiment, subject, self.tfr_name,
-                              condition, blmode, blstart, blend,
-                              crop_start, crop_end, crop_minfreq, crop_maxfreq)
+            output = 'channel_averages'
+
+        self. handler(output, condition, blmode, blstart, blend,
+                      tmin, tmax, fmin, fmax)
 
         self.close()

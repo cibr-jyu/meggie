@@ -1,21 +1,10 @@
-tärketä:
   - And check that figure saving works and dpi to preferences (yes it cropped very weirdly did not it), and think about lower()
   - For user, info boxes are very important
-  - Implement induced
-
-- Remove more of those logged messages
-- if you do itc, ensure that plot units are right
-
-- are you sure to remove kaikkialle deleteihin.
-
-- should ensure that mainwindow and dialogs have tryexcepts, everything else should be fine as dynamic.py catches everything but handlers, and handlers already have tryexcepts
-
-- is it anymore possible to make it so that TFR's are baselined in the creation. Then group average would make more sense. Or we should add baselining to group average.. Leave the baseline option to plots but add it also to creation?
-
-- or just add baselining to saves and group average? no need for baselines..
-
-- but bad channel selection should be more clear again, and should ensure unified appreciation of bad channels
-
-- ota tse-laskusta baseline pois ja siirrä se plotin yhteyteen
-
-- unify dialog names: "Meggie - " tai ilman mutta ei molempia
+  - Implement induced (only group average and tse saving left)
+  (- Remove more of those logged messages)
+  (- are you sure to remove kaikkialle deleteihin.)
+  (- should ensure that mainwindow and dialogs have tryexcepts, everything else should be fine as dynamic.py catches everything but handlers, and handlers already have tryexcepts)
+  (- but bad channel selection should be more clear again, and should ensure unified appreciation of bad channels)
+  (- take baseline away from tse computation and add toplotting)
+  (- unify dialog names: "Meggie - " or without)
+  - Test everything
