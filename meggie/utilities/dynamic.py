@@ -150,6 +150,10 @@ def construct_tab(package, tab_spec, parent):
                     pushButtonTransformElement, idx, 0, 1, 1)
                 setattr(self, 'pushButtonTransformElement_' + str(idx + 1),
                         pushButtonTransformElement)
+            if getattr(self, 'gridLayoutTransforms', None):
+                spacer = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum,
+                                               QtWidgets.QSizePolicy.Expanding)
+                self.gridLayoutTransforms.addItem(spacer, idx + 1, 0, 1, 1)
 
             # add action buttons
             for idx, action_name in enumerate(tab_spec.get('actions', [])):
@@ -166,6 +170,10 @@ def construct_tab(package, tab_spec, parent):
                     pushButtonActionElement, idx, 0, 1, 1)
                 setattr(self, 'pushButtonActionElement_' + str(idx + 1),
                         pushButtonActionElement)
+            if getattr(self, 'gridLayoutActions', None):
+                spacer = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum,
+                                               QtWidgets.QSizePolicy.Expanding)
+                self.gridLayoutActions.addItem(spacer, idx + 1, 0, 1, 1)
 
             # add info text boxes
             for idx, info_name in enumerate(tab_spec.get('info', [])):
@@ -222,10 +230,10 @@ def construct_tab(package, tab_spec, parent):
 
             # add spacers to bottom and right to keep the window concise
             spacerItemVertical = QtWidgets.QSpacerItem(
-                20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+                20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
             self.gridLayoutContainer.addItem(spacerItemVertical, 1, 0, 1, 1)
             spacerItemHorizontal = QtWidgets.QSpacerItem(
-                40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+                10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.gridLayoutContainer.addItem(spacerItemHorizontal, 0, 1, 1, 1)
 
             # add handlers for list selection changed -> info updates
