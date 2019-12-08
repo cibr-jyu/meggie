@@ -11,8 +11,11 @@ import mne
 import numpy as np
 import matplotlib.pyplot as plt
 
+import meggie.utilities.filemanager as filemanager
+
 from meggie.datatypes.evoked.evoked import Evoked
 
+from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
@@ -133,4 +136,70 @@ def group_average_evoked(experiment, evoked_name, groups, new_name):
 
     grand_average_evoked.save_content()
     subject.add(grand_average_evoked, 'evoked')
+
+
+def save_all_channels(experiment, selected_name):
+    """
+    """
+    column_names = []
+    row_names = []
+    csv_data = []
+
+    # accumulate csv contents
+    for subject in experiment.subjects.values():
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
+            continue
+
+        for key, mne_evoked in evoked.content.items():
+            csv_data.extend(mne_evoked.data.tolist())
+            column_names = format_floats(mne_evoked.times)
+
+            for ch_name in mne_evoked.info['ch_names']:
+                name = subject.name + '{' + key + '}' + '[' + ch_name + ']'
+                if ch_name in mne_evoked.info['bads']:
+                    continue
+                row_names.append(name)
+
+    folder = filemanager.create_timestamped_folder(experiment)
+    fname = selected_name + '_all_subjects_all_channels_evoked.csv'
+    path = os.path.join(folder, fname)
+
+    filemanager.save_csv(path, csv_data, column_names, row_names)
+    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
+
+def save_channel_averages(experiment, selected_name):
+    """
+    """
+    column_names = []
+    row_names = []
+    csv_data = []
+
+    # accumulate csv contents
+    for subject in experiment.subjects.values():
+        evoked = subject.evoked.get(selected_name)
+        if not evoked:
+            continue
+
+        for key, mne_evoked in evoked.content.items():
+
+            data_labels, averaged_data = create_averages(
+                experiment, mne_evoked)
+
+            csv_data.extend(averaged_data.tolist())
+            column_names = format_floats(mne_evoked.times)
+
+            for ch_type, area in data_labels:
+                name = (subject.name + 
+                        '{' + key + '}' + 
+                        '[' + ch_type + '|' + area + ']')
+                row_names.append(name)
+
+    folder = filemanager.create_timestamped_folder(experiment)
+    fname = selected_name + '_all_subjects_channel_averages_evoked.csv'
+    path = os.path.join(folder, fname)
+
+    filemanager.save_csv(path, csv_data, column_names, row_names)
+    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 

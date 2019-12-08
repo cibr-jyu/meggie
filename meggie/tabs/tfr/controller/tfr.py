@@ -9,6 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mne
 
+import meggie.utilities.filemanager as filemanager
+
+from meggie.utilities.formats import format_floats
 from meggie.utilities.channels import read_layout
 from meggie.utilities.colors import color_cycle
 from meggie.utilities.groups import average_data_to_channel_groups
@@ -409,3 +412,91 @@ def group_average_tfr(experiment, tfr_name, groups):
     meggie_tfr.save_content()
     experiment.active_subject.add(meggie_tfr, "tfr")
 
+
+def save_tfr_all_channels(experiment, selected_name):
+    """
+    """
+    column_names = []
+    row_names = []
+    csv_data = []
+
+    # accumulate csv contents
+    for subject in experiment.subjects.values():
+        tfr = subject.tfr.get(selected_name)
+        if not tfr:
+            continue
+
+        ch_names = tfr.ch_names
+        freqs = tfr.freqs
+        column_names = format_floats(tfr.times)
+
+        for key, mne_tfr in tfr.content.items():
+            data = mne_tfr.data
+            for ix in range(data.shape[0]):
+                for iy in range(data.shape[1]):
+                    csv_data.append(data[ix, iy].tolist())
+
+                    row_name = (subject.name +
+                                '{' + key + '}' + 
+                                '[' + ch_names[ix] + ']' + 
+                                '(' + str(freqs[iy]) + ')')
+                    row_names.append(row_name)
+
+        folder = filemanager.create_timestamped_folder(experiment)
+        fname = selected_name + '_all_subjects_all_channels_tfr.csv'
+        path = os.path.join(folder, fname)
+
+        filemanager.save_csv(path, csv_data, column_names, row_names)
+        logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
+
+def save_tfr_channel_averages(experiment, selected_name):
+    """
+    """
+    column_names = []
+    row_names = []
+    csv_data = []
+
+    channel_groups = experiment.channel_groups
+
+    # accumulate csv contents
+    for subject in experiment.subjects.values():
+        tfr = subject.tfr.get(selected_name)
+        if not tfr:
+            continue
+
+        ch_names = tfr.ch_names
+        freqs = tfr.freqs
+        column_names = format_floats(tfr.times)
+
+        for key, mne_tfr in tfr.content.items():
+            data_labels, averaged_data = average_data_to_channel_groups(
+                mne_tfr.data, ch_names, channel_groups)
+
+            for ix in range(averaged_data.shape[0]):
+                for iy in range(averaged_data.shape[1]):
+                    ch_type, area = data_labels[ix]
+
+                    csv_data.append(averaged_data[ix, iy].tolist())
+
+                    row_name = (subject.name +
+                                '{' + key + '}' +
+                                '[' + ch_type + '|' + area + ']' +
+                                '({:.2f})'.format(freqs[iy]))
+                    row_names.append(row_name)
+
+        folder = filemanager.create_timestamped_folder(experiment)
+        fname = selected_name + '_all_subjects_channel_averages_tfr.csv'
+        path = os.path.join(folder, fname)
+
+        filemanager.save_csv(path, csv_data, column_names, row_names)
+        logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
+
+
+
+def save_tse_all_channels(experiment, selected_name):
+    pass
+
+
+def save_tse_channel_averages(experiment, selected_name):
+    pass

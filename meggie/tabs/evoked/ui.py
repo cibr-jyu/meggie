@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from meggie.tabs.evoked.controller.evoked import create_averages
 from meggie.tabs.evoked.controller.evoked import plot_channel_averages
 from meggie.tabs.evoked.controller.evoked import group_average_evoked
+from meggie.tabs.evoked.controller.evoked import save_all_channels
+from meggie.tabs.evoked.controller.evoked import save_channel_averages
 
 import meggie.utilities.filemanager as filemanager
 
@@ -91,14 +93,17 @@ def _plot_evoked_topo(experiment, evoked):
         evokeds.append(evok)
 
     def onclick(event):
-        channel = plt.getp(plt.gca(), 'title')
-        plt.gca().set_title('')
+        try:
+            channel = plt.getp(plt.gca(), 'title')
+            plt.gca().set_title('')
 
-        title = "evoked_{0}_{1}".format(evoked.name, channel)
+            title = "evoked_{0}_{1}".format(evoked.name, channel)
 
-        plt.gcf().canvas.set_window_title(title)
-        plt.gcf().suptitle(title)
-        plt.show()
+            plt.gcf().canvas.set_window_title(title)
+            plt.gcf().suptitle(title)
+            plt.show()
+        except Exception as exc:
+            pass
 
     fig = mne.viz.plot_evoked_topo(evokeds)
     fig.canvas.mpl_connect('button_press_event', onclick)
@@ -168,12 +173,12 @@ def group_average(experiment, data, window):
         try:
             group_average_evoked(experiment, selected_name, groups, name,
                                  do_meanwhile=window.update_ui)
+            experiment.save_experiment_settings()
+            window.initialize_ui()
+
         except Exception as exc:
             exc_messagebox(window, exc)
             return
-
-        experiment.save_experiment_settings()
-        window.initialize_ui()
 
     default_name = next_available_name(
         experiment.active_subject.evoked.keys(), 
@@ -182,69 +187,6 @@ def group_average(experiment, data, window):
                                 default_name)
     dialog.show()
 
-
-def _save_all_channels(experiment, selected_name):
-    """ Saves all channels to csv from selected item from all subjects
-    """
-    column_names = []
-    row_names = []
-    csv_data = []
-
-    # accumulate csv contents
-    for subject in experiment.subjects.values():
-        evoked = subject.evoked.get(selected_name)
-        if not evoked:
-            continue
-
-        for key, mne_evoked in evoked.content.items():
-            csv_data.extend(mne_evoked.data.tolist())
-            column_names = mne_evoked.times.tolist()
-
-            for ch_name in mne_evoked.info['ch_names']:
-                name = subject.name + '{' + key + '}' + '[' + ch_name + ']'
-                if ch_name in mne_evoked.info['bads']:
-                    name = name + ' (bad)'
-                row_names.append(name)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + '_all_subjects_all_channels.csv'
-    path = os.path.join(folder, fname)
-
-    filemanager.save_csv(path, csv_data, column_names, row_names)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
-
-
-def _save_channel_averages(experiment, selected_name):
-
-    column_names = []
-    row_names = []
-    csv_data = []
-
-    # accumulate csv contents
-    for subject in experiment.subjects.values():
-        evoked = subject.evoked.get(selected_name)
-        if not evoked:
-            continue
-
-        for key, mne_evoked in evoked.content.items():
-
-            data_labels, averaged_data = create_averages(
-                experiment, mne_evoked)
-
-            csv_data.extend(averaged_data.tolist())
-            column_names = mne_evoked.times.tolist()
-
-            for ch_type, area in data_labels:
-                name = (subject.name + '{' + key + '}' + '[' +
-                        ch_type + '|' + area + ']')
-                row_names.append(name)
-
-    folder = filemanager.create_timestamped_folder(experiment)
-    fname = selected_name + '_all_subjects_channel_averages.csv'
-    path = os.path.join(folder, fname)
-
-    filemanager.save_csv(path, csv_data, column_names, row_names)
-    logging.getLogger('ui_logger').info('Saved the csv file to ' + path)
 
 def save(experiment, data, window):
     """ Saves averages or channels to csv from selected item from all subjects
@@ -280,11 +222,6 @@ def save(experiment, data, window):
     dialog.show()
 
 
-
-
-
-
-
 def evoked_info(experiment, data, window):
     """ Fills info element
     """
@@ -297,3 +234,4 @@ def evoked_info(experiment, data, window):
         message = ""
 
     return message
+

@@ -4,6 +4,17 @@ import os
 from pprint import pformat
 
 from meggie.utilities.names import next_available_name
+from meggie.utilities.validators import assert_arrays_same
+from meggie.utilities.messaging import exc_messagebox
+
+from meggie.tabs.tfr.controller.tfr import save_tfr_channel_averages
+from meggie.tabs.tfr.controller.tfr import save_tfr_all_channels
+from meggie.tabs.tfr.controller.tfr import save_tse_channel_averages
+from meggie.tabs.tfr.controller.tfr import save_tse_all_channels
+from meggie.tabs.tfr.controller.tfr import group_average_tfr
+
+from meggie.utilities.dialogs.outputOptionsMain import OutputOptions
+from meggie.utilities.dialogs.groupAverageDialogMain import GroupAverageDialog
 
 from meggie.tabs.tfr.dialogs.TFRDialogMain import TFRDialog
 from meggie.tabs.tfr.dialogs.TFRPlotDialogMain import TFRPlotDialog
@@ -88,14 +99,77 @@ def plot_tse(experiment, data, window):
 
 
 def save_tfr(experiment, data, window):
-    pass
+    """ Saves averages or channels to csv from selected item from all subjects
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    time_arrays = []
+    freq_arrays = []
+    for subject in experiment.subjects.values():
+        tfr = subject.tfr.get(selected_name)
+        if not tfr:
+            continue
+        time_arrays.append(tfr.times)
+        freq_arrays.append(tfr.freqs)
+    assert_arrays_same(time_arrays)
+    assert_arrays_same(freq_arrays)
+
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                save_tfr_channel_averages(
+                    experiment, selected_name)
+            else:
+                save_tfr_all_channels(
+                    experiment, selected_name)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
 
 
 def save_tse(experiment, data, window):
-    pass
+    """ Computes TSE and saves averages or channels 
+    to csv from selected item from all subjects
+    """
+    try:
+        selected_name = data['outputs']['tfr'][0]
+    except IndexError as exc:
+        return
+
+    time_arrays = []
+    freq_arrays = []
+    for subject in experiment.subjects.values():
+        tfr = subject.tfr.get(selected_name)
+        if not tfr:
+            continue
+        time_arrays.append(tfr.times)
+        freq_arrays.append(tfr.freqs)
+    assert_arrays_same(time_arrays)
+    assert_arrays_same(freq_arrays)
+
+    def handler(selected_option):
+        try:
+            if selected_option == 'channel_averages':
+                save_tse_channel_averages(
+                    experiment, selected_name)
+            else:
+                save_tse_all_channels(
+                    experiment, selected_name)
+        except Exception as exc:
+            exc_messagebox(window, exc)
+
+    dialog = OutputOptions(window, handler=handler)
+    dialog.show()
 
 
 def group_average(experiment, data, window):
+    """ Handles group average item creation
+    """
     pass
 
 
