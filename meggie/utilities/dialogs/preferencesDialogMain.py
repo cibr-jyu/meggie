@@ -35,16 +35,16 @@ class PreferencesDialog(QtWidgets.QDialog):
 
         # Prefill previous values to UI and attributes from config file.
         workDirectory = self.parent.preferencesHandler.working_directory
-        freesurfer_home = self.parent.preferencesHandler.freesurfer_home
+        self.ui.LineEditFilePath.setText(workDirectory)
+
+        # freesurfer_home = self.parent.preferencesHandler.freesurfer_home
+        # self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
 
         if self.parent.preferencesHandler.auto_load_last_open_experiment:
             self.ui.checkBoxAutomaticOpenPreviousExperiment.setChecked(True)
 
         if self.parent.preferencesHandler.confirm_quit:
             self.ui.checkBoxConfirmQuit.setChecked(True)
-
-        self.ui.LineEditFilePath.setText(workDirectory)
-        self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
 
         config_path = pkg_resources.resource_filename(
             'meggie', 'configuration.json')
@@ -92,14 +92,14 @@ class PreferencesDialog(QtWidgets.QDialog):
                 self, "Select a workspace directory")))
         self.ui.LineEditFilePath.setText(workFilepath)
 
-    def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
-        if checked is None:
-            return
+    # def on_pushButtonBrowseFreeSurferHome_clicked(self, checked=None):
+    #     if checked is None:
+    #         return
 
-        freesurfer_home = QtCore.QDir.toNativeSeparators(
-            str(QtWidgets.QFileDialog.getExistingDirectory(
-                self, "Point Meggie to your FreeSurfer home directory")))
-        self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
+    #     freesurfer_home = QtCore.QDir.toNativeSeparators(
+    #         str(QtWidgets.QFileDialog.getExistingDirectory(
+    #             self, "Point Meggie to your FreeSurfer home directory")))
+    #     self.ui.lineEditFreeSurferHome.setText(freesurfer_home)
 
     def on_pushButtonCustom_clicked(self, checked=None):
         if checked is None:
@@ -125,22 +125,22 @@ class PreferencesDialog(QtWidgets.QDialog):
             message = 'No file path found for working file'
             messagebox(self.parent, message)
             return
+        self.parent.preferencesHandler.working_directory = workFilepath
 
-        freesurfer_path = self.ui.lineEditFreeSurferHome.text()
+        # freesurfer_path = self.ui.lineEditFreeSurferHome.text()
+        # self.parent.preferencesHandler.freesurfer_home = freesurfer_path
+        freesurfer_path = ''
 
         if self.ui.checkBoxAutomaticOpenPreviousExperiment.isChecked():
             autoLoadLastOpenExp = True
         else:
             autoLoadLastOpenExp = False
+        self.parent.preferencesHandler.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
 
         if self.ui.checkBoxConfirmQuit.isChecked():
             confirmQuit = True
         else:
             confirmQuit = False
-
-        self.parent.preferencesHandler.working_directory = workFilepath
-        self.parent.preferencesHandler.freesurfer_home = freesurfer_path
-        self.parent.preferencesHandler.auto_load_last_open_experiment = autoLoadLastOpenExp  # noqa
         self.parent.preferencesHandler.confirm_quit = confirmQuit
 
         config_path = pkg_resources.resource_filename(

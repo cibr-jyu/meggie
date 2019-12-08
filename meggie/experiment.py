@@ -35,7 +35,6 @@ class Experiment(QObject):
         # set some defaults
         self._name = 'experiment'
         self._author = 'unknown author'
-        self._description = 'no description'
         self._subjects = {}
         self._active_subject = None
         self._workspace = None
@@ -74,28 +73,6 @@ class Experiment(QObject):
         """
         """
         self._author = validate_name(author, minlength=0, fieldname='author')
-
-    @property
-    def description(self):
-        """
-        """
-        return self._description
-
-    @description.setter
-    def description(self, description):
-        """
-        """
-        if len(description) <= 1000:
-
-            if (re.match(
-                r"^[A-Za-zäÄöÖåÅ0-9 \t\r\n\v\f\]\[!\"#$%&'()*+,./:;<=>?@\^_`{|}~-]+$",
-                    description) or len(description) == 0):
-                self._description = description
-            else:
-                raise ValueError("Use only letters and " +
-                                 "numbers in your description")
-        else:
-            raise ValueError("Too long description")
 
     @property
     def layout(self):
@@ -227,7 +204,6 @@ class Experiment(QObject):
             'subjects': subjects,
             'name': self.name,
             'author': self.author,
-            'description': self.description,
             'layout': self.layout,
             'channel_groups': self.channel_groups
         }
@@ -270,7 +246,6 @@ class ExperimentHandler(QObject):
         experiment = Experiment()
         experiment.author = exp_dict['author']
         experiment.name = os.path.basename(exp_dict['name'])
-        experiment.description = exp_dict['description']
 
         experiment.workspace = prefs.working_directory
 
@@ -321,7 +296,6 @@ class ExperimentHandler(QObject):
         experiment = Experiment()
         experiment.author = data['author']
         experiment.name = data['name']
-        experiment.description = data['description']
 
         if 'layout' in data.keys():
             experiment.layout = data['layout']

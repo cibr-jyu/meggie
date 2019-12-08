@@ -5,8 +5,11 @@
 	"actions": ["plot", "ica", "filter",
 				"resample", "rereference",
 				"projections"],
-    "translations": {"plot": "Plot raw",
+    "info": ["measurement_info", "event_info"],
+    "translations": {"plot": "Plot raw / set bads",
                      "ica": "Remove artifacts using ICA",
                      "rereference": "Rereference EEG data",
-                     "projections": "Plot SSP vectors"}
+                     "projections": "Plot SSP vectors",
+                     "measurement_info": "Measurement info",
+                     "event_info": "Event info"}
 }

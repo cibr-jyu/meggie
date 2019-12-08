@@ -29,7 +29,6 @@ from meggie.utilities.messaging import messagebox
 from meggie.utilities.messaging import exc_messagebox
 
 from meggie.utilities.dialogs.logDialogMain import LogDialog
-from meggie.utilities.dialogs.experimentInfoDialogMain import ExperimentInfoDialog
 from meggie.utilities.dialogs.aboutDialogMain import AboutDialog
 from meggie.utilities.dialogs.preferencesDialogMain import PreferencesDialog
 from meggie.utilities.dialogs.layoutDialogMain import LayoutDialog
@@ -68,10 +67,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # For handling initialization and switching of experiments.
         self.experimentHandler = ExperimentHandler(self)
-
-        # Creates a label on status bar to show current working file message.
-        self.statusLabel = QtWidgets.QLabel()
-        self.ui.statusbar.addWidget(self.statusLabel)
 
         # If the user has chosen to open the previous experiment automatically.
         if self.preferencesHandler.auto_load_last_open_experiment:
@@ -256,19 +251,6 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = AboutDialog(self)
         dialog.show()
 
-    def on_actionShowExperimentInfo_triggered(self, checked=None):
-        """Open the experiment info dialog """
-        if checked is None:
-            return
-
-        if not self.experiment:
-            messagebox(self,
-                       'You do not currently have an experiment activated.')
-            return
-
-        dialog = ExperimentInfoDialog(self)
-        dialog.show()
-
     def on_pushButtonLayout_clicked(self, checked=None):
         if checked is None:
             return
@@ -366,72 +348,24 @@ class MainWindow(QtWidgets.QMainWindow):
     def initialize_ui(self):
         """
         """
-
         self.update_tabs()
-
         self.setup_loggers()
 
         self.ui.listWidgetSubjects.clear()
-        self.ui.textBrowserEvents.clear()
-        self.ui.labelDateValue.clear()
-        self.ui.labelLengthValue.clear()
-        self.ui.labelHighValue.clear()
-        self.ui.labelLowValue.clear()
-        self.ui.labelSamplesValue.clear()
-        self.ui.labelSubjectValue.clear()
-
-        self.ui.checkBoxMaxfiltered.setChecked(False)
-        self.ui.checkBoxICAApplied.setChecked(False)
-        self.ui.checkBoxRereferenced.setChecked(False)
 
         if not self.experiment:
+            self.setWindowTitle('Meggie')
             return
+
+        if self.experiment.name:
+            self.ui.labelExperimentNameValue.setText(self.experiment.name)
+        if self.experiment.author:
+            self.ui.labelExperimentAuthorValue.setText(self.experiment.author)
 
         self.setWindowTitle('Meggie - ' + self.experiment.name)
 
         self.populate_subject_list()
 
-        active_subject = self.experiment.active_subject
-
-        if active_subject is None:
-            self.statusLabel.setText('Add or activate subjects before '
-                                     'continuing.')
-            return
-
-        raw = active_subject.get_raw()
-
-        name = active_subject.raw_fname
-        status = "Current working file: " + name
-
-        self.statusLabel.setText(status)
-
-        try:
-            mi = MeasurementInfo(raw)
-            self.ui.labelDateValue.setText(mi.date)
-            self.ui.labelLengthValue.setText('%0.2f' % raw.times[-1] + ' s')
-            self.ui.labelHighValue.setText(str(mi.high_pass) + ' Hz')
-            self.ui.labelLowValue.setText(str(mi.low_pass) + ' Hz')
-            self.ui.labelSamplesValue.setText(str(mi.sampling_freq) + ' Hz')
-            self.ui.labelSubjectValue.setText(mi.subject_name)
-        except BaseException:
-            pass
-
-        try:
-            self.populate_raw_tab_event_list()
-        except BaseException:
-            pass
-
-        # Check whether sss/tsss method is applied.
-        if active_subject.check_sss_applied():
-            self.ui.checkBoxMaxfiltered.setChecked(True)
-
-        # Check whether ICA method is applied.
-        if active_subject.ica_applied:
-            self.ui.checkBoxICAApplied.setChecked(True)
-
-        # Check whether Rereferenceing is applied.
-        if active_subject.rereferenced:
-            self.ui.checkBoxRereferenced.setChecked(True)
 
     def populate_subject_list(self):
         """ """
@@ -447,24 +381,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 font.setBold(True)
                 item.setFont(font)
             self.ui.listWidgetSubjects.addItem(item)
-
-    def populate_raw_tab_event_list(self):
-        """
-        Fill the raw tab event list with info about event IDs and
-        amount of events with those IDs.
-        """
-        event_counts = create_event_set(
-            self.experiment.active_subject.get_raw())
-
-        if not event_counts:
-            events_string = 'No events found.'
-        else:
-            events_string = ''
-            for key, value in event_counts.items():
-                events_string += 'Trigger %s, %s events\n' % (
-                    str(key), str(value))
-
-        self.ui.textBrowserEvents.setText(events_string)
 
     def update_tabs(self):
         """ method for initializing the tabs. """

@@ -93,7 +93,8 @@ class Subject(object):
         if self._raw is not None:
             self._raw = None
 
-    def check_sss_applied(self):
+    @property
+    def sss_applied(self):
         """
         Checks the subject folder for sss/tsss applied file.
         Returns True if sss/tsss found.

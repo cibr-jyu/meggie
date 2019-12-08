@@ -43,7 +43,6 @@ class CreateExperimentDialog(QtWidgets.QDialog):
         expDict = {
             'name': self.ui.lineEditExperimentName.text(),
             'author': self.ui.lineEditAuthor.text(),
-            'description': self.ui.textEditDescription.toPlainText()
         }
         try:
             experiment = self.parent.experimentHandler.initialize_new_experiment(
